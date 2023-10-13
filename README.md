@@ -58,3 +58,8 @@ use the domain with GitHub Pages before setting it up with your DNS provider, to
 prevent potential subdomain takeovers. By adding the custom domain in the
 repository settings (even if it throws an error initially), you've asserted this
 intent.
+
+## How to Index Jupyter Book?
+
+- [Indexing on search engines](https://github.com/executablebooks/jupyter-book/issues/1934)
+- [Generate sitemap.xml for SEO](https://github.com/executablebooks/jupyter-book/issues/880)
