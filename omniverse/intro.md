@@ -4,7 +4,6 @@ Welcome to the Omniverse, a vast expanse of knowledge spanning various domains
 of science, technology, and mathematics. Let's embark on this cosmic journey!
 
 ```{tableofcontents}
-
 ```
 
 ## 🤖 [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning)
