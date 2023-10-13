@@ -2,30 +2,50 @@
 
 ## Conventions
 
-We largely follow the [Machine Learning: The Basics](https://link.springer.com/book/10.1007/978-981-16-8193-6)
-book in terms of notations. Some of them are also taken from [Foundations of Machine Learning](https://cs.nyu.edu/~mohri/mlbook/).
+We largely follow the
+[Machine Learning: The Basics](https://link.springer.com/book/10.1007/978-981-16-8193-6)
+book in terms of notations. Some of them are also taken from
+[Foundations of Machine Learning](https://cs.nyu.edu/~mohri/mlbook/).
 
 ## Learning Problem (Conditional Maximum Likelihood Estimation)
 
 As an example, we refer to this important paragraph:
 
-We consider a multi-class classification problem with $c$ classes, $c \geq 1$. Let $y=$ $\{1, \ldots, c\}$ denote the output space and $\mathcal{D}$ a distribution over $\mathcal{X} \times \mathcal{y}$. The learner receives a labeled training sample $S=\left(\left(x_1, y_1\right), \ldots,\left(x_m, y_m\right)\right) \in(\mathcal{X} \times \mathcal{y})^m$ drawn i.i.d. according to $\mathcal{D}$. As in Chapter 12, we assume that, additionally, the learner has access to a feature mapping $\Phi: X \times y \rightarrow \mathbb{R}^N$ with $\mathbb{R}^N$ a normed vector space and with $\|\Phi\|_{\infty} \leq r$. We will denote by $\mathcal{H}$ a family of real-valued functions containing the component feature functions $\Phi_j$ with $j \in[N]$. Note that in the most general case, we may have $N=+\infty$. The problem consists of using the training sample $S$ to learn an accurate conditional probability $\mathrm{p}[\cdot \mid x]$, for any $x \in X$.
+We consider a multi-class classification problem with $c$ classes, $c \geq 1$.
+Let $y=$ $\{1, \ldots, c\}$ denote the output space and $\mathcal{D}$ a
+distribution over $\mathcal{X} \times \mathcal{y}$. The learner receives a
+labeled training sample
+$S=\left(\left(x_1, y_1\right), \ldots,\left(x_m, y_m\right)\right) \in(\mathcal{X} \times \mathcal{y})^m$
+drawn i.i.d. according to $\mathcal{D}$. As in Chapter 12, we assume that,
+additionally, the learner has access to a feature mapping
+$\Phi: X \times y \rightarrow \mathbb{R}^N$ with $\mathbb{R}^N$ a normed vector
+space and with $\|\Phi\|_{\infty} \leq r$. We will denote by $\mathcal{H}$ a
+family of real-valued functions containing the component feature functions
+$\Phi_j$ with $j \in[N]$. Note that in the most general case, we may have
+$N=+\infty$. The problem consists of using the training sample $S$ to learn an
+accurate conditional probability $\mathrm{p}[\cdot \mid x]$, for any $x \in X$.
 
-This is extracted from section 13.1. Learning Problem in [Foundations of Machine Learning](https://cs.nyu.edu/~mohri/mlbook/).
-This treatment is important for you to appreciate the following notations.
+This is extracted from section 13.1. Learning Problem in
+[Foundations of Machine Learning](https://cs.nyu.edu/~mohri/mlbook/). This
+treatment is important for you to appreciate the following notations.
 
 ---
 
 ## Mathematical Notations
 
-We often abuse notation and use $\mathcal{D}$ to denote the dataset $\mathcal{S}$ or $\mathcal{D}_{\mathrm{train}}$ and the probability distribution $\mathcal{D} = \mathbb{P}_{\mathcal{D}}$. The context should be clear. However, as of now, we will try to be consistent in the usage of $\mathcal{D}$ where
-it is a probability distribution and not a dataset.
+We often abuse notation and use $\mathcal{D}$ to denote the dataset
+$\mathcal{S}$ or $\mathcal{D}_{\mathrm{train}}$ and the probability distribution
+$\mathcal{D} = \mathbb{P}_{\mathcal{D}}$. The context should be clear. However,
+as of now, we will try to be consistent in the usage of $\mathcal{D}$ where it
+is a probability distribution and not a dataset.
 
-This source of abuse notation is because $\mathcal{D}$ is written as shorthand for the word *dataset*. We try
-to avoid it here. As the true dataset can be infinite and is defined by $\mathcal{X} \times \mathcal{Y}$ for
-learning problems with labels.
+This source of abuse notation is because $\mathcal{D}$ is written as shorthand
+for the word _dataset_. We try to avoid it here. As the true dataset can be
+infinite and is defined by $\mathcal{X} \times \mathcal{Y}$ for learning
+problems with labels.
 
-Abuse notation: $\mathcal{S}$ or $\mathcal{D}_{\mathrm{train}}$ or $\mathcal{D}_{\{\mathbf{x}, y\}}$
+Abuse notation: $\mathcal{S}$ or $\mathcal{D}_{\mathrm{train}}$ or
+$\mathcal{D}_{\{\mathbf{x}, y\}}$
 
 ````{div} full-width
 ```{list-table} Machine Learning Notations
@@ -349,5 +369,7 @@ to the joint distribution of the input and the label,
 
 ## Further Readings
 
-- Jung, Alexander. Machine Learning: The Basics. Springer Nature Singapore, 2023.
-- Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of Machine Learning. The MIT Press, 2018.
+- Jung, Alexander. Machine Learning: The Basics. Springer Nature
+    Singapore, 2023.
+- Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of
+    Machine Learning. The MIT Press, 2018.
