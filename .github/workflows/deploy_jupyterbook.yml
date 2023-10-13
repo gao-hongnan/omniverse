@@ -1,0 +1,58 @@
+name: Deploy JupyterBook
+
+on:
+  # Trigger the workflow on push to main branch
+  push:
+    branches:
+      - main
+
+env:
+  CONTENT_DIR: omniverse # the directory where the book's content is stored
+
+# This job installs dependencies, build the book, and pushes it to `gh-pages`
+jobs:
+  build-and-deploy-book:
+    name: Build and Deploy JupyterBook to GitHub Pages
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: [3.9]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Get pip cache directory path
+        id: pip-cache
+        run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT # set-output is deprecated.
+
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_dev.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip setuptools wheel
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install -r requirements_dev.txt
+
+      # Build the book
+      - name: Build the book
+        run: |
+          jupyter-book build ${{ env.CONTENT_DIR }}
+
+      # Deploy the book's HTML to gh-pages branch
+      - name: GitHub Pages action
+        uses: peaceiris/actions-gh-pages@v3.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ env.CONTENT_DIR }}/_build/html # Use environment variable
