@@ -119,7 +119,7 @@ to the joint distribution of the input and the label,
   -
 * - $\underset{(\mathbf{x}, y) \sim \mathcal{D}}{\mathbb{P}} = \mathbb{P}_{\mathcal{D}} = \mathbb{P}_{\mathcal{D}}(\mathbf{x}, y)$
   - The fixed (true) but unknown distribution of the data. Usually samples are
-  drawn $\iid$ from $\underset{(\mathbf{x}, y) \sim \mathcal{D}}{\mathbb{P}}$.
+  drawn $\textbf{i.i.d.}$ from $\underset{(\mathbf{x}, y) \sim \mathcal{D}}{\mathbb{P}}$.
 
     Sometimes, we also denote it by $\mathbb{P}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})$
     where $\boldsymbol{\theta}$ is a set of parameters that define the distribution $\mathbb{P}$.
@@ -132,7 +132,7 @@ to the joint distribution of the input and the label,
     \mathcal{S} \overset{\mathrm{iid}}{\sim} \mathcal{D} = \left \{ \left(\mathrm{X}^{(n)}, Y^{(n)} \right) \right \}_{n=1}^N = \left \{ \left(\mathrm{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^N \in \left(\mathcal{X}, \mathcal{Y} \right)^N
     $$
 
-    This means that $\mathcal{S}$ is a collection of samples drawn $\iid$ from an unknown distribution $\mathcal{D}$ over the joint distribution of the input and the label space
+    This means that $\mathcal{S}$ is a collection of samples drawn $\textbf{i.i.d.}$ from an unknown distribution $\mathcal{D}$ over the joint distribution of the input and the label space
     $\mathcal{X} \times \mathcal{Y}$.
   -
 * - $\mathcal{S}_{\mathrm{test}}$
@@ -142,7 +142,7 @@ to the joint distribution of the input and the label,
     \mathcal{S}_{\mathrm{test}} \overset{\mathrm{iid}}{\sim} \mathcal{D} = \left \{ \left(\mathrm{X}^{(n)}, Y^{(n)} \right) \right \}_{n=1}^{N_{\mathrm{test}}} = \left \{ \left(\mathrm{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^{N_{\mathrm{test}}} \in \left(\mathcal{X}, \mathcal{Y} \right)^{N_{\mathrm{test}}}
     $$
 
-    This means that $\mathcal{S}_{\mathrm{test}}$ is a collection of samples drawn $\iid$ from an unknown distribution $\mathcal{D}$ over the joint distribution of the input and the label space
+    This means that $\mathcal{S}_{\mathrm{test}}$ is a collection of samples drawn $\textbf{i.i.d.}$ from an unknown distribution $\mathcal{D}$ over the joint distribution of the input and the label space
     $\mathcal{X} \times \mathcal{Y}$.
   -
 * - $\hat{\mathcal{D}}$
@@ -253,7 +253,7 @@ to the joint distribution of the input and the label,
   -
 * - - $\mathcal{R}$
     - $\mathcal{R}_{\mathcal{D}}$
-  - The true risk function $\mathcal{R}$ is the expected loss $\mathcal{L}$ over all (any) data points drawn $\iid$ from the distribution $\mathcal{D}$.
+  - The true risk function $\mathcal{R}$ is the expected loss $\mathcal{L}$ over all (any) data points drawn $\textbf{i.i.d.}$ from the distribution $\mathcal{D}$.
 
     $$
     \begin{aligned}
@@ -271,7 +271,7 @@ to the joint distribution of the input and the label,
 
     Note a possible confusion can arise especially in the chapter of Bias-Variance Tradeoff,
     where we used $\mathbb{E}_{\mathcal{S}}$ to mean the expected loss over all possible training sets
-    $\mathcal{S}$, but here we use $\mathbb{E}_{\left(\mathbf{x}, y\right) \sim \mathcal{D}}$ to mean the expected loss over all data points drawn $\iid$ from the distribution $\mathcal{D}$.
+    $\mathcal{S}$, but here we use $\mathbb{E}_{\left(\mathbf{x}, y\right) \sim \mathcal{D}}$ to mean the expected loss over all data points drawn $\textbf{i.i.d.}$ from the distribution $\mathcal{D}$.
   - The notation $\underset{{\left(\mathbf{x}, \mathbf{y}\right) \sim \mathcal{D}}}{\mathbb{E}}$ denotes that the expectation is taken over the joint distribution $\mathcal{D}$ of the input-output pairs $(\mathbf{x}, \mathbf{y})$. In other words, it represents the average value of a function over all possible input-output pairs drawn from the distribution $\mathcal{D}$.
 
     To understand it better, consider a (loss) function $\ell(\mathbf{x}, \mathbf{y})$. The expectation of this function with respect to the distribution $\mathcal{D}$ can be calculated as follows:
@@ -311,7 +311,7 @@ to the joint distribution of the input and the label,
 
 * - $\mathcal{J}$ or $\mathcal{J}_{\mathcal{D}}$
   - Note that this term is similar to the risk function $\mathcal{R}$, but sometimes the cost function can be more general in the sense
-    it does not necessarily have to be the expected loss $\mathcal{L}$ over all data points drawn $\iid$ from the distribution $\mathcal{D}$.
+    it does not necessarily have to be the expected loss $\mathcal{L}$ over all data points drawn $\textbf{i.i.d.}$ from the distribution $\mathcal{D}$.
     See K-Means for example, the cost function is the sum of squared distances between the data points and their cluster centers and is not the expected loss.
   -
 * - $\hat{\mathcal{J}}$ or $\hat{\mathcal{J}}_{\mathcal{S}}$ or $\widehat{\mathcal{J}}\left(h \mid \mathcal{S}\right)$
