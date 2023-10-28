@@ -35,6 +35,7 @@ import rich
 from IPython.display import HTML, display
 
 from typing import List
+import math
 ```
 
 ## Learning Objectives
@@ -206,17 +207,74 @@ or premises that guide the problem-solving approach. On the other hand,
 constraints are often the derived limitations or boundary conditions that
 naturally arise from these assumptions.
 
-## Constraints
+```{prf:remark} Externally Derived Constraints
+:label: 875-koko-eating-bananas-externally-derived-constraints
 
-- `1 <= piles.length <= 104`
-- `piles.length <= h <= 109`
-- `1 <= piles[i] <= 109`
+It's important to understand that constraints can also be externally imposed or
+arise from specific practical considerations, rather than being directly derived
+from the problem's assumptions. In such cases, these constraints serve as
+additional rules or limitations that must be adhered to when seeking a solution.
+```
 
-### What are the Constraints for?
+### Assumptions
 
-For one, you must notice that `piles.length <= h` is a necessary constraint.
-Consider $h > piles.length$. Then, it is impossible for Koko to eat all the
-bananas in the piles in $h$ hours.
+Assumptions set the stage for problem-solving by defining the initial
+conditions, parameters, or rules that are accepted without direct evidence. They
+simplify complex situations, making them more manageable and tractable for
+analysis or computational modeling.
+
+In the **Koko Eating Bananas** problem, we make the following assumptions:
+
+1. Koko can only eat a constant number of bananas per hour (`k`), from a single
+   pile.
+2. Koko will start a new pile only after finishing the current one.
+3. If a pile has fewer bananas than `k`, Koko will take less than an hour to
+   finish that pile but won't start another pile within the same hour.
+4. Point 3 implicitly implies that Koko will not eat any more bananas from other
+   piles in the same hour even if she finishes eating the current pile in less
+   than an hour.
+5. Koko has a fixed number of hours (`h`) to complete eating all the bananas.
+6. We assume there exists a solution to the problem. In other words, we assume
+   that there exists a speed `k` such that Koko can eat all the bananas in `h`
+   hours or fewer.
+
+### Constraints
+
+These assumptions lead to certain constraints:
+
+1. Minimum Speed: Koko can't have a speed of zero; she must eat at least one
+   banana per hour.
+2. Time Constraint: Koko has only `h` hours, a hard deadline to finish eating
+   all bananas.
+3. Integer Hours: Time is quantized in hours. Even if Koko takes less than an
+   hour to finish a pile, she can't start another one within the same hour.
+4. The number of piles is less than or equal to the number of hours. This is
+   because if the number of piles is greater than the number of hours, then it
+   is impossible for Koko to eat all the bananas in `h` hours or fewer.
+
+In addition, leetcode provides the following constraints:
+
+- $1 \leq \text{piles.length} \leq 10^4$
+- $\text{piles.length} \leq h \leq 10^9$
+- $1 \leq \text{piles[i]} \leq 10^9$
+
+The additional constraints from LeetCode serve the following purposes:
+
+1. **Computational Feasibility**: Limiting the array length and the value of `h`
+   ensures that the problem can be solved within reasonable computational time,
+   given the algorithmic techniques that candidates are expected to use.
+
+2. **Problem Scope**: By setting minimum and maximum values, they define the
+   problem's scope more precisely, thereby allowing for standardized assessment
+   of solutions.
+
+3. **Avoiding Edge Cases**: Constraints like $1 \leq \text{piles[i]} \leq 10^9$
+   help in removing trivial or degenerate cases, focusing the problem on
+   meaningful scenarios.
+
+4. **Algorithmic Complexity**: The constraints provide bounds that can guide the
+   choice of algorithm, helping one discern whether an $\mathcal{O}(n \log n)$
+   or $\mathcal{O}(n)$ algorithm is appropriate, for example.
 
 ## Test Cases
 
@@ -254,21 +312,41 @@ bananas in the piles in $h$ hours.
       **large-scale scenarios** efficiently. Koko would need to eat at least 10
       bananas/hour.
 
-## Walkthrough / Whiteboarding
+## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
-Detailed walkthrough of the problem-solving process.
+### Theoretical Best Time Complexity
 
-## Theoretical Best Time Complexity
+In the "Koko Eating Bananas" problem, the goal is to minimize the eating speed
+$k$ such that all bananas are eaten within $h$ hours. One common algorithmic
+approach to solve this problem is using binary search on $k$.
 
-Discussion of the theoretical best time complexity for this problem.
+The binary search would operate on the speed range $[1, \max(\text{piles})]$,
+and for each candidate speed, we need to traverse all the piles to check if Koko
+can finish eating in $h$ hours. This traversal takes $\mathcal{O}(n)$ time where
+$n$ is the length of the `piles` array. Thus, the best theoretical time
+complexity for solving this problem would be $\mathcal{O}(n \log m)$, where $m$
+is the maximum number of bananas in a pile.
 
-## Theoretical Best Space Complexity
+### Theoretical Best Space Complexity
 
-Discussion of the theoretical best space complexity for this problem.
+For the binary search algorithm, we only need a constant amount of extra space
+to store variables such as the low, high, and mid points of the search, as well
+as a counter for the total hours Koko would take for a given $k$. Therefore, the
+space complexity is $\mathcal{O}(1)$, which is the best you can achieve for this
+problem assuming that the input size is not counted towards the space
+complexity.
 
-## Space-Time Tradeoff
+### Space-Time Tradeoff
 
-Analysis of the tradeoff between space and time complexity for the problem.
+In this specific problem, there's limited scope for a space-time tradeoff. The
+time complexity is primarily determined by the need to iterate over all the
+piles for each candidate $k$, and this is not something that can be pre-computed
+or stored to save time later. Similarly, the space complexity is already at its
+theoretical minimum $\mathcal{O}(1)$, so there isn't room for optimization by
+using more space.
+
+To sum up, this problem doesn't offer much room for a space-time tradeoff, given
+its constraints and the nature of its optimal solution.
 
 ## Solution (Potentially Multiple)
 
