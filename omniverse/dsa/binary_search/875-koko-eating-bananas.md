@@ -353,19 +353,12 @@ using more space.
 To sum up, this problem doesn't offer much room for a space-time tradeoff, given
 its constraints and the nature of its optimal solution.
 
-## Solution: Binary Search
-
-We have seen earlier that a naive approach would simply be to iterate over all
-possible speeds $k$ where $1 \leq k \leq \max(\text{piles})$ and check if Koko
-can finish eating all the bananas in $h$ hours. The time complexity of this
-approach would be $\mathcal{O}(N \times \max(\text{piles}))$. We will now see
-how we can improve this time complexity to
-$\mathcal{O}(N \log \max(\text{piles}))$ using binary search.
+## Mathematical Formulation
 
 First, we will introduce some mathematical notations and definitions to help us
 formulate the problem and solution in a more concise manner.
 
-### Mathematical Formulation
+---
 
 Given a sequence of piles,
 
@@ -378,10 +371,18 @@ $h$ representing the total number of hours available, our goal is to find the
 minimum constant integer eating speed $k$ such that Koko can finish all the
 bananas in $\mathcal{P}$ within $h$ hours.
 
-We can specify the search space for $k$ as:
+For reasons meantioned earlier and in the constraints, we can specify the search
+space for $k$ as:
 
 $$
 \mathcal{K} = \left\{ k \in \mathbb{Z}^+ \,|\, 1 \leq k \leq \max_{n \in [1,N]} p_n \right\}.
+$$
+
+For convenience, we also define a shorthand notation for the maximum number of
+bananas in a pile:
+
+$$
+M \stackrel{\text{def}}{=} \max_{n \in [1,N]} p_n
 $$
 
 In this setting, we define the time $\mathcal{T}(p_n, k)$ it takes Koko to eat a
@@ -417,7 +418,7 @@ $$
 \begin{aligned}
 & \text{minimize}  && k \in \mathcal{K} \\
 & \text{s.t.}      && \mathcal{H}(k) \leq h \\
-& \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+
+& \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+, \; 1 \leq k \leq M
 \end{aligned}
 $$
 
@@ -431,7 +432,7 @@ $$
 \end{aligned}
 $$
 
-### Definitions
+## Definitions
 
 The definitions of this problem are fairly straightforward and self-contained.
 The previous section already introduced most of the necessary definitions. We
@@ -456,7 +457,51 @@ include two more definitions here for completeness since we may use it later.
   k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}(k) \leq h \}
   $$
 
+- $p_n$ is the number of bananas in the $n$th pile
+- $k$ is the speed at which Koko eats bananas
+- $h$ is the number of hours Koko has to eat all the bananas
+- $n$ is the number of piles
+- $\left\lceil \frac{p_n}{k} \right\rceil$ is the number of hours it takes Koko
+  to eat the $n$th pile
+- $\sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$ is the total number of
+  hours it takes Koko to eat all the bananas.
+- $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$. This
+  is the upper bound of the search space for $k$.
+
+## Solution: Binary Search
+
+In solving this problem, the objective is to efficiently identify the minimum
+eating speed $k$ that allows Koko to consume all the bananas in $h$ hours. A
+straightforward method is to iterate over all potential speeds $k$ in the range
+$1 \leq k \leq M$[^max-of-piples-is-M] and evaluate if $\mathcal{H}(k) \leq h$,
+where $\mathcal{H}(k)$ represents the hours needed to eat all bananas at speed
+$k$. This naive approach results in a time complexity of
+$\mathcal{O}(N \times M)$, which could be computationally prohibitive when $N$,
+the number of piles, or $M$, the maximum size of a pile, is large. However, we
+can improve this to $\mathcal{O}(N \log M)$ by employing a binary search
+technique.
+
 ### Solution Intuition
+
+Now the first question is, how do we know that we can use binary search to solve
+this problem? One answer is of course based on how experienced you are. But
+behind this experience, there is an intuition that those experienced programmers
+developed such that when they see this problem, they automatically know that
+this is a binary search problem. So what is this intuition? How can we develop
+this intuition? For me, if a certain type of algorithm has a certain type of
+template to "pattern recognition", then that template will be the intuition.
+
+See [Identifying Binary Search Problems](./concept.md)
+
+#### Intuition
+
+The Koko Eating Bananas problem can be seen as a
+[**First True in a Sorted Boolean Array**](https://algo.monster/problems/binary_search_boundary)
+problem through the concept of feasibility and its inherent monotonicity. A
+thorough understanding of how these mathematical constructs and computer science
+paradigms intersect will help illuminate this connection rigorously.
+
+---
 
 Main intuition following the binary search framework.
 
@@ -500,7 +545,7 @@ faster rate. Therefore, we can discard the right side of the search space and
 continue our search on the left side to find the minimum `k` that satisfies the
 condition.
 
-In the example you gave, we found that `k = 6` works, meaning Koko can eat all
+In the example we gave, we found that `k = 6` works, meaning Koko can eat all
 the bananas in `h = 8` hours if she eats at a speed of 6 bananas per hour.
 Therefore, all speeds `k' > 6` will also work. So we discard the right half of
 the search space (speeds `k' > 6`) and continue our search on the left half
@@ -522,25 +567,6 @@ to handle efficiently. """
 Visual representation of the problem and solution (if applicable).
 
 ### Algorithm
-
-To formalize the earlier minimization problem, we can write it as:
-
-$$
-\min_{k} k \quad \text{s.t.} \quad \sum_{i=1}^{n} \left\lceil \frac{p_i}{k} \right\rceil \leq h
-$$
-
-where
-
-- $p_i$ is the number of bananas in the $i$th pile
-- $k$ is the speed at which Koko eats bananas
-- $h$ is the number of hours Koko has to eat all the bananas
-- $n$ is the number of piles
-- $\left\lceil \frac{p_i}{k} \right\rceil$ is the number of hours it takes Koko
-  to eat the $i$th pile
-- $\sum_{i=1}^{n} \left\lceil \frac{p_i}{k} \right\rceil$ is the total number of
-  hours it takes Koko to eat all the bananas
-- $\min_{k} k$ is the minimum speed at which Koko can eat all the bananas in $h$
-  hours and is the quantity we are trying to minimize.
 
 #### Pseudocode
 
@@ -621,3 +647,5 @@ Analysis of the total space complexity of the solution.
 ## References and Further Readings
 
 Any useful references or resources for further reading.
+
+[^max-of-piples-is-M]: Recall $\max(\mathcal{P}) = M$
