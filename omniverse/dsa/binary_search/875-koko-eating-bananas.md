@@ -1,30 +1,32 @@
 ---
 jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
+  cell_metadata_filter: -all
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.11.5
 mystnb:
-    number_source_lines: true
+  number_source_lines: true
 kernelspec:
-    display_name: Python 3
-    language: python
-    name: python3
+  display_name: Python 3
+  language: python
+  name: python3
 ---
 
 # Koko Eating Bananas
 
-```{contents}
-:local:
-```
-
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![Question Number](https://img.shields.io/badge/Question-875-blue)](https://leetcode.com/problems/koko-eating-bananas/)
 ![Difficulty](https://img.shields.io/badge/Difficulty-Medium-yellow)
 ![Tag](https://img.shields.io/badge/Tag-Array-orange)
 ![Tag](https://img.shields.io/badge/Tag-BinarySearch-orange)
+
+```{contents}
+:local:
+```
 
 ```{code-cell} ipython3
 :tags: [remove-cell]
@@ -42,8 +44,8 @@ import math
 
 ## Problem Statement
 
-Koko loves to eat bananas. There are `n` piles of bananas, the `i-th` pile has
-piles `i` bananas. The guards have gone and will come back in `h` hours.
+Koko loves to eat bananas. There are `N` piles of bananas, the `n-th` pile has
+piles `piles[n]` bananas. The guards have gone and will come back in `h` hours.
 
 Koko can decide her bananas-per-hour eating speed of `k`. Each hour, she chooses
 some pile of bananas and eats `k` bananas from that pile. If the pile has less
@@ -166,18 +168,22 @@ the bananas in $h$ or **_fewer_** hours. This "_first_ $k$" will be the
 **minimum $k$** satisfying the given condition.
 
 This **naive approach** has a time complexity of
-$\mathcal{O}(k_{\text{min}} \times n)$, where $k_{\text{min}}$ is the _smallest
-speed_ at which Koko can consume all the bananas within $h$ hours, and $n$ is
+$\mathcal{O}(k_{\text{min}} \times N)$, where $k_{\text{min}}$ is the _smallest
+speed_ at which Koko can consume all the bananas within $h$ hours, and $N$ is
 the number of piles. Since $k_{\text{min}}$ is not known in advance and could be
 large, this approach can be **computationally expensive** for large datasets or
 **tight time constraints**. Therefore, the **crux of the problem** is to find
-this_optimal $k$_ without resorting to such a linear search through all
+this*optimal $k$* without resorting to such a linear search through all
 potential speeds.
 
 ### Reducing the Search Space
 
 The observant reader should notice that actually the $k_{\text{min}}$ is
-**_upper bounded_** by the **maximum number of bananas in a pile**.
+**_upper bounded_** by the **maximum number of bananas in a pile**:
+
+$$
+k_{\text{min}} \leq \max(\text{piles})
+$$
 
 **Why?**
 
@@ -188,7 +194,7 @@ Koko is allowed to eat at a speed of $\max(\text{piles})$ bananas per hour. She
 will always be able to finish all the bananas in $h$ hours or fewer. Therefore,
 we can **_discard all speeds greater than $\max(\text{piles})$_**. So our time
 complexity for the naive approach becomes
-$\mathcal{O}(\max(\text{piles}) \times n)$ since we will at most iterate through
+$\mathcal{O}(\max(\text{piles}) \times N)$ since we will at most iterate through
 $\max(\text{piles})$ speeds.
 
 ## Example
@@ -273,8 +279,8 @@ The additional constraints from LeetCode serve the following purposes:
    meaningful scenarios.
 
 4. **Algorithmic Complexity**: The constraints provide bounds that can guide the
-   choice of algorithm, helping one discern whether an $\mathcal{O}(n \log n)$
-   or $\mathcal{O}(n)$ algorithm is appropriate, for example.
+   choice of algorithm, helping one discern whether an $\mathcal{O}(N \log N)$
+   or $\mathcal{O}(N)$ algorithm is appropriate, for example.
 
 ## Test Cases
 
@@ -282,35 +288,34 @@ The additional constraints from LeetCode serve the following purposes:
 
 1. **Multiple Piles, Limited Time**
 
-    - `Input: piles = [30, 11, 23, 4, 20], h = 6`
-    - `Output: 23`
-    - **Explanation**: Koko needs a minimum speed of 23 bananas/hour to finish
-      all bananas in 6 hours or fewer.
+   - `Input: piles = [30, 11, 23, 4, 20], h = 6`
+   - `Output: 23`
+   - **Explanation**: Koko needs a minimum speed of 23 bananas/hour to finish
+     all bananas in 6 hours or fewer.
 
 ### Edge Cases
 
 1. **Single Pile and Minimum Possible Input**
 
-    - `Input: piles = [1], h = 1`
-    - `Output: 1`
-    - **Explanation**: This is the simplest case where the pile has the minimum
-      number of bananas and Koko has the least amount of time. The speed is also
-      1 banana/hour.
+   - `Input: piles = [1], h = 1`
+   - `Output: 1`
+   - **Explanation**: This is the simplest case where the pile has the minimum
+     number of bananas and Koko has the least amount of time. The speed is also
+     1 banana/hour.
 
 2. **Highly Skewed Piles**
 
-    - `Input: piles = [100, 1, 1, 1], h = 4`
-    - `Output: 100`
-    - **Explanation**: The large pile dictates Koko's minimum eating speed. Koko
-      needs to eat at 100 bananas/hour to finish all bananas in 4 hours.
+   - `Input: piles = [100, 1, 1, 1], h = 4`
+   - `Output: 100`
+   - **Explanation**: The large pile dictates Koko's minimum eating speed. Koko
+     needs to eat at 100 bananas/hour to finish all bananas in 4 hours.
 
 3. **Large Data Set**
 
-    - `Input: piles = [1]*10^6, h = 10^5`
-    - `Output: 10`
-    - **Explanation**: This tests the algorithm's ability to handle
-      **large-scale scenarios** efficiently. Koko would need to eat at least 10
-      bananas/hour.
+   - `Input: piles = [1]*10^6, h = 10^5`
+   - `Output: 10`
+   - **Explanation**: This tests the algorithm's ability to handle **large-scale
+     scenarios** efficiently. Koko would need to eat at least 10 bananas/hour.
 
 ## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
@@ -322,9 +327,9 @@ approach to solve this problem is using binary search on $k$.
 
 The binary search would operate on the speed range $[1, \max(\text{piles})]$,
 and for each candidate speed, we need to traverse all the piles to check if Koko
-can finish eating in $h$ hours. This traversal takes $\mathcal{O}(n)$ time where
-$n$ is the length of the `piles` array. Thus, the best theoretical time
-complexity for solving this problem would be $\mathcal{O}(n \log m)$, where $m$
+can finish eating in $h$ hours. This traversal takes $\mathcal{O}(N)$ time where
+$N$ is the length of the `piles` array. Thus, the best theoretical time
+complexity for solving this problem would be $\mathcal{O}(N \log M)$, where $M$
 is the maximum number of bananas in a pile.
 
 ### Theoretical Best Space Complexity
@@ -348,9 +353,110 @@ using more space.
 To sum up, this problem doesn't offer much room for a space-time tradeoff, given
 its constraints and the nature of its optimal solution.
 
-## Solution (Potentially Multiple)
+## Solution: Binary Search
 
-### Intuition
+We have seen earlier that a naive approach would simply be to iterate over all
+possible speeds $k$ where $1 \leq k \leq \max(\text{piles})$ and check if Koko
+can finish eating all the bananas in $h$ hours. The time complexity of this
+approach would be $\mathcal{O}(N \times \max(\text{piles}))$. We will now see
+how we can improve this time complexity to
+$\mathcal{O}(N \log \max(\text{piles}))$ using binary search.
+
+First, we will introduce some mathematical notations and definitions to help us
+formulate the problem and solution in a more concise manner.
+
+### Mathematical Formulation
+
+Given a sequence of piles,
+
+$$
+\mathcal{P} = \left\{ p_1, p_2, \ldots, p_N \,|\, 1 \leq n \leq N \right\},
+$$
+
+each containing a non-negative integer number of bananas, and a positive integer
+$h$ representing the total number of hours available, our goal is to find the
+minimum constant integer eating speed $k$ such that Koko can finish all the
+bananas in $\mathcal{P}$ within $h$ hours.
+
+We can specify the search space for $k$ as:
+
+$$
+\mathcal{K} = \left\{ k \in \mathbb{Z}^+ \,|\, 1 \leq k \leq \max_{n \in [1,N]} p_n \right\}.
+$$
+
+In this setting, we define the time $\mathcal{T}(p_n, k)$ it takes Koko to eat a
+pile $p_n$ at speed $k$ as:
+
+$$
+\mathcal{T}(p_n, k) = \left \lceil \frac{p_n}{k} \right \rceil
+$$
+
+where $\lceil \cdot \rceil$ is the ceiling function, which rounds a real number
+$x$ **_up_** to the nearest integer. For example, $\lceil 2.3 \rceil = 3$.
+
+```{prf:remark} Why ceiling?
+:label: 875-koko-eating-bananas-why-ceiling
+
+Because Koko can only eat a constant number of bananas per hour, so she will
+always take at least $\lceil \frac{p_n}{k} \rceil$ hours to finish a pile $p_n$.
+Consider $k=3$ and the pile $p_n=5$. Then Koko will take $2$ hours to finish
+this pile. This is because $\frac{5}{3} = 1.6667$, which rounds up to $2$ (of
+course you cannot round down).
+```
+
+Consequently, the total time $\mathcal{H}(k)$ required to eat all the bananas in
+$\mathcal{P}$ at speed $k$ can be expressed as:
+
+$$
+\mathcal{H}(k) = \sum_{n=1}^{N} \mathcal{T}(p_n, k)
+$$
+
+The optimization problem can thus be formally stated as:
+
+$$
+\begin{aligned}
+& \text{minimize}  && k \in \mathcal{K} \\
+& \text{s.t.}      && \mathcal{H}(k) \leq h \\
+& \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+
+\end{aligned}
+$$
+
+or equivalently:
+
+$$
+\begin{aligned}
+& k^* = \arg\min_{k \in \mathcal{K}} k \\
+& \text{s.t.}  \quad & \mathcal{H}(k) \leq h \\
+& \text{where} \quad & k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+
+\end{aligned}
+$$
+
+### Definitions
+
+The definitions of this problem are fairly straightforward and self-contained.
+The previous section already introduced most of the necessary definitions. We
+include two more definitions here for completeness since we may use it later.
+
+- **Feasibility Function $\mathcal{F}(\mathcal{P}, k, h)$**: A binary function
+  indicating whether it is possible to eat all bananas within $h$ hours at speed
+  $k$.
+
+  $$
+  \mathcal{F}(\mathcal{P}, k, h) =
+  \begin{cases}
+  1, & \text{if } \mathcal{H}(k) \leq h \\
+  0, & \text{otherwise}
+  \end{cases}
+  $$
+
+- **Optimal Eating Speed $k^*$**: The minimum constant integer eating speed that
+  satisfies the problem's constraints.
+
+  $$
+  k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}(k) \leq h \}
+  $$
+
+### Solution Intuition
 
 Main intuition following the binary search framework.
 
@@ -361,10 +467,9 @@ because:
 
 - Koko cannot eat $0$ bananas per hour, so the lower bound is $k=1$.
 - Koko does not need to eat more than the maximum number of bananas in a pile
-    per hour, so the upper bound is $k=\max(\text{piles})$. Because even if she
-    does, there is no point as the question stated that once she finishes eating
-    all the bananas in a pile, she will not eat any more bananas from other
-    piles.
+  per hour, so the upper bound is $k=\max(\text{piles})$. Because even if she
+  does, there is no point as the question stated that once she finishes eating
+  all the bananas in a pile, she will not eat any more bananas from other piles.
 
 And why can we approach it from a binary search perspective? Consider first an
 example where $k=1$ and say the `piles = [3, 6, 7, 11]` and `h=8`. Then we see
@@ -430,12 +535,12 @@ where
 - $k$ is the speed at which Koko eats bananas
 - $h$ is the number of hours Koko has to eat all the bananas
 - $n$ is the number of piles
-- $\left\lceil \frac{p_i}{k} \right\rceil$ is the number of hours it takes
-    Koko to eat the $i$th pile
-- $\sum_{i=1}^{n} \left\lceil \frac{p_i}{k} \right\rceil$ is the total number
-    of hours it takes Koko to eat all the bananas
-- $\min_{k} k$ is the minimum speed at which Koko can eat all the bananas in
-    $h$ hours and is the quantity we are trying to minimize.
+- $\left\lceil \frac{p_i}{k} \right\rceil$ is the number of hours it takes Koko
+  to eat the $i$th pile
+- $\sum_{i=1}^{n} \left\lceil \frac{p_i}{k} \right\rceil$ is the total number of
+  hours it takes Koko to eat all the bananas
+- $\min_{k} k$ is the minimum speed at which Koko can eat all the bananas in $h$
+  hours and is the quantity we are trying to minimize.
 
 #### Pseudocode
 
