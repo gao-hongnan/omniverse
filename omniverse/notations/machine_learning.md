@@ -224,7 +224,7 @@ to the joint distribution of the input and the label,
     $\mathbf{x}$ that are mapped to the same predicted label $h(\mathbf{x})=\hat{y}$ for all $\mathbf{x} \in R_{\hat{y}}$.
   -
 * - $\mathcal{L}$ or $\mathcal{L}(\boldsymbol{\theta})$
-  - Formally, a loss function is a map {cite}`jung_2023`
+  - Formally, a loss function is a map {cite}`jung2022machine`
 
     $$
     \begin{aligned}
@@ -370,6 +370,6 @@ to the joint distribution of the input and the label,
 ## Further Readings
 
 - Jung, Alexander. Machine Learning: The Basics. Springer Nature
-    Singapore, 2023.
-- Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of
-    Machine Learning. The MIT Press, 2018.
+  Singapore, 2023.
+- Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of Machine
+  Learning. The MIT Press, 2018.
