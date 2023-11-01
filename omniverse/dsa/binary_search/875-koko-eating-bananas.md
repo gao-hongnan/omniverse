@@ -38,6 +38,13 @@ from IPython.display import HTML, display
 
 from typing import List
 import math
+
+import sys
+from pathlib import Path
+parent_dir = str(Path().resolve().parents[2])
+sys.path.append(parent_dir)
+
+from utils.testing.test_decorator import TestFramework
 ```
 
 ## Learning Objectives
@@ -312,10 +319,10 @@ The additional constraints from LeetCode serve the following purposes:
 
 3. **Large Data Set**
 
-   - `Input: piles = [1]*10^6, h = 10^5`
-   - `Output: 10`
+   - `Input: piles = [8]*10^6, h = 10^5`
+   - `Output: 8`
    - **Explanation**: This tests the algorithm's ability to handle **large-scale
-     scenarios** efficiently. Koko would need to eat at least 10 bananas/hour.
+     scenarios** efficiently. Koko would need to eat at least 8 bananas/hour.
 
 ## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
@@ -435,15 +442,28 @@ $$
 ## Definitions
 
 The definitions of this problem are fairly straightforward and self-contained.
-The previous section already introduced most of the necessary definitions. We
-include two more definitions here for completeness since we may use it later.
+The previous section already introduced most of the necessary definitions.
+
+- $p_n$ is the number of bananas in the $n$th pile
+- $k$ is the speed at which Koko eats bananas
+- $h$ is the number of hours Koko has to eat all the bananas
+- $n$ is the number of piles
+- $\left\lceil \frac{p_n}{k} \right\rceil$ is the number of hours it takes Koko
+  to eat the $n$th pile
+- $\sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$ is the total number of
+  hours it takes Koko to eat all the bananas.
+- $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$. This
+  is the upper bound of the search space for $k$.
+
+We include two more definitions here for completeness since we will use it
+later.
 
 - **Feasibility Function $\mathcal{F}(\mathcal{P}, k, h)$**: A binary function
   indicating whether it is possible to eat all bananas within $h$ hours at speed
   $k$.
 
   $$
-  \mathcal{F}(\mathcal{P}, k, h) =
+  \mathcal{F}(k, \mathcal{P}, h) =
   \begin{cases}
   1, & \text{if } \mathcal{H}(k) \leq h \\
   0, & \text{otherwise}
@@ -457,110 +477,253 @@ include two more definitions here for completeness since we may use it later.
   k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}(k) \leq h \}
   $$
 
-- $p_n$ is the number of bananas in the $n$th pile
-- $k$ is the speed at which Koko eats bananas
-- $h$ is the number of hours Koko has to eat all the bananas
-- $n$ is the number of piles
-- $\left\lceil \frac{p_n}{k} \right\rceil$ is the number of hours it takes Koko
-  to eat the $n$th pile
-- $\sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$ is the total number of
-  hours it takes Koko to eat all the bananas.
-- $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$. This
-  is the upper bound of the search space for $k$.
-
 ## Solution: Binary Search
 
 In solving this problem, the objective is to efficiently identify the minimum
 eating speed $k$ that allows Koko to consume all the bananas in $h$ hours. A
 straightforward method is to iterate over all potential speeds $k$ in the range
-$1 \leq k \leq M$[^max-of-piples-is-M] and evaluate if $\mathcal{H}(k) \leq h$,
+$1 \leq k \leq M$[^max-of-piles-is-M] and evaluate if $\mathcal{H}(k) \leq h$,
 where $\mathcal{H}(k)$ represents the hours needed to eat all bananas at speed
 $k$. This naive approach results in a time complexity of
 $\mathcal{O}(N \times M)$, which could be computationally prohibitive when $N$,
-the number of piles, or $M$, the maximum size of a pile, is large. However, we
-can improve this to $\mathcal{O}(N \log M)$ by employing a binary search
-technique.
+the number of piles, **_and/or_** $M$, the maximum size of a pile, is large.
+However, we can improve this to $\mathcal{O}(N \log M)$ by employing a binary
+search technique.
 
 ### Solution Intuition
 
-Now the first question is, how do we know that we can use binary search to solve
-this problem? One answer is of course based on how experienced you are. But
-behind this experience, there is an intuition that those experienced programmers
-developed such that when they see this problem, they automatically know that
-this is a binary search problem. So what is this intuition? How can we develop
-this intuition? For me, if a certain type of algorithm has a certain type of
-template to "pattern recognition", then that template will be the intuition.
-
-See [Identifying Binary Search Problems](./concept.md)
-
-#### Intuition
-
-The Koko Eating Bananas problem can be seen as a
-[**First True in a Sorted Boolean Array**](https://algo.monster/problems/binary_search_boundary)
-problem through the concept of feasibility and its inherent monotonicity. A
-thorough understanding of how these mathematical constructs and computer science
-paradigms intersect will help illuminate this connection rigorously.
-
----
+The first question that arises is, how can we be sure that binary search is an
+appropriate technique for solving this problem? The answer often depends on
+one's level of experience. However, beyond experience, there is an underlying
+intuition that experienced programmers have developed. This intuition allows
+them to instantly recognize problems that are well-suited for binary search. So,
+what constitutes this intuition, and how can it be developed? In general, if a
+specific type of algorithm adheres to a recognizable pattern or template, then
+that pattern serves as the intuition behind choosing that algorithm.
 
 Main intuition following the binary search framework.
 
 > Minimize $k$ such that koko can _eat all the bananas within $h$ hours_.
 
-The intuition is that the search space is from $k=1$ to $k=\max(\text{piles})$
-because:
+#### The Precondition for Binary Search
 
-- Koko cannot eat $0$ bananas per hour, so the lower bound is $k=1$.
-- Koko does not need to eat more than the maximum number of bananas in a pile
-  per hour, so the upper bound is $k=\max(\text{piles})$. Because even if she
-  does, there is no point as the question stated that once she finishes eating
-  all the bananas in a pile, she will not eat any more bananas from other piles.
+The main precondition for applying binary search to this problem is the property
+of **monotonicity** in the **feasibility**
+function[^precondition-of-binary-search]. If a **feasibility** function
+$\mathcal{F}(\cdot)$ is **monotonic**, then the problem lends itself well to a
+binary search solution. Here, the feasible function $\mathcal{F}(\cdot)$ is a
+boolean function that returns either `True` or `False`, or `1` or `0` since we
+want to talk about monotonicity, which is better understood if the output is a
+"number".
 
-And why can we approach it from a binary search perspective? Consider first an
-example where $k=1$ and say the `piles = [3, 6, 7, 11]` and `h=8`. Then we see
-that the search space is from $k=1$ to $k=11$. We can see the mid number is
-$k=6$. Then we can ask ourselves, is it possible for Koko to eat all the bananas
-in $h=8$ hours if she eats at a speed of $k=6$ bananas per hour? The answer is
-yes because she will take `[1, 1, 2, 2]` hours to eat all the bananas in the
-piles. This is less than $h=8$ hours. So since it is a yes, we can say that all
-$k' > k=6$ will also be a yes. So we can discard the right half of the search
-space and only search the left half.
+The second precondition is implicit. The search space $\mathcal{K}$ must be
+inherently **ordered** in which you can sort it (sortable). This is because
+binary search requires the search space to be sorted.
 
-Conversely, if we somehow land ourselves in a situation where $k=3$, then we can
-ask ourselves, is it possible for Koko to eat all the bananas in $h=8$ hours if
-she eats at a speed of $k=3$ bananas per hour? The answer is no because she will
-take `[1, 2, 3, 4]` hours to eat all the bananas in the piles. So in that case
-we can say that all $k' < k=3$ will also be a no. So we can discard the left
-half of the search space and only search the right half.
+Consequently, the domain of the feasibility function $\mathcal{F}(\cdot)$ is the
+search space $\mathcal{K}$, and the range is $\{0, 1\}$.
 
-Because let's say there is a $k$ that satisfies the condition, then we can say
-that all $k' > k$ will also satisfy the condition. This is because if $k$
-satisfies the condition, then $k$ is the minimum speed at which Koko can eat all
-the bananas in $h$.
+But why is having this monotonicity property important? Why is it that we need
+this feasibility function to be monotonic? The reason is that we want to be able
+to discard half of the search space at each step. This is the key to binary
+search. The connection is that monotonicity implies there is a tipping point.
+There exists a $k$ such that if $\mathcal{F}(k) = 1$, then $\mathcal{F}(k') = 1$
+for all $k' > k$.
 
-"""Rephrase In this context, if we find a speed `k` such that Koko can eat all
-the bananas within `h` hours, we know that for all speeds `k' > k`, Koko will
-also be able to eat all the bananas within `h` hours because she is eating at a
-faster rate. Therefore, we can discard the right side of the search space and
-continue our search on the left side to find the minimum `k` that satisfies the
-condition.
+Understanding the problem through the lens of feasibility and monotonicity lends
+itself to the concept of a _sorted boolean
+array_[^first-true-in-a-sorted-boolean-array] where we can easily apply binary
+search!
 
-In the example we gave, we found that `k = 6` works, meaning Koko can eat all
-the bananas in `h = 8` hours if she eats at a speed of 6 bananas per hour.
-Therefore, all speeds `k' > 6` will also work. So we discard the right half of
-the search space (speeds `k' > 6`) and continue our search on the left half
-(speeds `k' ≤ 6`) to find the minimum speed that still allows Koko to eat all
-the bananas within `h` hours.
+The only difficulty lies in defining the feasibility function
+$\mathcal{F}(\cdot)$.
 
-In the binary search algorithm, we continue this process, halving the search
-space at each step, until we find the minimum `k` that satisfies the condition.
+#### Framing the Problem as a Sorted Boolean Array
 
-The reason why we can approach this problem from a binary search perspective is
-because the condition we are checking (`k` bananas per hour is enough for Koko
-to eat all the bananas in `h` hours) has the property of monotonicity: if a
-speed `k` is sufficient, then all speeds greater than `k` will also be
-sufficient. This is exactly the kind of condition that binary search is designed
-to handle efficiently. """
+##### Feasibility Function
+
+First, we define the feasibility function formally.
+
+```{prf:definition} Feasibility Function
+:label: 875-koko-eating-bananas-feasibility-function
+
+The feasibility function $\mathcal{F}$ is a mapping from a decision variable
+$k \in \mathcal{K}$ and a set of parameters $\Theta$ to a binary outcome,
+subject to a set of constraints $C$.
+
+$$
+\mathcal{F}: \mathcal{K} \times \Theta \to \{0, 1\}
+$$
+
+Here, $\mathcal{K}$ is the domain of possible values for the decision variable,
+$\Theta$ represents other relevant parameters, and $C$ represents the set of
+constraints.
+
+The function is defined as:
+
+$$
+\mathcal{F}(k, \Theta) = \begin{cases}
+1, & \text{if } C(k, \Theta) \text{ is true} \\
+0, & \text{otherwise} \end{cases}
+$$
+
+Here, $C(k, \Theta)$ is a function that returns `True` ($1$) or `False` ($0$)
+based on whether all constraints are satisfied for the given $k$ and $\Theta$.
+```
+
+For our problem, the decision variable is $k$, the set of parameters is
+$\Theta = \{ \mathcal{P}, h \}$, and the constraints is just whether Koko can
+finish eating all the bananas in $h$ hours or fewer.
+
+```{prf:definition} Feasibility Function for Koko Eating Bananas
+:label: 875-koko-eating-bananas-feasibility-function-for-koko-eating-bananas
+
+The feasibility function $\mathcal{F}$ for the Koko Eating Bananas problem is
+defined as:
+
+$$
+\mathcal{F}(k, \mathcal{P}, h) = \begin{cases}
+1, & \text{if } \mathcal{H}(k) \leq h \\
+0, & \text{otherwise}
+\end{cases}
+$$
+
+where $\mathcal{H}(k)$ is the total number of hours it takes Koko to eat all the
+bananas at speed $k$.
+```
+
+This feasibility function looks reasonable, we remain to verify if this function
+is monotonic on the search space $\mathcal{K}$.
+
+##### Monotonicity
+
+Here we first define the concept of monotonicity formally.
+
+```{prf:definition} Monotonicity
+:label: 875-koko-eating-bananas-monotonicity
+
+In the context of a binary search problem, if the feasibility function
+$\mathcal{F}: \mathcal{K} \to \{0, 1\}$ is monotonic over the search space
+$\mathcal{K}$, it would satisfy one of the following conditions:
+
+1. For all $k_1, k_2 \in \mathcal{K}$ such that $k_1 \leq k_2$, it holds that
+   $\mathcal{F}(k_1) \leq \mathcal{F}(k_2)$ (Monotonically Increasing).
+2. For all $k_1, k_2 \in \mathcal{K}$ such that $k_1 \leq k_2$, it holds that
+   $\mathcal{F}(k_1) \geq \mathcal{F}(k_2)$ (Monotonically Decreasing).
+```
+
+We claim that the feasibility function $\mathcal{F}(k, \mathcal{P}, h)$ is
+**_monotonically increasing_**. If Koko can eat all bananas in $h$ hours at a
+speed $k_1$, then she can surely do so at any greater speed $k_2 > k_1$.
+Note that the total number of hours to finish, $\mathcal{H}(k)$, however, is **_monotonically decreasing_** with
+respect to $k$ because if Koko eats faster, she will take fewer hours to finish.
+
+More concretely:
+
+$$
+\mathcal{F}(\mathcal{P}, k_1, h) = 1 \Rightarrow \mathcal{F}(\mathcal{P},
+k_2, h) = 1 \quad \text{for all} \quad k_2 > k_1
+$$
+
+The logic
+
+````{admonition} Proof
+:class: dropdown
+
+```{prf:proof}
+We start off by a claim:
+
+**Claim**:
+$\mathcal{F}(k_1, \mathcal{P}, h) \leq \mathcal{F}(k_2, \mathcal{P}, h)$ for all
+$k_1 < k_2$.
+
+In other words, if $\mathcal{F}(k_1, \mathcal{P}, h) = 1$, then
+$\mathcal{F}(k_2, \mathcal{P}, h) = 1$ for all $k_2 > k_1$.
+
+**Proof**:
+
+Given that $\mathcal{F}(k_1, \mathcal{P}, h) = 1$, we have:
+
+$$
+\sum_{n=1}^{N} \left \lceil \frac{p_n}{k_1} \right \rceil \leq h
+$$
+
+We aim to prove:
+
+$$
+\sum_{n=1}^{N} \left \lceil \frac{p_n}{k_2} \right \rceil \leq h
+$$
+
+Since $k_1 < k_2$, $\frac{p_n}{k_1} \geq \frac{p_n}{k_2}$ for all $n$.
+
+This implies that
+$\left \lceil \frac{p_n}{k_1} \right \rceil \geq \left \lceil \frac{p_n}{k_2} \right \rceil$
+for all $n$.
+
+Hence, if $\sum_{n=1}^{N} \left \lceil \frac{p_n}{k_1} \right \rceil \leq h$,
+then $\sum_{n=1}^{N} \left \lceil \frac{p_n}{k_2} \right \rceil \leq h$.
+
+This concludes the proof that $\mathcal{F}(k, \mathcal{P}, h)$ is monotonically
+increasing with respect to $k$.
+```
+````
+
+##### Translating to a First True in a Sorted Boolean Array Problem
+
+Given the monotonic property of $\mathcal{F}$, we can effectively sort the
+boolean outputs of $\mathcal{F}$ across the search space $\mathcal{K}$. That is,
+as we traverse $\mathcal{K}$ from the slowest to the fastest eating speed, the
+function $\mathcal{F}$ will transition from returning `False` to returning
+`True`. Our objective is to find the smallest $k$ for which $\mathcal{F}$
+returns `True`. Essentially, we have transformed the problem into a **_first
+true in a sorted boolean array_** problem.
+
+To rigorously connect these ideas, consider the feasibility function
+$\mathcal{F}$ as a sequence
+$\mathcal{F} = \{ \mathcal{F}(\mathcal{P}, k_1, h), \mathcal{F}(\mathcal{P}, k_2, h), \ldots \}$
+where $k_1 < k_2 < \ldots$ are the sorted eating speeds in $\mathcal{K}$. The
+sequence $\mathcal{F}$ is essentially a "Sorted Boolean Array". Given the
+monotonic property of $\mathcal{F}$, $\mathcal{F}$ is a sorted boolean sequence
+with a threshold point where it transitions from `False` to `True`. Finding this
+point is equivalent to solving the original problem, and binary search is the
+efficient way to do it.
+
+Thus, we can see that the Koko Eating Bananas problem is fundamentally a "First
+True in a Sorted Boolean Array" problem, revealed through the lens of
+feasibility and its monotonic properties:
+
+1. **Ordered Search Space**: The space of all possible eating speeds $k$ is
+   well-defined and ordered (from 1 to $M$).
+
+2. **Monotonicity of Feasibility**: The problem exhibits a monotonic property
+   with respect to feasibility; if Koko can finish all the bananas in $h$ hours
+   at speed $k$, she can also finish them at any speed greater than $
+   k$.
+
+3. **First True in Sorted Boolean Array**: With the above properties, one can
+   treat the search space $\mathcal{K}$ as a sorted boolean array defined by the
+   feasibility function $\mathcal{F}$. The problem reduces to finding the "first
+   true" in this sorted boolean array.
+
+To this end, we can reframe the earlier minimization statement:
+
+$$
+\begin{aligned}
+& \text{minimize}  && k \in \mathcal{K} \\
+& \text{s.t.}      && \mathcal{H}(k) \leq h \\
+& \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+, \; 1 \leq k \leq M
+\end{aligned}
+$$
+
+to
+
+$$
+\begin{aligned}
+& \text{minimize}  && k \in \mathcal{K} \\
+& \text{s.t.}      && \mathcal{F}(k, \mathcal{P}, h) = 1 \\
+& \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+, \; 1 \leq k \leq M
+\end{aligned}
+$$
 
 ### Visualization
 
@@ -568,23 +731,105 @@ Visual representation of the problem and solution (if applicable).
 
 ### Algorithm
 
+#### Whiteboarding
+
+The domain of our search space is defined as $k \in [1, \max(\text{{piles}})]$:
+
+- The lower bound $k = 1$ is set because Koko cannot eat 0 bananas per hour.
+- The upper bound $k = \max(\text{{piles}})$ is chosen based on the constraint
+  that eating at a faster rate than the largest pile is unproductive.
+
+The problem lends itself to a binary search approach due to its inherent
+monotonicity. To illustrate, consider an example with `piles = [3, 6, 7, 11]`
+and $h = 8$. The initial search space spans from $k = 1$ to $k = 11$, with a
+mid-point at $k = 6$.
+
+We then evaluate whether Koko can consume all the bananas within $h = 8$ hours
+at a speed of $k = 6$ bananas per hour. The answer is affirmative, requiring
+`[1, 1, 2, 2]` hours for the respective piles. Consequently, all speeds
+$k' > k = 6$ must also satisfy this condition. This enables us to discard the
+right half of the search space, focusing our search on $k' \leq k = 6$.
+
+Conversely, if we arrive at an insufficient speed, say $k = 3$, then all speeds
+$k' < k = 3$ will also be insufficient. Therefore, we can discard the left half
+of the search space, concentrating our search on $k' \geq k = 3$.
+
+The monotonic property guarantees that if a speed $k$ enables Koko to consume
+all bananas within $h$ hours, all speeds $k' > k$ will also satisfy this
+condition. Hence, the binary search can be efficiently employed to halve the
+search space iteratively until the minimum $k$ that meets the requirement is
+found.
+
 #### Pseudocode
 
-Detailed description of the algorithm used to solve the problem.
+````{prf:algorithm} Binary Search Pseudocode
+:label: 875-koko-eating-bananas-binary-search-pseudocode
+
+```
+Algorithm Find_Optimal_Eating_Speed(P, h, M)
+    Input: P = [p_1, p_2, ..., p_N] (list of piles),
+           h (total hours available),
+           M (maximum number of bananas in a pile)
+    Output: k* (optimal eating speed)
+
+    1: Initialize l = 1
+    2: Initialize r = M
+
+    3: while l < r do
+        4:    m = floor((l + r) / 2)
+
+        5:    if Feasibility_Function(P, m, h) == 1 then
+        6:        r = m
+        7:    else
+        8:        l = m + 1
+        9:    end if
+
+       10: end while
+
+    11: return l
+```
+````
 
 #### Mathematical Representation
 
-Math formulation
+Given the search space $\mathcal{K}$ and the feasibility function
+$\mathcal{F}(k, \mathcal{P}, h)$, we seek to find the optimal eating speed $k^*$
+by exploring $\mathcal{K}$ via binary search.
+
+We employ binary search in $\mathcal{K}$, the search space defined as:
+
+$$
+\mathcal{K} = \{ k \in \mathbb{Z}^+ \,|\, 1 \leq k \leq M \}
+$$
+
+The algorithm initiates with the lower bound as $l = 1$ and the upper bound as
+$r = M$, and iteratively updates these bounds until $l \geq r$. Let $m_t$ be the
+candidate speed at iteration $t$ calculated as
+$m_t = \left\lfloor \frac{l_t + r_t}{2} \right\rfloor$.
+
+The algorithm uses these bounds to iteratively tighten the search space.
+
+1. **Initialization**:
+    1. $l = 1$
+    2. $r = M$
+2. **Iterative Procedure**: For $k = m_t$:
+
+    - Compute $\mathcal{F}(\mathcal{P}, k, h)$.
+    - If $\mathcal{F}(\mathcal{P}, k, h) = 1$, then $r_{t+1} = m_t$.
+    - Otherwise, $l_{t+1} = m_t + 1$.
+
+3. **Termination**: The algorithm terminates when $l_{t+1} \geq r_{t+1}$. The
+   optimal eating speed $k^* = l$.
 
 #### Correctness
 
 Prove the correctness of the algorithm
 
-### Claim
+##### Claim
 
 Statement claiming the correctness of the algorithm.
 
-### Proof
+##### Proof
 
 Proof showing the correctness of the algorithm.
 
@@ -595,36 +840,55 @@ class Solution:
     def feasible(self, piles: List[int], speed: int, h: int) -> bool:
         return self.total_hours_to_finish_eating(piles, speed) <= h
 
+    def total_hours_to_finish_eating(self, piles: List[int], speed: int) -> int:
+        total_hours = 0
+        for pile in piles:
+            hours = pile / speed      # num_bananas / speed -> hours needed to finish eating
+            hours = math.ceil(hours)  # if hours = 2.5, it counts at 3
+            total_hours += hours
+        return total_hours
+
     def minEatingSpeed(self, piles: List[int], h: int) -> int:
         l, r = 1, max(piles)
 
         while l < r:
-            m = l + (r-l) // 2
-            if self.feasible(piles, speed=m, h=h) is True:
+            m = l + (r - l) // 2
+            if self.feasible(piles, speed=m, h=h):
                 r = m
             else:
-                l= m +1
+                l = m + 1
         return l
-
-
-
-    # speed = banana/hour
-
-    def total_hours_to_finish_eating(self, piles: List[int], speed: int) -> int:
-        total_hours = 0
-        for pile in piles:
-            # pile = num of bananas
-            hours = pile / speed # recover time
-            # if hours = 2.5, it counts at 3
-            hours = math.ceil(hours)
-
-            total_hours += hours
-        return total_hours
 ```
 
 ### Tests
 
 Set of tests for validating the algorithm.
+
+```{code-cell} ipython3
+# Initialize the TestFramework class
+tf = TestFramework()
+
+minimum_speed = Solution().minEatingSpeed
+
+@tf.describe("Testing minimum_speed function for Koko Eating Bananas")
+def test_minimum_speed():
+
+    @tf.individual_test("Multiple Piles, Limited Time")
+    def _():
+        tf.assert_equals(minimum_speed([30, 11, 23, 4, 20], 6), 23, "Should return 23")
+
+    @tf.individual_test("Single Pile and Minimum Possible Input")
+    def _():
+        tf.assert_equals(minimum_speed([1], 1), 1, "Should return 1")
+
+    @tf.individual_test("Highly Skewed Piles")
+    def _():
+        tf.assert_equals(minimum_speed([100, 1, 1, 1], 4), 100, "Should return 100")
+
+    @tf.individual_test("Large Data Set")
+    def _():
+        tf.assert_equals(minimum_speed([8]*10**6, 10**5), 8, "Should return 8.")
+```
 
 ### Time Complexity
 
@@ -648,4 +912,10 @@ Analysis of the total space complexity of the solution.
 
 Any useful references or resources for further reading.
 
-[^max-of-piples-is-M]: Recall $\max(\mathcal{P}) = M$
+[^max-of-piles-is-M]: Recall $\max(\mathcal{P}) = M$
+[^precondition-of-binary-search]:
+    See [Identifying Binary Search Problems](./concept.md) for a detailed
+    discussion on the precondition for binary search.
+
+[^first-true-in-a-sorted-boolean-array]:
+    [**First True in a Sorted Boolean Array**](https://algo.monster/problems/binary_search_boundary)
