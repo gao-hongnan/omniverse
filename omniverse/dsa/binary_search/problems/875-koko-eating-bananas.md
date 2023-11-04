@@ -1266,7 +1266,10 @@ complexity is primarily determined by the input size.
 
 ## References and Further Readings
 
-Any useful references or resources for further reading.
+- [USACO Guide: Silver Binary Search](https://usaco.guide/silver/binary-search)
+- [Binary Search: Identifying Monotonic Patterns](https://ramandeepsingh.hashnode.dev/binary-search-identifying-monotonic-patterns)
+- [The Algorists: Advanced Binary Search](https://www.thealgorists.com/Algo/BinarySearch/AdvancedBinarySearch)
+- [Algo Monster: Binary Search Monotonic](https://algo.monster/problems/binary-search-monotonic)
 
 [^max-of-piles-is-M]: Recall $\max(\mathcal{P}) = M$
 [^precondition-of-binary-search]:
