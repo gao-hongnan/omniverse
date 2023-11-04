@@ -49,7 +49,9 @@ from utils.testing.test_decorator import TestFramework
 
 ## Learning Objectives
 
-## Problem Statement
+## Introduction
+
+### Problem Statement
 
 Koko loves to eat bananas. There are `N` piles of bananas, the `n-th` pile has
 piles `piles[n]` bananas. The guards have gone and will come back in `h` hours.
@@ -65,7 +67,7 @@ the guards return.
 Return the _minimum_ integer `k` such that she can eat all the bananas within
 `h` hours.
 
-## Core Concepts, Analogies, and Problem Significance
+### Theoretical Foundations and Practical Implications
 
 The **Koko Eating Bananas** problem serves as a captivating example of
 [optimization problems](https://en.wikipedia.org/wiki/Optimization_problem) in
@@ -208,7 +210,71 @@ $\max(\text{piles})$ speeds.
 
 In this section, we go through some small example(s) to illustrate the problem.
 
-### Example 1
+### Example 1: Iterative Approach
+
+```python
+Input :
+   piles = [3,6,7,11],
+   h     = 8
+Output:    4
+```
+
+The question at hand is: What is the minimum speed at which Koko can eat all the
+bananas in the piles within `h` hours?
+
+Let's look at each pile individually and calculate the hours it would take for
+Koko to finish each pile at different speeds:
+
+- At speed 1: Koko would take 3, 6, 7, and 11 hours respectively for each pile,
+  which sums up to 27 hours in total. This is more than 8 hours, so the speed is
+  too slow.
+- At speed 2: Koko would take 2, 3, 4, and 6 hours respectively for each pile,
+  which sums up to 15 hours in total. This is still more than 8 hours, so the
+  speed is still too slow.
+- At speed 3: Koko would take 1, 2, 3, and 4 hours respectively for each pile,
+  which sums up to 10 hours in total. This is still more than 8 hours, so the
+  speed is still too slow.
+- At speed 4: Koko would take 1, 2, 2, and 3 hours respectively for each pile,
+  which sums up to 8 hours in total. This is exactly the number of hours
+  available, so the speed is just right.
+
+Hence, the minimum speed at which Koko can eat all the bananas in the piles
+within `h = 8` hours is `4`.
+
+### Example 2: Pigeonhole Principle
+
+```python
+Input :
+   piles = [30,11,23,4,20],
+   h     = 5
+Output:    30
+```
+
+Again, we are looking for the minimum speed at which Koko can eat all the
+bananas in the piles within `h` hours.
+
+Given that there are only 5 hours available and one of the piles itself has 30
+bananas, the minimum speed at which Koko must eat to finish just that pile in
+time is 30 bananas per hour. Since no pile has more than 30 bananas, a speed of
+30 bananas per hour will also suffice for all other piles.
+
+**Why?**
+
+In the scenario described, Koko has 5 hours to eat all the bananas from 5 piles,
+and the largest pile contains 30 bananas. The
+[**pigeonhole principle**](https://en.wikipedia.org/wiki/Pigeonhole_principle)
+in this context dictates that each hour must be allocated to a single pile, as
+there are exactly as many piles as there are hours.
+
+Since Koko can only eat from one pile each hour and one of those piles has 30
+bananas, she must eat at a rate of at least 30 bananas per hour to finish just
+that pile in time. If her eating speed were any slower, she would not be able to
+finish the largest pile within the allotted hour.
+
+Moreover, because no pile has more than 30 bananas, a speed of 30 bananas per
+hour is sufficient for Koko to eat any of the piles within an hour. Therefore,
+30 bananas per hour is both a necessary and sufficient speed for Koko to eat all
+the bananas from all the piles within the 5 hours.
 
 ## Assumptions and Constraints
 
@@ -392,11 +458,11 @@ $$
 M \stackrel{\text{def}}{=} \max_{n \in [1,N]} p_n
 $$
 
-In this setting, we define the time $\mathcal{T}(p_n, k)$ it takes Koko to eat a
+In this setting, we define the time $\mathcal{T}(k, p_n)$ it takes Koko to eat a
 pile $p_n$ at speed $k$ as:
 
 $$
-\mathcal{T}(p_n, k) = \left \lceil \frac{p_n}{k} \right \rceil
+\mathcal{T}(k, p_n) = \left \lceil \frac{p_n}{k} \right \rceil
 $$
 
 where $\lceil \cdot \rceil$ is the ceiling function, which rounds a real number
@@ -412,11 +478,11 @@ this pile. This is because $\frac{5}{3} = 1.6667$, which rounds up to $2$ (of
 course you cannot round down).
 ```
 
-Consequently, the total time $\mathcal{H}(k)$ required to eat all the bananas in
-$\mathcal{P}$ at speed $k$ can be expressed as:
+Consequently, the total time $\mathcal{H}(k, \mathcal{P})$ required to eat all
+the bananas in $\mathcal{P}$ at speed $k$ can be expressed as:
 
 $$
-\mathcal{H}(k) = \sum_{n=1}^{N} \mathcal{T}(p_n, k)
+\mathcal{H}\left(k, \mathcal{P}\right) = \sum_{n=1}^{N} \mathcal{T}(k, p_n)
 $$
 
 The optimization problem can thus be formally stated as:
@@ -424,7 +490,7 @@ The optimization problem can thus be formally stated as:
 $$
 \begin{aligned}
 & \text{minimize}  && k \in \mathcal{K} \\
-& \text{s.t.}      && \mathcal{H}(k) \leq h \\
+& \text{s.t.}      && \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
 & \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+, \; 1 \leq k \leq M
 \end{aligned}
 $$
@@ -434,7 +500,7 @@ or equivalently:
 $$
 \begin{aligned}
 & k^* = \arg\min_{k \in \mathcal{K}} k \\
-& \text{s.t.}  \quad & \mathcal{H}(k) \leq h \\
+& \text{s.t.}  \quad & \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
 & \text{where} \quad & k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+
 \end{aligned}
 $$
@@ -447,11 +513,11 @@ The previous section already introduced most of the necessary definitions.
 - $p_n$ is the number of bananas in the $n$th pile
 - $k$ is the speed at which Koko eats bananas
 - $h$ is the number of hours Koko has to eat all the bananas
-- $n$ is the number of piles
-- $\left\lceil \frac{p_n}{k} \right\rceil$ is the number of hours it takes Koko
-  to eat the $n$th pile
-- $\sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$ is the total number of
-  hours it takes Koko to eat all the bananas.
+- $N$ is the number of piles
+- $\mathcal{T}(k, p_n) = \left\lceil \frac{p_n}{k} \right\rceil$ is the number
+  of hours it takes Koko to eat the $n$th pile
+- $\mathcal{H}(k, \mathcal{P}) = \sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$
+  is the total number of hours it takes Koko to eat all the bananas.
 - $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$. This
   is the upper bound of the search space for $k$.
 
@@ -465,7 +531,7 @@ later.
   $$
   \mathcal{F}(k, \mathcal{P}, h) =
   \begin{cases}
-  1, & \text{if } \mathcal{H}(k) \leq h \\
+  1, & \text{if } \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
   0, & \text{otherwise}
   \end{cases}
   $$
@@ -474,7 +540,7 @@ later.
   satisfies the problem's constraints.
 
   $$
-  k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}(k) \leq h \}
+  k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}\left(k, \mathcal{P}\right) \leq h \}
   $$
 
 ## Solution: Binary Search
@@ -482,9 +548,10 @@ later.
 In solving this problem, the objective is to efficiently identify the minimum
 eating speed $k$ that allows Koko to consume all the bananas in $h$ hours. A
 straightforward method is to iterate over all potential speeds $k$ in the range
-$1 \leq k \leq M$[^max-of-piles-is-M] and evaluate if $\mathcal{H}(k) \leq h$,
-where $\mathcal{H}(k)$ represents the hours needed to eat all bananas at speed
-$k$. This naive approach results in a time complexity of
+$1 \leq k \leq M$[^max-of-piles-is-M] and evaluate if
+$\mathcal{H}\left(k, \mathcal{P}\right) \leq h$, where
+$\mathcal{H}\left(k, \mathcal{P}\right)$ represents the hours needed to eat all
+bananas at speed $k$. This naive approach results in a time complexity of
 $\mathcal{O}(N \times M)$, which could be computationally prohibitive when $N$,
 the number of piles, **_and/or_** $M$, the maximum size of a pile, is large.
 However, we can improve this to $\mathcal{O}(N \log M)$ by employing a binary
@@ -583,12 +650,12 @@ defined as:
 
 $$
 \mathcal{F}(k, \mathcal{P}, h) = \begin{cases}
-1, & \text{if } \mathcal{H}(k) \leq h \\
+1, & \text{if } \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
 0, & \text{otherwise}
 \end{cases}
 $$
 
-where $\mathcal{H}(k)$ is the total number of hours it takes Koko to eat all the
+where $\mathcal{H}\left(k, \mathcal{P}\right)$ is the total number of hours it takes Koko to eat all the
 bananas at speed $k$.
 ```
 
@@ -614,9 +681,11 @@ $\mathcal{K}$, it would satisfy one of the following conditions:
 
 We claim that the feasibility function $\mathcal{F}(k, \mathcal{P}, h)$ is
 **_monotonically increasing_**. If Koko can eat all bananas in $h$ hours at a
-speed $k_1$, then she can surely do so at any greater speed $k_2 > k_1$.
-Note that the total number of hours to finish, $\mathcal{H}(k)$, however, is **_monotonically decreasing_** with
-respect to $k$ because if Koko eats faster, she will take fewer hours to finish.
+speed $k_1$, then she can surely do so at any greater speed $k_2 > k_1$. Note
+that the total number of hours to finish,
+$\mathcal{H}\left(k, \mathcal{P}\right)$, however, is **_monotonically
+decreasing_** with respect to $k$ because if Koko eats faster, she will take
+fewer hours to finish.
 
 More concretely:
 
@@ -710,7 +779,7 @@ To this end, we can reframe the earlier minimization statement:
 $$
 \begin{aligned}
 & \text{minimize}  && k \in \mathcal{K} \\
-& \text{s.t.}      && \mathcal{H}(k) \leq h \\
+& \text{s.t.}      && \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
 & \text{where}     && k, h \in \mathbb{Z}^+, \; \mathcal{K} \subset \mathbb{Z}^+, \; 1 \leq k \leq M
 \end{aligned}
 $$
@@ -728,6 +797,19 @@ $$
 ### Visualization
 
 Visual representation of the problem and solution (if applicable).
+
+I do not have any visualization, here's an image of a monkey eating bananas
+generated by OpenAI's DALL·E 3 model xd.
+
+```{figure} ./assets/875-koko-eating-bananas-1.png
+---
+name: 875-koko-eating-bananas-visualization-1
+---
+
+Prompt: "Depict Koko, a monkey, voraciously consuming heaps of bananas given to
+her, all the while exhibiting signs of trepidation about the guards' premature
+return to apprehend her." - **_DALL·E 3_**
+```
 
 ### Algorithm
 
@@ -810,13 +892,13 @@ $m_t = \left\lfloor \frac{l_t + r_t}{2} \right\rfloor$.
 The algorithm uses these bounds to iteratively tighten the search space.
 
 1. **Initialization**:
-    1. $l = 1$
-    2. $r = M$
+   1. $l = 1$
+   2. $r = M$
 2. **Iterative Procedure**: For $k = m_t$:
 
-    - Compute $\mathcal{F}(\mathcal{P}, k, h)$.
-    - If $\mathcal{F}(\mathcal{P}, k, h) = 1$, then $r_{t+1} = m_t$.
-    - Otherwise, $l_{t+1} = m_t + 1$.
+   - Compute $\mathcal{F}(\mathcal{P}, k, h)$.
+   - If $\mathcal{F}(\mathcal{P}, k, h) = 1$, then $r_{t+1} = m_t$.
+   - Otherwise, $l_{t+1} = m_t + 1$.
 
 3. **Termination**: The algorithm terminates when $l_{t+1} \geq r_{t+1}$. The
    optimal eating speed $k^* = l$.
@@ -892,21 +974,143 @@ def test_minimum_speed():
 
 ### Time Complexity
 
-Analysis of the time complexity of the solution.
+To analyze the time complexity of the given code, we will break down each
+function and its operations. We will denote $N$ as the length of the `piles`
+list.
+
+#### Function `feasible`
+
+This function simply calls another function `total_hours_to_finish_eating` and
+compares its output to $h$. Thus, the time complexity of `feasible` is the same
+as that of `total_hours_to_finish_eating`.
+
+#### Function `total_hours_to_finish_eating`
+
+This function iterates over each element of `piles` once and performs a constant
+number of operations for each pile (division and ceiling function). Therefore,
+the time complexity of this function is linear in terms of the number of piles
+$N$.
+
+$$
+\mathcal{T}(\mathcal{H}(\cdot)) = \mathcal{O}(N)
+$$
+
+#### Function `minEatingSpeed`
+
+This function uses a binary search to find the minimum feasible speed. The
+binary search will operate by repeatedly halving the search interval. The
+maximum possible number of bananas in a pile, denoted as $M$, defines the
+initial search space, ranging from $1$ to $M$. Each iteration of the while loop
+cuts the search space in half, and the total number of iterations needed will be
+$\log_2 M$.
+
+Within each iteration of the while loop, the function `feasible` is called,
+which in turn calls `total_hours_to_finish_eating`. As we established, the time
+complexity for these is $\mathcal{O}(N)$. Therefore, the total time complexity
+for `minEatingSpeed` (we now denote this function as $\mathcal{J}(\cdot)$) is
+the product of the number of binary search iterations and the time complexity of
+the function called within each iteration:
+
+$$
+\begin{aligned}
+\mathcal{T}(\mathcal{J}) &= \log_2 M \cdot \mathcal{O}(N) \\
+                         &= \mathcal{O}(\log_2 M \cdot N)
+\end{aligned}
+$$
+
+### Best, Worst, and Average Case Analysis
+
+In a typical binary search problem, the best, worst, and average case time
+complexities are presented below. Please note the $N$ below is the length of the
+search space, in contrast to our $M$ (so don't get confused).
+
+```{list-table} Best, Worst, and Average Case Analysis of Binary Search
+:header-rows: 1
+:name: 875-koko-eating-bananas-best-worst-average-case-analysis-of-binary-search
+
+* - Case
+  - Worst Case
+  - Average Case
+  - Best Case
+* - Element is in the list
+  - $\mathcal{O}(\log_2 N)$
+  - $\mathcal{O}(\log_2 N)$
+  - $\mathcal{O}(1)$
+* - Element is not in the list
+  - $\mathcal{O}(\log_2 N)$
+  - $\mathcal{O}(\log_2 N)$
+  - $\mathcal{O}(\log_2 N)$
+```
+
+In our Koko problem, the element is always in the list. Therefore, we can ignore
+the "element is not in the list" case. Furthermore, in each iteration of the
+binary search, we need to spend $\mathcal{O}(N)$ time to check if the speed is
+feasible. Therefore, the best, worst, and average case time complexities for
+Koko eating bananas are as follows:
+
+```{list-table} Best, Worst, and Average Case Analysis of Koko Eating Bananas
+:header-rows: 1
+:name: 875-koko-eating-bananas-best-worst-average-case-analysis-of-koko-eating-bananas
+
+* - Case
+  - Worst Case
+  - Average Case
+  - Best Case
+* - Element is in the list
+  - $\mathcal{O}(\log_2 M \cdot N)$
+  - $\mathcal{O}(\log_2 M \cdot N)$
+  - $\mathcal{O}(N)$
+```
+
+In a typical binary search, the best case occurs when the element is at the
+midpoint of the search space, resulting in an $\mathcal{O}(1)$ complexity since
+no further searching is required. The worst and average cases involve more
+searching and have a complexity of $\mathcal{O}(\log_2 N)$, as you've noted.
+
+For the Koko eating bananas problem, however, each iteration of the binary
+search involves checking the entire list of piles to see if Koko can eat all the
+bananas at a certain rate within H hours. This checking process has a time
+complexity of $\mathcal{O}(N)$. Even in the best case, where the ideal rate is
+found in the first try, you still need to perform this check once. Therefore,
+the best case complexity would be $\mathcal{O}(N)$, as you need to check every
+pile at least once.
 
 ### Space Complexity
 
+The space complexity can be broken down into two components: input space
+complexity and auxiliary space complexity.
+
 #### Input Space Complexity
 
-Analysis of the space complexity of the input.
+The input for the Koko eating bananas problem is the list of banana piles. This
+input occupies $\mathcal{O}(N)$ space, where $N$ is the number of piles. The
+speed $k$ and the hours $h$ are just integers, so they occupy constant space.
 
 #### Auxiliary Space Complexity
 
-Analysis of the space complexity excluding the input and output space.
+Auxiliary space refers to the extra space used by an algorithm, not including
+the space taken up by the inputs. For the Koko problem, if we are implementing
+the binary search iteratively, the auxiliary space complexity would be constant,
+$\mathcal{O}(1)$, because we only need a fixed number of variables: one for the
+low end of our search space (`l`), one for the high end (`r`), and occasionally
+one for the midpoint (`m`) during each iteration of the binary search.
+
+The algorithm does not use any dynamic data structures, like lists or arrays,
+that grow with the input size, and there is no recursive stack space to consider
+since it's an iterative approach.
 
 #### Total Space Complexity
 
-Analysis of the total space complexity of the solution.
+Total space complexity is the sum of input and auxiliary space complexities.
+Since the input space complexity is $\mathcal{O}(N)$ and the auxiliary space
+complexity is $\mathcal{O}(1)$, the total space complexity for the Koko eating
+bananas problem is $\mathcal{O}(N)$ when considering the input space. If we
+choose not to consider the input space, the space complexity remains
+$\mathcal{O}(1)$.
+
+In summary, the algorithm for solving the Koko eating bananas problem is
+space-efficient, requiring only constant auxiliary space. The total space
+complexity is primarily determined by the input size.
 
 ## References and Further Readings
 
