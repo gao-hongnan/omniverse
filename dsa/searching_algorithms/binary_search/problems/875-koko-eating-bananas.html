@@ -652,12 +652,6 @@ optimization</em>,
 multi-core processors, or even time-management strategies in day-to-day
 activities. The bananas can be thought of as data packets needing to be
 processed, and Koko’s eating speed is akin to a processor’s clock speed.</p>
-<p>The key attraction of this problem lies in its deceptive simplicity. It begins
-as a straightforward question yet evolves into a puzzle requiring a nuanced
-understanding of algorithms, particularly <strong>binary search</strong>. In solving this
-problem, one isn’t merely finding the minimum speed at which a fictional monkey
-eats bananas but rather learning to make efficient decisions in constrained
-environments.</p>
 <p>For readers interested in broader contexts, this problem can be viewed as a
 specific case within
 <a class="reference external" href="https://en.wikipedia.org/wiki/Combinatorial_optimization">combinatorial optimization</a>
@@ -672,18 +666,18 @@ real-world optimization challenges. Thus, understanding its solution has both
 <section id="analogy-job-scheduling-in-data-centers">
 <h3><a class="toc-backref" href="#id8" role="doc-backlink">Analogy: Job Scheduling in Data Centers</a><a class="headerlink" href="#analogy-job-scheduling-in-data-centers" title="Permalink to this heading">#</a></h3>
 <p>Imagine a <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Data_center">data center</a></strong> where
-multiple tasks (akin to the piles of bananas) need to be processed by a cluster
-of servers (akin to Koko). The task of the data center administrator (akin to
-the algorithm you’re trying to design) is to determine the <strong>minimum processing
-power</strong> (<em>speed</em>) each server must have to complete all tasks within a given
-time frame (<em>hours</em>).</p>
+multiple tasks (akin to the piles of bananas <code class="docutils literal notranslate"><span class="pre">piles</span></code>) need to be processed by a
+single server (akin to Koko). The task of the data center manager (akin to the
+algorithm <code class="docutils literal notranslate"><span class="pre">minEatingSpeed</span></code> you’re trying to design) is to determine the
+<strong>minimum processing power</strong> (<em>speed</em> <code class="docutils literal notranslate"><span class="pre">k</span></code>) each server must have to complete all
+tasks within a prescribed time frame (<em>hours</em> <code class="docutils literal notranslate"><span class="pre">h</span></code>).</p>
 <section id="breaking-it-down">
 <h4><a class="toc-backref" href="#id9" role="doc-backlink">Breaking it Down</a><a class="headerlink" href="#breaking-it-down" title="Permalink to this heading">#</a></h4>
 <ol class="arabic simple">
 <li><p><strong>Tasks in Data Center</strong>: These are equivalent to the piles of bananas. Each
 task could require different amounts of processing, just as piles can have
 different numbers of bananas.</p></li>
-<li><p><strong>Processing Power of Servers</strong>: This is akin to the <em>speed</em> <span class="math notranslate nohighlight">\(k\)</span> at which
+<li><p><strong>Processing Power of the Server</strong>: This is akin to the <em>speed</em> <span class="math notranslate nohighlight">\(k\)</span> at which
 Koko eats bananas. The faster the processing power, the quicker the tasks get
 done.</p></li>
 <li><p><strong>Time Frame</strong>: Just as Koko has a deadline <span class="math notranslate nohighlight">\(h\)</span>, the data center has a
@@ -697,7 +691,7 @@ SLA, much like finding the <em>minimum</em> <span class="math notranslate nohigh
 <p>This is a <strong>real-world issue</strong> with significant implications. Inefficient job
 scheduling can lead to increased electricity costs, lower throughput, and
 ultimately, less satisfied clients. Thus, solving this problem efficiently has
-both <strong>theoretical</strong> and <strong>practical significance</strong>.</p>
+both <strong>theoretical</strong> and <strong>practical significance</strong> (as mentioned earlier).</p>
 <p>By understanding the Koko Eating Bananas problem, you gain insights into how you
 might approach job scheduling optimization in a data center, a concept that has
 far-reaching applications in the world of
@@ -740,7 +734,7 @@ speed</em> at which Koko can consume all the bananas within <span class="math no
 the number of piles. Since <span class="math notranslate nohighlight">\(k_{\text{min}}\)</span> is not known in advance and could be
 large, this approach can be <strong>computationally expensive</strong> for large datasets or
 <strong>tight time constraints</strong>. Therefore, the <strong>crux of the problem</strong> is to find
-this<em>optimal <span class="math notranslate nohighlight">\(k\)</span></em> without resorting to such a linear search through all
+this <em>optimal <span class="math notranslate nohighlight">\(k\)</span></em> without resorting to such a linear search through all
 potential speeds.</p>
 </section>
 <section id="reducing-the-search-space">
@@ -749,18 +743,18 @@ potential speeds.</p>
 <strong><em>upper bounded</em></strong> by the <strong>maximum number of bananas in a pile</strong>:</p>
 <div class="math notranslate nohighlight">
 \[
-k_{\text{min}} \leq \max(\text{piles})
+k_{\text{min}} \leq M := \max(\text{piles})
 \]</div>
 <p><strong>Why?</strong></p>
 <p>Because we know from the <em>constraints</em> that <code class="docutils literal notranslate"><span class="pre">piles.length</span> <span class="pre">&lt;=</span> <span class="pre">h</span></code>. This is an
 important observation because it allows us to <strong><em>reduce the search space</em></strong> from
-<span class="math notranslate nohighlight">\([1, \infty)\)</span> to <span class="math notranslate nohighlight">\([1, \max(\text{piles})]\)</span>. We will always yield a solution if
-Koko is allowed to eat at a speed of <span class="math notranslate nohighlight">\(\max(\text{piles})\)</span> bananas per hour. She
-will always be able to finish all the bananas in <span class="math notranslate nohighlight">\(h\)</span> hours or fewer. Therefore,
-we can <strong><em>discard all speeds greater than <span class="math notranslate nohighlight">\(\max(\text{piles})\)</span></em></strong>. So our time
-complexity for the naive approach becomes
-<span class="math notranslate nohighlight">\(\mathcal{O}(\max(\text{piles}) \times N)\)</span> since we will at most iterate through
-<span class="math notranslate nohighlight">\(\max(\text{piles})\)</span> speeds.</p>
+<span class="math notranslate nohighlight">\([1, \infty)\)</span> to <span class="math notranslate nohighlight">\([1, M]\)</span>. We will always yield a solution if Koko is allowed to
+eat at a speed of <span class="math notranslate nohighlight">\(M\)</span> bananas per hour. She will always be able to finish all
+the bananas in <span class="math notranslate nohighlight">\(h\)</span> hours or fewer. Therefore, we can <strong><em>discard all speeds
+greater than</em></strong> <span class="math notranslate nohighlight">\(M\)</span>. So our time complexity for the naive approach becomes
+<span class="math notranslate nohighlight">\(\mathcal{O}(M \times N)\)</span> since we will at most iterate through <span class="math notranslate nohighlight">\(M\)</span> speeds.</p>
+<p>We will show later that we can further optimize this time complexity to
+<span class="math notranslate nohighlight">\(\mathcal{O}(M \log N)\)</span> via a binary search approach.</p>
 </section>
 </section>
 <section id="example">
@@ -850,33 +844,34 @@ simplify complex situations, making them more manageable and tractable for
 analysis or computational modeling.</p>
 <p>In the <strong>Koko Eating Bananas</strong> problem, we make the following assumptions:</p>
 <ol class="arabic simple">
-<li><p>Koko can only eat a constant number of bananas per hour (<code class="docutils literal notranslate"><span class="pre">k</span></code>), from a single
-pile.</p></li>
-<li><p>Koko will start a new pile only after finishing the current one.</p></li>
-<li><p>If a pile has fewer bananas than <code class="docutils literal notranslate"><span class="pre">k</span></code>, Koko will take less than an hour to
-finish that pile but won’t start another pile within the same hour.</p></li>
-<li><p>Point 3 implicitly implies that Koko will not eat any more bananas from other
-piles in the same hour even if she finishes eating the current pile in less
-than an hour.</p></li>
-<li><p>Koko has a fixed number of hours (<code class="docutils literal notranslate"><span class="pre">h</span></code>) to complete eating all the bananas.</p></li>
-<li><p>We assume there exists a solution to the problem. In other words, we assume
-that there exists a speed <code class="docutils literal notranslate"><span class="pre">k</span></code> such that Koko can eat all the bananas in <code class="docutils literal notranslate"><span class="pre">h</span></code>
-hours or fewer.</p></li>
+<li><p><strong>Constant Eating Rate</strong>: Koko can only eat a constant number of bananas per
+hour (<code class="docutils literal notranslate"><span class="pre">k</span></code>), from a single pile.</p></li>
+<li><p><strong>One Pile at a Time</strong>: Koko will start a new pile only after finishing the
+current one.</p></li>
+<li><p><strong>Quantized Eating Periods</strong>: If a pile has fewer bananas than <code class="docutils literal notranslate"><span class="pre">k</span></code>, Koko will
+take less than an hour to finish that pile but won’t start another pile
+within the same hour. This implicitly implies that Koko will not eat any more
+bananas from other piles in the same hour even if she finishes eating the
+current pile in less than an hour.</p></li>
+<li><p><strong>Existence of Solution</strong>: We assume there exists a solution to the problem.
+In other words, we assume that there exists a speed <code class="docutils literal notranslate"><span class="pre">k</span></code> such that Koko can
+eat all the bananas in <code class="docutils literal notranslate"><span class="pre">h</span></code> hours or fewer.</p></li>
 </ol>
 </section>
 <section id="constraints">
 <h3><a class="toc-backref" href="#id18" role="doc-backlink">Constraints</a><a class="headerlink" href="#constraints" title="Permalink to this heading">#</a></h3>
-<p>These assumptions lead to certain constraints:</p>
+<p>These assumptions lead to certain constraints (in no particular order):</p>
 <ol class="arabic simple">
-<li><p>Minimum Speed: Koko can’t have a speed of zero; she must eat at least one
+<li><p><strong>Minimum Speed</strong>: Koko can’t have a speed of zero; she must eat at least one
 banana per hour.</p></li>
-<li><p>Time Constraint: Koko has only <code class="docutils literal notranslate"><span class="pre">h</span></code> hours, a hard deadline to finish eating
-all bananas.</p></li>
-<li><p>Integer Hours: Time is quantized in hours. Even if Koko takes less than an
-hour to finish a pile, she can’t start another one within the same hour.</p></li>
-<li><p>The number of piles is less than or equal to the number of hours. This is
-because if the number of piles is greater than the number of hours, then it
-is impossible for Koko to eat all the bananas in <code class="docutils literal notranslate"><span class="pre">h</span></code> hours or fewer.</p></li>
+<li><p><strong>Time Constraint</strong>: Koko has only <code class="docutils literal notranslate"><span class="pre">h</span></code> hours, a hard deadline to finish
+eating all bananas.</p></li>
+<li><p><strong>Integer Hours</strong>: Time is quantized in hours. Even if Koko takes less than
+an hour to finish a pile, she can’t start another one within the same hour.</p></li>
+<li><p><strong>Existence of Solution</strong>: The number of piles is less than or equal to the
+number of hours. This is because if the number of piles is greater than the
+number of hours, then it is impossible for Koko to eat all the bananas in <code class="docutils literal notranslate"><span class="pre">h</span></code>
+hours or fewer.</p></li>
 </ol>
 <p>In addition, leetcode provides the following constraints:</p>
 <ul class="simple">
@@ -961,12 +956,12 @@ essentially sets a lower boundary for our optimization efforts.</p>
 <p>In the “Koko Eating Bananas” problem, the goal is to minimize the eating speed
 <span class="math notranslate nohighlight">\(k\)</span> such that all bananas are eaten within <span class="math notranslate nohighlight">\(h\)</span> hours. One common algorithmic
 approach to solve this problem is using binary search on <span class="math notranslate nohighlight">\(k\)</span>.</p>
-<p>The binary search would operate on the speed range <span class="math notranslate nohighlight">\([1, \max(\text{piles})]\)</span>,
-and for each candidate speed, we need to traverse all the piles to check if Koko
-can finish eating in <span class="math notranslate nohighlight">\(h\)</span> hours. This traversal takes <span class="math notranslate nohighlight">\(\mathcal{O}(N)\)</span> time where
-<span class="math notranslate nohighlight">\(N\)</span> is the length of the <code class="docutils literal notranslate"><span class="pre">piles</span></code> array. Thus, the best theoretical time
-complexity for solving this problem would be <span class="math notranslate nohighlight">\(\mathcal{O}(N \log M)\)</span>, where <span class="math notranslate nohighlight">\(M\)</span>
-is the maximum number of bananas in a pile.</p>
+<p>The binary search would operate on the speed range <span class="math notranslate nohighlight">\([1, M]\)</span>, and for each
+candidate speed, we need to traverse all the piles to check if Koko can finish
+eating in <span class="math notranslate nohighlight">\(h\)</span> hours. This traversal takes <span class="math notranslate nohighlight">\(\mathcal{O}(N)\)</span> time where <span class="math notranslate nohighlight">\(N\)</span> is the
+length of the <code class="docutils literal notranslate"><span class="pre">piles</span></code> array. Thus, the best theoretical time complexity for
+solving this problem would be <span class="math notranslate nohighlight">\(\mathcal{O}(N \log M)\)</span>, where <span class="math notranslate nohighlight">\(M\)</span> is the maximum
+number of bananas in a pile.</p>
 </section>
 <section id="theoretical-best-space-complexity">
 <h3><a class="toc-backref" href="#id24" role="doc-backlink">Theoretical Best Space Complexity</a><a class="headerlink" href="#theoretical-best-space-complexity" title="Permalink to this heading">#</a></h3>

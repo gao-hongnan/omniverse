@@ -122,13 +122,6 @@ multi-core processors, or even time-management strategies in day-to-day
 activities. The bananas can be thought of as data packets needing to be
 processed, and Koko's eating speed is akin to a processor's clock speed.
 
-The key attraction of this problem lies in its deceptive simplicity. It begins
-as a straightforward question yet evolves into a puzzle requiring a nuanced
-understanding of algorithms, particularly **binary search**. In solving this
-problem, one isn't merely finding the minimum speed at which a fictional monkey
-eats bananas but rather learning to make efficient decisions in constrained
-environments.
-
 For readers interested in broader contexts, this problem can be viewed as a
 specific case within
 [combinatorial optimization](https://en.wikipedia.org/wiki/Combinatorial_optimization)
@@ -144,11 +137,11 @@ _theoretical_ and _practical_ significance.
 ### Analogy: Job Scheduling in Data Centers
 
 Imagine a **[data center](https://en.wikipedia.org/wiki/Data_center)** where
-multiple tasks (akin to the piles of bananas) need to be processed by a cluster
-of servers (akin to Koko). The task of the data center administrator (akin to
-the algorithm you're trying to design) is to determine the **minimum processing
-power** (_speed_) each server must have to complete all tasks within a given
-time frame (_hours_).
+multiple tasks (akin to the piles of bananas `piles`) need to be processed by a
+single server (akin to Koko). The task of the data center manager (akin to the
+algorithm `minEatingSpeed` you're trying to design) is to determine the
+**minimum processing power** (_speed_ `k`) each server must have to complete all
+tasks within a prescribed time frame (_hours_ `h`).
 
 #### Breaking it Down
 
@@ -156,7 +149,7 @@ time frame (_hours_).
    task could require different amounts of processing, just as piles can have
    different numbers of bananas.
 
-2. **Processing Power of Servers**: This is akin to the _speed_ $k$ at which
+2. **Processing Power of the Server**: This is akin to the _speed_ $k$ at which
    Koko eats bananas. The faster the processing power, the quicker the tasks get
    done.
 
@@ -172,7 +165,7 @@ time frame (_hours_).
 This is a **real-world issue** with significant implications. Inefficient job
 scheduling can lead to increased electricity costs, lower throughput, and
 ultimately, less satisfied clients. Thus, solving this problem efficiently has
-both **theoretical** and **practical significance**.
+both **theoretical** and **practical significance** (as mentioned earlier).
 
 By understanding the Koko Eating Bananas problem, you gain insights into how you
 might approach job scheduling optimization in a data center, a concept that has
@@ -220,7 +213,7 @@ speed_ at which Koko can consume all the bananas within $h$ hours, and $N$ is
 the number of piles. Since $k_{\text{min}}$ is not known in advance and could be
 large, this approach can be **computationally expensive** for large datasets or
 **tight time constraints**. Therefore, the **crux of the problem** is to find
-this*optimal $k$* without resorting to such a linear search through all
+this _optimal $k$_ without resorting to such a linear search through all
 potential speeds.
 
 ### Reducing the Search Space
@@ -229,20 +222,21 @@ The observant reader should notice that actually the $k_{\text{min}}$ is
 **_upper bounded_** by the **maximum number of bananas in a pile**:
 
 $$
-k_{\text{min}} \leq \max(\text{piles})
+k_{\text{min}} \leq M := \max(\text{piles})
 $$
 
 **Why?**
 
 Because we know from the _constraints_ that `piles.length <= h`. This is an
 important observation because it allows us to **_reduce the search space_** from
-$[1, \infty)$ to $[1, \max(\text{piles})]$. We will always yield a solution if
-Koko is allowed to eat at a speed of $\max(\text{piles})$ bananas per hour. She
-will always be able to finish all the bananas in $h$ hours or fewer. Therefore,
-we can **_discard all speeds greater than $\max(\text{piles})$_**. So our time
-complexity for the naive approach becomes
-$\mathcal{O}(\max(\text{piles}) \times N)$ since we will at most iterate through
-$\max(\text{piles})$ speeds.
+$[1, \infty)$ to $[1, M]$. We will always yield a solution if Koko is allowed to
+eat at a speed of $M$ bananas per hour. She will always be able to finish all
+the bananas in $h$ hours or fewer. Therefore, we can **_discard all speeds
+greater than_** $M$. So our time complexity for the naive approach becomes
+$\mathcal{O}(M \times N)$ since we will at most iterate through $M$ speeds.
+
+We will show later that we can further optimize this time complexity to
+$\mathcal{O}(M \log N)$ via a binary search approach.
 
 ## Example
 
@@ -342,32 +336,33 @@ analysis or computational modeling.
 
 In the **Koko Eating Bananas** problem, we make the following assumptions:
 
-1. Koko can only eat a constant number of bananas per hour (`k`), from a single
-   pile.
-2. Koko will start a new pile only after finishing the current one.
-3. If a pile has fewer bananas than `k`, Koko will take less than an hour to
-   finish that pile but won't start another pile within the same hour.
-4. Point 3 implicitly implies that Koko will not eat any more bananas from other
-   piles in the same hour even if she finishes eating the current pile in less
-   than an hour.
-5. Koko has a fixed number of hours (`h`) to complete eating all the bananas.
-6. We assume there exists a solution to the problem. In other words, we assume
-   that there exists a speed `k` such that Koko can eat all the bananas in `h`
-   hours or fewer.
+1. **Constant Eating Rate**: Koko can only eat a constant number of bananas per
+   hour (`k`), from a single pile.
+2. **One Pile at a Time**: Koko will start a new pile only after finishing the
+   current one.
+3. **Quantized Eating Periods**: If a pile has fewer bananas than `k`, Koko will
+   take less than an hour to finish that pile but won't start another pile
+   within the same hour. This implicitly implies that Koko will not eat any more
+   bananas from other piles in the same hour even if she finishes eating the
+   current pile in less than an hour.
+4. **Existence of Solution**: We assume there exists a solution to the problem.
+   In other words, we assume that there exists a speed `k` such that Koko can
+   eat all the bananas in `h` hours or fewer.
 
 ### Constraints
 
-These assumptions lead to certain constraints:
+These assumptions lead to certain constraints (in no particular order):
 
-1. Minimum Speed: Koko can't have a speed of zero; she must eat at least one
+1. **Minimum Speed**: Koko can't have a speed of zero; she must eat at least one
    banana per hour.
-2. Time Constraint: Koko has only `h` hours, a hard deadline to finish eating
-   all bananas.
-3. Integer Hours: Time is quantized in hours. Even if Koko takes less than an
-   hour to finish a pile, she can't start another one within the same hour.
-4. The number of piles is less than or equal to the number of hours. This is
-   because if the number of piles is greater than the number of hours, then it
-   is impossible for Koko to eat all the bananas in `h` hours or fewer.
+2. **Time Constraint**: Koko has only `h` hours, a hard deadline to finish
+   eating all bananas.
+3. **Integer Hours**: Time is quantized in hours. Even if Koko takes less than
+   an hour to finish a pile, she can't start another one within the same hour.
+4. **Existence of Solution**: The number of piles is less than or equal to the
+   number of hours. This is because if the number of piles is greater than the
+   number of hours, then it is impossible for Koko to eat all the bananas in `h`
+   hours or fewer.
 
 In addition, leetcode provides the following constraints:
 
@@ -444,12 +439,12 @@ In the "Koko Eating Bananas" problem, the goal is to minimize the eating speed
 $k$ such that all bananas are eaten within $h$ hours. One common algorithmic
 approach to solve this problem is using binary search on $k$.
 
-The binary search would operate on the speed range $[1, \max(\text{piles})]$,
-and for each candidate speed, we need to traverse all the piles to check if Koko
-can finish eating in $h$ hours. This traversal takes $\mathcal{O}(N)$ time where
-$N$ is the length of the `piles` array. Thus, the best theoretical time
-complexity for solving this problem would be $\mathcal{O}(N \log M)$, where $M$
-is the maximum number of bananas in a pile.
+The binary search would operate on the speed range $[1, M]$, and for each
+candidate speed, we need to traverse all the piles to check if Koko can finish
+eating in $h$ hours. This traversal takes $\mathcal{O}(N)$ time where $N$ is the
+length of the `piles` array. Thus, the best theoretical time complexity for
+solving this problem would be $\mathcal{O}(N \log M)$, where $M$ is the maximum
+number of bananas in a pile.
 
 ### Theoretical Best Space Complexity
 
