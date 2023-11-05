@@ -78,6 +78,15 @@ else:
 
 ## Learning Objectives
 
+- Understand the problem statement and its significance.
+- Develop an intuition for the problem.
+- Identify the assumptions and constraints.
+- Formulate the problem mathematically.
+- Identify the appropriate algorithmic approach.
+- Implement the solution and test cases.
+- Analyze the time and space complexity.
+- Identify the tradeoffs between different approaches (if any).
+
 ## Introduction
 
 ### Problem Statement
@@ -934,15 +943,54 @@ The algorithm uses these bounds to iteratively tighten the search space.
 
 #### Correctness
 
-Prove the correctness of the algorithm
+Proving the correctness of a binary search algorithm typically involves
+demonstrating two properties: invariance and termination.
 
-##### Claim
+```{prf:proof}
+We prove both properties here.
 
-Statement claiming the correctness of the algorithm.
+**Invariant**: At each iteration of the binary search, we maintain the invariant
+that the optimal eating speed $k^*$ must lie within the interval $[l, r]$. This
+is because we only adjust $l$ or $r$ based on the feasibility function, which
+correctly tells us whether a certain speed is too slow (and thus, the optimal
+speed must be higher) or feasible (and thus, the optimal speed could be lower or
+equal).
 
-##### Proof
+1. **Initialization**: At the start, $l = 1$ and $r = M$. Clearly, $k^*$ must
+   lie within this range because it's defined to be a positive integer that's no
+   greater than $M$.
 
-Proof showing the correctness of the algorithm.
+2. **Maintenance**: At each step, we calculate
+   $m = \left\lfloor \frac{l + r}{2} \right\rfloor$. Then, based on
+   $\mathcal{F}(\mathcal{P}, m, h)$, we either set $r = m$ or $l = m + 1$.
+
+   - If $\mathcal{F}(\mathcal{P}, m, h) = 1$, meaning that eating speed $m$ is
+     feasible, we set $r = m$. This is correct because if $m$ is feasible, then
+     any speed greater than $m$ might also be feasible, but the optimal speed
+     (the smallest feasible speed) must be less than or equal to $m$. Hence, we
+     adjust the interval to $[l, m]$.
+
+   - If $\mathcal{F}(\mathcal{P}, m, h) = 0$, meaning that eating speed $m$ is
+     not feasible, we set $l = m + 1$. This is correct because if $m$ is not
+     feasible, then any speed less than $m$ is also not feasible. Hence, the
+     optimal speed must be greater than $m$, and we adjust the interval to
+     $[m + 1, r]$.
+
+By updating $l$ and $r$ in this manner, we ensure that the interval $[l, r]$
+always contains $k^*$.
+
+**Termination**: The algorithm terminates when $l \geq r$. Due to the properties
+of the floor function and the update rules for $l$ and $r$, this condition will
+eventually be met. At this point, the interval has been narrowed down to a
+single point, $l$, which must be the optimal eating speed $k^*$. This follows
+from the invariant; since $k^*$ was always within the interval, and the interval
+has been reduced to a single point, that point must be $k^*$.
+```
+
+This completes the proof of correctness for the binary search algorithm in the
+context of the Koko eating bananas problem. The invariance ensures that the
+optimal solution is never excluded from the search space, and the termination
+condition guarantees that the algorithm will converge to the optimal solution.
 
 ### Implementation
 
