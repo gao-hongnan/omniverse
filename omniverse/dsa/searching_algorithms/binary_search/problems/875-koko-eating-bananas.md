@@ -1226,7 +1226,7 @@ searching and have a complexity of $\mathcal{O}(\log_2 N)$, as you've noted.
 
 For the Koko eating bananas problem, however, each iteration of the binary
 search involves checking the entire list of piles to see if Koko can eat all the
-bananas at a certain rate within H hours. This checking process has a time
+bananas at a certain rate within $h$ hours. This checking process has a time
 complexity of $\mathcal{O}(N)$. Even in the best case, where the ideal rate is
 found in the first try, you still need to perform this check once. Therefore,
 the best case complexity would be $\mathcal{O}(N)$, as you need to check every
@@ -1278,8 +1278,9 @@ complexity is primarily determined by the input size.
 
 [^max-of-piles-is-M]: Recall $\max(\mathcal{P}) = M$
 [^precondition-of-binary-search]:
-    See [Identifying Binary Search Problems](../concept.md) for a detailed
-    discussion on the precondition for binary search.
+    See
+    [Identifying Binary Search Problems](https://usaco.guide/silver/binary-search)
+    for a detailed discussion on the precondition for binary search.
 
 [^first-true-in-a-sorted-boolean-array]:
     [**First True in a Sorted Boolean Array**](https://algo.monster/problems/binary_search_boundary)
