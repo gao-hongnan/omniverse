@@ -15,7 +15,7 @@ kernelspec:
   name: python3
 ---
 
-# Binary Search
+# Concept
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gao-hongnan/gaohn-dsa/blob/main/content/searching_algorithms/binary_search/concept.ipynb)
 
@@ -755,7 +755,7 @@ array for a binary search. How did we get to this result?
 To analyze the binary search algorithm, we need to recall that each comparison
 eliminates about half of the remaining items from consideration. What is the
 maximum number of comparisons this algorithm will require to check the entire
-list {cite}`runestone_binary_search`?
+list {cite}`pythonds3`?
 
 Let's say we have an array of $n$ elements.
 
@@ -802,8 +802,8 @@ odd length.
 ```
 
 If we split the container/list enough times, eventually we will have only one
-item left {cite}`runestone_binary_search`. The last item is either the target
-value or it is not.
+item left {cite}`pythonds3`. The last item is either the target value or it is
+not.
 
 So our stopping condition is when the number of items left is $1$. Consequently,
 we solve for $k$ in the equation $\frac{n}{2^k} = 1$:
@@ -826,7 +826,7 @@ list, ending the search.
 In terms of big-O, we say that the binary search algorithm takes $\O(\log_2 n)$
 time to search for an item in a list of $n$ items, which means the maximum
 number of comparisons is in a logarithmic relationship to the number of items in
-the list {cite}`runestone_binary_search`.
+the list {cite}`pythonds3`.
 
 The time complexity table is listed below, the best case is $\O(1)$ for the same
 reason as the sequential search algorithm, where the `target` element is in the
