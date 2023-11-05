@@ -37,10 +37,38 @@ from typing import Iterable, TypeVar
 
 import sys
 from pathlib import Path
-parent_dir = str(Path().resolve().parents[2])
-sys.path.append(parent_dir)
 
-from dsa.utils.ipywidget_utils import create_tabbed_svg_viewer
+def find_root_dir(current_path: Path, marker: str) -> Path or None:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path
+        The starting path to search from.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path or None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    current_path = current_path.resolve()
+    for parent in current_path.parents:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+current_file_path = Path("__file__")
+root_dir = find_root_dir(current_file_path, marker='utils')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from utils.visualization.tabbed_svg_viewer import create_tabbed_svg_viewer
+else:
+    raise ImportError("Root directory not found.")
 
 T = TypeVar("T", str, int, float)  # T should be of type int, float or str
 ```
@@ -341,10 +369,10 @@ Let's have a visualization next.
 ```{code-cell} ipython3
 # List of SVG image paths
 svg_images = [
-    "../../assets/searching_algorithms/binary_search/binary-search-0.svg",
-    "../../assets/searching_algorithms/binary_search/binary-search-1.svg",
-    "../../assets/searching_algorithms/binary_search/binary-search-2.svg",
-    "../../assets/searching_algorithms/binary_search/binary-search-3.svg",
+    "./assets/binary-search-0.svg",
+    "./assets/binary-search-1.svg",
+    "./assets/binary-search-2.svg",
+    "./assets/binary-search-3.svg",
 ]
 
 tab_titles = ["Step 1", "Step 2", "Step 3", "Step 4"]

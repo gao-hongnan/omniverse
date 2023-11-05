@@ -43,16 +43,22 @@ import math
 import sys
 from pathlib import Path
 
-def find_root_dir(current_path: Path, marker: str) -> Path:
+def find_root_dir(current_path: Path, marker: str) -> Path or None:
     """
-    Find the root directory by looking for a directory or file that serves as a marker.
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
 
-    Parameters:
-    current_path (Path): The starting path to search from.
-    marker (str): The name of the file or directory that signifies the root.
+    Parameters
+    ----------
+    current_path : Path
+        The starting path to search from.
+    marker : str
+        The name of the file or directory that signifies the root.
 
-    Returns:
-    Path: The path to the root directory. Returns None if the marker is not found.
+    Returns
+    -------
+    Path or None
+        The path to the root directory. Returns None if the marker is not found.
     """
     current_path = current_path.resolve()
     for parent in current_path.parents:
@@ -60,7 +66,6 @@ def find_root_dir(current_path: Path, marker: str) -> Path:
             return parent
     return None
 
-# Usage
 current_file_path = Path("__file__")
 root_dir = find_root_dir(current_file_path, marker='utils')
 
