@@ -430,6 +430,14 @@ The additional constraints from LeetCode serve the following purposes:
 
 ## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
+This section presents a conundrum. Before delving into the algorithmic method,
+it's often
+[_recommended_](https://www.techinterviewhandbook.org/software-engineering-interview-guide/)
+to have a rough intuition on the optimal time and space complexities and their
+inherent tradeoffs. However, having this foundational knowledge upfront can
+guide us away from futile attempts at chasing an elusive optimal strategy. It
+essentially sets a lower boundary for our optimization efforts.
+
 ### Theoretical Best Time Complexity
 
 In the "Koko Eating Bananas" problem, the goal is to minimize the eating speed
@@ -1223,7 +1231,7 @@ $$
 \end{aligned}
 $$
 
-### Best, Worst, and Average Case Analysis
+#### Best, Worst, and Average Case Analysis
 
 In a typical binary search problem, the best, worst, and average case time
 complexities are presented below. Please note the $N$ below is the length of the
