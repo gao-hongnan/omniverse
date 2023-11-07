@@ -1,18 +1,18 @@
 ---
 jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
+  cell_metadata_filter: -all
+  formats: md:myst
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.11.5
 mystnb:
-    number_source_lines: true
+  number_source_lines: true
 kernelspec:
-    display_name: Python 3
-    language: python
-    name: python3
+  display_name: Python 3
+  language: python
+  name: python3
 ---
 
 # Find Minimum in Rotated Sorted Array
@@ -94,8 +94,6 @@ Analysis of the tradeoff between space and time complexity for the problem.
 
 ### Intuition
 
-
-
 ### Visualization
 
 Visual representation of the problem and solution (if applicable).
@@ -119,7 +117,6 @@ Statement claiming the correctness of the algorithm.
 Proof showing the correctness of the algorithm.
 
 ### Implementation
-
 
 ### Tests
 
