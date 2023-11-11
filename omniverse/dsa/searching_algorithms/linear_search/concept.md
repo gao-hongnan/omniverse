@@ -17,6 +17,58 @@ kernelspec:
 
 # Concept
 
+```{contents}
+:local:
+```
+
+```{code-cell} ipython3
+:tags: [remove-cell]
+
+%config InlineBackend.figure_format = 'svg'
+
+from __future__ import annotations
+
+import math
+from IPython.display import display
+from typing import Sequence, TypeVar, Optional
+
+
+import sys
+from pathlib import Path
+
+def find_root_dir(current_path: Path, marker: str) -> Optional[Path]:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path
+        The starting path to search from.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path or None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    current_path = current_path.resolve()
+    for parent in current_path.parents:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+current_file_path = Path("__file__")
+root_dir          = find_root_dir(current_file_path, marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.utils.testing.test_framework import TestFramework
+else:
+    raise ImportError("Root directory not found.")
+```
+
 ## Introduction
 
 [**Linear search**](https://en.wikipedia.org/wiki/Linear_search), also known as
@@ -63,7 +115,9 @@ science, the representation of a list in memory is typically implemented as a
 linear data structure. This means that the elements of the list are stored in
 [**contiguous**](<https://en.wikipedia.org/wiki/Fragmentation_(computing)>)
 memory locations. Each element in the list is stored at a memory address that
-sequentially follows the previous element, adhering to a defined order.
+sequentially follows the previous element, adhering to a defined order. Although
+not strictly relevant to the algorithm, having spatial locality between elements
+in the list enables efficient access and traversal operations.
 
 To elucidate the mechanism of linear search, let's consider the task of locating
 a specific target element $\tau$ within a list $\mathcal{A}$. The process
@@ -264,52 +318,145 @@ regardless of the outcome).
 ### Implementation
 
 ```{code-cell} ipython3
-from __future__ import annotations
+Real = TypeVar("Real", int, float, covariant=False, contravariant=False)
 
-from typing import TypeVar, Tuple, Iterable, Sequence
-
-T = TypeVar("T")
-
-
-def unordered_linear_search_iterative(
-    container: Sequence[T], target: T
+def unordered_linear_search_iterative_for_loop(
+    container: Sequence[Real], target: Real
 ) -> Tuple[bool, int]:
-    """If the target element is found in the container, returns True and its index,
-    else, return False and -1 to indicate the not found index."""
-    is_found = False  # a flag to indicate so your return is more meaningful
+    """Perform a linear search on an unordered sequence using for loop."""
     index = 0
     for item in container:
         if item == target:
-            is_found = True
-            return is_found, index
+            return True, index
         index += 1
-    return is_found, -1
+    return False, -1
 
-# use while loop
 
 def unordered_linear_search_iterative_while_loop(
-    container: Sequence[T], target: T
+    container: Sequence[Real], target: Real
 ) -> Tuple[bool, int]:
-    """If the target element is found in the container, returns True and its index,
-    else, return False and -1 to indicate the not found index."""
-
-    index = 0
+    """Perform a linear search on an unordered sequence using while loop."""
+    # fmt: off
+    index  = 0
     length = len(container)
+    # fmt: on
 
     while index < length:
         if container[index] == target:
             return True, index
         index += 1
     return False, -1
+```
+
+### Tests
+
+```{code-cell} ipython3
+tf = TestFramework()
 
 unordered_list = [1, 2, 32, 8, 17, 19, 42, 13, 0]
 
-print(unordered_linear_search_iterative(unordered_list, -1)) # smaller than smallest element
-print(unordered_linear_search_iterative(unordered_list, 45)) # larger than largest element
-print(unordered_linear_search_iterative(unordered_list, 13)) # in the middle
+@tf.describe("Testing unordered_linear_search_iterative_for_loop function")
+def test_unordered_linear_search_iterative_for_loop():
+    @tf.individual_test("Target not present in the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop(unordered_list, -1),
+            (False, -1),
+            "Should return (False, -1)",
+        )
+
+    @tf.individual_test("Target at the beginning of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop(unordered_list, 1),
+            (True, 0),
+            "Should return (True, 0)",
+        )
+
+    @tf.individual_test("Target at the end of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop(unordered_list, 0),
+            (True, 8),
+            "Should return (True, 8)",
+        )
+
+    @tf.individual_test("Target in the middle of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop(unordered_list, 17),
+            (True, 4),
+            "Should return (True, 4)",
+        )
+
+    @tf.individual_test("Empty list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop([], 1),
+            (False, -1),
+            "Should return (False, -1)",
+        )
+
+    @tf.individual_test("List with duplicate elements")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_for_loop([1, 1, 1], 1),
+            (True, 0),
+            "Should return (True, 0)",
+        )
+
+@tf.describe("Testing unordered_linear_search_iterative_while_loop function")
+def test_unordered_linear_search_iterative_while_loop():
+    @tf.individual_test("Target not present in the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop(unordered_list, -1),
+            (False, -1),
+            "Should return (False, -1)",
+        )
+
+    @tf.individual_test("Target at the beginning of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop(unordered_list, 1),
+            (True, 0),
+            "Should return (True, 0)",
+        )
+
+    @tf.individual_test("Target at the end of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop(unordered_list, 0),
+            (True, 8),
+            "Should return (True, 8)",
+        )
+
+    @tf.individual_test("Target in the middle of the list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop(unordered_list, 17),
+            (True, 4),
+            "Should return (True, 4)",
+        )
+
+    @tf.individual_test("Empty list")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop([], 1),
+            (False, -1),
+            "Should return (False, -1)",
+        )
+
+    @tf.individual_test("List with duplicate elements")
+    def _():
+        tf.assert_equals(
+            unordered_linear_search_iterative_while_loop([1, 1, 1], 1),
+            (True, 0),
+            "Should return (True, 0)",
+        )
 ```
 
-#### Time Complexity
+### Time Complexity
 
 We need to split the time complexity into a few cases, this is because the time
 complexity **_heavily_** depends on the position of the target element we are
@@ -350,7 +497,7 @@ for all cases, because we need to check every element in the list.
   - $\mathcal{O}(n)$
 ```
 
-#### Space Complexity
+### Space Complexity
 
 Space complexity: $\mathcal{O}(1)$ because we are keeping track of one
 boolean/index variable in the loop. However, if we count the space of the list,
