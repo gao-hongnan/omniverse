@@ -889,7 +889,8 @@ found.
 :label: 875-koko-eating-bananas-binary-search-pseudocode
 
 ```
-Algorithm Find_Optimal_Eating_Speed(P, h, M)
+Algorithm: find_minEatingSpeed(P, h, M)
+
     Input: P = [p_1, p_2, ..., p_N] (list of piles),
            h (total hours available),
            M (maximum number of bananas in a pile)
