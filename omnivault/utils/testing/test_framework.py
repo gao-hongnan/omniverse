@@ -66,13 +66,15 @@ class TestFramework:
         """
         Assert that the actual and expected values are equal.
 
-        Parameters:
-            actual (Any): The actual value.
-            expected (Any): The expected value.
-            message (str): The message to display if the assertion fails.
+        Parameters
+        ----------
+        actual (Any): The actual value.
+        expected (Any): The expected value.
+        message (str): The message to display if the assertion fails.
 
-        Raises:
-            AssertionError: If the actual and expected values are not equal.
+        Raises
+        ------
+        AssertionError: If the actual and expected values are not equal.
         """
         try:
             assert actual == expected, message
