@@ -37,7 +37,7 @@ kernelspec:
 import rich
 from IPython.display import HTML, display
 
-from typing import List, Optional
+from typing import Sequence, Optional
 import math
 
 import sys
@@ -1000,10 +1000,10 @@ condition guarantees that the algorithm will converge to the optimal solution.
 
 ```{code-cell} ipython3
 class Solution:
-    def feasible(self, piles: List[int], speed: int, h: int) -> bool:
+    def feasible(self, piles: Sequence[int], speed: int, h: int) -> bool:
         return self.total_hours_to_finish_eating(piles, speed) <= h
 
-    def total_hours_to_finish_eating(self, piles: List[int], speed: int) -> int:
+    def total_hours_to_finish_eating(self, piles: Sequence[int], speed: int) -> int:
         total_hours = 0
         for pile in piles:
             hours = pile / speed      # num_bananas / speed -> hours needed to finish eating
@@ -1011,7 +1011,7 @@ class Solution:
             total_hours += hours
         return total_hours
 
-    def minEatingSpeed(self, piles: List[int], h: int) -> int:
+    def minEatingSpeed(self, piles: Sequence[int], h: int) -> int:
         l, r = 1, max(piles)
 
         while l < r:
