@@ -419,7 +419,7 @@ index.
 
 ## Intuition
 
-In **[Linear Search](../linear_search/concept.ipynb)**, even though the list is
+In **[Linear Search](../linear_search/concept.md)**, even though the list is
 sorted, we still have to traverse each element until we find the target, or we
 reach the end of the list. This yields a time complexity of $\mathcal{O}(n)$,
 with $n$ being the size of the list.
