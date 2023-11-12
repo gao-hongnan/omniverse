@@ -37,7 +37,7 @@ kernelspec:
 import rich
 from IPython.display import HTML, display
 
-from typing import List, Optional
+from typing import Sequence, Optional
 import math
 
 import sys
@@ -889,7 +889,8 @@ found.
 :label: 875-koko-eating-bananas-binary-search-pseudocode
 
 ```
-Algorithm Find_Optimal_Eating_Speed(P, h, M)
+Algorithm: find_minEatingSpeed(P, h, M)
+
     Input: P = [p_1, p_2, ..., p_N] (list of piles),
            h (total hours available),
            M (maximum number of bananas in a pile)
@@ -999,10 +1000,10 @@ condition guarantees that the algorithm will converge to the optimal solution.
 
 ```{code-cell} ipython3
 class Solution:
-    def feasible(self, piles: List[int], speed: int, h: int) -> bool:
+    def feasible(self, piles: Sequence[int], speed: int, h: int) -> bool:
         return self.total_hours_to_finish_eating(piles, speed) <= h
 
-    def total_hours_to_finish_eating(self, piles: List[int], speed: int) -> int:
+    def total_hours_to_finish_eating(self, piles: Sequence[int], speed: int) -> int:
         total_hours = 0
         for pile in piles:
             hours = pile / speed      # num_bananas / speed -> hours needed to finish eating
@@ -1010,7 +1011,7 @@ class Solution:
             total_hours += hours
         return total_hours
 
-    def minEatingSpeed(self, piles: List[int], h: int) -> int:
+    def minEatingSpeed(self, piles: Sequence[int], h: int) -> int:
         l, r = 1, max(piles)
 
         while l < r:
@@ -1098,12 +1099,13 @@ Let's redefine $\mathcal{T}_{\mathcal{H}}(N)$ and $\mathcal{T}_{\mathcal{J}}(N)$
 to represent the time complexities of the functions $\mathcal{H}$ and
 $\mathcal{J}$, respectively.
 
-1. **Time Complexity Function $T(N)$**: This notation represents the **exact
-   time complexity** or **actual running time** of an algorithm as a function of
-   the input size $N$. It quantifies the precise number of steps or operations
-   an algorithm takes in relation to the size of its input. For example, if an
-   algorithm requires $3N + 5$ operations for an input of size $N$, then its
-   time complexity function is expressed as $T(N) = 3N + 5$.
+1. **Time Complexity Function $\mathcal{T}(N)$**: This notation represents the
+   **exact time complexity** or **actual running time** of an algorithm as a
+   function of the input size $N$. It quantifies the precise number of steps or
+   operations an algorithm takes in relation to the size of its input. For
+   example, if an algorithm requires $3N + 5$ operations for an input of size
+   $N$, then its time complexity function is expressed as
+   $\mathcal{T}(N) = 3N + 5$.
 
 2. **Big O Notation $\mathcal{O}(g(N))$**: In contrast, Big O notation is used
    in **asymptotic analysis** to describe an **upper bound** on the growth rate
@@ -1121,13 +1123,14 @@ $\mathcal{J}$, respectively.
    $f(N) \leq C \cdot g(N)$ is satisfied.
 
 Applying this to the example given, if the time complexity function of an
-algorithm is $T(N) = 3N + 5$, we identify $f(N)$ as $T(N)$ and $g(N)$ as $N$ in
-the Big O definition. We can then say that $T(N)$ is in $\mathcal{O}(N)$ (or
-$T(N) \in \mathcal{O}(N)$) because there exist constants $C$ (in this case, $C$
-could be $3$ or any larger number) and $N_0$ (which could be $1$ or any positive
-integer) such that for all $N \geq N_0$, the running time $T(N)$ is bounded
-above by $C \cdot N$. This indicates that the algorithm’s running time grows
-linearly or slower as the input size $N$ increases.
+algorithm is $\mathcal{T}(N) = 3N + 5$, we identify $f(N)$ as $\mathcal{T}(N)$
+and $g(N)$ as $N$ in the Big O definition. We can then say that $\mathcal{T}(N)$
+is in $\mathcal{O}(N)$ (or $\mathcal{T}(N) \in \mathcal{O}(N)$) because there
+exist constants $C$ (in this case, $C$ could be $3$ or any larger number) and
+$N_0$ (which could be $1$ or any positive integer) such that for all
+$N \geq N_0$, the running time $\mathcal{T}(N)$ is bounded above by $C \cdot N$.
+This indicates that the algorithm’s running time grows linearly or slower as the
+input size $N$ increases.
 
 > In essence, $\mathcal{T}(N)$ gives a precise, often more detailed description
 > of an algorithm's running time, while $\mathcal{O}(N)$ provides an asymptotic
