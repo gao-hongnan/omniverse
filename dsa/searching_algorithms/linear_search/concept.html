@@ -474,6 +474,22 @@ document.write(`
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-and-probabilistic-linear-search">Ordered and Probabilistic Linear Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-linear-search-efficiency-in-sorted-arrays">Ordered Linear Search: Efficiency in Sorted Arrays</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-search-harnessing-data-to-optimize-searches">Probabilistic Search: Harnessing Data to Optimize Searches</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-scenario-optimized-product-search-in-an-online-store">Problem Scenario: Optimized Product Search in an Online Store</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#sales-data-and-probabilities">Sales Data and Probabilities</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#objective">Objective</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#search-algorithm-implementation">Search Algorithm Implementation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-outcome">Expected Outcome</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-readings">Further Readings</a></li>
 </ul>
             </nav>
@@ -546,7 +562,26 @@ document.write(`
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#further-readings" id="id37">Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#ordered-and-probabilistic-linear-search" id="id37">Ordered and Probabilistic Linear Search</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ordered-linear-search-efficiency-in-sorted-arrays" id="id38">Ordered Linear Search: Efficiency in Sorted Arrays</a></p></li>
+<li><p><a class="reference internal" href="#probabilistic-search-harnessing-data-to-optimize-searches" id="id39">Probabilistic Search: Harnessing Data to Optimize Searches</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-scenario-optimized-product-search-in-an-online-store" id="id40">Problem Scenario: Optimized Product Search in an Online Store</a></p>
+<ul>
+<li><p><a class="reference internal" href="#background" id="id41">Background</a></p></li>
+<li><p><a class="reference internal" href="#sales-data-and-probabilities" id="id42">Sales Data and Probabilities</a></p></li>
+<li><p><a class="reference internal" href="#objective" id="id43">Objective</a></p></li>
+<li><p><a class="reference internal" href="#search-algorithm-implementation" id="id44">Search Algorithm Implementation</a></p></li>
+<li><p><a class="reference internal" href="#expected-outcome" id="id45">Expected Outcome</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#summary" id="id46">Summary</a></p></li>
+<li><p><a class="reference internal" href="#further-readings" id="id47">Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="introduction">
@@ -861,8 +896,8 @@ algorithms.</p>
 <section id="correctness">
 <h4><a class="toc-backref" href="#id15" role="doc-backlink">Correctness</a><a class="headerlink" href="#correctness" title="Permalink to this heading">#</a></h4>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> be an array of <span class="math notranslate nohighlight">\(N\)</span> elements,
-<span class="math notranslate nohighlight">\(\mathcal{A}[0], \mathcal{A}[1], \ldots, \mathcal{A}[N-1]\)</span>, and let <span class="math notranslate nohighlight">\(\tau\)</span> be a
-target value. Consider a loop in an algorithm that iterates over <span class="math notranslate nohighlight">\(\mathcal{A}\)</span>
+<span class="math notranslate nohighlight">\(\mathcal{A}_{0}, \mathcal{A}_{1}, \ldots, \mathcal{A}_{N-1}\)</span>, and let <span class="math notranslate nohighlight">\(\tau\)</span> be
+a target value. Consider a loop in an algorithm that iterates over <span class="math notranslate nohighlight">\(\mathcal{A}\)</span>
 with the intention of finding the index of <span class="math notranslate nohighlight">\(\tau\)</span> in <span class="math notranslate nohighlight">\(\mathcal{A}\)</span>. The loop
 invariant for this algorithm can be stated as follows:</p>
 <div class="proof admonition" id="proof">
@@ -1498,8 +1533,157 @@ of recursive calls.</p>
 </section>
 </section>
 </section>
+<section id="ordered-and-probabilistic-linear-search">
+<h2><a class="toc-backref" href="#id37" role="doc-backlink">Ordered and Probabilistic Linear Search</a><a class="headerlink" href="#ordered-and-probabilistic-linear-search" title="Permalink to this heading">#</a></h2>
+<p>Here we briefly touch upon two variations of linear search, ordered linear
+search and probabilistic linear search for the sake of completeness. For a much
+more detailed explanation, please refer to the
+<a class="reference external" href="https://ozaner.github.io/sequential-search/">blog post here</a>.</p>
+<section id="ordered-linear-search-efficiency-in-sorted-arrays">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Ordered Linear Search: Efficiency in Sorted Arrays</a><a class="headerlink" href="#ordered-linear-search-efficiency-in-sorted-arrays" title="Permalink to this heading">#</a></h3>
+<p><strong>Overview</strong>: Ordered linear search is a powerful variation of the standard
+linear search algorithm, specifically tailored for use with sorted arrays. This
+method leverages the inherent order within the array to optimize the search
+process, allowing for early termination and thus potentially reducing the number
+of comparisons needed to find a target element.</p>
+<p><strong>How It Works</strong>: In an ordered linear search, the algorithm sequentially checks
+each element, but with a key advantage – if it encounters an element greater (or
+lesser, depending on the sort order) than the target, it can immediately
+conclude that the target is not in the list. This early termination is a
+game-changer in terms of efficiency, particularly when the target is located
+near the beginning of the array or is not present at all.</p>
+<p><strong>Why It’s Effective</strong>: This approach is most effective in scenarios where the
+data is inherently ordered or can be sorted prior to the search. Common examples
+include searching through chronological records, numerical data, or
+alphabetically sorted lists.</p>
+<p><strong>Learn More</strong>: To dive deeper into ordered linear search, understand its
+specific use cases, and explore its implementation,
+<a class="reference external" href="https://ozaner.github.io/sequential-search/">click here for a detailed guide and examples</a>.</p>
+</section>
+<section id="probabilistic-search-harnessing-data-to-optimize-searches">
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">Probabilistic Search: Harnessing Data to Optimize Searches</a><a class="headerlink" href="#probabilistic-search-harnessing-data-to-optimize-searches" title="Permalink to this heading">#</a></h3>
+<p><strong>Overview</strong>: Probabilistic search represents a significant advancement in
+search algorithms by incorporating the likelihood of each element being the
+target into the search process. This method is particularly useful in situations
+where certain elements are more frequently searched for than others, a common
+scenario in many real-world applications.</p>
+<p><strong>The Power of Probability</strong>: In probabilistic search, each element in the array
+is assigned a probability based on its likelihood of being the target, derived
+from historical data or specific characteristics. The search algorithm then
+prioritizes elements with higher probabilities, leading to a more efficient
+search process. This approach is ideal for datasets where user behavior or
+element popularity can be predicted or measured.</p>
+<p><strong>Applications and Benefits</strong>: From online shopping platforms optimizing product
+searches based on buying patterns to search engines prioritizing frequently
+queried terms, probabilistic search has wide-ranging applications. Its adoption
+can significantly enhance user experience by reducing search times and improving
+overall efficiency.</p>
+<p><strong>Learn More</strong>: To gain a comprehensive understanding of probabilistic search,
+explore its methodologies, and see how it’s revolutionizing data search in
+various fields,
+<a class="reference external" href="https://ozaner.github.io/sequential-search/">click here for an in-depth exploration</a>.</p>
+<section id="problem-scenario-optimized-product-search-in-an-online-store">
+<h4><a class="toc-backref" href="#id40" role="doc-backlink">Problem Scenario: Optimized Product Search in an Online Store</a><a class="headerlink" href="#problem-scenario-optimized-product-search-in-an-online-store" title="Permalink to this heading">#</a></h4>
+<section id="background">
+<h5><a class="toc-backref" href="#id41" role="doc-backlink">Background</a><a class="headerlink" href="#background" title="Permalink to this heading">#</a></h5>
+<p>An online store, “TechGear”, sells a variety of electronic products. Based on
+historical sales data, some products are more frequently searched for by
+customers than others. TechGear wants to optimize their product search algorithm
+to quickly locate products that customers are more likely to search for.</p>
+</section>
+<section id="sales-data-and-probabilities">
+<h5><a class="toc-backref" href="#id42" role="doc-backlink">Sales Data and Probabilities</a><a class="headerlink" href="#sales-data-and-probabilities" title="Permalink to this heading">#</a></h5>
+<p>TechGear has the following catalog of products with associated probabilities
+based on their sales data:</p>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Product ID</p></th>
+<th class="head"><p>Product Name</p></th>
+<th class="head"><p>Probability (Sales-based)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Smartphone X</p></td>
+<td><p>0.30</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Laptop Pro</p></td>
+<td><p>0.25</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Headphones Beat</p></td>
+<td><p>0.15</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Smartwatch 2</p></td>
+<td><p>0.10</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Camera Zoom</p></td>
+<td><p>0.05</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>Portable Charger</p></td>
+<td><p>0.05</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>Drone Fly</p></td>
+<td><p>0.05</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>Gaming Console Z</p></td>
+<td><p>0.05</p></td>
+</tr>
+</tbody>
+</table>
+<p>The probabilities reflect the likelihood of each product being searched for,
+based on past customer behavior. For instance, ‘Smartphone X’ has the highest
+search probability at 0.30.</p>
+</section>
+<section id="objective">
+<h5><a class="toc-backref" href="#id43" role="doc-backlink">Objective</a><a class="headerlink" href="#objective" title="Permalink to this heading">#</a></h5>
+<p>TechGear wants to implement a linear search algorithm that utilizes this
+probability data to improve the efficiency of product searches in their catalog.</p>
+</section>
+<section id="search-algorithm-implementation">
+<h5><a class="toc-backref" href="#id44" role="doc-backlink">Search Algorithm Implementation</a><a class="headerlink" href="#search-algorithm-implementation" title="Permalink to this heading">#</a></h5>
+<ol class="arabic simple">
+<li><p><strong>Reorder the Catalog</strong>: The first step is to reorder the catalog of products
+based on the probabilities, placing higher probability items towards the
+beginning.</p></li>
+<li><p><strong>Search Process</strong>: Implement a linear search that goes through the reordered
+list. If a customer searches for ‘Smartwatch 2’, the algorithm will check
+products in the order of their likelihood (starting with ‘Smartphone X’, then
+‘Laptop Pro’, and so on) until it finds ‘Smartwatch 2’.</p></li>
+<li><p><strong>Evaluate Performance</strong>: The performance of this probabilistic search
+algorithm can be compared with a regular linear search to demonstrate the
+efficiency gained by prioritizing products based on their search probability.</p></li>
+</ol>
+</section>
+<section id="expected-outcome">
+<h5><a class="toc-backref" href="#id45" role="doc-backlink">Expected Outcome</a><a class="headerlink" href="#expected-outcome" title="Permalink to this heading">#</a></h5>
+<p>The expectation is that, on average, the probabilistic search algorithm will
+locate products faster than a regular linear search, especially for items with
+high search probabilities. This approach can significantly improve customer
+experience by reducing search times. Intuitively, it makes sense, because
+customers are more likely to search for products with higher probabilities, and
+the algorithm prioritizes these items.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id46" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
+<p>In conclusion, while linear search is one of the simplest search algorithms, its
+variations like ordered and probabilistic searches demonstrate its adaptability
+and effectiveness in diverse scenarios. From basic implementations in unordered
+lists to more sophisticated applications in sorted and probabilistic lists,
+linear search remains a crucial tool in the algorithmic toolkit. It is also a
+good “naive/brute-force” approach to solving problems.</p>
+</section>
 <section id="further-readings">
-<h2><a class="toc-backref" href="#id37" role="doc-backlink">Further Readings</a><a class="headerlink" href="#further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id47" role="doc-backlink">Further Readings</a><a class="headerlink" href="#further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html">Runestone Academy Sequential Search</a></p></li>
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Linear_search">Wikipedia Linear Search</a></p></li>
@@ -1627,6 +1811,22 @@ of recursive calls.</p>
 </li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-and-probabilistic-linear-search">Ordered and Probabilistic Linear Search</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ordered-linear-search-efficiency-in-sorted-arrays">Ordered Linear Search: Efficiency in Sorted Arrays</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-search-harnessing-data-to-optimize-searches">Probabilistic Search: Harnessing Data to Optimize Searches</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-scenario-optimized-product-search-in-an-online-store">Problem Scenario: Optimized Product Search in an Online Store</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#sales-data-and-probabilities">Sales Data and Probabilities</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#objective">Objective</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#search-algorithm-implementation">Search Algorithm Implementation</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#expected-outcome">Expected Outcome</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-readings">Further Readings</a></li>
 </ul>
   </nav></div>

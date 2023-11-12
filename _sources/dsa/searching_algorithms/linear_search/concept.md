@@ -388,8 +388,8 @@ algorithms.
 #### Correctness
 
 Let $\mathcal{A}$ be an array of $N$ elements,
-$\mathcal{A}[0], \mathcal{A}[1], \ldots, \mathcal{A}[N-1]$, and let $\tau$ be a
-target value. Consider a loop in an algorithm that iterates over $\mathcal{A}$
+$\mathcal{A}_{0}, \mathcal{A}_{1}, \ldots, \mathcal{A}_{N-1}$, and let $\tau$ be
+a target value. Consider a loop in an algorithm that iterates over $\mathcal{A}$
 with the intention of finding the index of $\tau$ in $\mathcal{A}$. The loop
 invariant for this algorithm can be stated as follows:
 
@@ -970,6 +970,130 @@ of recursive calls.
   - $\mathcal{O}(N)$
   - $\mathcal{O}(N)$
 ```
+
+## Ordered and Probabilistic Linear Search
+
+Here we briefly touch upon two variations of linear search, ordered linear
+search and probabilistic linear search for the sake of completeness. For a much
+more detailed explanation, please refer to the
+[blog post here](https://ozaner.github.io/sequential-search/).
+
+### Ordered Linear Search: Efficiency in Sorted Arrays
+
+**Overview**: Ordered linear search is a powerful variation of the standard
+linear search algorithm, specifically tailored for use with sorted arrays. This
+method leverages the inherent order within the array to optimize the search
+process, allowing for early termination and thus potentially reducing the number
+of comparisons needed to find a target element.
+
+**How It Works**: In an ordered linear search, the algorithm sequentially checks
+each element, but with a key advantage – if it encounters an element greater (or
+lesser, depending on the sort order) than the target, it can immediately
+conclude that the target is not in the list. This early termination is a
+game-changer in terms of efficiency, particularly when the target is located
+near the beginning of the array or is not present at all.
+
+**Why It's Effective**: This approach is most effective in scenarios where the
+data is inherently ordered or can be sorted prior to the search. Common examples
+include searching through chronological records, numerical data, or
+alphabetically sorted lists.
+
+**Learn More**: To dive deeper into ordered linear search, understand its
+specific use cases, and explore its implementation,
+[click here for a detailed guide and examples](https://ozaner.github.io/sequential-search/).
+
+### Probabilistic Search: Harnessing Data to Optimize Searches
+
+**Overview**: Probabilistic search represents a significant advancement in
+search algorithms by incorporating the likelihood of each element being the
+target into the search process. This method is particularly useful in situations
+where certain elements are more frequently searched for than others, a common
+scenario in many real-world applications.
+
+**The Power of Probability**: In probabilistic search, each element in the array
+is assigned a probability based on its likelihood of being the target, derived
+from historical data or specific characteristics. The search algorithm then
+prioritizes elements with higher probabilities, leading to a more efficient
+search process. This approach is ideal for datasets where user behavior or
+element popularity can be predicted or measured.
+
+**Applications and Benefits**: From online shopping platforms optimizing product
+searches based on buying patterns to search engines prioritizing frequently
+queried terms, probabilistic search has wide-ranging applications. Its adoption
+can significantly enhance user experience by reducing search times and improving
+overall efficiency.
+
+**Learn More**: To gain a comprehensive understanding of probabilistic search,
+explore its methodologies, and see how it's revolutionizing data search in
+various fields,
+[click here for an in-depth exploration](https://ozaner.github.io/sequential-search/).
+
+#### Problem Scenario: Optimized Product Search in an Online Store
+
+##### Background
+
+An online store, "TechGear", sells a variety of electronic products. Based on
+historical sales data, some products are more frequently searched for by
+customers than others. TechGear wants to optimize their product search algorithm
+to quickly locate products that customers are more likely to search for.
+
+##### Sales Data and Probabilities
+
+TechGear has the following catalog of products with associated probabilities
+based on their sales data:
+
+| Product ID | Product Name     | Probability (Sales-based) |
+| ---------- | ---------------- | ------------------------- |
+| 1          | Smartphone X     | 0.30                      |
+| 2          | Laptop Pro       | 0.25                      |
+| 3          | Headphones Beat  | 0.15                      |
+| 4          | Smartwatch 2     | 0.10                      |
+| 5          | Camera Zoom      | 0.05                      |
+| 6          | Portable Charger | 0.05                      |
+| 7          | Drone Fly        | 0.05                      |
+| 8          | Gaming Console Z | 0.05                      |
+
+The probabilities reflect the likelihood of each product being searched for,
+based on past customer behavior. For instance, 'Smartphone X' has the highest
+search probability at 0.30.
+
+##### Objective
+
+TechGear wants to implement a linear search algorithm that utilizes this
+probability data to improve the efficiency of product searches in their catalog.
+
+##### Search Algorithm Implementation
+
+1. **Reorder the Catalog**: The first step is to reorder the catalog of products
+   based on the probabilities, placing higher probability items towards the
+   beginning.
+
+2. **Search Process**: Implement a linear search that goes through the reordered
+   list. If a customer searches for 'Smartwatch 2', the algorithm will check
+   products in the order of their likelihood (starting with 'Smartphone X', then
+   'Laptop Pro', and so on) until it finds 'Smartwatch 2'.
+
+3. **Evaluate Performance**: The performance of this probabilistic search
+   algorithm can be compared with a regular linear search to demonstrate the
+   efficiency gained by prioritizing products based on their search probability.
+
+##### Expected Outcome
+
+The expectation is that, on average, the probabilistic search algorithm will
+locate products faster than a regular linear search, especially for items with
+high search probabilities. This approach can significantly improve customer
+experience by reducing search times. Intuitively, it makes sense, because
+customers are more likely to search for products with higher probabilities, and
+the algorithm prioritizes these items.
+
+## Summary
+
+In conclusion, while linear search is one of the simplest search algorithms, its
+variations like ordered and probabilistic searches demonstrate its adaptability
+and effectiveness in diverse scenarios. From basic implementations in unordered
+lists to more sophisticated applications in sorted and probabilistic lists,
+linear search remains a crucial tool in the algorithmic toolkit. It is also a
+good "naive/brute-force" approach to solving problems.
 
 ## Further Readings
 
