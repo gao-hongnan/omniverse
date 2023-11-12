@@ -199,36 +199,6 @@ from any particular arrangement of the data. We will see later on some
 extensions of linear search that leverage the ordering of elements to optimize
 the search process or if the list is probabilistic.
 
-## Contiguous
-
-- **Contiguous Memory Allocation**: In most programming languages, when a list
-  (or an array, which is a fixed-size list) is created, a contiguous block of
-  memory is allocated. This contiguous allocation ensures that each element in
-  the list can be accessed by computing its memory address based on the starting
-  memory address of the list and the element's position (or index) in the list.
-
-- **Index-Based Access**: The position of each element in the list is determined
-  by its index, a numerical representation starting from 0 (in zero-indexed
-  languages like Python, C, and Java) or 1 (in one-indexed languages like Lua
-  and MATLAB). The memory address of an element at index $n$ can be calculated
-  using the formula: `Base Address + (n * Size of Element)`. This formula
-  leverages the fact that elements are stored at evenly spaced intervals in
-  memory.
-
-- **Relative Positioning**: The sequential storage implies that the memory
-  location of an element is relative to its immediate neighbors. For example, in
-  a list of integers (assuming each integer occupies 4 bytes and the list starts
-  at memory address 100), the element at index 1 would be at memory address 104,
-  index 2 at 108, and so on. This relative positioning enables efficient access
-  and traversal operations, as moving to the next or previous element involves a
-  consistent step in memory.
-
-Understanding this memory model is crucial for appreciating how basic operations
-on lists, like indexing and iterating, are performed and why they have the time
-complexities they do. For instance, accessing any element in a list via its
-index is an $\mathcal{O}(1)$ operation because it involves a direct calculation
-to find the element's memory address, regardless of the list's size.
-
 ## Unordered Sequential Search
 
 We start with the simplest scenario: searching for an element in an unordered
@@ -652,11 +622,12 @@ order of $\mathcal{O}(N)$, because we need to check every element in the list
 
 #### Average Case
 
-On average, the time complexity is $\mathcal{O}(\frac{N}{2})$. This average
-means that for a list with $N$ elements, there is an equal chance that the
-element we are searching for is at the beginning, middle, or end of the list. In
-short, it is a uniform distribution. And therefore the **expected** time
-complexity is $\mathcal{O}(\frac{N}{2})$. Let's define it more rigorously below.
+On average, the time complexity is $\mathcal{O}\left(\frac{N}{2}\right)$. This
+average means that for a list with $N$ elements, there is an equal chance that
+the element we are searching for is at the beginning, middle, or end of the
+list. In short, it is a uniform distribution. And therefore the **expected**
+time complexity is $\mathcal{O}\left(\frac{N}{2}\right)$. Let's define it more
+rigorously below.
 
 ##### Defining the Random Variable
 
@@ -727,16 +698,17 @@ complexity is $\mathcal{O}(\frac{N}{2})$. Let's define it more rigorously below.
      $$
      \begin{aligned}
      \mathbb{E}[\mathcal{T}(N)] &= \mathbb{E}[X + 1] \\
-                               &= \mathbb{E}[X] + 1 \\
-                               &= \frac{N+1}{2} + 1 \\
-                               &= \frac{N+3}{2}
+                                &= \mathbb{E}[X] + 1 \\
+                                &= \frac{N+1}{2} + 1 \\
+                                &= \frac{N+3}{2}
      \end{aligned}
      $$
 
    - This result shows that on average, the linear search algorithm will perform
-     $\frac{N+3}{2}$ comparisons to find $\tau$ in an array of size $N
-    $
-     under the assumption of uniform distribution.
+     $\frac{N+3}{2}$ comparisons to find $\tau$ in an array of size $N$ under
+     the assumption of uniform distribution. Note that the $+1$ in the
+     expression $\frac{N+1}{2} + 1$ accounts for the fact that the comparison
+     starts at index $0$.
 
 ##### Time Complexity Using Big O Notation $\mathcal{O}(g(N))$
 
@@ -771,9 +743,9 @@ complexity is $\mathcal{O}(\frac{N}{2})$. Let's define it more rigorously below.
 
      $$
      \begin{aligned}
-     0 \leq \mathbb{E}[\mathcal{T}(N)] &= \frac{N+3}{2} \\
-                                      &\leq N \quad (\text{since } N+3 \leq 2N \text{ for } N \geq 1) \\
-                                      &= C \cdot g(N)
+     0 \leq \mathbb{E}[\mathcal{T}(N)]  &= \frac{N+3}{2} \\
+                                        &\leq N \quad (\text{since } N+3 \leq 2N \text{ for } N \geq 1) \\
+                                        &= C \cdot g(N)
      \end{aligned}
      $$
 
@@ -799,7 +771,7 @@ for all cases, because we need to check every element in the list.
   - Best Case
 * - Element is in the list
   - $\mathcal{O}(N)$
-  - $\mathcal{O}(\frac{N}{2})$
+  - $\mathcal{O}\left(\frac{N}{2}\right)$
   - $\mathcal{O}(1)$
 * - Element is not in the list
   - $\mathcal{O}(N)$
@@ -840,164 +812,175 @@ for all cases, because we need to check every element in the list.
   space for the list $\mathcal{A}$ and the constant extra space for the
   variables is just $\mathcal{O}(N)$.
 
-### Implementation (Recursive)
+### The Recursive Counterpart
+
+After discussing the iterative approach, let's consider the recursive
+implementation of the unordered linear search. Recursion offers an alternative
+way to perform the search by breaking down the problem into smaller subproblems.
+
+#### Recursive Method Overview
+
+The `unordered_sequential_search_recursive` function implements linear search on
+an unordered sequence using recursion. It checks each element in sequence,
+starting from the beginning of the list, and returns the index of the target
+element if found. If the target is not found, it returns `-1`. This is achieved
+through the following steps:
+
+1. **Base Case - Empty Container**: Checks if the container is empty. If so,
+   returns `-1`, indicating the target is not found.
+2. **Base Case - Target Found**: Checks if the first element in the container is
+   the target. If so, returns the current index.
+3. **Recursive Case**: Calls itself with the rest of the container (excluding
+   the first element) and increments the index.
+
+#### Implementation
 
 ```{code-cell} ipython3
 def unordered_sequential_search_recursive(
-    container: Iterable[T], target: T, index: int = 0
+    container: Sequence[Real], target: Real, index: int = 0
 ) -> int:
-    """Recursive implementation of unordered Sequential Search."""
-    if len(container) == 0:  # if not container is also fine
-        return -1  # not found
+    """Perform a linear search on an unordered sequence using recursion."""
+    # Base case: if container is empty
+    if not container:
+        return -1     # not found
 
-    if container[0] == target:  # this is base case
+    # Base case: if the target is found
+    if container[0] == target:
         return index  # found
 
     # notice we increment index by 1 to mean index += 1 in the iterative case
-    return unordered_sequential_search_recursive(
-        container[1:], target, index + 1
-    )  # recursive case
-
-unordered_list = [1, 2, 32, 8, 17, 19, 42, 13, 0]
-
-print(unordered_sequential_search_recursive(unordered_list, -1)) # smaller than smallest element
-print(unordered_sequential_search_recursive(unordered_list, 45)) # larger than largest element
-print(unordered_sequential_search_recursive(unordered_list, 13)) # in the middle
-```
-
-Let's see if our implementation obeys the 3 Laws of Recursion
-({prf:ref}`axiom_three_laws_of_recursion`).
-
-We need to shrink our `container` list from $n$ all the way down, and at the
-same time, keep track of our `index` to point to the correct index of the
-`container`.
-
-1. We have two base cases: - in `lines 5-6`, we first check if the list is
-   empty, if it is, means we reached till the end of the list and have not found
-   the `target` element, and hence return `-1`. - in `lines 8-9`, if the list's
-   first element is the `target`, then return the `index` since we found it.
-2. Has our recursive algorithm change its state and move towards our base case?
-   Yes, because after each function call at `lines 12-14`, we slice our list by
-   `[1:]`, which means we drop the first element, and move on to check if the
-   "next" element is our `target`. Here, we also need to increment `index` by 1
-   since we need to recover the index if we found the `target`.
-3. This is a recursive algorithm because the function calls itself at
-   `lines 12-14`.
-
-```{admonition} Tip
-:class: tip
-
-Time to revisit this recursion for revision, especially understand how
-recursion is stacking function calls and popping it later.
-
-I also think converting from an iterative solution to recursive is easier
-than just thinking of recursion straight. You just need to observe
-what variables are changing in **states** in iterative,
-and try to do the same to its recursive counterpart.
+    return unordered_sequential_search_recursive(container[1:], target, index + 1)
 ```
 
 Using Python Tutor to visualize recursive calls
 [here](https://pythontutor.com/render.html#code=def%20f%28container,%20target,%20index%3D0%29%3A%0A%20%20%20%20if%20len%28container%29%20%3D%3D%200%3A%20%20%23%20if%20not%20container%20is%20also%20fine%0A%20%20%20%20%20%20%20%20return%20-1%20%20%23%20not%20found%0A%0A%20%20%20%20if%20container%5B0%5D%20%3D%3D%20target%3A%20%20%23%20this%20is%20base%20case%0A%20%20%20%20%20%20%20%20return%20index%20%20%23%20found%0A%0A%20%20%20%20%23%20notice%20we%20increment%20index%20by%201%20to%20mean%20index%20%2B%3D%201%20in%20the%20iterative%20case%0A%20%20%20%20return%20f%28container%5B1%3A%5D,%20target,%20index%20%2B%201%29%20%20%23%20recursive%20case%0A%20%20%20%20%0Aunordered_list%20%3D%20%5B1,%202,%2032,%208,%2017,%2019,%2042,%2013,%200%5D%0Aprint%28f%28unordered_list,%2013%29%29&cumulative=false&curInstr=0&heapPrimitives=nevernest&mode=display&origin=opt-frontend.js&py=3&rawInputLstJSON=%5B%5D&textReferences=false).
 
-## Ordered Sequential Search
+Embedded:
 
-Previously, we showed how to perform sequential search on a list, which does not
-assumes order.
+<iframe src="https://pythontutor.com/render.html#code=def%20f%28container,%20target,%20index%3D0%29%3A%0A%20%20%20%20if%20len%28container%29%20%3D%3D%200%3A%20%20%23%20if%20not%20container%20is%20also%20fine%0A%20%20%20%20%20%20%20%20return%20-1%20%20%23%20not%20found%0A%0A%20%20%20%20if%20container%5B0%5D%20%3D%3D%20target%3A%20%20%23%20this%20is%20base%20case%0A%20%20%20%20%20%20%20%20return%20index%20%20%23%20found%0A%0A%20%20%20%20%23%20notice%20we%20increment%20index%20by%201%20to%20mean%20index%20%2B%3D%201%20in%20the%20iterative%20case%0A%20%20%20%20return%20f%28container%5B1%3A%5D,%20target,%20index%20%2B%201%29%20%20%23%20recursive%20case%0A%20%20%20%20%0Aunordered_list%20%3D%20%5B1,%202,%2032,%208,%2017,%2019,%2042,%2013,%200%5D%0Aprint%28f%28unordered_list,%2013%29%29&cumulative=false&curInstr=0&heapPrimitives=nevernest&mode=display&origin=opt-frontend.js&py=3&rawInputLstJSON=%5B%5D&textReferences=false" width="800" height="600">
+</iframe>
 
-We noticed that when the item is not in the list, the time complexity is
-$\mathcal{O}(n)$, because we need to check every element in the list. This can
-be alleviated if we assume that the list is ordered, and we can stop searching
-when we reach an element that is greater than the element we are searching for.
-
-For now, we will assume the list contains a list of integers, but this can be
-generalized to other data types through mapping. For example, we can map the
-alphabet to a list of integers, and then perform ordered sequential search on
-the list of integers.
-
-### Algorithm (Iterative)
-
-```{prf:algorithm} Basic Ordered Linear Search Algorithm (Iterative)
-:label: basic_ordered_linear_search_iterative
-
-Given an ordered list $L$ of $n$ elements with values or records $L_0, L_1, ..., L_{n-1}$
-such that $L_0 \leq L_1 \leq ... \leq L_{n-1}$, and target value $T$, the following subroutine uses ordered linear search to find the index of the target $T$ in $L$.
-
-1. Set $i$ to 0.
-2. If $L_i = T$, the search terminates successfully; return $i$. Else, go to step 3.
-3. If $L_i > T$, the search terminates unsuccessfully; return $-1$.
-```
-
-### Implementation (Iterative)
+#### Tests
 
 ```{code-cell} ipython3
-def ordered_sequential_search(container: Iterable[T], target: T) -> Tuple[bool, int]:
-    """Sequential search for ordered container."""
-    is_found = False  # a flag to indicate so your return is more meaningful
-    index = 0
-    for item in container:
-        if item == target:
-            is_found = True
-            return is_found, index
-        index += 1
-        if item > target:
-            return is_found, -1
-    # do not forget this if not if target > largest element in container, this case is not covered
-    return is_found, -1
+@tf.describe("Testing unordered_sequential_search_recursive function")
+def test_unordered_sequential_search_recursive():
+    @tf.individual_test("Target not present in the list")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive(unordered_list, -1),
+            -1,
+            "Should return -1",
+        )
+
+    @tf.individual_test("Target at the beginning of the list")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive(unordered_list, 1),
+            0,
+            "Should return 0",
+        )
+
+    @tf.individual_test("Target at the end of the list")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive(unordered_list, 0),
+            8,
+            "Should return 8",
+        )
+
+    @tf.individual_test("Target in the middle of the list")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive(unordered_list, 17),
+            4,
+            "Should return 4",
+        )
+
+    @tf.individual_test("Empty list")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive([], 1),
+            -1,
+            "Should return -1",
+        )
+
+    @tf.individual_test("List with duplicate elements")
+    def _():
+        tf.assert_equals(
+            unordered_sequential_search_recursive([1, 1, 1], 1),
+            0,
+            "Should return 0",
+        )
 ```
 
-The reason for not using `enumerate` to get the index of a number in a list when
-iterating is to minimize the usage of in-built functions.
+#### Complexity Analysis
+
+- **Time Complexity**: The time complexity of the recursive implementation is
+  similar to the iterative approach. In the worst case (target not present or at
+  the end), it checks each element once, leading to $\mathcal{O}(N)$ complexity.
+  The average and best cases are also similar to the iterative approach.
+
+- **Space Complexity**: The space complexity of the recursive implementation is
+  a bit different from the iterative one. Each recursive call adds a new layer
+  to the call stack. In the worst case, there will be $N$ recursive calls,
+  leading to a space complexity of $\mathcal{O}(N)$.
+
+We can further optimize the recursive implementation by using tail recursion to
+reduce the space complexity to $\mathcal{O}(1)$.
 
 ```{code-cell} ipython3
-ordered_list = [0, 1, 2, 8, 13, 17, 19, 32, 42]
-print(ordered_sequential_search(ordered_list, -1)) # smaller than smallest element
-print(ordered_sequential_search(ordered_list, 45)) # larger than largest element
-print(ordered_sequential_search(ordered_list, 13)) # in the middle
+def unordered_sequential_search_tail_recursive(
+    container: Sequence[Real], target: Real, index: int = 0
+) -> int:
+    """Perform a linear search on an unordered sequence using tail recursion."""
+    # Check if we have reached the end of the container
+    if index == len(container):
+        return -1  # Target not found
+
+    # Check if the target is at the current index
+    if container[index] == target:
+        return index  # Target found
+
+    # Recurse with the next index
+    return unordered_sequential_search_tail_recursive(container, target, index + 1)
 ```
 
-#### Time Complexity
+#### Time Complexity Table
 
-Note that for ordered sequential search, the time complexity does not change for
-the case when the item is in the list.
+It's beneficial to include a time complexity table for the recursive
+implementation as well. However, note that while the time complexities are
+similar to the iterative version, the space complexity differs due to the nature
+of recursive calls.
 
-However, for the case when the item is not in the list, we have our best case
-scenario to be $\mathcal{O}(1)$, because upon checking our first element, and if
-the first element is already greater than the element we are searching for, then
-we can stop searching and return `False`.
-
-For the worst case scenario, it is still $\mathcal{O}(n)$ since we have to check
-every element in the list.
-
-But, for the average case, it is now $\mathcal{O}(\frac{n}{2})$, because we can
-stop searching when we reach an element that is greater than the element we are
-searching for.
-
-```{list-table} Time Complexity of Ordered Sequential Search
+```{list-table} Time Complexity of Linear Search (Recursive)
 :header-rows: 1
-:name: ordered_sequential_search_time_complexity
+:name: linear-search-time-complexity-recursive
 
 * - Case
   - Worst Case
   - Average Case
   - Best Case
 * - Element is in the list
-  - $\mathcal{O}(n)$
-  - $\mathcal{O}(\frac{n}{2})$
+  - $\mathcal{O}(N)$
+  - $\mathcal{O}\left(\frac{N}{2}\right)$
   - $\mathcal{O}(1)$
 * - Element is not in the list
-  - $\mathcal{O}(n)$
-  - $\mathcal{O}(\frac{n}{2})$
-  - $\mathcal{O}(1)$
+  - $\mathcal{O}(N)$
+  - $\mathcal{O}(N)$
+  - $\mathcal{O}(N)$
 ```
-
-#### Space Complexity
-
-Similarly, the space complexity is still $\mathcal{O}(1)$.
 
 ## Further Readings
 
-- [GeeksforGeeks Linear Search](https://www.geeksforgeeks.org/linear-search/)
 - [Runestone Academy Sequential Search](https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html)
 - [Wikipedia Linear Search](https://en.wikipedia.org/wiki/Linear_search)
 - [Stack Overflow Recursive Linear Search](https://stackoverflow.com/questions/4295608/recursive-linear-search-returns-list-index)
 - [Ozaner Sequential Search](https://ozaner.github.io/sequential-search/)
+- [Expected Number of Iterations of an Exhaustive Search - Mathematics Stack Exchange](https://math.stackexchange.com/questions/2048236/expected-number-of-iterations-of-an-exhaustive-search)
+- [Average Time Complexity of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/140716/average-time-complexity-of-linear-search)
+- [Loop Invariant of Linear Search - Stack Overflow](https://stackoverflow.com/questions/5585020/loop-invariant-of-linear-search)
+- [Analysis of Linear Search - CLRS Chapter 2, Exercise 2.1-3](https://atekihcan.github.io/CLRS/02/E02.01-03/)
+- [Proof of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/6597/proof-of-linear-search)
+- [Proving the Correctness of Linear Search Algorithm (CLRS Exercise 2.1-3) - Quora](https://www.quora.com/How-do-you-prove-the-correctness-of-a-linear-search-algorithm-for-exercise-2-1-3-in-CLRS)
+- [Heap Invariant and Its Proof - Columbia University](https://www.columbia.edu/~cs2035/courses/csor4231.F05/heap-invariant.pdf)
