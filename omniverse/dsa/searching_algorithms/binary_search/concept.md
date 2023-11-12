@@ -648,7 +648,7 @@ from typing import TypeVar, Iterable
 T = TypeVar("T", int, float)  # T should be of type int, float or str
 
 
-class BinarySearchStrategy(ABC):
+class BinarySearch(ABC):
     """Interface for Binary Search Strategies (Strategy Design Pattern)."""
 
     @abstractmethod
@@ -661,7 +661,7 @@ class BinarySearchStrategy(ABC):
 
 
 class BinarySearch:
-    def __init__(self, strategy: BinarySearchStrategy) -> None:
+    def __init__(self, strategy: BinarySearch) -> None:
         """
         Usually, the Context (here is BinarySearch executor)
         accepts a strategy through the constructor, but also
@@ -670,7 +670,7 @@ class BinarySearch:
         self._strategy = strategy
 
     @property
-    def strategy(self) -> BinarySearchStrategy:
+    def strategy(self) -> BinarySearch:
         """
         The Context maintains a reference to one of the Strategy objects. The
         Context does not know the concrete class of a strategy. It should work
@@ -680,7 +680,7 @@ class BinarySearch:
         return self._strategy
 
     @strategy.setter
-    def strategy(self, strategy: BinarySearchStrategy) -> None:
+    def strategy(self, strategy: BinarySearch) -> None:
         """
         Usually, the Context allows replacing a Strategy object at runtime.
         """
@@ -693,7 +693,7 @@ class BinarySearch:
 ```
 
 ```{code-cell} ipython3
-class IterativeBinarySearchExactMatch(BinarySearchStrategy):
+class IterativeBinarySearchExactMatch(BinarySearch):
     """Leetcode calls this template 1:
     https://leetcode.com/explore/learn/card/binary-search/125/template-i/
     """
@@ -997,7 +997,7 @@ of the array is 0, then the search is unsuccessful, and -1 is returned.
 ### Implementation
 
 ```{code-cell} ipython3
-class RecursiveBinarySearchExactMatch(BinarySearchStrategy):
+class RecursiveBinarySearchExactMatch(BinarySearch):
     """Template 1 but recursive."""
 
     def search(self, nums: Iterable[T], target: int) -> int:
