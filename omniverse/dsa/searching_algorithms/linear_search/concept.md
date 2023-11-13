@@ -1095,7 +1095,7 @@ lists to more sophisticated applications in sorted and probabilistic lists,
 linear search remains a crucial tool in the algorithmic toolkit. It is also a
 good "naive/brute-force" approach to solving problems.
 
-## Further Readings
+## References and Further Readings
 
 - [Runestone Academy Sequential Search](https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html)
 - [Wikipedia Linear Search](https://en.wikipedia.org/wiki/Linear_search)

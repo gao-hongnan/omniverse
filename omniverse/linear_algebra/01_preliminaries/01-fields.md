@@ -44,10 +44,12 @@ regression to complex neural networks.
 
 ## Definition
 
-A field[^field-def] is an ordered quintuple, $(\mathbb{F},+,0;\times,1)$, where
-$\mathbb{F}$ is a set, $+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
-$\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$ are well defined
-binary operations[^well-defined] such that:
+A **[field](<https://en.wikipedia.org/wiki/Field_(mathematics)>)** is an ordered
+quintuple, $(\mathbb{F},+,0;\times,1)$, where $\mathbb{F}$ is a set,
+$+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
+$\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$ are
+[**well defined**](<https://en.wikipedia.org/wiki/Closure_(mathematics)>) binary
+operations[^well-defined] such that:
 
 ```{list-table} Definition of a Field
 :header-rows: 1
@@ -175,9 +177,5 @@ explored, while non-fields like natural numbers and integers are distinguished
 by their lack of certain properties. A special mention is given to the binary
 field, significant in digital logic and computer science.
 
-[^field-def]:
-    [https://en.wikipedia.org/wiki/Field\_(mathematics)](<https://en.wikipedia.org/wiki/Field_(mathematics)>)
-
 [^well-defined]:
-    [https://en.wikipedia.org/wiki/Closure\_(mathematics)](<https://en.wikipedia.org/wiki/Closure_(mathematics)>)
     Well defined means closure for addition and multiplication is satisfied.
