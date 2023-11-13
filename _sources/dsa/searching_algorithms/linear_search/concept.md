@@ -820,11 +820,11 @@ way to perform the search by breaking down the problem into smaller subproblems.
 
 #### Recursive Method Overview
 
-The `unordered_sequential_search_recursive` function implements linear search on
-an unordered sequence using recursion. It checks each element in sequence,
-starting from the beginning of the list, and returns the index of the target
-element if found. If the target is not found, it returns `-1`. This is achieved
-through the following steps:
+The `unordered_linear_search_recursive` function implements linear search on an
+unordered sequence using recursion. It checks each element in sequence, starting
+from the beginning of the list, and returns the index of the target element if
+found. If the target is not found, it returns `-1`. This is achieved through the
+following steps:
 
 1. **Base Case - Empty Container**: Checks if the container is empty. If so,
    returns `-1`, indicating the target is not found.
@@ -836,7 +836,7 @@ through the following steps:
 #### Implementation
 
 ```{code-cell} ipython3
-def unordered_sequential_search_recursive(
+def unordered_linear_search_recursive(
     container: Sequence[Real], target: Real, index: int = 0
 ) -> int:
     """Perform a linear search on an unordered sequence using recursion."""
@@ -849,7 +849,7 @@ def unordered_sequential_search_recursive(
         return index  # found
 
     # notice we increment index by 1 to mean index += 1 in the iterative case
-    return unordered_sequential_search_recursive(container[1:], target, index + 1)
+    return unordered_linear_search_recursive(container[1:], target, index + 1)
 ```
 
 Using Python Tutor to visualize recursive calls
@@ -863,12 +863,12 @@ Embedded:
 #### Tests
 
 ```{code-cell} ipython3
-@tf.describe("Testing unordered_sequential_search_recursive function")
+@tf.describe("Testing unordered_linear_search_recursive function")
 def test_unordered_sequential_search_recursive():
     @tf.individual_test("Target not present in the list")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive(unordered_list, -1),
+            unordered_linear_search_recursive(unordered_list, -1),
             -1,
             "Should return -1",
         )
@@ -876,7 +876,7 @@ def test_unordered_sequential_search_recursive():
     @tf.individual_test("Target at the beginning of the list")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive(unordered_list, 1),
+            unordered_linear_search_recursive(unordered_list, 1),
             0,
             "Should return 0",
         )
@@ -884,7 +884,7 @@ def test_unordered_sequential_search_recursive():
     @tf.individual_test("Target at the end of the list")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive(unordered_list, 0),
+            unordered_linear_search_recursive(unordered_list, 0),
             8,
             "Should return 8",
         )
@@ -892,7 +892,7 @@ def test_unordered_sequential_search_recursive():
     @tf.individual_test("Target in the middle of the list")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive(unordered_list, 17),
+            unordered_linear_search_recursive(unordered_list, 17),
             4,
             "Should return 4",
         )
@@ -900,7 +900,7 @@ def test_unordered_sequential_search_recursive():
     @tf.individual_test("Empty list")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive([], 1),
+            unordered_linear_search_recursive([], 1),
             -1,
             "Should return -1",
         )
@@ -908,7 +908,7 @@ def test_unordered_sequential_search_recursive():
     @tf.individual_test("List with duplicate elements")
     def _():
         tf.assert_equals(
-            unordered_sequential_search_recursive([1, 1, 1], 1),
+            unordered_linear_search_recursive([1, 1, 1], 1),
             0,
             "Should return 0",
         )
@@ -930,7 +930,7 @@ We can further optimize the recursive implementation by using tail recursion to
 reduce the space complexity to $\mathcal{O}(1)$.
 
 ```{code-cell} ipython3
-def unordered_sequential_search_tail_recursive(
+def unordered_linear_search_tail_recursive(
     container: Sequence[Real], target: Real, index: int = 0
 ) -> int:
     """Perform a linear search on an unordered sequence using tail recursion."""
@@ -943,7 +943,7 @@ def unordered_sequential_search_tail_recursive(
         return index  # Target found
 
     # Recurse with the next index
-    return unordered_sequential_search_tail_recursive(container, target, index + 1)
+    return unordered_linear_search_tail_recursive(container, target, index + 1)
 ```
 
 #### Time Complexity Table
@@ -1095,7 +1095,7 @@ lists to more sophisticated applications in sorted and probabilistic lists,
 linear search remains a crucial tool in the algorithmic toolkit. It is also a
 good "naive/brute-force" approach to solving problems.
 
-## Further Readings
+## References and Further Readings
 
 - [Runestone Academy Sequential Search](https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html)
 - [Wikipedia Linear Search](https://en.wikipedia.org/wiki/Linear_search)
