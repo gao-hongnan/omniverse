@@ -4,7 +4,17 @@
 :local:
 ```
 
-## Introduction and Motivation
+## Learning Objectives
+
+- Form intuition for the concept of a field and its relevance in linear algebra.
+- Comprehend the definition and properties of a field in mathematics.
+- Recognize different examples of fields and their relevance in various
+  contexts.
+- Apply the concept of fields to understand the foundation of vector spaces.
+- Bridge the gap between abstract mathematical concepts and their practical
+  applications in machine learning.
+
+## Introduction
 
 Why is an understanding of fields essential in the study of linear algebra,
 especially for machine learning? Fields are not just sets of numbers; they are
@@ -24,32 +34,42 @@ Keeping in mind the concept of scalars is crucial as we later explore vectors,
 which are fundamentally different from scalars yet interact with them within the
 framework of a field in linear algebra.
 
-## Learning Objectives
-
-- Form intuition for the concept of a field and its relevance in linear algebra.
-- Comprehend the definition and properties of a field in mathematics.
-- Recognize different examples of fields and their relevance in various
-  contexts.
-- Apply the concept of fields to understand the foundation of vector spaces.
-- Bridge the gap between abstract mathematical concepts and their practical
-  applications in machine learning.
-
-## Intuition
-
-A field in mathematics is like a rulebook for numbers. It dictates how we can
-add, subtract, multiply, and divide numbers in a way that makes sense and keeps
-the universe of mathematics harmonious. In machine learning, fields underpin the
-operations we perform on data, influencing everything from simple linear
-regression to complex neural networks.
-
 ## Definition
 
-A **[field](<https://en.wikipedia.org/wiki/Field_(mathematics)>)** is an ordered
-quintuple, $(\mathbb{F},+,0;\times,1)$, where $\mathbb{F}$ is a set,
+A **[field](<https://en.wikipedia.org/wiki/Field_(mathematics)>)** is a
+[**quintuple**](https://www.merriam-webster.com/dictionary/quintuple),
+$(\mathbb{F},+,0;\times,1)$, where $\mathbb{F}$ is a set,
 $+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
 $\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$ are
 [**well defined**](<https://en.wikipedia.org/wiki/Closure_(mathematics)>) binary
 operations[^well-defined] such that:
+
+A **field** is an ordered pair of triplets, defined as
+
+$$
+( (\mathbb{F}, +, 0), (\mathbb{F}, \times, 1) ),
+$$
+
+where:
+
+1. $\mathbb{F}$ is a set,
+2. $+$ and $\times$ are binary operations defined on $\mathbb{F}$ such that
+   $+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
+   $\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$,
+3. These operations are well-defined and satisfy the field axioms.
+
+In this representation:
+
+- The first triple $(\mathbb{F}, +, 0)$ encapsulates the addition operation in
+  the field, where $+$ is the addition operation, and $0$ is the additive
+  identity in $\mathbb{F}$.
+- The second triple $(\mathbb{F}, \times, 1)$ encapsulates the multiplication
+  operation, where $\times$ is the multiplication operation, and $1$ is the
+  multiplicative identity.
+
+This format clearly distinguishes the two fundamental operations (addition and
+multiplication) and their respective identities, encapsulating the essence of a
+field in a more mathematically conventional and rigorous way.
 
 ```{list-table} Definition of a Field
 :header-rows: 1
@@ -98,6 +118,14 @@ operations[^well-defined] such that:
 In the following sections and chapters, we will use the notation $\mathbb{F}$ to
 denote a field. In addition, we can use interchangeably the symbols $\mathbb{R}$
 and $\mathbb{C}$ to denote the fields of real and complex numbers, respectively.
+
+## Intuition
+
+A field in mathematics is like a rulebook for numbers. It dictates how we can
+add, subtract, multiply, and divide numbers in a way that makes sense and keeps
+the universe of mathematics harmonious. In machine learning, fields underpin the
+operations we perform on data, influencing everything from simple linear
+regression to complex neural networks.
 
 ## Examples
 
