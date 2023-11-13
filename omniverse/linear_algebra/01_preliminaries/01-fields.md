@@ -30,21 +30,11 @@ operations performed within this space.
 
 The elements within a field, known as scalars, must adhere to these rules. This
 adherence is what distinguishes a field from a mere collection of numbers.
-Keeping in mind the concept of scalars is crucial as we later explore vectors,
-which are fundamentally different from scalars yet interact with them within the
-framework of a field in linear algebra.
 
 ## Definition
 
-A **[field](<https://en.wikipedia.org/wiki/Field_(mathematics)>)** is a
-[**quintuple**](https://www.merriam-webster.com/dictionary/quintuple),
-$(\mathbb{F},+,0;\times,1)$, where $\mathbb{F}$ is a set,
-$+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
-$\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$ are
-[**well defined**](<https://en.wikipedia.org/wiki/Closure_(mathematics)>) binary
-operations[^well-defined] such that:
-
-A **field** is an ordered pair of triplets, defined as
+A **[field](<https://en.wikipedia.org/wiki/Field_(mathematics)>)** is an ordered
+pair of triplets, defined as
 
 $$
 ( (\mathbb{F}, +, 0), (\mathbb{F}, \times, 1) ),
@@ -56,7 +46,9 @@ where:
 2. $+$ and $\times$ are binary operations defined on $\mathbb{F}$ such that
    $+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}$ and
    $\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}$,
-3. These operations are well-defined and satisfy the field axioms.
+3. These operations are
+   [**well-defined**](<https://en.wikipedia.org/wiki/Closure_(mathematics)>)[^well-defined]
+   and satisfy the field axioms (detailed below).
 
 In this representation:
 
@@ -66,10 +58,6 @@ In this representation:
 - The second triple $(\mathbb{F}, \times, 1)$ encapsulates the multiplication
   operation, where $\times$ is the multiplication operation, and $1$ is the
   multiplicative identity.
-
-This format clearly distinguishes the two fundamental operations (addition and
-multiplication) and their respective identities, encapsulating the essence of a
-field in a more mathematically conventional and rigorous way.
 
 ```{list-table} Definition of a Field
 :header-rows: 1
@@ -113,21 +101,9 @@ field in a more mathematically conventional and rigorous way.
     $(b+c)\times a = (b\times a)+(c\times a)$.
 ```
 
-## Notations
-
-In the following sections and chapters, we will use the notation $\mathbb{F}$ to
-denote a field. In addition, we can use interchangeably the symbols $\mathbb{R}$
-and $\mathbb{C}$ to denote the fields of real and complex numbers, respectively.
-
-## Intuition
-
-A field in mathematics is like a rulebook for numbers. It dictates how we can
-add, subtract, multiply, and divide numbers in a way that makes sense and keeps
-the universe of mathematics harmonious. In machine learning, fields underpin the
-operations we perform on data, influencing everything from simple linear
-regression to complex neural networks.
-
 ## Examples
+
+Let's look at some examples of fields as well as non-fields.
 
 ### Fields
 
@@ -174,6 +150,15 @@ Fields can consist of:
    2 × (3 + 4) equals (2 × 3) + (2 × 4).
 ```
 
+```{admonition} Example is not a Proof
+:class: warning
+
+Do not mistake the example above as a form of proof that the real number
+system $\mathbb{R}$ is a field. The example only shows that a particular
+set of real numbers satisfies the field axioms. To prove that $\mathbb{R}$
+is a field, you must show that all real numbers satisfy the field axioms.
+```
+
 ### Non-Fields
 
 Non-fields include:
@@ -181,10 +166,16 @@ Non-fields include:
 - The natural numbers $\mathbb{N}$.
 - The integers $\mathbb{Z}$.
 
-Why are these non-fields? They lack additive inverses. For example, the natural
-numbers $\mathbb{N}$ do not have additive inverses. For any $n \in \mathbb{N}$,
-there is no $m \in \mathbb{N}$ such that $n + m = 0$. The same is true for the
-integers $\mathbb{Z}$.
+Why are these non-fields? They lack **additive** and/or **multiplicative**
+inverses.
+
+For example:
+
+- The natural numbers $\mathbb{N}$ do not have additive inverses. For any
+  $n \in \mathbb{N}$, there is no $m \in \mathbb{N}$ such that $n + m = 0$.
+- The integers $\mathbb{Z}$ do not have multiplicative inverses. For any
+  $n \in \mathbb{Z}$, there is no $m \in \mathbb{Z}$ such that $n \times m = 1$
+  (besides $n = 1$ and $m = 1$).
 
 ### Binary Field $\mathbb{F}_2$
 
@@ -195,15 +186,18 @@ science.
 
 ## Summary
 
-The text discusses fields in mathematics, emphasizing their importance in linear
-algebra and machine learning. Fields are structured sets with specific rules for
-addition, subtraction, multiplication, and division, ensuring consistency in
-mathematical operations. Key aspects include understanding field properties,
-their relevance in linear algebra, and practical applications in machine
-learning. Fields like real numbers, complex numbers, and rational numbers are
-explored, while non-fields like natural numbers and integers are distinguished
-by their lack of certain properties. A special mention is given to the binary
-field, significant in digital logic and computer science.
+The content provides a comprehensive overview of fields in mathematics,
+emphasizing their significance in linear algebra and machine learning. It
+defines a field as a structured set with specific rules for operations like
+addition and multiplication, essential for consistency in mathematical
+procedures. Examples of fields, such as real numbers, complex numbers, and
+rational numbers, are discussed to illustrate their properties and applications.
+In contrast, non-fields like natural numbers and integers are highlighted for
+lacking certain field properties. Additionally, the binary field
+$\mathbb{F}\_2$, crucial in digital logic and computer science, is introduced.
+The summary underscores the importance of fields in ensuring logical and
+consistent mathematical operations, fundamental to various scientific and
+technological disciplines.
 
 [^well-defined]:
     Well defined means closure for addition and multiplication is satisfied.
