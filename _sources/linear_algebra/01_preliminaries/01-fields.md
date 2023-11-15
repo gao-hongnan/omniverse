@@ -52,10 +52,10 @@ where:
 
 In this representation:
 
-- The first triple $(\mathbb{F}, +, 0)$ encapsulates the addition operation in
+- The first triplet $(\mathbb{F}, +, 0)$ encapsulates the addition operation in
   the field, where $+$ is the addition operation, and $0$ is the additive
   identity in $\mathbb{F}$.
-- The second triple $(\mathbb{F}, \times, 1)$ encapsulates the multiplication
+- The second triplet $(\mathbb{F}, \times, 1)$ encapsulates the multiplication
   operation, where $\times$ is the multiplication operation, and $1$ is the
   multiplicative identity.
 
