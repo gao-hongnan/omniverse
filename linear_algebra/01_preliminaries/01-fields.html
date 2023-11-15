@@ -395,7 +395,9 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-field-mathbb-f-2">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-importance-of-a-field-in-vector-spaces-and-deep-learning">The Importance of a Field in Vector Spaces and Deep Learning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
         </div>
@@ -411,21 +413,23 @@ document.write(`
 <h1>Fields<a class="headerlink" href="#fields" title="Permalink to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#learning-objectives" id="id3">Learning Objectives</a></p></li>
-<li><p><a class="reference internal" href="#introduction" id="id4">Introduction</a></p></li>
-<li><p><a class="reference internal" href="#definition" id="id5">Definition</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id6">Examples</a></p>
+<li><p><a class="reference internal" href="#learning-objectives" id="id5">Learning Objectives</a></p></li>
+<li><p><a class="reference internal" href="#introduction" id="id6">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#definition" id="id7">Definition</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id8">Examples</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id2" id="id7">Fields</a></p></li>
-<li><p><a class="reference internal" href="#non-fields" id="id8">Non-Fields</a></p></li>
-<li><p><a class="reference internal" href="#binary-field-mathbb-f-2" id="id9">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id9">Fields</a></p></li>
+<li><p><a class="reference internal" href="#non-fields" id="id10">Non-Fields</a></p></li>
+<li><p><a class="reference internal" href="#binary-field-mathbb-f-2" id="id11">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#summary" id="id10">Summary</a></p></li>
+<li><p><a class="reference internal" href="#the-importance-of-a-field-in-vector-spaces-and-deep-learning" id="id12">The Importance of a Field in Vector Spaces and Deep Learning</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id13">Summary</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id14">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="learning-objectives">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Learning Objectives</a><a class="headerlink" href="#learning-objectives" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Learning Objectives</a><a class="headerlink" href="#learning-objectives" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Form intuition for the concept of a field and its relevance in linear algebra.</p></li>
 <li><p>Comprehend the definition and properties of a field in mathematics.</p></li>
@@ -437,14 +441,17 @@ applications in machine learning.</p></li>
 </ul>
 </section>
 <section id="introduction">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>Why is an understanding of fields essential in the study of linear algebra,
 especially for machine learning? Fields are not just sets of numbers; they are
 sets where operations like addition, subtraction, multiplication, and division
 adhere to specific, well-defined rules. These rules are crucial because they
-provide a consistent framework in which linear algebra operates.</p>
+provide a consistent framework in which linear algebra operates. Without them,
+linear algebra would be a collection of arbitrary rules and procedures, making
+gradient descent, linear regression, embeddings, and other machine learning
+algorithms impossible.</p>
 <p>In linear algebra, a field can be thought of as a structured “space” — for
-instance, the set of real numbers (<span class="math notranslate nohighlight">\(\mathbb{R}\)</span>) — where operations such as
+instance, the set of real numbers <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> — where operations such as
 addition and multiplication are not just possible but follow specific,
 well-defined rules. These rules ensure mathematical consistency and logic in the
 operations performed within this space.</p>
@@ -452,34 +459,46 @@ operations performed within this space.</p>
 adherence is what distinguishes a field from a mere collection of numbers.</p>
 </section>
 <section id="definition">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h2>
 <p>A <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Field_(mathematics)">field</a></strong> is an ordered
 pair of triplets, defined as</p>
 <div class="math notranslate nohighlight">
 \[
-( (\mathbb{F}, +, 0), (\mathbb{F}, \times, 1) ),
+( (\mathbb{F}, \oplus, \mathbf{0}), (\mathbb{F}, \otimes, \mathbf{1}) ),
 \]</div>
 <p>where:</p>
-<ol class="arabic simple">
+<ol class="arabic">
 <li><p><span class="math notranslate nohighlight">\(\mathbb{F}\)</span> is a set,</p></li>
-<li><p><span class="math notranslate nohighlight">\(+\)</span> and <span class="math notranslate nohighlight">\(\times\)</span> are binary operations defined on <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> such that
-<span class="math notranslate nohighlight">\(+\colon \mathbb{F}\times \mathbb{F} \to \mathbb{F}\)</span> and
-<span class="math notranslate nohighlight">\(\times\colon \mathbb{F} \times \mathbb{F}\to \mathbb{F}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\oplus\)</span> and <span class="math notranslate nohighlight">\(\otimes\)</span> are binary operations defined on <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> such
+that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+   \begin{aligned}
+   &amp; \oplus \colon \mathbb{F}  \otimes \mathbb{F} \to \mathbb{F} \\
+   &amp; \otimes \colon \mathbb{F} \otimes \mathbb{F} \to \mathbb{F}
+   \end{aligned}
+   \end{split}\]</div>
+</li>
 <li><p>These operations are
 <a class="reference external" href="https://en.wikipedia.org/wiki/Closure_(mathematics)"><strong>well-defined</strong></a><a class="footnote-reference brackets" href="#well-defined" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>
 and satisfy the field axioms (detailed below).</p></li>
 </ol>
 <p>In this representation:</p>
 <ul class="simple">
-<li><p>The first triplet <span class="math notranslate nohighlight">\((\mathbb{F}, +, 0)\)</span> encapsulates the addition operation in
-the field, where <span class="math notranslate nohighlight">\(+\)</span> is the addition operation, and <span class="math notranslate nohighlight">\(0\)</span> is the additive
-identity in <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p></li>
-<li><p>The second triplet <span class="math notranslate nohighlight">\((\mathbb{F}, \times, 1)\)</span> encapsulates the multiplication
-operation, where <span class="math notranslate nohighlight">\(\times\)</span> is the multiplication operation, and <span class="math notranslate nohighlight">\(1\)</span> is the
-multiplicative identity.</p></li>
+<li><p>The first triplet <span class="math notranslate nohighlight">\((\mathbb{F}, \oplus, \mathbf{0})\)</span> encapsulates the addition
+operation in the field, where <span class="math notranslate nohighlight">\(\oplus\)</span> is the addition operation, and <span class="math notranslate nohighlight">\(0\)</span> is
+the additive identity in <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p></li>
+<li><p>The second triplet <span class="math notranslate nohighlight">\((\mathbb{F}, \otimes, \mathbf{1})\)</span> encapsulates the
+multiplication operation, where <span class="math notranslate nohighlight">\(\otimes\)</span> is the multiplication operation, and
+<span class="math notranslate nohighlight">\(1\)</span> is the multiplicative identity.</p></li>
 </ul>
+<div class="proof definition admonition" id="linear-algebra-01-preliminaries-field">
+<p class="admonition-title"><span class="caption-number">Definition 5 </span> (Field)</p>
+<section class="definition-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(\mathbb{F} := \left\{ \mathbb{F}, \oplus, \otimes \right\}\)</span> is a <strong>field</strong>
+if and only if the following axioms hold:</p>
 <table class="table" id="linear-algebra-preliminaries-definition-of-a-field">
-<caption><span class="caption-number">Table 5 </span><span class="caption-text">Definition of a Field</span><a class="headerlink" href="#linear-algebra-preliminaries-definition-of-a-field" title="Permalink to this table">#</a></caption>
+<caption><span class="caption-number">Table 5 </span><span class="caption-text">Field Axioms</span><a class="headerlink" href="#linear-algebra-preliminaries-definition-of-a-field" title="Permalink to this table">#</a></caption>
 <thead>
 <tr class="row-odd"><th class="head"><p><strong>Property</strong></p></th>
 <th class="head"><p><strong>Description</strong></p></th>
@@ -487,27 +506,29 @@ multiplicative identity.</p></li>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><strong>Well Defined (Closure)</strong></p></td>
-<td><p>For all <span class="math notranslate nohighlight">\(a, b \in \mathbb{F}\)</span>, we have <span class="math notranslate nohighlight">\(a + b \in \mathbb{F}\)</span> and
-<span class="math notranslate nohighlight">\(a \times b \in \mathbb{F}\)</span>.</p></td>
+<td><p>For all <span class="math notranslate nohighlight">\(a, b \in \mathbb{F}\)</span>, we have <span class="math notranslate nohighlight">\(a \oplus b \in \mathbb{F}\)</span> and
+<span class="math notranslate nohighlight">\(a \otimes b \in \mathbb{F}\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Commutative Law for Addition</strong></p></td>
-<td><p>For all <span class="math notranslate nohighlight">\(a, b \in \mathbb{F}\)</span>, <span class="math notranslate nohighlight">\(a + b = b + a\)</span>.</p></td>
+<td><p>For all <span class="math notranslate nohighlight">\(a, b \in \mathbb{F}\)</span>, <span class="math notranslate nohighlight">\(a \oplus b = b \oplus a\)</span>.</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Associative Law for Addition</strong></p></td>
-<td><p>For all <span class="math notranslate nohighlight">\(a, b, c \in \mathbb{F}\)</span>, <span class="math notranslate nohighlight">\((a + b) + c = a + (b + c)\)</span>.</p></td>
+<td><p>For all <span class="math notranslate nohighlight">\(a, b, c \in \mathbb{F}\)</span>,
+<span class="math notranslate nohighlight">\((a \oplus b) \oplus c = a \oplus (b \oplus c)\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Existence of the Additive Identity</strong></p></td>
 <td><p>There exists <span class="math notranslate nohighlight">\(\mathbf{0} \in \mathbb{F}\)</span> such that for all
-<span class="math notranslate nohighlight">\(a \in \mathbb{F}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{0} + a = a\)</span>.</p>
+<span class="math notranslate nohighlight">\(a \in \mathbb{F}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{0} \oplus a = a\)</span>.</p>
 <p>In other words, an additive identity for the set <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> is any element
-<span class="math notranslate nohighlight">\(e\)</span> such that for any element <span class="math notranslate nohighlight">\(x \in \mathbb{F}\)</span>, we have <span class="math notranslate nohighlight">\(e + x = x = x + e\)</span>.
+<span class="math notranslate nohighlight">\(e\)</span> such that for any element <span class="math notranslate nohighlight">\(x \in \mathbb{F}\)</span>, we have
+<span class="math notranslate nohighlight">\(e \oplus x = x = x \oplus e\)</span>.
 In familiar fields like the Real Numbers <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>, the additive identity
 is <span class="math notranslate nohighlight">\(\mathbf{0}\)</span>.</p>
 </td>
 </tr>
 <tr class="row-even"><td><p><strong>Existence of Additive Inverse</strong></p></td>
 <td><p>For every <span class="math notranslate nohighlight">\(a \in \mathbb{F}\)</span>, there exists <span class="math notranslate nohighlight">\(b \in \mathbb{F}\)</span> such that
-<span class="math notranslate nohighlight">\(a + b = 0\)</span>. We call <span class="math notranslate nohighlight">\(b\)</span> the additive
+<span class="math notranslate nohighlight">\(a \oplus b = 0\)</span>. We call <span class="math notranslate nohighlight">\(b\)</span> the additive
 inverse and denote <span class="math notranslate nohighlight">\(b\)</span> by <span class="math notranslate nohighlight">\(-a\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Commutative Law for Multiplication</strong></p></td>
@@ -518,29 +539,30 @@ inverse and denote <span class="math notranslate nohighlight">\(b\)</span> by <s
 </tr>
 <tr class="row-odd"><td><p><strong>Existence of the Multiplicative Identity</strong></p></td>
 <td><p>There exists <span class="math notranslate nohighlight">\(\mathbf{1}\in \mathbb{F}\)</span> such that
-<span class="math notranslate nohighlight">\(\mathbf{1} \times a = a\times \mathbf{1} = a\)</span> for all <span class="math notranslate nohighlight">\(a\in \mathbb{F}\)</span>.</p></td>
+<span class="math notranslate nohighlight">\(\mathbf{1} \otimes a = a\otimes \mathbf{1} = a\)</span> for all <span class="math notranslate nohighlight">\(a\in \mathbb{F}\)</span>.</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Existence of Multiplicative Inverse</strong></p></td>
 <td><p>For every non-zero <span class="math notranslate nohighlight">\(a \in \mathbb{F}\)</span>, there exists <span class="math notranslate nohighlight">\(b \in \mathbb{F}\)</span> such
-that <span class="math notranslate nohighlight">\(a \times b = 1\)</span>. Denoted as <span class="math notranslate nohighlight">\(a^{-1}\)</span>.</p></td>
+that <span class="math notranslate nohighlight">\(a \otimes b = 1\)</span>. We denote <span class="math notranslate nohighlight">\(b\)</span> as <span class="math notranslate nohighlight">\(a^{-1}\)</span>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>Distributive Law</strong></p></td>
 <td><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\times\)</span> distributes over <span class="math notranslate nohighlight">\(+\)</span> on the left: for all <span class="math notranslate nohighlight">\(a,b,c\in \mathbb{F}\)</span>,
-<span class="math notranslate nohighlight">\(a\times(b+c) = (a\times b)+(a\times c)\)</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\times\)</span> distributes over <span class="math notranslate nohighlight">\(+\)</span> on the right: for all <span class="math notranslate nohighlight">\(a,b,c\in \mathbb{F}\)</span>,
-<span class="math notranslate nohighlight">\((b+c)\times a = (b\times a)+(c\times a)\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\otimes\)</span> distributes over <span class="math notranslate nohighlight">\(\oplus\)</span> on the left: for all <span class="math notranslate nohighlight">\(a,b,c\in \mathbb{F}\)</span>,
+<span class="math notranslate nohighlight">\(a \otimes (b \oplus c) = (a \otimes b) \oplus (a \otimes c)\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\otimes\)</span> distributes over <span class="math notranslate nohighlight">\(\oplus\)</span> on the right: for all <span class="math notranslate nohighlight">\(a,b,c\in \mathbb{F}\)</span>,
+<span class="math notranslate nohighlight">\((b \oplus c) \otimes a = (b \otimes a) \oplus (c \otimes a)\)</span>.</p></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 </section>
+</div></section>
 <section id="examples">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading">#</a></h2>
 <p>Let’s look at some examples of fields as well as non-fields.</p>
 <section id="id2">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Fields</a><a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Fields</a><a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>Fields can consist of:</p>
 <ul class="simple">
 <li><p>The real numbers <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>.</p></li>
@@ -550,38 +572,44 @@ that <span class="math notranslate nohighlight">\(a \times b = 1\)</span>. Denot
 <div class="proof example admonition" id="linear-algebra-preliminaries-fields-on-the-real-numbers">
 <p class="admonition-title"><span class="caption-number">Example 1 </span> (Fields on the Real Numbers)</p>
 <section class="example-content" id="proof-content">
+<p>Here we replace <span class="math notranslate nohighlight">\(\oplus\)</span> with <span class="math notranslate nohighlight">\(+\)</span> and <span class="math notranslate nohighlight">\(\otimes\)</span> with <span class="math notranslate nohighlight">\(\times\)</span>.</p>
 <ol class="arabic simple">
 <li><p><strong>Closure</strong>:</p>
 <ul class="simple">
-<li><p><strong>Addition</strong>: If you take any two real numbers, say 2.3 and 3.7, their sum
-(6.0) is also a real number.</p></li>
-<li><p><strong>Multiplication</strong>: Similarly, if you multiply these numbers (2.3 × 3.7),
-the product (8.51) is also a real number.</p></li>
+<li><p><strong>Addition</strong>: If you take any two real numbers, say <span class="math notranslate nohighlight">\(2.3\)</span> and <span class="math notranslate nohighlight">\(3.7\)</span>, their
+sum (<span class="math notranslate nohighlight">\(6.0\)</span>) is also a real number.</p></li>
+<li><p><strong>Multiplication</strong>: Similarly, if you multiply these numbers
+(<span class="math notranslate nohighlight">\(2.3 \times 3.7\)</span>), the product (<span class="math notranslate nohighlight">\(8.51\)</span>) is also a real number.</p></li>
 </ul>
 </li>
 <li><p><strong>Commutativity</strong>:</p>
 <ul class="simple">
-<li><p><strong>Addition</strong>: 2.3 + 3.7 equals 3.7 + 2.3.</p></li>
-<li><p><strong>Multiplication</strong>: 2.3 × 3.7 equals 3.7 × 2.3.</p></li>
+<li><p><strong>Addition</strong>: <span class="math notranslate nohighlight">\(2.3 + 3.7\)</span> equals <span class="math notranslate nohighlight">\(3.7 + 2.3\)</span>.</p></li>
+<li><p><strong>Multiplication</strong>: <span class="math notranslate nohighlight">\(2.3 \times 3.7\)</span> equals <span class="math notranslate nohighlight">\(3.7 \times 2.3\)</span>.</p></li>
 </ul>
 </li>
 <li><p><strong>Associativity</strong>:</p>
 <ul class="simple">
-<li><p><strong>Addition</strong>: (2.3 + 3.7) + 1.5 equals 2.3 + (3.7 + 1.5).</p></li>
-<li><p><strong>Multiplication</strong>: (2.3 × 3.7) × 1.5 equals 2.3 × (3.7 × 1.5).</p></li>
+<li><p><strong>Addition</strong>: <span class="math notranslate nohighlight">\((2.3 + 3.7) + 1.5\)</span> equals <span class="math notranslate nohighlight">\(2.3 + (3.7 + 1.5)\)</span>.</p></li>
+<li><p><strong>Multiplication</strong>: <span class="math notranslate nohighlight">\((2.3 \times 3.7) \times 1.5\)</span> equals
+<span class="math notranslate nohighlight">\(2.3 \times (3.7
+\times 1.5)\)</span>.</p></li>
 </ul>
 </li>
-<li><p><strong>Additive Identity</strong>: The additive identity in <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> is 0. For any
-real number <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(a + 0 = a\)</span>. For example, 2.3 + 0 = 2.3.</p></li>
-<li><p><strong>Multiplicative Identity</strong>: The multiplicative identity in <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>
-is 1. For any real number <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(a × 1 = a\)</span>. For example, 2.3 × 1 = 2.3.</p></li>
+<li><p><strong>Additive Identity</strong>: The additive identity in <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> is <span class="math notranslate nohighlight">\(0\)</span>. For any
+real number <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(a + 0 = a\)</span>. For example, <span class="math notranslate nohighlight">\(2.3 + 0 = 2.3\)</span>.</p></li>
+<li><p><strong>Multiplicative Identity</strong>: The multiplicative identity in <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> is
+<span class="math notranslate nohighlight">\(1\)</span>. For any real number <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(a \times 1 = a\)</span>. For example,
+<span class="math notranslate nohighlight">\(2.3 \times 1 =
+2.3\)</span>.</p></li>
 <li><p><strong>Additive Inverse</strong>: For every real number, there is an additive inverse (or
-opposite). For 2.3, the additive inverse is -2.3, because 2.3 + (-2.3) = 0.</p></li>
+opposite). For <span class="math notranslate nohighlight">\(2.3\)</span>, the additive inverse is <span class="math notranslate nohighlight">\(-2.3\)</span>, because
+<span class="math notranslate nohighlight">\(2.3 + (-2.3) = 0\)</span>.</p></li>
 <li><p><strong>Multiplicative Inverse</strong>: For every non-zero real number, there is a
-multiplicative inverse (or reciprocal). The multiplicative inverse of 2.3 is
-<span class="math notranslate nohighlight">\(\frac{1}{2.3}\)</span> because 2.3 × <span class="math notranslate nohighlight">\(\frac{1}{2.3}\)</span> = 1.</p></li>
+multiplicative inverse (or reciprocal). The multiplicative inverse of <span class="math notranslate nohighlight">\(2.3\)</span>
+is <span class="math notranslate nohighlight">\(\frac{1}{2.3}\)</span> because <span class="math notranslate nohighlight">\(2.3 \times \frac{1}{2.3}\)</span> = 1.</p></li>
 <li><p><strong>Distributive Law</strong>: Multiplication distributes over addition. For example,
-2 × (3 + 4) equals (2 × 3) + (2 × 4).</p></li>
+<span class="math notranslate nohighlight">\(2 \times (3 + 4)\)</span> equals <span class="math notranslate nohighlight">\((2 \times 3) + (2 \times 4)\)</span>.</p></li>
 </ol>
 </section>
 </div><div class="warning admonition">
@@ -593,7 +621,7 @@ is a field, you must show that all real numbers satisfy the field axioms.</p>
 </div>
 </section>
 <section id="non-fields">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Non-Fields</a><a class="headerlink" href="#non-fields" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Non-Fields</a><a class="headerlink" href="#non-fields" title="Permalink to this heading">#</a></h3>
 <p>Non-fields include:</p>
 <ul class="simple">
 <li><p>The natural numbers <span class="math notranslate nohighlight">\(\mathbb{N}\)</span>.</p></li>
@@ -611,15 +639,39 @@ inverses.</p>
 </ul>
 </section>
 <section id="binary-field-mathbb-f-2">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a><a class="headerlink" href="#binary-field-mathbb-f-2" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a><a class="headerlink" href="#binary-field-mathbb-f-2" title="Permalink to this heading">#</a></h3>
 <p>A special field is the binary field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span>. It consists of the elements
 <span class="math notranslate nohighlight">\(\{0, 1\}\)</span>, where <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span> are the additive and multiplicative identities,
 respectively. The binary field is fundamental in digital logic and computer
 science.</p>
 </section>
 </section>
+<section id="the-importance-of-a-field-in-vector-spaces-and-deep-learning">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">The Importance of a Field in Vector Spaces and Deep Learning</a><a class="headerlink" href="#the-importance-of-a-field-in-vector-spaces-and-deep-learning" title="Permalink to this heading">#</a></h2>
+<p>Vector spaces, their subspaces, and the linear transformations within these
+spaces are foundational concepts in deep learning. A prominent example is the
+attention mechanism, widely recognized in deep learning. This mechanism encodes
+sequences of words into a vector space or subspace, with each word represented
+as a vector in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional space, denoted as <span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>. These
+vectors, known as embeddings, encapsulate both the semantic and contextual
+information about words in a sequence. The effectiveness of this representation
+hinges on the vector space being well-defined, a state that is contingent on the
+precise definition and consistent application of operations within the space.
+This is where the role of a field becomes crucial.</p>
+<p>This is where the concept of a field becomes critical. A field provides a
+structured set of scalars with which vectors can be scaled and combined. The
+operations of vector addition and scalar multiplication, fundamental to any
+vector space, rely on the properties of a field—such as closure, associativity,
+and distributivity—to ensure their consistency and reliability. These properties
+guarantee that any combination or transformation of vectors results in another
+vector within the same space, a necessity for maintaining the integrity of
+operations in machine learning and deep learning algorithms. We can say with
+certainty that the concept of vector spaces and its properites underlie the
+foundation of all machine learning and deep learning algorithms
+<span id="id3">[<a class="reference internal" href="../../bibliography.html#id4" title="Marc Peter Deisenroth, A. Aldo Faisal, and Cheng Soon Ong. Mathematics for Machine Learning. Cambridge University Press, 2020. URL: \url{https://mml-book.github.io/}.">Deisenroth <em>et al.</em>, 2020</a>]</span>.</p>
+</section>
 <section id="summary">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Permalink to this heading">#</a></h2>
 <p>The content provides a comprehensive overview of fields in mathematics,
 emphasizing their significance in linear algebra and machine learning. It
 defines a field as a structured set with specific rules for operations like
@@ -627,11 +679,18 @@ addition and multiplication, essential for consistency in mathematical
 procedures. Examples of fields, such as real numbers, complex numbers, and
 rational numbers, are discussed to illustrate their properties and applications.
 In contrast, non-fields like natural numbers and integers are highlighted for
-lacking certain field properties. Additionally, the binary field
-<span class="math notranslate nohighlight">\(\mathbb{F}\_2\)</span>, crucial in digital logic and computer science, is introduced.
-The summary underscores the importance of fields in ensuring logical and
-consistent mathematical operations, fundamental to various scientific and
-technological disciplines.</p>
+lacking certain field properties.</p>
+<p>In what follows, we will focus on the field of real numbers <span class="math notranslate nohighlight">\(\mathbb{R}^{D}\)</span>,
+where <span class="math notranslate nohighlight">\(D\)</span> is the dimension of the vector space. This is because most machine
+learning algorithms are defined over the real numbers
+<span id="id4">[<a class="reference internal" href="../../bibliography.html#id4" title="Marc Peter Deisenroth, A. Aldo Faisal, and Cheng Soon Ong. Mathematics for Machine Learning. Cambridge University Press, 2020. URL: \url{https://mml-book.github.io/}.">Deisenroth <em>et al.</em>, 2020</a>]</span>.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Deisenroth, M. P., Faisal, A. A., &amp; Ong, C. S. (2020). <em>Mathematics for
+Machine Learning</em>. Cambridge University Press. (pp. 17-18).</p></li>
+</ul>
 <hr class="footnotes docutils" />
 <aside class="footnote brackets" id="well-defined" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
@@ -712,7 +771,9 @@ technological disciplines.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-field-mathbb-f-2">Binary Field <span class="math notranslate nohighlight">\(\mathbb{F}_2\)</span></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-importance-of-a-field-in-vector-spaces-and-deep-learning">The Importance of a Field in Vector Spaces and Deep Learning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
 
