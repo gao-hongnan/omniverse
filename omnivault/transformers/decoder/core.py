@@ -1,4 +1,7 @@
+from typing import List, Optional
+
 import torch
+from torch import nn
 
 from omnivault.transformers.decoder.base import BaseDecoder, BaseDecoderBlock
 from omnivault.transformers.modules.attention.core import MultiHeadedAttention
@@ -14,8 +17,8 @@ class GPTDecoderBlock(BaseDecoderBlock):
     encoder-decoder cross-attention.
     """
 
-    def __init__(self, config: ModelConfig) -> None:
-        super().__init__()
+    def __init__(self, config) -> None:
+        super().__init__(config)
         # fmt: off
         self.masked_self_attention_mha = MultiHeadedAttention(**config.decoder.masked_self_attention_mha.__dict__)
         # self.encoder_decoder_cross_attention_mha = MultiHeadedAttention(**config.decoder.encoder_decoder_cross_attention_mha)
@@ -28,7 +31,9 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # self.feed_forward.register_forward_hook(forward_hook)
         # fmt: on
 
-    def forward(self, z: torch.Tensor, target_masks: torch.BoolTensor) -> torch.Tensor:
+    def forward(
+        self, z: torch.Tensor,  target_masks: Optional[torch.BoolTensor] = None
+    ) -> torch.Tensor:
         """
         Parameters
         ----------
@@ -56,8 +61,8 @@ class GPTDecoderBlock(BaseDecoderBlock):
 
 
 class GPTDecoder(BaseDecoder):
-    def __init__(self, config: ModelConfig):
-        super().__init__()
+    def __init__(self, config):
+        super().__init__(config)
         # fmt: off
         self.d_model       : int                   = config.d_model
         self.tok_embed     : nn.Embedding          = nn.Embedding(config.vocab_size, config.d_model)
@@ -71,16 +76,11 @@ class GPTDecoder(BaseDecoder):
 
         self._reset_parameters()
 
-    def _reset_parameters(self) -> None:
-        for p in self.parameters():
-            if p.dim() > 1:
-                nn.init.xavier_uniform_(p)
-
     def forward(
         self,
         input_tokens: torch.LongTensor,
-        target_padding_masks: torch.BoolTensor,
-        future_masks: torch.BoolTensor,
+        target_padding_masks: Optional[torch.BoolTensor] = None,
+        future_masks: Optional[torch.BoolTensor] = None,
     ) -> torch.FloatTensor:
         """
         Notations
@@ -118,7 +118,6 @@ class GPTDecoder(BaseDecoder):
         # fmt: off
         seq_len     : int              = input_tokens.size(1)
         target_masks: torch.BoolTensor = torch.logical_and(target_padding_masks, future_masks)
-
 
         z = self.tok_embed(input_tokens) # * math.sqrt(self.d_model) for better optimization landscape
         z = z + self.pos_embed[:, :seq_len, :]
