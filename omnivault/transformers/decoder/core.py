@@ -32,7 +32,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # fmt: on
 
     def forward(
-        self, z: torch.Tensor,  target_masks: Optional[torch.BoolTensor] = None
+        self, z: torch.Tensor, target_masks: Optional[torch.BoolTensor] = None
     ) -> torch.Tensor:
         """
         Parameters

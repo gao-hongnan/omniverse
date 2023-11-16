@@ -38,7 +38,6 @@ class BaseDecoderBlock(nn.Module):
     def forward(
         self,
         z: torch.Tensor,  # that's tgt in torch code base
-
         encoder_hidden_states: Optional[
             torch.Tensor
         ] = None,  # that's memory in torch code base
