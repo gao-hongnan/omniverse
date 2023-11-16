@@ -223,17 +223,16 @@ hinges on the vector space being well-defined, a state that is contingent on the
 precise definition and consistent application of operations within the space.
 This is where the role of a field becomes crucial.
 
-This is where the concept of a field becomes critical. A field provides a
-structured set of scalars with which vectors can be scaled and combined. The
-operations of vector addition and scalar multiplication, fundamental to any
-vector space, rely on the properties of a field—such as closure, associativity,
-and distributivity—to ensure their consistency and reliability. These properties
-guarantee that any combination or transformation of vectors results in another
-vector within the same space, a necessity for maintaining the integrity of
-operations in machine learning and deep learning algorithms. We can say with
-certainty that the concept of vector spaces and its properites underlie the
-foundation of all machine learning and deep learning algorithms
-{cite}`deisenroth2020mathematics`.
+A field provides a structured set of scalars with which vectors can be scaled
+and combined. The operations of vector addition and scalar multiplication,
+fundamental to any vector space, rely on the properties of a field—such as
+closure, associativity, and distributivity—to ensure their consistency and
+reliability. These properties guarantee that any combination or transformation
+of vectors results in another vector within the same space, a necessity for
+maintaining the integrity of operations in machine learning and deep learning
+algorithms. We can say with certainty that the concept of vector spaces and its
+properites underlie the foundation of all machine learning and deep learning
+algorithms {cite}`deisenroth2020mathematics`.
 
 ## Summary
 
