@@ -150,7 +150,9 @@ one coordinate system, $\mathbf{v}$ might have coordinates $(x, y)$, but
 in a rotated coordinate system, its coordinates could appear different, say
 $(x', y')$. Despite this change in representation, the vector $\mathbf{v}$
 itself has not changed; it still has the same length and points in the same
-direction in space. This is perfectly illustrated in {numref}`01-vector-vector-versus-coordinate`.
+direction in space. This is perfectly illustrated in {numref}`01-vector-vector-versus-coordinate`,
+where the three vectors have different coordinates but are equivalent because
+they have the same orientation (direction) and length (magnitude).
 
 The concept of **_basis_** is central to this idea. A basis provides a frame
 of reference for describing vectors. Changing the basis is akin to changing
@@ -164,23 +166,34 @@ This idea is fundamental in understanding how vectors behave in different
 coordinate systems and underlines their abstract nature, independent of any
 particular representation.
 
-[^1]:
-    [What does it mean for a vector to remain invariant under coordinate transformation?](https://www.physicsforums.com/threads/what-does-it-mean-for-a-vector-to-remain-invariant-under-coordinate-transformation.517681/)
-
-### Algebraic Definition (Vectors)
+### Algebraic Definition
 
 ```{prf:definition} Algebraic Definition of a Vector
 :label: 01-vector-algebraic-definition
 
-For a field $\mathbb{F}$ and a positive integer $n$, a **vector** $\mathbf{v}$ with $n$ entries
-$v_1, v_2, \cdots, v_n$, each $v_i$ belonging to $\mathbb{F}$, is called an $n$-vector
-over $\mathbb{F}$. In particular, $\mathbf{v}$ is **ordered** and can be represented
-mathematically as:
+In the context of linear algebra, a **vector** $\mathbf{v}$ within an
+$D$-dimensional space over a field $\mathbb{F}$ is defined as an ordered
+$D$-tuple of elements from $\mathbb{F}$. Specifically, if $\mathbb{F}$ is a
+field (such as the real numbers $\mathbb{R}$ or the complex numbers
+$\mathbb{C}$) and $D$ is a positive integer, then a vector $\mathbf{v}$ with $D$
+entries $v_1, v_2, \cdots, v_D$, where each $v_d$ belongs to $\mathbb{F}$, is
+termed an _$D$-vector_[^why-D] over $\mathbb{F}$.
 
-$$\mathbf{v} = \{(v_1, v_2, \cdots, v_n) ~|~ v_i \in \mathbb{F}\}$$
+Mathematically, $\mathbf{v}$ is represented as:
 
-The set of $n$-vectors over $\mathbb{F}$ is denoted $\mathbb{F}^n$. We will deal with this more
-in vector spaces, just keep a mental note here.
+$$
+\mathbf{v} = (v_1, v_2, \cdots, v_D), \text{ where } v_d \in \mathbb{F} \text{ for each } d = 1, 2, \cdots, D
+$$
+
+This notation emphasizes that $\mathbf{v}$ is an ordered collection of elements,
+where the order of these elements is crucial to the definition of the vector.
+The set of all such $D$-vectors over $\mathbb{F}$ is denoted by $\mathbb{F}^D$.
+
+In the context of **vector spaces**, which will be explored in more detail
+later, these $D$-vectors form the fundamental elements of the space, adhering to
+specific rules of addition and scalar multiplication consistent with the
+properties of the field $\mathbb{F}$. This algebraic perspective is essential in
+understanding the structure and operations within vector spaces.
 ```
 
 ```{code-cell} ipython3
@@ -221,13 +234,18 @@ plt.show()
 
 - By definition of the geometrical interpretation of vectors, two vectors are
   **equal if and only if they have the same magnitude in the same direction**,
-  which is why even though figure 2.3's 3 vectors look visually different, but
+  which is why even though {numref}`01-vector-vector-versus-coordinate`'s 3 vectors look visually different, but
   are actually the same vector.
-- By definition of the algebraical interpretation of vectors, two vectors $\v_1$
-  and $\v_2$ are **equal if and only if each elements of** $\v_1$ is equal to
-  $\v_2$.
+- By definition of the algebraical interpretation of vectors, two vectors $\mathbf{v}_1$
+  and $\mathbf{v}_2$ are **equal if and only if each elements of** $\mathbf{v}_1$ is equal to
+  $\mathbf{v}_2$.
 ```
 
 [^vector-is-invariant-under-coordinate-transformation]:
     See
     [What does it mean for a vector to remain invariant under coordinate transformation?](https://www.physicsforums.com/threads/what-does-it-mean-for-a-vector-to-remain-invariant-under-coordinate-transformation.517681/)
+
+[^why-D]:
+    The choice of $D$ to represent dimensionality of a vector is chosen on
+    purpose where $D$ is a common notation in deep learning to represent the
+    dimensionality of a vector space in which the embedding resides.
