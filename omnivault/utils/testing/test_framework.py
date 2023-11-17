@@ -7,8 +7,10 @@ class TestFramework:
     """
     A simple testing framework for executing tests with descriptions.
 
-    Attributes:
-        tests (List[Callable]): A list to store the test functions.
+    Attributes
+    ----------
+    tests: (List[Callable])
+        A list to store the test functions.
     """
 
     def __init__(self) -> None:
@@ -19,11 +21,15 @@ class TestFramework:
         """
         Decorator for describing a test.
 
-        Parameters:
-            description (str): The description of the test.
+        Parameters
+        ----------
+        description: str
+            The description of the test.
 
-        Returns:
-            Callable: A wrapped function with a description.
+        Returns
+        -------
+        wrapper: Callable
+            A wrapped function with a description.
         """
 
         def wrapper(func: Callable) -> None:
@@ -39,11 +45,15 @@ class TestFramework:
         """
         Decorator for running a single test.
 
-        Parameters:
-            description (str): Description of what the test should do.
+        Parameters
+        ----------
+        description: str
+            Description of what the test should do.
 
-        Returns:
-            Callable: A wrapped function that runs the test.
+        Returns
+        -------
+        wrapper: Callable
+            A wrapped function that runs the test.
         """
 
         def wrapper(func: Callable) -> None:
@@ -68,9 +78,12 @@ class TestFramework:
 
         Parameters
         ----------
-        actual (Any): The actual value.
-        expected (Any): The expected value.
-        message (str): The message to display if the assertion fails.
+        actual  : Any
+            The actual value.
+        expected: Any
+            The expected value.
+        message : str
+            The message to display if the assertion fails.
 
         Raises
         ------

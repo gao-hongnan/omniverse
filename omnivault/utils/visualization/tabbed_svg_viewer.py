@@ -7,14 +7,21 @@ from IPython.display import SVG, display
 def create_tabbed_svg_viewer(
     image_paths: List[str], tab_titles: List[str]
 ) -> ipywidgets.Tab:
-    """Create a tabbed image viewer widget.
+    """
+    Create a tabbed image viewer widget.
 
-    Args:
-        image_paths: List of image paths.
-        tab_titles: List of titles for the tabs.
+    Parameters
+    ----------
+    image_paths: List[str]
+        A list containing the paths to the images to be displayed in the viewer.
+    tab_titles : List[str]
+        A list containing the titles for each tab in the viewer.
 
-    Returns:
-        A tab widget.
+    Returns
+    -------
+    ipywidgets.Tab
+        An IPython widget Tab instance with each tab containing an image from the
+        provided paths and titled according to the `tab_titles` list.
     """
     if len(image_paths) != len(tab_titles):
         raise ValueError("image_paths and tab_titles must have the same length.")

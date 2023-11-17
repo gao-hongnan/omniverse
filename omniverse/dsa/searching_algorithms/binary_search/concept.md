@@ -38,7 +38,7 @@ from typing import Iterable, TypeVar, Optional
 import sys
 from pathlib import Path
 
-def find_root_dir(current_path: Path, marker: str) -> Optional[Path]:
+def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
     Find the root directory by searching for a directory or file that serves as a
     marker.

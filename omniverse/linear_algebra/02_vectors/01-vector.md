@@ -37,7 +37,7 @@ import numpy as np
 import sys
 from pathlib import Path
 
-def find_root_dir(current_path: Path, marker: str) -> Optional[Path]:
+def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
     Find the root directory by searching for a directory or file that serves as a
     marker.
@@ -60,13 +60,17 @@ def find_root_dir(current_path: Path, marker: str) -> Optional[Path]:
             return parent
     return None
 
-current_file_path = Path("__file__")
-root_dir          = find_root_dir(current_file_path, marker='omnivault')
+root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
-    from omnivault.linear_algebra.plot import VectorPlotter
+    from omnivault.linear_algebra.plotter import (
+        VectorPlotter,
+        Vector,
+        add_vectors_to_plotter,
+        add_text_annotations,
+    )
 else:
     raise ImportError("Root directory not found.")
 
@@ -108,12 +112,47 @@ in space**:
 > $\mathbf{v} = [1, -2]$.
 ```
 
-```{figure} https://storage.googleapis.com/reighns/reighns_ml_projects/docs/linear_algebra/linear_algebra_theory_intuition_code_chap2_fig_2.3.svg
+```{code-cell} ipython3
+:tags: [hide-input, remove-output]
+
+# Create plot using VectorPlotter
+fig, ax = plt.subplots(figsize=(9, 9))
+plotter = VectorPlotter(
+    fig=fig,
+    ax=ax,
+    ax_kwargs={
+        'set_xlim': {'left': -5, 'right': 5},
+        'set_ylim': {'bottom': -5, 'top': 5},
+        'set_xlabel': {'xlabel': 'X-axis', 'fontsize': 12},
+        'set_ylabel': {'ylabel': 'Y-axis', 'fontsize': 12},
+        'set_title': {'label': 'Vector Plot with Annotations', 'fontsize': 16},
+    }
+)
+
+# Define vectors
+vector1 = Vector(origin=(0, 0), direction=(1, -2), color="r", label="v1")
+vector2 = Vector(origin=(2, 2), direction=(1, -2), color="g", label="v2")
+vector3 = Vector(origin=(-2, -2), direction=(1, -2), color="b", label="v3")
+
+# Add vectors and annotations to plotter
+for vector in [vector1, vector2, vector3]:
+    plotter.add_vector(vector)
+    annotation_text = f"{vector.label}: ({vector.direction[0]}, {vector.direction[1]})"
+    plotter.add_text(vector.origin[0] + vector.direction[0]/2,
+                     vector.origin[1] + vector.direction[1]/2,
+                     annotation_text, fontsize=12, color=vector.color)
+
+# Plot and show
+plotter.plot()
+plotter.save("./assets/01-vector-vector-versus-coordinate.svg")
+```
+
+```{figure} ./assets/01-vector-vector-versus-coordinate.svg
 ---
 name: 01-vector-vector-versus-coordinate
 ---
 
-3 of the same vectors with different starting coordinates; By Hongnan G.
+Three of the same vectors with different starting coordinates; By Hongnan G.
 ```
 
 ### Vector is Invariant under Coordinate Transformation
@@ -197,34 +236,47 @@ understanding the structure and operations within vector spaces.
 ```
 
 ```{code-cell} ipython3
-fig, ax = plt.subplots(figsize = (9,9))
+:tags: [hide-input, remove-output]
 
-vec = np.array([[[0, 0, 4, 7]],
-               [[0, 0, 8, 4]],
-               [[0, 0, 12, 11]],
-               [[4, 7, 8, 4]],
-               [[8, 4, 4, 7]]])
-color = ['r','b','g','b','r']
+# Create plot using VectorPlotter
+fig, ax = plt.subplots(figsize=(9, 9))
 
-for i in range(vec.shape[0]):
-    X,Y,U,V = zip(*vec[i,:,:])
-    ax.quiver(X, Y, U, V, angles='xy', scale_units='xy', color = color[i], scale=1, alpha = .6)
+plotter = VectorPlotter(
+    fig=fig,
+    ax=ax,
+    ax_kwargs={
+        "set_xlim": {"left": 0, "right": 15},
+        "set_ylim": {"bottom": 0, "top": 15},
+        "set_xlabel": {"xlabel": "x-axis", "fontsize": 16},
+        "set_ylabel": {"ylabel": "y-axis", "fontsize": 16},
+        "set_title": {"label": "Vector Addition", "size": 18},
+    },
+)
 
-ax.set_xlim([0, 15])
-ax.set_ylim([0, 15])
-ax.set_xlabel('x-axis', fontsize =16)
-ax.set_ylabel('y-axis', fontsize =16)
-ax.grid()
 
-for i in range(3):
-    ax.text(x = vec[i,0,2], y = vec[i,0,3], s = '(%.0d, %.0d)' %(vec[i,0,2],vec[i,0,3]), fontsize = 16)
+# Define vectors and colors
+vectors = [
+    Vector(origin=(0, 0), direction=(4, 7), color="r"),
+    Vector(origin=(0, 0), direction=(8, 4), color="b"),
+    Vector(origin=(0, 0), direction=(12, 11), color="g"),
+    Vector(origin=(4, 7), direction=(8, 4), color="b"),
+    Vector(origin=(8, 4), direction=(4, 7), color="r"),
+]
 
-ax.text(x= vec[0,0,2]/2, y = vec[0,0,3]/2, s= '$u$', fontsize = 16)
-ax.text(x= 8, y = 9, s= '$v$', fontsize = 16)
-ax.text(x= 6, y = 5.5, s= '$u+v$', fontsize = 16)
+add_vectors_to_plotter(plotter, vectors)
+add_text_annotations(plotter, vectors)
 
-ax.set_title('Vector Addition', size = 18)
-plt.show()
+# Plot and show
+plotter.plot()
+plotter.save("./assets/01-vector-addition.svg")
+```
+
+```{figure} ./assets/01-vector-addition.svg
+---
+name: 01-vector-vector-addition
+---
+
+Vector addition; By Hongnan G.
 ```
 
 ## Equality of Vectors
