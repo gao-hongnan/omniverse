@@ -15,7 +15,7 @@ kernelspec:
   name: python3
 ---
 
-# Vector and Its Operations
+# Vector and Its Definition
 
 ```{contents}
 :local:
@@ -29,13 +29,13 @@ kernelspec:
 from __future__ import annotations
 
 import math
-from IPython.display import display
-from typing import Sequence, TypeVar, Optional
-import matplotlib.pyplot as plt
-import numpy as np
-
 import sys
 from pathlib import Path
+from typing import Optional, Sequence, TypeVar
+
+import matplotlib.pyplot as plt
+import numpy as np
+from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
@@ -88,7 +88,7 @@ use_svg_display()
 ### Geometric Definition
 
 ```{prf:definition} Geometric Definition of a Vector
-:label: 01-vector-geometric-definition
+:label: 01-vector-definition-geometric-definition
 
 A **vector** is a mathematical object that possesses both **magnitude** and
 **direction**. Geometrically, it is represented as a directed line segment,
@@ -97,19 +97,20 @@ space signifies its direction.
 ```
 
 ```{prf:example} Vector versus Coordinate
-:label: 01-vector-vector-versus-coordinate
+:label: 01-vector-definition-vector-versus-coordinate
 
 A key distinction in linear algebra is between a **vector** and a **coordinate
 in space**:
 
-> For example, in diagram 2.3, while the three coordinates (circles) are
-> distinct, the three vectors (lines) are equivalent. This equivalence is
-> because each vector represents a movement of 1 unit to the right and 2 units
-> down in a two-dimensional space, denoted conventionally as a vector
-> $\mathbf{v} = [1, -2]$ (bolded or $\vec{v}$). When positioned at the origin, the head of this vector
-> aligns with the coordinate point $(1, -2)$. The takeaway is that all 3 vectors
-> have the same magnitude and direction and can be represented by the vector
-> $\mathbf{v} = [1, -2]$.
+The three coordinates (tail of the line segment) in
+{numref}`01-vector-definition-vector-versus-coordinate` are distinct, the three
+vectors (lines) are equivalent. This equivalence is because each vector
+represents a movement of 1 unit to the right and 2 units down in a
+two-dimensional space, denoted conventionally as a vector $\mathbf{v} = [1, -2]$
+(bolded or $\vec{v}$). When positioned at the origin, the head of this vector
+aligns with the coordinate point $(1, -2)$. The takeaway is that all 3 vectors
+have the same magnitude and direction and can be represented by the vector
+$\mathbf{v} = [1, -2]$.
 ```
 
 ```{code-cell} ipython3
@@ -144,12 +145,12 @@ for vector in [vector1, vector2, vector3]:
 
 # Plot and show
 plotter.plot()
-plotter.save("./assets/01-vector-vector-versus-coordinate.svg")
+plotter.save("./assets/01-vector-definition-vector-versus-coordinate.svg")
 ```
 
-```{figure} ./assets/01-vector-vector-versus-coordinate.svg
+```{figure} ./assets/01-vector-definition-vector-versus-coordinate.svg
 ---
-name: 01-vector-vector-versus-coordinate
+name: 01-vector-definition-vector-versus-coordinate
 ---
 
 Three of the same vectors with different starting coordinates; By Hongnan G.
@@ -176,7 +177,7 @@ $\mathbf{v}$ itself is an abstract entity, distinct from how it's represented in
 any particular coordinate system.
 
 ```{prf:theorem} Vector is Invariant under Coordinate Transformation
-:label: 01-vector-is-invariant-under-coordinate-transformation
+:label: 01-vector-definition-is-invariant-under-coordinate-transformation
 
 A given vector, $\mathbf{v}$, remains the same entity, irrespective of the
 coordinate system used to describe it. This property is referred to as the
@@ -189,7 +190,7 @@ one coordinate system, $\mathbf{v}$ might have coordinates $(x, y)$, but
 in a rotated coordinate system, its coordinates could appear different, say
 $(x', y')$. Despite this change in representation, the vector $\mathbf{v}$
 itself has not changed; it still has the same length and points in the same
-direction in space. This is perfectly illustrated in {numref}`01-vector-vector-versus-coordinate`,
+direction in space. This is perfectly illustrated in {numref}`01-vector-definition-vector-versus-coordinate`,
 where the three vectors have different coordinates but are equivalent because
 they have the same orientation (direction) and length (magnitude).
 
@@ -208,7 +209,7 @@ particular representation.
 ### Algebraic Definition
 
 ```{prf:definition} Algebraic Definition of a Vector
-:label: 01-vector-algebraic-definition
+:label: 01-vector-definition-algebraic-definition
 
 In the context of linear algebra, a **vector** $\mathbf{v}$ within an
 $D$-dimensional space over a field $\mathbb{F}$ is defined as an ordered
@@ -228,6 +229,12 @@ This notation emphasizes that $\mathbf{v}$ is an ordered collection of elements,
 where the order of these elements is crucial to the definition of the vector.
 The set of all such $D$-vectors over $\mathbb{F}$ is denoted by $\mathbb{F}^D$.
 
+This means:
+
+$$
+\mathbb{F}^D = \{ (v_1, v_2, \cdots, v_D) \mid v_d \in \mathbb{F} \text{ for each } d = 1, 2, \cdots, D \}
+$$
+
 In the context of **vector spaces**, which will be explored in more detail
 later, these $D$-vectors form the fundamental elements of the space, adhering to
 specific rules of addition and scalar multiplication consistent with the
@@ -235,63 +242,149 @@ properties of the field $\mathbb{F}$. This algebraic perspective is essential in
 understanding the structure and operations within vector spaces.
 ```
 
-```{code-cell} ipython3
-:tags: [hide-input, remove-output]
+## Vector Orientation
 
-# Create plot using VectorPlotter
-fig, ax = plt.subplots(figsize=(9, 9))
+In the context of linear algebra and its applications, the orientation of
+vectors is a fundamental concept, typically categorized into **column vectors**
+and **row vectors**.
 
-plotter = VectorPlotter(
-    fig=fig,
-    ax=ax,
-    ax_kwargs={
-        "set_xlim": {"left": 0, "right": 15},
-        "set_ylim": {"bottom": 0, "top": 15},
-        "set_xlabel": {"xlabel": "x-axis", "fontsize": 16},
-        "set_ylabel": {"ylabel": "y-axis", "fontsize": 16},
-        "set_title": {"label": "Vector Addition", "size": 18},
-    },
-)
+- **Column Vector**: A column vector $\mathbf{v}$ in a $D$-dimensional real
+  vector space, denoted as $\mathbf{v} \in \mathbb{R}^{D}$, is defined as a
+  $D \times 1$ matrix. Each element of this vector is a real number, and the
+  vector is represented as:
 
+  $$
+  \mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}_{D \times 1}
+  $$
 
-# Define vectors and colors
-vectors = [
-    Vector(origin=(0, 0), direction=(4, 7), color="r"),
-    Vector(origin=(0, 0), direction=(8, 4), color="b"),
-    Vector(origin=(0, 0), direction=(12, 11), color="g"),
-    Vector(origin=(4, 7), direction=(8, 4), color="b"),
-    Vector(origin=(8, 4), direction=(4, 7), color="r"),
-]
+  where $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
+  $_{D \times 1}$ emphasizes that $\mathbf{v}$ is a matrix with $D$ rows and 1
+  column.
 
-add_vectors_to_plotter(plotter, vectors)
-add_text_annotations(plotter, vectors)
+- **Row Vector**: Similarly, a row vector $\mathbf{v}$ in $\mathbb{R}^{D}$ is
+  defined as a $1 \times D$ matrix. It is the transpose of a column vector and
+  is represented as:
 
-# Plot and show
-plotter.plot()
-plotter.save("./assets/01-vector-addition.svg")
+  $$
+  \mathbf{v} =
+  \begin{bmatrix}
+  v_1 & v_2 & \cdots & v_D
+  \end{bmatrix}_{1 \times D}
+  $$
+
+  with $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
+  $_{1 \times D}$ indicates that $\mathbf{v}$ is a matrix with 1 row and $D$
+  columns.
+
+```{prf:remark} Standard Representation of Vectors
+:label: 01-vector-definition-column-vector-is-the-standard-representation
+
+In most contexts within linear algebra and its applications, the standard
+representation of a vector $\mathbf{v}$ is as a column vector. This convention
+aligns with the typical matrix multiplication rules where a column vector can be
+viewed as a matrix with a single column. Unless explicitly stated otherwise,
+vectors are assumed to be column vectors in mathematical discussions and
+computations.
 ```
 
-```{figure} ./assets/01-vector-addition.svg
----
-name: 01-vector-vector-addition
----
+```{code-cell} ipython3
+# array, no orientation
+v = np.array([1, 2, 3])
+print(f"v: {v}")
+print(f"v shape: {v.shape}")
 
-Vector addition; By Hongnan G.
+# col. vector, note that the shape is (3, 1), means a 3 by 1 vector
+col_v = np.array([[1], [2], [3]])
+print(f"col_v: \n{col_v}")
+print(f"col_v shape: {col_v.shape}")
+
+# row vector, note that the shape is (1, 3), means a 1 by 3 vector
+row_v = np.array([[1, 2, 3]])
+print(f"row_v: {row_v}")
+print(f"row_v shape: {row_v.shape}")
 ```
 
 ## Equality of Vectors
 
 ```{prf:definition} Equality of Vectors
-:label: 01-vector-equality-of-vectors
+:label: 01-vector-definition-equality-of-vectors
 
-- By definition of the geometrical interpretation of vectors, two vectors are
-  **equal if and only if they have the same magnitude in the same direction**,
-  which is why even though {numref}`01-vector-vector-versus-coordinate`'s 3 vectors look visually different, but
-  are actually the same vector.
-- By definition of the algebraical interpretation of vectors, two vectors $\mathbf{v}_1$
-  and $\mathbf{v}_2$ are **equal if and only if each elements of** $\mathbf{v}_1$ is equal to
-  $\mathbf{v}_2$.
+- **Geometric Perspective**: In the context of the geometric interpretation of
+  vectors, two vectors $\mathbf{u}$ and $\mathbf{v}$ are considered **equal** if
+  and only if they have identical magnitudes and directions. This definition
+  implies that vectors are _free vectors_, meaning their position in space is
+  irrelevant to their definition. Consequently, two vectors that appear
+  different in terms of their starting points but have the same length and
+  direction (orientation) are in fact the same vector geometrically. This is
+  illustrated by the example in
+  {numref}`01-vector-definition-vector-versus-coordinate`, where three vectors
+  may visually appear distinct but are geometrically equivalent.
+
+- **Algebraic Perspective**: From the algebraic viewpoint, consider two vectors
+  $\mathbf{v}$ and $\mathbf{w}$ in an $D$-dimensional space over a field
+  $\mathbb{F}$, represented as column vectors:
+
+  $$
+  \mathbf{v} = \begin{bmatrix} v_{1} \\ v_{2} \\ \vdots \\ v_{D} \end{bmatrix}, \quad
+  \mathbf{w} = \begin{bmatrix} w_{1} \\ w_{2} \\ \vdots \\ w_{D} \end{bmatrix}.
+  $$
+
+  These vectors are **equal** if and only if each corresponding element of
+  $\mathbf{v}$ is equal to the corresponding element of $\mathbf{w}$.
+  Mathematically, this is expressed as:
+
+  $$
+  v_{d} = w_{d} \quad \text{for all} \quad d \in \{1, 2, \cdots, D\}.
+  $$
+
+  This definition emphasizes the ordered nature of vectors in algebraic terms,
+  where equality is established component-wise.
 ```
+
+## Transpose of a Vector
+
+```{prf:definition} Transpose of a Vector
+:label: 01-vector-definition-transpose-of-a-vector
+
+We revisit the concept of **transpose** from the perspective of column and row
+vectors. The **transpose** of a vector $\mathbf{v}$ is a fundamental operation
+that converts a row vector to a column vector and vice versa.
+
+- **Column Vector**: A column vector in $D$-dimensional space, denoted as
+  $\mathbf{v} \in \mathbb{R}^D$, is represented as a $D \times 1$ matrix (a
+  matrix with $D$ rows and 1 column). It is defined as:
+
+  $$
+  \mathbf{v} = \begin{bmatrix} v_{1} \\ v_{2} \\ \vdots \\ v_{D} \end{bmatrix}.
+  $$
+
+  Here, $v_{i}$ represents the $i$-th element of the vector $\mathbf{v}$, where
+  $i \in \{1, 2, \ldots, D\}$.
+
+- **Row Vector**: A row vector is the transpose of a column vector. The
+  transpose of vector $\mathbf{v}$, denoted as $\mathbf{v}^T$, is a $1 \times D$
+  matrix (a matrix with 1 row and $D$ columns). It is represented as:
+  $$
+  \mathbf{v}^T = \begin{bmatrix} v_{1} & v_{2} & \cdots & v_{D} \end{bmatrix}.
+  $$
+  The operation of transposition changes the orientation of the vector from
+  vertical to horizontal.
+```
+
+### Properties of Transpose
+
+1. **Double Transpose**: The transpose of the transpose of a vector returns the
+   original vector, i.e., $(\mathbf{v}^T)^T = \mathbf{v}$.
+
+2. **Transpose of a Sum**: The transpose of a sum of two vectors is equal to the
+   sum of their transposes, i.e.,
+   $(\mathbf{u} + \mathbf{v})^T = \mathbf{u}^T + \mathbf{v}^T$ for any vectors
+   $\mathbf{u}, \mathbf{v} \in \mathbb{R}^D$.
+
+3. **Transpose of Scalar Multiplication**: The transpose of a scalar multiple of
+   a vector is the scalar multiple of the transpose of the vector, i.e.,
+   $(c\mathbf{v})^T = c\mathbf{v}^T$ for any scalar $c$ and vector
+   $\mathbf{v} \in \mathbb{R}^D$.
 
 [^vector-is-invariant-under-coordinate-transformation]:
     See
