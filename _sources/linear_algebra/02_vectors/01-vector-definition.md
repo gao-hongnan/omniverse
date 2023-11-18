@@ -386,18 +386,20 @@ that converts a row vector to a column vector and vice versa.
   matrix with $D$ rows and 1 column). It is defined as:
 
   $$
-  \mathbf{v} = \begin{bmatrix} v_{1} \\ v_{2} \\ \vdots \\ v_{D} \end{bmatrix}.
+  \mathbf{v} = \begin{bmatrix} v_{1} \\ v_{2} \\ \vdots \\ v_{D} \end{bmatrix}_{D \times 1}.
   $$
 
-  Here, $v_{i}$ represents the $i$-th element of the vector $\mathbf{v}$, where
-  $i \in \{1, 2, \ldots, D\}$.
+  Here, $v_{d}$ represents the $d$-th element of the vector $\mathbf{v}$, where
+  $d \in \{1, 2, \ldots, D\}$.
 
 - **Row Vector**: A row vector is the transpose of a column vector. The
   transpose of vector $\mathbf{v}$, denoted as $\mathbf{v}^T$, is a $1 \times D$
   matrix (a matrix with 1 row and $D$ columns). It is represented as:
+
   $$
-  \mathbf{v}^T = \begin{bmatrix} v_{1} & v_{2} & \cdots & v_{D} \end{bmatrix}.
+  \mathbf{v}^T = \begin{bmatrix} v_{1} & v_{2} & \cdots & v_{D} \end{bmatrix}_{1 \times D}.
   $$
+
   The operation of transposition changes the orientation of the vector from
   vertical to horizontal.
 ```
