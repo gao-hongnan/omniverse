@@ -30,8 +30,8 @@ from omnivault.utils.visualization.figure_manager import FigureManager
 class Vector:
     origin: Tuple[float, float]
     direction: Tuple[float, float]
-    label: Optional[str] = None
     color: Optional[str] = "black"
+    label: Optional[str] = None
 
 
 def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]):
@@ -39,23 +39,34 @@ def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]):
         plotter.add_vector(vector)
 
 
-def add_text_annotations(plotter: VectorPlotter, vectors: List[Vector]):
-    # For first three vectors
+def add_text_annotations(
+    plotter: VectorPlotter,
+    vectors: List[Vector],
+    include_endpoint_label: bool = True,
+    include_vector_label: bool = True,
+    endpoint_kwargs: Optional[Dict[str, Any]] = None,
+    vector_kwargs: Optional[Dict[str, Any]] = None,
+):
+    endpoint_kwargs = endpoint_kwargs or {"fontsize": 12}
+    vector_kwargs = vector_kwargs or {"fontsize": 12}
 
     for vector in vectors:
-        x_end = vector.origin[0] + vector.direction[0]
-        y_end = vector.origin[1] + vector.direction[1]
-        label = f"({x_end}, {y_end})"
-        plotter.add_text(x=x_end, y=y_end, text=label, fontsize=16)
+        if include_endpoint_label:
+            # Label with endpoint coordinates
+            x_end = vector.origin[0] + vector.direction[0]
+            y_end = vector.origin[1] + vector.direction[1]
+            label = f"({x_end}, {y_end})"
+            plotter.add_text(x=x_end, y=y_end, text=label, **endpoint_kwargs)
 
-    # For vector operation labels
-    labels = ["$u$", "$v$", "$u+v$"]
-    for i, label in enumerate(labels):
-        mid_point = (
-            vectors[i].origin[0] + vectors[i].direction[0] / 2,
-            vectors[i].origin[1] + vectors[i].direction[1] / 2,
-        )
-        plotter.add_text(x=mid_point[0], y=mid_point[1], text=label, fontsize=16)
+        if include_vector_label and vector.label:
+            # Label with vector label
+            mid_point = (
+                vector.origin[0] + vector.direction[0] / 2,
+                vector.origin[1] + vector.direction[1] / 2,
+            )
+            plotter.add_text(
+                x=mid_point[0], y=mid_point[1], text=vector.label, **vector_kwargs
+            )
 
 
 class VectorPlotter(FigureManager):

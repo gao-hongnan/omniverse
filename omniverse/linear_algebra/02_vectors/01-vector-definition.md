@@ -35,6 +35,7 @@ from typing import Optional, Sequence, TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
+import rich
 from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
@@ -320,18 +321,18 @@ computations.
 ```{code-cell} ipython3
 # array, no orientation
 v = np.array([1, 2, 3])
-print(f"v: {v}")
-print(f"v shape: {v.shape}")
+rich.print(f"v: {v}")
+rich.print(f"v shape: {v.shape}")
 
 # col. vector, note that the shape is (3, 1), means a 3 by 1 vector
 col_v = np.array([[1], [2], [3]])
-print(f"col_v: \n{col_v}")
-print(f"col_v shape: {col_v.shape}")
+rich.print(f"col_v: \n{col_v}")
+rich.print(f"col_v shape: {col_v.shape}")
 
 # row vector, note that the shape is (1, 3), means a 1 by 3 vector
 row_v = np.array([[1, 2, 3]])
-print(f"row_v: {row_v}")
-print(f"row_v shape: {row_v.shape}")
+rich.print(f"row_v: {row_v}")
+rich.print(f"row_v shape: {row_v.shape}")
 ```
 
 ## Equality of Vectors
@@ -419,6 +420,11 @@ that converts a row vector to a column vector and vice versa.
    $(c\mathbf{v})^T = c\mathbf{v}^T$ for any scalar $c \in \mathbb{R}$ and any
    and vector $\mathbf{v} \in \mathbb{R}^D$.
 ```
+
+## References and Further Readings
+
+- Axler, S. (1997). _Linear Algebra Done Right_. Springer New York. (Chapter
+  1.A).
 
 [^vector-is-invariant-under-coordinate-transformation]:
     See
