@@ -18,8 +18,9 @@ Parameters for creating a quiver plot:
   to the magnitude of the displacement, calculated as sqrt(U[i]**2 + V[i]**2).
 """
 from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple, List, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 
@@ -28,13 +29,15 @@ from omnivault.utils.visualization.figure_manager import FigureManager
 
 @dataclass
 class Vector:
-    origin: Tuple[float, float]
+    # fmt: off
+    origin   : Tuple[float, float]
     direction: Tuple[float, float]
-    color: Optional[str] = "black"
-    label: Optional[str] = None
+    color    : Optional[str] = "black"
+    label    : Optional[str] = None
+    # fmt: on
 
 
-def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]):
+def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]) -> None:
     for vector in vectors:
         plotter.add_vector(vector)
 
@@ -46,7 +49,7 @@ def add_text_annotations(
     include_vector_label: bool = True,
     endpoint_kwargs: Optional[Dict[str, Any]] = None,
     vector_kwargs: Optional[Dict[str, Any]] = None,
-):
+) -> None:
     endpoint_kwargs = endpoint_kwargs or {"fontsize": 12}
     vector_kwargs = vector_kwargs or {"fontsize": 12}
 
@@ -107,8 +110,10 @@ class VectorPlotter(FigureManager):
 
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
         for vector in self.vectors:
-            X, Y = vector.origin
-            U, V = vector.direction
+            # fmt: off
+            X, Y = vector.origin    # pylint: disable=invalid-name
+            U, V = vector.direction # pylint: disable=invalid-name
+            # fmt: on
             self.ax.quiver(X, Y, U, V, color=vector.color, **self.quiver_kwargs)
 
         if grid:
@@ -117,5 +122,7 @@ class VectorPlotter(FigureManager):
         if not show_ticks:
             self.ax.tick_params(axis="both", which="both", length=0)
 
-    def save(self, path: str, dpi: Union[float, str] = "figure") -> None:
-        self.fig.savefig(path, dpi=dpi)
+    def save(
+        self, path: str, *, dpi: Union[float, str] = "figure", **kwargs: Dict[str, Any]
+    ) -> None:
+        self.fig.savefig(path, dpi=dpi, **kwargs)
