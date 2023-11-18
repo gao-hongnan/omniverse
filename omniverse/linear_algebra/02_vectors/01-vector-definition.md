@@ -79,9 +79,30 @@ use_svg_display()
 
 ## Learning Objectives
 
-- Definition of a Vector
-  - Vector Operations with both Algebraic and Geometric understanding.
-  - cohen2021linear
+1. **Understand _Geometric Definition_ of Vectors**: Comprehend vectors as
+   entities with both **magnitude** and **direction**.
+
+2. **Differentiate _Vectors_ and _Coordinates_**: Identify the distinction
+   between a vector and its spatial coordinates.
+
+3. **Learn _Vector Invariance_ Under Coordinate Transformation**: Recognize a
+   vector's unchanging properties under different coordinate systems.
+
+4. **Explore _Algebraic Definition_ of Vectors**: Understand vectors as ordered
+   tuples in $D$-dimensional space over field $\mathbb{F}$.
+
+5. **Comprehend _Vector Orientation_**: Recognize column and row vectors as
+   specific matrix forms.
+
+6. **Grasp _Equality of Vectors_**: Understand geometric and algebraic
+   perspectives of vector equality.
+
+7. **Learn About _Transpose of Vectors_**: Understand the operation and effects
+   of vector transposition.
+
+8. **Familiarize with _Properties of Transpose_**: Learn key properties like
+   double transpose and transpose operations on vector sums and scalar
+   multiplications.
 
 ## Definition
 
@@ -185,26 +206,32 @@ _**invariance of a vector under coordinate transformations**_. In essence, the
 vector's intrinsic properties—its direction and magnitude—do not change, even
 though its coordinates might vary with different choices of basis.
 
-For example, consider the vector $\mathbf{v}$ in a two-dimensional space. In
-one coordinate system, $\mathbf{v}$ might have coordinates $(x, y)$, but
-in a rotated coordinate system, its coordinates could appear different, say
+For example, consider the vector $\mathbf{v}$ in a two-dimensional space. In one
+coordinate system, $\mathbf{v}$ might have coordinates $(x, y)$, but in a
+rotated coordinate system, its coordinates could appear different, say
 $(x', y')$. Despite this change in representation, the vector $\mathbf{v}$
 itself has not changed; it still has the same length and points in the same
-direction in space. This is perfectly illustrated in {numref}`01-vector-definition-vector-versus-coordinate`,
-where the three vectors have different coordinates but are equivalent because
-they have the same orientation (direction) and length (magnitude).
+direction in space.
 
-The concept of **_basis_** is central to this idea. A basis provides a frame
-of reference for describing vectors. Changing the basis is akin to changing
-the viewpoint but not the vector itself. At this juncture, delving deeply into
-the concept of basis might be overwhelming, but it's helpful to think of a
-basis as our point of reference. In our discussions, we are considering the
-origin as this reference point.
+This is perfectly illustrated in
+{numref}`01-vector-definition-vector-versus-coordinate`, where the three vectors
+have different coordinates but are equivalent because they have the same
+orientation (direction) and length (magnitude). To be more verbose, the vector
+$\mathbf{v}_1$ has the tail at the origin, so we say that its basis is the
+standard basis. The vector $\mathbf{v}_2$ has the tail at the point $(2, 2)$, so
+we say that its basis is the basis with the origin at $(2, 2)$. The vector
+$\mathbf{v}_3$ has the tail at the point $(-2, -2)$, so we say that its basis is
+the basis with the origin at $(-2, -2)$. Consequently, no matter which origin
+the vector is based on, the vector itself is the same because it moves 1 unit to
+the right and 2 units down in a two-dimensional space.
+
+The concept of **_basis_** is central to this idea. A basis provides a frame of
+reference for describing vectors. Changing the basis is akin to changing the
+viewpoint but not the vector itself. At this juncture, delving deeply into the
+concept of basis might be overwhelming, but it's helpful to think of a basis as
+our point of reference. In our discussions, we are considering the origin as
+this reference point.
 ```
-
-This idea is fundamental in understanding how vectors behave in different
-coordinate systems and underlines their abstract nature, independent of any
-particular representation.
 
 ### Algebraic Definition
 
@@ -227,9 +254,7 @@ $$
 
 This notation emphasizes that $\mathbf{v}$ is an ordered collection of elements,
 where the order of these elements is crucial to the definition of the vector.
-The set of all such $D$-vectors over $\mathbb{F}$ is denoted by $\mathbb{F}^D$.
-
-This means:
+The set of all such $D$-vectors over $\mathbb{F}$ is denoted by $\mathbb{F}^D$:
 
 $$
 \mathbb{F}^D = \{ (v_1, v_2, \cdots, v_D) \mid v_d \in \mathbb{F} \text{ for each } d = 1, 2, \cdots, D \}
@@ -275,6 +300,11 @@ and **row vectors**.
   with $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
   $_{1 \times D}$ indicates that $\mathbf{v}$ is a matrix with 1 row and $D$
   columns.
+
+It is worth noting that row and column vectors can be viewed as matrices with
+special dimensions. This perspective is useful in understanding the
+representation of vectors in the context of matrix operations, which will be
+explored in more detail later.
 
 ```{prf:remark} Standard Representation of Vectors
 :label: 01-vector-definition-column-vector-is-the-standard-representation
@@ -373,6 +403,9 @@ that converts a row vector to a column vector and vice versa.
 
 ### Properties of Transpose
 
+```{prf:property} Properties of Transpose
+:label: 01-vector-definition-properties-of-transpose
+
 1. **Double Transpose**: The transpose of the transpose of a vector returns the
    original vector, i.e., $(\mathbf{v}^T)^T = \mathbf{v}$.
 
@@ -383,8 +416,9 @@ that converts a row vector to a column vector and vice versa.
 
 3. **Transpose of Scalar Multiplication**: The transpose of a scalar multiple of
    a vector is the scalar multiple of the transpose of the vector, i.e.,
-   $(c\mathbf{v})^T = c\mathbf{v}^T$ for any scalar $c$ and vector
-   $\mathbf{v} \in \mathbb{R}^D$.
+   $(c\mathbf{v})^T = c\mathbf{v}^T$ for any scalar $c \in \mathbb{R}$ and any
+   and vector $\mathbf{v} \in \mathbb{R}^D$.
+```
 
 [^vector-is-invariant-under-coordinate-transformation]:
     See
