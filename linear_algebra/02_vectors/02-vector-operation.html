@@ -1,0 +1,1104 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Vector and Its Operations &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'linear_algebra/02_vectors/02-vector-operation';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/linear_algebra/02_vectors/02-vector-operation.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bibliography" href="../../bibliography.html" />
+    <link rel="prev" title="Vector and Its Definition" href="01-vector-definition.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01_preliminaries/01-fields.html">Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Vectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Vector and Its Operations</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/Omniverse/blob/main/omniverse/linear_algebra/02_vectors/02-vector-operation.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/Omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/Omniverse/issues/new?title=Issue%20on%20page%20%2Flinear_algebra/02_vectors/02-vector-operation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/linear_algebra/02_vectors/02-vector-operation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../_sources/linear_algebra/02_vectors/02-vector-operation.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Vector and Its Operations</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-addition-and-subtraction">Vector Addition and Subtraction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algebraic-definition">Algebraic Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometric-interpretation">Geometric Interpretation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-addition-is-commutative">Vector Addition is Commutative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scalar-vector-multiplication">Scalar-Vector Multiplication</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Algebraic Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometrical-definition">Geometrical Definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#positive-scaling">Positive Scaling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-scaling">Negative Scaling</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-scalar-multiplication-is-invariant-under-rotation">Vector-Scalar Multiplication is Invariant under Rotation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-scalar-multiplication-is-commutative">Vector-Scalar Multiplication is Commutative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="vector-and-its-operations">
+<h1>Vector and Its Operations<a class="headerlink" href="#vector-and-its-operations" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#learning-objectives" id="id2">Learning Objectives</a></p></li>
+<li><p><a class="reference internal" href="#vector-addition-and-subtraction" id="id3">Vector Addition and Subtraction</a></p>
+<ul>
+<li><p><a class="reference internal" href="#algebraic-definition" id="id4">Algebraic Definition</a></p></li>
+<li><p><a class="reference internal" href="#geometric-interpretation" id="id5">Geometric Interpretation</a></p></li>
+<li><p><a class="reference internal" href="#vector-addition-is-commutative" id="id6">Vector Addition is Commutative</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#scalar-vector-multiplication" id="id7">Scalar-Vector Multiplication</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id8">Algebraic Definition</a></p></li>
+<li><p><a class="reference internal" href="#geometrical-definition" id="id9">Geometrical Definition</a></p>
+<ul>
+<li><p><a class="reference internal" href="#positive-scaling" id="id10">Positive Scaling</a></p></li>
+<li><p><a class="reference internal" href="#negative-scaling" id="id11">Negative Scaling</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#vector-scalar-multiplication-is-invariant-under-rotation" id="id12">Vector-Scalar Multiplication is Invariant under Rotation</a></p></li>
+<li><p><a class="reference internal" href="#vector-scalar-multiplication-is-commutative" id="id13">Vector-Scalar Multiplication is Commutative</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id14">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="learning-objectives">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Learning Objectives</a><a class="headerlink" href="#learning-objectives" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Understand <em>Vector Addition and Subtraction</em></strong>: Grasp the concepts of
+vector addition and subtraction, both algebraically and geometrically, in the
+<span class="math notranslate nohighlight">\(D\)</span>-dimensional real number space <span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>.</p></li>
+<li><p><strong>Comprehend <em>Algebraic Definitions</em></strong>: Familiarize with the algebraic
+definitions of vector addition, subtraction, and scalar-vector
+multiplication, understanding how these operations are performed
+component-wise.</p></li>
+<li><p><strong>Visualize <em>Geometric Interpretation</em> of Vector Operations</strong>: Learn to
+visualize and interpret the geometric implications of vector addition and
+subtraction, especially in a 2D context for clarity.</p></li>
+<li><p><strong>Recognize the <em>Vector Addition is Commutative</em></strong>: Acknowledge that vector
+addition is commutative in nature, implying that the order of addition does
+not affect the resultant vector.</p></li>
+<li><p><strong>Explore <em>Scalar-Vector Multiplication</em></strong>: Understand the process and
+implications of multiplying a vector by a scalar, both in terms of algebraic
+representation and geometric scaling.</p></li>
+<li><p><strong>Understand <em>Direction Preservation</em> in Scalar Multiplication</strong>: Recognize
+that scalar multiplication of a vector alters its magnitude but preserves its
+direction, except in cases of negative scaling where the direction is
+reversed.</p></li>
+<li><p><strong>Discover <em>Commutativity in Scalar-Vector Multiplication</em></strong>: Learn about the
+commutative property of scalar-vector multiplication, which allows the scalar
+to multiply the vector from either side, resulting in the same outcome.</p></li>
+</ol>
+</section>
+<section id="vector-addition-and-subtraction">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Vector Addition and Subtraction</a><a class="headerlink" href="#vector-addition-and-subtraction" title="Permalink to this heading">#</a></h2>
+<section id="algebraic-definition">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Algebraic Definition</a><a class="headerlink" href="#algebraic-definition" title="Permalink to this heading">#</a></h3>
+<div class="proof definition admonition" id="02-vector-operation-vector-addition-algebraic-definition">
+<p class="admonition-title"><span class="caption-number">Definition 10 </span> (Algebraic Definition (Vector Addition and Subtraction))</p>
+<section class="definition-content" id="proof-content">
+<p>For any vectors <strong><span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathbb{R}^D\)</span></strong>, where
+<strong><span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span></strong> represents the D-dimensional
+<a class="reference external" href="https://en.wikipedia.org/wiki/Real_coordinate_space">real number space</a>, the
+operations of <strong>vector addition</strong> and <strong>vector subtraction</strong> are defined
+component-wise as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{u} \pm \mathbf{v} = \begin{bmatrix} u_1 \pm v_1 \\ u_2 \pm v_2 \\ \vdots \\ u_D \pm v_D \end{bmatrix},
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{u} = \begin{bmatrix} u_1 \\ u_2 \\ \vdots \\ u_D \end{bmatrix}
+\)</span>
+and <span class="math notranslate nohighlight">\(\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}
+\)</span> are
+column vectors in <strong><span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span></strong>. Each component of the resulting vector is
+the sum (or difference, depending on the operation) of the corresponding
+components of <strong><span class="math notranslate nohighlight">\(\mathbf{u}\)</span></strong> and <strong><span class="math notranslate nohighlight">\(\mathbf{v}\)</span></strong>. Specifically, the <span class="math notranslate nohighlight">\(i\)</span>-th
+component of the resultant vector <span class="math notranslate nohighlight">\(\mathbf{u} \pm
+\mathbf{v}\)</span> is given by
+<span class="math notranslate nohighlight">\(u_d \pm v_d\)</span>, for each <span class="math notranslate nohighlight">\(d \in \{1, 2, \ldots,
+D\}\)</span>.</p>
+</section>
+</div></section>
+<section id="geometric-interpretation">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Geometric Interpretation</a><a class="headerlink" href="#geometric-interpretation" title="Permalink to this heading">#</a></h3>
+<p>In exploring the geometric intuition behind vector addition and subtraction,
+let’s consider vectors in a D-dimensional space, particularly focusing on 2D for
+visualization.</p>
+<div class="math notranslate nohighlight" id="equation-eq-vector-addition-example">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-vector-addition-example" title="Permalink to this equation">#</a></span>\[\begin{split}\mathbf{u} =
+\begin{bmatrix}
+4 \\
+7
+\end{bmatrix}, \quad \mathbf{v} =
+\begin{bmatrix}
+8 \\
+4
+\end{bmatrix}\end{split}\]</div>
+<div class="proof example admonition" id="02-vector-operation-vector-addition-example">
+<p class="admonition-title"><span class="caption-number">Example 3 </span> (Vector Addition)</p>
+<section class="example-content" id="proof-content">
+<p>To add vectors <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, start by placing both vectors with
+their tails at the origin as shown in
+<a class="reference internal" href="#vector-operation-vector-addition"><span class="std std-numref">Fig. 4</span></a>. One approach is to extend vector
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span> by moving 8 units right (along the x-axis) and 4 units up (along
+the y-axis) from the head of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. This results in
+<span class="math notranslate nohighlight">\(\mathbf{u} + \mathbf{v} = \begin{bmatrix} 12 \\ 11 \end{bmatrix}\)</span>.</p>
+<p>Alternatively, apply the <strong>head-to-tail method</strong> by placing the tail of
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span> at the head of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. The key concept here is that vectors
+are free entities in space, characterized solely by their direction and
+magnitude. Hence, translating vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> to the head of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>
+does not change its essence. The resultant vector from the origin to the new
+head position of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> is <span class="math notranslate nohighlight">\(\mathbf{u} + \mathbf{v}\)</span>.</p>
+</section>
+</div><div class="cell tag_hide-input tag_remove-output docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Create plot using VectorPlotter</span>
+<span class="linenos"> 2</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="n">plotter</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos"> 5</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos"> 6</span>    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<span class="linenos"> 7</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 8</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+<span class="linenos"> 9</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+<span class="linenos">10</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">11</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">12</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Vector Addition&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">13</span>    <span class="p">},</span>
+<span class="linenos">14</span><span class="p">)</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="c1"># Define vectors and colors</span>
+<span class="linenos">18</span><span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">19</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">20</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">21</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> + \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">22</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">23</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">24</span><span class="p">]</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="linenos">27</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="c1"># Plot and show</span>
+<span class="linenos">30</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="linenos">31</span><span class="n">plotter</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;./assets/02-vector-operation-addition.svg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<figure class="align-default" id="vector-operation-vector-addition">
+<img alt="../../_images/02-vector-operation-addition.svg" src="../../_images/02-vector-operation-addition.svg" /><figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Vector addition; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-addition" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<div class="proof example admonition" id="02-vector-operation-vector-subtraction-example">
+<p class="admonition-title"><span class="caption-number">Example 4 </span> (Vector Subtraction)</p>
+<section class="example-content" id="proof-content">
+<p>To conceptualize vector subtraction, consider two methods realized by the
+diagram in <a class="reference internal" href="#vector-operation-vector-subtraction"><span class="std std-numref">Fig. 5</span></a>.</p>
+<ul class="simple">
+<li><p><strong>First Method:</strong> Recognize that <span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v}\)</span> is equivalent to
+<span class="math notranslate nohighlight">\(\mathbf{u} + (-\mathbf{v})\)</span>. Here,
+<span class="math notranslate nohighlight">\(-1 \cdot \mathbf{v} = \begin{bmatrix} -8 \\ -4 \end{bmatrix}\)</span>. Now, apply
+vector addition by placing the tail of <span class="math notranslate nohighlight">\(-\mathbf{v}\)</span> at the head of
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. This method corresponds to the diagram’s bottom left side.</p></li>
+<li><p><strong>Second Method:</strong> Keep both vectors in their standard positions (origin as
+the tail) and draw a vector from the head of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> to the head of
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. This resultant vector represents <span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v}\)</span>. It’s
+not in the standard position, but it geometrically represents the difference.</p></li>
+</ul>
+</section>
+</div><p>A noteworthy geometric property is that
+<span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v} = -(\mathbf{v} - \mathbf{u})\)</span>. This signifies that
+geometrically, the vector <span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v}\)</span> is the vector
+<span class="math notranslate nohighlight">\(\mathbf{v} - \mathbf{u}\)</span> rotated by 180 degrees.</p>
+<div class="cell tag_hide-input tag_remove-output docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Create plot using VectorPlotter</span>
+<span class="linenos"> 2</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="n">plotter</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos"> 5</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos"> 6</span>    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<span class="linenos"> 7</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 8</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+<span class="linenos"> 9</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+<span class="linenos">10</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">11</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">12</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Vector Subtraction&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">13</span>    <span class="p">},</span>
+<span class="linenos">14</span><span class="p">)</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="c1"># Define vectors and colors</span>
+<span class="linenos">17</span><span class="n">vectors</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">18</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">19</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">20</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> - \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">21</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">22</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf{-v}$&quot;</span><span class="p">),</span>
+<span class="linenos">23</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf{-v}$&quot;</span><span class="p">),</span>
+<span class="linenos">24</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> - \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">25</span><span class="p">]</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="linenos">28</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="n">vectors</span><span class="p">)</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="c1"># Plot and show</span>
+<span class="linenos">31</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="linenos">32</span><span class="n">plotter</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;./assets/02-vector-operation-subtraction.svg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<figure class="align-default" id="vector-operation-vector-subtraction">
+<img alt="../../_images/02-vector-operation-subtraction.svg" src="../../_images/02-vector-operation-subtraction.svg" /><figcaption>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Vector subtraction; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-subtraction" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>We can also use code to combine them to a subplot:</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">plotter_add</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos"> 4</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos"> 5</span>    <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos"> 6</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 7</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+<span class="linenos"> 8</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">},</span>
+<span class="linenos"> 9</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">10</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">11</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Vector Addition&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">12</span>    <span class="p">},</span>
+<span class="linenos">13</span><span class="p">)</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">vectors_add</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">16</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">17</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">18</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> + \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">19</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">20</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">21</span><span class="p">]</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter_add</span><span class="p">,</span> <span class="n">vectors_add</span><span class="p">)</span>
+<span class="linenos">24</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter_add</span><span class="p">,</span> <span class="n">vectors_add</span><span class="p">)</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="n">plotter_add</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span><span class="n">plotter_sub</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos">29</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos">30</span>    <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="linenos">31</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos">32</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+<span class="linenos">33</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">},</span>
+<span class="linenos">34</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">35</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">36</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Vector Subtraction&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">37</span>    <span class="p">},</span>
+<span class="linenos">38</span><span class="p">)</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span><span class="n">vectors_sub</span> <span class="o">=</span> <span class="p">[</span>
+<span class="linenos">41</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">42</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">43</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> - \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">44</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">45</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf{-v}$&quot;</span><span class="p">),</span>
+<span class="linenos">46</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf{-v}$&quot;</span><span class="p">),</span>
+<span class="linenos">47</span>    <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2"> - \mathbf</span><span class="si">{v}</span><span class="s2">$&quot;</span><span class="p">),</span>
+<span class="linenos">48</span><span class="p">]</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter_sub</span><span class="p">,</span> <span class="n">vectors_sub</span><span class="p">)</span>
+<span class="linenos">51</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter_sub</span><span class="p">,</span> <span class="n">vectors_sub</span><span class="p">)</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span><span class="n">plotter_sub</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/a050b809cae4b1e6b0a0d0a70a94dd8df2c721467f1226a7d6a918dcb35e1fd6.svg" src="../../_images/a050b809cae4b1e6b0a0d0a70a94dd8df2c721467f1226a7d6a918dcb35e1fd6.svg" /></div>
+</div>
+</section>
+<section id="vector-addition-is-commutative">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Vector Addition is Commutative</a><a class="headerlink" href="#vector-addition-is-commutative" title="Permalink to this heading">#</a></h3>
+<p>In the realm of linear algebra, before delving into the formal definition of a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Vector_space"><strong>vector space over a field</strong></a>,
+it’s insightful to note a fundamental property of vector addition within such a
+context. Suppose we have a set of vectors <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> defined over a field
+<span class="math notranslate nohighlight">\(\mathbb{F}\)</span>. In this scenario, every vector in <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> exhibits
+<strong>commutative</strong> properties in addition, as dictated by the definition of a field
+in <a class="reference internal" href="../01_preliminaries/01-fields.html#linear-algebra-01-preliminaries-field">Definition 5</a>.</p>
+<p>Concretely, this means that for any two vectors
+<span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathcal{V}\)</span>, the operation of vector addition is
+commutative; that is, <span class="math notranslate nohighlight">\(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\)</span>. This
+property holds regardless of the dimension <span class="math notranslate nohighlight">\(D\)</span> of the vectors.</p>
+</section>
+</section>
+<section id="scalar-vector-multiplication">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Scalar-Vector Multiplication</a><a class="headerlink" href="#scalar-vector-multiplication" title="Permalink to this heading">#</a></h2>
+<section id="id1">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Algebraic Definition</a><a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<div class="proof definition admonition" id="02-vector-operation-scalar-vector-multiplication-algebraic-definition">
+<p class="admonition-title"><span class="caption-number">Definition 11 </span> (Algebraic Definition (Scalar-Vector Multiplication))</p>
+<section class="definition-content" id="proof-content">
+<p>Given any vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span> and a scalar
+<span class="math notranslate nohighlight">\(\lambda \in \mathbb{R}\)</span>, the operation of multiplying the vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>
+by the scalar <span class="math notranslate nohighlight">\(\lambda\)</span>, denoted as <span class="math notranslate nohighlight">\(\lambda \mathbf{v}\)</span>, is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\lambda \mathbf{v} = \begin{bmatrix} \lambda v_1 \\ \lambda v_2 \\ \vdots \\
+\lambda v_D \end{bmatrix},
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> is represented as
+<span class="math notranslate nohighlight">\(\begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}\)</span>. This operation is
+known as
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Scalar_multiplication">Vector-Scalar Multiplication</a></strong>.</p>
+</section>
+</div></section>
+<section id="geometrical-definition">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Geometrical Definition</a><a class="headerlink" href="#geometrical-definition" title="Permalink to this heading">#</a></h3>
+<section id="positive-scaling">
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Positive Scaling</a><a class="headerlink" href="#positive-scaling" title="Permalink to this heading">#</a></h4>
+<p>Scaling a vector positively is straightforward. For instance, consider the
+vector <span class="math notranslate nohighlight">\(\mathbf{u} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\)</span>. When scaled by a
+positive scalar, say <span class="math notranslate nohighlight">\(\lambda = 3\)</span>, the vector becomes:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+3\mathbf{u} = 3 \begin{bmatrix} 1 \\ 2 \end{bmatrix} = \begin{bmatrix} 3 \\ 6
+\end{bmatrix}.
+\end{split}\]</div>
+<p>In this case, the magnitude of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> increases by a factor of <span class="math notranslate nohighlight">\(3\)</span>, while
+its direction remains unchanged. The resulting vector, <span class="math notranslate nohighlight">\(3\mathbf{u}\)</span>, points in
+the same direction as the original but is three times longer.</p>
+</section>
+<section id="negative-scaling">
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">Negative Scaling</a><a class="headerlink" href="#negative-scaling" title="Permalink to this heading">#</a></h4>
+<p>Conversely, taking the same vector
+<span class="math notranslate nohighlight">\(\mathbf{u} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\)</span> and scaling it by
+<span class="math notranslate nohighlight">\(\lambda = -1\)</span> yields:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+-1\mathbf{u} = -1 \begin{bmatrix} 1 \\ 2 \end{bmatrix} = \begin{bmatrix} -1 \\
+-2 \end{bmatrix}.
+\end{split}\]</div>
+<p>Here, the negatively scaled vector <span class="math notranslate nohighlight">\(-\mathbf{u}\)</span> points in the opposite
+direction to <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. However, it’s important to note that the
+“orientation” of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> in a broader sense remains unchanged; the line
+along which <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> lies is preserved, and all scalar multiples of
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span>, regardless of the sign, will lie on this line.</p>
+<p>Let’s look how the vector <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and its scaled versions look like in a 2D
+space:</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1"># Assuming VectorPlotter, Vector, add_vectors_to_plotter, and add_text_annotations</span>
+<span class="linenos"> 6</span><span class="c1"># are defined as in your previous code</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="c1"># Create a subplot for positive and negative scaling</span>
+<span class="linenos"> 9</span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="c1"># Plot for Positive Scaling</span>
+<span class="linenos">12</span><span class="n">plotter_pos</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos">13</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos">14</span>    <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="linenos">15</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos">16</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+<span class="linenos">17</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+<span class="linenos">18</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">19</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">20</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Positive Vector-Scalar Multiplication&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">21</span>    <span class="p">},</span>
+<span class="linenos">22</span><span class="p">)</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="n">original_vector</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="linenos">25</span><span class="n">scaled_vector</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$3 \cdot \mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter_pos</span><span class="p">,</span> <span class="p">[</span><span class="n">original_vector</span><span class="p">,</span> <span class="n">scaled_vector</span><span class="p">])</span>
+<span class="linenos">28</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter_pos</span><span class="p">,</span> <span class="p">[</span><span class="n">original_vector</span><span class="p">,</span> <span class="n">scaled_vector</span><span class="p">])</span>
+<span class="linenos">29</span><span class="n">plotter_pos</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="c1"># Plot for Negative Scaling</span>
+<span class="linenos">32</span><span class="n">plotter_neg</span> <span class="o">=</span> <span class="n">VectorPlotter</span><span class="p">(</span>
+<span class="linenos">33</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos">34</span>    <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="linenos">35</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos">36</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+<span class="linenos">37</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">},</span>
+<span class="linenos">38</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">39</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">40</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Negative Vector-Scalar Multiplication&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">41</span>    <span class="p">},</span>
+<span class="linenos">42</span><span class="p">)</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span><span class="n">negatively_scaled_vector</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$-1 \cdot \mathbf</span><span class="si">{u}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter_neg</span><span class="p">,</span> <span class="p">[</span><span class="n">original_vector</span><span class="p">,</span> <span class="n">negatively_scaled_vector</span><span class="p">])</span>
+<span class="linenos">47</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter_neg</span><span class="p">,</span> <span class="p">[</span><span class="n">original_vector</span><span class="p">,</span> <span class="n">negatively_scaled_vector</span><span class="p">])</span>
+<span class="linenos">48</span><span class="n">plotter_neg</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/0f5f163fc5a8f9974d24da49f24e1c381f573cd6ec2f9f17467644b4f847d74f.svg" src="../../_images/0f5f163fc5a8f9974d24da49f24e1c381f573cd6ec2f9f17467644b4f847d74f.svg" /></div>
+</div>
+</section>
+</section>
+<section id="vector-scalar-multiplication-is-invariant-under-rotation">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Vector-Scalar Multiplication is Invariant under Rotation</a><a class="headerlink" href="#vector-scalar-multiplication-is-invariant-under-rotation" title="Permalink to this heading">#</a></h3>
+<p><strong>Vector-scalar multiplication</strong>, though conceptually straightforward, plays a
+fundamental role in various applications within linear algebra, such as in the
+context of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix"><strong>eigendecomposition</strong></a>.</p>
+<p>As we have seen in the
+<a class="reference internal" href="#02-vector-operation-scalar-vector-multiplication-algebraic-definition">Definition 11</a>,
+this operation involves scaling a vector by a scalar factor, which alters the
+vector’s magnitude without changing its direction (geometrically we can see this
+too). The result, <span class="math notranslate nohighlight">\(\lambda \mathbf{v}\)</span>, is a vector in the same direction as
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span> but scaled in magnitude by <span class="math notranslate nohighlight">\(\lambda\)</span>. This operation is significant
+for several reasons:</p>
+<ol class="arabic simple">
+<li><p><strong>Preservation of Direction</strong>: Unlike many other transformations,
+vector-scalar multiplication maintains the original direction of the vector,
+either stretching or compressing it along its existing line of action.</p></li>
+<li><p><strong>Eigenvectors and Eigenvalues</strong>: In the study of eigenvectors and
+eigenvalues, which are central to eigendecomposition, vector-scalar
+multiplication illustrates how certain vectors (eigenvectors) change only in
+magnitude, not direction, when a linear transformation is applied.</p></li>
+</ol>
+</section>
+<section id="vector-scalar-multiplication-is-commutative">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Vector-Scalar Multiplication is Commutative</a><a class="headerlink" href="#vector-scalar-multiplication-is-commutative" title="Permalink to this heading">#</a></h3>
+<p>In linear algebra, the commutative property often associated with scalar
+operations also applies to
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Scalar_multiplication">vector-scalar multiplication</a></strong>,
+but with a nuanced understanding. Specifically, for any vector
+<span class="math notranslate nohighlight">\(\mathbf{v} \in
+\mathbb{R}^D\)</span> and scalar <span class="math notranslate nohighlight">\(\lambda \in \mathbb{R}\)</span>, the operation
+of multiplying the vector by the scalar exhibits a form of commutativity. This
+can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\lambda \mathbf{v} = \begin{bmatrix} \lambda v_1 \\ \lambda v_2 \\ \vdots \\
+\lambda v_D \end{bmatrix} = \begin{bmatrix} v_1 \lambda \\ v_2 \lambda \\ \vdots
+\\ v_D \lambda \end{bmatrix} = \mathbf{v} \lambda.
+\end{split}\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\lambda \mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v} \lambda\)</span> are mathematically
+equivalent, indicating that the scalar can multiply the vector from either the
+left or the right, yielding the same result. This property is particularly
+important because it simplifies the manipulation and transformation of vectors
+in various linear algebra applications, such as in matrix-vector multiplication
+and transformations.</p>
+<p>It’s essential to note that while the scalar multiplication operation is
+commutative, the multiplication of vectors (if defined, such as in dot or cross
+products) does not necessarily follow the commutative property. Thus, the
+commutativity in vector-scalar multiplication is a specific case, pertaining
+only to the interaction between a scalar and a vector, not between two vectors.</p>
+</section>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Axler, S. (1997). <em>Linear Algebra Done Right</em>. Springer New York. (Chapter
+1.A).</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./linear_algebra/02_vectors"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01-vector-definition.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Vector and Its Definition</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-objectives">Learning Objectives</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-addition-and-subtraction">Vector Addition and Subtraction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algebraic-definition">Algebraic Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometric-interpretation">Geometric Interpretation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-addition-is-commutative">Vector Addition is Commutative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scalar-vector-multiplication">Scalar-Vector Multiplication</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Algebraic Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometrical-definition">Geometrical Definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#positive-scaling">Positive Scaling</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#negative-scaling">Negative Scaling</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-scalar-multiplication-is-invariant-under-rotation">Vector-Scalar Multiplication is Invariant under Rotation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-scalar-multiplication-is-commutative">Vector-Scalar Multiplication is Commutative</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
