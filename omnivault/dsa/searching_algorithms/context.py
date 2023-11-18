@@ -14,18 +14,18 @@ from omnivault.dsa.typings.generics import Real
 
 
 class SearchContext:
+    """The Context defines the interface of interest to clients."""
+
     def __init__(self, strategy: Search) -> None:
-        """The context defines the interface of interest to clients
-        and accepts a strategy through the constructor."""
+        """The context defines the interface of interest to clients and accepts
+        a strategy through the constructor."""
         self._strategy = strategy
 
     @property
     def strategy(self) -> Search:
-        """
-        The Context maintains a reference to one of the Strategy objects. The
+        """The Context maintains a reference to one of the Strategy objects. The
         Context does not know the concrete class of a strategy. It should work
-        with all strategies via the Strategy interface.
-        """
+        with all strategies via the Strategy interface."""
         return self._strategy
 
     @strategy.setter
@@ -34,4 +34,6 @@ class SearchContext:
         self._strategy = strategy
 
     def execute_search(self, container: Sequence[Real], target: Real) -> int:
+        """Here the context delegates some work to the strategy object instead
+        of implementing multiple versions of the algorithm on its own."""
         return self.strategy.search(container, target)

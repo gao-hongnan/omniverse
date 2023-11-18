@@ -696,8 +696,8 @@ $$
 \end{cases}
 $$
 
-where $\mathcal{H}\left(k, \mathcal{P}\right)$ is the total number of hours it takes Koko to eat all the
-bananas at speed $k$.
+where $\mathcal{H}\left(k, \mathcal{P}\right)$ is the total number of hours it
+takes Koko to eat all the bananas at speed $k$.
 ```
 
 This feasibility function looks reasonable, we remain to verify if this function
@@ -1006,7 +1006,7 @@ class Solution:
     def total_hours_to_finish_eating(self, piles: Sequence[int], speed: int) -> int:
         total_hours = 0
         for pile in piles:
-            hours = pile / speed      # num_bananas / speed -> hours needed to finish eating
+            hours = pile / speed  # num_bananas / speed -> hours needed to finish eating
             hours = math.ceil(hours)  # if hours = 2.5, it counts at 3
             total_hours += hours
         return total_hours
@@ -1020,6 +1020,7 @@ class Solution:
                 r = m
             else:
                 l = m + 1
+
         return l
 ```
 
@@ -1035,10 +1036,13 @@ minimum_speed = Solution().minEatingSpeed
 
 @tf.describe("Testing minimum_speed function for Koko Eating Bananas")
 def test_minimum_speed():
-
     @tf.individual_test("Multiple Piles, Limited Time")
     def _():
-        tf.assert_equals(minimum_speed([30, 11, 23, 4, 20], 6), 23, "Should return 23")
+        tf.assert_equals(
+            minimum_speed([30, 11, 23, 4, 20], 6),
+            23,
+            "Should return 23",
+        )
 
     @tf.individual_test("Single Pile and Minimum Possible Input")
     def _():
@@ -1050,7 +1054,7 @@ def test_minimum_speed():
 
     @tf.individual_test("Large Data Set")
     def _():
-        tf.assert_equals(minimum_speed([8]*10**6, 10**5), 8, "Should return 8.")
+        tf.assert_equals(minimum_speed([8] * 10**6, 10**5), 8, "Should return 8.")
 ```
 
 ### Time Complexity

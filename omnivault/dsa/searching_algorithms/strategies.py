@@ -11,14 +11,26 @@ Strategy Pattern.
 from __future__ import annotations
 
 import math
-from typing import Sequence
+from typing import Literal, Sequence
 
-from omnivault.dsa.searching_algorithms.base import BinarySearch, Search
+from omnivault.dsa.searching_algorithms.base import Search
 from omnivault.dsa.typings.generics import Real
+from omnivault.dsa.typings.newtype import NonNegativeInt
 
 
 class LinearSearchForLoop(Search):
-    def search(self, container: Sequence[Real], target: Real) -> int:
+    """
+    Implements a linear search algorithm using a for loop.
+
+    This class provides a concrete implementation of the `Search` abstract base
+    class. It performs a linear search on a sequence to find a target element.
+    The search is conducted iteratively using a for loop, examining each element
+    sequentially until the target is found or the end of the sequence is reached.
+    """
+
+    def search(
+        self, container: Sequence[Real], target: Real
+    ) -> NonNegativeInt | Literal[-1]:
         for index, item in enumerate(container):
             if item == target:
                 return index
@@ -26,7 +38,18 @@ class LinearSearchForLoop(Search):
 
 
 class LinearSearchWhileLoop(Search):
-    def search(self, container: Sequence[Real], target: Real) -> int:
+    """
+    Implements a linear search algorithm using a while loop.
+
+    This class provides a concrete implementation of the `Search` abstract base
+    class. It iteratively searches through the given sequence using a while loop,
+    comparing each element with the target until the target is found or the end
+    of the sequence is reached.
+    """
+
+    def search(
+        self, container: Sequence[Real], target: Real
+    ) -> NonNegativeInt | Literal[-1]:
         index = 0
         length = len(container)
         while index < length:
@@ -37,7 +60,23 @@ class LinearSearchWhileLoop(Search):
 
 
 class LinearSearchRecursive(Search):
-    def search(self, container: Sequence[Real], target: Real) -> int:
+    """
+    Implements a linear search algorithm using recursion.
+
+    This class provides a recursive implementation of the `Search` abstract base
+    class. It searches for a target element in a sequence by recursively
+    examining each element. The recursion starts from the first element and
+    proceeds until the target is found or the sequence is fully traversed.
+
+    Note
+    ----
+    Since Python does not support tail-call optimization, this recursive
+    approach may not be efficient for very large sequences.
+    """
+
+    def search(
+        self, container: Sequence[Real], target: Real
+    ) -> NonNegativeInt | Literal[-1]:
         def recursive(container: Sequence[Real], target: Real, index: int = 0) -> int:
             if not container:
                 return -1
@@ -49,8 +88,21 @@ class LinearSearchRecursive(Search):
 
 
 class LinearSearchTailRecursive(Search):
-    def search(self, container: Sequence[Real], target: Real) -> int:
-        def recursive(container: Sequence[Real], target: Real, index: int = 0) -> int:
+    """
+    Implements a linear search algorithm using tail recursion.
+
+    This class attempts a tail-recursive approach to implement linear search,
+    similar to `LinearSearchRecursive`. However, due to the lack of tail-call
+    optimization in Python, this implementation does not provide the usual
+    benefits of tail recursion and behaves similarly to regular recursion.
+    """
+
+    def search(
+        self, container: Sequence[Real], target: Real
+    ) -> NonNegativeInt | Literal[-1]:
+        def recursive(
+            container: Sequence[Real], target: Real, index: int = 0
+        ) -> NonNegativeInt | Literal[-1]:
             if not container:
                 return -1
             if container[0] == target:
@@ -60,12 +112,21 @@ class LinearSearchTailRecursive(Search):
         return recursive(container, target)
 
 
-class IterativeBinarySearchExactMatch(BinarySearch):
+class IterativeBinarySearchExactMatch(Search):
     """Leetcode calls this template 1:
     https://leetcode.com/explore/learn/card/binary-search/125/template-i/
+
+    Implements an iterative binary search algorithm for exact matches.
+
+    This class provides an iterative implementation of binary search following
+    the template often used in problems such as those found on LeetCode.
+    It is designed to work on sorted sequences, dividing the search space in half
+    with each step, until the target element is found or the search space is exhausted.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> int:
+    def search(
+        self, container: Sequence[Real], target: Real
+    ) -> NonNegativeInt | Literal[-1]:
         """Search for a target from a sorted array container."""
 
         left_index = 0
@@ -88,19 +149,25 @@ class IterativeBinarySearchExactMatch(BinarySearch):
         # Search has ended and target is not present in the container, so we return -1
         return -1
 
-    def mid_strategy(self, left: int, right: int) -> int:
+    def mid_strategy(
+        self, left: NonNegativeInt, right: NonNegativeInt
+    ) -> NonNegativeInt:
+        """Strategy for calculating the middle index."""
+
         # (left_index + right_index) // 2 will cause overflow.
         mid_index = left + math.floor((right - left) / 2)
         return mid_index
 
 
-class RecursiveBinarySearchExactMatch(BinarySearch):
+class RecursiveBinarySearchExactMatch(Search):
     """Template 1 but recursive."""
 
     def search(self, container: Sequence[Real], target: Real) -> int:
         """Search for a target from a sorted array container."""
 
-        def recursive(l: int, r: int) -> int:
+        def recursive(
+            l: NonNegativeInt, r: NonNegativeInt
+        ) -> NonNegativeInt | Literal[-1]:
             if l > r:
                 return -1
 
@@ -116,6 +183,10 @@ class RecursiveBinarySearchExactMatch(BinarySearch):
         l, r = 0, len(container) - 1
         return recursive(l, r)
 
-    def mid_strategy(self, left: int, right: int) -> int:
+    def mid_strategy(
+        self, left: NonNegativeInt, right: NonNegativeInt
+    ) -> NonNegativeInt:
+        """Strategy for calculating the middle index."""
+
         mid_index = left + math.floor((right - left) / 2)
         return mid_index
