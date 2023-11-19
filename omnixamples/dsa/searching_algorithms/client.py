@@ -28,6 +28,7 @@ from omnivault.dsa.searching_algorithms.strategies import (
 @dataclass
 class Product:
     """A class for representing a product."""
+
     id: int
     name: str
     price: float
@@ -36,6 +37,7 @@ class Product:
 @dataclass
 class Inventory:
     """A class for representing an inventory of products."""
+
     items: List[Product] = field(default_factory=list)
 
     def add_new_item(self, product: Product) -> None:
@@ -66,9 +68,7 @@ def quicksort(items: List[Product], key: Callable[[Product], float]) -> List[Pro
     less_than_pivot = [item for item in items[1:] if key(item) <= key(pivot)]
     greater_than_pivot = [item for item in items[1:] if key(item) > key(pivot)]
     return (
-        quicksort(less_than_pivot, key)
-        + [pivot]
-        + quicksort(greater_than_pivot, key)
+        quicksort(less_than_pivot, key) + [pivot] + quicksort(greater_than_pivot, key)
     )
 
 

@@ -123,6 +123,11 @@ class VectorPlotter(FigureManager):
             self.ax.tick_params(axis="both", which="both", length=0)
 
     def save(
-        self, path: str, *, dpi: Union[float, str] = "figure", **kwargs: Dict[str, Any]
+        self,
+        path: str,
+        *,
+        dpi: Union[float, str] = "figure",
+        format="svg",
+        **kwargs: Dict[str, Any],
     ) -> None:
-        self.fig.savefig(path, dpi=dpi, **kwargs)
+        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)
