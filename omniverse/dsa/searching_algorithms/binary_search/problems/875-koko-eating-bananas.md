@@ -418,7 +418,7 @@ The additional constraints from LeetCode serve the following purposes:
 
 3. **Large Data Set**
 
-   - `Input: piles = [8]*10^6, h = 10^5`
+   - `Input: piles = [8]*10^6, h = 10^6`
    - `Output: 8`
    - **Explanation**: This tests the algorithm's ability to handle **large-scale
      scenarios** efficiently. Koko would need to eat at least 8 bananas/hour.
@@ -860,7 +860,8 @@ The domain of our search space is defined as $k \in [1, \max(\text{{piles}})]$:
 
 - The lower bound $k = 1$ is set because Koko cannot eat 0 bananas per hour.
 - The upper bound $k = \max(\text{{piles}})$ is chosen based on the constraint
-  that eating at a faster rate than the largest pile is unproductive.
+  that eating at a faster rate than the largest pile is unproductive since Koko
+  can only eat from one pile at a time.
 
 The problem lends itself to a binary search approach due to its inherent
 monotonicity. To illustrate, consider an example with `piles = [3, 6, 7, 11]`
@@ -889,7 +890,7 @@ found.
 :label: 875-koko-eating-bananas-binary-search-pseudocode
 
 ```
-Algorithm: find_minEatingSpeed(P, h, M)
+Algorithm: min_eating_speed(P, h, M)
 
     Input: P = [p_1, p_2, ..., p_N] (list of piles),
            h (total hours available),
@@ -902,7 +903,7 @@ Algorithm: find_minEatingSpeed(P, h, M)
     3: while l < r do
         4:    m = floor((l + r) / 2)
 
-        5:    if Feasibility_Function(P, m, h) == 1 then
+        5:    if feasible(P, m, h) == 1 then
         6:        r = m
         7:    else
         8:        l = m + 1
@@ -1054,7 +1055,7 @@ def test_minimum_speed():
 
     @tf.individual_test("Large Data Set")
     def _():
-        tf.assert_equals(minimum_speed([8] * 10**6, 10**5), 8, "Should return 8.")
+        tf.assert_equals(minimum_speed([8] * 10**6, 10**6), 8, "Should return 8.")
 ```
 
 ### Time Complexity
