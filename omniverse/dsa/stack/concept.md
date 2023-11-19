@@ -17,7 +17,11 @@ kernelspec:
 
 # Concept
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/gao-hongnan/gaohn-dsa/blob/main/content/stack/concept.ipynb)
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Stack-orange)
+![Tag](https://img.shields.io/badge/Tag-Array-orange)
+![Tag](https://img.shields.io/badge/Tag-Linked_List-orange)
 
 ```{contents}
 :local:
@@ -68,6 +72,29 @@ if root_dir is not None:
 else:
     raise ImportError("Root directory not found.")
 ```
+
+## Learning Objectives
+
+1. Understand the fundamental concept of a **Stack** as an abstract data type in
+   computer science, characterized by its **_Last In, First Out (LIFO)_**
+   principle.
+2. Grasp the intuition behind a stack as a collection with restricted access,
+   analogous to real-world examples such as a stack of books or a **_stack of
+   plates_** in a restaurant.
+3. Learn the core operations of a stack, including `push`, `pop`, `peek`,
+   `is_empty`, and `size`, along with their descriptions and significance.
+4. Comprehend the implementation details of the `StackList` class in Python,
+   particularly focusing on its usage of a dynamic array (Python list) for stack
+   operations and its implementation as a **Generic** class for type
+   flexibility.
+5. Be able to implement and use the `StackList` class, including pushing items
+   onto the stack, checking its size, peeking at the top item, popping items
+   off, and iterating over the stack.
+6. Understand the **time complexity** of the stack operations, particularly the
+   average and amortized worst-case time complexities, along with an explanation
+   of **amortized analysis** and **exponential growth strategy**.
+7. Recognize the **space complexity** of the `StackList` class and how it varies
+   based on the types and sizes of the elements stored in the stack.
 
 ## Introduction
 
@@ -192,15 +219,16 @@ element. In many programming languages, the built-in list or array structures
 are used to implement the stack due to their efficiency and simplicity. In
 Python, the `list` is particularly well-suited for this purpose because it
 provides built-in methods for stack operations, such as `append()` for push and
-`pop()` for pop operations, which both run in $O(1)$ average time complexity.
+`pop()` for pop operations, which both run in $\mathcal{O}(1)$ average time
+complexity.
 
 ### Why Use a List for Stack Implementation?
 
 Python lists are dynamic arrays behind the scenes. This makes them ideal for
 implementing stacks because:
 
-- They provide **amortized constant time complexity** ($O(1)$) for adding and
-  removing items from the end[^list-pop-time-complexity].
+- They provide **amortized constant time complexity** ($\mathcal{O}(1)$) for
+  adding and removing items from the end[^list-pop-time-complexity].
 - Lists are **dynamic**, so they can grow and shrink on demand, which suits the
   variable size nature of stacks.
 - They come with built-in methods that directly correspond to stack operations
@@ -367,188 +395,114 @@ print(f"stack is empty? {stack.is_empty()}")
 
 ### Time Complexity
 
-Consider a stack of $N$ items. The time complexity of the `push` and `pop`
-operations is $O(1)$, as they both involve accessing the last item of the list
-`_stack_items`. The `peek` operation also runs in $O(1)$ time, as it only
-accesses the last item of the list without removing it. The `is_empty` method
-runs in $O(1)$ time, as it only checks if the list `_stack_items` is empty.
-Finally, the `size` property runs in $O(1)$ time, as it simply returns the
-length of the list `_stack_items`.
+Given a stack of size $N$ implemented using a Python list, the average and
+amortized worst-case time complexities of the fundamental operations are as
+follows:
+
+- **`push` (append)**: Appending an item to the end of a Python list has an
+  average time complexity of $\mathcal{O}(1)$. This constant time complexity
+  results from Python lists being implemented as dynamic arrays. Although they
+  occasionally need to be resized—an operation that takes $\mathcal{O}(N)$
+  time—the allocation strategy of Python lists employs an exponential growth
+  factor. This means that resizes happen less frequently as the list grows.
+  Thus, while the worst-case complexity of a single `append` operation can be
+  $\mathcal{O}(N)$ (when resizing is required), the cost of resizing is spread
+  over a large number of `append` operations, leading to an amortized time
+  complexity of $\mathcal{O}(1)$. This behavior is well-documented in the
+  [Python Time Complexity page](https://wiki.python.org/moin/TimeComplexity),
+  which lists both the average and amortized worst-case complexities for
+  `list.append` as $\mathcal{O}(1)$.
+
+- **`pop` (without an index)**: The `pop` method in Python, when used without an
+  index, removes the last item of the list. This operation has an average and
+  amortized worst-case time complexity of $\mathcal{O}(1)$, as it directly
+  accesses and removes the element at the end of the dynamic array without
+  needing to shift any elements. This behavior is consistent with the Python
+  documentation referenced above.
+
+- **`peek`**: Retrieving the item at the top of the stack without removing it,
+  achieved by a direct access to the last element of the list (i.e.,
+  `list[-1]`), is an operation with a time complexity of $\mathcal{O}(1)$. This
+  constant time complexity is due to the array-based nature of Python lists,
+  which allows for direct indexing.
+
+- **`is_empty`**: The `is_empty` method checks whether the list is empty,
+  equivalent to verifying if the length of the list is zero. This is a
+  constant-time operation ($\mathcal{O}(1)$) in Python because the list object
+  maintains and updates its count of elements.
+
+- **`size` (len)**: Obtaining the number of elements in the list, as done by the
+  `size` property using the `__len__` method, is a $\mathcal{O}(1)$ operation.
+  Python lists automatically keep track of their size, enabling quick access to
+  this information.
+
+Some more remarks on **_amortized worst-case time complexity_**:
+
+```{prf:remark} Amortized Worst-Case Time Complexity
+:label: stack-list-amortized-worst-case-time-complexity
+
+1. **Amortized Analysis**: In amortized analysis, we average the time complexity
+   over a sequence of operations, not just a single operation. For Python lists,
+   when a resizing occurs (which is an $\mathcal{O}(N)$ operation), it doesn't
+   happen with every append. Python lists grow in such a way that the resizes
+   happen exponentially less often as the size of the list grows. This strategy
+   ensures that, averaged over a large number of appends, the time per operation
+   is still constant, or $\mathcal{O}(1)$.
+
+2. **Exponential Growth Strategy**: When a Python list needs to resize, it
+   doesn't just increase its size by one element. Instead, it typically
+   increases its size by a larger amount (approximately doubling, although the
+   exact growth factor may vary). This means that, although the individual
+   operation of resizing and copying the list is $\mathcal{O}(N)$, such
+   operations happen so infrequently that their cost is "amortized" over the
+   many $\mathcal{O}(1)$ append operations, resulting in an overall
+   $\mathcal{O}(1)$ amortized time complexity.
+
+3. **Worst-Case vs. Amortized Worst-Case**: The worst-case scenario for a single
+   operation of `list.append()` can indeed be $\mathcal{O}(N)$ (when a resize
+   occurs), but when considering the worst-case in an amortized sense (across
+   multiple operations), it averages out to $\mathcal{O}(1)$.
+```
 
 ```{list-table} Stack List Time Complexity
 :header-rows: 1
 :name: stack-list-time-complexity
 
-* - Operations
-  - Time Complexity
-* - `push`
+- - Operations
+  - Average Time Complexity
+  - Amortized Worst-Case Time Complexity
+- - `push`
   - $\mathcal{O}(1)$
-* - `pop`
+  - $\mathcal{O}(1)$ [occasional resizing]
+- - `pop`
+  - $\mathcal{O}(1)$
+  - $\mathcal{O}(1)$
+- - `peek`
+  - $\mathcal{O}(1)$
+  - $\mathcal{O}(1)$
+- - `is_empty`
+  - $\mathcal{O}(1)$
+  - $\mathcal{O}(1)$
+- - `size`
+  - $\mathcal{O}(1)$
   - $\mathcal{O}(1)$
 ```
-
-The time complexity for both `push` and `pop` are $\mathcal{O}(1)$, an obvious
-consequence because the native python `list`'s operations `append` and `pop` are
-also $\mathcal{O}(1)$, so the result follows.
 
 If you treat the list's start as top of the stack, then you might need to use
 `insert(0)` and `pop(0)`, and these are $\mathcal{O}(N)$ operations.
 
 ### Space Complexity
 
-Space complexity: $\mathcal{O}(N)$. The space required depends on the number of
-items stored in the list `stack_items`, so if `stack_items` stores up to $N$
-items, then space complexity is $\mathcal{O}(N)$.
-
-## Implementing Stack Using Linked List
-
-We need to think a bit little different from list where you easily visualize a
-list's first and last element as the bottom and top of the stack respectively.
-
-For Linked List, you think of a reversed list. That is to say, the `head` node
-of the Linked List is the **top** of the stack and the last node (not the `None`
-node) will be the beginning of the stack.
-
-Ref:
-[https://www.geeksforgeeks.org/stack-data-structure-introduction-program/?ref=lbp](https://www.geeksforgeeks.org/stack-data-structure-introduction-program/?ref=lbp)
-
-```{code-cell} ipython3
-from typing import Optional, Any
-
-class LinkedListNode:
-    """
-    The LinkedListNode object is initialized with a value and can be linked to the next node by setting the next_node attribute to a LinkedListNode object.
-    This node is Singular associated with Singly Linked List.
-
-    Attributes:
-        curr_node_value (Any): The value associated with the created node.
-        next_node (LinkedListNode): The next node in the linked list. Note the distinction between curr_node_value and next_node, the former is the value of the node, the latter is the pointer to the next node.
-
-    Examples:
-        >>> node = Node(1)
-        >>> print(node.curr_node_value)
-        1
-        >>> print(node.next_node)
-        None
-        >>> node.next_node = Node(2)
-        >>> print(node.next_node.curr_node_value)
-        2
-        >>> print(node.next_node.next_node)
-        None
-    """
-
-    curr_node_value: Any
-    next_node: Optional["LinkedListNode"]
-
-    def __init__(self, curr_node_value: Any = None) -> None:
-        self.curr_node_value = curr_node_value
-        self.next_node = None
-```
-
-```{code-cell} ipython3
-class StackLinkedList:
-    def __init__(self) -> None:
-        self.head = None  # top of the stack
-
-    def is_empty(self) -> bool:
-        """Check if the stack is empty.
-
-        The stack is empty if the head is None.
-
-        Returns:
-            bool: True if the stack is empty, False otherwise.
-        """
-        return self.head is None
-
-    def push(self, curr_node_value: Any) -> None:
-        """Push a new node on top of the stack.
-
-        # if push a value say 10 inside,, then the new node will be the head of the stack.
-        # if push another value say 20 inside, then the 20 will be the head of the stack.
-        # everytime you push a value it must be the pushed node become head.
-        # so if you push 10, 20, 30, then it must be 30 -> 20 -> 10 -> None.
-        # so think of base case if push 10 what happens?
-        # as usual the logic is:
-            - Start with the base case self.head to be None first, this will keep incrementing as we push more values.
-            - Create a new node with the value of curr_node_value whenever a new value is pushed.
-            - If we push in a 10, the newly_pushed_node holds the value of 10.
-            - We set newly_pushed_node.next_node to become self.head so now newly_pushed_node becomes 10 -> None.
-            - Now set self.head to be the newly_pushed_node so next time we push another value, it will be new_value -> 10 -> None.
-            - If we push in a 20, the newly_pushed_node variables holds 20.
-            - We set newly_pushed_node.next_node to become self.head so now newly_pushed_node becomes 20 -> (10 -> None).
-            - The logic continues.
-
-        Args:
-            curr_node_value (Any): The current item (node) pushed into the stack.
-        """
-
-        newly_pushed_node = LinkedListNode(curr_node_value)
-        newly_pushed_node.next_node = self.head
-        self.head = newly_pushed_node
-        print(f"Pushed {curr_node_value} onto the stack")
-
-    def pop(self) -> Any:
-        """Pop an item from the top of the stack.
-
-        In this implementation, the item at the head of the Linked List is returned and removed.
-
-        # logic is pop the head and it can always work since whenever you access self.head, the current value it holds is the first value and also the top of the stack.
-        # - popped_node: set to self.head.
-        # - self.head: set to self.head.next_node which is akin to removing the head and now the next value is the new head.
-        # - popped_value: this is the current node value of popped_node.
-
-        Raises:
-            Exception: If stack is empty.
-
-        Returns:
-            Any: The top most item in the stack.
-        """
-
-        if self.is_empty():
-            raise Exception("Stack is empty")
-
-        popped_node = self.head
-        self.head = self.head.next_node
-        popped_value = popped_node.curr_node_value
-        print(f"Popped {popped_value} from the stack")
-
-        return popped_value
-
-    def peek(self) -> Any:
-        """Peek at the top of the stack.
-
-        In this implementation, the item at the head of the Linked List is returned.
-
-        Raises:
-            Exception: If stack is empty.
-
-        Returns:
-            Any: The top most item in the stack.
-        """
-
-        if self.is_empty():
-            raise Exception("Stack is empty")
-
-        return self.head.curr_node_value
-
-# Driver code
-stack = StackLinkedList()
-stack.push(10)
-stack.push(20)
-stack.push(30)
-_ = stack.pop()
-```
-
-### Time Complexity
-
-Time complexity: $\mathcal{O}(1)$ for both `push` and `pop` as no **traversal**
-is involved.
-
-### Space Complexity
-
-Space complexity: $\mathcal{O}(N)$. The space required depends on the number of
-items stored in the list `stack_items`, so if `stack_items` stores up to $N$
-items, then space complexity is $\mathcal{O}(N)$.
+The space complexity of the `StackList` class is $\mathcal{O}(N)$, where $N$ is
+the number of elements in the stack. This linear relationship arises because the
+primary storage is the list `_stack_items`, whose size grows directly with the
+number of elements added to the stack. If the stack's elements are themselves
+containers, such as lists or sets, the overall space complexity will depend on
+the sizes of these containers. In the case where each element has a similar size
+`M`, the space complexity can be approximated as $\mathcal{O}(N \times M)$. For
+variable-sized containers, the complexity becomes the sum of the sizes of all
+elements, i.e., $\mathcal{O}\left(\sum_{i=1}^{N} M_i\right)$, where `M_i` is the
+size of the `i`-th element.
 
 ## References and Further Readings
 
