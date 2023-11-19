@@ -61,12 +61,13 @@ def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Opti
             return parent
     return None
 
-current_file_path = Path("__file__")
-root_dir          = find_root_dir(current_file_path, marker='omnivault')
+root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.tabbed_svg_viewer import create_tabbed_svg_viewer
+    from omnivault.dsa.searching_algorithms.context import SearchContext
+    from omnivault.dsa.searching_algorithms.strategies import IterativeBinarySearchExactMatch, RecursiveBinarySearchExactMatch
 else:
     raise ImportError("Root directory not found.")
 
@@ -639,93 +640,7 @@ See the algorithm above.
 
 ### Implementation
 
-```{code-cell} ipython3
-:tags: [hide-input]
-
-from abc import ABC, abstractmethod
-from typing import TypeVar, Iterable
-
-T = TypeVar("T", int, float)  # T should be of type int, float or str
-
-
-class BinarySearch(ABC):
-    """Interface for Binary Search Strategies (Strategy Design Pattern)."""
-
-    @abstractmethod
-    def search(self, nums: Iterable[T], target: int) -> int:
-        """Search for a target from a sorted array nums."""
-
-    @abstractmethod
-    def mid_strategy(self, left: int, right: int) -> int:
-        """Strategy for calculating the middle index."""
-
-
-class BinarySearch:
-    def __init__(self, strategy: BinarySearch) -> None:
-        """
-        Usually, the Context (here is BinarySearch executor)
-        accepts a strategy through the constructor, but also
-        provides a setter to change it at runtime.
-        """
-        self._strategy = strategy
-
-    @property
-    def strategy(self) -> BinarySearch:
-        """
-        The Context maintains a reference to one of the Strategy objects. The
-        Context does not know the concrete class of a strategy. It should work
-        with all strategies via the Strategy interface.
-        """
-
-        return self._strategy
-
-    @strategy.setter
-    def strategy(self, strategy: BinarySearch) -> None:
-        """
-        Usually, the Context allows replacing a Strategy object at runtime.
-        """
-
-        self._strategy = strategy
-
-    def find_target(self, nums: Iterable[T], target: int) -> int:
-        """Find the target."""
-        return self._strategy.search(nums, target)
-```
-
-```{code-cell} ipython3
-class IterativeBinarySearchExactMatch(BinarySearch):
-    """Leetcode calls this template 1:
-    https://leetcode.com/explore/learn/card/binary-search/125/template-i/
-    """
-
-    def search(self, nums: Iterable[T], target: int) -> int:
-        """Search for a target from a sorted array nums."""
-
-        left_index = 0
-        right_index = len(nums) - 1
-
-        while left_index <= right_index:
-            mid_index = self.mid_strategy(left=left_index, right=right_index)
-            # Check if target is present at mid
-            if nums[mid_index] == target:
-                return mid_index
-
-            # If target is greater, we discard left half, so we update left_index
-            elif nums[mid_index] < target:
-                left_index = mid_index + 1
-
-            # If target is smaller, we discard right half, so we update right_index
-            else:
-                right_index = mid_index - 1
-
-        # Search has ended and target is not present in the nums, so we return -1
-        return -1
-
-    def mid_strategy(self, left: int, right: int) -> int:
-        # (left_index + right_index) // 2 will cause overflow.
-        mid_index = left + math.floor((right - left) / 2)
-        return mid_index
-```
+See my dsa repo.
 
 Think of the following:
 
@@ -762,8 +677,9 @@ Think of the following:
 ### Tests
 
 ```{code-cell} ipython3
-binary_search = BinarySearch(strategy=IterativeBinarySearchExactMatch())
-result = binary_search.find_target([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)
+strategy = IterativeBinarySearchExactMatch()
+context = SearchContext(strategy)
+result = context.execute_search([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)
 assert result == 5
 ```
 
@@ -851,16 +767,16 @@ to $1$ and since we will not be able to divide the list any further, we can
 conclude that the target value is either the last element or it is not in the
 list, ending the search.
 
-In terms of big-O, we say that the binary search algorithm takes $\O(\log_2 n)$
-time to search for an item in a list of $n$ items, which means the maximum
-number of comparisons is in a logarithmic relationship to the number of items in
-the list {cite}`pythonds3`.
+In terms of big-O, we say that the binary search algorithm takes
+$\mathcal{O}(\log_2 n)$ time to search for an item in a list of $n$ items, which
+means the maximum number of comparisons is in a logarithmic relationship to the
+number of items in the list {cite}`pythonds3`.
 
-The time complexity table is listed below, the best case is $\O(1)$ for the same
-reason as the sequential search algorithm, where the `target` element is in the
-middle, and we just need to make one comparison. For the worst case, the element
-is either in the first or last index, or it is not in the list at all. In this
-case, we need to make $\log_2 n$ comparisons.
+The time complexity table is listed below, the best case is $\mathcal{O}(1)$ for
+the same reason as the sequential search algorithm, where the `target` element
+is in the middle, and we just need to make one comparison. For the worst case,
+the element is either in the first or last index, or it is not in the list at
+all. In this case, we need to make $\log_2 n$ comparisons.
 
 ```{list-table} Best, Worst, and Average Case Analysis of Binary Search
 :header-rows: 1
@@ -871,13 +787,13 @@ case, we need to make $\log_2 n$ comparisons.
   - Average Case
   - Best Case
 * - Element is in the list
-  - $\O(\log_2 n)$
-  - $\O(\log_2 n)$[^average_case]
-  - $\O(1)$
+  - $\mathcal{O}(\log_2 n)$
+  - $\mathcal{O}(\log_2 n)$[^average_case]
+  - $\mathcal{O}(1)$
 * - Element is not in the list
-  - $\O(\log_2 n)$
-  - $\O(\log_2 n)$
-  - $\O(\log_2 n)$
+  - $\mathcal{O}(\log_2 n)$
+  - $\mathcal{O}(\log_2 n)$
+  - $\mathcal{O}(\log_2 n)$
 ```
 
 ### Space Complexity
@@ -996,33 +912,7 @@ of the array is 0, then the search is unsuccessful, and -1 is returned.
 
 ### Implementation
 
-```{code-cell} ipython3
-class RecursiveBinarySearchExactMatch(BinarySearch):
-    """Template 1 but recursive."""
-
-    def search(self, nums: Iterable[T], target: int) -> int:
-        """Search for a target from a sorted array nums."""
-
-        def recursive(l: int, r: int) -> int:
-            if l > r:
-                return -1
-
-            mid_index = self.mid_strategy(l, r)
-
-            if nums[mid_index] < target:
-                return recursive(l=mid_index + 1, r=r)
-            elif nums[mid_index] > target:
-                return recursive(l=l, r=mid_index - 1)
-            else:
-                return mid_index
-
-        l, r = 0, len(nums) - 1
-        return recursive(l, r)
-
-    def mid_strategy(self, left: int, right: int) -> int:
-        mid_index = left + math.floor((right - left) / 2)
-        return mid_index
-```
+See dsa folder.
 
 Using Python Tutor to visualize recursive calls
 [here](https://pythontutor.com/render.html#code=import%20math%0Afrom%20typing%20import%20Iterable,%20TypeVar,%20Tuple%0A%0AT%20%3D%20TypeVar%28%22T%22,%20str,%20int,%20float%29%20%20%23%20T%20should%20be%20of%20type%20int,%20float%20or%20str%0A%0Adef%20binary_search_recursive%28%0A%20%20%20%20container%3A%20Iterable%5BT%5D,%20target%3A%20T,%20left_index%3A%20int,%20right_index%3A%20int%0A%29%20-%3E%20int%3A%0A%20%20%20%20%22%22%22Binary%20search%20recursive%20implementation.%22%22%22%0A%20%20%20%20mid_index%20%3D%20left_index%20%2B%20math.floor%28%28right_index%20-%20left_index%29%20/%202%29%0A%20%20%20%20if%20left_index%20%3C%3D%20right_index%3A%0A%20%20%20%20%20%20%20%20if%20container%5Bmid_index%5D%20%3D%3D%20target%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20mid_index%20%20%23%20base%20case%201%0A%20%20%20%20%20%20%20%20elif%20container%5Bmid_index%5D%20%3C%20target%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20binary_search_recursive%28%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20container,%20target,%20mid_index%20%2B%201,%20right_index%0A%20%20%20%20%20%20%20%20%20%20%20%20%29%0A%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20binary_search_recursive%28container,%20target,%20left_index,%20mid_index%20-%201%29%0A%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20return%20-1%20%20%23%20base%20case%202%0A%20%20%20%20%0Aordered_list%20%3D%20%5B0,%201,%202,%208,%2013,%2017,%2019,%2032,%2042%5D%0Aleft_index%20%3D%200%0Aright_index%20%3D%20len%28ordered_list%29%20-%201%0Aprint%28binary_search_recursive%28ordered_list,%2042,%20left_index,%20right_index%29%29&cumulative=false&curInstr=17&heapPrimitives=nevernest&mode=display&origin=opt-frontend.js&py=3&rawInputLstJSON=%5B%5D&textReferences=false).
@@ -1033,8 +923,8 @@ Using Python Tutor to visualize recursive calls
 
 ```{code-cell} ipython3
 # Changing the strategy to RecursiveBinarySearchExactMatch
-binary_search.strategy = RecursiveBinarySearchExactMatch()
-result = binary_search.find_target([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)
+context.strategy = RecursiveBinarySearchExactMatch()
+result = context.execute_search([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)
 assert result == 5
 ```
 
