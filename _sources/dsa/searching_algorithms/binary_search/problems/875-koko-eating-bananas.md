@@ -1025,6 +1025,17 @@ class Solution:
         return l
 ```
 
+It is worth noting to readers that this approach corresponds more closely to the
+[**approach 3: find lower bound**](https://leetcode.com/problems/binary-search/editorial/)
+in Leetcode's Binary Search editorial.
+
+In binary search and other algorithms, the "lower bound" refers to the smallest
+value in a range that meets a specified criterion. This criterion is not
+necessarily about being the minimum value in a numerical sense, but rather the
+first value in a sorted sequence that satisfies a certain condition. So if we
+again look at the problem via the first true in a sorted boolean array lens, the
+lower bound is the first `True` value in the sorted boolean array.
+
 ### Tests
 
 Set of tests for validating the algorithm.

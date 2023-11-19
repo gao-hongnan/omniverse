@@ -167,7 +167,9 @@ for vector in [vector1, vector2, vector3]:
 
 # Plot and show
 plotter.plot()
-plotter.save("./assets/01-vector-definition-vector-versus-coordinate.svg")
+save_path = Path("./assets/01-vector-definition-vector-versus-coordinate.svg")
+if not save_path.exists():
+    plotter.save(save_path)
 ```
 
 ```{figure} ./assets/01-vector-definition-vector-versus-coordinate.svg
