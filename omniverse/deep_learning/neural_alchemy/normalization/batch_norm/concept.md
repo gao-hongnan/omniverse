@@ -1,0 +1,1 @@
+- https://github.com/arjun-majumdar/CNN_Classifications/blob/master/BatchNorm_bias_cancellation.pdf
