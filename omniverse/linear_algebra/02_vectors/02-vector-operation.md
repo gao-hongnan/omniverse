@@ -211,7 +211,9 @@ add_text_annotations(plotter, vectors)
 
 # Plot and show
 plotter.plot()
-plotter.save("./assets/02-vector-operation-addition.svg")
+save_path = Path("./assets/02-vector-operation-addition.svg")
+if not save_path.exists():
+    plotter.save(save_path)
 ```
 
 ```{figure} ./assets/02-vector-operation-addition.svg
@@ -279,7 +281,9 @@ add_text_annotations(plotter, vectors)
 
 # Plot and show
 plotter.plot()
-plotter.save("./assets/02-vector-operation-subtraction.svg")
+save_path = Path("./assets/02-vector-operation-subtraction.svg")
+if not save_path.exists():
+    plotter.save(save_path)
 ```
 
 ```{figure} ./assets/02-vector-operation-subtraction.svg
