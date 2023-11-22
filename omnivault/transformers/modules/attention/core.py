@@ -5,6 +5,7 @@ from torch import nn
 
 from omnivault.transformers.modules.attention.base import Attention
 
+
 # pylint: disable=invalid-name
 class ScaledDotProductAttention(Attention):
     """

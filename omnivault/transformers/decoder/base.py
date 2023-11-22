@@ -20,10 +20,12 @@ The `memory_mask` in the context of a Transformer decoder is not the same as a f
 The `memory_mask` and the future mask are different components serving distinct purposes in a Transformer model. The former relates to how the decoder interacts with the encoder's output, and the latter is about maintaining the autoregressive property in sequence generation.
 """
 
-from typing import Callable, Optional, Union
+from typing import Optional
 
 import torch
-import torch.nn as nn
+from torch import nn
+
+from omnivault.transformers.config.decoder import DecoderConfig
 
 
 class BaseDecoderBlock(nn.Module):
@@ -31,7 +33,7 @@ class BaseDecoderBlock(nn.Module):
     Abstract base class for a decoder block in a transformer-like architecture.
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config: DecoderConfig) -> None:
         super().__init__()
         self.config = config
 
@@ -73,7 +75,7 @@ class BaseDecoder(nn.Module):
 
     def __init__(
         self,
-        config,
+        config: DecoderConfig,
     ) -> None:
         super().__init__()
         self.config = config

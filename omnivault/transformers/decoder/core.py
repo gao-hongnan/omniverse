@@ -1,8 +1,9 @@
-from typing import List, Optional
+from typing import Optional, Union, overload
 
 import torch
 from torch import nn
 
+from omnivault.transformers.config.decoder import DecoderConfig
 from omnivault.transformers.decoder.base import BaseDecoder, BaseDecoderBlock
 from omnivault.transformers.modules.attention.core import MultiHeadedAttention
 from omnivault.transformers.modules.layers.addnorm import AddNorm
@@ -17,7 +18,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
     encoder-decoder cross-attention.
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config: DecoderConfig) -> None:
         super().__init__(config)
         # fmt: off
         self.masked_self_attention_mha = MultiHeadedAttention(**config.decoder.masked_self_attention_mha.__dict__)
@@ -32,7 +33,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # fmt: on
 
     def forward(
-        self, z: torch.Tensor, target_masks: Optional[torch.BoolTensor] = None
+        self, z: torch.Tensor, target_masks: Union[torch.BoolTensor, None] = None
     ) -> torch.Tensor:
         """
         Parameters
@@ -61,20 +62,66 @@ class GPTDecoderBlock(BaseDecoderBlock):
 
 
 class GPTDecoder(BaseDecoder):
-    def __init__(self, config):
+    def __init__(self, config: DecoderConfig) -> None:
         super().__init__(config)
         # fmt: off
-        self.d_model       : int                   = config.d_model
-        self.tok_embed     : nn.Embedding          = nn.Embedding(config.vocab_size, config.d_model)
-        self.pos_embed     : nn.Parameter          = nn.Parameter(torch.zeros(1, config.max_seq_len, config.d_model))
-        self.decoder_blocks: List[GPTDecoderBlock] = nn.ModuleList([GPTDecoderBlock(config) for _ in range(config.num_layers)])
+        self.d_model       : int           = config.d_model
+        self.tok_embed     : nn.Embedding  = nn.Embedding(config.vocab_size, config.d_model)
+        self.pos_embed     : nn.Parameter  = nn.Parameter(torch.zeros(1, config.max_seq_len, config.d_model))
+        self.decoder_blocks: nn.ModuleList = nn.ModuleList([GPTDecoderBlock(config) for _ in range(config.num_decoder_blocks)]) # PyTorch did not make ModuleList a proper container, maybe open a PR to make it inherit Generic[T]???
 
-        self.dropout       : nn.Dropout            = nn.Dropout(config.dropout)
-        self.layer_norm    : nn.LayerNorm          = nn.LayerNorm(config.d_model)
-        self.head          : nn.Linear             = nn.Linear(config.d_model, config.vocab_size)  # last layer
+        self.dropout       : nn.Dropout    = nn.Dropout(config.dropout)
+        self.layer_norm    : nn.LayerNorm  = nn.LayerNorm(config.d_model)
+        self.head          : nn.Linear     = nn.Linear(config.d_model, config.vocab_size)  # last layer
         # fmt: on
 
         self._reset_parameters()
+
+    @overload
+    def create_target_masks(
+        self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor
+    ) -> torch.BoolTensor:
+        ...
+
+    @overload
+    def create_target_masks(
+        self, target_padding_masks: torch.Tensor, future_masks: Optional[torch.Tensor]
+    ) -> torch.BoolTensor:
+        ...
+
+    @overload
+    def create_target_masks(
+        self, target_padding_masks: Optional[torch.Tensor], future_masks: torch.Tensor
+    ) -> torch.BoolTensor:
+        ...
+
+    @overload
+    def create_target_masks(
+        self,
+        target_padding_masks: Optional[torch.Tensor],
+        future_masks: Optional[torch.Tensor],
+    ) -> torch.BoolTensor:
+        ...
+
+    def create_target_masks(
+        self,
+        target_padding_masks: Optional[torch.Tensor],
+        future_masks: Optional[torch.Tensor],
+    ) -> torch.BoolTensor:
+        if target_padding_masks is None and future_masks is None:
+            raise ValueError(
+                "At least one of target_padding_masks or future_masks must not be None"
+            )
+
+        if target_padding_masks is None:
+            assert future_masks is not None  # for mypy
+            target_padding_masks = torch.ones_like(future_masks, dtype=torch.bool)
+
+        if future_masks is None:
+            assert target_padding_masks is not None  # for mypy
+            future_masks = torch.ones_like(target_padding_masks, dtype=torch.bool)
+
+        return torch.logical_and(target_padding_masks, future_masks).bool()  # type: ignore[return-value]
 
     def forward(
         self,
@@ -117,7 +164,7 @@ class GPTDecoder(BaseDecoder):
         """
         # fmt: off
         seq_len     : int              = input_tokens.size(1)
-        target_masks: torch.BoolTensor = torch.logical_and(target_padding_masks, future_masks)
+        target_masks: torch.BoolTensor = self.create_target_masks(target_padding_masks, future_masks)
 
         z = self.tok_embed(input_tokens) # * math.sqrt(self.d_model) for better optimization landscape
         z = z + self.pos_embed[:, :seq_len, :]

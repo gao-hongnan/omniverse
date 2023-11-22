@@ -5,3 +5,4 @@ NonNegativeInt = int
 PositiveInt = int
 Loss = float
 Accuracy = float
+Token = str
