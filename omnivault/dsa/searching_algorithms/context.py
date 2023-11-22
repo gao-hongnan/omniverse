@@ -9,8 +9,8 @@ runtime, adhering to the principles of the Strategy Pattern.
 """
 from typing import Sequence
 
+from omnivault._types._generic import Real
 from omnivault.dsa.searching_algorithms.base import Search
-from omnivault.dsa.typings.generics import Real
 
 
 class SearchContext:

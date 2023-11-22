@@ -13,8 +13,8 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Literal, Sequence, Union
 
-from omnivault.dsa.typings.generics import Real
-from omnivault.dsa.typings.aliases import NonNegativeInt
+from omnivault._types._alias import NonNegativeInt
+from omnivault._types._generic import Real
 
 
 class Search(ABC):

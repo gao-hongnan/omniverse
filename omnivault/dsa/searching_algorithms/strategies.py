@@ -13,9 +13,9 @@ from __future__ import annotations
 import math
 from typing import Literal, Sequence, Union
 
+from omnivault._types._alias import NonNegativeInt
+from omnivault._types._generic import Real
 from omnivault.dsa.searching_algorithms.base import Search
-from omnivault.dsa.typings.generics import Real
-from omnivault.dsa.typings.aliases import NonNegativeInt
 
 
 class LinearSearchForLoop(Search):

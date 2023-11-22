@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from typing import List, Generator
+from typing import Generator, List
 
+from omnivault._types._generic import T
 from omnivault.dsa.stack.base import Stack
-from omnivault.dsa.typings.generics import T
 
 
 class StackList(Stack[T]):

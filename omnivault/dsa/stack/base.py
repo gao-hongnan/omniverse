@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, Generator
+from typing import Generator, Generic
 
-from omnivault.dsa.typings.generics import T
+from omnivault._types._generic import T
 
 
 class Stack(ABC, Generic[T]):
