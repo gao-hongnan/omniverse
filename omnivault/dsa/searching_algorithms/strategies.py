@@ -11,11 +11,11 @@ Strategy Pattern.
 from __future__ import annotations
 
 import math
-from typing import Literal, Sequence
+from typing import Literal, Sequence, Union
 
 from omnivault.dsa.searching_algorithms.base import Search
 from omnivault.dsa.typings.generics import Real
-from omnivault.dsa.typings.newtype import NonNegativeInt
+from omnivault.dsa.typings.aliases import NonNegativeInt
 
 
 class LinearSearchForLoop(Search):
@@ -30,7 +30,7 @@ class LinearSearchForLoop(Search):
 
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         for index, item in enumerate(container):
             if item == target:
                 return index
@@ -49,7 +49,7 @@ class LinearSearchWhileLoop(Search):
 
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         index = 0
         length = len(container)
         while index < length:
@@ -76,7 +76,7 @@ class LinearSearchRecursive(Search):
 
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         def recursive(container: Sequence[Real], target: Real, index: int = 0) -> int:
             if not container:
                 return -1
@@ -99,10 +99,10 @@ class LinearSearchTailRecursive(Search):
 
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         def recursive(
             container: Sequence[Real], target: Real, index: int = 0
-        ) -> NonNegativeInt | Literal[-1]:
+        ) -> Union[NonNegativeInt, Literal[-1]]:
             if not container:
                 return -1
             if container[0] == target:
@@ -126,7 +126,7 @@ class IterativeBinarySearchExactMatch(Search):
 
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         """Search for a target from a sorted array container."""
 
         left_index = 0
@@ -135,7 +135,7 @@ class IterativeBinarySearchExactMatch(Search):
         while left_index <= right_index:
             mid_index = self.mid_strategy(left=left_index, right=right_index)
             # Check if target is present at mid
-            if container[mid_index] == target:
+            if container[mid_index] == target:  # pylint: disable=no-else-return
                 return mid_index
 
             # If target is greater, we discard left half, so we update left_index
@@ -167,13 +167,13 @@ class RecursiveBinarySearchExactMatch(Search):
 
         def recursive(
             l: NonNegativeInt, r: NonNegativeInt
-        ) -> NonNegativeInt | Literal[-1]:
+        ) -> Union[NonNegativeInt, Literal[-1]]:
             if l > r:
                 return -1
 
             mid_index = self.mid_strategy(l, r)
 
-            if container[mid_index] < target:
+            if container[mid_index] < target:  # pylint: disable=no-else-return
                 return recursive(l=mid_index + 1, r=r)
             elif container[mid_index] > target:
                 return recursive(l=l, r=mid_index - 1)

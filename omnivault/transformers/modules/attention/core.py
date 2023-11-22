@@ -5,7 +5,7 @@ from torch import nn
 
 from omnivault.transformers.modules.attention.base import Attention
 
-
+# pylint: disable=invalid-name
 class ScaledDotProductAttention(Attention):
     """
     Implements scaled dot-product attention mechanism.
@@ -164,6 +164,9 @@ class MultiHeadedAttention(nn.Module):
 
         self.attention = attention
         self.dropout   = nn.Dropout(p=dropout, inplace=False)
+
+        self.context_vector: torch.Tensor
+        self.attention_weights: torch.Tensor
 
         # self._reset_parameters()
         # fmt: on

@@ -131,5 +131,3 @@ class StackList(Stack[T]):
             The current item pushed into the stack.
         """
         self.stack_items.append(item)
-
-

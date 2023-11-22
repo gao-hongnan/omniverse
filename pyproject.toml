@@ -1,0 +1,53 @@
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39']
+verbose = false
+diff = false
+color = false
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pylint]
+disable = [
+    "R0902",  # Too many instance attributes
+    "R0913",  # Too many arguments
+    "C0301",  # Line too long
+    "R0903",  # Too few public methods
+    "C0114",  # Missing module docstring
+    "C0115",  # Missing class docstring
+    "C0116",  # Missing function or method docstring
+]
+max-line-length = 88
+good-names = [
+    # Add short names that pylint should not complain about
+]
+
+[tool.mypy]
+python_version = 3.9  # Specify the Python version used
+ignore_missing_imports = true
+disallow_untyped_defs = false
+disable_error_code = ['override', 'attr-defined']
+disallow_any_generics = false
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra" # -ra -q
+testpaths = [
+    "tests",
+    # "tests/unit",
+    # "tests/integration",
+    # "tests/system",
+]
+filterwarnings = "ignore::DeprecationWarning" # ignore deprecation warnings when running tests

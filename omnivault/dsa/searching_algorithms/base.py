@@ -11,10 +11,10 @@ context class in context.py.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Literal, Sequence
+from typing import Literal, Sequence, Union
 
 from omnivault.dsa.typings.generics import Real
-from omnivault.dsa.typings.newtype import NonNegativeInt
+from omnivault.dsa.typings.aliases import NonNegativeInt
 
 
 class Search(ABC):
@@ -23,6 +23,6 @@ class Search(ABC):
     @abstractmethod
     def search(
         self, container: Sequence[Real], target: Real
-    ) -> NonNegativeInt | Literal[-1]:
+    ) -> Union[NonNegativeInt, Literal[-1]]:
         """Searches for the target in the container and returns the index of the
         target if found, otherwise returns -1."""

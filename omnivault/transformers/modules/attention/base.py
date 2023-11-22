@@ -1,4 +1,4 @@
-"""
+r"""
 Scaled Dot-Product Attention Module
 ===================================
 
@@ -6,7 +6,7 @@ This module defines the Scaled Dot-Product Attention mechanism, which is a key
 component in transformer architectures. It follows the equations:
 
 .. math::
-    \\text{Attention}(Q, K, V) = \\text{softmax} \\left( \\frac{QK^T}{\\sqrt{d_k}} \\right) V
+    \text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) V
 
 The attention mechanism is computed as follows:
 1. Find the embedding dimension $D$ or $d_q$ from the query feature vector. Note

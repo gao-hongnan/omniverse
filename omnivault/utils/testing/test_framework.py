@@ -91,6 +91,6 @@ class TestFramework:
         """
         try:
             assert actual == expected, message
-        except AssertionError:
+        except AssertionError as err:
             message = f"Test failed: {message}\nExpected: {expected}, but got: {actual}"
-            raise AssertionError(message)
+            raise AssertionError(message) from err

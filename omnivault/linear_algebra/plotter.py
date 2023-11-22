@@ -89,20 +89,34 @@ class VectorPlotter(FigureManager):
             "alpha": 0.6,
         }
 
-        self.vectors = []
-        self.colors = []
+        self.vectors: List[Vector] = []
+        self.colors: List[str] = []
 
-    def add_text(self, x, y, text, fontsize=16, **kwargs: Dict[str, Any]) -> None:
+    def add_text(
+        self,
+        x: float,
+        y: float,
+        text: str,
+        fontsize: int = 16,
+        **kwargs: Dict[str, Any],
+    ) -> None:
         self.ax.text(x, y, text, fontsize=fontsize, **kwargs)
 
-    def annotate(self, x, y, text, arrow_props=None, **kwargs: Dict[str, Any]) -> None:
+    def annotate(
+        self,
+        x: float,
+        y: float,
+        text: str,
+        arrow_props: Optional[Dict[str, Any]] = None,
+        **kwargs: Dict[str, Any],
+    ) -> None:
         self.ax.annotate(
             text,
             xy=(x, y),
             xytext=(x, y),
             arrowprops=arrow_props,
             fontsize=16,
-            **kwargs,
+            **kwargs,  # type: ignore[arg-type]
         )
 
     def add_vector(self, vector: Vector) -> None:
@@ -127,7 +141,7 @@ class VectorPlotter(FigureManager):
         path: str,
         *,
         dpi: Union[float, str] = "figure",
-        format="svg",
+        format="svg",  # pylint: disable=redefined-builtin
         **kwargs: Dict[str, Any],
     ) -> None:
-        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)
+        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
