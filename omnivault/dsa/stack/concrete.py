@@ -22,10 +22,6 @@ class StackList(Stack[T]):
         list as the top of the stack.
     """
 
-    def __init__(self) -> None:
-        """Construct a new stack list object."""
-        self._stack_items: List[T] = []
-
     def __len__(self) -> int:
         """Return the size of the stack."""
         return len(self.stack_items)

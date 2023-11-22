@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Dict, List, Type
-from abc import ABC, abstractmethod
-from omnivault._types._alias import Token
-from torch.utils.data import Dataset
-from omnivault.transformers.config.constants import TOKENS
-from rich.pretty import pprint
 import re
+from abc import ABC, abstractmethod
+from typing import Dict, List, Type
+
+from rich.pretty import pprint
+from torch.utils.data import Dataset
+
+from omnivault._types._alias import Token
+from omnivault.transformers.config.constants import TOKENS
 
 
 class Vocabulary(ABC):
@@ -149,7 +151,9 @@ class AdderVocabulary(Vocabulary):
             )
         return decoded
 
-    def decode_batch(self, sentences: List[List[int]], remove_special_tokens: bool = True) -> List[str]:
+    def decode_batch(
+        self, sentences: List[List[int]], remove_special_tokens: bool = True
+    ) -> List[str]:
         return [
             self.decode(sentence, remove_special_tokens=remove_special_tokens)
             for sentence in sentences

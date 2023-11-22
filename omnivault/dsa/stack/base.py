@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generator, Generic
+from typing import Generator, Generic, Iterable, List, Optional, overload
 
 from omnivault._types._generic import T
 
@@ -10,6 +10,27 @@ class Stack(ABC, Generic[T]):
     """
     This interface defines the contract for a stack data structure.
     """
+
+    @overload
+    def __init__(self) -> None:
+        ...
+
+    @overload
+    def __init__(self, iterable: Iterable[T]) -> None:
+        ...
+
+    def __init__(self, iterable: Optional[Iterable[T]] = None) -> None:
+        """Construct a new stack object.
+
+        Parameters
+        ----------
+        iterable : Optional[Iterable[T]], optional
+            An iterable to initialize the stack with, by default None
+        """
+        self._stack_items: List[T] = []
+        if iterable is not None:
+            for item in iterable:
+                self.push(item)
 
     @abstractmethod
     def push(self, item: T) -> None:
