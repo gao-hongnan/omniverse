@@ -1,18 +1,18 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 # Vector and Its Operations
@@ -147,7 +147,7 @@ let's consider vectors in a D-dimensional space, particularly focusing on 2D for
 visualization.
 
 ```{math}
-:label: eq:vector-addition-example
+:label: 02-vector-operation-vector-addition-example-1
 
 \mathbf{u} =
 \begin{bmatrix}
@@ -537,5 +537,5 @@ only to the interaction between a scalar and a vector, not between two vectors.
 
 ## References and Further Readings
 
-- Axler, S. (1997). _Linear Algebra Done Right_. Springer New York. (Chapter
-  1.A).
+-   Axler, S. (1997). _Linear Algebra Done Right_. Springer New York. (Chapter
+    1.A $\mathbb{R}^N$ and $\mathbb{C}^N$).
