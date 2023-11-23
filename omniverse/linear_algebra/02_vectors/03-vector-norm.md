@@ -153,34 +153,105 @@ as a set of vectors in the $D$-dimensional space $\mathbb{R}^D$.
 
 ### $L^{p}$ Norm
 
-For a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^p$ norm of $\mathbf{v}$,
-denoted as $\|\mathbf{v}\|_p$, is defined as:
+With the norm well defined, we can now define the $L^p$ norm, which is a
+specific case of the norm function. The $L^p$ is a generalization of the concept
+of "length" for vectors in the **_vector space_** $\mathcal{V}$.
+
+```{prf:definition} $L^p$ Norm
+:label: 03-vector-norm-lp-norm
+
+For a vector space $\mathcal{V} = \mathbb{R}^D$ over the field
+$\mathbb{F} =
+\mathbb{R}$, the $L^p$ norm is a function defined as:
+
+$$
+\begin{aligned}
+\|\cdot\|_p : \mathcal{V} & \rightarrow \mathbb{R}, \\
+\mathbf{v} & \mapsto \left( \sum_{i=1}^D |v_i|^p \right)^{\frac{1}{p}},
+\end{aligned}
+$$
+
+where each vector $\mathbf{v} \in \mathcal{V}$ is assigned a real number
+$\|\mathbf{v}\|_p$, representing the $L^p$ norm of $\mathbf{v}$.
+```
+
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^p$ norm of
+$\mathbf{v}$, denoted as $\|\mathbf{v}\|_p$, is defined as:
 
 $$\|\mathbf{v}\|_p = \left( \sum_{i=1}^{D} |v_i|^p \right)^{\frac{1}{p}},$$
 
 where $v_1, v_2, \ldots, v_D$ are the components of the vector $\mathbf{v}$, and
-$p$ is a real number greater than or equal to 1. The choice of $p$ determines
-the metric's sensitivity to differences in vector components, influencing its
-application in various algorithms.
+$p$ is a real number greater than or equal to 1.
+
+As we shall see later, the choice of $p$ determines the metric's sensitivity to
+differences in vector components, influencing its application in various
+algorithms.
 
 ### L1 Norm (Manhattan Norm)
 
 The **L1 norm**, also known as the **Manhattan norm** or **Taxicab norm**, is a
-specific case of the Lp norm where $p = 1$:
+specific case of the $L^p$ norm where $p = 1$.
+
+```{prf:definition} L1 Norm
+:label: 03-vector-norm-l1-norm
+
+For the same vector space $\mathcal{V} = \mathbb{R}^D$, the $L^1$ norm is
+defined by:
+
+$$
+\begin{aligned}
+\|\cdot\|_1 : \mathcal{V} & \rightarrow \mathbb{R}, \\
+\mathbf{v} & \mapsto \sum_{i=1}^D |u_i|,
+\end{aligned}
+$$
+
+assigning to each vector $\mathbf{v}$ the sum of the absolute values of its
+components, $\|\mathbf{v}\|_1$.
+
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^1$ norm of
+$\mathbf{v}$, denoted as $\|\mathbf{v}\|_1$, is defined as:
 
 $$\|\mathbf{v}\|_1 = \sum_{i=1}^{D} |v_i|.$$
+```
 
 It sums the absolute values of the vector components. Geometrically, it measures
 the distance a taxicab would travel in a grid-like path in $\mathbb{R}^D$. In
 machine learning, the L1 norm is used for **regularization**, encouraging
 sparsity in the model parameters.
 
+![](./assets/wikipedia-520px-Manhattan_distance.svg.png)
+
 ### L2 Norm (Euclidean Norm)
 
 The **L2 norm**, or **Euclidean norm**, obtained by setting $p = 2$, is the most
-familiar:
+familiar norm in machine learning.
 
-$$\|\mathbf{v}\|_2 = \sqrt{\sum_{i=1}^{D} v_i^2}.$$
+```{prf:definition} L2 Norm
+:label: 03-vector-norm-l2-norm
+
+Similarly, for $\mathcal{V} = \mathbb{R}^D$, the $L^2$ norm is given by:
+
+$$
+\begin{aligned}
+\|\cdot\|_2 : \mathcal{V} & \rightarrow \mathbb{R}, \\
+\mathbf{v} & \mapsto \left( \sum_{i=1}^D |u_i|^2 \right)^{\frac{1}{2}},
+\end{aligned}
+$$
+
+where $\|\mathbf{v}\|_2$ is the Euclidean length of the vector $\mathbf{v}$.
+
+Each of these norm functions adheres to the definition of a norm, applying
+specific operations to vectors in $\mathbb{R}^D$ and mapping them to real
+numbers that represent different concepts of length or magnitude. The $L^p$ norm
+offers a generalized way to define these lengths, with $L^1$ and $L^2
+$ being
+special cases for specific values of $p$.
+
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^2$ norm of
+$\mathbf{v}$, denoted as $\|\mathbf{v}\|_2$, is defined as:
+
+$$\|\mathbf{v}\|_2 = \sqrt{\sum_{i=1}^{D} |v_i|^2}.$$
+```
 
 It measures the "straight-line" distance from the origin to the point in
 $\mathbb{R}^D$ represented by $\mathbf{v}$. This norm is extensively used in
