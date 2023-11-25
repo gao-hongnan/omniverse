@@ -13,7 +13,7 @@ To run the script with command-line arguments:
 
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 import rich
 from rich.pretty import pprint
@@ -74,13 +74,13 @@ def quicksort(items: List[Product], key: Callable[[Product], float]) -> List[Pro
 
 def find_product_by_id(
     inventory: Inventory, product_id: int, high_traffic: bool = False
-) -> Product:
+) -> Optional[Product]:
     """Finds a product in the inventory by its ID."""
     if high_traffic:
         inventory.items = quicksort(inventory.items, key=lambda product: product.id)
         strategy = IterativeBinarySearchExactMatch()
     else:
-        strategy = LinearSearchForLoop()
+        strategy = LinearSearchForLoop() # type: ignore
 
     context = SearchContext(strategy=strategy)
 
@@ -107,7 +107,7 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def main() -> None:
+def main() -> Optional[Product]:
     """Main driver."""
     args = parse_args()
     # Creating an instance of Inventory

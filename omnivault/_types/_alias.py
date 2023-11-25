@@ -1,5 +1,5 @@
 """
-This file contains aliases for common types used in the DSA.
+This file contains aliases for common types.
 """
 NonNegativeInt = int
 PositiveInt = int

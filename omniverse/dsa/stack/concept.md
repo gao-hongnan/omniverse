@@ -449,7 +449,7 @@ performing various operations:
    items in the stack, popping and printing each one. This will empty the stack.
 
 ```{code-cell} ipython3
-stack = StackList[int]()
+stack = StackList[int]() # means stack should only store integers
 items = [1, 2, 3, 4, 5, 6]
 
 for item in items:
