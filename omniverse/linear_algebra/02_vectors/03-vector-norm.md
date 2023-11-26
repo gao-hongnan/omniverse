@@ -220,7 +220,15 @@ the distance a taxicab would travel in a grid-like path in $\mathbb{R}^D$. In
 machine learning, the L1 norm is used for **regularization**, encouraging
 sparsity in the model parameters.
 
-![](./assets/wikipedia-520px-Manhattan_distance.svg.png)
+```{figure} ./assets/wikipedia-520px-Manhattan_distance.svg.png
+---
+name: 03-vector-norm-manhattan-distance
+---
+Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
+yellow, blue, and green paths all have the same length of 12. In Euclidean
+geometry, the green line has length $6 \sqrt{2} \approx 8.49$ and is the unique
+shortest path, while the other paths have the longer length of 12.
+```
 
 ### L2 Norm (Euclidean Norm)
 
@@ -279,9 +287,18 @@ plotter = VectorPlotter2D(
     },
 )
 
-v = Vector2D(origin=(0, 0), direction=(3, 4), color="r", label="$\|\mathbf{v}\|_2 = \sqrt{3^2 + 4^2} = 5$")
-horizontal_component_v = Vector2D(origin=(0, 0), direction=(3, 0), color="b", label="$v_1 = 3$")
-vertical_component_v = Vector2D(origin=(3, 0), direction=(0, 4), color="g", label="$v_2 = 4$")
+v = Vector2D(
+    origin=(0, 0),
+    direction=(3, 4),
+    color="r",
+    label="$\|\mathbf{v}\|_2 = \sqrt{3^2 + 4^2} = 5$",
+)
+horizontal_component_v = Vector2D(
+    origin=(0, 0), direction=(3, 0), color="b", label="$v_1 = 3$"
+)
+vertical_component_v = Vector2D(
+    origin=(3, 0), direction=(0, 4), color="g", label="$v_2 = 4$"
+)
 add_vectors_to_plotter(plotter, [v, horizontal_component_v, vertical_component_v])
 add_text_annotations(plotter, [v])
 
