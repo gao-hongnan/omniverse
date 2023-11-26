@@ -68,8 +68,13 @@ def train_one_epoch(
     progress_bar      : tqdm  =  tqdm(enumerate(dataloader, start=1), total=num_batches)
     # fmt: on
 
-    for _batch_index, x in progress_bar:
-        inputs, targets, target_padding_masks, future_masks = construct_batches(x)
+    for _batch_index, batch in progress_bar:
+        (
+            inputs,
+            targets,
+            target_padding_masks,
+            future_masks,
+        ) = batch  # construct_batches(batch)
         inputs, targets, target_padding_masks, future_masks = (
             inputs.to(device),
             targets.to(device),
@@ -143,11 +148,16 @@ def valid_one_epoch(
     progress_bar = tqdm(enumerate(dataloader, start=1), total=num_batches)
 
     with torch.no_grad():  # Disable gradient computation
-        for _batch_index, x in progress_bar:
+        for _batch_index, batch in progress_bar:
             # decoded_equations: List[str] = batch_decode_equation(x)
             # pprint(decoded_equations)
 
-            inputs, targets, target_padding_masks, future_masks = construct_batches(x)
+            (
+                inputs,
+                targets,
+                target_padding_masks,
+                future_masks,
+            ) = batch  # construct_batches(batch)
             inputs, targets, target_padding_masks, future_masks = (
                 inputs.to(device),
                 targets.to(device),
