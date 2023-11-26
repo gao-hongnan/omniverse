@@ -19,7 +19,7 @@ Parameters for creating a quiver plot:
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import matplotlib.pyplot as plt
 
@@ -82,6 +82,8 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         self.vectors: List[Vector2D] = []
         self.colors: List[str] = []
 
+        self._apply_ax_customizations() # may not need since in FigureManager
+
     def add_text(
         self,
         x: float,
@@ -126,84 +128,76 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         if not show_ticks:
             self.ax.tick_params(axis="both", which="both", length=0)
 
-    def save(
-        self,
-        path: str,
-        *,
-        dpi: Union[float, str] = "figure",
-        format="svg",  # pylint: disable=redefined-builtin
-        **kwargs: Dict[str, Any],
-    ) -> None:
-        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
 
 class VectorPlotter3D(VectorPlotter[Vector3D]):
-    pass
-    # def __init__(
-    #     self,
-    #     fig: Optional[plt.Figure] = None,
-    #     ax: Optional[plt.Axes] = None,
-    #     ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
-    #     quiver_kwargs: Optional[Dict[str, Any]] = None,
-    # ) -> None:
-    #     super().__init__(fig, ax, ax_kwargs)
+    from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=import-outside-toplevel
 
-    #     self.quiver_kwargs = quiver_kwargs or {
-    #         "angles": "xy",
-    #         "scale_units": "xy",
-    #         "scale": 1,
-    #         "alpha": 0.6,
-    #     }
+    def __init__(
+        self,
+        fig: Optional[plt.Figure] = None,
+        ax: Optional[plt.Axes] = None,
+        ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+        quiver_kwargs: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        super().__init__(fig, ax, ax_kwargs)
 
-    #     self.vectors: List[Vector3D] = []
-    #     self.colors: List[str] = []
+        self.quiver_kwargs = quiver_kwargs or {
+            "length": 1,
+            "normalize": False,
+            "alpha": 0.6,
+            "arrow_length_ratio": 0.18,
+            "pivot": "tail",
+            "linestyles": "solid",
+            "linewidths": 3,
+        }
 
-    # def add_text(
-    #     self,
-    #     x: float,
-    #     y: float,
-    #     z: float,
-    #     text: str,
-    #     fontsize: int = 16,
-    #     **kwargs: Dict[str, Any],
-    # ) -> None:
-    #     self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)
+        self.vectors: List[Vector3D] = []
+        self.colors: List[str] = []
 
-    # def annotate(
-    #     self,
-    #     x: float,
-    #     y: float,
-    #     z: float,
-    #     text: str,
-    #     arrow_props: Optional[Dict[str, Any]] = None,
-    #     **kwargs: Dict[str, Any],
-    # ) -> None:
-    #     self.ax.annotate(
-    #         text,
-    #         xy=(x, y, z),
-    #         xytext=(x, y, z),
-    #         arrowprops=arrow_props,
-    #         fontsize=16,
-    #         **kwargs,  # type: ignore[arg-type]
-    #     )
+        self._apply_ax_customizations() # may not need since in FigureManager
 
-    # def add_vector(self, vector: Vector3D) -> None:
-    #     self.vectors.append(vector)
+    def add_text(
+        self,
+        x: float,
+        y: float,
+        z: float,
+        text: str,
+        fontsize: int = 16,
+        **kwargs: Dict[str, Any],
+    ) -> None:
+        self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)
 
-    # def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
-    #     for vector in self.vectors:
-    #         # fmt: off
-    #         X, Y, Z = vector.origin    # pylint: disable=invalid-name
-    #         U, V, W = vector.direction # pylint: disable=invalid-name
-    #         # fmt: on
-    #         self.ax.quiver(X, Y, Z, U, V, W, color=vector.color, **self.quiver_kwargs)
+    def annotate(
+        self,
+        x: float,
+        y: float,
+        z: float,
+        text: str,
+        arrow_props: Optional[Dict[str, Any]] = None,
+        **kwargs: Dict[str, Any],
+    ) -> None:
+        self.ax.annotate(
+            text,
+            xy=(x, y, z),
+            xytext=(x, y, z),
+            arrowprops=arrow_props,
+            fontsize=16,
+            **kwargs,  # type: ignore[arg-type]
+        )
 
-    #     if grid:
-    #         self.ax.grid()
+    def add_vector(self, vector: Vector3D) -> None:
+        self.vectors.append(vector)
 
-    #     if not show_ticks:
-    #         self.ax.tick_params(axis="both", which="both", length=0)
+    def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
+        for vector in self.vectors:
+            # fmt: off
+            X, Y, Z = vector.origin    # pylint: disable=invalid-name
+            U, V, W = vector.direction # pylint: disable=invalid-name
+            # fmt: on
+            self.ax.quiver(X, Y, Z, U, V, W, color=vector.color, **self.quiver_kwargs)
 
-    # def save(
-    #     self, path: str, *, dpi: Union[float, str] = "figure", **kwargs: Dict[str, Any]
-    # ) -> None:
-    #     self.fig.savefig(path, dpi=dpi, **kwargs)
+        if grid:
+            self.ax.grid()
+
+        if not show_ticks:
+            self.ax.tick_params(axis="both", which="both", length=0)

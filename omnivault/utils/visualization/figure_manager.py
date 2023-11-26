@@ -5,7 +5,7 @@ process of figure and axes creation and customization in matplotlib, making
 it easier to create and manage plots in a reusable manner.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import matplotlib.pyplot as plt
 
@@ -53,3 +53,13 @@ class FigureManager:
             self.fig.show()
         else:
             plt.show()
+
+    def save(
+        self,
+        path: str,
+        *,
+        dpi: Union[float, str] = "figure",
+        format="svg",  # pylint: disable=redefined-builtin
+        **kwargs: Dict[str, Any],
+    ) -> None:
+        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
