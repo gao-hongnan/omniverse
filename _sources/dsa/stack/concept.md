@@ -1,18 +1,18 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 # Concept
@@ -69,6 +69,8 @@ root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
+    from omnivault.dsa.stack.base import Stack
+    from omnivault._types._generic import T
 else:
     raise ImportError("Root directory not found.")
 ```
@@ -121,28 +123,28 @@ allow for random access to other elements.
 An excellent analogy for understanding stacks is the **_stack of plates_** in a
 restaurant, particularly in a sushi restaurant. Imagine this scenario:
 
-- The **plate loader** in a sushi restaurant, where plates are neatly stacked
-  one over the other, serves as a vivid illustration of a stack.
-- When you finish eating from a plate, you place it on top of the stack on the
-  **plate loader**. This action is akin to the `push` operation in a stack,
-  where an element is added to the top.
-- Now, consider the stack transitioning into a coding environment. We initiate
-  an empty stack `s` represented as `s = []`. In this representation, **_the end
-  of the list is treated as the top of the stack_**.
-- As you add more plates (e.g., `p1`, `p2`), you `push` them onto the stack:
-  `s.push(p1)`, leading to `s = [p1]`, and then `s.push(p2)`, resulting in
-  `s = [p1, p2]`.
-- When a waiter clears the topmost plate, this is similar to the `pop`
-  operation, which **_returns and removes_** the top item of the stack. Thus,
-  executing `s.pop()` would return `p2`, modifying the stack to `s = [p1]`.
+-   The **plate loader** in a sushi restaurant, where plates are neatly stacked
+    one over the other, serves as a vivid illustration of a stack.
+-   When you finish eating from a plate, you place it on top of the stack on the
+    **plate loader**. This action is akin to the `push` operation in a stack,
+    where an element is added to the top.
+-   Now, consider the stack transitioning into a coding environment. We initiate
+    an empty stack `s` represented as `s = []`. In this representation, **_the
+    end of the list is treated as the top of the stack_**.
+-   As you add more plates (e.g., `p1`, `p2`), you `push` them onto the stack:
+    `s.push(p1)`, leading to `s = [p1]`, and then `s.push(p2)`, resulting in
+    `s = [p1, p2]`.
+-   When a waiter clears the topmost plate, this is similar to the `pop`
+    operation, which **_returns and removes_** the top item of the stack. Thus,
+    executing `s.pop()` would return `p2`, modifying the stack to `s = [p1]`.
 
 Here, we have went through the two fundamental operations (amongst others) on
 stack: `push` and `pop`.
 
-- `push` operation pushes something on the top of the stack (appending to a
-  list);
-- `pop` operation returns and removes the top most item from the stack (popping
-  from the list).
+-   `push` operation pushes something on the top of the stack (appending to a
+    list);
+-   `pop` operation returns and removes the top most item from the stack
+    (popping from the list).
 
 ```{figure} ./assets/stack-1.svg
 ---
@@ -227,12 +229,12 @@ complexity.
 Python lists are dynamic arrays behind the scenes. This makes them ideal for
 implementing stacks because:
 
-- They provide **amortized constant time complexity** ($\mathcal{O}(1)$) for
-  adding and removing items from the end[^list-pop-time-complexity].
-- Lists are **dynamic**, so they can grow and shrink on demand, which suits the
-  variable size nature of stacks.
-- They come with built-in methods that directly correspond to stack operations
-  (`append` for push and `pop` without an index for pop).
+-   They provide **amortized constant time complexity** ($\mathcal{O}(1)$) for
+    adding and removing items from the end[^list-pop-time-complexity].
+-   Lists are **dynamic**, so they can grow and shrink on demand, which suits
+    the variable size nature of stacks.
+-   They come with built-in methods that directly correspond to stack operations
+    (`append` for push and `pop` without an index for pop).
 
 Using Python lists sidesteps the need for managing the capacity of the
 underlying data structure, which is an advantage over using a fixed-size array.
@@ -292,48 +294,133 @@ Stack being a container, we will also implement some dunder methods:
     its elements.
 ```
 
-```{code-cell} ipython3
+````{code-cell} ipython3
 from __future__ import annotations
 
 from typing import List, Generator, TypeVar, Generic
 
-T = TypeVar("T", covariant=False, contravariant=False)
+class StackList(Stack[T]):
+    """Creates a stack that uses python's default list as the underlying
+    data structure.
 
-class StackList(Generic[T]):
-    def __init__(self) -> None:
-        self._stack_items: List[T] = []
+    Note
+    ----
+    Methods are ordered with
+    dunder/magic/property -> public -> private -> static/class.
+
+    Attributes
+    ----------
+    _stack_items : List[T]
+        The list that stores the items in the stack. We treat the end of the
+        list as the top of the stack.
+    """
 
     def __len__(self) -> int:
-        return len(self._stack_items)
+        """Return the size of the stack."""
+        return len(self.stack_items)
 
     def __iter__(self) -> Generator[T, None, None]:
+        """Iterate over the stack items.
+
+        Note
+        ----
+        If we return self, then we need to define `__next__`
+        to make it an iterator. Else, python handles the
+        `__next__` method for us if `__iter__` returns an
+        iterator.
+
+        ```python
+        def __next__(self) -> StackList[T]:
+            if self.is_empty():
+                raise StopIteration
+            return self.pop()
+        ```
+
+        Returns
+        -------
+        StackList[T]
+            The stack.
+        """
+
         while not self.is_empty():
             yield self.pop()
 
     @property
     def stack_items(self) -> List[T]:
+        """Read only property for the stack items."""
         return self._stack_items
 
     @property
     def size(self) -> int:
+        """Return the size of the stack.
+
+        Note
+        ----
+        When you call `len(self)` from within the class, it will call internally
+        `self.__len__()` (`StackList.__len__()`) which will return the size of
+        the stack.
+
+        Returns
+        -------
+        int
+            The size of the stack.
+        """
         return len(self)
 
     def is_empty(self) -> bool:
-        return not self._stack_items
+        """Check if stack is empty.
+
+        Returns
+        -------
+        bool
+            True if stack is empty, False otherwise.
+        """
+        return not self.stack_items
 
     def peek(self) -> T:
-        if self.is_empty():
-            raise Exception("Stack is empty")
-        return self._stack_items[-1]
+        """Return the top most item in the stack without modifying the stack.
+
+        This is different from pop in that it does not remove the item from the
+        stack.
+
+        Returns
+        -------
+        T
+            The top most item in the stack.
+        """
+        return self.stack_items[-1]
 
     def pop(self) -> T:
+        """Pop an item from the top of the stack.
+
+        In this implementation, the item at the end of the list is returned
+        and removed. We are using the list's pop method to do this.
+
+        Raises
+        ------
+        (Exception): If stack is empty.
+
+        Returns
+        -------
+        T
+            The top most item in the stack.
+        """
         if self.is_empty():
-            raise Exception("Stack is empty")
-        return self._stack_items.pop()
+            raise Exception("Stack is empty")  # pylint: disable=broad-exception-raised
+        return self.stack_items.pop()
 
     def push(self, item: T) -> None:
-        self._stack_items.append(item)
-```
+        """Push an item on top of the stack.
+
+        In this implementation, the item is appended to the end of the list.
+
+        Parameters
+        ----------
+        item : T
+            The current item pushed into the stack.
+        """
+        self.stack_items.append(item)
+````
 
 ```{prf:remark} Some Remarks
 :label: stack-list-remarks
@@ -362,7 +449,7 @@ performing various operations:
    items in the stack, popping and printing each one. This will empty the stack.
 
 ```{code-cell} ipython3
-stack = StackList[int]()
+stack = StackList[int]() # means stack should only store integers
 items = [1, 2, 3, 4, 5, 6]
 
 for item in items:
@@ -399,42 +486,42 @@ Given a stack of size $N$ implemented using a Python list, the average and
 amortized worst-case time complexities of the fundamental operations are as
 follows:
 
-- **`push` (append)**: Appending an item to the end of a Python list has an
-  average time complexity of $\mathcal{O}(1)$. This constant time complexity
-  results from Python lists being implemented as dynamic arrays. Although they
-  occasionally need to be resized—an operation that takes $\mathcal{O}(N)$
-  time—the allocation strategy of Python lists employs an exponential growth
-  factor. This means that resizes happen less frequently as the list grows.
-  Thus, while the worst-case complexity of a single `append` operation can be
-  $\mathcal{O}(N)$ (when resizing is required), the cost of resizing is spread
-  over a large number of `append` operations, leading to an amortized time
-  complexity of $\mathcal{O}(1)$. This behavior is well-documented in the
-  [Python Time Complexity page](https://wiki.python.org/moin/TimeComplexity),
-  which lists both the average and amortized worst-case complexities for
-  `list.append` as $\mathcal{O}(1)$.
+-   **`push` (append)**: Appending an item to the end of a Python list has an
+    average time complexity of $\mathcal{O}(1)$. This constant time complexity
+    results from Python lists being implemented as dynamic arrays. Although they
+    occasionally need to be resized—an operation that takes $\mathcal{O}(N)$
+    time—the allocation strategy of Python lists employs an exponential growth
+    factor. This means that resizes happen less frequently as the list grows.
+    Thus, while the worst-case complexity of a single `append` operation can be
+    $\mathcal{O}(N)$ (when resizing is required), the cost of resizing is spread
+    over a large number of `append` operations, leading to an amortized time
+    complexity of $\mathcal{O}(1)$. This behavior is well-documented in the
+    [Python Time Complexity page](https://wiki.python.org/moin/TimeComplexity),
+    which lists both the average and amortized worst-case complexities for
+    `list.append` as $\mathcal{O}(1)$.
 
-- **`pop` (without an index)**: The `pop` method in Python, when used without an
-  index, removes the last item of the list. This operation has an average and
-  amortized worst-case time complexity of $\mathcal{O}(1)$, as it directly
-  accesses and removes the element at the end of the dynamic array without
-  needing to shift any elements. This behavior is consistent with the Python
-  documentation referenced above.
+-   **`pop` (without an index)**: The `pop` method in Python, when used without
+    an index, removes the last item of the list. This operation has an average
+    and amortized worst-case time complexity of $\mathcal{O}(1)$, as it directly
+    accesses and removes the element at the end of the dynamic array without
+    needing to shift any elements. This behavior is consistent with the Python
+    documentation referenced above.
 
-- **`peek`**: Retrieving the item at the top of the stack without removing it,
-  achieved by a direct access to the last element of the list (i.e.,
-  `list[-1]`), is an operation with a time complexity of $\mathcal{O}(1)$. This
-  constant time complexity is due to the array-based nature of Python lists,
-  which allows for direct indexing.
+-   **`peek`**: Retrieving the item at the top of the stack without removing it,
+    achieved by a direct access to the last element of the list (i.e.,
+    `list[-1]`), is an operation with a time complexity of $\mathcal{O}(1)$.
+    This constant time complexity is due to the array-based nature of Python
+    lists, which allows for direct indexing.
 
-- **`is_empty`**: The `is_empty` method checks whether the list is empty,
-  equivalent to verifying if the length of the list is zero. This is a
-  constant-time operation ($\mathcal{O}(1)$) in Python because the list object
-  maintains and updates its count of elements.
+-   **`is_empty`**: The `is_empty` method checks whether the list is empty,
+    equivalent to verifying if the length of the list is zero. This is a
+    constant-time operation ($\mathcal{O}(1)$) in Python because the list object
+    maintains and updates its count of elements.
 
-- **`size` (len)**: Obtaining the number of elements in the list, as done by the
-  `size` property using the `__len__` method, is a $\mathcal{O}(1)$ operation.
-  Python lists automatically keep track of their size, enabling quick access to
-  this information.
+-   **`size` (len)**: Obtaining the number of elements in the list, as done by
+    the `size` property using the `__len__` method, is a $\mathcal{O}(1)$
+    operation. Python lists automatically keep track of their size, enabling
+    quick access to this information.
 
 Some more remarks on **_amortized worst-case time complexity_**:
 
@@ -506,9 +593,9 @@ size of the `i`-th element.
 
 ## References and Further Readings
 
-- [Tech Interview Handbook - Stack Algorithms](https://www.techinterviewhandbook.org/algorithms/stack/)
-- [GeeksforGeeks - Introduction to Stack Data Structure](https://www.geeksforgeeks.org/introduction-to-stack-data-structure-and-algorithm-tutorials/)
-- [Runestone Academy - The Stack Abstract Data Type](https://runestone.academy/ns/books/published/pythonds3/BasicDS/TheStackAbstractDataType.html)
+-   [Tech Interview Handbook - Stack Algorithms](https://www.techinterviewhandbook.org/algorithms/stack/)
+-   [GeeksforGeeks - Introduction to Stack Data Structure](https://www.geeksforgeeks.org/introduction-to-stack-data-structure-and-algorithm-tutorials/)
+-   [Runestone Academy - The Stack Abstract Data Type](https://runestone.academy/ns/books/published/pythonds3/BasicDS/TheStackAbstractDataType.html)
 
 [^stack-applications]:
     [Stack Applications](https://www.geeksforgeeks.org/real-time-application-of-data-structures/#application-of-stack)

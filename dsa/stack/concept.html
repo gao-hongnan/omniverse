@@ -183,6 +183,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../searching_algorithms/binary_search/concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
 </ul>
 </li>
@@ -556,8 +557,8 @@ one over the other, serves as a vivid illustration of a stack.</p></li>
 <strong>plate loader</strong>. This action is akin to the <code class="docutils literal notranslate"><span class="pre">push</span></code> operation in a stack,
 where an element is added to the top.</p></li>
 <li><p>Now, consider the stack transitioning into a coding environment. We initiate
-an empty stack <code class="docutils literal notranslate"><span class="pre">s</span></code> represented as <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">[]</span></code>. In this representation, <strong><em>the end
-of the list is treated as the top of the stack</em></strong>.</p></li>
+an empty stack <code class="docutils literal notranslate"><span class="pre">s</span></code> represented as <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">[]</span></code>. In this representation, <strong><em>the
+end of the list is treated as the top of the stack</em></strong>.</p></li>
 <li><p>As you add more plates (e.g., <code class="docutils literal notranslate"><span class="pre">p1</span></code>, <code class="docutils literal notranslate"><span class="pre">p2</span></code>), you <code class="docutils literal notranslate"><span class="pre">push</span></code> them onto the stack:
 <code class="docutils literal notranslate"><span class="pre">s.push(p1)</span></code>, leading to <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">[p1]</span></code>, and then <code class="docutils literal notranslate"><span class="pre">s.push(p2)</span></code>, resulting in
 <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">=</span> <span class="pre">[p1,</span> <span class="pre">p2]</span></code>.</p></li>
@@ -570,8 +571,8 @@ stack: <code class="docutils literal notranslate"><span class="pre">push</span><
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">push</span></code> operation pushes something on the top of the stack (appending to a
 list);</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pop</span></code> operation returns and removes the top most item from the stack (popping
-from the list).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pop</span></code> operation returns and removes the top most item from the stack
+(popping from the list).</p></li>
 </ul>
 <figure class="align-default" id="stack-1">
 <img alt="../../_images/stack-1.svg" src="../../_images/stack-1.svg" /><figcaption>
@@ -656,8 +657,8 @@ implementing stacks because:</p>
 <ul class="simple">
 <li><p>They provide <strong>amortized constant time complexity</strong> (<span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>) for
 adding and removing items from the end<a class="footnote-reference brackets" href="#list-pop-time-complexity" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p></li>
-<li><p>Lists are <strong>dynamic</strong>, so they can grow and shrink on demand, which suits the
-variable size nature of stacks.</p></li>
+<li><p>Lists are <strong>dynamic</strong>, so they can grow and shrink on demand, which suits
+the variable size nature of stacks.</p></li>
 <li><p>They come with built-in methods that directly correspond to stack operations
 (<code class="docutils literal notranslate"><span class="pre">append</span></code> for push and <code class="docutils literal notranslate"><span class="pre">pop</span></code> without an index for pop).</p></li>
 </ul>
@@ -730,46 +731,131 @@ its elements.</p></td>
 </table>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos"> 6</span>
-<span class="linenos"> 7</span><span class="k">class</span> <span class="nc">StackList</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-<span class="linenos"> 8</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 9</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos">10</span>
-<span class="linenos">11</span>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="linenos">12</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span><span class="p">)</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="linenos">15</span>        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
-<span class="linenos">16</span>            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-<span class="linenos">17</span>
-<span class="linenos">18</span>    <span class="nd">@property</span>
-<span class="linenos">19</span>    <span class="k">def</span> <span class="nf">stack_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-<span class="linenos">20</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span>
-<span class="linenos">21</span>
-<span class="linenos">22</span>    <span class="nd">@property</span>
-<span class="linenos">23</span>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="linenos">24</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="linenos">27</span>        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span>
-<span class="linenos">28</span>
-<span class="linenos">29</span>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="linenos">30</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
-<span class="linenos">31</span>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Stack is empty&quot;</span><span class="p">)</span>
-<span class="linenos">32</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="linenos">33</span>
-<span class="linenos">34</span>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="linenos">35</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
-<span class="linenos">36</span>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Stack is empty&quot;</span><span class="p">)</span>
-<span class="linenos">37</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-<span class="linenos">38</span>
-<span class="linenos">39</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">40</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="linenos">  2</span>
+<span class="linenos">  3</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Generic</span>
+<span class="linenos">  4</span>
+<span class="linenos">  5</span><span class="k">class</span> <span class="nc">StackList</span><span class="p">(</span><span class="n">Stack</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="linenos">  6</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a stack that uses python&#39;s default list as the underlying</span>
+<span class="linenos">  7</span><span class="sd">    data structure.</span>
+<span class="linenos">  8</span>
+<span class="linenos">  9</span><span class="sd">    Note</span>
+<span class="linenos"> 10</span><span class="sd">    ----</span>
+<span class="linenos"> 11</span><span class="sd">    Methods are ordered with</span>
+<span class="linenos"> 12</span><span class="sd">    dunder/magic/property -&gt; public -&gt; private -&gt; static/class.</span>
+<span class="linenos"> 13</span>
+<span class="linenos"> 14</span><span class="sd">    Attributes</span>
+<span class="linenos"> 15</span><span class="sd">    ----------</span>
+<span class="linenos"> 16</span><span class="sd">    _stack_items : List[T]</span>
+<span class="linenos"> 17</span><span class="sd">        The list that stores the items in the stack. We treat the end of the</span>
+<span class="linenos"> 18</span><span class="sd">        list as the top of the stack.</span>
+<span class="linenos"> 19</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos"> 20</span>
+<span class="linenos"> 21</span>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 22</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the size of the stack.&quot;&quot;&quot;</span>
+<span class="linenos"> 23</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_items</span><span class="p">)</span>
+<span class="linenos"> 24</span>
+<span class="linenos"> 25</span>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos"> 26</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over the stack items.</span>
+<span class="linenos"> 27</span>
+<span class="linenos"> 28</span><span class="sd">        Note</span>
+<span class="linenos"> 29</span><span class="sd">        ----</span>
+<span class="linenos"> 30</span><span class="sd">        If we return self, then we need to define `__next__`</span>
+<span class="linenos"> 31</span><span class="sd">        to make it an iterator. Else, python handles the</span>
+<span class="linenos"> 32</span><span class="sd">        `__next__` method for us if `__iter__` returns an</span>
+<span class="linenos"> 33</span><span class="sd">        iterator.</span>
+<span class="linenos"> 34</span>
+<span class="linenos"> 35</span><span class="sd">        ```python</span>
+<span class="linenos"> 36</span><span class="sd">        def __next__(self) -&gt; StackList[T]:</span>
+<span class="linenos"> 37</span><span class="sd">            if self.is_empty():</span>
+<span class="linenos"> 38</span><span class="sd">                raise StopIteration</span>
+<span class="linenos"> 39</span><span class="sd">            return self.pop()</span>
+<span class="linenos"> 40</span><span class="sd">        ```</span>
+<span class="linenos"> 41</span>
+<span class="linenos"> 42</span><span class="sd">        Returns</span>
+<span class="linenos"> 43</span><span class="sd">        -------</span>
+<span class="linenos"> 44</span><span class="sd">        StackList[T]</span>
+<span class="linenos"> 45</span><span class="sd">            The stack.</span>
+<span class="linenos"> 46</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 47</span>
+<span class="linenos"> 48</span>        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+<span class="linenos"> 49</span>            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="linenos"> 50</span>
+<span class="linenos"> 51</span>    <span class="nd">@property</span>
+<span class="linenos"> 52</span>    <span class="k">def</span> <span class="nf">stack_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="linenos"> 53</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Read only property for the stack items.&quot;&quot;&quot;</span>
+<span class="linenos"> 54</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stack_items</span>
+<span class="linenos"> 55</span>
+<span class="linenos"> 56</span>    <span class="nd">@property</span>
+<span class="linenos"> 57</span>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 58</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the size of the stack.</span>
+<span class="linenos"> 59</span>
+<span class="linenos"> 60</span><span class="sd">        Note</span>
+<span class="linenos"> 61</span><span class="sd">        ----</span>
+<span class="linenos"> 62</span><span class="sd">        When you call `len(self)` from within the class, it will call internally</span>
+<span class="linenos"> 63</span><span class="sd">        `self.__len__()` (`StackList.__len__()`) which will return the size of</span>
+<span class="linenos"> 64</span><span class="sd">        the stack.</span>
+<span class="linenos"> 65</span>
+<span class="linenos"> 66</span><span class="sd">        Returns</span>
+<span class="linenos"> 67</span><span class="sd">        -------</span>
+<span class="linenos"> 68</span><span class="sd">        int</span>
+<span class="linenos"> 69</span><span class="sd">            The size of the stack.</span>
+<span class="linenos"> 70</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 71</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="linenos"> 72</span>
+<span class="linenos"> 73</span>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="linenos"> 74</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if stack is empty.</span>
+<span class="linenos"> 75</span>
+<span class="linenos"> 76</span><span class="sd">        Returns</span>
+<span class="linenos"> 77</span><span class="sd">        -------</span>
+<span class="linenos"> 78</span><span class="sd">        bool</span>
+<span class="linenos"> 79</span><span class="sd">            True if stack is empty, False otherwise.</span>
+<span class="linenos"> 80</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 81</span>        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_items</span>
+<span class="linenos"> 82</span>
+<span class="linenos"> 83</span>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos"> 84</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the top most item in the stack without modifying the stack.</span>
+<span class="linenos"> 85</span>
+<span class="linenos"> 86</span><span class="sd">        This is different from pop in that it does not remove the item from the</span>
+<span class="linenos"> 87</span><span class="sd">        stack.</span>
+<span class="linenos"> 88</span>
+<span class="linenos"> 89</span><span class="sd">        Returns</span>
+<span class="linenos"> 90</span><span class="sd">        -------</span>
+<span class="linenos"> 91</span><span class="sd">        T</span>
+<span class="linenos"> 92</span><span class="sd">            The top most item in the stack.</span>
+<span class="linenos"> 93</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 94</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_items</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos"> 95</span>
+<span class="linenos"> 96</span>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos"> 97</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Pop an item from the top of the stack.</span>
+<span class="linenos"> 98</span>
+<span class="linenos"> 99</span><span class="sd">        In this implementation, the item at the end of the list is returned</span>
+<span class="linenos">100</span><span class="sd">        and removed. We are using the list&#39;s pop method to do this.</span>
+<span class="linenos">101</span>
+<span class="linenos">102</span><span class="sd">        Raises</span>
+<span class="linenos">103</span><span class="sd">        ------</span>
+<span class="linenos">104</span><span class="sd">        (Exception): If stack is empty.</span>
+<span class="linenos">105</span>
+<span class="linenos">106</span><span class="sd">        Returns</span>
+<span class="linenos">107</span><span class="sd">        -------</span>
+<span class="linenos">108</span><span class="sd">        T</span>
+<span class="linenos">109</span><span class="sd">            The top most item in the stack.</span>
+<span class="linenos">110</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">111</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+<span class="linenos">112</span>            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Stack is empty&quot;</span><span class="p">)</span>  <span class="c1"># pylint: disable=broad-exception-raised</span>
+<span class="linenos">113</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_items</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="linenos">114</span>
+<span class="linenos">115</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">116</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Push an item on top of the stack.</span>
+<span class="linenos">117</span>
+<span class="linenos">118</span><span class="sd">        In this implementation, the item is appended to the end of the list.</span>
+<span class="linenos">119</span>
+<span class="linenos">120</span><span class="sd">        Parameters</span>
+<span class="linenos">121</span><span class="sd">        ----------</span>
+<span class="linenos">122</span><span class="sd">        item : T</span>
+<span class="linenos">123</span><span class="sd">            The current item pushed into the stack.</span>
+<span class="linenos">124</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">125</span>        <span class="bp">self</span><span class="o">.</span><span class="n">stack_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -802,7 +888,7 @@ items in the stack, popping and printing each one. This will empty the stack.</p
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">stack</span> <span class="o">=</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">int</span><span class="p">]()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">stack</span> <span class="o">=</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">int</span><span class="p">]()</span> <span class="c1"># means stack should only store integers</span>
 <span class="linenos"> 2</span><span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
 <span class="linenos"> 3</span>
 <span class="linenos"> 4</span><span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
@@ -877,25 +963,25 @@ complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</spa
 <a class="reference external" href="https://wiki.python.org/moin/TimeComplexity">Python Time Complexity page</a>,
 which lists both the average and amortized worst-case complexities for
 <code class="docutils literal notranslate"><span class="pre">list.append</span></code> as <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">pop</span></code> (without an index)</strong>: The <code class="docutils literal notranslate"><span class="pre">pop</span></code> method in Python, when used without an
-index, removes the last item of the list. This operation has an average and
-amortized worst-case time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>, as it directly
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pop</span></code> (without an index)</strong>: The <code class="docutils literal notranslate"><span class="pre">pop</span></code> method in Python, when used without
+an index, removes the last item of the list. This operation has an average
+and amortized worst-case time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>, as it directly
 accesses and removes the element at the end of the dynamic array without
 needing to shift any elements. This behavior is consistent with the Python
 documentation referenced above.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">peek</span></code></strong>: Retrieving the item at the top of the stack without removing it,
 achieved by a direct access to the last element of the list (i.e.,
-<code class="docutils literal notranslate"><span class="pre">list[-1]</span></code>), is an operation with a time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>. This
-constant time complexity is due to the array-based nature of Python lists,
-which allows for direct indexing.</p></li>
+<code class="docutils literal notranslate"><span class="pre">list[-1]</span></code>), is an operation with a time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.
+This constant time complexity is due to the array-based nature of Python
+lists, which allows for direct indexing.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">is_empty</span></code></strong>: The <code class="docutils literal notranslate"><span class="pre">is_empty</span></code> method checks whether the list is empty,
 equivalent to verifying if the length of the list is zero. This is a
 constant-time operation (<span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>) in Python because the list object
 maintains and updates its count of elements.</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">size</span></code> (len)</strong>: Obtaining the number of elements in the list, as done by the
-<code class="docutils literal notranslate"><span class="pre">size</span></code> property using the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method, is a <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> operation.
-Python lists automatically keep track of their size, enabling quick access to
-this information.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">size</span></code> (len)</strong>: Obtaining the number of elements in the list, as done by
+the <code class="docutils literal notranslate"><span class="pre">size</span></code> property using the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method, is a <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>
+operation. Python lists automatically keep track of their size, enabling
+quick access to this information.</p></li>
 </ul>
 <p>Some more remarks on <strong><em>amortized worst-case time complexity</em></strong>:</p>
 <div class="proof remark admonition" id="stack-list-amortized-worst-case-time-complexity">

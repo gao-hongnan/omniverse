@@ -1,18 +1,18 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 # Concept
@@ -252,17 +252,40 @@ Algorithm : unordered_linear_search_iterative(A, t)
 ```{prf:algorithm} Unordered Linear Search Mathematical Representation (Iterative)
 :label: unordered-linear-search-mathematical-representation-iterative
 
-Given a list $\mathcal{A}$ of $N$ elements with values or records
+Given a list $\mathcal{A}$ of $N$ elements with values
 $\mathcal{A}_0, \mathcal{A}_1, \ldots, \mathcal{A}_{N-1}$, and a target value
 $\tau$, the goal is to find the index of the target $\tau$ in $\mathcal{A}$
-using an iterative linear search procedure.
+using an _iterative linear search_ procedure.
 
-The search space $\mathcal{S}$ for the linear search is defined as the set of
-indices in $\mathcal{A}$:
+The search space $\mathcal{S}$ for linear search can be conceptualized in two
+ways:
 
-$$
-\mathcal{S} = \{ n \in \mathbb{N} \,|\, 0 \leq n < N \}
-$$
+1. **As the Set of Indices in $\mathcal{A}$**: The search space is defined as
+   the set of all possible indices within the list $\mathcal{A}$, which can be
+   mathematically represented as:
+
+   $$
+   \mathcal{S} = \{ n \in \mathbb{N} \,|\, 0 \leq n < N \}
+   $$
+
+   This interpretation focuses on the positions (indices) within the array
+   during the search process.
+
+2. **As the Array Itself**: Alternatively, the search space can be directly
+   equated to the array $\mathcal{A}$ itself, denoted as:
+
+   $$
+   \mathcal{S} := \mathcal{A}
+   $$
+
+   This view considers the elements (values) of the array as the domain of the
+   search.
+
+However, unlike binary search, this search space $\mathcal{S}$ is static and
+encompasses the entire array throughout the search process. The linear search
+algorithm inspects each element in $\mathcal{S}$ sequentially until it finds the
+target $\tau$ or exhausts the search space. Consequently, we will just
+interchangeably use the array $\mathcal{A}$ as the search space $\mathcal{S}$.
 
 The algorithm performs the following steps:
 
@@ -294,10 +317,10 @@ established by proving two key properties: its **invariance** and
 **termination**, often termed as the **loop invariant** and **loop
 termination**.
 
-- **Invariance** ensures that the algorithm always maintains certain conditions
-  that lead to a correct solution,
-- **Termination** guarantees that the algorithm will eventually complete its
-  execution.
+-   **Invariance** ensures that the algorithm always maintains certain
+    conditions that lead to a correct solution,
+-   **Termination** guarantees that the algorithm will eventually complete its
+    execution.
 
 We state the loop invariant theorem below, with the core logic extended from
 [Introduction to Algorithms](https://en.wikipedia.org/wiki/Introduction_to_Algorithms)
@@ -358,28 +381,29 @@ Now, let's align this with the loop invariant steps:
 
 1. **Initialization (Base Case in Induction)**:
 
-   - In loop invariants: You show that $\mathcal{P}(n)$ is true before the first
-     iteration of the loop, where $n$ is at its initial value.
-   - In induction: This is analogous to proving the base case, where you show
-     that the property holds for the initial value.
+    - In loop invariants: You show that $\mathcal{P}(n)$ is true before the
+      first iteration of the loop, where $n$ is at its initial value.
+    - In induction: This is analogous to proving the base case, where you show
+      that the property holds for the initial value.
 
 2. **Maintenance (Inductive Step in Induction)**:
 
-   - In loop invariants: Assuming $\mathcal{P}(k)$ is true at the start of the
-     $k^{th}$ iteration, you must show that $\mathcal{P}(k+1)$ is true at the
-     end of the $k^{th}$ iteration. This is the same as showing that
-     $\mathcal{P}(k+1)$ is true at the start of the $(k+1)^{th}$ iteration. This
-     is done by examining the changes made in the loop body and how they affect
-     $\mathcal{P}(n)$.
-   - In induction: This directly corresponds to the inductive step where you
-     assume the statement is true for $k$ and prove it for $k+1$.
+    - In loop invariants: Assuming $\mathcal{P}(k)$ is true at the start of the
+      $k^{th}$ iteration, you must show that $\mathcal{P}(k+1)$ is true at the
+      end of the $k^{th}$ iteration. This is the same as showing that
+      $\mathcal{P}(k+1)$ is true at the start of the $(k+1)^{th}$ iteration.
+      This is done by examining the changes made in the loop body and how they
+      affect $\mathcal{P}(n)$.
+    - In induction: This directly corresponds to the inductive step where you
+      assume the statement is true for $k$ and prove it for $k+1$.
 
 3. **Termination**:
-   - In loop invariants: When the loop terminates, the invariant
-     $\mathcal{P}(n)$ along with the termination condition helps in establishing
-     the correctness of the algorithm. This corresponds to concluding in
-     induction that since the base case and inductive step are proven, the
-     property holds for all natural numbers starting from the base case.
+    - In loop invariants: When the loop terminates, the invariant
+      $\mathcal{P}(n)$ along with the termination condition helps in
+      establishing the correctness of the algorithm. This corresponds to
+      concluding in induction that since the base case and inductive step are
+      proven, the property holds for all natural numbers starting from the base
+      case.
 
 Therefore, the process of using a loop invariant to prove the correctness of an
 algorithm can be viewed as an application of simple mathematical induction. The
@@ -634,129 +658,131 @@ rigorously below.
 
 ##### Defining the Random Variable
 
-- In the context of linear search, the random variable $X$ can be defined as the
-  index position at which the target element $\tau$ is located in the array
-  $\mathcal{A}$.
-- This means $X$ takes on values in the set $\{0, 1, 2, \ldots, N-1\}$, where
-  $N$ is the size of the array and indexed by $n=0, 1, 2, \ldots, N-1$.
-- We denote $X = n$ as the realization that the target element $\tau$ is at the
-  $n$-th position in the array and $\mathbb{P}[X = n]$ as the probability of
-  this event occurring. In other words, if $X = 2$, then $\mathbb{P}[X = 2]$ is
-  the probability that the target element $\tau$ is at the $2$-nd position in
-  the array.
+-   In the context of linear search, the random variable $X$ can be defined as
+    the index position at which the target element $\tau$ is located in the
+    array $\mathcal{A}$.
+-   This means $X$ takes on values in the set $\{0, 1, 2, \ldots, N-1\}$, where
+    $N$ is the size of the array and indexed by $n=0, 1, 2, \ldots, N-1$.
+-   We denote $X = n$ as the realization that the target element $\tau$ is at
+    the $n$-th position in the array and $\mathbb{P}[X = n]$ as the probability
+    of this event occurring. In other words, if $X = 2$, then
+    $\mathbb{P}[X = 2]$ is the probability that the target element $\tau$ is at
+    the $2$-nd position in the array.
 
 ##### Uniform Distribution of $X$
 
-- When we say that $X$ is uniformly distributed, we mean that the probability of
-  the target element $\tau$ being at any specific index $N$ in the array is
-  equal for all indices.
-- Mathematically, this is expressed as $\mathbb{P}[X = n] = \frac{1}{N}$ for all
-  $i$ in $\{0, 1, 2, \ldots, N-1\}$.
-- This is based on the assumption that the target element $\tau$ is equally
-  likely to be at any position in the array, reflecting a scenario where there
-  is no prior knowledge about the position of $\tau$.
+-   When we say that $X$ is uniformly distributed, we mean that the probability
+    of the target element $\tau$ being at any specific index $N$ in the array is
+    equal for all indices.
+-   Mathematically, this is expressed as $\mathbb{P}[X = n] = \frac{1}{N}$ for
+    all $i$ in $\{0, 1, 2, \ldots, N-1\}$.
+-   This is based on the assumption that the target element $\tau$ is equally
+    likely to be at any position in the array, reflecting a scenario where there
+    is no prior knowledge about the position of $\tau$.
 
 ##### Calculating Expected Value $\mathbb{E}[\mathcal{T}(N)]$
 
 1. **Calculating Expected Value of $X$**:
 
-   - The expected value (average) of $X$, denoted as $\mathbb{E}[X]$, represents
-     the average index position where $\tau$ is expected to be found.
-   - It is computed as the sum of each possible value of $X$ multiplied by its
-     probability:
+    - The expected value (average) of $X$, denoted as $\mathbb{E}[X]$,
+      represents the average index position where $\tau$ is expected to be
+      found.
+    - It is computed as the sum of each possible value of $X$ multiplied by its
+      probability:
 
-     $$
-     \begin{aligned}
-     \mathbb{E}[X]  &= \sum_{n=1}^{N} n \cdot P(X = n) \\
-                    &= \sum_{n=1}^{N} n \cdot \frac{1}{N} \\
-                    &= \frac{1}{N} \sum_{n=1}^{N} n \\
-                    &= \frac{1}{N} \cdot \frac{N(N+1)}{2} \\
-                    &= \frac{N+1}{2}
-     \end{aligned}
-     $$
+        $$
+        \begin{aligned}
+        \mathbb{E}[X]  &= \sum_{n=1}^{N} n \cdot P(X = n) \\
+                       &= \sum_{n=1}^{N} n \cdot \frac{1}{N} \\
+                       &= \frac{1}{N} \sum_{n=1}^{N} n \\
+                       &= \frac{1}{N} \cdot \frac{N(N+1)}{2} \\
+                       &= \frac{N+1}{2}
+        \end{aligned}
+        $$
 
-   - In other words, the expected value of $X$ is $\frac{N+1}{2}$, which means
-     that on average, the target element $\tau$ is expected to be found around
-     the middle of the array. This translates to
-     $\mathcal{T}(N) = \frac{N+1}{2}$.
+    - In other words, the expected value of $X$ is $\frac{N+1}{2}$, which means
+      that on average, the target element $\tau$ is expected to be found around
+      the middle of the array. This translates to
+      $\mathcal{T}(N) = \frac{N+1}{2}$.
 
-     Why?
+        Why?
 
-     Because the average number of comparisons is $\frac{N+1}{2}$, and each
-     comparison takes constant time, the average time complexity is also
-     $\frac{N+1}{2}$.
+        Because the average number of comparisons is $\frac{N+1}{2}$, and each
+        comparison takes constant time, the average time complexity is also
+        $\frac{N+1}{2}$.
 
 2. **Relating $\mathbb{E}[X]$ to Time Complexity $\mathcal{T}(N)$**:
 
-   - The time complexity function $\mathcal{T}(N)$ represents the number of
-     comparisons required to find $\tau$ in the array $\mathcal{A}$.
-   - When the linear search algorithm finds $\tau$ at index $n$, it performs
-     $n + 1$ comparisons (since the first comparison is at index 0).
-   - Thus, the function $\mathcal{T}(n) = n + 1$, where $n$ is the index at
-     which $\tau$ is found.
-   - To determine the expected time complexity $\mathbb{E}[\mathcal{T}(N)]$, we
-     need to consider the expected number of comparisons, which depends on the
-     average position $\mathbb{E}[X]$ where $\tau$ is located:
+    - The time complexity function $\mathcal{T}(N)$ represents the number of
+      comparisons required to find $\tau$ in the array $\mathcal{A}$.
+    - When the linear search algorithm finds $\tau$ at index $0 < n <= N$, it
+      performs $n + 1$ comparisons (since the first comparison is at index 0).
+    - Thus, the function $\mathcal{T}(n) = n + 1$, where $n$ is the index at
+      which $\tau$ is found.
+    - To determine the expected time complexity $\mathbb{E}[\mathcal{T}(N)]$, we
+      need to consider the expected number of comparisons, which depends on the
+      average position $\mathbb{E}[X]$ where $\tau$ is located:
 
-     $$
-     \begin{aligned}
-     \mathbb{E}[\mathcal{T}(N)] &= \mathbb{E}[X + 1] \\
-                                &= \mathbb{E}[X] + 1 \\
-                                &= \frac{N+1}{2} + 1 \\
-                                &= \frac{N+3}{2}
-     \end{aligned}
-     $$
+        $$
+        \begin{aligned}
+        \mathbb{E}[\mathcal{T}(N)] &= \mathbb{E}[X + 1] \\
+                                   &= \mathbb{E}[X] + 1 \\
+                                   &= \frac{N+1}{2} + 1 \\
+                                   &= \frac{N+3}{2}
+        \end{aligned}
+        $$
 
-   - This result shows that on average, the linear search algorithm will perform
-     $\frac{N+3}{2}$ comparisons to find $\tau$ in an array of size $N$ under
-     the assumption of uniform distribution. Note that the $+1$ in the
-     expression $\frac{N+1}{2} + 1$ accounts for the fact that the comparison
-     starts at index $0$.
+    - This result shows that on average, the linear search algorithm will
+      perform $\frac{N+3}{2}$ comparisons to find $\tau$ in an array of size $N$
+      under the assumption of uniform distribution. Note that the $+1$ in the
+      expression $\frac{N+1}{2} + 1$ accounts for the fact that the comparison
+      starts at index $0$.
 
 ##### Time Complexity Using Big O Notation $\mathcal{O}(g(N))$
 
 1. **Definition of Big O Notation**:
 
-   - Big O notation provides an upper bound on the growth rate of a function. In
-     the context of time complexity, it is used to describe the worst-case
-     scenario for the growth rate of the number of operations an algorithm
-     performs.
-   - Formally, a function $f(N)$ is in $\mathcal{O}(g(N))$ if there exist
-     constants $C > 0$ and $N_0$ such that for all $N \geq N_0$,
-     $0 \leq f(N) \leq C \cdot g(N)$.
+    - Big O notation provides an upper bound on the growth rate of a function.
+      In the context of time complexity, it is used to describe the worst-case
+      scenario for the growth rate of the number of operations an algorithm
+      performs.
+    - Formally, a function $f(N)$ is in $\mathcal{O}(g(N))$ if there exist
+      constants $C > 0$ and $N_0$ such that for all $N \geq N_0$,
+      $0 \leq f(N) \leq C \cdot g(N)$.
 
 2. **Applying to Linear Search**:
 
-   - From the earlier analysis, we have that the average number of comparisons
-     needed to find $\tau$ is $\frac{N+3}{2}$.
-   - To express this in Big O notation, we need to find a function $g(N)$ and
-     constants $C$ and $N_0$ that satisfy the formal definition.
+    - From the earlier analysis, we have that the average number of comparisons
+      needed to find $\tau$ is $\frac{N+3}{2}$.
+    - To express this in Big O notation, we need to find a function $g(N)$ and
+      constants $C$ and $N_0$ that satisfy the formal definition.
 
 3. **Choosing $g(N)$ and Constants**:
 
-   - Let's choose $g(N) = N$. This choice reflects the linear nature of the time
-     complexity function $\mathbb{E}[\mathcal{T}(N)]$.
-   - Now, we need to find $C$ and $N_0$ such that
-     $\mathbb{E}[\mathcal{T}(N)] \leq C \cdot g(N)$ for all $N \geq N_0$.
+    - Let's choose $g(N) = N$. This choice reflects the linear nature of the
+      time complexity function $\mathbb{E}[\mathcal{T}(N)]$.
+    - Now, we need to find $C$ and $N_0$ such that
+      $\mathbb{E}[\mathcal{T}(N)] \leq C \cdot g(N)$ for all $N \geq N_0$.
 
 4. **Proof**:
 
-   - We note that $\mathbb{E}[\mathcal{T}(N)] = \frac{N+3}{2}$.
-   - Choose $C = 1$ and $N_0 = 1$. For all $N \geq N_0$:
+    - We note that $\mathbb{E}[\mathcal{T}(N)] = \frac{N+3}{2}$.
+    - Choose $C = 1$ and $N_0 = 1$. For all $N \geq N_0$:
 
-     $$
-     \begin{aligned}
-     0 \leq \mathbb{E}[\mathcal{T}(N)]  &= \frac{N+3}{2} \\
-                                        &\leq N \quad (\text{since } N+3 \leq 2N \text{ for } N \geq 1) \\
-                                        &= C \cdot g(N)
-     \end{aligned}
-     $$
+        $$
+        \begin{aligned}
+        0 \leq \mathbb{E}[\mathcal{T}(N)]  &= \frac{N+3}{2} \\
+                                           &\leq N \quad (\text{since } N+3 \leq 2N \text{ for } N \geq 1) \\
+                                           &= C \cdot g(N)
+        \end{aligned}
+        $$
 
-   - This demonstrates that $\mathbb{E}[\mathcal{T}(N)] = \frac{N+3}{2}$ is
-     bounded above by $C \cdot g(N)$, confirming that the average case time
-     complexity of the linear search algorithm is $\mathcal{O}(N)$.
-   - This shows that the average time complexity of linear search grows linearly
-     with the size of the array $N$ and is bounded by a linear function of $N$.
+    - This demonstrates that $\mathbb{E}[\mathcal{T}(N)] = \frac{N+3}{2}$ is
+      bounded above by $C \cdot g(N)$, confirming that the average case time
+      complexity of the linear search algorithm is $\mathcal{O}(N)$.
+    - This shows that the average time complexity of linear search grows
+      linearly with the size of the array $N$ and is bounded by a linear
+      function of $N$.
 
 #### Time Complexity Table
 
@@ -786,34 +812,36 @@ for all cases, because we need to check every element in the list.
 
 #### Input Space Complexity
 
-- **Definition**: Input space complexity refers to the space used by the inputs
-  to the algorithm.
-- **Linear Search Context**: For linear search, the primary input is the list
-  $\mathcal{A}$ of size $N$.
-- **Analysis**: Since the list $\mathcal{A}$ is an essential input to the
-  algorithm and occupies space proportional to its size, the input space
-  complexity is directly related to the length of this list.
-- **Space Complexity**: Thus, the input space complexity is $\mathcal{O}(N)$,
-  where $N$ is the number of elements in $\mathcal{A}$.
+-   **Definition**: Input space complexity refers to the space used by the
+    inputs to the algorithm.
+-   **Linear Search Context**: For linear search, the primary input is the list
+    $\mathcal{A}$ of size $N$.
+-   **Analysis**: Since the list $\mathcal{A}$ is an essential input to the
+    algorithm and occupies space proportional to its size, the input space
+    complexity is directly related to the length of this list.
+-   **Space Complexity**: Thus, the input space complexity is $\mathcal{O}(N)$,
+    where $N$ is the number of elements in $\mathcal{A}$.
 
 #### Auxiliary Space Complexity
 
-- **Definition**: Auxiliary space complexity accounts for the extra or temporary
-  space used by an algorithm, excluding the space taken by the inputs.
-- **Linear Search Context**: In linear search, the only additional space used is
-  for a few variables, such as the index variable (and possibly a boolean flag).
-- **Analysis**: The space required for these variables does not scale with the
-  size of the input $N$; rather, it remains constant.
-- **Space Complexity**: Therefore, the auxiliary space complexity for linear
-  search is $\mathcal{O}(1)$.
+-   **Definition**: Auxiliary space complexity accounts for the extra or
+    temporary space used by an algorithm, excluding the space taken by the
+    inputs.
+-   **Linear Search Context**: In linear search, the only additional space used
+    is for a few variables, such as the index variable (and possibly a boolean
+    flag).
+-   **Analysis**: The space required for these variables does not scale with the
+    size of the input $N$; rather, it remains constant.
+-   **Space Complexity**: Therefore, the auxiliary space complexity for linear
+    search is $\mathcal{O}(1)$.
 
 #### Total Space Complexity
 
-- **Definition**: Total space complexity combines both the input and auxiliary
-  space complexities.
-- **Linear Search Context**: The total space used by the algorithm includes the
-  space for the list $\mathcal{A}$ and the constant extra space for the
-  variables is just $\mathcal{O}(N)$.
+-   **Definition**: Total space complexity combines both the input and auxiliary
+    space complexities.
+-   **Linear Search Context**: The total space used by the algorithm includes
+    the space for the list $\mathcal{A}$ and the constant extra space for the
+    variables is just $\mathcal{O}(N)$.
 
 ### The Recursive Counterpart
 
@@ -919,15 +947,16 @@ def test_unordered_sequential_search_recursive():
 
 #### Complexity Analysis
 
-- **Time Complexity**: The time complexity of the recursive implementation is
-  similar to the iterative approach. In the worst case (target not present or at
-  the end), it checks each element once, leading to $\mathcal{O}(N)$ complexity.
-  The average and best cases are also similar to the iterative approach.
+-   **Time Complexity**: The time complexity of the recursive implementation is
+    similar to the iterative approach. In the worst case (target not present or
+    at the end), it checks each element once, leading to $\mathcal{O}(N)$
+    complexity. The average and best cases are also similar to the iterative
+    approach.
 
-- **Space Complexity**: The space complexity of the recursive implementation is
-  a bit different from the iterative one. Each recursive call adds a new layer
-  to the call stack. In the worst case, there will be $N$ recursive calls,
-  leading to a space complexity of $\mathcal{O}(N)$.
+-   **Space Complexity**: The space complexity of the recursive implementation
+    is a bit different from the iterative one. Each recursive call adds a new
+    layer to the call stack. In the worst case, there will be $N$ recursive
+    calls, leading to a space complexity of $\mathcal{O}(N)$.
 
 We can further optimize the recursive implementation by using tail recursion to
 reduce the space complexity to $\mathcal{O}(1)$.
@@ -1100,14 +1129,14 @@ good "naive/brute-force" approach to solving problems.
 
 ## References and Further Readings
 
-- [Runestone Academy Sequential Search](https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html)
-- [Wikipedia Linear Search](https://en.wikipedia.org/wiki/Linear_search)
-- [Stack Overflow Recursive Linear Search](https://stackoverflow.com/questions/4295608/recursive-linear-search-returns-list-index)
-- [Ozaner Sequential Search](https://ozaner.github.io/sequential-search/)
-- [Expected Number of Iterations of an Exhaustive Search - Mathematics Stack Exchange](https://math.stackexchange.com/questions/2048236/expected-number-of-iterations-of-an-exhaustive-search)
-- [Average Time Complexity of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/140716/average-time-complexity-of-linear-search)
-- [Loop Invariant of Linear Search - Stack Overflow](https://stackoverflow.com/questions/5585020/loop-invariant-of-linear-search)
-- [Analysis of Linear Search - CLRS Chapter 2, Exercise 2.1-3](https://atekihcan.github.io/CLRS/02/E02.01-03/)
-- [Proof of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/6597/proof-of-linear-search)
-- [Proving the Correctness of Linear Search Algorithm (CLRS Exercise 2.1-3) - Quora](https://www.quora.com/How-do-you-prove-the-correctness-of-a-linear-search-algorithm-for-exercise-2-1-3-in-CLRS)
-- [Heap Invariant and Its Proof - Columbia University](https://www.columbia.edu/~cs2035/courses/csor4231.F05/heap-invariant.pdf)
+-   [Runestone Academy Sequential Search](https://runestone.academy/ns/books/published/pythonds/SortSearch/TheSequentialSearch.html)
+-   [Wikipedia Linear Search](https://en.wikipedia.org/wiki/Linear_search)
+-   [Stack Overflow Recursive Linear Search](https://stackoverflow.com/questions/4295608/recursive-linear-search-returns-list-index)
+-   [Ozaner Sequential Search](https://ozaner.github.io/sequential-search/)
+-   [Expected Number of Iterations of an Exhaustive Search - Mathematics Stack Exchange](https://math.stackexchange.com/questions/2048236/expected-number-of-iterations-of-an-exhaustive-search)
+-   [Average Time Complexity of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/140716/average-time-complexity-of-linear-search)
+-   [Loop Invariant of Linear Search - Stack Overflow](https://stackoverflow.com/questions/5585020/loop-invariant-of-linear-search)
+-   [Analysis of Linear Search - CLRS Chapter 2, Exercise 2.1-3](https://atekihcan.github.io/CLRS/02/E02.01-03/)
+-   [Proof of Linear Search - Computer Science Stack Exchange](https://cs.stackexchange.com/questions/6597/proof-of-linear-search)
+-   [Proving the Correctness of Linear Search Algorithm (CLRS Exercise 2.1-3) - Quora](https://www.quora.com/How-do-you-prove-the-correctness-of-a-linear-search-algorithm-for-exercise-2-1-3-in-CLRS)
+-   [Heap Invariant and Its Proof - Columbia University](https://www.columbia.edu/~cs2035/courses/csor4231.F05/heap-invariant.pdf)
