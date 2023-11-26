@@ -29,14 +29,14 @@ kernelspec:
 from __future__ import annotations
 
 import math
-from IPython.display import display
-from typing import Sequence, TypeVar, Optional
+import sys
+from pathlib import Path
+from typing import Optional, Sequence, TypeVar
+
 import matplotlib.pyplot as plt
 import numpy as np
 import rich
-
-import sys
-from pathlib import Path
+from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
@@ -68,10 +68,11 @@ if root_dir is not None:
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
         VectorPlotter2D,
-        Vector2D,
+        VectorPlotter3D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
+    from omnivault.linear_algebra.vector import Vector2D, Vector3D
 else:
     raise ImportError("Root directory not found.")
 

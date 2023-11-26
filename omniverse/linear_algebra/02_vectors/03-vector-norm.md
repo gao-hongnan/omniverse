@@ -68,10 +68,11 @@ if root_dir is not None:
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
         VectorPlotter2D,
-        Vector2D,
+        VectorPlotter3D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
+    from omnivault.linear_algebra.vector import Vector2D, Vector3D
 else:
     raise ImportError("Root directory not found.")
 

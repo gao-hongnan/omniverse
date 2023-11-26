@@ -19,36 +19,12 @@ Parameters for creating a quiver plot:
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple, Union, TypeVar, Generic
-from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional, Union
+
 import matplotlib.pyplot as plt
 
-from omnivault.utils.visualization.figure_manager import FigureManager
-
-
-# TODO: Use Vector as base class and type hint with the generic and typevar method.
-# Base Vector class
-@dataclass
-class Vector:
-    color: Optional[str] = "black"
-    label: Optional[str] = None
-
-
-Vec = TypeVar("Vec", bound=Vector, covariant=False, contravariant=False)
-
-
-# Vector2D and Vector3D inherit from Vector and remember Vec is bound to Vector
-@dataclass
-class Vector2D(Vector):
-    origin: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
-    direction: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
-
-
-@dataclass
-class Vector3D(Vector):
-    origin: Tuple[float, float, float] = field(default_factory= lambda: (0.0, 0.0, 0.0))
-    direction: Tuple[float, float, float] = field(default_factory= lambda: (0.0, 0.0, 0.0))
+from omnivault.linear_algebra.base import VectorPlotter
+from omnivault.linear_algebra.vector import Vector, Vector2D, Vector3D
 
 
 def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]) -> None:
@@ -85,11 +61,6 @@ def add_text_annotations(
                 x=mid_point[0], y=mid_point[1], text=vector.label, **vector_kwargs
             )
 
-
-class VectorPlotter(Generic[Vec], FigureManager, ABC):
-    @abstractmethod
-    def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
-        ...
 
 class VectorPlotter2D(VectorPlotter[Vector2D]):
     def __init__(
@@ -164,3 +135,75 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         **kwargs: Dict[str, Any],
     ) -> None:
         self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
+
+class VectorPlotter3D(VectorPlotter[Vector3D]):
+    pass
+    # def __init__(
+    #     self,
+    #     fig: Optional[plt.Figure] = None,
+    #     ax: Optional[plt.Axes] = None,
+    #     ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+    #     quiver_kwargs: Optional[Dict[str, Any]] = None,
+    # ) -> None:
+    #     super().__init__(fig, ax, ax_kwargs)
+
+    #     self.quiver_kwargs = quiver_kwargs or {
+    #         "angles": "xy",
+    #         "scale_units": "xy",
+    #         "scale": 1,
+    #         "alpha": 0.6,
+    #     }
+
+    #     self.vectors: List[Vector3D] = []
+    #     self.colors: List[str] = []
+
+    # def add_text(
+    #     self,
+    #     x: float,
+    #     y: float,
+    #     z: float,
+    #     text: str,
+    #     fontsize: int = 16,
+    #     **kwargs: Dict[str, Any],
+    # ) -> None:
+    #     self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)
+
+    # def annotate(
+    #     self,
+    #     x: float,
+    #     y: float,
+    #     z: float,
+    #     text: str,
+    #     arrow_props: Optional[Dict[str, Any]] = None,
+    #     **kwargs: Dict[str, Any],
+    # ) -> None:
+    #     self.ax.annotate(
+    #         text,
+    #         xy=(x, y, z),
+    #         xytext=(x, y, z),
+    #         arrowprops=arrow_props,
+    #         fontsize=16,
+    #         **kwargs,  # type: ignore[arg-type]
+    #     )
+
+    # def add_vector(self, vector: Vector3D) -> None:
+    #     self.vectors.append(vector)
+
+    # def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
+    #     for vector in self.vectors:
+    #         # fmt: off
+    #         X, Y, Z = vector.origin    # pylint: disable=invalid-name
+    #         U, V, W = vector.direction # pylint: disable=invalid-name
+    #         # fmt: on
+    #         self.ax.quiver(X, Y, Z, U, V, W, color=vector.color, **self.quiver_kwargs)
+
+    #     if grid:
+    #         self.ax.grid()
+
+    #     if not show_ticks:
+    #         self.ax.tick_params(axis="both", which="both", length=0)
+
+    # def save(
+    #     self, path: str, *, dpi: Union[float, str] = "figure", **kwargs: Dict[str, Any]
+    # ) -> None:
+    #     self.fig.savefig(path, dpi=dpi, **kwargs)

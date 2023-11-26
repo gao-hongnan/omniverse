@@ -68,10 +68,11 @@ if root_dir is not None:
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
         VectorPlotter2D,
-        Vector2D,
+        VectorPlotter3D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
+    from omnivault.linear_algebra.vector import Vector2D, Vector3D
 else:
     raise ImportError("Root directory not found.")
 
@@ -178,6 +179,15 @@ name: 01-vector-definition-vector-versus-coordinate
 ---
 
 Three of the same vectors with different starting coordinates; By Hongnan G.
+```
+
+```{code-cell} ipython3
+print(vector1.dimension)
+print(vector1.magnitude)
+print(vector2.dimension)
+print(vector2.magnitude)
+print(vector3.dimension)
+print(vector3.magnitude)
 ```
 
 ### Vector is Invariant under Coordinate Transformation

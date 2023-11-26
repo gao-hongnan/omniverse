@@ -1,5 +1,5 @@
 from collections.abc import MutableSequence
-from typing import Iterable, Generic, Optional
+from typing import Generic, Iterable, Optional
 
 from omnivault._types._generic import T
 
