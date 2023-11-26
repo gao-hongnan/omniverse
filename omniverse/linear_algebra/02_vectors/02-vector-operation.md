@@ -212,7 +212,7 @@ add_text_annotations(plotter, vectors)
 
 # Plot and show
 plotter.plot()
-save_path = Path("./assets/02-vector-operation-addition.svg")
+save_path = Path("./assets/02-vector-operation-addition123.svg")
 if not save_path.exists():
     plotter.save(save_path)
 ```
@@ -223,6 +223,46 @@ name: 02-vector-operation-vector-addition
 ---
 
 Vector addition; By Hongnan G.
+```
+
+For the sake of displaying completeness of vector addition in 3D, let's look at
+how we can plot it with our code base:
+
+```{code-cell} ipython3
+fig = plt.figure(figsize=(20, 10))
+ax = fig.add_subplot(111, projection="3d")
+
+quiver_kwargs = {
+    "length": 1,
+    "normalize": False,
+    "alpha": 0.6,
+    "arrow_length_ratio": 0.08,
+    "pivot": "tail",
+    "linestyles": "solid",
+    "linewidths": 3,
+}
+
+plotter3d = VectorPlotter3D(
+    fig=fig,
+    ax=ax,
+    ax_kwargs={
+        "set_xlim": {"left": 0, "right": 10},
+        "set_ylim": {"bottom": 0, "top": 10},
+        "set_zlim": {"bottom": 0, "top": 10},
+    },
+    quiver_kwargs=quiver_kwargs,
+)
+vectors = [
+    Vector3D(origin=(0, 0, 0), direction=(3, 4, 5), color="red", label="$\mathbf{u}$"),
+    Vector3D(origin=(0, 0, 0), direction=(3, 6, 3), color="green", label="$\mathbf{v}$"),
+    Vector3D(origin=(0, 0, 0), direction=(6, 10, 8), color="blue", label="$\mathbf{u} + \mathbf{v}$"),
+    Vector3D(origin=(3, 6, 3), direction=(3, 4, 5), color="red", label="$\mathbf{u}$"),
+    Vector3D(origin=(3, 4, 5), direction=(3, 6, 3), color="green", label="$\mathbf{v}$"),
+]
+
+add_vectors_to_plotter(plotter3d, vectors)
+add_text_annotations(plotter3d, vectors)
+plotter3d.plot(show_ticks=True)
 ```
 
 ```{prf:example} Vector Subtraction

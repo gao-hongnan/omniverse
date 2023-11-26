@@ -19,7 +19,7 @@ Parameters for creating a quiver plot:
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 import matplotlib.pyplot as plt
 
@@ -27,14 +27,14 @@ from omnivault.linear_algebra.base import VectorPlotter
 from omnivault.linear_algebra.vector import Vector, Vector2D, Vector3D
 
 
-def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]) -> None:
+def add_vectors_to_plotter(plotter: VectorPlotter, vectors: Sequence[Vector]) -> None:
     for vector in vectors:
         plotter.add_vector(vector)
 
 
 def add_text_annotations(
     plotter: VectorPlotter,
-    vectors: List[Vector],
+    vectors: Sequence[Vector],
     include_endpoint_label: bool = True,
     include_vector_label: bool = True,
     endpoint_kwargs: Optional[Dict[str, Any]] = None,
@@ -44,22 +44,41 @@ def add_text_annotations(
     vector_kwargs = vector_kwargs or {"fontsize": 12}
 
     for vector in vectors:
+        dim = len(vector)  # Determine if the vector is 2D or 3D
+
+        # endpoint = tuple(map(sum, zip(vector.origin, vector.direction)))
         if include_endpoint_label:
             # Label with endpoint coordinates
             x_end = vector.origin[0] + vector.direction[0]
             y_end = vector.origin[1] + vector.direction[1]
-            label = f"({x_end}, {y_end})"
-            plotter.add_text(x=x_end, y=y_end, text=label, **endpoint_kwargs)
+            if dim == 3:
+                z_end = vector.origin[2] + vector.direction[2]
+                label = f"({x_end}, {y_end}, {z_end})"
+                plotter.add_text(
+                    x=x_end, y=y_end, z=z_end, text=label, **endpoint_kwargs
+                )
+            else:
+                label = f"({x_end}, {y_end})"
+                plotter.add_text(x=x_end, y=y_end, text=label, **endpoint_kwargs)
 
         if include_vector_label and vector.label:
+            midpoint = tuple(
+                origin + direction / 2
+                for origin, direction in zip(vector.origin, vector.direction)
+            )
             # Label with vector label
-            mid_point = (
-                vector.origin[0] + vector.direction[0] / 2,
-                vector.origin[1] + vector.direction[1] / 2,
-            )
-            plotter.add_text(
-                x=mid_point[0], y=mid_point[1], text=vector.label, **vector_kwargs
-            )
+            if dim == 3:
+                plotter.add_text(
+                    x=midpoint[0],
+                    y=midpoint[1],
+                    z=midpoint[2],
+                    text=vector.label,
+                    **vector_kwargs,
+                )
+            else:  # dim == 2
+                plotter.add_text(
+                    x=midpoint[0], y=midpoint[1], text=vector.label, **vector_kwargs
+                )
 
 
 class VectorPlotter2D(VectorPlotter[Vector2D]):
@@ -82,7 +101,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         self.vectors: List[Vector2D] = []
         self.colors: List[str] = []
 
-        self._apply_ax_customizations() # may not need since in FigureManager
+        self._apply_ax_customizations()  # may not need since in FigureManager
 
     def add_text(
         self,
@@ -154,7 +173,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         self.vectors: List[Vector3D] = []
         self.colors: List[str] = []
 
-        self._apply_ax_customizations() # may not need since in FigureManager
+        self._apply_ax_customizations()  # may not need since in FigureManager
 
     def add_text(
         self,
@@ -165,7 +184,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         fontsize: int = 16,
         **kwargs: Dict[str, Any],
     ) -> None:
-        self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)
+        self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)  # type: ignore[arg-type]
 
     def annotate(
         self,
@@ -178,8 +197,8 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
     ) -> None:
         self.ax.annotate(
             text,
-            xy=(x, y, z),
-            xytext=(x, y, z),
+            xy=(x, y, z),  # type: ignore[arg-type]
+            xytext=(x, y, z),  # type: ignore[arg-type]
             arrowprops=arrow_props,
             fontsize=16,
             **kwargs,  # type: ignore[arg-type]
