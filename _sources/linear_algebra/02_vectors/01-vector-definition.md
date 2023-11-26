@@ -422,7 +422,7 @@ that converts a row vector to a column vector and vice versa.
 :label: 01-vector-definition-properties-of-transpose
 
 1. **Double Transpose**: The transpose of the transpose of a vector returns the
-   original vector, i.e., $(\mathbf{v}^T)^T = \mathbf{v}$.
+   original vector, i.e., $\left(\mathbf{v}^T\right)^T = \mathbf{v}$.
 
 2. **Transpose of a Sum**: The transpose of a sum of two vectors is equal to the
    sum of their transposes, i.e.,
