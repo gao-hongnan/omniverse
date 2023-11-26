@@ -67,8 +67,8 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
-        VectorPlotter,
-        Vector,
+        VectorPlotter2D,
+        Vector2D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
@@ -181,10 +181,10 @@ head position of $\mathbf{v}$ is $\mathbf{u} + \mathbf{v}$.
 ```{code-cell} ipython3
 :tags: [hide-input, remove-output]
 
-# Create plot using VectorPlotter
+# Create plot using VectorPlotter2D
 fig, ax = plt.subplots(figsize=(9, 9))
 
-plotter = VectorPlotter(
+plotter = VectorPlotter2D(
     fig=fig,
     ax=ax,
     ax_kwargs={
@@ -199,11 +199,11 @@ plotter = VectorPlotter(
 
 # Define vectors and colors
 vectors = [
-    Vector(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(0, 0), direction=(12, 11), color="g", label="$\mathbf{u} + \mathbf{v}$"),
-    Vector(origin=(4, 7), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(8, 4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(12, 11), color="g", label="$\mathbf{u} + \mathbf{v}$"),
+    Vector2D(origin=(4, 7), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(8, 4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
 ]
 
 add_vectors_to_plotter(plotter, vectors)
@@ -250,10 +250,10 @@ $\mathbf{v} - \mathbf{u}$ rotated by 180 degrees.
 ```{code-cell} ipython3
 :tags: [hide-input, remove-output]
 
-# Create plot using VectorPlotter
+# Create plot using VectorPlotter2D
 fig, ax = plt.subplots(figsize=(9, 9))
 
-plotter = VectorPlotter(
+plotter = VectorPlotter2D(
     fig=fig,
     ax=ax,
     ax_kwargs={
@@ -267,13 +267,13 @@ plotter = VectorPlotter(
 
 # Define vectors and colors
 vectors = [
-    Vector(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(0, 0), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
-    Vector(origin=(-8, -4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
-    Vector(origin=(4, 7), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
-    Vector(origin=(8, 4), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
+    Vector2D(origin=(-8, -4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
+    Vector2D(origin=(4, 7), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
+    Vector2D(origin=(8, 4), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
 ]
 
 add_vectors_to_plotter(plotter, vectors)
@@ -301,7 +301,7 @@ We can also use code to combine them to a subplot:
 
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(18, 9))
 
-plotter_add = VectorPlotter(
+plotter_add = VectorPlotter2D(
     fig=fig,
     ax=axes[0],
     ax_kwargs={
@@ -314,11 +314,11 @@ plotter_add = VectorPlotter(
 )
 
 vectors_add = [
-    Vector(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(0, 0), direction=(12, 11), color="g", label="$\mathbf{u} + \mathbf{v}$"),
-    Vector(origin=(4, 7), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(8, 4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(12, 11), color="g", label="$\mathbf{u} + \mathbf{v}$"),
+    Vector2D(origin=(4, 7), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(8, 4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
 ]
 
 add_vectors_to_plotter(plotter_add, vectors_add)
@@ -326,7 +326,7 @@ add_text_annotations(plotter_add, vectors_add)
 
 plotter_add.plot()
 
-plotter_sub = VectorPlotter(
+plotter_sub = VectorPlotter2D(
     fig=fig,
     ax=axes[1],
     ax_kwargs={
@@ -339,13 +339,13 @@ plotter_sub = VectorPlotter(
 )
 
 vectors_sub = [
-    Vector(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
-    Vector(origin=(0, 0), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
-    Vector(origin=(-8, -4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
-    Vector(origin=(0, 0), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
-    Vector(origin=(4, 7), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
-    Vector(origin=(8, 4), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(8, 4), color="b", label="$\mathbf{v}$"),
+    Vector2D(origin=(0, 0), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
+    Vector2D(origin=(-8, -4), direction=(4, 7), color="r", label="$\mathbf{u}$"),
+    Vector2D(origin=(0, 0), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
+    Vector2D(origin=(4, 7), direction=(-8, -4), color="b", label="$\mathbf{-v}$"),
+    Vector2D(origin=(8, 4), direction=(-4, 3), color="g", label="$\mathbf{u} - \mathbf{v}$"),
 ]
 
 add_vectors_to_plotter(plotter_sub, vectors_sub)
@@ -435,14 +435,11 @@ import matplotlib.pyplot as plt
 from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 
-# Assuming VectorPlotter, Vector, add_vectors_to_plotter, and add_text_annotations
-# are defined as in your previous code
-
 # Create a subplot for positive and negative scaling
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(18, 9))
 
 # Plot for Positive Scaling
-plotter_pos = VectorPlotter(
+plotter_pos = VectorPlotter2D(
     fig=fig,
     ax=axes[0],
     ax_kwargs={
@@ -454,15 +451,15 @@ plotter_pos = VectorPlotter(
     },
 )
 
-original_vector = Vector(origin=(0, 0), direction=(1, 2), color="r", label="$\mathbf{u}$")
-scaled_vector = Vector(origin=(0, 0), direction=(3, 6), color="g", label="$3 \cdot \mathbf{u}$")
+original_vector = Vector2D(origin=(0, 0), direction=(1, 2), color="r", label="$\mathbf{u}$")
+scaled_vector = Vector2D(origin=(0, 0), direction=(3, 6), color="g", label="$3 \cdot \mathbf{u}$")
 
 add_vectors_to_plotter(plotter_pos, [original_vector, scaled_vector])
 add_text_annotations(plotter_pos, [original_vector, scaled_vector])
 plotter_pos.plot()
 
 # Plot for Negative Scaling
-plotter_neg = VectorPlotter(
+plotter_neg = VectorPlotter2D(
     fig=fig,
     ax=axes[1],
     ax_kwargs={
@@ -474,7 +471,7 @@ plotter_neg = VectorPlotter(
     },
 )
 
-negatively_scaled_vector = Vector(origin=(0, 0), direction=(-1, -2), color="b", label="$-1 \cdot \mathbf{u}$")
+negatively_scaled_vector = Vector2D(origin=(0, 0), direction=(-1, -2), color="b", label="$-1 \cdot \mathbf{u}$")
 
 add_vectors_to_plotter(plotter_neg, [original_vector, negatively_scaled_vector])
 add_text_annotations(plotter_neg, [original_vector, negatively_scaled_vector])

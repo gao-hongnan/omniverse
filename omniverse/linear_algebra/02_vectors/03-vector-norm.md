@@ -67,8 +67,8 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
-        VectorPlotter,
-        Vector,
+        VectorPlotter2D,
+        Vector2D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
@@ -266,7 +266,7 @@ Let's see how the L2 norm looks like in a 2D space.
 
 fig, ax = plt.subplots(figsize=(9, 9))
 
-plotter = VectorPlotter(
+plotter = VectorPlotter2D(
     fig=fig,
     ax=ax,
     ax_kwargs={
@@ -278,9 +278,9 @@ plotter = VectorPlotter(
     },
 )
 
-v = Vector(origin=(0, 0), direction=(3, 4), color="r", label="$\|\mathbf{v}\|_2 = \sqrt{3^2 + 4^2} = 5$")
-horizontal_component_v = Vector(origin=(0, 0), direction=(3, 0), color="b", label="$v_1 = 3$")
-vertical_component_v = Vector(origin=(3, 0), direction=(0, 4), color="g", label="$v_2 = 4$")
+v = Vector2D(origin=(0, 0), direction=(3, 4), color="r", label="$\|\mathbf{v}\|_2 = \sqrt{3^2 + 4^2} = 5$")
+horizontal_component_v = Vector2D(origin=(0, 0), direction=(3, 0), color="b", label="$v_1 = 3$")
+vertical_component_v = Vector2D(origin=(3, 0), direction=(0, 4), color="g", label="$v_2 = 4$")
 add_vectors_to_plotter(plotter, [v, horizontal_component_v, vertical_component_v])
 add_text_annotations(plotter, [v])
 

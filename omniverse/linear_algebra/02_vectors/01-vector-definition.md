@@ -1,18 +1,18 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 # Vector and Its Definition
@@ -67,8 +67,8 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.linear_algebra.plotter import (
-        VectorPlotter,
-        Vector,
+        VectorPlotter2D,
+        Vector2D,
         add_vectors_to_plotter,
         add_text_annotations,
     )
@@ -138,9 +138,9 @@ $\mathbf{v} = [1, -2]$.
 ```{code-cell} ipython3
 :tags: [hide-input, remove-output]
 
-# Create plot using VectorPlotter
+# Create plot using VectorPlotter2D
 fig, ax = plt.subplots(figsize=(9, 9))
-plotter = VectorPlotter(
+plotter = VectorPlotter2D(
     fig=fig,
     ax=ax,
     ax_kwargs={
@@ -153,9 +153,9 @@ plotter = VectorPlotter(
 )
 
 # Define vectors
-vector1 = Vector(origin=(0, 0), direction=(1, -2), color="r", label="v1")
-vector2 = Vector(origin=(2, 2), direction=(1, -2), color="g", label="v2")
-vector3 = Vector(origin=(-2, -2), direction=(1, -2), color="b", label="v3")
+vector1 = Vector2D(origin=(0, 0), direction=(1, -2), color="r", label="v1")
+vector2 = Vector2D(origin=(2, 2), direction=(1, -2), color="g", label="v2")
+vector3 = Vector2D(origin=(-2, -2), direction=(1, -2), color="b", label="v3")
 
 # Add vectors and annotations to plotter
 for vector in [vector1, vector2, vector3]:
@@ -276,33 +276,33 @@ In the context of linear algebra and its applications, the orientation of
 vectors is a fundamental concept, typically categorized into **column vectors**
 and **row vectors**.
 
-- **Column Vector**: A column vector $\mathbf{v}$ in a $D$-dimensional real
-  vector space, denoted as $\mathbf{v} \in \mathbb{R}^{D}$, is defined as a
-  $D \times 1$ matrix. Each element of this vector is a real number, and the
-  vector is represented as:
+-   **Column Vector**: A column vector $\mathbf{v}$ in a $D$-dimensional real
+    vector space, denoted as $\mathbf{v} \in \mathbb{R}^{D}$, is defined as a
+    $D \times 1$ matrix. Each element of this vector is a real number, and the
+    vector is represented as:
 
-  $$
-  \mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}_{D \times 1}
-  $$
+    $$
+    \mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}_{D \times 1}
+    $$
 
-  where $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
-  $_{D \times 1}$ emphasizes that $\mathbf{v}$ is a matrix with $D$ rows and 1
-  column.
+    where $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
+    $_{D \times 1}$ emphasizes that $\mathbf{v}$ is a matrix with $D$ rows and 1
+    column.
 
-- **Row Vector**: Similarly, a row vector $\mathbf{v}$ in $\mathbb{R}^{D}$ is
-  defined as a $1 \times D$ matrix. It is the transpose of a column vector and
-  is represented as:
+-   **Row Vector**: Similarly, a row vector $\mathbf{v}$ in $\mathbb{R}^{D}$ is
+    defined as a $1 \times D$ matrix. It is the transpose of a column vector and
+    is represented as:
 
-  $$
-  \mathbf{v} =
-  \begin{bmatrix}
-  v_1 & v_2 & \cdots & v_D
-  \end{bmatrix}_{1 \times D}
-  $$
+    $$
+    \mathbf{v} =
+    \begin{bmatrix}
+    v_1 & v_2 & \cdots & v_D
+    \end{bmatrix}_{1 \times D}
+    $$
 
-  with $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
-  $_{1 \times D}$ indicates that $\mathbf{v}$ is a matrix with 1 row and $D$
-  columns.
+    with $v_1, v_2, \ldots, v_D \in \mathbb{R}$. The subscript notation
+    $_{1 \times D}$ indicates that $\mathbf{v}$ is a matrix with 1 row and $D$
+    columns.
 
 It is worth noting that row and column vectors can be viewed as matrices with
 special dimensions. This perspective is useful in understanding the
@@ -427,8 +427,8 @@ that converts a row vector to a column vector and vice versa.
 
 ## References and Further Readings
 
-- Axler, S. (1997). _Linear Algebra Done Right_. Springer New York. (Chapter
-  1.A).
+-   Axler, S. (1997). _Linear Algebra Done Right_. Springer New York. (Chapter
+    1.A).
 
 [^vector-is-invariant-under-coordinate-transformation]:
     See

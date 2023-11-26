@@ -80,11 +80,10 @@ def find_product_by_id(
         inventory.items = quicksort(inventory.items, key=lambda product: product.id)
         strategy = IterativeBinarySearchExactMatch()
     else:
-        strategy = LinearSearchForLoop() # type: ignore
+        strategy = LinearSearchForLoop()  # type: ignore
 
     context = SearchContext(strategy=strategy)
 
-    # Assuming a method to extract product IDs from Product objects
     product_ids = [product.id for product in inventory.items]
     index = context.execute_search(container=product_ids, target=product_id)
 

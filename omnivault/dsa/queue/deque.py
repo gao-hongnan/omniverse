@@ -1,15 +1,18 @@
 from collections.abc import MutableSequence
-from typing import  Iterable, Generic, Optional
+from typing import Iterable, Generic, Optional
 
 from omnivault._types._generic import T
 
+
 class Deque(MutableSequence[T], Generic[T]):
-    def __init__(self, iterable: Optional[Iterable[T]] = None, maxlen: Optional[int] = None):
+    def __init__(
+        self, iterable: Optional[Iterable[T]] = None, maxlen: Optional[int] = None
+    ):
         self.maxlen = maxlen
         self._data = list(iterable) if iterable is not None else []
 
         if self.maxlen is not None and len(self._data) > self.maxlen:
-            self._data = self._data[-self.maxlen:]
+            self._data = self._data[-self.maxlen :]
 
     def append(self, item: T) -> None:
         if self.maxlen is None or len(self._data) < self.maxlen:
@@ -51,6 +54,7 @@ class Deque(MutableSequence[T], Generic[T]):
 
     # Additional methods like copy, count, extend, remove, etc., should be implemented here.
     # ...
+
 
 # Example usage
 my_deque = Deque([1, 2, 3], maxlen=3)

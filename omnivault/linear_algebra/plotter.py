@@ -19,22 +19,36 @@ Parameters for creating a quiver plot:
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple, Union
-
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Tuple, Union, TypeVar, Generic
+from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 
 from omnivault.utils.visualization.figure_manager import FigureManager
 
 
+# TODO: Use Vector as base class and type hint with the generic and typevar method.
+# Base Vector class
 @dataclass
 class Vector:
-    # fmt: off
-    origin   : Tuple[float, float]
-    direction: Tuple[float, float]
-    color    : Optional[str] = "black"
-    label    : Optional[str] = None
-    # fmt: on
+    color: Optional[str] = "black"
+    label: Optional[str] = None
+
+
+Vec = TypeVar("Vec", bound=Vector, covariant=False, contravariant=False)
+
+
+# Vector2D and Vector3D inherit from Vector and remember Vec is bound to Vector
+@dataclass
+class Vector2D(Vector):
+    origin: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
+    direction: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
+
+
+@dataclass
+class Vector3D(Vector):
+    origin: Tuple[float, float, float] = field(default_factory= lambda: (0.0, 0.0, 0.0))
+    direction: Tuple[float, float, float] = field(default_factory= lambda: (0.0, 0.0, 0.0))
 
 
 def add_vectors_to_plotter(plotter: VectorPlotter, vectors: List[Vector]) -> None:
@@ -72,7 +86,12 @@ def add_text_annotations(
             )
 
 
-class VectorPlotter(FigureManager):
+class VectorPlotter(Generic[Vec], FigureManager, ABC):
+    @abstractmethod
+    def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
+        ...
+
+class VectorPlotter2D(VectorPlotter[Vector2D]):
     def __init__(
         self,
         fig: Optional[plt.Figure] = None,
@@ -89,7 +108,7 @@ class VectorPlotter(FigureManager):
             "alpha": 0.6,
         }
 
-        self.vectors: List[Vector] = []
+        self.vectors: List[Vector2D] = []
         self.colors: List[str] = []
 
     def add_text(
@@ -119,7 +138,7 @@ class VectorPlotter(FigureManager):
             **kwargs,  # type: ignore[arg-type]
         )
 
-    def add_vector(self, vector: Vector) -> None:
+    def add_vector(self, vector: Vector2D) -> None:
         self.vectors.append(vector)
 
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
