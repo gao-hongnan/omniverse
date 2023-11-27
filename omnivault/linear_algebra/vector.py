@@ -27,11 +27,26 @@ class Vector:
     @property
     def magnitude(self) -> float:
         """Return the magnitude of the vector."""
-        return self.l2_norm()
+        return self.l2_norm # TODO: consider setter/getter for magnitude
 
+    @property
+    def l1_norm(self) -> float:
+        """Return the L1 norm of the vector."""
+        return float(np.linalg.norm(self.direction, ord=1))
+
+    @property
     def l2_norm(self) -> float:
         """Return the L2 norm of the vector."""
-        return float(np.linalg.norm(self.direction))
+        return float(np.linalg.norm(self.direction, ord=2))
+
+    def __add__(self, other: Vector) -> Vector:
+        """Add two vectors."""
+        if self.dimension != other.dimension:
+            raise ValueError("Vectors must have the same dimension.")
+        return Vector(
+            origin=tuple(np.array(self.origin) + np.array(other.origin)),
+            direction=tuple(np.array(self.direction) + np.array(other.direction)),
+        )
 
 
 # Vector2D and Vector3D inherit from Vector and remember Vec is bound to Vector

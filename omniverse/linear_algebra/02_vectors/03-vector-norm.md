@@ -98,21 +98,34 @@ represent complex entities like features, words, or even images.
 
 ## Norm
 
-```{prf:definition} Norm on a Vector Space
+We start off with the formal definition of a norm. We will also define
+$\mathbf{v}$ as a vector in $\mathbb{R}^D$, where $D$ is the dimension of the
+vector space:
+
+```{math}
+:label: 03-vector-norm-vector-in-rd
+
+\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}
+```
+
+````{prf:definition} Norm on a Vector Space
 :label: 03-vector-norm-norm-on-a-vector-space
 
 A norm on a vector space $\mathcal{V}$ over a field $\mathbb{F}$ (typically
 $\mathbb{R}$ or $\mathbb{C}$), is a function
 
-$$
-\begin{aligned}
-\|\cdot\|: V & \rightarrow \mathbb{R}, \\
-\mathbf{u} & \mapsto\|\mathbf{u}\|,
-\end{aligned}
-$$
 
-which assigns each vector $\mathbf{u} \in \mathcal{V}$ a real number
-$\|\mathbf{u}\|$, representing the **length** of $\mathbf{u}$
+```{math}
+:label: 03-vector-norm-norm-on-a-vector-space-function
+
+\begin{aligned}
+\|\cdot\|: \mathbf{V} & \rightarrow \mathbb{R}, \\
+\mathbf{v} & \mapsto\|\mathbf{v}\|,
+\end{aligned}
+```
+
+which assigns each vector $\mathbf{v} \in \mathcal{V}$ a real number
+$\|\mathbf{v}\|$, representing the **length** of $\mathbf{v}$
 {cite}`deisenroth2020mathematics`.
 
 This function must satisfy the following properties for all scalars $\lambda$
@@ -146,7 +159,7 @@ and vectors $\mathbf{u}, \mathbf{v} \in \mathcal{V}$:
 
     The norm of any vector is non-negative and is zero if and only if the vector
     itself is the zero vector.
-```
+````
 
 We are being ahead of ourselves because we did not define what is a vector
 space. We will revisit this later in the series. For now, treat a vector space
@@ -154,112 +167,118 @@ as a set of vectors in the $D$-dimensional space $\mathbb{R}^D$.
 
 ### $L^{p}$ Norm
 
-With the norm well defined, we can now define the $L^p$ norm, which is a
-specific case of the norm function. The $L^p$ is a generalization of the concept
+With the norm well defined, we can now define the $L_p$ norm, which is a
+specific case of the norm function. The $L_p$ is a generalization of the concept
 of "length" for vectors in the **_vector space_** $\mathcal{V}$.
 
-```{prf:definition} $L^p$ Norm
+```{prf:definition} $L_p$ Norm
 :label: 03-vector-norm-lp-norm
 
 For a vector space $\mathcal{V} = \mathbb{R}^D$ over the field
 $\mathbb{F} =
-\mathbb{R}$, the $L^p$ norm is a function defined as:
+\mathbb{R}$, the $L_p$ norm is a function defined as:
 
 $$
 \begin{aligned}
 \|\cdot\|_p : \mathcal{V} & \rightarrow \mathbb{R}, \\
-\mathbf{v} & \mapsto \left( \sum_{i=1}^D |v_i|^p \right)^{\frac{1}{p}},
+\mathbf{v} & \mapsto \left( \sum_{d=1}^D |v_d|^p \right)^{\frac{1}{p}},
 \end{aligned}
 $$
 
-where each vector $\mathbf{v} \in \mathcal{V}$ is assigned a real number
-$\|\mathbf{v}\|_p$, representing the $L^p$ norm of $\mathbf{v}$.
-```
+where each vector $\mathbf{v} \in \mathcal{V}$ (defined as in
+{eq}`03-vector-norm-vector-in-rd`) is assigned a real number $\|\mathbf{v}\|_p$,
+representing the $L_p$ norm of $\mathbf{v}$.
 
-In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^p$ norm of
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L_p$ norm of
 $\mathbf{v}$, denoted as $\|\mathbf{v}\|_p$, is defined as:
 
-$$\|\mathbf{v}\|_p = \left( \sum_{i=1}^{D} |v_i|^p \right)^{\frac{1}{p}},$$
+$$\|\mathbf{v}\|_p = \left( \sum_{d=1}^{D} |v_d|^p \right)^{\frac{1}{p}},$$
 
 where $v_1, v_2, \ldots, v_D$ are the components of the vector $\mathbf{v}$, and
 $p$ is a real number greater than or equal to 1.
+```
 
-As we shall see later, the choice of $p$ determines the metric's sensitivity to
-differences in vector components, influencing its application in various
-algorithms.
+One can easily verify that the $L_p$ norm satisfies the properties of a norm
+function in {prf:ref}`03-vector-norm-norm-on-a-vector-space`.
 
-### L1 Norm (Manhattan Norm)
+As we shall see later (likely when we discuss about analytic geometry), the
+choice of $p$ determines the metric's sensitivity to differences in vector
+components, influencing its application in various algorithms.
 
-The **L1 norm**, also known as the **Manhattan norm** or **Taxicab norm**, is a
-specific case of the $L^p$ norm where $p = 1$.
+### $L_1$ Norm (Manhattan Norm)
 
-```{prf:definition} L1 Norm
+The $L_1$ **norm**, also known as the **Manhattan norm** or **Taxicab norm**, is
+a specific case of the $L_p$ norm where $p = 1$.
+
+```{prf:definition} $L_1$ Norm
 :label: 03-vector-norm-l1-norm
 
-For the same vector space $\mathcal{V} = \mathbb{R}^D$, the $L^1$ norm is
+For the same vector space $\mathcal{V} = \mathbb{R}^D$, the $L_1$ norm is
 defined by:
 
 $$
 \begin{aligned}
 \|\cdot\|_1 : \mathcal{V} & \rightarrow \mathbb{R}, \\
-\mathbf{v} & \mapsto \sum_{i=1}^D |u_i|,
+\mathbf{v} & \mapsto \sum_{d=1}^D |v_d|,
 \end{aligned}
 $$
 
-assigning to each vector $\mathbf{v}$ the sum of the absolute values of its
+assigning to each vector $\mathbf{v}$ (defined as in
+{eq}`03-vector-norm-vector-in-rd`) the sum of the absolute values of its
 components, $\|\mathbf{v}\|_1$.
 
-In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^1$ norm of
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L_1$ norm of
 $\mathbf{v}$, denoted as $\|\mathbf{v}\|_1$, is defined as:
 
-$$\|\mathbf{v}\|_1 = \sum_{i=1}^{D} |v_i|.$$
+$$\|\mathbf{v}\|_1 = \sum_{d=1}^{D} |v_d|.$$
 ```
 
-It sums the absolute values of the vector components. Geometrically, it measures
-the distance a taxicab would travel in a grid-like path in $\mathbb{R}^D$. In
-machine learning, the L1 norm is used for **regularization**, encouraging
-sparsity in the model parameters.
+This norm is called the Manhattan norm because it is the distance between two
+points in a grid-like Manhattan street layout, where the shortest path between
+two points is the sum of the horizontal and vertical distances. This metric sums
+the absolute values of the vector components. Geometrically, it measures the
+distance a taxicab (hence the name taxicab) would travel in a grid-like path in
+$\mathbb{R}^D$. In machine learning, the $L_1$ norm is often used for
+[**regularization**](<https://en.wikipedia.org/wiki/Lasso_(statistics)>),
+encouraging sparsity in the model parameters.
 
 ```{figure} ./assets/wikipedia-520px-Manhattan_distance.svg.png
 ---
 name: 03-vector-norm-manhattan-distance
 ---
+
 Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
-yellow, blue, and green paths all have the same length of 12. In Euclidean
+yellow, and blue paths all have the same length of 12. In Euclidean
 geometry, the green line has length $6 \sqrt{2} \approx 8.49$ and is the unique
 shortest path, while the other paths have the longer length of 12.
+
+**Image Credit: [Wikipedia](https://en.wikipedia.org/wiki/Taxicab_geometry)**
 ```
 
-### L2 Norm (Euclidean Norm)
+### $L_2$ Norm (Euclidean Norm)
 
-The **L2 norm**, or **Euclidean norm**, obtained by setting $p = 2$, is the most
-familiar norm in machine learning.
+The $L_2$ **norm**, or **Euclidean norm**, obtained by setting $p = 2$, is the
+most familiar norm in machine learning.
 
 ```{prf:definition} L2 Norm
 :label: 03-vector-norm-l2-norm
 
-Similarly, for $\mathcal{V} = \mathbb{R}^D$, the $L^2$ norm is given by:
+Similarly, for $\mathcal{V} = \mathbb{R}^D$, the $L_2$ norm is given by:
 
 $$
 \begin{aligned}
 \|\cdot\|_2 : \mathcal{V} & \rightarrow \mathbb{R}, \\
-\mathbf{v} & \mapsto \left( \sum_{i=1}^D |u_i|^2 \right)^{\frac{1}{2}},
+\mathbf{v} & \mapsto \left( \sum_{d=1}^D |v_d|^2 \right)^{\frac{1}{2}},
 \end{aligned}
 $$
 
-where $\|\mathbf{v}\|_2$ is the Euclidean length of the vector $\mathbf{v}$.
+where $\|\mathbf{v}\|_2$ is the Euclidean length of the vector $\mathbf{v}$
+(defined as in {eq}`03-vector-norm-vector-in-rd`).
 
-Each of these norm functions adheres to the definition of a norm, applying
-specific operations to vectors in $\mathbb{R}^D$ and mapping them to real
-numbers that represent different concepts of length or magnitude. The $L^p$ norm
-offers a generalized way to define these lengths, with $L^1$ and $L^2
-$ being
-special cases for specific values of $p$.
-
-In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L^2$ norm of
+In other words, for a vector $\mathbf{v} \in \mathbb{R}^D$, the $L_2$ norm of
 $\mathbf{v}$, denoted as $\|\mathbf{v}\|_2$, is defined as:
 
-$$\|\mathbf{v}\|_2 = \sqrt{\sum_{i=1}^{D} |v_i|^2}.$$
+$$\|\mathbf{v}\|_2 = \sqrt{\sum_{d=1}^{D} |v_d|^2}.$$
 ```
 
 It measures the "straight-line" distance from the origin to the point in
@@ -267,6 +286,10 @@ $\mathbb{R}^D$ represented by $\mathbf{v}$. This norm is extensively used in
 machine learning to measure the magnitude of vectors, in optimization algorithms
 (like gradient descent), and in computing distances between points in feature
 space.
+
+With reference to figure {numref}`03-vector-norm-manhattan-distance`, the green
+line defines the Euclidean distance between two points in $\mathbb{R}^2$ and is
+the shortest path between the two points.
 
 Let's see how the L2 norm looks like in a 2D space.
 
@@ -279,8 +302,8 @@ plotter = VectorPlotter2D(
     fig=fig,
     ax=ax,
     ax_kwargs={
-        "set_xlim": {"left": 0, "right": 10},
-        "set_ylim": {"bottom": 0, "top": 10},
+        "set_xlim": {"left": 0, "right": 5},
+        "set_ylim": {"bottom": 0, "top": 5},
         "set_xlabel": {"xlabel": "x-axis", "fontsize": 16},
         "set_ylabel": {"ylabel": "y-axis", "fontsize": 16},
         "set_title": {"label": "Vector Magnitude Demonstration", "size": 18},
@@ -305,15 +328,142 @@ add_text_annotations(plotter, [v])
 plotter.plot()
 ```
 
-Notice that the calculation is equivalent to the Pythagorean theorem, where the
-length of the hypotenuse is the square root of the sum of the squares of the
-other two sides.
+Notice that the calculation is equivalent to the
+[**Pythagorean theorem**](https://en.wikipedia.org/wiki/Pythagorean_theorem),
+where the length of the hypotenuse is the square root of the sum of the squares
+of the other two sides.
 
 We can easily calculate the L2 norm of a vector using NumPy:
 
 ```{code-cell} ipython3
 u = np.array([3, 4])
 rich.print(f"Norm of u: {np.linalg.norm(u)}")
+```
+
+And as convenience, our vector object `v` has an property/attribute `l2_norm`
+(`magnitude`) that returns the L2 norm of the vector.
+
+```{code-cell} ipython3
+v = Vector2D(
+    origin=(0, 0),
+    direction=(3, 4),
+    color="r",
+    label="$\|\mathbf{v}\|_2 = \sqrt{3^2 + 4^2} = 5$",
+)
+rich.print(f"Norm of v: {v.l2_norm}")
+```
+
+#### Generalization of the Pythagorean Theorem to $D$ Dimensions
+
+The Pythagorean theorem generalizes to $D$ dimensions, where the length of the
+hypotenuse is the square root of the sum of the squares of the other sides.
+
+We can use 3D as a way to illustrate this. The following series of images are
+taken from
+[Math is Fun](https://www.mathsisfun.com/geometry/pythagoras-3d.html).
+
+First, consider {numref}`03-vector-norm-pythagorean-theorem-3d-a`, we want to
+find the length of the diagonal.
+
+```{figure} ./assets/mathsisfun-pythagoras-3d-a.svg
+---
+name: 03-vector-norm-pythagorean-theorem-3d-a
+---
+
+Finding the length of the diagonal.
+```
+
+We can first use Pythagorean theorem to find the length of the diagonal of the
+base.
+
+$$
+c = \sqrt{x^2 + y^2}
+$$
+
+where $c$ is the length of the diagonal of the base.
+
+```{figure} ./assets/mathsisfun-pythagoras-3d-b.svg
+---
+name: 03-vector-norm-pythagorean-theorem-3d-b
+---
+```
+
+Then, the diagonal base serves as one of the sides of the triangle that we want
+to find.
+
+```{figure} ./assets/mathsisfun-pythagoras-3d-c.svg
+---
+name: 03-vector-norm-pythagorean-theorem-3d-c
+---
+```
+
+Finally, we use Pythagorean theorem again to find the length of the diagonal.
+
+$$
+\begin{aligned}
+d   &= \sqrt{c^2 + z^2} \\
+    &= \sqrt{\left(\sqrt{x^2 + y^2}\right)^2 + z^2} \\
+    &= \sqrt{x^2 + y^2 + z^2}
+\end{aligned}
+$$
+
+```{figure} ./assets/mathsisfun-pythagoras-3d-d.svg
+---
+name: 03-vector-norm-pythagorean-theorem-3d
+---
+
+The Pythagorean Theorem in 3D.
+
+**Image Credit:
+[Math is Fun](https://www.mathsisfun.com/geometry/pythagoras-3d.html)**
+```
+
+Without loss of generality (we are being less pedantic here), we can generalize
+the Pythagorean theorem to $D$ dimensions, illustrated in
+{numref}`03-vector-norm-pythagorean-theorem-d-dimensions` below.
+
+We denote $d$ as the length of the diagonal, and $a_1, a_2, \ldots, a_D$ as the
+length of the sides of the triangle (or the vector components).
+
+```{list-table} Generalization of the Pythagorean Theorem to $D$ Dimensions
+:header-rows: 1
+:name: 03-vector-norm-pythagorean-theorem-d-dimensions
+
+* - Dimension
+  - Pythagoras
+  - Distance/Norm
+* - 1
+  - $d^2 = a_1^2$
+  - $d = \sqrt{a_1^2} = \|a\|_2$
+* - 2
+  - $d^2 = a_1^2 + a_2^2$
+  - $d = \sqrt{a_1^2 + a_2^2} = \|a\|_2$
+* - 3
+  - $d^2 = a_1^2 + a_2^2 + a_3^2$
+  - $d = \sqrt{a_1^2 + a_2^2 + a_3^2} = \|a\|_2$
+* - ...
+  - ...
+  - ...
+* - $D$
+  - $d^2 = a_1^2 + a_2^2 + \cdots + a_D^2$
+  - $d = \sqrt{a_1^2 + a_2^2 + \cdots + a_D^2} = \|a\|_2$
+```
+
+## Distance
+
+We have been using distance and norm interchangeably. However, they are not
+_exactly_ the same.
+
+The key difference (without going to deep into real analysis and metric spaces)
+is that the **norm** as defined in
+{prf:ref}`03-vector-norm-norm-on-a-vector-space` is a function that maps a
+vector to a field $\mathbb{F}$ (i.e. real number $\mathbb{R}$), while the
+**distance** is a function that maps a pair of vectors to a field $\mathbb{F}$.
+
+```{prf:definition} Distance
+:label: 03-vector-norm-distance
+
+...
 ```
 
 ## Motivation: Understanding Similarity in High-Dimensional Spaces
@@ -353,18 +503,18 @@ Similarity measures in vector spaces enable us to:
 ### Role of Norms and Distance Metrics
 
 To quantify similarity, we often use norms and distance metrics like the
-Euclidean norm (L2 norm) or the Manhattan norm (L1 norm). These mathematical
-tools give us a way to compute distances in high-dimensional spaces, translating
-into measures of similarity or dissimilarity:
+Euclidean norm ($L_2$ norm) or the Manhattan norm ($L_1$ norm). These
+mathematical tools give us a way to compute distances in high-dimensional
+spaces, translating into measures of similarity or dissimilarity:
 
 -   **Closer Vectors**: Indicate more similarity (e.g., images with similar
     features, words with related meanings).
 -   **Further Apart Vectors**: Suggest less similarity or greater dissimilarity.
 
-### Limitations of L1 and L2 Norms in Measuring Similarity
+### Limitations of $L_1$ and $L_2$ Norms in Measuring Similarity
 
-The L1 and L2 norms focus on the magnitude of vectors, which can be a limitation
-in certain scenarios:
+The $L_1$ and $L_2$ norms focus on the magnitude of vectors, which can be a
+limitation in certain scenarios:
 
 -   **Dominance of Magnitude**: In high-dimensional spaces, especially with
     sparse vectors (common in NLP), the magnitude of vectors can dominate the
@@ -374,7 +524,7 @@ in certain scenarios:
 -   **Insensitive to Distribution of Components**: These norms don't
     differentiate how vector components contribute to the overall direction. Two
     vectors with similar orientations but different distributions of values
-    across components can have the same L1 or L2 norm.
+    across components can have the same $L_1$ or $L_2$ norm.
 
 Consequently,
 **[Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)** emerges
@@ -415,3 +565,4 @@ print("Cosine Similarity:", cosine_similarity)
 
 -   Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). _Mathematics for
     Machine Learning_. Cambridge University Press. (Chapter 3.1, Norms).
+-   https://www.mathsisfun.com/geometry/pythagoras-3d.html
