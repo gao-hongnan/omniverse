@@ -371,6 +371,9 @@ name: 03-vector-norm-pythagorean-theorem-3d-a
 ---
 
 Finding the length of the diagonal.
+
+**Image Credit:
+[Math is Fun](https://www.mathsisfun.com/geometry/pythagoras-3d.html)**
 ```
 
 We can first use Pythagorean theorem to find the length of the diagonal of the
@@ -386,6 +389,9 @@ where $c$ is the length of the diagonal of the base.
 ---
 name: 03-vector-norm-pythagorean-theorem-3d-b
 ---
+
+**Image Credit:
+[Math is Fun](https://www.mathsisfun.com/geometry/pythagoras-3d.html)**
 ```
 
 Then, the diagonal base serves as one of the sides of the triangle that we want
@@ -395,6 +401,9 @@ to find.
 ---
 name: 03-vector-norm-pythagorean-theorem-3d-c
 ---
+
+**Image Credit:
+[Math is Fun](https://www.mathsisfun.com/geometry/pythagoras-3d.html)**
 ```
 
 Finally, we use Pythagorean theorem again to find the length of the diagonal.
@@ -460,109 +469,250 @@ is that the **norm** as defined in
 vector to a field $\mathbb{F}$ (i.e. real number $\mathbb{R}$), while the
 **distance** is a function that maps a pair of vectors to a field $\mathbb{F}$.
 
-```{prf:definition} Distance
+````{prf:definition} Distance
 :label: 03-vector-norm-distance
 
-...
+A distance on a vector space $\mathcal{V}$ over a field $\mathbb{F}$ (typically
+$\mathbb{R}$ or $\mathbb{C}$), is a function
+
+```{math}
+:label: 03-vector-norm-distance-function
+
+\begin{aligned}
+d: \mathcal{V} \times \mathcal{V} & \rightarrow \mathbb{R}, \\
+(\mathbf{u}, \mathbf{v}) & \mapsto d(\mathbf{u}, \mathbf{v}),
+\end{aligned}
 ```
 
-## Motivation: Understanding Similarity in High-Dimensional Spaces
+which assigns each pair of vectors $\mathbf{u}, \mathbf{v} \in \mathcal{V}$ a
+real number $d(\mathbf{u}, \mathbf{v})$, representing the **distance** between
+$\mathbf{u}$ and $\mathbf{v}$. This function must satisfy the following
+properties for all vectors $\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathcal{V}$
+{cite}`muscat2014functional`:
 
-In machine learning, particularly in fields like **natural language processing
-(NLP)** and **computer vision**, a fundamental challenge is to understand and
-quantify the notion of similarity. Consider the task of image recognition or
-word meaning interpretation. How do we determine that two images are similar, or
-that two words have similar meanings?
+1. **Non-negativity:**
 
-### Representing Images and Words as Vectors
+    $$
+    d(\mathbf{u}, \mathbf{v}) \geq 0
+    $$
 
-In high-dimensional spaces like $\mathbb{R}^D$, complex entities like images and
-words can be represented as vectors. For instance:
+    The distance between any two vectors is non-negative.
 
--   **Images**: Each image can be represented as a vector, where each dimension
-    corresponds to a pixel or a feature extracted from the image.
--   **Words**: In NLP, words are represented as vectors in a space where
-    distances between vectors are related to semantic similarities between
-    words. This is achieved through techniques like **word embeddings**.
+2. **Identity of Indiscernibles:**
 
-### The Need for Similarity Measures
+    $$
+    d(\mathbf{u}, \mathbf{v}) = 0 \iff \mathbf{u} = \mathbf{v}
+    $$
 
-Once we have these vector representations, we need a way to quantify how 'close'
-or 'similar' they are. This is where the concept of **similarity** comes in.
-Similarity measures in vector spaces enable us to:
+    The distance between two vectors is zero if and only if the vectors are
+    identical.
 
--   **Compare Images**: Determine how similar two images are based on their
-    vector representations. This has applications in image search, face
-    recognition, and more.
--   **Understand Word Semantics**: In NLP, measure the closeness of words in the
-    embedding space to capture semantic relationships (like synonyms,
-    analogies).
--   **Cluster and Categorize**: Group similar items together, whether they're
-    images in a photo library or words in a document.
+3. **Symmetry:**
 
-### Role of Norms and Distance Metrics
+    $$
+    d(\mathbf{u}, \mathbf{v}) = d(\mathbf{v}, \mathbf{u})
+    $$
 
-To quantify similarity, we often use norms and distance metrics like the
-Euclidean norm ($L_2$ norm) or the Manhattan norm ($L_1$ norm). These
-mathematical tools give us a way to compute distances in high-dimensional
-spaces, translating into measures of similarity or dissimilarity:
+    The distance between two vectors is the same regardless of the order of
+    the vectors.
 
--   **Closer Vectors**: Indicate more similarity (e.g., images with similar
-    features, words with related meanings).
--   **Further Apart Vectors**: Suggest less similarity or greater dissimilarity.
+4. **Triangle Inequality:**
 
-### Limitations of $L_1$ and $L_2$ Norms in Measuring Similarity
+    $$
+    d(\mathbf{u}, \mathbf{v}) \leq d(\mathbf{u}, \mathbf{w}) +
+    d(\mathbf{w}, \mathbf{v})
+    $$
 
-The $L_1$ and $L_2$ norms focus on the magnitude of vectors, which can be a
-limitation in certain scenarios:
+    The distance between two vectors is always less than or equal to the sum
+    of the distances between the vectors and a third vector.
+````
 
--   **Dominance of Magnitude**: In high-dimensional spaces, especially with
-    sparse vectors (common in NLP), the magnitude of vectors can dominate the
-    similarity measure. Two vectors might be pointing in the same direction
-    (hence, similar in orientation) but can be deemed dissimilar due to
-    differences in magnitude.
--   **Insensitive to Distribution of Components**: These norms don't
-    differentiate how vector components contribute to the overall direction. Two
-    vectors with similar orientations but different distributions of values
-    across components can have the same $L_1$ or $L_2$ norm.
+We say that every norm induces a distance metric defined in
+{prf:ref}`03-vector-norm-distance`.
 
-Consequently,
-**[Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)** emerges
-as a critical concept, especially in NLP and document classification. Unlike
-Euclidean or Manhattan norms that focus on magnitude, cosine similarity
-concentrates on the angle between vectors, making it exceptionally suited for
-comparing the orientation (and thus the semantic direction) of word embeddings
-in high-dimensional space. We will explore cosine similarity in detail in later
-sections.
+**Why?**
 
-```{code-cell} ipython3
-import numpy as np
+Given a norm $\|\cdot\|$ on a vector space $\mathcal{V}$, one can define a
+distance function induced by this norm as
+$d(\mathbf{u}, \mathbf{v})=\|\mathbf{u}-\mathbf{v}\|$ for all
+$\mathbf{u}, \mathbf{v} \in \mathcal{V}$. This distance function satisfies the
+metric space properties:
 
-def calculate_norms_and_cosine_similarity(vec_a, vec_b):
-    l1_norm = np.sum(np.abs(vec_a - vec_b))
-    l2_norm = np.sqrt(np.sum((vec_a - vec_b) ** 2))
-    cosine_similarity = np.dot(vec_a, vec_b) / (np.linalg.norm(vec_a) * np.linalg.norm(vec_b))
-    return l1_norm, l2_norm, cosine_similarity
+1. **Non-negativity**: For any vectors $\mathbf{u}, \mathbf{v}$, the distance
+   $d(\mathbf{u}, \mathbf{v})$ is never negative because norms are always
+   non-negative. This is a direct result of the norm's property of **positive
+   definiteness** ({prf:ref}`03-vector-norm-norm-on-a-vector-space`).
 
-vec_a = np.array([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
-vec_b = np.array([1, 1, 1, 0, 0, 0, 0, 0, 0, 1])
+2. **Identity of Indiscernibles**: The distance $d(\mathbf{u}, \mathbf{v})$ is
+   zero if and only if $\mathbf{u} = \mathbf{v}$. This follows from the positive
+   definiteness property ({prf:ref}`03-vector-norm-norm-on-a-vector-space`) of
+   norms which states that $\|\mathbf{u}\| =
+   0$ if and only if
+   $\mathbf{u} = \mathbf{0}$. Thus, $\|\mathbf{u} -
+   \mathbf{v}\| = 0$ implies
+   $\mathbf{u} - \mathbf{v} = \mathbf{0}$, which means
+   $\mathbf{u} = \mathbf{v}$.
 
-l1_norm, l2_norm, cosine_similarity = calculate_norms_and_cosine_similarity(vec_a, vec_b)
-print("L1 Norm:", l1_norm)
-print("L2 Norm:", l2_norm)
-print("Cosine Similarity:", cosine_similarity)
+3. **Symmetry**: The distance function is symmetric, meaning
+   $d(\mathbf{u},
+   \mathbf{v}) = d(\mathbf{v}, \mathbf{u})$ for all
+   $\mathbf{u}, \mathbf{v}$. This is because
+   $\|\mathbf{u}-\mathbf{v}\| = \|\mathbf{v}-\mathbf{u}\|$, as the norm of a
+   vector remains the same if its sign is reversed. This follows directly from
+   the norm's property of **absolute homogeneity**
+   ({prf:ref}`03-vector-norm-norm-on-a-vector-space`) because you can just set
+   $\lambda = -1$. Thus,
+   $\|\mathbf{u}-\mathbf{v}\| = \|-1\| \|\mathbf{v}-\mathbf{u}\| =
+    \|\mathbf{v}-\mathbf{u}\|$.
 
-vec_c = np.array([1, 2, 3])
-vec_d = np.array([2, 4, 6])
+4. **Triangle Inequality**: The distance satisfies the triangle inequality,
+   which states that for any
+   $\mathbf{u}, \mathbf{v}, \mathbf{w} \in
+   \mathcal{V}$, the inequality
+   $d(\mathbf{u}, \mathbf{w}) \leq
+   d(\mathbf{u}, \mathbf{v}) + d(\mathbf{v}, \mathbf{w})$
+   holds. This is a consequence of the norm's triangle inequality
+   ({prf:ref}`03-vector-norm-norm-on-a-vector-space`),
+   $\|\mathbf{u}+\mathbf{v}\|
+   \leq \|\mathbf{u}\| + \|\mathbf{v}\|$, applied
+   to the vectors $\mathbf{u}-\mathbf{v}$ and $\mathbf{v}-\mathbf{w}$, which
+   yields
+   $\|\mathbf{u}-\mathbf{w}\| \leq \|\mathbf{u}-\mathbf{v}\| + \|\mathbf{v}-\mathbf{w}\|$.
 
-l1_norm, l2_norm, cosine_similarity = calculate_norms_and_cosine_similarity(vec_c, vec_d)
-print("L1 Norm:", l1_norm)
-print("L2 Norm:", l2_norm)
-print("Cosine Similarity:", cosine_similarity)
-```
+Thus, the norm-induced distance function $d$ adheres to all the axioms of a
+metric and therefore defines a metric space on $\mathcal{V}$. This provides a
+way to measure "distances" in vector spaces that are consistent with the
+structure and properties of the space as defined by the norm.
+
+For example, the $L_2$ norm $\|\cdot\|_2$ induces the Euclidean distance
+$d(\mathbf{u}, \mathbf{v}) = \|\mathbf{u}-\mathbf{v}\|_2$ between two vectors
+$\mathbf{u}, \mathbf{v} \in \mathbb{R}^D$. The key to remember that the
+transition of a norm to a distance is the subtraction of two vectors. So the
+domain of the distance function is a pair of vectors, while the domain of the
+norm function is a single vector. There is no confusion because
+$d(\mathbf{u}, \mathbf{v})$ indeed takes in two vectors as input, while the
+right hand side of the equation $\|\mathbf{u}-\mathbf{v}\|_2$ is a single
+vector.
+
+Furthermore, the $L_2$ norm of a single vector $\mathbf{v}$ is **_equivalent_**
+to the Euclidean distance between $\mathbf{v}$ and the origin $\mathbf{0}$, and
+the $L_2$ norm of the difference between two vectors $\mathbf{u}$ and
+$\mathbf{v}$ is **_equivalent_** to the Euclidean distance between $\mathbf{u}$
+and $\mathbf{v}$. Therefore, we often use the term "norm" and "distance"
+interchangeably because if we set the component $\mathbf{v} = \mathbf{0}$, then
+we recover the norm of $\mathbf{u}$.
+
+It is important to note that while norms always induce a metric, not all metrics
+arise from norms. A metric that does not come from a norm might not satisfy the
+properties of homogeneity or the triangle inequality in the same way that a norm
+does.
+
+For such distances, while they may satisfy the properties required of a metric,
+they cannot be expressed as the norm of the difference between two vectors. Two
+[**examples**](https://math.stackexchange.com/questions/172028/difference-between-norm-and-distance)
+are given:
+
+1. The discrete metric:
+
+    $$
+    d(x, y)= \begin{cases}0 & \text { if } x=y \\ 1 & \text { if } x \neq y\end{cases}
+    $$
+
+2. The arctangent metric on $\mathbb{R}$:
+
+    $$
+    d(x, y)=|\arctan (x)-\arctan (y)|
+    $$
+
+Both of these satisfy the properties of a metric but are not induced by any norm
+because they do not satisfy the homogeneity property (scaling) and, in the case
+of the discrete metric, do not satisfy the triangle inequality as it would be
+defined by a norm.
+
+An example of such a metric is the discrete metric mentioned previously, where
+the distance between distinct points is always one, irrespective of their
+"actual" separation in the vector space.
+
+## Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning
+
+The concepts of vector norms and distances, as explored previously, play a
+crucial role in the realms of
+[machine learning](https://en.wikipedia.org/wiki/Machine_learning) and
+[deep learning](https://en.wikipedia.org/wiki/Deep_learning). Their relevance
+can be highlighted in several key aspects of these fields:
+
+1. **Feature Normalization**: In many machine learning algorithms, it's
+   important to [normalize](https://en.wikipedia.org/wiki/Feature_scaling) or
+   scale features so that they contribute equally to the learning process.
+   Vector norms, especially the **$L_2$** norm, are often used to normalize
+   data, ensuring that each feature contributes proportionately to the overall
+   model.
+
+2. **Similarity and Distance Metrics**: In clustering algorithms like
+   [K-means](https://en.wikipedia.org/wiki/K-means_clustering) or in nearest
+   neighbor searches, the notion of distance between data points is fundamental.
+   Here, norms (like the Euclidean or Manhattan norms) define the metrics used
+   to quantify the _similarity_ or _dissimilarity_ between points in the feature
+   space.
+
+3. **Regularization in Optimization**: In both machine and deep learning,
+   [regularization](<https://en.wikipedia.org/wiki/Regularization_(mathematics)>)
+   techniques are employed to prevent overfitting. The **$L_1$** (Lasso) and
+   **$L_2$** (Ridge) norms are particularly notable for their use in
+   regularization terms. **$L_1$** regularization encourages sparsity in the
+   model parameters, which can be beneficial for feature selection, while
+   **$
+   L_2$** regularization penalizes large weights, promoting smoother
+   solution spaces.
+
+4. **Embedding Spaces in Deep Learning**: In deep learning, particularly in
+   areas like
+   [natural language processing](https://en.wikipedia.org/wiki/Natural_language_processing)
+   or image recognition, the concept of _embedding spaces_ is vital. These are
+   high-dimensional spaces where similar items are placed closer together. Norms
+   and distances in these spaces are used to measure the closeness or similarity
+   of different entities (like words, sentences, or images), impacting the
+   performance of models like neural networks.
+
+5. **Gradient Descent and Backpropagation**: The core of training deep learning
+   models involves optimization techniques like
+   [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent). The
+   **$
+   L_2$** norm is particularly important in quantifying the magnitude of
+   gradients, guiding the update steps in the learning process.
+
+6. **Loss Functions**: Many machine learning models are trained by minimizing a
+   [loss function](https://en.wikipedia.org/wiki/Loss_function). The choice of
+   this function often involves norms and distances. For instance, mean squared
+   error (a common loss function) is essentially an **$L_2$** norm of the error
+   vector.
+
+7. **Autoencoders in Deep Learning**:
+   [Autoencoders](https://en.wikipedia.org/wiki/Autoencoder), used for
+   dimensionality reduction or feature learning, often utilize norms to measure
+   the _reconstruction loss_, i.e., the difference between the input and its
+   reconstruction.
+
+8. **Anomaly Detection**: In anomaly detection, distances from a norm or a
+   threshold often signify whether a data point is an _anomaly_ or not.
+
+In conclusion, vector norms and distances are not just abstract mathematical
+concepts; they are tools deeply ingrained in the fabric of machine learning and
+deep learning. They provide the means to measure, compare, and optimize in the
+multi-dimensional spaces that these fields operate in, making them indispensable
+in the toolkit of anyone working in these domains.
+
+This is by no means we will deal with norms and distances. We will revisit this
+when we discuss about analytic geometry - which spans concepts such as
+similarity, inner product, orthogonality, and projections.
 
 ## References and Further Readings
 
 -   Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). _Mathematics for
     Machine Learning_. Cambridge University Press. (Chapter 3.1, Norms).
--   https://www.mathsisfun.com/geometry/pythagoras-3d.html
+-   Muscat, J. Functional Analysis An Introduction to Metric Spaces, Hilbert
+    Spaces, and Banach Algebras, Springer, 2014.
+-   [Math Is Fun - Pythagoras in 3D](https://www.mathsisfun.com/geometry/pythagoras-3d.html)
+-   [Wikipedia - Metric Space](https://en.wikipedia.org/wiki/Metric_space)
+-   [Wikipedia - Vector Space](https://en.wikipedia.org/wiki/Vector_space)
+-   [Math StackExchange - Difference between Norm and Distance](https://math.stackexchange.com/questions/172028/difference-between-norm-and-distance)
