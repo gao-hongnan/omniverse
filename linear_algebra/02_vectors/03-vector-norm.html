@@ -1,0 +1,1214 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Vector Norm and Distance &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'linear_algebra/02_vectors/03-vector-norm';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/linear_algebra/02_vectors/03-vector-norm.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bibliography" href="../../bibliography.html" />
+    <link rel="prev" title="Vector and Its Operations" href="02-vector-operation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01_preliminaries/01-fields.html">Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Vectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Vector Norm and Distance</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/Omniverse/blob/main/omniverse/linear_algebra/02_vectors/03-vector-norm.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/Omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/Omniverse/issues/new?title=Issue%20on%20page%20%2Flinear_algebra/02_vectors/03-vector-norm.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/linear_algebra/02_vectors/03-vector-norm.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../_sources/linear_algebra/02_vectors/03-vector-norm.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Vector Norm and Distance</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#norm">Norm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-p-norm"><span class="math notranslate nohighlight">\(L^{p}\)</span> Norm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-1-norm-manhattan-norm"><span class="math notranslate nohighlight">\(L_1\)</span> Norm (Manhattan Norm)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-2-norm-euclidean-norm"><span class="math notranslate nohighlight">\(L_2\)</span> Norm (Euclidean Norm)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generalization-of-the-pythagorean-theorem-to-d-dimensions">Generalization of the Pythagorean Theorem to <span class="math notranslate nohighlight">\(D\)</span> Dimensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distance">Distance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-relevance-of-vector-norms-and-distances-in-machine-learning-and-deep-learning">Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="vector-norm-and-distance">
+<h1>Vector Norm and Distance<a class="headerlink" href="#vector-norm-and-distance" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#norm" id="id3">Norm</a></p>
+<ul>
+<li><p><a class="reference internal" href="#l-p-norm" id="id4"><span class="math notranslate nohighlight">\(L^{p}\)</span> Norm</a></p></li>
+<li><p><a class="reference internal" href="#l-1-norm-manhattan-norm" id="id5"><span class="math notranslate nohighlight">\(L_1\)</span> Norm (Manhattan Norm)</a></p></li>
+<li><p><a class="reference internal" href="#l-2-norm-euclidean-norm" id="id6"><span class="math notranslate nohighlight">\(L_2\)</span> Norm (Euclidean Norm)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#generalization-of-the-pythagorean-theorem-to-d-dimensions" id="id7">Generalization of the Pythagorean Theorem to <span class="math notranslate nohighlight">\(D\)</span> Dimensions</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#distance" id="id8">Distance</a></p></li>
+<li><p><a class="reference internal" href="#closing-relevance-of-vector-norms-and-distances-in-machine-learning-and-deep-learning" id="id9">Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id10">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p>We first start off by mentioning that we will revisit this section later in the
+series in a more rigorous manner. For now, we will have a first look on the
+naive interpretation of vector norms and distances.</p>
+<p>Understanding the <strong>norm</strong> of a vector is fundamental in various fields,
+including
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Machine_learning">machine learning</a></strong>, where it
+is crucial for tasks like
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Feature_scaling">normalizing data</a></strong>,
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Cosine_similarity">measuring similarity</a></strong>, and
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Regularization_(mathematics)">regularization</a></strong>.
+In the context of
+<strong><a class="reference external" href="https://en.wikipedia.org/wiki/Generative_adversarial_network">generative AI</a></strong>
+and <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Word_embedding">embedding spaces</a></strong>, norms
+play a pivotal role in quantifying the magnitude and distance of vectors, which
+represent complex entities like features, words, or even images.</p>
+<section id="norm">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Norm</a><a class="headerlink" href="#norm" title="Permalink to this heading">#</a></h2>
+<p>We start off with the formal definition of a norm. We will also define
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span> as a vector in <span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the dimension of the
+vector space:</p>
+<div class="math notranslate nohighlight" id="equation-03-vector-norm-vector-in-rd">
+<span class="eqno">(2)<a class="headerlink" href="#equation-03-vector-norm-vector-in-rd" title="Permalink to this equation">#</a></span>\[\begin{split}\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}\end{split}\]</div>
+<div class="proof definition admonition" id="03-vector-norm-norm-on-a-vector-space">
+<p class="admonition-title"><span class="caption-number">Definition 13 </span> (Norm on a Vector Space)</p>
+<section class="definition-content" id="proof-content">
+<p>A norm on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
+<span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
+<div class="math notranslate nohighlight" id="equation-03-vector-norm-norm-on-a-vector-space-function">
+<span class="eqno">(3)<a class="headerlink" href="#equation-03-vector-norm-norm-on-a-vector-space-function" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{aligned}
+\|\cdot\|: \mathbf{V} &amp; \rightarrow \mathbb{R}, \\
+\mathbf{v} &amp; \mapsto\|\mathbf{v}\|,
+\end{aligned}\end{split}\]</div>
+<p>which assigns each vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathcal{V}\)</span> a real number
+<span class="math notranslate nohighlight">\(\|\mathbf{v}\|\)</span>, representing the <strong>length</strong> of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>
+<span id="id1">[<a class="reference internal" href="../../bibliography.html#id4" title="Marc Peter Deisenroth, A. Aldo Faisal, and Cheng Soon Ong. Mathematics for Machine Learning. Cambridge University Press, 2020. URL: https://mml-book.github.io/.">Deisenroth <em>et al.</em>, 2020</a>]</span>.</p>
+<p>This function must satisfy the following properties for all scalars <span class="math notranslate nohighlight">\(\lambda\)</span>
+and vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathcal{V}\)</span>:</p>
+<ol class="arabic">
+<li><p><strong>Absolute Homogeneity (or Positive Scaling):</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    \|\lambda \mathbf{u}\| =
+    |\lambda| \|\mathbf{u}\|
+    \]</div>
+<p>This means the norm is scale-invariant and respects scalar multiplication.</p>
+</li>
+<li><p><strong>Triangle Inequality:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    \|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| +
+    \|\mathbf{v}\|
+    \]</div>
+<p>The sum of the norms of two vectors is always greater than or equal to the
+norm of their sum.</p>
+</li>
+<li><p><strong>Positive Definiteness:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    \|\mathbf{u}\| \geq 0 \text{ and }
+    \|\mathbf{u}\| = 0 \iff \mathbf{u} = \mathbf{0}
+    \]</div>
+<p>The norm of any vector is non-negative and is zero if and only if the vector
+itself is the zero vector.</p>
+</li>
+</ol>
+</section>
+</div><p>We are being ahead of ourselves because we did not define what is a vector
+space. We will revisit this later in the series. For now, treat a vector space
+as a set of vectors in the <span class="math notranslate nohighlight">\(D\)</span>-dimensional space <span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>.</p>
+<section id="l-p-norm">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="math notranslate nohighlight">\(L^{p}\)</span> Norm</a><a class="headerlink" href="#l-p-norm" title="Permalink to this heading">#</a></h3>
+<p>With the norm well defined, we can now define the <span class="math notranslate nohighlight">\(L_p\)</span> norm, which is a
+specific case of the norm function. The <span class="math notranslate nohighlight">\(L_p\)</span> is a generalization of the concept
+of “length” for vectors in the <strong><em>vector space</em></strong> <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
+<div class="proof definition admonition" id="03-vector-norm-lp-norm">
+<p class="admonition-title"><span class="caption-number">Definition 14 </span> (<span class="math notranslate nohighlight">\(L_p\)</span> Norm)</p>
+<section class="definition-content" id="proof-content">
+<p>For a vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span> over the field
+<span class="math notranslate nohighlight">\(\mathbb{F} =
+\mathbb{R}\)</span>, the <span class="math notranslate nohighlight">\(L_p\)</span> norm is a function defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\|\cdot\|_p : \mathcal{V} &amp; \rightarrow \mathbb{R}, \\
+\mathbf{v} &amp; \mapsto \left( \sum_{d=1}^D |v_d|^p \right)^{\frac{1}{p}},
+\end{aligned}
+\end{split}\]</div>
+<p>where each vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathcal{V}\)</span> (defined as in
+<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(2)</a>) is assigned a real number <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_p\)</span>,
+representing the <span class="math notranslate nohighlight">\(L_p\)</span> norm of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>.</p>
+<p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_p\)</span> norm of
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_p\)</span>, is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\|\mathbf{v}\|_p = \left( \sum_{d=1}^{D} |v_d|^p \right)^{\frac{1}{p}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(v_1, v_2, \ldots, v_D\)</span> are the components of the vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, and
+<span class="math notranslate nohighlight">\(p\)</span> is a real number greater than or equal to 1.</p>
+</section>
+</div><p>One can easily verify that the <span class="math notranslate nohighlight">\(L_p\)</span> norm satisfies the properties of a norm
+function in <a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a>.</p>
+<p>As we shall see later (likely when we discuss about analytic geometry), the
+choice of <span class="math notranslate nohighlight">\(p\)</span> determines the metric’s sensitivity to differences in vector
+components, influencing its application in various algorithms.</p>
+</section>
+<section id="l-1-norm-manhattan-norm">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink"><span class="math notranslate nohighlight">\(L_1\)</span> Norm (Manhattan Norm)</a><a class="headerlink" href="#l-1-norm-manhattan-norm" title="Permalink to this heading">#</a></h3>
+<p>The <span class="math notranslate nohighlight">\(L_1\)</span> <strong>norm</strong>, also known as the <strong>Manhattan norm</strong> or <strong>Taxicab norm</strong>, is
+a specific case of the <span class="math notranslate nohighlight">\(L_p\)</span> norm where <span class="math notranslate nohighlight">\(p = 1\)</span>.</p>
+<div class="proof definition admonition" id="03-vector-norm-l1-norm">
+<p class="admonition-title"><span class="caption-number">Definition 15 </span> (<span class="math notranslate nohighlight">\(L_1\)</span> Norm)</p>
+<section class="definition-content" id="proof-content">
+<p>For the same vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_1\)</span> norm is
+defined by:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\|\cdot\|_1 : \mathcal{V} &amp; \rightarrow \mathbb{R}, \\
+\mathbf{v} &amp; \mapsto \sum_{d=1}^D |v_d|,
+\end{aligned}
+\end{split}\]</div>
+<p>assigning to each vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> (defined as in
+<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(2)</a>) the sum of the absolute values of its
+components, <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_1\)</span>.</p>
+<p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_1\)</span> norm of
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_1\)</span>, is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\|\mathbf{v}\|_1 = \sum_{d=1}^{D} |v_d|.\]</div>
+</section>
+</div><p>This norm is called the Manhattan norm because it is the distance between two
+points in a grid-like Manhattan street layout, where the shortest path between
+two points is the sum of the horizontal and vertical distances. This metric sums
+the absolute values of the vector components. Geometrically, it measures the
+distance a taxicab (hence the name taxicab) would travel in a grid-like path in
+<span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>. In machine learning, the <span class="math notranslate nohighlight">\(L_1\)</span> norm is often used for
+<a class="reference external" href="https://en.wikipedia.org/wiki/Lasso_(statistics)"><strong>regularization</strong></a>,
+encouraging sparsity in the model parameters.</p>
+<figure class="align-default" id="vector-norm-manhattan-distance">
+<img alt="../../_images/wikipedia-520px-Manhattan_distance.svg.png" src="../../_images/wikipedia-520px-Manhattan_distance.svg.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7 </span><span class="caption-text">Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
+yellow, and blue paths all have the same length of 12. In Euclidean
+geometry, the green line has length <span class="math notranslate nohighlight">\(6 \sqrt{2} \approx 8.49\)</span> and is the unique
+shortest path, while the other paths have the longer length of 12.</span><a class="headerlink" href="#vector-norm-manhattan-distance" title="Permalink to this image">#</a></p>
+<div class="legend">
+<p><strong>Image Credit: <a class="reference external" href="https://en.wikipedia.org/wiki/Taxicab_geometry">Wikipedia</a></strong></p>
+</div>
+</figcaption>
+</figure>
+</section>
+<section id="l-2-norm-euclidean-norm">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="math notranslate nohighlight">\(L_2\)</span> Norm (Euclidean Norm)</a><a class="headerlink" href="#l-2-norm-euclidean-norm" title="Permalink to this heading">#</a></h3>
+<p>The <span class="math notranslate nohighlight">\(L_2\)</span> <strong>norm</strong>, or <strong>Euclidean norm</strong>, obtained by setting <span class="math notranslate nohighlight">\(p = 2\)</span>, is the
+most familiar norm in machine learning.</p>
+<div class="proof definition admonition" id="03-vector-norm-l2-norm">
+<p class="admonition-title"><span class="caption-number">Definition 16 </span> (L2 Norm)</p>
+<section class="definition-content" id="proof-content">
+<p>Similarly, for <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_2\)</span> norm is given by:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\|\cdot\|_2 : \mathcal{V} &amp; \rightarrow \mathbb{R}, \\
+\mathbf{v} &amp; \mapsto \left( \sum_{d=1}^D |v_d|^2 \right)^{\frac{1}{2}},
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_2\)</span> is the Euclidean length of the vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>
+(defined as in <a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(2)</a>).</p>
+<p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_2\)</span> norm of
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_2\)</span>, is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\|\mathbf{v}\|_2 = \sqrt{\sum_{d=1}^{D} |v_d|^2}.\]</div>
+</section>
+</div><p>It measures the “straight-line” distance from the origin to the point in
+<span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span> represented by <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>. This norm is extensively used in
+machine learning to measure the magnitude of vectors, in optimization algorithms
+(like gradient descent), and in computing distances between points in feature
+space.</p>
+<p>With reference to figure <a class="reference internal" href="#vector-norm-manhattan-distance"><span class="std std-numref">Fig. 7</span></a>, the green
+line defines the Euclidean distance between two points in <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span> and is
+the shortest path between the two points.</p>
+<p>Let’s see how the L2 norm looks like in a 2D space.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">plotter</span> <span class="o">=</span> <span class="n">VectorPlotter2D</span><span class="p">(</span>
+<span class="linenos"> 4</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos"> 5</span>    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<span class="linenos"> 6</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 7</span>        <span class="s2">&quot;set_xlim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<span class="linenos"> 8</span>        <span class="s2">&quot;set_ylim&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottom&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<span class="linenos"> 9</span>        <span class="s2">&quot;set_xlabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;x-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">10</span>        <span class="s2">&quot;set_ylabel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;y-axis&quot;</span><span class="p">,</span> <span class="s2">&quot;fontsize&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">11</span>        <span class="s2">&quot;set_title&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Vector Magnitude Demonstration&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">},</span>
+<span class="linenos">12</span>    <span class="p">},</span>
+<span class="linenos">13</span><span class="p">)</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">v</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span>
+<span class="linenos">16</span>    <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="linenos">17</span>    <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="linenos">18</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+<span class="linenos">19</span>    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\|\mathbf</span><span class="si">{v}</span><span class="s2">\|_2 = \sqrt{3^2 + 4^2} = 5$&quot;</span><span class="p">,</span>
+<span class="linenos">20</span><span class="p">)</span>
+<span class="linenos">21</span><span class="n">horizontal_component_v</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span>
+<span class="linenos">22</span>    <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$v_1 = 3$&quot;</span>
+<span class="linenos">23</span><span class="p">)</span>
+<span class="linenos">24</span><span class="n">vertical_component_v</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span>
+<span class="linenos">25</span>    <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$v_2 = 4$&quot;</span>
+<span class="linenos">26</span><span class="p">)</span>
+<span class="linenos">27</span><span class="n">add_vectors_to_plotter</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="p">[</span><span class="n">v</span><span class="p">,</span> <span class="n">horizontal_component_v</span><span class="p">,</span> <span class="n">vertical_component_v</span><span class="p">])</span>
+<span class="linenos">28</span><span class="n">add_text_annotations</span><span class="p">(</span><span class="n">plotter</span><span class="p">,</span> <span class="p">[</span><span class="n">v</span><span class="p">])</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../../_images/c72b4bff559fa3ae74d16c65bc1cfaac0ed713ee7e39ad885273cdedb06a30dc.svg" src="../../_images/c72b4bff559fa3ae74d16c65bc1cfaac0ed713ee7e39ad885273cdedb06a30dc.svg" /></div>
+</div>
+<p>Notice that the calculation is equivalent to the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Pythagorean_theorem"><strong>Pythagorean theorem</strong></a>,
+where the length of the hypotenuse is the square root of the sum of the squares
+of the other two sides.</p>
+<p>We can easily calculate the L2 norm of a vector using NumPy:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="linenos">2</span><span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Norm of u: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Norm of u: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5.0</span>
+</pre>
+</div></div>
+</div>
+<p>And as convenience, our vector object <code class="docutils literal notranslate"><span class="pre">v</span></code> has an property/attribute <code class="docutils literal notranslate"><span class="pre">l2_norm</span></code>
+(<code class="docutils literal notranslate"><span class="pre">magnitude</span></code>) that returns the L2 norm of the vector.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">v</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span>
+<span class="linenos">2</span>    <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+<span class="linenos">3</span>    <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="linenos">4</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+<span class="linenos">5</span>    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$\|\mathbf</span><span class="si">{v}</span><span class="s2">\|_2 = \sqrt{3^2 + 4^2} = 5$&quot;</span><span class="p">,</span>
+<span class="linenos">6</span><span class="p">)</span>
+<span class="linenos">7</span><span class="n">rich</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Norm of v: </span><span class="si">{</span><span class="n">v</span><span class="o">.</span><span class="n">l2_norm</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">Norm of v: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5.0</span>
+</pre>
+</div></div>
+</div>
+<section id="generalization-of-the-pythagorean-theorem-to-d-dimensions">
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">Generalization of the Pythagorean Theorem to <span class="math notranslate nohighlight">\(D\)</span> Dimensions</a><a class="headerlink" href="#generalization-of-the-pythagorean-theorem-to-d-dimensions" title="Permalink to this heading">#</a></h4>
+<p>The Pythagorean theorem generalizes to <span class="math notranslate nohighlight">\(D\)</span> dimensions, where the length of the
+hypotenuse is the square root of the sum of the squares of the other sides.</p>
+<p>We can use 3D as a way to illustrate this. The following series of images are
+taken from
+<a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a>.</p>
+<p>First, consider <a class="reference internal" href="#vector-norm-pythagorean-theorem-3d-a"><span class="std std-numref">Fig. 8</span></a>, we want to
+find the length of the diagonal.</p>
+<figure class="align-default" id="vector-norm-pythagorean-theorem-3d-a">
+<img alt="../../_images/mathsisfun-pythagoras-3d-a.svg" src="../../_images/mathsisfun-pythagoras-3d-a.svg" /><figcaption>
+<p><span class="caption-number">Fig. 8 </span><span class="caption-text">Finding the length of the diagonal.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-a" title="Permalink to this image">#</a></p>
+<div class="legend">
+<p><strong>Image Credit:
+<a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
+</div>
+</figcaption>
+</figure>
+<p>We can first use Pythagorean theorem to find the length of the diagonal of the
+base.</p>
+<div class="math notranslate nohighlight">
+\[
+c = \sqrt{x^2 + y^2}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is the length of the diagonal of the base.</p>
+<figure class="align-default" id="vector-norm-pythagorean-theorem-3d-b">
+<img alt="../../_images/mathsisfun-pythagoras-3d-b.svg" src="../../_images/mathsisfun-pythagoras-3d-b.svg" /><figcaption>
+<p><span class="caption-number">Fig. 9 </span><span class="caption-text"><strong>Image Credit:
+<a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-b" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Then, the diagonal base serves as one of the sides of the triangle that we want
+to find.</p>
+<figure class="align-default" id="vector-norm-pythagorean-theorem-3d-c">
+<img alt="../../_images/mathsisfun-pythagoras-3d-c.svg" src="../../_images/mathsisfun-pythagoras-3d-c.svg" /><figcaption>
+<p><span class="caption-number">Fig. 10 </span><span class="caption-text"><strong>Image Credit:
+<a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-c" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Finally, we use Pythagorean theorem again to find the length of the diagonal.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+d   &amp;= \sqrt{c^2 + z^2} \\
+    &amp;= \sqrt{\left(\sqrt{x^2 + y^2}\right)^2 + z^2} \\
+    &amp;= \sqrt{x^2 + y^2 + z^2}
+\end{aligned}
+\end{split}\]</div>
+<figure class="align-default" id="vector-norm-pythagorean-theorem-3d">
+<img alt="../../_images/mathsisfun-pythagoras-3d-d.svg" src="../../_images/mathsisfun-pythagoras-3d-d.svg" /><figcaption>
+<p><span class="caption-number">Fig. 11 </span><span class="caption-text">The Pythagorean Theorem in 3D.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d" title="Permalink to this image">#</a></p>
+<div class="legend">
+<p><strong>Image Credit:
+<a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
+</div>
+</figcaption>
+</figure>
+<p>Without loss of generality (we are being less pedantic here), we can generalize
+the Pythagorean theorem to <span class="math notranslate nohighlight">\(D\)</span> dimensions, illustrated in
+<a class="reference internal" href="#vector-norm-pythagorean-theorem-d-dimensions"><span class="std std-numref">Table 13</span></a> below.</p>
+<p>We denote <span class="math notranslate nohighlight">\(d\)</span> as the length of the diagonal, and <span class="math notranslate nohighlight">\(a_1, a_2, \ldots, a_D\)</span> as the
+length of the sides of the triangle (or the vector components).</p>
+<table class="table" id="vector-norm-pythagorean-theorem-d-dimensions">
+<caption><span class="caption-number">Table 13 </span><span class="caption-text">Generalization of the Pythagorean Theorem to <span class="math notranslate nohighlight">\(D\)</span> Dimensions</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-d-dimensions" title="Permalink to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Dimension</p></th>
+<th class="head"><p>Pythagoras</p></th>
+<th class="head"><p>Distance/Norm</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><span class="math notranslate nohighlight">\(d^2 = a_1^2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(d = \sqrt{a_1^2} = \|a\|_2\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><span class="math notranslate nohighlight">\(d^2 = a_1^2 + a_2^2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(d = \sqrt{a_1^2 + a_2^2} = \|a\|_2\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><span class="math notranslate nohighlight">\(d^2 = a_1^2 + a_2^2 + a_3^2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(d = \sqrt{a_1^2 + a_2^2 + a_3^2} = \|a\|_2\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(D\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(d^2 = a_1^2 + a_2^2 + \cdots + a_D^2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(d = \sqrt{a_1^2 + a_2^2 + \cdots + a_D^2} = \|a\|_2\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="distance">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Distance</a><a class="headerlink" href="#distance" title="Permalink to this heading">#</a></h2>
+<p>We have been using distance and norm interchangeably. However, they are not
+<em>exactly</em> the same.</p>
+<p>The key difference (without going to deep into real analysis and metric spaces)
+is that the <strong>norm</strong> as defined in
+<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a> is a function that maps a
+vector to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (i.e. real number <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>), while the
+<strong>distance</strong> is a function that maps a pair of vectors to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p>
+<div class="proof definition admonition" id="03-vector-norm-distance">
+<p class="admonition-title"><span class="caption-number">Definition 17 </span> (Distance)</p>
+<section class="definition-content" id="proof-content">
+<p>A distance on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
+<span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
+<div class="math notranslate nohighlight" id="equation-03-vector-norm-distance-function">
+<span class="eqno">(4)<a class="headerlink" href="#equation-03-vector-norm-distance-function" title="Permalink to this equation">#</a></span>\[\begin{split}\begin{aligned}
+d: \mathcal{V} \times \mathcal{V} &amp; \rightarrow \mathbb{R}, \\
+(\mathbf{u}, \mathbf{v}) &amp; \mapsto d(\mathbf{u}, \mathbf{v}),
+\end{aligned}\end{split}\]</div>
+<p>which assigns each pair of vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathcal{V}\)</span> a
+real number <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span>, representing the <strong>distance</strong> between
+<span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>. This function must satisfy the following
+properties for all vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}, \mathbf{w} \in \mathcal{V}\)</span>
+<span id="id2">[<a class="reference internal" href="../../bibliography.html#id9" title="Joseph Muscat. Functional Analysis: An Introduction to Metric Spaces, Hilbert Spaces, and Banach Algebras. Springer, 2014.">Muscat, 2014</a>]</span>:</p>
+<ol class="arabic">
+<li><p><strong>Non-negativity:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    d(\mathbf{u}, \mathbf{v}) \geq 0
+    \]</div>
+<p>The distance between any two vectors is non-negative.</p>
+</li>
+<li><p><strong>Identity of Indiscernibles:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    d(\mathbf{u}, \mathbf{v}) = 0 \iff \mathbf{u} = \mathbf{v}
+    \]</div>
+<p>The distance between two vectors is zero if and only if the vectors are
+identical.</p>
+</li>
+<li><p><strong>Symmetry:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    d(\mathbf{u}, \mathbf{v}) = d(\mathbf{v}, \mathbf{u})
+    \]</div>
+<p>The distance between two vectors is the same regardless of the order of
+the vectors.</p>
+</li>
+<li><p><strong>Triangle Inequality:</strong></p>
+<div class="math notranslate nohighlight">
+\[
+    d(\mathbf{u}, \mathbf{v}) \leq d(\mathbf{u}, \mathbf{w}) +
+    d(\mathbf{w}, \mathbf{v})
+    \]</div>
+<p>The distance between two vectors is always less than or equal to the sum
+of the distances between the vectors and a third vector.</p>
+</li>
+</ol>
+</section>
+</div><p>We say that every norm induces a distance metric defined in
+<a class="reference internal" href="#03-vector-norm-distance">Definition 17</a>.</p>
+<p><strong>Why?</strong></p>
+<p>Given a norm <span class="math notranslate nohighlight">\(\|\cdot\|\)</span> on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, one can define a
+distance function induced by this norm as
+<span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})=\|\mathbf{u}-\mathbf{v}\|\)</span> for all
+<span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathcal{V}\)</span>. This distance function satisfies the
+metric space properties:</p>
+<ol class="arabic simple">
+<li><p><strong>Non-negativity</strong>: For any vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}\)</span>, the distance
+<span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is never negative because norms are always
+non-negative. This is a direct result of the norm’s property of <strong>positive
+definiteness</strong> (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a>).</p></li>
+<li><p><strong>Identity of Indiscernibles</strong>: The distance <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is
+zero if and only if <span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{v}\)</span>. This follows from the positive
+definiteness property (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a>) of
+norms which states that <span class="math notranslate nohighlight">\(\|\mathbf{u}\| =
+0\)</span> if and only if
+<span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{0}\)</span>. Thus, <span class="math notranslate nohighlight">\(\|\mathbf{u} -
+\mathbf{v}\| = 0\)</span> implies
+<span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v} = \mathbf{0}\)</span>, which means
+<span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{v}\)</span>.</p></li>
+<li><p><strong>Symmetry</strong>: The distance function is symmetric, meaning
+<span class="math notranslate nohighlight">\(d(\mathbf{u},
+\mathbf{v}) = d(\mathbf{v}, \mathbf{u})\)</span> for all
+<span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}\)</span>. This is because
+<span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|\mathbf{v}-\mathbf{u}\|\)</span>, as the norm of a
+vector remains the same if its sign is reversed. This follows directly from
+the norm’s property of <strong>absolute homogeneity</strong>
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a>) because you can just set
+<span class="math notranslate nohighlight">\(\lambda = -1\)</span>. Thus,
+<span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|-1\| \|\mathbf{v}-\mathbf{u}\| =
+ \|\mathbf{v}-\mathbf{u}\|\)</span>.</p></li>
+<li><p><strong>Triangle Inequality</strong>: The distance satisfies the triangle inequality,
+which states that for any
+<span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}, \mathbf{w} \in
+\mathcal{V}\)</span>, the inequality
+<span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{w}) \leq
+d(\mathbf{u}, \mathbf{v}) + d(\mathbf{v}, \mathbf{w})\)</span>
+holds. This is a consequence of the norm’s triangle inequality
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 13</a>),
+<span class="math notranslate nohighlight">\(\|\mathbf{u}+\mathbf{v}\|
+\leq \|\mathbf{u}\| + \|\mathbf{v}\|\)</span>, applied
+to the vectors <span class="math notranslate nohighlight">\(\mathbf{u}-\mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}-\mathbf{w}\)</span>, which
+yields
+<span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{w}\| \leq \|\mathbf{u}-\mathbf{v}\| + \|\mathbf{v}-\mathbf{w}\|\)</span>.</p></li>
+</ol>
+<p>Thus, the norm-induced distance function <span class="math notranslate nohighlight">\(d\)</span> adheres to all the axioms of a
+metric and therefore defines a metric space on <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>. This provides a
+way to measure “distances” in vector spaces that are consistent with the
+structure and properties of the space as defined by the norm.</p>
+<p>For example, the <span class="math notranslate nohighlight">\(L_2\)</span> norm <span class="math notranslate nohighlight">\(\|\cdot\|_2\)</span> induces the Euclidean distance
+<span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v}) = \|\mathbf{u}-\mathbf{v}\|_2\)</span> between two vectors
+<span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathbb{R}^D\)</span>. The key to remember that the
+transition of a norm to a distance is the subtraction of two vectors. So the
+domain of the distance function is a pair of vectors, while the domain of the
+norm function is a single vector. There is no confusion because
+<span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> indeed takes in two vectors as input, while the
+right hand side of the equation <span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\|_2\)</span> is a single
+vector.</p>
+<p>Furthermore, the <span class="math notranslate nohighlight">\(L_2\)</span> norm of a single vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> is <strong><em>equivalent</em></strong>
+to the Euclidean distance between <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> and the origin <span class="math notranslate nohighlight">\(\mathbf{0}\)</span>, and
+the <span class="math notranslate nohighlight">\(L_2\)</span> norm of the difference between two vectors <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{v}\)</span> is <strong><em>equivalent</em></strong> to the Euclidean distance between <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>
+and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>. Therefore, we often use the term “norm” and “distance”
+interchangeably because if we set the component <span class="math notranslate nohighlight">\(\mathbf{v} = \mathbf{0}\)</span>, then
+we recover the norm of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>.</p>
+<p>It is important to note that while norms always induce a metric, not all metrics
+arise from norms. A metric that does not come from a norm might not satisfy the
+properties of homogeneity or the triangle inequality in the same way that a norm
+does.</p>
+<p>For such distances, while they may satisfy the properties required of a metric,
+they cannot be expressed as the norm of the difference between two vectors. Two
+<a class="reference external" href="https://math.stackexchange.com/questions/172028/difference-between-norm-and-distance"><strong>examples</strong></a>
+are given:</p>
+<ol class="arabic">
+<li><p>The discrete metric:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+    d(x, y)= \begin{cases}0 &amp; \text { if } x=y \\ 1 &amp; \text { if } x \neq y\end{cases}
+    \end{split}\]</div>
+</li>
+<li><p>The arctangent metric on <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+    d(x, y)=|\arctan (x)-\arctan (y)|
+    \]</div>
+</li>
+</ol>
+<p>Both of these satisfy the properties of a metric but are not induced by any norm
+because they do not satisfy the homogeneity property (scaling) and, in the case
+of the discrete metric, do not satisfy the triangle inequality as it would be
+defined by a norm.</p>
+<p>An example of such a metric is the discrete metric mentioned previously, where
+the distance between distinct points is always one, irrespective of their
+“actual” separation in the vector space.</p>
+</section>
+<section id="closing-relevance-of-vector-norms-and-distances-in-machine-learning-and-deep-learning">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning</a><a class="headerlink" href="#closing-relevance-of-vector-norms-and-distances-in-machine-learning-and-deep-learning" title="Permalink to this heading">#</a></h2>
+<p>The concepts of vector norms and distances, as explored previously, play a
+crucial role in the realms of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Machine_learning">machine learning</a> and
+<a class="reference external" href="https://en.wikipedia.org/wiki/Deep_learning">deep learning</a>. Their relevance
+can be highlighted in several key aspects of these fields:</p>
+<ol class="arabic simple">
+<li><p><strong>Feature Normalization</strong>: In many machine learning algorithms, it’s
+important to <a class="reference external" href="https://en.wikipedia.org/wiki/Feature_scaling">normalize</a> or
+scale features so that they contribute equally to the learning process.
+Vector norms, especially the <strong><span class="math notranslate nohighlight">\(L_2\)</span></strong> norm, are often used to normalize
+data, ensuring that each feature contributes proportionately to the overall
+model.</p></li>
+<li><p><strong>Similarity and Distance Metrics</strong>: In clustering algorithms like
+<a class="reference external" href="https://en.wikipedia.org/wiki/K-means_clustering">K-means</a> or in nearest
+neighbor searches, the notion of distance between data points is fundamental.
+Here, norms (like the Euclidean or Manhattan norms) define the metrics used
+to quantify the <em>similarity</em> or <em>dissimilarity</em> between points in the feature
+space.</p></li>
+<li><p><strong>Regularization in Optimization</strong>: In both machine and deep learning,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Regularization_(mathematics)">regularization</a>
+techniques are employed to prevent overfitting. The <strong><span class="math notranslate nohighlight">\(L_1\)</span></strong> (Lasso) and
+<strong><span class="math notranslate nohighlight">\(L_2\)</span></strong> (Ridge) norms are particularly notable for their use in
+regularization terms. <strong><span class="math notranslate nohighlight">\(L_1\)</span></strong> regularization encourages sparsity in the
+model parameters, which can be beneficial for feature selection, while
+<strong><span class="math notranslate nohighlight">\(
+L_2\)</span></strong> regularization penalizes large weights, promoting smoother
+solution spaces.</p></li>
+<li><p><strong>Embedding Spaces in Deep Learning</strong>: In deep learning, particularly in
+areas like
+<a class="reference external" href="https://en.wikipedia.org/wiki/Natural_language_processing">natural language processing</a>
+or image recognition, the concept of <em>embedding spaces</em> is vital. These are
+high-dimensional spaces where similar items are placed closer together. Norms
+and distances in these spaces are used to measure the closeness or similarity
+of different entities (like words, sentences, or images), impacting the
+performance of models like neural networks.</p></li>
+<li><p><strong>Gradient Descent and Backpropagation</strong>: The core of training deep learning
+models involves optimization techniques like
+<a class="reference external" href="https://en.wikipedia.org/wiki/Gradient_descent">gradient descent</a>. The
+<strong><span class="math notranslate nohighlight">\(
+L_2\)</span></strong> norm is particularly important in quantifying the magnitude of
+gradients, guiding the update steps in the learning process.</p></li>
+<li><p><strong>Loss Functions</strong>: Many machine learning models are trained by minimizing a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Loss_function">loss function</a>. The choice of
+this function often involves norms and distances. For instance, mean squared
+error (a common loss function) is essentially an <strong><span class="math notranslate nohighlight">\(L_2\)</span></strong> norm of the error
+vector.</p></li>
+<li><p><strong>Autoencoders in Deep Learning</strong>:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Autoencoder">Autoencoders</a>, used for
+dimensionality reduction or feature learning, often utilize norms to measure
+the <em>reconstruction loss</em>, i.e., the difference between the input and its
+reconstruction.</p></li>
+<li><p><strong>Anomaly Detection</strong>: In anomaly detection, distances from a norm or a
+threshold often signify whether a data point is an <em>anomaly</em> or not.</p></li>
+</ol>
+<p>In conclusion, vector norms and distances are not just abstract mathematical
+concepts; they are tools deeply ingrained in the fabric of machine learning and
+deep learning. They provide the means to measure, compare, and optimize in the
+multi-dimensional spaces that these fields operate in, making them indispensable
+in the toolkit of anyone working in these domains.</p>
+<p>This is by no means we will deal with norms and distances. We will revisit this
+when we discuss about analytic geometry - which spans concepts such as
+similarity, inner product, orthogonality, and projections.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Deisenroth, M. P., Faisal, A. A., &amp; Ong, C. S. (2020). <em>Mathematics for
+Machine Learning</em>. Cambridge University Press. (Chapter 3.1, Norms).</p></li>
+<li><p>Muscat, J. Functional Analysis An Introduction to Metric Spaces, Hilbert
+Spaces, and Banach Algebras, Springer, 2014.</p></li>
+<li><p><a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math Is Fun - Pythagoras in 3D</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Metric_space">Wikipedia - Metric Space</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Vector_space">Wikipedia - Vector Space</a></p></li>
+<li><p><a class="reference external" href="https://math.stackexchange.com/questions/172028/difference-between-norm-and-distance">Math StackExchange - Difference between Norm and Distance</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./linear_algebra/02_vectors"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02-vector-operation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Vector and Its Operations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#norm">Norm</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-p-norm"><span class="math notranslate nohighlight">\(L^{p}\)</span> Norm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-1-norm-manhattan-norm"><span class="math notranslate nohighlight">\(L_1\)</span> Norm (Manhattan Norm)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#l-2-norm-euclidean-norm"><span class="math notranslate nohighlight">\(L_2\)</span> Norm (Euclidean Norm)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generalization-of-the-pythagorean-theorem-to-d-dimensions">Generalization of the Pythagorean Theorem to <span class="math notranslate nohighlight">\(D\)</span> Dimensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#distance">Distance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#closing-relevance-of-vector-norms-and-distances-in-machine-learning-and-deep-learning">Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
