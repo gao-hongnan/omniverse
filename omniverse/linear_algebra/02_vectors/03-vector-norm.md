@@ -629,10 +629,6 @@ because they do not satisfy the homogeneity property (scaling) and, in the case
 of the discrete metric, do not satisfy the triangle inequality as it would be
 defined by a norm.
 
-An example of such a metric is the discrete metric mentioned previously, where
-the distance between distinct points is always one, irrespective of their
-"actual" separation in the vector space.
-
 ## Closing: Relevance of Vector Norms and Distances in Machine Learning and Deep Learning
 
 The concepts of vector norms and distances, as explored previously, play a
