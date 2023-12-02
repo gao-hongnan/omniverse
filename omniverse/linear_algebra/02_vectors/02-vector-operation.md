@@ -40,8 +40,8 @@ from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
-    Find the root directory by searching for a directory or file that serves as a
-    marker.
+    Find the root directory by searching for a directory or file that serves as
+    a marker.
 
     Parameters
     ----------

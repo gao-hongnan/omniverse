@@ -27,7 +27,7 @@ class Vector:
     @property
     def magnitude(self) -> float:
         """Return the magnitude of the vector."""
-        return self.l2_norm # TODO: consider setter/getter for magnitude
+        return self.l2_norm  # TODO: consider setter/getter for magnitude
 
     @property
     def l1_norm(self) -> float:

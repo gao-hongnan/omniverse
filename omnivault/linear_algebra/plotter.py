@@ -24,17 +24,28 @@ from typing import Any, Dict, List, Optional, Sequence
 import matplotlib.pyplot as plt
 
 from omnivault.linear_algebra.base import VectorPlotter
-from omnivault.linear_algebra.vector import Vector, Vector2D, Vector3D
+from omnivault.linear_algebra.vector import Vector2D, Vector3D
+
+from omnivault._types._generic import Vec
 
 
-def add_vectors_to_plotter(plotter: VectorPlotter, vectors: Sequence[Vector]) -> None:
+def add_vectors_to_plotter(plotter: VectorPlotter[Vec], vectors: Sequence[Vec]) -> None:
+    """Add vectors to a plotter.
+
+    Type
+    ----
+    The reason we use `Vec` instead of `Vector` is because `Vec` is a type
+    variable bounded to `Vector` and thus can represent `Vector` and any
+    of its subclasses. This means `Vec` is an upper bound for `Vector` and
+    its subclasses.
+    """
     for vector in vectors:
         plotter.add_vector(vector)
 
 
 def add_text_annotations(
-    plotter: VectorPlotter,
-    vectors: Sequence[Vector],
+    plotter: VectorPlotter[Vec],
+    vectors: Sequence[Vec],
     include_endpoint_label: bool = True,
     include_vector_label: bool = True,
     endpoint_kwargs: Optional[Dict[str, Any]] = None,
@@ -108,6 +119,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         x: float,
         y: float,
         text: str,
+        z: Optional[float] = None,
         fontsize: int = 16,
         **kwargs: Dict[str, Any],
     ) -> None:
@@ -149,7 +161,8 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
 
 
 class VectorPlotter3D(VectorPlotter[Vector3D]):
-    from mpl_toolkits.mplot3d import Axes3D  # pylint: disable=import-outside-toplevel
+    # pylint: disable=import-outside-toplevel
+    from mpl_toolkits.mplot3d import Axes3D  # type: ignore[import-untyped]
 
     def __init__(
         self,
@@ -179,8 +192,8 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         self,
         x: float,
         y: float,
-        z: float,
         text: str,
+        z: Optional[float] = None,
         fontsize: int = 16,
         **kwargs: Dict[str, Any],
     ) -> None:

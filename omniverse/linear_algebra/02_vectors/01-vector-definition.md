@@ -40,8 +40,8 @@ from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
-    Find the root directory by searching for a directory or file that serves as a
-    marker.
+    Find the root directory by searching for a directory or file that serves as
+    a marker.
 
     Parameters
     ----------
@@ -139,7 +139,6 @@ $\mathbf{v} = [1, -2]$.
 ```{code-cell} ipython3
 :tags: [hide-input, remove-output]
 
-# Create plot using VectorPlotter2D
 fig, ax = plt.subplots(figsize=(9, 9))
 plotter = VectorPlotter2D(
     fig=fig,
@@ -166,7 +165,6 @@ for vector in [vector1, vector2, vector3]:
                      vector.origin[1] + vector.direction[1]/2,
                      annotation_text, fontsize=12, color=vector.color)
 
-# Plot and show
 plotter.plot()
 save_path = Path("./assets/01-vector-definition-vector-versus-coordinate.svg")
 if not save_path.exists():
