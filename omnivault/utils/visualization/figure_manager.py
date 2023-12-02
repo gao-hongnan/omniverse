@@ -52,7 +52,7 @@ class FigureManager:
         if self.fig:
             self.fig.show()
         else:
-            plt.show()
+            plt.show()  # type: ignore[no-untyped-call]
 
     def save(
         self,

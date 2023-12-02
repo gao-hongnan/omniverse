@@ -9,26 +9,6 @@ https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%20
 
 ALso mention:
 
-Furthermore, in the context of machine learning and deep learning, we often use
-different notations that are more aligned with common conventions in these
-fields. Let's revise the original notation to better fit this context:
-
-```{math}
-:label: 02-systems-of-linear-equations-definition-algebraic-form-eq-2
-
-\begin{aligned}
-    & \theta_{1}x_{1,1} + \theta_{2}x_{1,2} + \cdots + \theta_{D}x_{1,D} && = && \ y_1 \\
-    & \theta_{1}x_{2,1} + \theta_{2}x_{2,2} + \cdots + \theta_{D}x_{2,D} && = && \ y_2 \\
-    & \ \ \vdots \\
-    & \theta_{1}x_{N,1} + \theta_{2}x_{N,2} + \cdots + \theta_{D}x_{N,D} && = && \ y_N
-\end{aligned}
-```
-
-where $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients
-or weights associated with each feature, $x_{n,d} \in \mathbb{R}$ represents the
-value of the $d$-th feature for the $n$-th sample, and $y_n \in \mathbb{R}$ (for
-$n = 1, \ldots, N$) are the target or outcome values for each sample.
-
 ### Matrix Definition (System of Linear Equations)
 
 The vector equation is equivalent to a matrix equation of the form

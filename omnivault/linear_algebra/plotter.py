@@ -20,7 +20,6 @@ Parameters for creating a quiver plot:
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Sequence
-
 import matplotlib.pyplot as plt
 
 from omnivault.linear_algebra.base import VectorPlotter

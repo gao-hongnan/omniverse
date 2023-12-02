@@ -1,4 +1,113 @@
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
 # Systems of Linear Equations
+
+```{contents}
+:local:
+```
+
+```{code-cell} ipython3
+:tags: [remove-cell]
+
+%config InlineBackend.figure_format = 'svg'
+
+from __future__ import annotations
+
+import math
+import sys
+from pathlib import Path
+from typing import Optional, Sequence, TypeVar
+
+import matplotlib.pyplot as plt
+import numpy as np
+import rich
+from IPython.display import display
+
+def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
+    """
+    Find the root directory by searching for a directory or file that serves as
+    a marker.
+
+    Parameters
+    ----------
+    current_path : Path
+        The starting path to search from.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path or None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    current_path = current_path.resolve()
+    for parent in current_path.parents:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+root_dir = find_root_dir(marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.utils.visualization.style import use_svg_display
+    from omnivault.linear_algebra.plotter import (
+        VectorPlotter2D,
+        VectorPlotter3D,
+        add_vectors_to_plotter,
+        add_text_annotations,
+    )
+    from omnivault.linear_algebra.vector import Vector2D, Vector3D
+else:
+    raise ImportError("Root directory not found.")
+
+use_svg_display()
+```
+
+```{code-cell} ipython3
+x = np.linspace(-5, 5, 100)
+y1 = -x + 6
+y2 = x + 4
+
+fig, ax = plt.subplots(figsize = (12, 7))
+ax.scatter(1, 5, s = 200, zorder=5, color = 'r', alpha = .8)
+
+ax.plot(x, y1, lw =3, label = '$x+y=6$')
+ax.plot(x, y2, lw =3, label = '$x-y=-4$')
+ax.plot([1, 1], [0, 5], ls = '--', color = 'b', alpha = .5)
+ax.plot([-5, 1], [5, 5], ls = '--', color = 'b', alpha = .5)
+ax.set_xlim([-5, 5])
+ax.set_ylim([0, 12])
+
+ax.legend()
+s = '$(1,5)$'
+ax.text(1, 5.5, s, fontsize = 20)
+ax.set_title('Solution of $x+y=6$, $x-y=-4$', size = 22)
+ax.grid()
+plt.show()
+```
+
+This is a first introduction to systems of linear equations. We'll start with a
+motivating example, then define the general form of linear equations, and
+finally discuss the geometric interpretation of linear equations. This is
+definitely not the most rigorous treatment of the topic, but it should be
+sufficient for our purposes. We will dive deeper into the topic in later
+chapters, talking about it through the lens of vectors and matrices.
 
 ## Motivation
 
@@ -169,9 +278,43 @@ $N$ and $D$ are commonly used to represent the following:
     the number of rooms, square footage, location, age of the building, etc. $D$
     represents the total count of these features.
 
+Furthermore, in machine learning context, the $x_{n,d}$ presented in
+{eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1` are often
+referred to as **_features_** or **_attributes_**. The $a_{n,d}$ are referred to
+as **_weights_** or **_coefficients_**. The $b_n$ are referred to as
+**_labels_** or **_targets_**. For that reason, we often denote the linear
+equations in {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1`
+as:
+
+```{math}
+:label: 02-systems-of-linear-equations-definition-algebraic-form-eq-2
+
+\begin{aligned}
+    & \theta_{1}x_{1,1} + \theta_{2}x_{1,2} + \cdots + \theta_{D}x_{1,D} && = && \ y_1 \\
+    & \theta_{1}x_{2,1} + \theta_{2}x_{2,2} + \cdots + \theta_{D}x_{2,D} && = && \ y_2 \\
+    & \ \ \vdots \\
+    & \theta_{1}x_{N,1} + \theta_{2}x_{N,2} + \cdots + \theta_{D}x_{N,D} && = && \ y_N
+\end{aligned}
+```
+
+where $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients
+or weights associated with each feature, $x_{n,d} \in \mathbb{R}$ represents the
+value of the $d$-th feature for the $n$-th sample, and $y_n \in \mathbb{R}$ (for
+$n = 1, \ldots, N$) are the target or outcome values for each sample. Also
+notice that the coefficients $\theta_{d}$ are the same for each sample $n$.
+
 ### System of Linear Equations (Geometric Interpretation)
 
-...
+Consider a system of linear equations with two unknowns $x_1$ and $x_2$:
+
+```{math}
+:label: 02-systems-of-linear-equations-geometric-interpretation-eq-1
+
+\begin{aligned}
+    & 4x_1 + 4x_2 && = && \ 5 \\
+    & 2x_1 - 4x_2 && = && \ 0
+\end{aligned}
+```
 
 ## References and Further Readings
 
