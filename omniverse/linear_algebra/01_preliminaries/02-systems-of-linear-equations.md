@@ -1,569 +1,177 @@
 # Systems of Linear Equations
 
+## Motivation
+
+Let's explore a detailed example to better motivate systems of linear equations.
+We'll examine Example 2.1 from Section 2.1, titled 'Systems of Linear
+Equations', on page 19 of the book 'Mathematics for Machine Learning' by
+Deisenroth, Faisal, and Ong (2020) {cite}`deisenroth2020mathematics`. This
+example provides an insightful application of these concepts in a practical
+context."
+
+1. **Context**: We have a company that produces a set of products
+   $N_1, \ldots, N_n$. These products require resources $R_1, \ldots, R_m$ to be
+   produced.
+
+2. **Resource Requirements**: Each product $N_j$ requires a certain amount of
+   each resource $R_i$. This amount is denoted by $a_{ij}$. For instance,
+   $a_{ij}$ is the amount of resource $R_i$ needed to produce one unit of
+   product $N_j$.
+
+3. **Objective**: The company wants to find an optimal production plan. This
+   means deciding how many units $x_j$ of each product $N_j$ to produce, given
+   the constraint of available resources.
+
+4. **Available Resources**: The total available units of each resource $R_i$ is
+   given by $b_i$.
+
+5. **System of Linear Equations**: The heart of the problem is to determine the
+   values of $x_j$ (the quantity of each product to produce) such that all
+   resources are optimally used (ideally, no resources are left over).
+
+    To do this, we set up a system of linear equations. For each resource $R_i$,
+    the total consumption by all products should be equal to the available
+    amount of that resource $b_i$. This leads to the equation:
+
+    ```{math}
+    :label: 02-systems-of-linear-equations-eq-1
+
+    a_{i1}x_1 + a_{i2}x_2 + \cdots + a_{in}x_n = b_i
+    ```
+
+    for each $i = 1, \ldots, m$. Here, $a_{i1}x_1$ represents the amount of
+    resource $R_i$ used by product $N_1$, $a_{i2}x_2$ by product $N_2$, and so
+    on.
+
+6. **Solution**: Consequently, an **_optimal production plan_**
+   $\left(x_1^*,
+   \ldots, x_n^*\right)$ is one that satisfies the system of
+   linear equations in {eq}`02-systems-of-linear-equations-eq-1`:
+
+    ```{math}
+    :label: 02-systems-of-linear-equations-eq-2
+
+    \begin{aligned}
+        & a_{11}x_1 + a_{12}x_2 + \cdots + a_{1n}x_n && = && \ b_1 \\
+        & a_{21}x_1 + a_{22}x_2 + \cdots + a_{2n}x_n && = && \ b_2 \\
+        & \vdots && && \ \vdots \\
+        & a_{m1}x_1 + a_{m2}x_2 + \cdots + a_{mn}x_n && = && \ b_m
+    \end{aligned}
+    ```
+
+    where
+
+    - $a_{ij} \in \mathbb{R}$ is the amount of resource $R_i$ needed to produce
+      one unit of product $N_j$.
+    - $b_i \in \mathbb{R}$ is the total available units of resource $R_i$. This
+      is the constraint on the amount of resource $R_i$ that can be used.
+
+    Equation {eq}`02-systems-of-linear-equations-eq-2` is what we call the
+    general form of a _system of linear equations_. The unknowns are the
+    quantities $x_1, \ldots, x_n$ of each product to produce. The coefficients
+    $a_{ij}$ represent the amount of resource $R_i$ needed to produce one unit
+    of product $N_j$. The constants $b_i$ represent the total available units of
+    resource $R_i$. Finally, every $n$-tuple $\left(x_1^*, \ldots, x_n^*\right)$
+    that satisfies {eq}`02-systems-of-linear-equations-eq-2` is a solution to
+    the system of linear equations.
+
+    In other words, the optimal production plan is the solution to the system of
+    linear equations. This solution is unique if the system is
+    [**consistent**](https://en.wikipedia.org/wiki/Consistent_and_inconsistent_equations)
+    (i.e., has at least one solution). If the system is
+    [**inconsistent**](https://en.wikipedia.org/wiki/Consistent_and_inconsistent_equations)
+    (i.e., has no solution), then there is no optimal production plan.
+
+In summary, this example illustrates how a practical problem in production
+planning can be modeled using linear algebra. The system of linear equations is
+central to finding an optimal solution that maximizes resource utilization.
+
+### Analogy: Bakery
+
+1. **Products ($N_j$)**: Imagine a bakery that makes various types of bread and
+   pastries. These could be:
+
+    - $N_1$: Loaves of whole wheat bread
+    - $N_2$: Baguettes
+    - $N_3$: Croissants
+    - ... and so on, up to $N_n$ being the nth type of bread or pastry.
+
+2. **Resources ($R_i$)**: The resources are the ingredients and materials needed
+   to make these breads and pastries. Examples include:
+
+    - $R_1$: Flour
+    - $R_2$: Yeast
+    - $R_3$: Butter
+    - $R_4$: Sugar
+    - ... up to $R_m$, the mth resource.
+
+3. **Resource Requirements ($a_{ij}$)**: Each type of bread or pastry requires
+   specific amounts of these ingredients. For example:
+
+    - To make one loaf of whole wheat bread ($N_1$), you might need 2 units of
+      flour ($a_{11} = 2$), 1 unit of yeast ($a_{21} = 1$), and no sugar
+      ($a_{41} = 0$).
+
+4. **Optimal Production Plan**: The bakery needs to decide how many of each type
+   of bread and pastry to bake each day. This decision is based on the available
+   ingredients. For instance, if they have 100 units of flour, 50 units of
+   yeast, 30 units of butter, and 20 units of sugar, how many loaves of whole
+   wheat bread, baguettes, croissants, etc., should they bake to use all these
+   ingredients efficiently without any waste?
+
+5. **System of Linear Equations**: This situation can be modeled as a system of
+   linear equations. Each equation corresponds to one resource, equating the
+   total amount of that resource used by all products to the available amount.
+   Solving these equations gives the bakery the optimal number of each type of
+   bread and pastry to bake.
+
 ## General Form of Linear Equations
 
-To motivate the systems of linear equations, let's
+Without touching on the concept of vectors and matrices, we can define a system
+of linear equations purely in terms of algebraic equations with a geometric
+interpretation.
 
-### Algebraic Definition (System of Linear Equations)
+### System of Linear Equations (Algebraic Form)
 
-A general system of $m$ linear equations with $n$ unknowns can be written as:
+````{prf:definition} System of Linear Equations (Algebraic Form)
+:label: 02-systems-of-linear-equations-definition-algebraic-form
 
-$$
-\begin{align}
-a_{11} x_1 + a_{12} x_2  + \cdots + a_{1n} x_n  &= b_1 \\
-a_{21} x_1 + a_{22} x_2  + \cdots + a_{2n} x_n  &= b_2 \\
-& \ \ \vdots\\
-a_{m1} x_1 + a_{m2} x_2  + \cdots + a_{mn} x_n  &= b_m,
-\end{align}
-$$
+A general system of $N$ linear equations with $D$ unknowns is given by:
 
-where $x_1, x_2,\ldots,x_n$ are the unknowns, $a_{11},a_{12},\ldots,a_{mn}$ are
-the coefficients of the system, and $b_1,b_2,\ldots,b_m$ are the constant terms.
+```{math}
+:label: 02-systems-of-linear-equations-definition-algebraic-form-eq-1
 
-### Matrix Definition (System of Linear Equations)
-
-The vector equation is equivalent to a matrix equation of the form
-$\mathbf{A}\mathbf{x} = \mathbf{b}$, where
-$\mathbf{A} \in \mathbb{F}^{m \times n}$, $\mathbf{x}$ a column vector in
-$\mathbb{F}^n$ and $\mathbf{b}$ a column vector in $\mathbb{F}^m$.
-
-$$
-\mathbf{A} =
-\begin{bmatrix}
-a_{11} & a_{12} & \cdots & a_{1n} \\
-a_{21} & a_{22} & \cdots & a_{2n} \\
-\vdots & \vdots & \ddots & \vdots \\
-a_{m1} & a_{m2} & \cdots & a_{mn}
-\end{bmatrix},\quad
-\mathbf{x}=
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\vdots \\
-x_n
-\end{bmatrix},\quad
-\mathbf{b}=
-\begin{bmatrix}
-b_1 \\
-b_2 \\
-\vdots \\
-b_m
-\end{bmatrix}
-$$
-
-### Vector Definition (System of Linear Equations)
-
-Recall in the chapter on Matrix Multiplication, we note that
-$\mathbf{A}\mathbf{x} = \mathbf{b}$ is a right multiplication of a matrix
-$\mathbf{A}$ on the vector $\mathbf{b}$, and thus $\mathbf{b}$ can be
-represented as the **linear combination of columns of $\mathbf{A}$ with $x_i$ as
-coefficients**.
-
-$$
-\mathbf{b} = x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + ... + x_n \mathbf{a}_n \implies
-\begin{bmatrix}
-b_1 \\
-b_2 \\
-\vdots \\
-b_m
-\end{bmatrix} = x_1 \begin{bmatrix} a_{11} \\ a_{21} \\ \vdots \\ a_{m1} \end{bmatrix} + x_2 \begin{bmatrix} a_{12} \\ a_{22} \\ \vdots \\ a_{m2} \end{bmatrix} + ... + x_n \begin{bmatrix} a_{1n} \\ a_{2n} \\ \vdots \\ a_{mn} \end{bmatrix}
-$$
-
-### Definition (Homogeneous System of Equations)
-
-A system of equations is called **homogeneous** if each equation in the system
-is equal to $0$ . A homogeneous system has the form:
-
-$$
-\begin{align}
-a_{11} x_1 + a_{12} x_2  + \cdots + a_{1n} x_n  &= 0 \\
-a_{21} x_1 + a_{22} x_2  + \cdots + a_{2n} x_n  &= 0 \\
-& \ \ \vdots\\
-a_{m1} x_1 + a_{m2} x_2  + \cdots + a_{mn} x_n  &= 0,
-\end{align}
-$$
-
-where $x_1, x_2,\ldots,x_n$ are the unknowns, $a_{11},a_{12},\ldots,a_{mn}$ are
-the coefficients of the system.
-
-> Note that this definition can be similarly translated in terms of Matrix and
-> Vector definitions.
-
-### Definition (Inconsistent and Consistent Systems)
-
--   **Consistent**: A system of linear equations are called **consistent** if
-    there exists at least one solution.
--   **Inconsistent**: A system of linear equations are called **inconsistent**
-    if there exists no solution.
-
-## Elementary Row Operations
-
-Elementarty row operations provide us a way to find out if a system of linear
-equations is **consistent or not**.
-
-### Definition (Elementary Row Operations)
-
-In order to enable us to convert a system of linear equations to an
-**equivalent** system, we define the following **elementary row operations**:
-
--   **Row Permutation:** Interchange any two rows of a matrix: $\r_i \iff \r_j$
--   **Row Multiply:** Replace any row of a matrix with a non-zero scalar
-    multiple of itself: $\r_i \to \lambda\r_i$
--   **Row Addition:** Replace any row of a matrix with the sum of itself and a
-    non-zero scalar multiple of any other row: $\r_i \to \r_i + \lambda \r_j$.
-
-**$\r_i$ refers to row $i$ of the matrix.**
-
-### Definition (Elementary Column Operations)
-
-By replacing the word _row_ to _column_, we recover the definition of
-**elementary column operations**.
-
-### Theorem (Elementary Row Operations Preserve Solution Set of Linear Systems)
-
-This theorem will be proven again later in the context of matrices. Here, I
-highly recommend reading the proof (without the context of matrices) from
-[A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)/01%3A_Systems_of_Equations/1.02%3A_Elementary_Operations>)
-where he showed that these 3 operations will not change the solution set of the
-original system of linear equations.
-
-## Gauss Elimination
-
-### Definition (Augmented Matrix of a System of Linear Equations)
-
-We usually combine $\mathbf{A}\mathbf{x} = \mathbf{b}$ into one system (matrix)
-for ease of computing elementary row operations, after all, row operations are
-always applied to the **whole system**.
-
-Given the general form of the linear equations, the **augmented matrix** of the
-system of equations is:
-
-$$
-[\mathbf{A} ~|~ \mathbf{b}] = \begin{bmatrix}
-a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
-a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
-\vdots & \vdots & \ddots & \vdots \\
-a_{m1} & a_{m2} & \cdots & a_{mn} & b_m
-\end{bmatrix}
-$$
-
-### Theorem (Solving Augmented Matrix Solves the System of Linear Equations)
-
-We established that row operations on a system of linear equations preserve the
-orginal solution set, therefore we can apply row operations on the augmented
-matrix to solve the solution.
-
-### Definition (Row Echolon Form)
-
-Given a matrix $\mathbf{A} \in \mathbb{F}^{m \times n}$ and
-$\mathbf{b} \in \mathbb{F}^{m}$, then we say the augmented matrix
-$[\mathbf{A} ~|~ \mathbf{b}]$ is in its **row echolon form** if:
-
--   Any rows that are all **zeros** must be at the bottom of the matrix, that is
-    to say, all **zero row vectors** are grouped at the bottom.
--   The **leading coefficient (also called the pivot)** of a non-zero row is
-    always strictly to the right of the leading coefficient of the row above it.
--   All entries in a column below a pivot are zeros.
--   Some textbooks require the leading coefficient to be 1.
-
-### Definition (Reduced Row Echolon Form)
-
-Given a matrix $\mathbf{A} \in \mathbb{F}^{m \times n}$ and
-$\mathbf{b} \in \mathbb{F}^{m}$, then we say the augmented matrix
-$[\mathbf{A} ~|~ \mathbf{b}]$ is in its **reduced row echolon form** if:
-
--   Any rows that are all **zeros** must be at the bottom of the matrix, that is
-    to say, all **zero row vectors** are grouped at the bottom.
--   The **leading coefficient (also called the pivot)** of a non-zero row is
-    always strictly to the right of the leading coefficient of the row above it.
--   All entries in a column below a pivot are zeros.
--   The leading coefficient to be 1.
--   All entries in a column above and below a leading entry are zero.
-
-### Definition (Pivot Position and Pivot Column)
-
--   **Pivot Position:** A **pivot position** in a matrix is the location of a
-    leading entry in the row-echelon form of a matrix.
-
--   **Pivot Column:** A **pivot column** is a column that contains a pivot
-    position.
-
-### Algorithm (Gaussian and Gaussian-Jordan Elimination)
-
-> Entirely taken from
-> [A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>).
-
-This algorithm provides a method for using row operations to take a matrix to
-its reduced row-echelon form. We begin with the matrix in its original form.
-
-1. Starting from the left, find the first nonzero column. This is the first
-   pivot column, and the position at the top of this column is the first pivot
-   position. Switch rows if necessary to place a nonzero number in the first
-   pivot position.
-2. Use row operations to make the entries below the first pivot position (in the
-   first pivot column) equal to zero.
-3. Ignoring the row containing the first pivot position, repeat steps 1 and 2
-   with the remaining rows. Repeat the process until there are no more rows to
-   modify.
-4. Divide each nonzero row by the value of the leading entry, so that the
-   leading entry becomes 1 . The matrix will then be in row-echelon form.
-
-> The following step will carry the matrix from row-echelon form to reduced
-> row-echelon form.
-
-5. Moving from right to left, use row operations to create zeros in the entries
-   of the pivot columns which are above the pivot positions. The result will be
-   a matrix in reduced row-echelon form.
-
-### Definition (Types of Solutions)
-
-> Modified from
-> [A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>).
-
-#### Definition (No Solution)
-
-In the case where the system of equations has no solution, the row-echelon form
-of the augmented matrix will have a row of the form:
-
-$$
-\left[\begin{array}{@{}ccc|c@{}}
-0 & 0 & \cdots & b_i \\
-\end{array}\right]
-$$
-
-That is to say, there exists a row with entirely zeros in $\mathbf{A}$ but the
-corresponding output $\b_i \neq 0$.
-
-#### Definition (One Unique Solution)
-
-We use a small example as follows:
-
-$$
-\left[\begin{array}{@{}ccc|c@{}}
-1 & 0 & 0 & b_1 \\
-0 & 1 & 0 & b_2 \\
-0 & 0 & 1 & b_3 \\
-\end{array}\right]
-$$
-
-This system has unique solution as every column of the coefficient matrix is a
-pivot column.
-
-#### Definition (Infinitely Many Solutions)
-
-We use a small example as follows.
-
-In the case where the system of equations has infinitely many solutions, the
-solution contains parameters. There will be columns of the coefficient matrix
-which are not pivot columns. The following are examples of augmented matrices in
-reduced row-echelon form for systems of equations with infinitely many
-solutions.
-
-$$
-\left[\begin{array}{@{}ccc|c@{}}
-1 & 0 & 0 & b_1 \\
-0 & 1 & 0 & b_2 \\
-0 & 0 & 0 & 0 \\
-\end{array}\right]
-$$
-
-## Uniqueness of Reduced Row-Echolon Form
-
-### Definition (Basis Variable)
-
-Assume a augmented matrix system $[\mathbf{A} ~|~ \mathbf{b}]$ in **rref**, then
-the variables (unknowns) $x_i$ is a **basic variable** if
-$[\mathbf{A} ~|~ \mathbf{b}]$ has a leading 1 in column number $i$, in this
-case, column $i$ is also a **pivot column**.
-
-### Definition (Free Variable)
-
-If the variable $x_i$ is not **basis**, then it is **free**.
-
-### Definition (Free Column)
-
-A **free column** is a column that does not contains a pivot position.
-
-### Example (Basic and Free Variable)
-
-This is best understood from an
-[example taken from A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>).
-
-Consider the system:
-
-$$
-\begin{align}
-x + 2y - z + w = 3 \\
-x + y - z + w = 1 \\
-x + 3y - z + w = 5
-\end{align}
-$$
-
-we know that the augmented matrix is:
-
-$$
-\left[\begin{array}{@{}cccc|c@{}}
-1 & 2 & -1 & 1 & 3 \\
-0 & 1 & 0  & 0 & 2 \\
-0 & 0 & 0 & 0 & 0\\
-\end{array}\right]
-$$
-
-**Solution**
-
--   We always look out for the row with 1 variable to one solution (if it
-    exists). In this case, it is $y = 2$. The perks of **rref** allows us to do
-    this easily.
--   In the first row, it has
-    $x + 2y - z + w = 3 \implies x + 4 - z + w = 3 \implies x = -1 + z - w$.
-    -   Since the solution of $x$ depends on $z$ and $w$, we call $z$ and $w$
-        the free variable and parameters as $z$ and $w$ can actually take on any
-        value.
-    -   Set $z = s$
-    -   Set $w = t$
-
-So the solution set can be described as:
-
-$$
-\begin{bmatrix}
-x \\ y \\ z \\ w
-\end{bmatrix}
-=
-\begin{bmatrix}
--1 + s - t \\ 2 \\ s \\ t
-\end{bmatrix}
-$$
-
-and has **infinitely number of solutions**.
-
-Here, the **free variables** are the parameters $z = s$ and $w = t$, and **basic
-variables**.
-
-### Sorting out the confusion (Basic and Free Variables)
-
-From the example above, we can clearly see that free variables allow us to
-assign any values to them. The above example seems obvious, but it isn't that
-much if we have:
-
-$$
-\left[\begin{array}{@{}cccc|c@{}}
-1 & 2 & 0 & -2 & 0 \\
-0 & 0 & 1 & 2 & 0 \\
-0 & 0 & 0 & 0 & 0\\
-\end{array}\right]
-$$
-
-which translates to:
-
-$$
 \begin{aligned}
-x_1 + 2x_2 + 0x_3 - 2x_4 = 0 \\
-0 x_1 + 0x_2 + x_3 + 2x_4 = 0
+    & a_{11}x_1 + a_{12}x_2 + \cdots + a_{1D}x_D && = && \ b_1 \\
+    & a_{21}x_1 + a_{22}x_2 + \cdots + a_{2D}x_D && = && \ b_2 \\
+    & \ \ \vdots \\
+    & a_{N1}x_1 + a_{N2}x_2 + \cdots + a_{ND}x_D && = && \ b_N
 \end{aligned}
-$$
+```
 
-By definition $x_2$ and $x_4$ are free variables, and if you ever wonder why
-$x_4$ is free (even though it is by definition), then you did not understand the
-basics.
+where $x_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) are the unknowns
+and $a_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) and $b_n$ (for
+$n = 1, \ldots, N$) are the coefficients and constants, respectively.
+````
 
-Consider simply:
+The choice of using $N$ and $D$ for the number of equations and unknowns instead
+of $m$ and $n$ is intentional. In the context of machine learning, the notations
+$N$ and $D$ are commonly used to represent the following:
 
-$$
-\begin{aligned}
-x + y = 0 \\
-2x + 2y = 0
-\end{aligned}
-$$
+-   $N$: The number of samples or observations in a dataset. In a dataset
+    comprising multiple individual data points (like patients in a medical
+    study, images in a computer vision task, or days in a time series analysis),
+    $N$ is typically used to denote the total count of these data points.
 
-then it is obvious that this system reduces to only solving $x + y = 0$, in
-which if you do **RREF**, the free variable is $y$. If you plot out the solution
-set, this is just a straight line $x + y = 0$ that passes through the origin.
-Then if you write it as $x = -y$, then this means $x$ depends on $y$, in which
-$y$ can be any point on the line. Similarly, if we ignore the definition of free
-variable, we can also write $y = -x$ and recover our favourite high school
-equation of a line where $y$ depends on $x$ and $x$ being independent is allowed
-to take on any values. But matrix theory now gives us a systematic way to
-approach things, we just need to know that if our unknowns is more than the
-equations, we are usually bound to have free variables.
+-   $D$: The number of features or dimensions for each sample. In machine
+    learning, each data point is often described by a set of features or
+    attributes. For example, in a dataset of houses, the features might include
+    the number of rooms, square footage, location, age of the building, etc. $D$
+    represents the total count of these features.
 
-### Word of Caution (Basic and Free Variables)
+### System of Linear Equations (Geometric Interpretation)
 
-Note that since normal Gaussian Elimination **REF** is not unique, there can be
-different free and basic variables for different **REF**. But you will see that
-**RREF** guarantees uniqueness.
-
-### Proposition (Basic and Free Variables)
-
-If $x_i$ is a basic variable of a homogeneous system of linear equations, then
-any solution of the system with $x_j=0$ for all those free variables $x_j$ with
-$j>i$ must also have $x_i=0$.
-
-> This is best understood by the previous example, note that we can denote:
-
-$$
-x = x_1, y = x_2, z = x_3, w = x_4
-$$
-
-and see that the free variables below $x_1$ cannot have $x_1 \neq 0$ inside.
-
-### Lemma (Solutions and the Reduced Row-Echelon Form of a Matrix)
-
-Let $\mathbf{A}$ and $\B$ be two distinct augmented matrices for two homogeneous
-systems of $m$ equations in $n$ variables, such that $A$ and $B$ are each in
-reduced row-echelon. Then, the two systems do not have exactly the same
-solutions.
-
-### Definition (Row Equivalence)
-
-Two matrices $\mathbf{A}$ and $\B$ are **row equivalent** if one matrix can be
-obtained from the other matrix by a **finite sequence of elementary row
-operations**.
-
-> Note that if $\mathbf{A}$ can be obtained by applying a sequence of elementary
-> row operations on $\B$, then it follows that we just need to apply the
-> sequence in reverse for $\B$ to get to $\mathbf{A}$.
-
-### Theorem (Every Matrix is row equivalent to its RREF)
-
-Every matrix $\mathbf{A} \in \mathbb{F}^{m \times n}$ is row equivalent to its
-**RREF**.
-
-### Theorem (Row Equivalent Augmented Matrices have the same solution set)
-
-Given $[\mathbf{A} ~|~ \mathbf{b}]$ and $[\C ~|~ \d]$, if both are **row
-equivalent** to each other, then the two linear systems have the same solution
-sets.
-
-### Theorem (RREF is Unique)
-
-Every matrix $\mathbf{A}$ has a **RREF** and it is unique. To prove it one
-should use **Lemma (Solutions and the Reduced Row-Echelon Form of a Matrix)**
-and **Theorem (Row Equivalent Augmented Matrices have the same solution set)**.
-See
-[A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>).
-
-## Rank and Homogeneous Systems
-
-The section talks about matrix rank in homogeneous systems. I felt it is better
-mentioned again in matrix theory. So do visit there.
-
-## Elementary Matrices
-
-### Permutation Matrix
-
-Row Exchange:
-
-$$
-\begin{align}
-x_1- 2x_2+x_3&=0\\
-2x_2-8x_3&=8\\
--4x_1+5x_2+9x_3&=-9
-\end{align}
-$$
-
-vs
-
-$$
-\begin{align}
-2x_2-8x_3&=8\\
-x_1- 2x_2+x_3&=0\\
--4x_1+5x_2+9x_3&=-9
-\end{align}
-$$
-
-has no difference, we just swapped row 1 and 2. We can do the same in matrix for
-conveince.
-
-Also, given
-
-$$
-\P = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \\ \end{bmatrix}
-,\quad
-\mathbf{A} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \\ \end{bmatrix}
-$$
-
-then
-
-$$\P\mathbf{A} = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \\ \end{bmatrix} \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \\ \end{bmatrix} = \begin{bmatrix} 4 & 5 & 6 \\ 1 & 2 & 3 \\ 7 & 8 & 9 \\ \end{bmatrix}$$
-
-and notice that row 1 and 2 are swapped by the left multiplication of the
-permutation matrix $\P$. Why did it worked?
-
-Recall now
-
-$$\P\mathbf{A} = \begin{bmatrix}\ \p_1 \\ \p_2 \\  \p_3 \end{bmatrix}\mathbf{A} = \begin{bmatrix}\p_1\mathbf{A} \\ \p_2\mathbf{A} \\ \p_3\mathbf{A} \end{bmatrix}$$
-
-We just look at the first row of $\P\mathbf{A}$ given by $\p_1\mathbf{A}$ which
-maps to the first row of $\P\mathbf{A}$.
-
-$$\p_1\mathbf{A} = 0 \begin{bmatrix} 1 & 2 & 3 \end{bmatrix} + 1 \begin{bmatrix} 4 & 5 & 6 \end{bmatrix} + 0 \begin{bmatrix} 7 & 8 & 9 \end{bmatrix} = \begin{bmatrix} 4 & 5 & 6 \end{bmatrix}$$
-
-Then the rest is the same logic:
-
-$$\p_2\mathbf{A} = 1 \begin{bmatrix} 1 & 2 & 3 \end{bmatrix} + 0 \begin{bmatrix} 4 & 5 & 6  \end{bmatrix} + 0 \begin{bmatrix} 7 & 8 & 9 \end{bmatrix} = \begin{bmatrix} 1 & 2 & 3 \end{bmatrix}$$
-
-$$\p_3\mathbf{A} = 0 \begin{bmatrix} 1 & 2 & 3 \end{bmatrix} + 0 \begin{bmatrix} 4 & 5 & 6  \end{bmatrix} + 1 \begin{bmatrix} 7 & 8 & 9  \end{bmatrix} = \begin{bmatrix} 7 & 8 & 9 \end{bmatrix}$$
-
-We now see why through **Matrix Multiplication (Left row wise)** that the
-**Permutation Matrix** works the way it is!
-
----
-
-### Introduction to Systems of Linear Equations in the Context of Linear Regression
-
-#### Motivation: The Essence of Linear Regression
-
-Linear regression is a foundational technique in machine learning, serving as a
-stepping stone to understanding more complex models. At its core, linear
-regression involves fitting a line (or a hyperplane in higher dimensions) to a
-set of data points to predict an outcome. This process fundamentally relies on
-systems of linear equations.
-
-#### Algebraic Definition (System of Linear Equations)
-
-Recall that a general system of $m$ linear equations with $n$ unknowns can be
-written as:
-
-$$
-\begin{align}
-a_{11} x_1 + a_{12} x_2  + \cdots + a_{1n} x_n  &= b_1 \\
-a_{21} x_1 + a_{22} x_2  + \cdots + a_{2n} x_n  &= b_2 \\
-& \ \ \vdots\\
-a_{m1} x_1 + a_{m2} x_2  + \cdots + a_{mn} x_n  &= b_m,
-\end{align}
-$$
-
-where $x_1, x_2,\ldots,x_n$ are the unknowns, $a_{11},a_{12},\ldots,a_{mn}$ are
-the coefficients of the system, and $b_1,b_2,\ldots,b_m$ are the constant terms.
-
-#### Linear Regression as a System of Linear Equations
-
-In a linear regression setting, we have a dataset with $m$ observations and $n$
-features. The goal is to find the weights (or coefficients) that best predict
-the target variable. Mathematically, this can be represented as:
-
-$$
-\begin{align}
-w_1 x_{11} + w_2 x_{12} + \cdots + w_n x_{1n} &= y_1 \\
-w_1 x_{21} + w_2 x_{22} + \cdots + w_n x_{2n} &= y_2 \\
-& \ \ \vdots \\
-w_1 x_{m1} + w_2 x_{m2} + \cdots + w_n x_{mn} &= y_m,
-\end{align}
-$$
-
-where $w_1, w_2, \ldots, w_n$ are the weights we aim to determine, $x_{ij}$
-represents the $j^{th}$ feature of the $i^{th}$ observation, and $y_i$ is the
-target variable for the $i^{th}$ observation.
-
-#### The Connection
-
-The resemblance between the general form of linear equations and the linear
-regression equations is evident. In both cases, we are looking to solve for
-unknown variables that satisfy a set of linear constraints. In machine learning,
-especially in linear regression, these solutions help us make predictions or
-understand relationships between variables. This direct application in a field
-as dynamic and impactful as machine learning demonstrates the enduring relevance
-and power of linear algebra, particularly systems of linear equations.
+...
 
 ## References and Further Readings
 
