@@ -59,7 +59,7 @@ class FigureManager:
         path: str,
         *,
         dpi: Union[float, str] = "figure",
-        format="svg",  # pylint: disable=redefined-builtin
+        format: str = "svg",  # pylint: disable=redefined-builtin
         **kwargs: Dict[str, Any],
     ) -> None:
         self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
