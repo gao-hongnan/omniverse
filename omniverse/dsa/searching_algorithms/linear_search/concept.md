@@ -412,6 +412,8 @@ maintenance step corresponds to the inductive step. This relationship highlights
 the fundamental role that mathematical induction plays in formal reasoning about
 algorithms.
 
+(omniverse-dsa-searching-algorithms-linear-search-iterative-algorithm-correctness)=
+
 #### Correctness
 
 Let $\mathcal{A}$ be an array of $N$ elements,
