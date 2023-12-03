@@ -26,9 +26,6 @@ class FigureManager:
         ax: Optional[plt.Axes] = None,
         ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> None:
-        # self.fig = fig or plt.figure()
-        # self.ax = ax or self.fig.add_subplot(111)
-
         # fmt: off
         self.fig       = fig or plt.gcf()
         self.ax        = ax or plt.gca()
@@ -41,7 +38,7 @@ class FigureManager:
         """
         Apply custom settings to the axes object.
 
-        This method iterates through the ax_kwargs dictionary and applies
+        This method iterates through the `ax_kwargs` dictionary and applies
         each attribute and its parameters to the axes object.
         """
         for ax_attr, ax_params in self.ax_kwargs.items():

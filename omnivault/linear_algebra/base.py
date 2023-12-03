@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, Any, Dict, Optional
+from typing import Any, Generic, Optional
 
 from omnivault._types._generic import Vec
 from omnivault.utils.visualization.figure_manager import FigureManager
@@ -24,6 +24,6 @@ class VectorPlotter(Generic[Vec], FigureManager, ABC):
         text: str,
         z: Optional[float] = None,
         fontsize: int = 16,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         ...

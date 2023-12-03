@@ -168,7 +168,7 @@ class RecursiveBinarySearchExactMatch(Search):
         def recursive(
             l: NonNegativeInt, r: NonNegativeInt
         ) -> Union[NonNegativeInt, Literal[-1]]:
-            if l > r:
+            if l > r:  # base case
                 return -1
 
             mid_index = self.mid_strategy(l, r)
@@ -177,7 +177,7 @@ class RecursiveBinarySearchExactMatch(Search):
                 return recursive(l=mid_index + 1, r=r)
             elif container[mid_index] > target:
                 return recursive(l=l, r=mid_index - 1)
-            else:
+            else: # base case
                 return mid_index
 
         l, r = 0, len(container) - 1

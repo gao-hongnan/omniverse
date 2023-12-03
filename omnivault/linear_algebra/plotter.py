@@ -16,16 +16,24 @@ Parameters for creating a quiver plot:
   displacements from the origin (X[i], Y[i]). These determine the direction and
   magnitude (length) of each vector. The length of the vector is proportional
   to the magnitude of the displacement, calculated as sqrt(U[i]**2 + V[i]**2).
+
+NOTE
+----
+All `quiver` calls only assumes that its takes in float values instead of
+`1D` or `2D` array-like objects. This means that the `X`, `Y`, `U`, and `V`
+are floats unpacked from our `Vector` objects. We then use a for loop to
+iterate over the vectors and plot them one by one. Maybe consider FIXME
+this to support vectorized plotting.
 """
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Sequence
+
 import matplotlib.pyplot as plt
 
+from omnivault._types._generic import Vec
 from omnivault.linear_algebra.base import VectorPlotter
 from omnivault.linear_algebra.vector import Vector2D, Vector3D
-
-from omnivault._types._generic import Vec
 
 
 def add_vectors_to_plotter(plotter: VectorPlotter[Vec], vectors: Sequence[Vec]) -> None:
@@ -120,7 +128,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         text: str,
         z: Optional[float] = None,
         fontsize: int = 16,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         self.ax.text(x, y, text, fontsize=fontsize, **kwargs)
 
@@ -130,7 +138,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         y: float,
         text: str,
         arrow_props: Optional[Dict[str, Any]] = None,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         self.ax.annotate(
             text,
@@ -194,7 +202,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         text: str,
         z: Optional[float] = None,
         fontsize: int = 16,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         self.ax.text(x, y, z, text, fontsize=fontsize, **kwargs)  # type: ignore[arg-type]
 
@@ -205,7 +213,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         z: float,
         text: str,
         arrow_props: Optional[Dict[str, Any]] = None,
-        **kwargs: Dict[str, Any],
+        **kwargs: Any,
     ) -> None:
         self.ax.annotate(
             text,
