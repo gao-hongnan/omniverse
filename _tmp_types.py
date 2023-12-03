@@ -1,19 +1,21 @@
-from omnivault.dsa.stack.concrete import StackList
-from omnivault._types._generic import T
 from typing import (
-    Union,
     Any,
-    List,
-    Tuple,
-    Dict,
     Callable,
-    TypeVar,
+    Dict,
     Generic,
+    List,
     Optional,
+    Tuple,
     Type,
+    TypeVar,
+    Union,
     cast,
 )
+
 from rich.pretty import pprint
+
+from omnivault._types._generic import T
+from omnivault.dsa.stack.concrete import StackList
 
 
 def append_any_to_stack(stack: StackList[Any], item: Any) -> StackList[Any]:
@@ -38,8 +40,8 @@ stack = append_generic_to_stack(stack, "a")
 stack = append_generic_to_stack(stack, 2)
 
 
-from numpy.typing import NDArray
 import numpy as np
+from numpy.typing import NDArray
 
 
 def _compute_argmin_assignment(
