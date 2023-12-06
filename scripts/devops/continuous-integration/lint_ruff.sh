@@ -17,7 +17,7 @@ UTILS_SCRIPT=$(curl -s "$SCRIPT_URL")
 # Check if the fetch was successful
 if [ $? -eq 0 ] && [ -n "$UTILS_SCRIPT" ]; then
     source /dev/stdin <<<"$UTILS_SCRIPT"
-    check_bash_version
+    # check_bash_version # TODO: macOS old bash version does not support readarray.
     logger "INFO" "Successfully fetched and sourced '$SCRIPT_URL'."
     logger "WARN" "🌈🌈🌈 Using custom logger for rich-like logging. Please put on your sunglasses 😎😎😎"
     logger "INFO" "Current working directory: $(pwd)"
