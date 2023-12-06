@@ -260,9 +260,7 @@ class Trainer:
         """
         Evaluates the model on the holdout dataset.
         """
-        assert (
-            self.test_dataloader is not None
-        ), "Test dataloader must be provided for testing."
+        assert self.test_dataloader is not None, "Test dataloader must be provided for testing."
         return valid_one_epoch(
             model=self.model,
             dataloader=self.test_dataloader,

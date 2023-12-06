@@ -48,14 +48,10 @@ def create_optimizer(model: nn.Module, opt_config: OptimizerConfig):
     param_dict = {pn: p for pn, p in model.named_parameters()}
     inter_params = decay & no_decay
     union_params = decay | no_decay
-    assert (
-        len(inter_params) == 0
-    ), "parameters %s made it into both decay/no_decay sets!" % (str(inter_params),)
+    assert len(inter_params) == 0, "parameters %s made it into both decay/no_decay sets!" % (str(inter_params),)
     assert (
         len(param_dict.keys() - union_params) == 0
-    ), "parameters %s were not separated into either decay/no_decay set!" % (
-        str(param_dict.keys() - union_params),
-    )
+    ), "parameters %s were not separated into either decay/no_decay set!" % (str(param_dict.keys() - union_params),)
 
     # create the pytorch optimizer object
     optim_groups = [
@@ -68,7 +64,5 @@ def create_optimizer(model: nn.Module, opt_config: OptimizerConfig):
             "weight_decay": 0.0,
         },
     ]
-    optimizer = torch.optim.AdamW(
-        optim_groups, lr=opt_config.learning_rate, betas=(0.9, 0.95)
-    )
+    optimizer = torch.optim.AdamW(optim_groups, lr=opt_config.learning_rate, betas=(0.9, 0.95))
     return optimizer

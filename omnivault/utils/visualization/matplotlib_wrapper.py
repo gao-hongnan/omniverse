@@ -54,16 +54,12 @@ def plot_hist(ax: plt.Axes, x: NDArray[np.float64], **kwargs: Any) -> BarContain
     return ax.hist(x, **kwargs)
 
 
-def plot_bar(
-    ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any
-) -> BarContainer:
+def plot_bar(ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any) -> BarContainer:
     """Plot bar plot."""
     return ax.bar(x, y, **kwargs)
 
 
-def plot_scatter(
-    ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any
-) -> PathCollection:
+def plot_scatter(ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any) -> PathCollection:
     """Plot scatter plot."""
 
     return ax.scatter(x, y, **kwargs)

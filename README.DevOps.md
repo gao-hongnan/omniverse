@@ -6,6 +6,10 @@ Things discussed here are concepts that are not specific to GitHub Actions. It
 can be replicated in other CI tools such as Travis CI, CircleCI, Jenkins, etc
 with some modifications of syntax.
 
+The
+[PyTorch GitHub Actions](https://github.com/pytorch/pytorch/blob/main/.github)
+has a comprehensive set of workflows that can be used as a reference.
+
 ### Environment Variables
 
 #### `WORKDIR`

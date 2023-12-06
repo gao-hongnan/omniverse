@@ -108,9 +108,7 @@ class Vocabulary(ABC):
         """
 
     @classmethod
-    def from_tokens(
-        cls: Type[Vocabulary], tokens: List[str], num_digits: int = 2
-    ) -> Vocabulary:
+    def from_tokens(cls: Type[Vocabulary], tokens: List[str], num_digits: int = 2) -> Vocabulary:
         token_to_index = {token: idx for idx, token in enumerate(tokens)}
         index_to_token = {idx: token for token, idx in token_to_index.items()}
         return cls(token_to_index, index_to_token, num_digits)
@@ -132,26 +130,14 @@ class AdderVocabulary(Vocabulary):
         return tokens
 
     def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
-        tokens: List[str] = self.tokenize(
-            sequence, add_special_tokens=add_special_tokens
-        )
-        return [
-            self.token_to_index.get(token, self.token_to_index[AdderVocabulary.UNK])
-            for token in tokens
-        ]
+        tokens: List[str] = self.tokenize(sequence, add_special_tokens=add_special_tokens)
+        return [self.token_to_index.get(token, self.token_to_index[AdderVocabulary.UNK]) for token in tokens]
 
-    def encode_batch(
-        self, sequences: List[str], add_special_tokens: bool = True
-    ) -> List[List[int]]:
-        return [
-            self.encode(sequence, add_special_tokens=add_special_tokens)
-            for sequence in sequences
-        ]
+    def encode_batch(self, sequences: List[str], add_special_tokens: bool = True) -> List[List[int]]:
+        return [self.encode(sequence, add_special_tokens=add_special_tokens) for sequence in sequences]
 
     def decode(self, sequence: str, remove_special_tokens: bool = True) -> str:
-        decoded = "".join(
-            [self.index_to_token.get(char, AdderVocabulary.UNK) for char in sequence]
-        )
+        decoded = "".join([self.index_to_token.get(char, AdderVocabulary.UNK) for char in sequence])
 
         if remove_special_tokens:
             decoded = re.sub(
@@ -161,13 +147,8 @@ class AdderVocabulary(Vocabulary):
             )
         return decoded
 
-    def decode_batch(
-        self, sequences: List[List[int]], remove_special_tokens: bool = True
-    ) -> List[str]:
-        return [
-            self.decode(sequence, remove_special_tokens=remove_special_tokens)
-            for sequence in sequences
-        ]
+    def decode_batch(self, sequences: List[List[int]], remove_special_tokens: bool = True) -> List[str]:
+        return [self.decode(sequence, remove_special_tokens=remove_special_tokens) for sequence in sequences]
 
     def __len__(self) -> int:
         return len(self.token_to_index)
@@ -191,9 +172,7 @@ class AdderDataset(Dataset):
         return len(self.data)
 
     def construct_future_mask(self, seq_len: int) -> torch.BoolTensor:
-        future_mask = torch.triu(
-            torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=1
-        ).to(torch.bool)
+        future_mask = torch.triu(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=1).to(torch.bool)
         future_mask = future_mask.contiguous()
         return future_mask == 0
 
@@ -225,9 +204,7 @@ class AdderDataset(Dataset):
         input_sequence: str = self.data[index]
         input_sequence: List[int] = self.vocabulary.encode(input_sequence)
 
-        input_sequence: torch.LongTensor = torch.tensor(
-            input_sequence, dtype=torch.long
-        )
+        input_sequence: torch.LongTensor = torch.tensor(input_sequence, dtype=torch.long)
 
         input = self.construct_input_tensor(input_sequence)  # x
         target = self.construct_target_tensor(input_sequence)  # y
@@ -305,9 +282,7 @@ def collate_fn(
 
     # padding_masks before view has shape: (batch_size, seq_len)
     # we want it to be (B, L, L) then (B, 1, L, L)
-    padding_masks_padded = padding_masks_padded.view(batch_size, 1, 1, seq_len).expand(
-        batch_size, 1, seq_len, seq_len
-    )
+    padding_masks_padded = padding_masks_padded.view(batch_size, 1, 1, seq_len).expand(batch_size, 1, seq_len, seq_len)
 
     # future mask has shape (L, L) but we want it to be (B, L, L) then (B, 1, L, L)
     future_masks = torch.stack(future_masks)

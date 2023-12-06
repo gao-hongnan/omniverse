@@ -30,12 +30,8 @@ class LayerNorm(nn.Module):
         self.elementwise_affine = elementwise_affine
 
         if self.elementwise_affine:
-            self.gamma = nn.Parameter(
-                torch.empty(self.normalized_shape, **factory_kwargs)
-            )
-            self.beta = nn.Parameter(
-                torch.empty(self.normalized_shape, **factory_kwargs)
-            )
+            self.gamma = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs))
+            self.beta = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs))
         else:
             self.register_parameter("gamma", None)
             self.register_parameter("beta", None)
@@ -55,6 +51,4 @@ class LayerNorm(nn.Module):
         return (x - mean) / (std + self.eps)
 
     def extra_repr(self) -> str:
-        return "{normalized_shape}, eps={eps}, elementwise_affine={elementwise_affine}".format(
-            **self.__dict__
-        )
+        return "{normalized_shape}, eps={eps}, elementwise_affine={elementwise_affine}".format(**self.__dict__)

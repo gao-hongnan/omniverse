@@ -5,9 +5,7 @@ from omnivault._types._generic import T
 
 
 class Deque(MutableSequence[T], Generic[T]):
-    def __init__(
-        self, iterable: Optional[Iterable[T]] = None, maxlen: Optional[int] = None
-    ):
+    def __init__(self, iterable: Optional[Iterable[T]] = None, maxlen: Optional[int] = None):
         self.maxlen = maxlen
         self._data = list(iterable) if iterable is not None else []
 

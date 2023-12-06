@@ -19,9 +19,7 @@ class PositionalEncoding(ABC, nn.Module):
 
 
 class Sinusoid(PositionalEncoding):
-    def __init__(
-        self, d_model: int, dropout: float = 0.0, max_seq_len: int = 3
-    ) -> None:
+    def __init__(self, d_model: int, dropout: float = 0.0, max_seq_len: int = 3) -> None:
         super().__init__(d_model, dropout)
         self.max_seq_len = max_seq_len
         self.d_model = d_model
@@ -77,9 +75,7 @@ class TestPositionalEncoding(unittest.TestCase):
         # fmt: on
 
         # Initialize the attention models
-        self.pos_encoding_d2l = d2l.PositionalEncoding(
-            self.d_model, dropout=self.dropout, max_seq_len=self.max_seq_len
-        )
+        self.pos_encoding_d2l = d2l.PositionalEncoding(self.d_model, dropout=self.dropout, max_seq_len=self.max_seq_len)
         self.pos_encoding_d2l.eval()
 
     def test_positional_encoding_with_d2l_as_sanity_check(self) -> None:

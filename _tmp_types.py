@@ -44,8 +44,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def _compute_argmin_assignment(
-    x: NDArray[np.float64], centroids: NDArray[np.float64]
-) -> Tuple[int, float]:
+def _compute_argmin_assignment(x: NDArray[np.float64], centroids: NDArray[np.float64]) -> Tuple[int, float]:
     # Function implementation...
     return (0, 0.0)

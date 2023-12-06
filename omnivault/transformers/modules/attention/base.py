@@ -123,6 +123,4 @@ class Attention(ABC, nn.Module):
         mask: Optional[torch.BoolTensor] = None,
     ) -> torch.Tensor:
         """Perform the forward pass for the attention mechanism."""
-        raise NotImplementedError(
-            "The forward method must be implemented by the subclass."
-        )
+        raise NotImplementedError("The forward method must be implemented by the subclass.")

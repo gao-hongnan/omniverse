@@ -38,11 +38,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: "pip" # caching pip will speed up installs
       - name: Install dependencies
-        working-directory: ${{ inputs.working-directory }}
-        run: |
-          python3 -m pip install --upgrade pip setuptools wheel
-          python3 -m pip install -r requirements.txt
-          python3 -m pip install -r requirements-dev.txt
+        uses: ./.github/actions/install-dependencies
+        with:
+          working-directory: ${{ env.WORKING_DIRECTORY }}
       - name: Run Continuous Integration Action
         uses: ./.github/actions/continuous-integration
         with:

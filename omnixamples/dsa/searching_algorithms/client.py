@@ -67,14 +67,10 @@ def quicksort(items: List[Product], key: Callable[[Product], float]) -> List[Pro
     pivot = items[0]
     less_than_pivot = [item for item in items[1:] if key(item) <= key(pivot)]
     greater_than_pivot = [item for item in items[1:] if key(item) > key(pivot)]
-    return (
-        quicksort(less_than_pivot, key) + [pivot] + quicksort(greater_than_pivot, key)
-    )
+    return quicksort(less_than_pivot, key) + [pivot] + quicksort(greater_than_pivot, key)
 
 
-def find_product_by_id(
-    inventory: Inventory, product_id: int, high_traffic: bool = False
-) -> Optional[Product]:
+def find_product_by_id(inventory: Inventory, product_id: int, high_traffic: bool = False) -> Optional[Product]:
     """Finds a product in the inventory by its ID."""
     if high_traffic:
         inventory.items = quicksort(inventory.items, key=lambda product: product.id)
@@ -124,9 +120,7 @@ def main() -> Optional[Product]:
     # Product ID to search for
     search_id = args.product_id
 
-    found_product = find_product_by_id(
-        inventory, search_id, high_traffic=args.high_traffic
-    )
+    found_product = find_product_by_id(inventory, search_id, high_traffic=args.high_traffic)
     return found_product
 
 

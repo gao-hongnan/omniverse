@@ -28,9 +28,7 @@ class LinearSearchForLoop(Search):
     sequentially until the target is found or the end of the sequence is reached.
     """
 
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
         for index, item in enumerate(container):
             if item == target:
                 return index
@@ -47,9 +45,7 @@ class LinearSearchWhileLoop(Search):
     of the sequence is reached.
     """
 
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
         index = 0
         length = len(container)
         while index < length:
@@ -74,9 +70,7 @@ class LinearSearchRecursive(Search):
     approach may not be efficient for very large sequences.
     """
 
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
         def recursive(container: Sequence[Real], target: Real, index: int = 0) -> int:
             if not container:
                 return -1
@@ -97,12 +91,8 @@ class LinearSearchTailRecursive(Search):
     benefits of tail recursion and behaves similarly to regular recursion.
     """
 
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
-        def recursive(
-            container: Sequence[Real], target: Real, index: int = 0
-        ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
+        def recursive(container: Sequence[Real], target: Real, index: int = 0) -> Union[NonNegativeInt, Literal[-1]]:
             if not container:
                 return -1
             if container[0] == target:
@@ -124,9 +114,7 @@ class IterativeBinarySearchExactMatch(Search):
     with each step, until the target element is found or the search space is exhausted.
     """
 
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
         """Search for a target from a sorted array container."""
 
         left_index = 0
@@ -149,9 +137,7 @@ class IterativeBinarySearchExactMatch(Search):
         # Search has ended and target is not present in the container, so we return -1
         return -1
 
-    def mid_strategy(
-        self, left: NonNegativeInt, right: NonNegativeInt
-    ) -> NonNegativeInt:
+    def mid_strategy(self, left: NonNegativeInt, right: NonNegativeInt) -> NonNegativeInt:
         """Strategy for calculating the middle index."""
 
         # (left_index + right_index) // 2 will cause overflow.
@@ -165,9 +151,7 @@ class RecursiveBinarySearchExactMatch(Search):
     def search(self, container: Sequence[Real], target: Real) -> int:
         """Search for a target from a sorted array container."""
 
-        def recursive(
-            l: NonNegativeInt, r: NonNegativeInt
-        ) -> Union[NonNegativeInt, Literal[-1]]:
+        def recursive(l: NonNegativeInt, r: NonNegativeInt) -> Union[NonNegativeInt, Literal[-1]]:
             if l > r:  # base case
                 return -1
 
@@ -183,9 +167,7 @@ class RecursiveBinarySearchExactMatch(Search):
         l, r = 0, len(container) - 1
         return recursive(l, r)
 
-    def mid_strategy(
-        self, left: NonNegativeInt, right: NonNegativeInt
-    ) -> NonNegativeInt:
+    def mid_strategy(self, left: NonNegativeInt, right: NonNegativeInt) -> NonNegativeInt:
         """Strategy for calculating the middle index."""
 
         mid_index = left + math.floor((right - left) / 2)

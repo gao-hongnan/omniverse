@@ -72,18 +72,13 @@ def add_text_annotations(
             if dim == 3:
                 z_end = vector.origin[2] + vector.direction[2]
                 label = f"({x_end}, {y_end}, {z_end})"
-                plotter.add_text(
-                    x=x_end, y=y_end, z=z_end, text=label, **endpoint_kwargs
-                )
+                plotter.add_text(x=x_end, y=y_end, z=z_end, text=label, **endpoint_kwargs)
             else:
                 label = f"({x_end}, {y_end})"
                 plotter.add_text(x=x_end, y=y_end, text=label, **endpoint_kwargs)
 
         if include_vector_label and vector.label:
-            midpoint = tuple(
-                origin + direction / 2
-                for origin, direction in zip(vector.origin, vector.direction)
-            )
+            midpoint = tuple(origin + direction / 2 for origin, direction in zip(vector.origin, vector.direction))
             # Label with vector label
             if dim == 3:
                 plotter.add_text(
@@ -94,9 +89,7 @@ def add_text_annotations(
                     **vector_kwargs,
                 )
             else:  # dim == 2
-                plotter.add_text(
-                    x=midpoint[0], y=midpoint[1], text=vector.label, **vector_kwargs
-                )
+                plotter.add_text(x=midpoint[0], y=midpoint[1], text=vector.label, **vector_kwargs)
 
 
 class VectorPlotter2D(VectorPlotter[Vector2D]):

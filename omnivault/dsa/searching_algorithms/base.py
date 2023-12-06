@@ -21,8 +21,6 @@ class Search(ABC):
     """Base class for Search Strategies (Strategy Design Pattern)."""
 
     @abstractmethod
-    def search(
-        self, container: Sequence[Real], target: Real
-    ) -> Union[NonNegativeInt, Literal[-1]]:
+    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
         """Searches for the target in the container and returns the index of the
         target if found, otherwise returns -1."""

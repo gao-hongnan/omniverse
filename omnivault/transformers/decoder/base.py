@@ -40,15 +40,9 @@ class BaseDecoderBlock(nn.Module):
     def forward(
         self,
         z: torch.Tensor,  # that's tgt in torch code base
-        encoder_hidden_states: Optional[
-            torch.Tensor
-        ] = None,  # that's memory in torch code base
-        encoder_hidden_states_masks: Optional[
-            torch.BoolTensor
-        ] = None,  # that's memory_mask in torch code base
-        target_masks: Optional[
-            torch.BoolTensor
-        ] = None,  # that's tgt_mask in torch code base
+        encoder_hidden_states: Optional[torch.Tensor] = None,  # that's memory in torch code base
+        encoder_hidden_states_masks: Optional[torch.BoolTensor] = None,  # that's memory_mask in torch code base
+        target_masks: Optional[torch.BoolTensor] = None,  # that's tgt_mask in torch code base
     ) -> torch.Tensor:
         """
         Performs one decoder *block* forward pass given final encoder hidden states, the previous block's output, and
@@ -85,12 +79,8 @@ class BaseDecoder(nn.Module):
         input_tokens: torch.LongTensor,
         target_padding_masks: Optional[torch.BoolTensor] = None,
         future_masks: Optional[torch.BoolTensor] = None,
-        encoder_hidden_states: Optional[
-            torch.Tensor
-        ] = None,  # that's memory in torch code base
-        encoder_hidden_states_masks: Optional[
-            torch.BoolTensor
-        ] = None,  # that's memory_mask in torch code base
+        encoder_hidden_states: Optional[torch.Tensor] = None,  # that's memory in torch code base
+        encoder_hidden_states_masks: Optional[torch.BoolTensor] = None,  # that's memory_mask in torch code base
     ) -> torch.FloatTensor:
         ...
 

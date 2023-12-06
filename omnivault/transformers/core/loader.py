@@ -93,20 +93,14 @@ def construct_batches(
     inputs = construct_input_tensors(x)
     batch_size, seq_len = inputs.size()
 
-    equal_sign_loc: List[int] = [
-        (equation == EQUAL_SIGN).nonzero(as_tuple=True)[0].item() for equation in x
-    ]
+    equal_sign_loc: List[int] = [(equation == EQUAL_SIGN).nonzero(as_tuple=True)[0].item() for equation in x]
 
     # Mask out the tokens before the equal sign
     targets = construct_target_tensors(x, equal_sign_loc, pad_token_id=PAD)
 
     future_masks = construct_future_mask(seq_len)
     # future mask has shape (L, L) but we want it to be (B, L, L) then (B, 1, L, L)
-    future_masks = (
-        future_masks.view(1, seq_len, seq_len)
-        .expand(size=(batch_size, -1, -1))
-        .unsqueeze(1)
-    )
+    future_masks = future_masks.view(1, seq_len, seq_len).expand(size=(batch_size, -1, -1)).unsqueeze(1)
 
     # padding_masks before view has shape: (batch_size, seq_len)
     # we want it to be (B, L, L) then (B, 1, L, L)

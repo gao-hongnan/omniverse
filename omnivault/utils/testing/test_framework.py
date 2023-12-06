@@ -34,9 +34,7 @@ class TestFramework:
 
         def wrapper(func: Callable) -> None:
             """Execute the function and display its description."""
-            display_html(
-                HTML(f"<span style='color: blue;'>Description: {description}</span>")
-            )
+            display_html(HTML(f"<span style='color: blue;'>Description: {description}</span>"))
             func()
 
         return wrapper
@@ -60,15 +58,9 @@ class TestFramework:
             """Execute the function and display the test result."""
             try:
                 func()
-                display_html(
-                    HTML(f"<span style='color: green;'>  [Pass]</span> {description}")
-                )
+                display_html(HTML(f"<span style='color: green;'>  [Pass]</span> {description}"))
             except AssertionError as e:
-                display_html(
-                    HTML(
-                        f"<span style='color: red;'>  [Fail]</span> {description} - {e}"
-                    )
-                )
+                display_html(HTML(f"<span style='color: red;'>  [Fail]</span> {description} - {e}"))
 
         return wrapper
 

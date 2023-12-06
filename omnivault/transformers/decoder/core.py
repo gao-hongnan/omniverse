@@ -32,9 +32,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # self.feed_forward.register_forward_hook(forward_hook)
         # fmt: on
 
-    def forward(
-        self, z: torch.Tensor, target_masks: Union[torch.BoolTensor, None] = None
-    ) -> torch.Tensor:
+    def forward(self, z: torch.Tensor, target_masks: Union[torch.BoolTensor, None] = None) -> torch.Tensor:
         """
         Parameters
         ----------
@@ -53,9 +51,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
         """
         z = self.add_norm_1(
             z,
-            lambda z: self.masked_self_attention_mha(
-                query=z, key=z, value=z, mask=target_masks
-            ),
+            lambda z: self.masked_self_attention_mha(query=z, key=z, value=z, mask=target_masks),
         )
         z = self.add_norm_2(z, self.feed_forward)
         return z
@@ -78,9 +74,7 @@ class GPTDecoder(BaseDecoder):
         self._reset_parameters()
 
     @overload
-    def create_target_masks(
-        self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor
-    ) -> torch.BoolTensor:
+    def create_target_masks(self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor) -> torch.BoolTensor:
         ...
 
     @overload
@@ -109,9 +103,7 @@ class GPTDecoder(BaseDecoder):
         future_masks: Optional[torch.Tensor],
     ) -> torch.BoolTensor:
         if target_padding_masks is None and future_masks is None:
-            raise ValueError(
-                "At least one of target_padding_masks or future_masks must not be None"
-            )
+            raise ValueError("At least one of target_padding_masks or future_masks must not be None")
 
         if target_padding_masks is None:
             assert future_masks is not None  # for mypy

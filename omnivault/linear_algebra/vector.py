@@ -59,6 +59,4 @@ class Vector2D(Vector):
 @dataclass
 class Vector3D(Vector):
     origin: Tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))
-    direction: Tuple[float, float, float] = field(
-        default_factory=lambda: (0.0, 0.0, 0.0)
-    )
+    direction: Tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))

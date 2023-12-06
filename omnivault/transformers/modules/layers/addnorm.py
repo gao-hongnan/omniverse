@@ -21,9 +21,7 @@ class AddNorm(nn.Module):
         self.layer_norm = LayerNorm(normalized_shape=feature_dim, eps=1e-5, elementwise_affine=True)
         # fmt: on
 
-    def forward(
-        self, x: torch.Tensor, sublayer: Callable[[torch.Tensor], torch.Tensor]
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, sublayer: Callable[[torch.Tensor], torch.Tensor]) -> torch.Tensor:
         """G(F(x) + x) where G = layer norm and F = sublayer"""
         # TODO: to check if this is correct and use my own custom layer.
         return self.layer_norm(x + sublayer(self.dropout(x)))

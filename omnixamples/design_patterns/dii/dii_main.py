@@ -19,14 +19,10 @@ def run_dataset(dataset: CustomDataset) -> None:
 
 if __name__ == "__main__":
     image_classification_transforms = ImageClassificationTransforms()
-    image_classification_dataset = CustomDataset(
-        image_classification_transforms, stage="train"
-    )
+    image_classification_dataset = CustomDataset(image_classification_transforms, stage="train")
     run_dataset(image_classification_dataset)
 
     # # you can change transforms from ImageClassification to ImageSegmentation
     image_segmentation_transforms = ImageSegmentationTransforms()
-    image_segmentation_dataset = CustomDataset(
-        image_segmentation_transforms, stage="train"
-    )
+    image_segmentation_dataset = CustomDataset(image_segmentation_transforms, stage="train")
     run_dataset(image_segmentation_dataset)
