@@ -126,7 +126,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         x: float,
         y: float,
         text: str,
-        z: Optional[float] = None,
+        z: Optional[float] = None,  # noqa: ARG002
         fontsize: int = 16,
         **kwargs: Any,
     ) -> None:
@@ -155,8 +155,8 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
         for vector in self.vectors:
             # fmt: off
-            X, Y = vector.origin    # pylint: disable=invalid-name
-            U, V = vector.direction # pylint: disable=invalid-name
+            X, Y = vector.origin
+            U, V = vector.direction
             # fmt: on
             self.ax.quiver(X, Y, U, V, color=vector.color, **self.quiver_kwargs)
 
@@ -230,8 +230,8 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
         for vector in self.vectors:
             # fmt: off
-            X, Y, Z = vector.origin    # pylint: disable=invalid-name
-            U, V, W = vector.direction # pylint: disable=invalid-name
+            X, Y, Z = vector.origin
+            U, V, W = vector.direction
             # fmt: on
             self.ax.quiver(X, Y, Z, U, V, W, color=vector.color, **self.quiver_kwargs)
 

@@ -177,7 +177,7 @@ class RecursiveBinarySearchExactMatch(Search):
                 return recursive(l=mid_index + 1, r=r)
             elif container[mid_index] > target:
                 return recursive(l=l, r=mid_index - 1)
-            else: # base case
+            else:  # base case
                 return mid_index
 
         l, r = 0, len(container) - 1

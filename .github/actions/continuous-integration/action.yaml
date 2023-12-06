@@ -1,0 +1,32 @@
+name: "Continuous Integration (CI)"
+description: "DevOps: Run CI checks on pull requests and pushes to main branch."
+inputs:
+  working-directory:
+    description: "Directory to change to before running checks."
+    required: false
+    default: "."
+  ruff-script-location:
+    description: "Location of Ruff script to run."
+    required: false
+    default: "scripts/devops/continuous-integration/lint_ruff.sh"
+  ruff-output-filename:
+    description: "File to write Ruff output to."
+    required: false
+    default: "ruff_results.log"
+runs:
+  using: "composite"
+  steps:
+    - name: Run Linter Check
+      run: |
+        cd ${{ inputs.working-directory }} || exit 1
+        chmod +x ${{ inputs.ruff-script-location }}
+        bash ${{ inputs.ruff-script-location }} | tee ${{ inputs.ruff-output-filename }}
+      shell: bash
+      if: always()
+    - name: Upload Check Results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: check-results
+        path: |
+          ${{ inputs.working-directory }}/${{ inputs.ruff-output-filename }}

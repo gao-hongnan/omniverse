@@ -1,0 +1,114 @@
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+extend-exclude = [
+    "omnivault/transformers",
+]
+
+# Same as Black.
+line-length = 120
+indent-width = 4
+
+# Assume Python 3.9
+target-version = "py39"
+
+[extend-per-file-ignores]
+"omnivault/linear_algebra/**/*.py" = ['UP007']
+"omnivault/dsa/**/*.py" = ['UP007']
+# "omnivault/dsa/searching_algorithms/strategies.py" = ["E741"]
+
+[lint]
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
+# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
+# McCabe complexity (`C901`) by default.
+
+select = [
+    "ARG", # flake8-unused-arguments
+    "B",
+    "C4",
+    "G",
+    "E",
+    "EXE",
+    "F",
+    "SIM1",
+    "W",
+    # Not included in flake8
+    "NPY",
+    "PERF",
+    "PGH004",
+    "PIE794",
+    "PIE800",
+    "PIE804",
+    "PIE807",
+    "PIE810",
+    "PLC0131", # type bivariance
+    "PLC0132", # type param mismatch
+    "PLC0205", # string as __slots__
+    "PLE",
+    "PLR0133", # constant comparison
+    "PLR0206", # property with params
+    "PLR1722", # use sys exit
+    "PLW0129", # assert on string literal
+    "PLW0406", # import self
+    "PLW0711", # binary op exception
+    "PLW1509", # preexec_fn not safe with threads
+    "PLW3301", # nested min max
+    "PT006", # TODO: enable more PT rules
+    "PT022",
+    "PT023",
+    "PT024",
+    "PT025",
+    "PT026",
+    "PYI",
+    "TRY200",
+    "TRY302",
+    "UP",
+]
+ignore = [
+    "E501",   # line-too-long: handled by black.
+    "UP006",  # non-pep585-annotation: Use `list` instead of `List` for type annotation.
+    "UP015",  # redundant-open-models
+    "UP035",  # deprecated-import: `typing.Type` is deprecated, use `type` instead.
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[format] # default but we are using black
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
