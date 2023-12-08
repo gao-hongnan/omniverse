@@ -8,6 +8,7 @@ on:
 
 env:
   CONTENT_DIR: omniverse # the directory where the book's content is stored
+  WORKING_DIRECTORY: "."
 
 # This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:
@@ -39,11 +40,10 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements_dev.txt') }}
           restore-keys: ${{ runner.os }}-pip-
 
-      - name: Install dependencies
-        run: |
-          python3 -m pip install --upgrade pip setuptools wheel
-          python3 -m pip install -r requirements.txt
-          python3 -m pip install -r requirements_dev.txt
+      - name: Install Dependencies
+        uses: ./.github/actions/install-dependencies
+        with:
+          working-directory: "."
 
       # Build the book
       - name: Build the book

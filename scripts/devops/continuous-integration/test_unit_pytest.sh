@@ -1,17 +1,19 @@
 #!/usr/bin/env sh
+# https://github.com/langchain-ai/langchain/blob/master/libs/langchain/Makefile
+# https://github.com/langchain-ai/langchain/blob/master/libs/langchain/pyproject.toml
 
 ########################## USER CONFIG #########################################
 # FLAGS and PACKAGES are defined here as a config for users to change instead
 # of allowing arbitrary flags in the script. So in the argparse below, we
 # do not allow FLAGS and PACKAGES to override the cli.
 FLAGS=(
-    --no-fix
-    --no-show-source
+    --verbose
     # Add more flags here if necessary
 )
-PACKAGES=(
-    "omnivault"
-    "_tmp_types.py"
+PACKAGES=( # similar to testpaths
+    tests/unit
+    tests/integration
+    tests/system
     # Add more packages here if necessary
 )
 
@@ -19,7 +21,7 @@ PACKAGES=(
 
 readonly SCRIPT_URL="https://raw.githubusercontent.com/gao-hongnan/common-utils/main/scripts/utils.sh"
 readonly ALLOWED_CONFIG_FILES=(".ruff.toml" "ruff.toml" "pyproject.toml")
-readonly TOOL="ruff"
+readonly TOOL="pytest"
 
 UTILS_SCRIPT=$(curl -s "$SCRIPT_URL")
 
@@ -44,15 +46,11 @@ show_usage() {
     empty_line
 
     logger "INFO" "For more details, see link(s) below:"
-    logger "LINK" "https://docs.astral.sh/${TOOL}/"
-    logger "LINK" "https://docs.astral.sh/${TOOL}/configuration"
-    logger "LINK" "https://docs.astral.sh/${TOOL}/rules/"
+    logger "LINK" "https://docs.${TOOL}.org/en/7.4.x/"
+    logger "LINK" "https://docs.${TOOL}.org/en/stable/reference/customize.html"
     logger "CODE" "$ ${TOOL} --help"
     logger "BLOCK" \
-    "$ ${TOOL} --check \\
-    --config=.${TOOL}.toml \\
-    --no-fix \\
-    --no-show-source \\
+    "$ ${TOOL} --verbose \\
     <PACKAGE-1> <PACKAGE-2> ..."
     empty_line
 
@@ -62,11 +60,12 @@ show_usage() {
     logger "INFO" "Options:"
     logger "CODE" "  --debug    Enable debug mode"
     logger "CODE" "  --strict   Exit script on first error"
+    logger "CODE" "  --coverage Run with coverage"
     logger "CODE" "  -h, --help Show this help message"
     empty_line
 
     logger "INFO" "Example:"
-    logger "CODE" "  $(basename $0) --debug --strict"
+    logger "CODE" "  $(basename $0) --coverage"
 }
 
 main() {
@@ -80,6 +79,9 @@ main() {
                 ;;
             --strict)
                 strict_mode=true
+                ;;
+            --coverage)
+                run_coverage=true
                 ;;
             -h|--help)
                 show_usage
@@ -104,14 +106,25 @@ main() {
     check_if_installed "${TOOL}"
     check_config_files "${ALLOWED_CONFIG_FILES[@]}"
 
-    logger "INFO" "Running ${TOOL} linting with flags: ${FLAGS[*]} and packages: ${PACKAGES[*]}. Please change them if necessary."
+    logger "INFO" "Running ${TOOL} linting with flags: ${FLAGS[*]} and packages: $PACKAGES. Please change them if necessary."
     logger "INFO" "${TOOL} version: $(${TOOL} --version)"
 
-    local cmd="${TOOL} check ${FLAGS[@]} ${PACKAGES[@]}"
+    if [ "$run_coverage" = true ]; then
+        # Run with coverage
+        local cmd="coverage run -m ${TOOL} ${FLAGS[@]} ${PACKAGES[@]}"
+    else
+        # Run without coverage
+        local cmd="${TOOL} ${FLAGS[@]} ${PACKAGES[@]}"
+    fi
+
     logger "INFO" "The ${TOOL} command to be executed:"
     logger "CODE" "$cmd"
 
     $cmd
+
+    if [ "$run_coverage" = true ]; then
+        coverage report -m
+    fi
 }
 
 main "$@"

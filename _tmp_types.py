@@ -1,18 +1,9 @@
 from typing import (
     Any,
-    Callable,
-    Dict,
-    Generic,
-    List,
-    Optional,
     Tuple,
-    Type,
-    TypeVar,
     Union,
-    cast,
 )
 
-from rich.pretty import pprint
 
 from omnivault._types._generic import T
 from omnivault.dsa.stack.concrete import StackList
