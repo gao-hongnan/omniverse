@@ -113,7 +113,7 @@ class StackList(Stack[T]):
             The top most item in the stack.
         """
         if self.is_empty():
-            raise Exception("Stack is empty")  # pylint: disable=broad-exception-raised
+            raise Exception("Stack is empty")
         return self.stack_items.pop()
 
     def push(self, item: T) -> None:

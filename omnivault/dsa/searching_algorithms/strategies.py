@@ -123,7 +123,7 @@ class IterativeBinarySearchExactMatch(Search):
         while left_index <= right_index:
             mid_index = self.mid_strategy(left=left_index, right=right_index)
             # Check if target is present at mid
-            if container[mid_index] == target:  # pylint: disable=no-else-return
+            if container[mid_index] == target:
                 return mid_index
 
             # If target is greater, we discard left half, so we update left_index
@@ -157,7 +157,7 @@ class RecursiveBinarySearchExactMatch(Search):
 
             mid_index = self.mid_strategy(l, r)
 
-            if container[mid_index] < target:  # pylint: disable=no-else-return
+            if container[mid_index] < target:
                 return recursive(l=mid_index + 1, r=r)
             elif container[mid_index] > target:
                 return recursive(l=l, r=mid_index - 1)

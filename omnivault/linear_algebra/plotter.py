@@ -161,7 +161,6 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
 
 
 class VectorPlotter3D(VectorPlotter[Vector3D]):
-    # pylint: disable=import-outside-toplevel
     from mpl_toolkits.mplot3d import Axes3D  # type: ignore[import-untyped]
 
     def __init__(

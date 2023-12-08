@@ -714,14 +714,20 @@ class IterativeBinarySearchExactMatch(Search):
         while left_index <= right_index:
             mid_index = self.mid_strategy(left=left_index, right=right_index)
 
-            if container[mid_index] == target:  # pylint: disable=no-else-return
+            if container[mid_index] == target:
                 return mid_index
             elif container[mid_index] < target:
                 left_index = mid_index + 1
             else:
                 right_index = mid_index - 1
-
         return -1
+
+    def mid_strategy(
+        self, left: NonNegativeInt, right: NonNegativeInt
+    ) -> NonNegativeInt:
+        """Calculate the mid index of the search space."""
+        mid_index = left + math.floor((right - left) / 2)
+        return mid_index
 ```
 
 ### Tests
@@ -983,6 +989,50 @@ the input array or list.
 
 ## Algorithm (Recursive + Exact Match)
 
+We can also implement binary search recursively. The recursive version of binary
+search is very similar to the iterative version, except that it uses a recursive
+function to perform the search instead of a while loop.
+
+### Pseudocode
+
+````{prf:algorithm} Pseudocode
+:label: binary-search-pseudocode-recursive
+
+```
+Algorithm: binary_search_recursive(A, t)
+
+    Input:  A = [a_0, a_1, ..., a_{N-1}] (sorted list of elements),
+            t (target value)
+    Output: Index of t in A or -1 if not found
+
+    1: Set l = 0 and r = N - 1        // (Initialization)
+
+    2: return binary_search_recursive_helper(A, l, r, t)
+
+Algorithm: binary_search_recursive_helper(A, l, r, t)
+
+      Input:  A = [a_0, a_1, ..., a_{N-1}] (sorted list of elements),
+              l (left index),
+              r (right index),
+              t (target value)
+      Output: Index of t in A or -1 if not found
+
+      1: if l > r then
+      2:    return -1
+      3: end if
+
+      4: m = l + (r - l) // 2            // (Calculate mid-point)
+
+      5: if A[m] == t then
+      6:    return m                     // (Target found)
+      7: elif A[m] < t then
+      8:    return binary_search_recursive_helper(A, m + 1, r, t)
+      9: else
+    10:    return binary_search_recursive_helper(A, l, m - 1, t)
+    11: end if
+```
+````
+
 ### Mathematical Representation (Recursive)
 
 The binary search algorithm is a
@@ -993,7 +1043,7 @@ the array), $N$ representing the length of the sequence, $\ell$ and $r$
 representing the low and high indices of the search space, and $m$ representing
 the midpoint.
 
-Here's a rigorous mathematical version for binary search:
+Here's a mathematical version for binary search:
 
 ```{prf:algorithm} Mathematical Representation
 :label: binary-search-mathematical-representation
@@ -1093,103 +1143,94 @@ We can use Python Tutor to visualize recursive calls
 
 <iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=import%20math%0Afrom%20typing%20import%20Sequence,%20TypeVar%0A%0AT%20%3D%20TypeVar%28%22T%22,%20str,%20int,%20float%29%20%20%23%20T%20should%20be%20of%20type%20int,%20float%20or%20str%0A%0Adef%20binary_search_recursive%28container%3A%20Sequence%5BT%5D,%20target%3A%20T,%20left_index%3A%20int,%20right_index%3A%20int%29%20-%3E%20int%3A%0A%20%20%20%20mid_index%20%3D%20left_index%20%2B%20math.floor%28%28right_index%20-%20left_index%29%20/%202%29%0A%20%20%20%20if%20left_index%20%3C%3D%20right_index%3A%0A%20%20%20%20%20%20%20%20if%20container%5Bmid_index%5D%20%3D%3D%20target%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20mid_index%20%20%23%20base%20case%201%0A%20%20%20%20%20%20%20%20elif%20container%5Bmid_index%5D%20%3C%20target%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20binary_search_recursive%28container,%20target,%20mid_index%20%2B%201,%20right_index%29%0A%20%20%20%20%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20%20%20%20%20return%20binary_search_recursive%28container,%20target,%20left_index,%20mid_index%20-%201%29%0A%20%20%20%20else%3A%0A%20%20%20%20%20%20%20%20return%20-1%20%20%23%20base%20case%202%0A%20%20%20%20%0Aordered_list%20%3D%20%5B0,%201,%202,%208,%2013,%2017,%2019,%2032,%2042%5D%0Aleft_index%20%3D%200%0Aright_index%20%3D%20len%28ordered_list%29%20-%201%0Aprint%28binary_search_recursive%28ordered_list,%2042,%20left_index,%20right_index%29%29&codeDivHeight=400&codeDivWidth=350&cumulative=false&curInstr=0&heapPrimitives=nevernest&origin=opt-frontend.js&py=3&rawInputLstJSON=%5B%5D&textReferences=false"> </iframe>
 
----
+### Correctness
 
-For the proof of correctness, assume that the binary search algorithm does not
-correctly find the target. This means that either the algorithm did not return
-the target when it was present in the array or returned an incorrect value when
-the target was not in the array.
+```{prf:theorem} Correctness of Binary Search Recursive Algorithm
+:label: omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness
 
-However, each step of the binary search algorithm precisely follows the sorted
-property of the array. If the target is less than the value at the midpoint, we
-know that the target, if it exists, must be in the left half. Similarly, if the
-target is greater than the value at the midpoint, it must be in the right half
-if it exists. Therefore, the algorithm correctly narrows down the search space
-at each step based on the sorted property of the array.
-
-This contradicts our assumption that the binary search algorithm does not
-correctly find the target, and thus proves that the binary search algorithm is
-correct.
-
-More formally:
-
-I'm still assuming the list indices start from 1 for the sake of simplicity.
-However, in most programming languages (including Python), they start from 0.
-
-```{prf:proof}
-We want to prove that the binary search algorithm correctly finds a target value
-in a sorted list or correctly reports that the target is not in the list.
-
-Let's denote the proposition $P(n)$: "For all sorted lists of length $N$, binary
-search either finds the target or correctly reports it is not in the list."
-
-**Base Case:**
-
-For $n=1$, binary search correctly reports whether the single element is equal
-to the target. So, $P(1)$ is true.
-
-**Inductive Step:**
-
-We assume that $P(k)$ holds for all $k$ such that $1 \leq k < n$ (Inductive
-Hypothesis). We want to show $P(n)$ is true.
-
-We can write down the steps of binary search for a sorted list of length $N$ as
-follows:
-
-1. Compute $m = \lfloor \frac{N}{2} \rfloor$ (mid-point).
-
-2. If the target equals the $m^{th}$ element of the list, then we have found the
-   target.
-
-3. If the target is less than the $m^{th}$ element, then we recursively search
-   the left subarray of length $m-1$.
-
-4. If the target is greater than the $m^{th}$ element, then we recursively
-   search the right subarray of length $n-m$.
-
-Both the left subarray in step 3 and the right subarray in step 4 have length
-less than $N$, so by our inductive hypothesis, our algorithm works correctly in
-these cases. Therefore, we conclude that $P(n)$ is true.
-
-This completes our induction and the proof that the binary search algorithm is
-correct.
-
-**Q.E.D.**
+_Theorem_: Given a sorted array $\mathcal{A}$ of $N$ elements
+$\mathcal{A}_0, \mathcal{A}_1, \ldots, \mathcal{A}_{N-1}$, the binary search
+algorithm correctly returns the index of a target value $\tau$ if it is present
+in $\mathcal{A}$, or returns -1 if $\tau$ is not present.
 ```
 
----
+```{prf:proof}
+The proof uses mathematical induction, focusing on the invariant related to the
+search space $\mathcal{S}$.
 
-???
+**Invariant**: At the beginning of each call to the binary search function, if
+the value $\tau$ is in $\mathcal{A}$, it lies within the search space
+$\mathcal{S} := \mathcal{A}[\ell..r]$ where $\ell$ and $r$ are the current lower
+and upper bounds, respectively.
 
--   Terminating condition: the search space is empty.
+_Base Case_ (Induction on the size of $\mathcal{S}$, $n = r - \ell + 1$):
 
-    -   We don't use `len(nums) == 0` because this question usually want us to
-        have auxiliary space complexity of $\mathcal{O}(1)$. And thus `nums` may
-        not be mutated directly here (retrospectively).
-    -   We generally use left, right pointers and if `left > right` then the
-        search space is empty. Why?
+-   When $n = 1$ (i.e., $\ell = r$), $\mathcal{S}$ consists of the single
+    element $\mathcal{A}[\ell]$. If $\mathcal{A}[\ell] = \tau$, the algorithm
+    returns $\ell$, which is correct. If $\mathcal{A}[\ell] \neq \tau$, the
+    algorithm returns -1. Thus, the base case satisfies the invariant.
 
-        -   The `left` pointer moves right (`left = mid + 1`), and the `right`
-            pointer moves left (`right = mid - 1`), so if they cross, it means
-            we've checked all possible elements.
-        -   The `left <= right` condition ensures that when `left` and `right`
-            are pointing to the same element (i.e., the search space has only
-            one item left), we still check this last element.
-        -   When `left > right`, there are no elements left to check in the
-            search space, and the algorithm can terminate.
+_Inductive Step_:
 
-        This condition works for the binary search paradigm where we exclude the
-        middle element at each step after checking it. There are other paradigms
-        where the `left` and `right` pointers do not exclude the middle element
-        after checking it, and the terminating condition for those may be
-        `left < right`. However, for the classic binary search, the
-        `left > right` condition is used to indicate an empty search space.
+-   Assume the invariant holds for all $n < k$ (induction hypothesis). We need
+    to prove it holds for $n = k$.
+-   The algorithm calculates the midpoint
+    $m = \ell + \left\lfloor \frac{r - \ell}{2} \right\rfloor$ and compares
+    $\mathcal{A}_m$ with $\tau$.
+    -   If $\mathcal{A}_m = \tau$, it returns $m$, correct by the invariant.
+    -   If $\mathcal{A}_m < \tau$, the algorithm recurs on
+        $\mathcal{S} := \mathcal{A}[m+1..r]$. This new $\mathcal{S}$ is strictly
+        smaller, and by the invariant, if $\tau$ is in $\mathcal{A}$, it must be
+        in $\mathcal{S}$.
+    -   If $\mathcal{A}_m > \tau$, it recurs on
+        $\mathcal{S} := \mathcal{A}[\ell..m-1]$, also smaller. The invariant
+        implies if $\tau$ is in $\mathcal{A}$, it is in this new $\mathcal{S}$.
+-   In both cases, the recursion is on a smaller search space $\mathcal{S}$,
+    maintaining the invariant. By the induction hypothesis, the recursive call
+    returns the correct result for $n = k$.
 
--   Distinguishing Syntax:
-    -   Initial Condition: `left = 0`, `right = length-1`
-    -   Termination: `left > right`
-    -   Searching Left: `right = mid-1`
-    -   Searching Right: `left = mid+1`
+_Conclusion_:
+
+-   By mathematical induction, the binary search algorithm correctly finds
+    $\tau$ in $\mathcal{A}$ or determines its absence, preserving the invariant
+    at each step. This proves the theorem.
+```
+
+### Implementation
+
+```python
+class RecursiveBinarySearchExactMatch(Search):
+    """Template 1 but recursive."""
+
+    def search(self, container: Sequence[Real], target: Real) -> int:
+        """Search for a target from a sorted array container."""
+
+        def recursive(
+            l: NonNegativeInt, r: NonNegativeInt
+        ) -> Union[NonNegativeInt, Literal[-1]]:
+            if l > r:  # base case
+                return -1
+
+            mid_index = self.mid_strategy(l, r)
+
+            if container[mid_index] < target:
+                return recursive(l=mid_index + 1, r=r)
+            elif container[mid_index] > target:
+                return recursive(l=l, r=mid_index - 1)
+            else: # base case
+                return mid_index
+
+        l, r = 0, len(container) - 1
+        return recursive(l, r)
+
+    def mid_strategy(
+        self, left: NonNegativeInt, right: NonNegativeInt
+    ) -> NonNegativeInt:
+        """Strategy for calculating the middle index."""
+
+        mid_index = left + math.floor((right - left) / 2)
+        return mid_index
+```
 
 ### Tests
 
@@ -1363,135 +1404,6 @@ binary search is $\mathcal{O}(\log N)$; otherwise, it is $\mathcal{O}(N)$.
 To summarize, the recursive binary search algorithm is still very
 space-efficient as it only requires logarithmic auxiliary space to perform the
 search, and it does not modify the input array or list.
-
-## When to use Binary Search?
-
-If we can discover some kind of **monotonicity**, for example, if `condition(k)`
-is `True` then `condition(k + 1)` is `True`, then we can consider binary search.
-
-More formally, we have:
-
-The essential precondition to apply binary search is the presence of a
-**monotonic property**. This is a property that allows us to decide which half
-of the search space should be eliminated based on the comparison between the
-target value and the value at the current index.
-
-```{prf:definition} Monotonicity
-:label: monotonicity
-
-In more formal terms, a function or sequence is said to have the property of
-monotonicity if it is either entirely non-increasing or non-decreasing. A
-function that increases monotonically does not necessarily increase constantly,
-but it does not decrease at any point. Similarly, a function that decreases
-monotonically does not necessarily decrease constantly, but it does not increase
-at any point.
-
-1. A sequence or function $f$ is said to be **monotone increasing** (or
-   non-decreasing) on an interval $I$ if for all $x, y \in I$, if $x \leq y$,
-   then $f(x) \leq f(y)$. In simple terms, as we move along the interval, the
-   function value does not decrease; it either increases or stays the same.
-
-2. Similarly, a sequence or function $f$ is said to be **monotone decreasing**
-   (or non-increasing) on an interval $I$ if for all $x, y \in I$, if
-   $x \leq y$, then $f(x) \geq f(y)$. That is, as we move along the interval,
-   the function value does not increase; it either decreases or stays the same.
-```
-
-In the context of binary search, when the `condition` function has a monotonic
-property (either always `True` to `False`, or always `False` to `True`), it
-means that there is a clear threshold or tipping point in the sorted array that
-divides the array into two halves - the first half where the `condition`
-function is `True` and the second half where the `condition` function is `False`
-(or vice versa).
-
-That's where binary search comes into play: it allows us to effectively locate
-that threshold by iteratively narrowing down the search space. If we find that
-the `condition` is `True` for a given middle element (let's call it `mid`), we
-know that all elements on the right of `mid` will also satisfy `condition`
-(because of the monotonic property), so we can safely ignore the right half.
-Conversely, if `condition(mid)` is `False`, we can ignore the left half.
-
-If we can't establish such a monotonic property, it's difficult (or even
-impossible) to decide which half of the array to eliminate, rendering binary
-search ineffective or incorrect. Therefore, confirming the existence of this
-monotonicity is crucial before deciding to use binary search.
-
-## Solution (Minimize $k$, $s.t.$ condition($k$) is True)
-
-Before going into details, we see the below:
-
-```{prf:remark} Finding Target and Finding First True
-:label: finding-target-and-finding-first-true
-
-Finding a target in a sorted array and finding the "first True" in a sorted
-Boolean array are conceptually similar because both rely on a monotonic
-condition. In the first case, the condition is "Is the element at the current
-index greater or equal to the target?" In the second case, it's "Is the element
-at the current index True?"
-
-To bridge the gap:
-
-1. Consider the feasible function $f(x)$ that maps each element in the sorted
-   array to either True or False based on whether the element is greater or
-   equal to the target. This makes the problem equivalent to finding the "first
-   True" in a sorted Boolean array derived from $f(x)$.
-2. In both problems, once you identify an element that satisfies the condition
-   (either being the target or being True), you can be sure that no elements
-   satisfying the condition exist in the half of the array that is 'less' than
-   the current element.
-
-In the context of finding a specific target element $x$ in a sorted array, the
-feasible function $f(i)$ would map to True for all elements greater than or
-equal to $x$ and False for all elements less than $x$. So, if the array is
-$[1, 3, 5, 7]$ and the target is $5$, the mapped Boolean array based on $f(i)$
-would be $\text{FFFFTTT}$, making it a sorted Boolean array. In this setup,
-"finding the first True" indeed corresponds to "finding the target element."
-```
-
-The problem of finding a target number in a sorted array is a "minimize k s.t.
-condition(k) is True" problem because you're essentially looking for the
-smallest (left-most) index `k` where the condition "array value at `k` is
-greater than or equal to the target" is True.
-
-In other words, you're trying to find the minimum `k` such that
-`nums[k] >= target`. This can either be the first occurrence of the target in
-the array (if the target exists in the array) or the position where the target
-could be inserted to maintain the sorted order of the array (if the target does
-not exist in the array).
-
-This fits the structure of "minimize k s.t. condition(k) is True" because you
-are minimizing the index `k` subject to a condition (i.e., `nums[k] >= target`).
-
-In the binary search template, this is implemented as the `condition(mid)`
-function. The binary search algorithm keeps adjusting the search boundaries
-(i.e., `left` and `right`) based on whether the condition is met at the
-mid-point, and keeps narrowing down to the smallest `k` (left-most position)
-where the condition is True. This is why this problem fits into the "minimize k
-s.t. condition(k) is True" structure.
-
-```{code-cell} ipython3
-def binary_search(nums: List[int], target: int) -> int:
-    def condition(k: int, nums: List[int]) -> bool:
-        return nums[k] >= target
-
-    left, right = 0, len(array)
-    while left < right:
-        mid = left + (right - left) // 2
-        if condition(k=mid, nums=nums):
-            right = mid
-        else:
-            left = mid + 1
-    return left
-
-# Example 1
-array = [1, 2, 3, 4, 5]
-target = 3
-result = binary_search(nums=array, target=target)
-assert result == 2
-```
-
-So you essentially combined the two steps of finding the target and finding the
-left-most occurrence of the target into one step.
 
 ## References and Further Readings
 
