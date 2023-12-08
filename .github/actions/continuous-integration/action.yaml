@@ -24,6 +24,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Run Formatter Check
+      run: |
+        cd ${{ inputs.working-directory }} || exit 1
+        chmod +x ${{ inputs.black-script-location }}
+        bash ${{ inputs.black-script-location }} | tee ${{ inputs.black-output-filename }}
+      shell: bash
+      if: always()
     - name: Run Linter Check
       run: |
         cd ${{ inputs.working-directory }} || exit 1
@@ -35,6 +42,6 @@ runs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: check-results
+        name: continuous-integration-result-logs
         path: |
           ${{ inputs.working-directory }}/${{ inputs.ruff-output-filename }}

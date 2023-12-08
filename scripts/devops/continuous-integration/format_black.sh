@@ -45,15 +45,14 @@ show_usage() {
     empty_line
 
     logger "INFO" "For more details, see link(s) below:"
-    logger "LINK" "https://docs.astral.sh/${TOOL}/configuration"
-    logger "LINK" "https://docs.astral.sh/${TOOL}/rules/"
+    logger "LINK" "https://${TOOL}.readthedocs.io/en/stable/index.html"
     logger "CODE" "$ ${TOOL} --help"
     logger "BLOCK" \
     "$ ${TOOL} --check \\
-    --config=.${TOOL}.toml \\
-    --no-fix \\
-    --no-show-source \\
-    <PACKAGE-1> <PACKAGE-2> ..."
+        --diff \\
+        --color \\
+        --verbose \\
+        <PACKAGE-1> <PACKAGE-2> ..."
     empty_line
 
     logger "INFO" "Usage: $(basename $0) [OPTIONS]"
@@ -107,7 +106,7 @@ main() {
     logger "INFO" "Running ${TOOL} linting with flags: ${FLAGS[*]} and packages: ${PACKAGES[*]}. Please change them if necessary."
     logger "INFO" "${TOOL} version: $(${TOOL} --version)"
 
-    local cmd="${TOOL} check ${FLAGS[@]} ${PACKAGES[@]}"
+    local cmd="${TOOL} ${FLAGS[@]} ${PACKAGES[@]}"
     logger "INFO" "The ${TOOL} command to be executed:"
     logger "CODE" "$cmd"
 

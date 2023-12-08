@@ -5,6 +5,7 @@
 # of allowing arbitrary flags in the script. So in the argparse below, we
 # do not allow FLAGS and PACKAGES to override the cli.
 FLAGS=(
+    check
     --no-fix
     --no-show-source
     # Add more flags here if necessary
@@ -107,7 +108,7 @@ main() {
     logger "INFO" "Running ${TOOL} linting with flags: ${FLAGS[*]} and packages: ${PACKAGES[*]}. Please change them if necessary."
     logger "INFO" "${TOOL} version: $(${TOOL} --version)"
 
-    local cmd="${TOOL} check ${FLAGS[@]} ${PACKAGES[@]}"
+    local cmd="${TOOL} ${FLAGS[@]} ${PACKAGES[@]}"
     logger "INFO" "The ${TOOL} command to be executed:"
     logger "CODE" "$cmd"
 
