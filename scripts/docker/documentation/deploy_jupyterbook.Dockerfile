@@ -2,7 +2,7 @@
 FROM python:3.9-slim-buster
 
 # Set environment variables
-ENV HOME_DIR=/jupyter-book-blog
+ENV HOME_DIR=/omniverse
 ENV VENV_DIR=/opt
 ENV VENV_NAME=venv
 
@@ -22,8 +22,10 @@ RUN apt-get update && \
 
 # Copy the requirements file and install Python dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+COPY requirements-dev.txt .
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir -r requirements-dev.txt
 
 # Copy your Jupyter Book content
 COPY . ${HOME_DIR}
@@ -34,7 +36,6 @@ EXPOSE 4000
 # Default command to build the Jupyter Book
 # Can be overridden to serve the book using `jupyter-book build .` followed by `jupyter-book serve .`
 CMD ["jupyter-book", "build", "."]
-
 
 # Copy the entrypoint script
 COPY scripts/docker/entrypoint.sh /entrypoint.sh
