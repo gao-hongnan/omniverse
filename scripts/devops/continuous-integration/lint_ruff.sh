@@ -11,7 +11,7 @@ FLAGS=(
 )
 PACKAGES=(
     "omnivault"
-    "_tmp_types.py"
+    # "_tmp_types.py"
     # Add more packages here if necessary
 )
 
