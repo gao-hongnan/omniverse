@@ -12,7 +12,7 @@ from typing import Sequence
 from omnivault._types._generic import Real
 from omnivault.dsa.searching_algorithms.base import Search
 from omnivault.dsa.queue.deque import Deque
-
+import omnivault.transformers.core.vocabulary as vocab
 class SearchContext:
     """The Context defines the interface of interest to clients."""
 
