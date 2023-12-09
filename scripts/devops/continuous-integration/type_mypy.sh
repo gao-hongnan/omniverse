@@ -117,6 +117,15 @@ main() {
     logger "CODE" "$cmd"
 
     $cmd
+
+    local status=$?
+
+    if [ "$status" -eq 0 ]; then
+        logger "INFO" "🎉🎉🎉 ${TOOL} type check passed."
+    else
+        logger "ERROR" "💥💥💥 ${TOOL} type check failed."
+    fi
 }
+
 
 main "$@"

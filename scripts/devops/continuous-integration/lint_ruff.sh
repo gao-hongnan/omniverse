@@ -113,6 +113,14 @@ main() {
     logger "CODE" "$cmd"
 
     $cmd
+
+    local status=$?
+
+    if [ "$status" -eq 0 ]; then
+        logger "INFO" "🎉🎉🎉 ${TOOL} linting passed."
+    else
+        logger "ERROR" "💥💥💥 ${TOOL} linting failed."
+    fi
 }
 
 main "$@"
