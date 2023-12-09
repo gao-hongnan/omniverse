@@ -25,13 +25,17 @@ stack = append_generic_to_stack(stack, 1)
 stack = append_generic_to_stack(stack, "a")
 stack = append_generic_to_stack(stack, 2)
 
+
 def append_int_to_stack(stack: StackList[int], item: int) -> StackList[int]:
     stack.push(item)
     return stack
 
+
 stack = StackList[int]()
 stack = append_int_to_stack(stack, 1)
-stack = append_int_to_stack(stack, "a")  # Error: Argument 2 to "append_int_to_stack" has incompatible type "str"; expected "int"
+stack = append_int_to_stack(
+    stack, "a"
+)  # Error: Argument 2 to "append_int_to_stack" has incompatible type "str"; expected "int"
 
 
 import numpy as np
