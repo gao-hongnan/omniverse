@@ -31,8 +31,7 @@ compile time.
 """
 from typing import Any
 
-from src.dii_base import \
-    Transforms  # from abstract interface import Transforms
+from src.dii_base import Transforms  # from abstract interface import Transforms
 
 
 class CustomDataset:
