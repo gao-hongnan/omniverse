@@ -13,7 +13,7 @@ DEFAULT_FLAGS=(
     # Add more flags here if necessary
 )
 DEFAULT_PACKAGES=(
-    "omnivault/dsa/searching_algorithms"
+    "omnivault"
     # Add more packages here if necessary
 )
 
