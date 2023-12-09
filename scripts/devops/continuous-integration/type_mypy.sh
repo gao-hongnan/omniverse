@@ -9,6 +9,7 @@ DEFAULT_FLAGS=(
     --python-version=3.9
     --color-output
     --pretty
+    --follow-imports=normal
     # Add more flags here if necessary
 )
 DEFAULT_PACKAGES=(
