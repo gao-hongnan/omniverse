@@ -193,6 +193,7 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Vectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
@@ -535,7 +536,7 @@ space signifies its direction.</p>
 <p>A key distinction in linear algebra is between a <strong>vector</strong> and a <strong>coordinate
 in space</strong>:</p>
 <p>The three coordinates (tail of the line segment) in
-<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 4</span></a> are distinct, the three
+<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 5</span></a> are distinct, the three
 vectors (lines) are equivalent. This equivalence is because each vector
 represents a movement of 1 unit to the right and 2 units down in a
 two-dimensional space, denoted conventionally as a vector <span class="math notranslate nohighlight">\(\mathbf{v} = [1, -2]\)</span>
@@ -551,38 +552,36 @@ have the same magnitude and direction and can be represented by the vector
 <span class="expanded">Hide code cell source</span>
 </summary>
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Create plot using VectorPlotter2D</span>
-<span class="linenos"> 2</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
-<span class="linenos"> 3</span><span class="n">plotter</span> <span class="o">=</span> <span class="n">VectorPlotter2D</span><span class="p">(</span>
-<span class="linenos"> 4</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
-<span class="linenos"> 5</span>    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
-<span class="linenos"> 6</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
-<span class="linenos"> 7</span>        <span class="s1">&#39;set_xlim&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-<span class="linenos"> 8</span>        <span class="s1">&#39;set_ylim&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-<span class="linenos"> 9</span>        <span class="s1">&#39;set_xlabel&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="s1">&#39;X-axis&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-<span class="linenos">10</span>        <span class="s1">&#39;set_ylabel&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="s1">&#39;Y-axis&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
-<span class="linenos">11</span>        <span class="s1">&#39;set_title&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;Vector Plot with Annotations&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
-<span class="linenos">12</span>    <span class="p">}</span>
-<span class="linenos">13</span><span class="p">)</span>
-<span class="linenos">14</span>
-<span class="linenos">15</span><span class="c1"># Define vectors</span>
-<span class="linenos">16</span><span class="n">vector1</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">)</span>
-<span class="linenos">17</span><span class="n">vector2</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v2&quot;</span><span class="p">)</span>
-<span class="linenos">18</span><span class="n">vector3</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v3&quot;</span><span class="p">)</span>
-<span class="linenos">19</span>
-<span class="linenos">20</span><span class="c1"># Add vectors and annotations to plotter</span>
-<span class="linenos">21</span><span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="p">[</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">,</span> <span class="n">vector3</span><span class="p">]:</span>
-<span class="linenos">22</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">add_vector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
-<span class="linenos">23</span>    <span class="n">annotation_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">: (</span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
-<span class="linenos">24</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
-<span class="linenos">25</span>                     <span class="n">vector</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
-<span class="linenos">26</span>                     <span class="n">annotation_text</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vector</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
-<span class="linenos">27</span>
-<span class="linenos">28</span><span class="c1"># Plot and show</span>
-<span class="linenos">29</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="linenos">30</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./assets/01-vector-definition-vector-versus-coordinate.svg&quot;</span><span class="p">)</span>
-<span class="linenos">31</span><span class="k">if</span> <span class="ow">not</span> <span class="n">save_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-<span class="linenos">32</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="linenos"> 2</span><span class="n">plotter</span> <span class="o">=</span> <span class="n">VectorPlotter2D</span><span class="p">(</span>
+<span class="linenos"> 3</span>    <span class="n">fig</span><span class="o">=</span><span class="n">fig</span><span class="p">,</span>
+<span class="linenos"> 4</span>    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+<span class="linenos"> 5</span>    <span class="n">ax_kwargs</span><span class="o">=</span><span class="p">{</span>
+<span class="linenos"> 6</span>        <span class="s1">&#39;set_xlim&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<span class="linenos"> 7</span>        <span class="s1">&#39;set_ylim&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;bottom&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+<span class="linenos"> 8</span>        <span class="s1">&#39;set_xlabel&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xlabel&#39;</span><span class="p">:</span> <span class="s1">&#39;X-axis&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+<span class="linenos"> 9</span>        <span class="s1">&#39;set_ylabel&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;ylabel&#39;</span><span class="p">:</span> <span class="s1">&#39;Y-axis&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>
+<span class="linenos">10</span>        <span class="s1">&#39;set_title&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;label&#39;</span><span class="p">:</span> <span class="s1">&#39;Vector Plot with Annotations&#39;</span><span class="p">,</span> <span class="s1">&#39;fontsize&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">},</span>
+<span class="linenos">11</span>    <span class="p">}</span>
+<span class="linenos">12</span><span class="p">)</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="c1"># Define vectors</span>
+<span class="linenos">15</span><span class="n">vector1</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v1&quot;</span><span class="p">)</span>
+<span class="linenos">16</span><span class="n">vector2</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v2&quot;</span><span class="p">)</span>
+<span class="linenos">17</span><span class="n">vector3</span> <span class="o">=</span> <span class="n">Vector2D</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;v3&quot;</span><span class="p">)</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="c1"># Add vectors and annotations to plotter</span>
+<span class="linenos">20</span><span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="p">[</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">,</span> <span class="n">vector3</span><span class="p">]:</span>
+<span class="linenos">21</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">add_vector</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+<span class="linenos">22</span>    <span class="n">annotation_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">: (</span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="linenos">23</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos">24</span>                     <span class="n">vector</span><span class="o">.</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">vector</span><span class="o">.</span><span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span>
+<span class="linenos">25</span>                     <span class="n">annotation_text</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">vector</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">plotter</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="linenos">28</span><span class="n">save_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./assets/01-vector-definition-vector-versus-coordinate.svg&quot;</span><span class="p">)</span>
+<span class="linenos">29</span><span class="k">if</span> <span class="ow">not</span> <span class="n">save_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="linenos">30</span>    <span class="n">plotter</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_path</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -590,7 +589,7 @@ have the same magnitude and direction and can be represented by the vector
 </div>
 <figure class="align-default" id="vector-definition-vector-versus-coordinate">
 <img alt="../../_images/01-vector-definition-vector-versus-coordinate.svg" src="../../_images/01-vector-definition-vector-versus-coordinate.svg" /><figcaption>
-<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Three of the same vectors with different starting coordinates; By Hongnan G.</span><a class="headerlink" href="#vector-definition-vector-versus-coordinate" title="Permalink to this image">#</a></p>
+<p><span class="caption-number">Fig. 5 </span><span class="caption-text">Three of the same vectors with different starting coordinates; By Hongnan G.</span><a class="headerlink" href="#vector-definition-vector-versus-coordinate" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 <div class="cell docutils container">
@@ -634,7 +633,7 @@ an <span class="math notranslate nohighlight">\(D\)</span>-dimensional space. Th
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> itself is an abstract entity, distinct from how it’s represented in
 any particular coordinate system.</p>
 <div class="proof theorem admonition" id="01-vector-definition-is-invariant-under-coordinate-transformation">
-<p class="admonition-title"><span class="caption-number">Theorem 2 </span> (Vector is Invariant under Coordinate Transformation)</p>
+<p class="admonition-title"><span class="caption-number">Theorem 3 </span> (Vector is Invariant under Coordinate Transformation)</p>
 <section class="theorem-content" id="proof-content">
 <p>A given vector, <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, remains the same entity, irrespective of the
 coordinate system used to describe it. This property is referred to as the
@@ -648,7 +647,7 @@ rotated coordinate system, its coordinates could appear different, say
 itself has not changed; it still has the same length and points in the same
 direction in space.</p>
 <p>This is perfectly illustrated in
-<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 4</span></a>, where the three vectors
+<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 5</span></a>, where the three vectors
 have different coordinates but are equivalent because they have the same
 orientation (direction) and length (magnitude). To be more verbose, the vector
 <span class="math notranslate nohighlight">\(\mathbf{v}_1\)</span> has the tail at the origin, so we say that its basis is the
@@ -736,7 +735,7 @@ special dimensions. This perspective is useful in understanding the
 representation of vectors in the context of matrix operations, which will be
 explored in more detail later.</p>
 <div class="proof remark admonition" id="01-vector-definition-column-vector-is-the-standard-representation">
-<p class="admonition-title"><span class="caption-number">Remark 7 </span> (Standard Representation of Vectors)</p>
+<p class="admonition-title"><span class="caption-number">Remark 6 </span> (Standard Representation of Vectors)</p>
 <section class="remark-content" id="proof-content">
 <p>In most contexts within linear algebra and its applications, the standard
 representation of a vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> is as a column vector. This convention
@@ -797,7 +796,7 @@ irrelevant to their definition. Consequently, two vectors that appear
 different in terms of their starting points but have the same length and
 direction (orientation) are in fact the same vector geometrically. This is
 illustrated by the example in
-<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 4</span></a>, where three vectors
+<a class="reference internal" href="#vector-definition-vector-versus-coordinate"><span class="std std-numref">Fig. 5</span></a>, where three vectors
 may visually appear distinct but are geometrically equivalent.</p></li>
 <li><p><strong>Algebraic Perspective</strong>: From the algebraic viewpoint, consider two vectors
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{w}\)</span> in an <span class="math notranslate nohighlight">\(D\)</span>-dimensional space over a field

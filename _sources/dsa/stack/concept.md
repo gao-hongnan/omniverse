@@ -36,8 +36,8 @@ from __future__ import annotations
 
 import math
 from IPython.display import display
-from typing import Iterable, TypeVar, Optional
-
+from typing import Generator, List, Union, Any
+from rich.pretty import pprint
 
 import sys
 from pathlib import Path
@@ -294,133 +294,37 @@ Stack being a container, we will also implement some dunder methods:
     its elements.
 ```
 
-````{code-cell} ipython3
-from __future__ import annotations
-
-from typing import List, Generator, TypeVar, Generic
-
+```{code-cell} ipython3
 class StackList(Stack[T]):
-    """Creates a stack that uses python's default list as the underlying
-    data structure.
-
-    Note
-    ----
-    Methods are ordered with
-    dunder/magic/property -> public -> private -> static/class.
-
-    Attributes
-    ----------
-    _stack_items : List[T]
-        The list that stores the items in the stack. We treat the end of the
-        list as the top of the stack.
-    """
-
     def __len__(self) -> int:
-        """Return the size of the stack."""
         return len(self.stack_items)
 
     def __iter__(self) -> Generator[T, None, None]:
-        """Iterate over the stack items.
-
-        Note
-        ----
-        If we return self, then we need to define `__next__`
-        to make it an iterator. Else, python handles the
-        `__next__` method for us if `__iter__` returns an
-        iterator.
-
-        ```python
-        def __next__(self) -> StackList[T]:
-            if self.is_empty():
-                raise StopIteration
-            return self.pop()
-        ```
-
-        Returns
-        -------
-        StackList[T]
-            The stack.
-        """
-
         while not self.is_empty():
             yield self.pop()
 
     @property
     def stack_items(self) -> List[T]:
-        """Read only property for the stack items."""
         return self._stack_items
 
     @property
     def size(self) -> int:
-        """Return the size of the stack.
-
-        Note
-        ----
-        When you call `len(self)` from within the class, it will call internally
-        `self.__len__()` (`StackList.__len__()`) which will return the size of
-        the stack.
-
-        Returns
-        -------
-        int
-            The size of the stack.
-        """
         return len(self)
 
     def is_empty(self) -> bool:
-        """Check if stack is empty.
-
-        Returns
-        -------
-        bool
-            True if stack is empty, False otherwise.
-        """
         return not self.stack_items
 
     def peek(self) -> T:
-        """Return the top most item in the stack without modifying the stack.
-
-        This is different from pop in that it does not remove the item from the
-        stack.
-
-        Returns
-        -------
-        T
-            The top most item in the stack.
-        """
         return self.stack_items[-1]
 
     def pop(self) -> T:
-        """Pop an item from the top of the stack.
-
-        In this implementation, the item at the end of the list is returned
-        and removed. We are using the list's pop method to do this.
-
-        Raises
-        ------
-        (Exception): If stack is empty.
-
-        Returns
-        -------
-        T
-            The top most item in the stack.
-        """
         if self.is_empty():
-            raise Exception("Stack is empty")  # pylint: disable=broad-exception-raised
+            raise Exception("Stack is empty")
         return self.stack_items.pop()
 
     def push(self, item: T) -> None:
-        """Push an item on top of the stack.
-
-        In this implementation, the item is appended to the end of the list.
-
-        Parameters
-        ----------
-        item : T
-            The current item pushed into the stack.
-        """
         self.stack_items.append(item)
-````
+```
 
 ```{prf:remark} Some Remarks
 :label: stack-list-remarks
@@ -479,6 +383,106 @@ print()
 print(f"stack size = {len(stack)}")
 print(f"stack is empty? {stack.is_empty()}")
 ```
+
+### The Importance of Generic Types
+
+The `StackList` class is a generic class, meaning it can store items of any
+type. This flexibility is provided by the use of the generic type variable `T`
+in `TypeVar("T")`. Furthermore, since `StackList` is a container, inheritance
+from `Generic[T]` is necessary to ensure type safety and clarity. For example,
+we can instantiate a `StackList` of integers by specifying the type
+`StackList[int]`, and the type hints will be enforced by the class (by a static
+type checker such as `mypy`) so that that particular stack instance can only
+store integers.
+
+Consider the following example, where we have a function named
+`append_int_to_stack` that takes a `StackList[int]` and an integer value, and
+returns a `StackList[int]` with the value appended to it. This function will
+only accept a `StackList` that stores integers, and will return a `StackList`
+that stores integers.
+
+```{code-cell} ipython3
+def append_int_to_stack(stack: StackList[int], value: int) -> StackList[int]:
+    stack.push(value)
+    return stack
+
+stack_int = StackList[int]()
+stack_int = append_int_to_stack(stack_int, 1)
+stack_int = append_int_to_stack(stack_int, 2)
+stack_int = append_int_to_stack(stack_int, "3")
+pprint(stack_int.stack_items)
+```
+
+The last line of the code above will raise a `mypy` error:
+
+```python
+error: Argument 2 to "append_int_to_stack" has incompatible type "str"; expected "int"  [arg-type]
+```
+
+because we are trying to push a string onto a stack that only accepts integers.
+
+Similarly, we can define a function that takes a `StackList[str]` and returns a
+`StackList[str]`:
+
+```{code-cell} ipython3
+def append_str_to_stack(stack: StackList[str], value: str) -> StackList[str]:
+    stack.push(value)
+    return stack
+
+stack_str = StackList[str]()
+stack_str = append_str_to_stack(stack_str, "1")
+stack_str = append_str_to_stack(stack_str, "2")
+stack_str = append_str_to_stack(stack_str, 3)
+print(stack_str.stack_items)
+```
+
+and this will also raise a `mypy` error:
+
+```python
+error: Argument 2 to "append_str_to_stack" has incompatible type "int"; expected "str"  [arg-type]
+```
+
+because we are trying to push an integer onto a stack that only accepts strings.
+
+To push both integers and strings onto a stack, we can define a function that
+takes a `StackList[Union[str, int]]` and returns a `StackList[Union[str, int]]`:
+
+```{code-cell} ipython3
+def append_to_stack(stack: StackList[T], value: T) -> StackList[T]:
+    stack.push(value)
+    return stack
+
+stack = StackList[Union[str, int]]()
+stack = append_to_stack(stack, 1)
+stack = append_to_stack(stack, "2")
+stack = append_to_stack(stack, 3)
+print(stack.stack_items)
+```
+
+Now if you run `mypy` on the code above, it will not raise any errors. However,
+we type hint the function `append_to_stack` with `StackList[T]` instead of
+`StackList[Union[str, int]]`, and this is because `T` is a generic type variable
+that can be bound to any type. In this case, `T` is bound to `Union[str, int]`
+because we specified `StackList[Union[str, int]]` when we defined `stack`.
+
+Note that you cannot define `stack = StackList[T]` without specifying the type
+`T` because `T` is a generic type variable, and `mypy` will raise an error:
+
+```python
+error: Type variable "omnivault._types._generic.T" is unbound  [valid-type]
+```
+
+When you create your own generic class like `StackList`, the type variable `T`
+must be bound to a specific type at the point of instantiation. This is a
+requirement for user-defined generics to ensure type safety and consistency.
+This is consistent with the behavior of built-in generic classes such as
+`List[T]`, which also require the type variable `T` to be bound to a specific
+type at the point of instantiation. So you cannot also define something like
+`array = list[T]([1, 2, 3])` without specifying the type `T`.
+
+This is the power of generic types - they allow us to write code that is
+type-safe and clear, and they enable us to write functions that are generic
+enough to work with different types of stacks.
 
 ### Time Complexity
 

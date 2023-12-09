@@ -40,8 +40,8 @@ from IPython.display import display
 
 def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
     """
-    Find the root directory by searching for a directory or file that serves as a
-    marker.
+    Find the root directory by searching for a directory or file that serves as
+    a marker.
 
     Parameters
     ----------
@@ -212,7 +212,7 @@ add_text_annotations(plotter, vectors)
 
 # Plot and show
 plotter.plot()
-save_path = Path("./assets/02-vector-operation-addition123.svg")
+save_path = Path("./assets/02-vector-operation-addition.svg")
 if not save_path.exists():
     plotter.save(save_path)
 ```

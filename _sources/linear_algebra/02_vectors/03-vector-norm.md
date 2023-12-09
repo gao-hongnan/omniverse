@@ -709,6 +709,7 @@ similarity, inner product, orthogonality, and projections.
 -   Muscat, J. Functional Analysis An Introduction to Metric Spaces, Hilbert
     Spaces, and Banach Algebras, Springer, 2014.
 -   [Math Is Fun - Pythagoras in 3D](https://www.mathsisfun.com/geometry/pythagoras-3d.html)
+-   [Wikipedia - Taxicab (Manhattan) Geometry](https://en.wikipedia.org/wiki/Taxicab_geometry)
 -   [Wikipedia - Metric Space](https://en.wikipedia.org/wiki/Metric_space)
 -   [Wikipedia - Vector Space](https://en.wikipedia.org/wiki/Vector_space)
 -   [Math StackExchange - Difference between Norm and Distance](https://math.stackexchange.com/questions/172028/difference-between-norm-and-distance)
