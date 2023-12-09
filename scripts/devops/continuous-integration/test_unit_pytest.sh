@@ -6,16 +6,20 @@
 # FLAGS and PACKAGES are defined here as a config for users to change instead
 # of allowing arbitrary flags in the script. So in the argparse below, we
 # do not allow FLAGS and PACKAGES to override the cli.
-FLAGS=(
+DEFAULT_FLAGS=(
     --verbose
     # Add more flags here if necessary
 )
-PACKAGES=( # similar to testpaths
+DEFAULT_PACKAGES=( # similar to testpaths
     tests/unit
     tests/integration
     tests/system
     # Add more packages here if necessary
 )
+
+# Use environment variables if set, otherwise use the defaults
+FLAGS=(${CUSTOM_FLAGS:-"${DEFAULT_FLAGS[@]}"})
+PACKAGES=(${CUSTOM_PACKAGES:-"${DEFAULT_PACKAGES[@]}"})
 
 ################################################################################
 
@@ -37,6 +41,20 @@ fetch_and_source_utils_script() {
     else
         echo "ERROR: Failed to fetch the script from '$SCRIPT_URL'. Check your internet connection or access permissions."
         exit 1
+    fi
+}
+
+log_env_override() {
+    if [ -n "$CUSTOM_FLAGS" ]; then
+        logger "WARN" "Custom flags provided via environment variable: $CUSTOM_FLAGS"
+    else
+        logger "INFO" "Using default flags."
+    fi
+
+    if [ -n "$CUSTOM_PACKAGES" ]; then
+        logger "WARN" "Custom packages provided via environment variable: $CUSTOM_PACKAGES"
+    else
+        logger "INFO" "Using default packages."
     fi
 }
 
@@ -70,6 +88,8 @@ show_usage() {
 
 main() {
     fetch_and_source_utils_script # need to call first because it uses logger
+
+    log_env_override
 
     # Parse command-line arguments
     while [ "$#" -gt 0 ]; do
