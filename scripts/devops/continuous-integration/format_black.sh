@@ -141,6 +141,8 @@ main() {
     else
         logger "ERROR" "💥💥💥 ${TOOL} format failed."
     fi
+
+    exit $status
 }
 
 main "$@"

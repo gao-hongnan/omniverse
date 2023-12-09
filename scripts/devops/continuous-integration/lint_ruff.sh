@@ -142,6 +142,8 @@ main() {
     else
         logger "ERROR" "💥💥💥 ${TOOL} linting failed."
     fi
+
+    exit $status
 }
 
 main "$@"

@@ -20,7 +20,6 @@ DEFAULT_PACKAGES=(
 FLAGS=(${CUSTOM_FLAGS:-"${DEFAULT_FLAGS[@]}"})
 PACKAGES=(${CUSTOM_PACKAGES:-"${DEFAULT_PACKAGES[@]}"})
 
-
 ################################################################################
 
 readonly SCRIPT_URL="https://raw.githubusercontent.com/gao-hongnan/common-utils/main/scripts/utils.sh"
@@ -147,6 +146,8 @@ main() {
     else
         logger "ERROR" "💥💥💥 ${TOOL} type check failed."
     fi
+
+    exit $status
 }
 
 
