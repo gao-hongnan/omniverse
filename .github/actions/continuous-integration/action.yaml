@@ -21,6 +21,14 @@ inputs:
     description: "File to write Black output to."
     required: false
     default: "black_results.log"
+  mypy-script-location:
+    description: "Location of MyPy script to run."
+    required: false
+    default: "scripts/devops/continuous-integration/type_check_mypy.sh"
+  mypy-output-filename:
+    description: "File to write MyPy output to."
+    required: false
+    default: "mypy_results.log"
 runs:
   using: "composite"
   steps:
@@ -38,6 +46,13 @@ runs:
         bash ${{ inputs.ruff-script-location }} | tee ${{ inputs.ruff-output-filename }}
       shell: bash
       if: always()
+    - name: Run Type Checker Check
+      run: |
+        cd ${{ inputs.working-directory }} || exit 1
+        chmod +x ${{ inputs.mypy-script-location }}
+        bash ${{ inputs.mypy-script-location }} | tee ${{ inputs.mypy-output-filename }}
+      shell: bash
+      if: always()
     - name: Upload Checked Results
       uses: actions/upload-artifact@v3
       if: always()
@@ -46,4 +61,5 @@ runs:
         path: |
           ${{ inputs.working-directory }}/${{ inputs.black-output-filename }}
           ${{ inputs.working-directory }}/${{ inputs.ruff-output-filename }}
+          ${{ inputs.working-directory }}/${{ inputs.mypy-output-filename }}
 

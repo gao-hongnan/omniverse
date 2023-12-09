@@ -1,9 +1,4 @@
-from typing import (
-    Any,
-    Tuple,
-    Union,
-)
-
+from typing import Any, Tuple, Union
 
 from omnivault._types._generic import T
 from omnivault.dsa.stack.concrete import StackList

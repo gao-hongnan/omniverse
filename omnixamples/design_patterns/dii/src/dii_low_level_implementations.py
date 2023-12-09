@@ -4,7 +4,8 @@ module depend only on the abstract interface module.
 """
 from typing import Callable
 
-from src.dii_base import Transforms  # from abstract interface import Transforms
+from src.dii_base import \
+    Transforms  # from abstract interface import Transforms
 
 
 class ImageClassificationTransforms(Transforms):

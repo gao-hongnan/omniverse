@@ -3,6 +3,7 @@ from typing import Any, Callable, List
 from IPython.core.display import HTML, display_html
 
 
+# mypy: disable-error-code="no-untyped-call"
 class TestFramework:
     """
     A simple testing framework for executing tests with descriptions.
@@ -15,9 +16,9 @@ class TestFramework:
 
     def __init__(self) -> None:
         """Initialize the TestFramework object."""
-        self.tests: List[Callable] = []
+        self.tests: List[Callable[[], None]] = []
 
-    def describe(self, description: str) -> Callable:
+    def describe(self, description: str) -> Callable[[Callable[[], None]], None]:
         """
         Decorator for describing a test.
 
@@ -32,14 +33,14 @@ class TestFramework:
             A wrapped function with a description.
         """
 
-        def wrapper(func: Callable) -> None:
+        def wrapper(func: Callable[[], None]) -> None:
             """Execute the function and display its description."""
             display_html(HTML(f"<span style='color: blue;'>Description: {description}</span>"))
             func()
 
         return wrapper
 
-    def individual_test(self, description: str) -> Callable:
+    def individual_test(self, description: str) -> Callable[[Callable[[], None]], None]:
         """
         Decorator for running a single test.
 
@@ -54,7 +55,7 @@ class TestFramework:
             A wrapped function that runs the test.
         """
 
-        def wrapper(func: Callable) -> None:
+        def wrapper(func: Callable[[], None]) -> None:
             """Execute the function and display the test result."""
             try:
                 func()

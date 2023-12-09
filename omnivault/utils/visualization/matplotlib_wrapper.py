@@ -51,7 +51,7 @@ def plot_quiver(
 
 def plot_hist(ax: plt.Axes, x: NDArray[np.float64], **kwargs: Any) -> BarContainer:
     """Plot histogram."""
-    return ax.hist(x, **kwargs)
+    return ax.hist(x, **kwargs) # type: ignore
 
 
 def plot_bar(ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any) -> BarContainer:

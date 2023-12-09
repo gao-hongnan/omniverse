@@ -1,3 +1,5 @@
+# mypy: disable-error-code="no-untyped-call, import-untyped"
+
 from typing import List
 
 import ipywidgets
