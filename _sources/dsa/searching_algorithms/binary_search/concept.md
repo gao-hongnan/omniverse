@@ -745,10 +745,10 @@ tf = TestFramework()
 binary_search = IterativeBinarySearchExactMatch().search
 
 @tf.describe("Testing Iterative Binary Search for Exact Match")
-def test_binary_search():
+def test_binary_search() -> None:
 
     @tf.individual_test("Standard Test Case")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([1, 3, 5, 7, 9], 5),
             2,
@@ -756,7 +756,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Target at Start")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([1, 3, 5, 7, 9], 1),
             0,
@@ -764,7 +764,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Target at End")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([1, 3, 5, 7, 9], 9),
             4,
@@ -772,7 +772,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Target Not in List")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([1, 3, 5, 7, 9], 4),
             -1,
@@ -780,7 +780,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Large Numbers in Array")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([10000, 20000, 30000, 40000], 30000),
             2,
@@ -788,7 +788,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Empty List")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([], 1),
             -1,
@@ -796,7 +796,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Single Element Array")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([3], 3),
             0,
@@ -804,7 +804,7 @@ def test_binary_search():
         )
 
     @tf.individual_test("Single Element Array, Target Not Present")
-    def _():
+    def _() -> None:
         tf.assert_equals(
             binary_search([3], 4),
             -1,
@@ -1154,8 +1154,11 @@ algorithm correctly returns the index of a target value $\tau$ if it is present
 in $\mathcal{A}$, or returns -1 if $\tau$ is not present.
 ```
 
+The following proof follows the notes in
+[CSE 241 Algorithm and Data Structure](https://classes.engineering.wustl.edu/cse241/handouts/binsearch.pdf).
+
 ```{prf:proof}
-The proof uses mathematical induction, focusing on the invariant related to the
+The proof uses strong mathematical induction, focusing on the invariant related to the
 search space $\mathcal{S}$.
 
 **Invariant**: At the beginning of each call to the binary search function, if
@@ -1165,33 +1168,42 @@ and upper bounds, respectively.
 
 _Base Case_ (Induction on the size of $\mathcal{S}$, $n = r - \ell + 1$):
 
--   When $n = 1$ (i.e., $\ell = r$), $\mathcal{S}$ consists of the single
-    element $\mathcal{A}[\ell]$. If $\mathcal{A}[\ell] = \tau$, the algorithm
-    returns $\ell$, which is correct. If $\mathcal{A}[\ell] \neq \tau$, the
-    algorithm returns -1. Thus, the base case satisfies the invariant.
+We first show the invariant holds for the base case, when the size of
+$\mathcal{S}$ is $n = 0$ or $n = 1$.
+
+-   When $n = 0$ (i.e., $\ell > r$), $\mathcal{S}$ is empty. The algorithm
+    returns -1, which is correct as $\tau$ is not present in an empty search
+    space.
+-   When $n = 1$ (i.e., $\ell = r$), $\mathcal{S}$ consists of a single element
+    $\mathcal{A}[\ell]$. If $\mathcal{A}[\ell] = \tau$, the algorithm returns
+    $\ell$, which is correct. If $\mathcal{A}[\ell] \neq \tau$, the algorithm
+    returns -1, signifying $\tau$ is not in $\mathcal{S}$.
 
 _Inductive Step_:
 
--   Assume the invariant holds for all $n < k$ (induction hypothesis). We need
-    to prove it holds for $n = k$.
--   The algorithm calculates the midpoint
-    $m = \ell + \left\lfloor \frac{r - \ell}{2} \right\rfloor$ and compares
-    $\mathcal{A}_m$ with $\tau$.
-    -   If $\mathcal{A}_m = \tau$, it returns $m$, correct by the invariant.
+-   Assume for the sake of induction such that the invariant holds and the
+    algorithm correctly returns the index of $\tau$ or -1 for arrays of size up
+    to $k$ (i.e., for all $\ell, r$ such that $r - \ell + 1 \leq k$).
+-   We need to show that the algorithm also works correctly for an array of size
+    $k+1$.
+-   In the algorithm, the midpoint $m$ is calculated. Three scenarios arise:
+    -   If $\mathcal{A}_m = \tau$, the algorithm returns $m$, which is correct
+        and maintains the invariant.
     -   If $\mathcal{A}_m < \tau$, the algorithm recurs on
-        $\mathcal{S} := \mathcal{A}[m+1..r]$. This new $\mathcal{S}$ is strictly
-        smaller, and by the invariant, if $\tau$ is in $\mathcal{A}$, it must be
-        in $\mathcal{S}$.
+        $\mathcal{S} := \mathcal{A}[m+1..r]$. The size of this new search space
+        is at most $k$, and by the inductive hypothesis, the recursive call
+        correctly maintains the invariant and returns the index of $\tau$ or -1.
     -   If $\mathcal{A}_m > \tau$, it recurs on
-        $\mathcal{S} := \mathcal{A}[\ell..m-1]$, also smaller. The invariant
-        implies if $\tau$ is in $\mathcal{A}$, it is in this new $\mathcal{S}$.
--   In both cases, the recursion is on a smaller search space $\mathcal{S}$,
-    maintaining the invariant. By the induction hypothesis, the recursive call
-    returns the correct result for $n = k$.
+        $\mathcal{S} := \mathcal{A}[\ell..m-1]$, also of size at most $k$. By
+        the inductive hypothesis, this recursive call maintains the invariant
+        and correctly handles the search.
+-   Thus, for any array of size $k+1$, the algorithm maintains the invariant and
+    correctly reduces the problem to a smaller instance, thereby proving the
+    correctness for arrays of size $k+1$.
 
 _Conclusion_:
 
--   By mathematical induction, the binary search algorithm correctly finds
+-   By strong mathematical induction, the binary search algorithm correctly finds
     $\tau$ in $\mathcal{A}$ or determines its absence, preserving the invariant
     at each step. This proves the theorem.
 ```
@@ -1241,57 +1253,170 @@ result = context.execute_search([2, 5, 8, 12, 16, 23, 38, 56, 72, 91], 23)
 assert result == 5
 ```
 
+```{code-cell} ipython3
+tf = TestFramework()
+
+binary_search = RecursiveBinarySearchExactMatch().search
+
+@tf.describe("Testing Recursive Binary Search for Exact Match")
+def test_binary_search() -> None:
+
+    @tf.individual_test("Standard Test Case")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([1, 3, 5, 7, 9], 5),
+            2,
+            "Should return 2"
+        )
+
+    @tf.individual_test("Target at Start")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([1, 3, 5, 7, 9], 1),
+            0,
+            "Should return 0"
+        )
+
+    @tf.individual_test("Target at End")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([1, 3, 5, 7, 9], 9),
+            4,
+            "Should return 4"
+        )
+
+    @tf.individual_test("Target Not in List")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([1, 3, 5, 7, 9], 4),
+            -1,
+            "Should return -1"
+        )
+
+    @tf.individual_test("Large Numbers in Array")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([10000, 20000, 30000, 40000], 30000),
+            2,
+            "Should return 2"
+        )
+
+    @tf.individual_test("Empty List")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([], 1),
+            -1,
+            "Should return -1 (empty array)"
+        )
+
+    @tf.individual_test("Single Element Array")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([3], 3),
+            0,
+            "Should return 0"
+        )
+
+    @tf.individual_test("Single Element Array, Target Not Present")
+    def _() -> None:
+        tf.assert_equals(
+            binary_search([3], 4),
+            -1,
+            "Should return -1"
+        )
+```
+
 ### Time Complexity
 
 #### Master Theorem
 
-We have a recurrence relation of the form:
+Let's use the Master Theorem to analyze the time complexity of binary search.
 
-$$T(n) = a \cdot T\left(\frac{N}{b}\right) + f(n)$$
+We have a recurrence relation of the form (also defined in
+{eq}`master-theorem-recurrence-relation-generic-form`) in
+[Master Theorem](../../complexity_analysis/master_theorem.md):
+
+```{math}
+:label: binary-search-concept-master-theorem-recurrence-relation
+
+\mathcal{T}(N) = a \cdot \mathcal{T}\left(\frac{N}{b}\right) + f(N)
+```
 
 Where:
 
+-   $N$ is the size of the input of the problem.
 -   $a$ is the number of subproblems in the recursion.
+-   $b$ is the factor by which the subproblem size is reduced in each recursive
+    call ($b > 1$).
 -   $\frac{N}{b}$ is the size of each subproblem. (All subproblems are assumed
     to have the same size.)
--   $f(n)$ represents the cost of the work done outside the recursive calls,
+-   $f(N)$ represents the cost of the work done outside the recursive calls,
     which includes the cost of dividing the problem and the cost of merging the
     solutions.
 
-For our binary search, we have:
+For our binary search, we have the following information:
 
-$$T(n) = T\left(\frac{N}{2}\right) + \mathcal{O}(1)$$
+-   The size of the input is $N$.
+-   In each step, the problem is divided into two subproblems of size
+    $\frac{N}{2}$.
+-   The immediate consequence is that $a=1$ and $b=2$. Why? Because we have only
+    one subproblem, and the size of the subproblem is halved at each step. In
+    particular $a=1$ is because only one half is chosen for further search.
 
-This translates into $a = 1$, $b = 2$, and $f(n) = \mathcal{O}(1)$, which means
-$d = 0$ since $\mathcal{O}(n^0) = \mathcal{O}(1)$.
+    This means at each step, there exists only $a=1$ recursive call.
 
-Now let's proceed with the Master Theorem. The Master Theorem states that the
-solution to the recurrence relation:
+-   The cost of the work done outside the recursive calls is $\mathcal{O}(1)$
+    because we only need to calculate the middle index and make a decision based
+    on the middle element. So $f(N) = \mathcal{O}(1)$, which means $f(N)$ is
+    bounded by a constant $C$.
 
-$$T(n) = a \cdot T\left(\frac{N}{b}\right) + f(n)$$
+With these defined, we can plug in the values into the recurrence relation:
 
-is given as follows:
+```{math}
+:label: binary-search-concept-master-theorem-recurrence-relation-plugged-in
 
-1. If $f(n) = \mathcal{O}(n^c)$, where $c < \log_b{a}$, then
-   $T(n) = \Theta(n^{\log_b{a}})$.
-2. If $f(n) = \mathcal{O}(n^c)$, where $c = \log_b{a}$, then
-   $T(n) = \Theta(n^c \log N)$.
-3. If $f(n) = \mathcal{O}(n^c)$, where $c > \log_b{a}$, then
-   $T(n) = \Theta(f(n))$.
+\mathcal{T}(N) = \mathcal{T}\left(\frac{N}{2}\right) + \mathcal{O}(1)
+```
 
-Comparing $d$ with $\log_b a$, we see that $d = \log_b a = \log_2 1 = 0$.
+The Master Theorem states that the solution to the recurrence relation
+{eq}`binary-search-concept-master-theorem-recurrence-relation` can be split into
+3 cases, depending on the relationship between $f(N)$ and $N^{\log_b a}$. Let's
+list them down briefly here.
 
-So, we're in the second case of the Master Theorem. According to the second case
-of the Master Theorem, if $f(n) = \Theta(n^d)$, where $d = \log_b a$, then
-$T(n) = \Theta(n^d \log N)$.
+First, define $c_{\text{crit}}$ to be the critical exponent:
 
-Substitute $d = 0$ into $T(n) = \Theta(n^d \log N)$, we get
-$T(n) = \Theta(\log N)$, which means that the time complexity of binary search
-is $\mathcal{O}(\log N)$.
+```{math}
+:label: binary-search-concept-master-theorem-critical-exponent
+
+\begin{aligned}
+c_{\text{crit}} &= \log_b a \\
+                &= \dfrac{\log\left(\text{number of subproblems}\right)}{\log\left(\text{relative subproblem size}\right)}
+\end{aligned}
+```
+
+1. If $f(N) = \mathcal{O}(N^c)$, where $c < c_{\text{crit}}$, then
+   $\mathcal{T}(N) = \Theta(N^{c_{\text{crit}}})$.
+2. If $f(N) = \mathcal{O}(N^c)$, where $c = c_{\text{crit}}$, then
+   $\mathcal{T}(N) = \Theta(N^{c_{\text{crit}}} \log N)$.
+3. If $f(N) = \mathcal{O}(N^c)$, where $c > c_{\text{crit}}$, then
+   $\mathcal{T}(N) = \Theta(f(N))$.
+
+Now what is $c$? $c$ is $0$ in our case because
+$f(N) = \mathcal{O}(1) = \mathcal{O}(N^0)$. This means $c = 0$. Now to know
+which case we're in, we need to know
+$c_{\text{crit}} = \log_b a = \log_2 1 = 0$.
+
+So we're in the second case of the Master Theorem since $c = c_{\text{crit}}$.
+
+According to the second case of the Master Theorem, the solution is
+$\mathcal{T}(N) = \Theta(N^c \log N)$, where $c = c_{\text{crit}} = 0$.
+
+Therefore, the time complexity of binary search is $\mathcal{O}(\log N)$ since
+$N^c = N^0 = 1$ (slight abuse of notation here).
 
 #### Repeated Substitution
 
-Let's denote the time complexity of our function as $\mathcal{T}(n)$, where $N$
+Let's denote the time complexity of our function as $\mathcal{T}(N)$, where $N$
 is the number of elements being considered during a given recursive call.
 Initially, $N$ is the size of the entire list, but with each recursive call, it
 gets halved.
@@ -1309,7 +1434,7 @@ To find the recurrence relation, let's break down the operations:
 
 Putting this into a recurrence relation:
 
-$$\mathcal{T}(n) = \mathcal{T}\left(\frac{N}{2}\right) + \mathcal{O}(1)$$
+$$\mathcal{T}(N) = \mathcal{T}\left(\frac{N}{2}\right) + \mathcal{O}(1)$$
 
 This is a standard divide-and-conquer recurrence relation. We can solve it using
 the Master Theorem or repeated substitution.
@@ -1318,26 +1443,26 @@ Using repeated substitution:
 
 $$
 \begin{align*}
-\mathcal{T}(n) &= \mathcal{T}\left(\frac{N}{2}\right) + \mathcal{O}(1) \\
-\mathcal{T}(n) &= \left[\mathcal{T}\left(\frac{N}{4}\right) + \mathcal{O}(1)\right] + \mathcal{O}(1) \\
-\mathcal{T}(n) &= \mathcal{T}\left(\frac{N}{4}\right) + 2\mathcal{O}(1) \\
-\mathcal{T}(n) &= \mathcal{T}\left(\frac{N}{8}\right) + 3\mathcal{O}(1) \\
+\mathcal{T}(N) &= \mathcal{T}\left(\frac{N}{2}\right) + \mathcal{O}(1) \\
+\mathcal{T}(N) &= \left[\mathcal{T}\left(\frac{N}{4}\right) + \mathcal{O}(1)\right] + \mathcal{O}(1) \\
+\mathcal{T}(N) &= \mathcal{T}\left(\frac{N}{4}\right) + 2\mathcal{O}(1) \\
+\mathcal{T}(N) &= \mathcal{T}\left(\frac{N}{8}\right) + 3\mathcal{O}(1) \\
 &\vdots \\
-\mathcal{T}(n) &= \mathcal{T}\left(\frac{N}{2^k}\right) + k\mathcal{O}(1)
+\mathcal{T}(N) &= \mathcal{T}\left(\frac{N}{2^k}\right) + k\mathcal{O}(1)
 \end{align*}
 $$
 
 Now, $\mathcal{T}\left(\frac{N}{2^k}\right)$ will be $\mathcal{T}(1)$ (i.e., a
-constant) when $\frac{N}{2^k} = 1$ or $k = \log n$.
+constant) when $\frac{N}{2^k} = 1$ or $k = \log N$.
 
 So, the expansion becomes:
 
-$$\mathcal{T}(n) = \mathcal{T}(1) + \log n \times \mathcal{O}(1)$$
+$$\mathcal{T}(N) = \mathcal{T}(1) + \log N \cdot \mathcal{O}(1)$$
 
 Given that $\mathcal{T}(1)$ is a constant time, the dominating factor here is
-$\log n$. Therefore, the time complexity is:
+$\log N$. Therefore, the time complexity is:
 
-$$\mathcal{T}(n) = \mathcal{O}(\log N)$$
+$$\mathcal{T}(N) = \mathcal{O}(\log N)$$
 
 ### Space Complexity
 
@@ -1346,8 +1471,8 @@ maximum depth of the recursion. In other words, it's based on the maximum number
 of recursive calls that are in progress at the same time.
 
 So the intuition is simple, we already established there can be a maximum of
-$\log n$ splits, thus it follows that the recursion depth is bounded by
-$\log n$.
+$\log N$ splits, thus it follows that the recursion depth is bounded by
+$\log N$.
 
 The space complexity of a recursive binary search gets divided into three parts:
 input, auxiliary, and total space complexity.
@@ -1369,8 +1494,8 @@ target value.
 
 Auxiliary space complexity is the extra space or temporary space used by an
 algorithm. In the case of recursive binary search, we still only need three
-variables to hold the left, right, and middle indices (`l`, `r`, `mid_index`).
-These variables occupy constant space, so the auxiliary space complexity is
+variables to hold the left, right, and middle indices (`l`, `r`, `m`). These
+variables occupy constant space, so the auxiliary space complexity is
 $\mathcal{O}(1)$ per recursive call.
 
 However, because this is a recursive function, we also have to consider the
@@ -1386,7 +1511,7 @@ pointers and the target element.
 For the recursive binary search:
 
 -   Each time we make a recursive call, we essentially halve the input size.
--   At most, we would need to make $\log n$ recursive calls (since we are
+-   At most, we would need to make $\log N$ recursive calls (since we are
     dividing by 2 each time) before we either find our target or exhaust the
     list.
 -   Each of these calls gets pushed onto the call stack.
