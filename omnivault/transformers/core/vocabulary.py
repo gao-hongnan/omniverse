@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import re
+import time
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Type
+from typing import Dict, List, Tuple, Type, TypeVar
 
 import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset
 
+from omnivault._types._generic import T_co
 from omnivault.transformers.config.constants import TOKENS
 
 
@@ -53,7 +55,7 @@ class Vocabulary(ABC):
         """
 
     @abstractmethod
-    def encode(self, sequence: str) -> int:
+    def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
         """
         Encodes a sequence to its corresponding integer index.
 
@@ -64,12 +66,12 @@ class Vocabulary(ABC):
 
         Returns
         -------
-        int
+        List[int]
             The integer index corresponding to the token.
         """
 
     @abstractmethod
-    def decode(self, sequence: str, remove_special_tokens: bool = True) -> str:
+    def decode(self, encoded_sequence: List[int], remove_special_tokens: bool = True) -> str:
         """
         Decodes an integer index back to its corresponding token.
 
@@ -131,13 +133,18 @@ class AdderVocabulary(Vocabulary):
 
     def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
         tokens: List[str] = self.tokenize(sequence, add_special_tokens=add_special_tokens)
-        return [self.token_to_index.get(token, self.token_to_index[AdderVocabulary.UNK]) for token in tokens]
+        encoded_sequence: List[int] = [
+            self.token_to_index.get(token, self.token_to_index[AdderVocabulary.UNK]) for token in tokens
+        ]
+        print("SSSS", encoded_sequence)
+
+        return encoded_sequence
 
     def encode_batch(self, sequences: List[str], add_special_tokens: bool = True) -> List[List[int]]:
         return [self.encode(sequence, add_special_tokens=add_special_tokens) for sequence in sequences]
 
-    def decode(self, sequence: str, remove_special_tokens: bool = True) -> str:
-        decoded = "".join([self.index_to_token.get(char, AdderVocabulary.UNK) for char in sequence])
+    def decode(self, encoded_sequence: List[int], remove_special_tokens: bool = True) -> str:
+        decoded = "".join([self.index_to_token.get(char, AdderVocabulary.UNK) for char in encoded_sequence])
 
         if remove_special_tokens:
             decoded = re.sub(
@@ -147,8 +154,11 @@ class AdderVocabulary(Vocabulary):
             )
         return decoded
 
-    def decode_batch(self, sequences: List[List[int]], remove_special_tokens: bool = True) -> List[str]:
-        return [self.decode(sequence, remove_special_tokens=remove_special_tokens) for sequence in sequences]
+    def decode_batch(self, encoded_sequences: List[List[int]], remove_special_tokens: bool = True) -> List[str]:
+        return [
+            self.decode(encoded_sequence, remove_special_tokens=remove_special_tokens)
+            for encoded_sequence in encoded_sequences
+        ]
 
     def __len__(self) -> int:
         return len(self.token_to_index)
@@ -158,7 +168,11 @@ class AdderVocabulary(Vocabulary):
         return len(self)
 
 
-class AdderDataset(Dataset):
+AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
+AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
+
+
+class AdderDataset(Dataset[AdderDataset_co]):
     def __init__(self, data: List[str], vocabulary: Vocabulary) -> None:
         super().__init__()
 
@@ -192,7 +206,7 @@ class AdderDataset(Dataset):
         target[: where_equal_index + 1] = self.pad_token_id
         return target[1:]
 
-    def __getitem__(self, index: int) -> Tuple[torch.LongTensor, torch.LongTensor]:
+    def __getitem__(self, index: int) -> AdderDataset_co:
         """
         data = ["15+57=072", "92+00=092", "95+53=148", "15+10=025"]
         getitem selects one index randomly, say 2, to obtain
@@ -213,38 +227,10 @@ class AdderDataset(Dataset):
         return input, target, padding_mask, future_mask
 
 
-class _MISSING_TYPE:
-    """
-    A sentinel class used to indicate that a parameter was not supplied.
-
-    This is used to differentiate between cases where a parameter is not
-    provided and where a parameter is provided with the value None. The class
-    provides a more descriptive representation than None or other placeholders.
-
-    NOTE: example usage is if you want to assign a default empty list or dict
-    but it is mutable, so you assign this type but not None since None don't make
-    sense.
-    """
-
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(_MISSING_TYPE, cls).__new__(cls)
-        return cls._instance
-
-    def __repr__(self):
-        return "<MISSING>"
-
-
-# avoid name clash with dataclasses
-_MISSING = _MISSING_TYPE()
-
-
 def collate_fn(
     batch: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]],
     batch_first: bool = True,
-    pad_token_id: int = _MISSING,
+    pad_token_id: int = 0,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     - **batch_first Parameter**: If `batch_first=True`, the resulting tensor
@@ -307,10 +293,10 @@ if __name__ == "__main__":
     pprint(vocab.encode("+"))
 
     sequence = "15+57=072"
-    sequences = ["15+57=072", "92+00=092", "95+53=148", "15+10=025"]
+    sequences = ["15+57=072", "01+02=003", "95+53=148", "15+10=025"]
 
     encoded_sentence = vocab.encode(sequence)
-    pprint(encoded_sentence)
+    print(f"Encoded sentence: {encoded_sentence}")
     decoded_sentence = vocab.decode(encoded_sentence)
     pprint(decoded_sentence)
 
@@ -319,20 +305,25 @@ if __name__ == "__main__":
     decoded_sentences = vocab.decode_batch(encoded_sentences)
     pprint(decoded_sentences)
 
-    dataset = AdderDataset(data=sequences, vocabulary=vocab)
+    dataset: AdderDataset[AdderDatasetYield] = AdderDataset(data=sequences, vocabulary=vocab)
 
     print()
 
+    counter = 1
     for x, y, pad_mask, future_mask in dataset:
         print("x")
         pprint(x)
+        pprint(isinstance(x, torch.LongTensor))
+
         print("y")
         pprint(y)
         print("pad")
         pprint(pad_mask)
         print("future")
         pprint(future_mask)
-
+        if counter == 2:
+            break
+    time.sleep(1000)
     # at this junction it is possible for the seq len
     # to vary. Dataset only cares about generating 1 single
     # sample data point and do not worry about different

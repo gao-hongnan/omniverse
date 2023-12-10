@@ -1,5 +1,61 @@
 # DevOps Best Practices
 
+## Pre-commit Setup Guide
+
+Pre-commit is a framework that manages and maintains multi-language pre-commit
+hooks. It simplifies code quality checks and ensures standards are met before
+commits are made.
+
+### Step 1: Install Pre-commit
+
+Install pre-commit on your system. For most users, using pip is sufficient:
+
+```bash
+pip install pre-commit
+```
+
+### Step 2: Create a Configuration File
+
+Create a `.pre-commit-config.yaml` file at the root of your repository. This
+file will contain the configuration for your pre-commit hooks.
+
+Example:
+
+```yaml
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.4.0
+      hooks:
+          - id: trailing-whitespace
+          - id: end-of-file-fixer
+```
+
+### Step 3: Install Hooks
+
+Run the following command to install the hooks defined in your
+`.pre-commit-config.yaml`:
+
+```bash
+pre-commit install
+```
+
+This command sets up the pre-commit hooks in your local repository.
+
+### Step 4: Run Against All Files
+
+Optionally, you can run the hooks against all the files in your repository to
+see if they pass:
+
+```bash
+pre-commit run --all-files
+```
+
+### Step 5: Make a Commit
+
+Once the hooks are installed, they will automatically run on every `git commit`.
+If a hook fails, it will block the commit. You can fix the issues and try
+committing again.
+
 ## GitHub Actions
 
 Things discussed here are concepts that are not specific to GitHub Actions. It
