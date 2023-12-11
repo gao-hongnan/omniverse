@@ -29,6 +29,14 @@ inputs:
     description: "File to write MyPy output to."
     required: false
     default: "mypy_results.log"
+  unit-test-script-location:
+    description: "Location of unit test script to run."
+    required: false
+    default: "scripts/devops/continuous-integration/test_unit_pytest.sh"
+  unit-test-output-filename:
+    description: "File to write unit test output to."
+    required: false
+    default: "unit_test_results.log"
 runs:
   using: "composite"
   steps:
@@ -53,6 +61,13 @@ runs:
         bash ${{ inputs.mypy-script-location }} | tee ${{ inputs.mypy-output-filename }}
       shell: bash
       if: always()
+    - name: Run Unit Tests
+      run: |
+        cd ${{ inputs.working-directory }} || exit 1
+        chmod +x ${{ inputs.unit-test-script-location }}
+        bash ${{ inputs.unit-test-script-location }} | tee ${{ inputs.unit-test-output-filename }}
+      shell: bash
+      if: always()
     - name: Upload Checked Results
       uses: actions/upload-artifact@v3
       if: always()
@@ -62,4 +77,5 @@ runs:
           ${{ inputs.working-directory }}/${{ inputs.black-output-filename }}
           ${{ inputs.working-directory }}/${{ inputs.ruff-output-filename }}
           ${{ inputs.working-directory }}/${{ inputs.mypy-output-filename }}
+          ${{ inputs.working-directory }}/${{ inputs.unit-test-output-filename }}
 

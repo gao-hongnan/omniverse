@@ -1,0 +1,14 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ci-type-mypy
+        name: Static Type Check
+        entry: >
+            bash -c 'set -o pipefail;
+            export CUSTOM_PACKAGES="omnivault" &&
+            export CUSTOM_FLAGS="--python-version=3.9 --color-output --no-pretty" &&
+            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/type_mypy.sh |
+            bash'
+        language: system
+        types: [python]
+        pass_filenames: false

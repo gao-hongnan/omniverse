@@ -38,6 +38,16 @@ on:
         required: false
         type: string
         default: "mypy_results.log"
+      unit-test-script-location:
+        description: "Location of unit test script to run."
+        required: false
+        type: string
+        default: "scripts/devops/continuous-integration/test_unit_pytest.sh"
+      unit-test-output-filename:
+        description: "File to write unit test output to."
+        required: false
+        type: string
+        default: "unit_test_results.log"
 
 env:
   WORKING_DIRECTORY: ${{ inputs.working-directory == '' && '.' || inputs.working-directory }}
@@ -67,3 +77,9 @@ jobs:
           working-directory: ${{ env.WORKING_DIRECTORY }}
           ruff-script-location: ${{ inputs.ruff-script-location }}
           ruff-output-filename: ${{ inputs.ruff-output-filename }}
+          black-script-location: ${{ inputs.black-script-location }}
+          black-output-filename: ${{ inputs.black-output-filename }}
+          mypy-script-location: ${{ inputs.mypy-script-location }}
+          mypy-output-filename: ${{ inputs.mypy-output-filename }}
+          unit-test-script-location: ${{ inputs.unit-test-script-location }}
+          unit-test-output-filename: ${{ inputs.unit-test-output-filename }}

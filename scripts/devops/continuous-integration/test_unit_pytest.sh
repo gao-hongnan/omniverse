@@ -11,9 +11,9 @@ DEFAULT_FLAGS=(
     # Add more flags here if necessary
 )
 DEFAULT_PACKAGES=( # similar to testpaths
-    tests/unit
-    tests/integration
-    tests/system
+    tests/omnivault/unit
+    # tests/integration
+    # tests/system
     # Add more packages here if necessary
 )
 
@@ -143,6 +143,7 @@ main() {
     $cmd
 
     if [ "$run_coverage" = true ]; then
+        check_if_installed "coverage" # FIXME: this is hardcoded
         coverage report -m
     fi
 }
