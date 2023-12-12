@@ -7,7 +7,6 @@ import torch
 @dataclass
 class GroundTruth:
     # test bad sequences like 01+02=03?
-    num_digits: int = 2
     seq_len: int = 10  # all sequences are padded to this length in this test example
 
     sequences: List[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])

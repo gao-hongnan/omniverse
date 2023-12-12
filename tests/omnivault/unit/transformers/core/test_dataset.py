@@ -3,11 +3,8 @@ from typing import List
 import pytest
 import torch
 
-from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
-
 from omnivault.transformer.config.ground_truth import GroundTruth
-
-
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 
 
 def test_construct_future_mask(adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth) -> None:
@@ -52,7 +49,9 @@ def test_construct_input(
     torch.testing.assert_close(input, expected_input)
 
 
-def test_dataset_integration_with_getitem(adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth) -> None:
+def test_dataset_integration_with_getitem(
+    adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth
+) -> None:
     """Test that the dataset returns the correct item."""
     index = 0
     length = len(adder_dataset)

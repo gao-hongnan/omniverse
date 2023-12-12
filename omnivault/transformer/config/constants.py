@@ -1,3 +1,4 @@
+NUM_DIGITS = 2
 TOKENS = [
     "0",
     "1",

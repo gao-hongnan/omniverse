@@ -6,7 +6,7 @@ import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset
 
-from omnivault.transformer.config.constants import TOKENS
+from omnivault.transformer.config.constants import NUM_DIGITS, TOKENS
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
@@ -122,7 +122,7 @@ def collate_fn(
 
 
 if __name__ == "__main__":
-    vocab = AdderVocabulary.from_tokens(tokens=TOKENS)
+    vocab = AdderVocabulary.from_tokens(tokens=TOKENS, num_digits=NUM_DIGITS)
 
     pprint(vocab.token_to_index)
     pprint(vocab.index_to_token)

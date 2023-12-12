@@ -39,7 +39,7 @@ class Vocabulary(ABC):
         ----------
         sequence : str
             The sequence to tokenize.
-        add_special_tokens : bool, optional
+        add_special_tokens : bool
             Whether to add special tokens to the sequence of tokens, by default True.
 
         Returns
