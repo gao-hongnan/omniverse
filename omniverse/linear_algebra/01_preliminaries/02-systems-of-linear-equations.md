@@ -126,9 +126,8 @@ context."
     on.
 
 6. **Solution**: Consequently, an **_optimal production plan_**
-   $\left(x_1^*,
-   \ldots, x_n^*\mathbf{r}ight)$ is one that satisfies the
-   system of linear equations in {eq}`02-systems-of-linear-equations-eq-1`:
+   $\left(x_1^*, \ldots, x_n^*\right)$ is one that satisfies the system of
+   linear equations in {eq}`02-systems-of-linear-equations-eq-1`:
 
     ```{math}
     :label: 02-systems-of-linear-equations-eq-2
@@ -153,10 +152,9 @@ context."
     quantities $x_1, \ldots, x_n$ of each product to produce. The coefficients
     $a_{ij}$ represent the amount of resource $R_i$ needed to produce one unit
     of product $N_j$. The constants $b_i$ represent the total available units of
-    resource $R_i$. Finally, every $n$-tuple
-    $\left(x_1^*, \ldots, x_n^*\mathbf{r}ight)$ that satisfies
-    {eq}`02-systems-of-linear-equations-eq-2` is a solution to the system of
-    linear equations.
+    resource $R_i$. Finally, every $n$-tuple $\left(x_1^*, \ldots, x_n^*\right)$
+    that satisfies {eq}`02-systems-of-linear-equations-eq-2` is a solution to
+    the system of linear equations.
 
     In other words, the optimal production plan is the solution to the system of
     linear equations. This solution is unique if the system is

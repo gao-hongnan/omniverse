@@ -56,11 +56,12 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
 
     name: str
 
-    lr: float # assume all optimizers have this parameter
+    lr: float  # assume all optimizers have this parameter
 
     def build(self, *, params: nn.ParameterList, **kwargs: T) -> torch.optim.Optimizer:
         """Builder method for creating an optimizer instance."""
         return self.create_instance(params=params, **kwargs)
+
 
 class AdamConfig(OptimizerConfig):
     name: str = "torch.optim.Adam"
