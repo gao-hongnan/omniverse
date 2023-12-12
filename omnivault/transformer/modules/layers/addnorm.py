@@ -3,7 +3,7 @@ from typing import Callable
 import torch
 from torch import nn
 
-from omnivault.transformers.modules.layers.normalization import LayerNorm
+from omnivault.transformer.modules.layers.normalization import LayerNorm
 
 
 class AddNorm(nn.Module):

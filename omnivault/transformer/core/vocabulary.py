@@ -4,7 +4,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Dict, List, Type
 
-from omnivault.transformers.config.constants import TOKENS
+from omnivault.transformer.config.constants import TOKENS
 
 
 class Vocabulary(ABC):

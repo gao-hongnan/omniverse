@@ -25,7 +25,7 @@ from typing import Optional
 import torch
 from torch import nn
 
-from omnivault.transformers.config.decoder import DecoderConfig
+from omnivault.transformer.config.decoder import DecoderConfig
 
 
 class BaseDecoderBlock(nn.Module):

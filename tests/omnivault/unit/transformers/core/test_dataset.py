@@ -3,9 +3,9 @@ from typing import List
 import pytest
 import torch
 
-from omnivault.transformers.core.dataset import AdderDataset, AdderDatasetYield
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 
-from omnivault.transformers.config.ground_truth import GroundTruth
+from omnivault.transformer.config.ground_truth import GroundTruth
 
 
 

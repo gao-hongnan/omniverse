@@ -1,9 +1,9 @@
 import pytest
 
-from omnivault.transformers.config.constants import TOKENS
-from omnivault.transformers.config.ground_truth import GroundTruth
-from omnivault.transformers.core.vocabulary import AdderVocabulary, Vocabulary
-from omnivault.transformers.core.dataset import AdderDataset, AdderDatasetYield
+from omnivault.transformer.config.constants import TOKENS
+from omnivault.transformer.config.ground_truth import GroundTruth
+from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 
 
 @pytest.fixture(scope="module")

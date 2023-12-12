@@ -2,9 +2,9 @@ from typing import List
 
 import pytest
 
-from omnivault.transformers.config.constants import TOKENS
-from omnivault.transformers.config.ground_truth import GroundTruth
-from omnivault.transformers.core.vocabulary import AdderVocabulary
+from omnivault.transformer.config.constants import TOKENS
+from omnivault.transformer.config.ground_truth import GroundTruth
+from omnivault.transformer.core.vocabulary import AdderVocabulary
 
 
 @pytest.mark.parametrize(

@@ -3,11 +3,11 @@ from typing import Optional, Union, overload
 import torch
 from torch import nn
 
-from omnivault.transformers.config.decoder import DecoderConfig
-from omnivault.transformers.decoder.base import BaseDecoder, BaseDecoderBlock
-from omnivault.transformers.modules.attention.core import MultiHeadedAttention
-from omnivault.transformers.modules.layers.addnorm import AddNorm
-from omnivault.transformers.modules.layers.mlp import PositionwiseFeedForward
+from omnivault.transformer.config.decoder import DecoderConfig
+from omnivault.transformer.decoder.base import BaseDecoder, BaseDecoderBlock
+from omnivault.transformer.modules.attention.core import MultiHeadedAttention
+from omnivault.transformer.modules.layers.addnorm import AddNorm
+from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
 
 
 class GPTDecoderBlock(BaseDecoderBlock):

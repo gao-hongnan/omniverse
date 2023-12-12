@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import nn
 
-from omnivault.transformers.modules.attention.base import Attention
+from omnivault.transformer.modules.attention.base import Attention
 
 
 class ScaledDotProductAttention(Attention):

@@ -3,7 +3,7 @@ from typing import Any
 
 from torch import nn
 
-from omnivault.transformers.modules.attention.base import Attention
+from omnivault.transformer.modules.attention.base import Attention
 
 
 @dataclass

@@ -6,8 +6,8 @@ import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset
 
-from omnivault.transformers.config.constants import TOKENS
-from omnivault.transformers.core.vocabulary import AdderVocabulary, Vocabulary
+from omnivault.transformer.config.constants import TOKENS
+from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)

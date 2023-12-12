@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from omnivault._types._alias import Loss
-from omnivault.transformers.core.loader import construct_batches
+from omnivault.transformer.core.loader import construct_batches
 
 
 def train_one_epoch(
