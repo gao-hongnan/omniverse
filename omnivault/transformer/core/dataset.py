@@ -6,13 +6,16 @@ import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset
 
-from omnivault.transformer.config.constants import NUM_DIGITS, TOKENS
+from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
 
 
+# TODO: ideally splitting data should be done within the dataset class to
+# speed up the process, as we only need to load the data that we need in memory.
+# See Kapathy's https://github.com/karpathy/minGPT/tree/master/projects/adder.
 class AdderDataset(Dataset[AdderDataset_co]):
     def __init__(self, data: List[str], vocabulary: Vocabulary) -> None:
         super().__init__()
@@ -122,7 +125,8 @@ def collate_fn(
 
 
 if __name__ == "__main__":
-    vocab = AdderVocabulary.from_tokens(tokens=TOKENS, num_digits=NUM_DIGITS)
+    config = Composer(dataset_size=2)
+    vocab = AdderVocabulary.from_tokens(tokens=config.constants.TOKENS, num_digits=config.constants.NUM_DIGITS)
 
     pprint(vocab.token_to_index)
     pprint(vocab.index_to_token)

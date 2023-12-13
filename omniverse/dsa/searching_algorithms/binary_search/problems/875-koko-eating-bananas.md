@@ -1,18 +1,18 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 # Koko Eating Bananas
@@ -32,6 +32,8 @@ kernelspec:
 ```{code-cell} ipython3
 :tags: [remove-cell]
 
+from __future__ import annotations
+
 %config InlineBackend.figure_format = 'svg'
 
 import rich
@@ -43,7 +45,7 @@ import math
 import sys
 from pathlib import Path
 
-def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
+def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Path | None:
     """
     Find the root directory by searching for a directory or file that serves as a
     marker.
@@ -78,14 +80,14 @@ else:
 
 ## Learning Objectives
 
-- Understand the problem statement and its significance.
-- Develop an intuition for the problem.
-- Identify the assumptions and constraints.
-- Formulate the problem mathematically.
-- Identify the appropriate algorithmic approach.
-- Implement the solution and test cases.
-- Analyze the time and space complexity.
-- Identify the tradeoffs between different approaches (if any).
+-   Understand the problem statement and its significance.
+-   Develop an intuition for the problem.
+-   Identify the assumptions and constraints.
+-   Formulate the problem mathematically.
+-   Identify the appropriate algorithmic approach.
+-   Implement the solution and test cases.
+-   Analyze the time and space complexity.
+-   Identify the tradeoffs between different approaches (if any).
 
 ## Introduction
 
@@ -257,18 +259,18 @@ bananas in the piles within `h` hours?
 Let's look at each pile individually and calculate the hours it would take for
 Koko to finish each pile at different speeds:
 
-- At speed 1: Koko would take 3, 6, 7, and 11 hours respectively for each pile,
-  which sums up to 27 hours in total. This is more than 8 hours, so the speed is
-  too slow.
-- At speed 2: Koko would take 2, 3, 4, and 6 hours respectively for each pile,
-  which sums up to 15 hours in total. This is still more than 8 hours, so the
-  speed is still too slow.
-- At speed 3: Koko would take 1, 2, 3, and 4 hours respectively for each pile,
-  which sums up to 10 hours in total. This is still more than 8 hours, so the
-  speed is still too slow.
-- At speed 4: Koko would take 1, 2, 2, and 3 hours respectively for each pile,
-  which sums up to 8 hours in total. This is exactly the number of hours
-  available, so the speed is just right.
+-   At speed 1: Koko would take 3, 6, 7, and 11 hours respectively for each
+    pile, which sums up to 27 hours in total. This is more than 8 hours, so the
+    speed is too slow.
+-   At speed 2: Koko would take 2, 3, 4, and 6 hours respectively for each pile,
+    which sums up to 15 hours in total. This is still more than 8 hours, so the
+    speed is still too slow.
+-   At speed 3: Koko would take 1, 2, 3, and 4 hours respectively for each pile,
+    which sums up to 10 hours in total. This is still more than 8 hours, so the
+    speed is still too slow.
+-   At speed 4: Koko would take 1, 2, 2, and 3 hours respectively for each pile,
+    which sums up to 8 hours in total. This is exactly the number of hours
+    available, so the speed is just right.
 
 Hence, the minimum speed at which Koko can eat all the bananas in the piles
 within `h = 8` hours is `4`.
@@ -366,9 +368,9 @@ These assumptions lead to certain constraints (in no particular order):
 
 In addition, leetcode provides the following constraints:
 
-- $1 \leq \text{piles.length} \leq 10^4$
-- $\text{piles.length} \leq h \leq 10^9$
-- $1 \leq \text{piles[i]} \leq 10^9$
+-   $1 \leq \text{piles.length} \leq 10^4$
+-   $\text{piles.length} \leq h \leq 10^9$
+-   $1 \leq \text{piles[i]} \leq 10^9$
 
 The additional constraints from LeetCode serve the following purposes:
 
@@ -394,34 +396,35 @@ The additional constraints from LeetCode serve the following purposes:
 
 1. **Multiple Piles, Limited Time**
 
-   - `Input: piles = [30, 11, 23, 4, 20], h = 6`
-   - `Output: 23`
-   - **Explanation**: Koko needs a minimum speed of 23 bananas/hour to finish
-     all bananas in 6 hours or fewer.
+    - `Input: piles = [30, 11, 23, 4, 20], h = 6`
+    - `Output: 23`
+    - **Explanation**: Koko needs a minimum speed of 23 bananas/hour to finish
+      all bananas in 6 hours or fewer.
 
 ### Edge Cases
 
 1. **Single Pile and Minimum Possible Input**
 
-   - `Input: piles = [1], h = 1`
-   - `Output: 1`
-   - **Explanation**: This is the simplest case where the pile has the minimum
-     number of bananas and Koko has the least amount of time. The speed is also
-     1 banana/hour.
+    - `Input: piles = [1], h = 1`
+    - `Output: 1`
+    - **Explanation**: This is the simplest case where the pile has the minimum
+      number of bananas and Koko has the least amount of time. The speed is also
+      1 banana/hour.
 
 2. **Highly Skewed Piles**
 
-   - `Input: piles = [100, 1, 1, 1], h = 4`
-   - `Output: 100`
-   - **Explanation**: The large pile dictates Koko's minimum eating speed. Koko
-     needs to eat at 100 bananas/hour to finish all bananas in 4 hours.
+    - `Input: piles = [100, 1, 1, 1], h = 4`
+    - `Output: 100`
+    - **Explanation**: The large pile dictates Koko's minimum eating speed. Koko
+      needs to eat at 100 bananas/hour to finish all bananas in 4 hours.
 
 3. **Large Data Set**
 
-   - `Input: piles = [8]*10^6, h = 10^6`
-   - `Output: 8`
-   - **Explanation**: This tests the algorithm's ability to handle **large-scale
-     scenarios** efficiently. Koko would need to eat at least 8 bananas/hour.
+    - `Input: piles = [8]*10^6, h = 10^6`
+    - `Output: 8`
+    - **Explanation**: This tests the algorithm's ability to handle
+      **large-scale scenarios** efficiently. Koko would need to eat at least 8
+      bananas/hour.
 
 ## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
@@ -551,38 +554,38 @@ $$
 The definitions of this problem are fairly straightforward and self-contained.
 The previous section already introduced most of the necessary definitions.
 
-- $p_n$ is the number of bananas in the $n$th pile
-- $k$ is the speed at which Koko eats bananas
-- $h$ is the number of hours Koko has to eat all the bananas
-- $N$ is the number of piles
-- $\mathcal{T}(k, p_n) = \left\lceil \frac{p_n}{k} \right\rceil$ is the number
-  of hours it takes Koko to eat the $n$th pile
-- $\mathcal{H}(k, \mathcal{P}) = \sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$
-  is the total number of hours it takes Koko to eat all the bananas.
-- $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$. This
-  is the upper bound of the search space for $k$.
+-   $p_n$ is the number of bananas in the $n$th pile
+-   $k$ is the speed at which Koko eats bananas
+-   $h$ is the number of hours Koko has to eat all the bananas
+-   $N$ is the number of piles
+-   $\mathcal{T}(k, p_n) = \left\lceil \frac{p_n}{k} \right\rceil$ is the number
+    of hours it takes Koko to eat the $n$th pile
+-   $\mathcal{H}(k, \mathcal{P}) = \sum_{n=1}^{N} \left\lceil \frac{p_n}{k} \right\rceil$
+    is the total number of hours it takes Koko to eat all the bananas.
+-   $M$ is the maximum number of bananas in a pile $\max_{n \in [1,N]} p_n$.
+    This is the upper bound of the search space for $k$.
 
 We include two more definitions here for completeness since we will use it
 later.
 
-- **Feasibility Function $\mathcal{F}(\mathcal{P}, k, h)$**: A binary function
-  indicating whether it is possible to eat all bananas within $h$ hours at speed
-  $k$.
+-   **Feasibility Function $\mathcal{F}(\mathcal{P}, k, h)$**: A binary function
+    indicating whether it is possible to eat all bananas within $h$ hours at
+    speed $k$.
 
-  $$
-  \mathcal{F}(k, \mathcal{P}, h) =
-  \begin{cases}
-  1, & \text{if } \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
-  0, & \text{otherwise}
-  \end{cases}
-  $$
+    $$
+    \mathcal{F}(k, \mathcal{P}, h) =
+    \begin{cases}
+    1, & \text{if } \mathcal{H}\left(k, \mathcal{P}\right) \leq h \\
+    0, & \text{otherwise}
+    \end{cases}
+    $$
 
-- **Optimal Eating Speed $k^*$**: The minimum constant integer eating speed that
-  satisfies the problem's constraints.
+-   **Optimal Eating Speed $k^*$**: The minimum constant integer eating speed
+    that satisfies the problem's constraints.
 
-  $$
-  k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}\left(k, \mathcal{P}\right) \leq h \}
-  $$
+    $$
+    k^* = \min \{ k \in \mathcal{K} \,|\, \mathcal{H}\left(k, \mathcal{P}\right) \leq h \}
+    $$
 
 ## Solution: Binary Search
 
@@ -858,10 +861,10 @@ return to apprehend her." - **_DALL·E 3_**
 
 The domain of our search space is defined as $k \in [1, \max(\text{{piles}})]$:
 
-- The lower bound $k = 1$ is set because Koko cannot eat 0 bananas per hour.
-- The upper bound $k = \max(\text{{piles}})$ is chosen based on the constraint
-  that eating at a faster rate than the largest pile is unproductive since Koko
-  can only eat from one pile at a time.
+-   The lower bound $k = 1$ is set because Koko cannot eat 0 bananas per hour.
+-   The upper bound $k = \max(\text{{piles}})$ is chosen based on the constraint
+    that eating at a faster rate than the largest pile is unproductive since
+    Koko can only eat from one pile at a time.
 
 The problem lends itself to a binary search approach due to its inherent
 monotonicity. To illustrate, consider an example with `piles = [3, 6, 7, 11]`
@@ -935,13 +938,13 @@ $m_t = \left\lfloor \frac{l_t + r_t}{2} \right\rfloor$.
 The algorithm uses these bounds to iteratively tighten the search space.
 
 1. **Initialization**:
-   1. $l = 1$
-   2. $r = M$
+    1. $l = 1$
+    2. $r = M$
 2. **Iterative Procedure**: For $k = m_t$:
 
-   - Compute $\mathcal{F}(\mathcal{P}, k, h)$.
-   - If $\mathcal{F}(\mathcal{P}, k, h) = 1$, then $r_{t+1} = m_t$.
-   - Otherwise, $l_{t+1} = m_t + 1$.
+    - Compute $\mathcal{F}(\mathcal{P}, k, h)$.
+    - If $\mathcal{F}(\mathcal{P}, k, h) = 1$, then $r_{t+1} = m_t$.
+    - Otherwise, $l_{t+1} = m_t + 1$.
 
 3. **Termination**: The algorithm terminates when $l_{t+1} \geq r_{t+1}$. The
    optimal eating speed $k^* = l$.
@@ -1133,10 +1136,10 @@ $\mathcal{J}$, respectively.
    $\mathcal{T}(N) \in \mathcal{O}(N)$ because for large $N$, the term $3N$
    dominates, and the running time grows linearly with $N$.
 
-   To formalize, a function $f(N)$ is in $\mathcal{O}(g(N))$ if there exist
-   positive constants $C$ (the constant factor) and $N_0$ (the threshold beyond
-   which the bound holds) such that for all $N \geq N_0$, the inequality
-   $f(N) \leq C \cdot g(N)$ is satisfied.
+    To formalize, a function $f(N)$ is in $\mathcal{O}(g(N))$ if there exist
+    positive constants $C$ (the constant factor) and $N_0$ (the threshold beyond
+    which the bound holds) such that for all $N \geq N_0$, the inequality
+    $f(N) \leq C \cdot g(N)$ is satisfied.
 
 Applying this to the example given, if the time complexity function of an
 algorithm is $\mathcal{T}(N) = 3N + 5$, we identify $f(N)$ as $\mathcal{T}(N)$
@@ -1341,10 +1344,10 @@ complexity is primarily determined by the input size.
 
 ## References and Further Readings
 
-- [USACO Guide: Silver Binary Search](https://usaco.guide/silver/binary-search)
-- [Binary Search: Identifying Monotonic Patterns](https://ramandeepsingh.hashnode.dev/binary-search-identifying-monotonic-patterns)
-- [The Algorists: Advanced Binary Search](https://www.thealgorists.com/Algo/BinarySearch/AdvancedBinarySearch)
-- [Algo Monster: Binary Search Monotonic](https://algo.monster/problems/binary-search-monotonic)
+-   [USACO Guide: Silver Binary Search](https://usaco.guide/silver/binary-search)
+-   [Binary Search: Identifying Monotonic Patterns](https://ramandeepsingh.hashnode.dev/binary-search-identifying-monotonic-patterns)
+-   [The Algorists: Advanced Binary Search](https://www.thealgorists.com/Algo/BinarySearch/AdvancedBinarySearch)
+-   [Algo Monster: Binary Search Monotonic](https://algo.monster/problems/binary-search-monotonic)
 
 [^max-of-piles-is-M]: Recall $\max(\mathcal{P}) = M$
 [^precondition-of-binary-search]:

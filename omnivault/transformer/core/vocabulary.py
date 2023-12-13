@@ -4,8 +4,6 @@ import re
 from abc import ABC, abstractmethod
 from typing import Dict, List, Type
 
-from omnivault.transformer.config.constants import TOKENS
-
 
 class Vocabulary(ABC):
     # Special tokens as class attributes
@@ -116,8 +114,28 @@ class AdderVocabulary(Vocabulary):
     EOS = "<EOS>"
     PAD = "<PAD>"
     UNK = "<UNK>"
+    ADD = "+"
     EQUAL = "="
-    TOKENS = TOKENS
+    TOKENS = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "+",
+        "*",
+        "-",
+        "=",
+        "<BOS>",
+        "<EOS>",
+        "<PAD>",
+        "<UNK>",
+    ]
 
     def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
         tokens = [char for char in sequence]

@@ -1,6 +1,6 @@
 import pytest
 
-from omnivault.transformer.config.constants import NUM_DIGITS, TOKENS
+from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.ground_truth import GroundTruth
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
@@ -13,8 +13,13 @@ def ground_truth() -> GroundTruth:
 
 
 @pytest.fixture(scope="module")
+def maybe_constant() -> MaybeConstant:
+    return MaybeConstant()
+
+
+@pytest.fixture(scope="module")
 def adder_vocab() -> Vocabulary:
-    return AdderVocabulary.from_tokens(tokens=TOKENS, num_digits=NUM_DIGITS)
+    return AdderVocabulary.from_tokens(tokens=MaybeConstant().TOKENS, num_digits=MaybeConstant().NUM_DIGITS)
 
 
 @pytest.fixture(scope="module")

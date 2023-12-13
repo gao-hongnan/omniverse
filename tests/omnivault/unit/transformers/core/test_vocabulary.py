@@ -2,14 +2,15 @@ from typing import List
 
 import pytest
 
-from omnivault.transformer.config.constants import TOKENS
 from omnivault.transformer.config.ground_truth import GroundTruth
 from omnivault.transformer.core.vocabulary import AdderVocabulary
+
+GROUND_TRUTH = GroundTruth()
 
 
 @pytest.mark.parametrize(
     "sequence,expected_tokens",
-    list(zip(GroundTruth().sequences, GroundTruth().tokenized_sequences)),
+    list(zip(GROUND_TRUTH.sequences, GROUND_TRUTH.tokenized_sequences)),
 )
 def test_tokenize(adder_vocab: AdderVocabulary, sequence: str, expected_tokens: List[str]) -> None:
     """Test that the sequence is tokenized as expected.
@@ -21,7 +22,7 @@ def test_tokenize(adder_vocab: AdderVocabulary, sequence: str, expected_tokens: 
 
 @pytest.mark.parametrize(
     "sequence,expected_encoded",
-    list(zip(GroundTruth().sequences, GroundTruth().encoded_sequences)),
+    list(zip(GROUND_TRUTH.sequences, GROUND_TRUTH.encoded_sequences)),
 )
 def test_encode(adder_vocab: AdderVocabulary, sequence: str, expected_encoded: List[int]) -> None:
     """Test that the sequence is encoded as expected.
@@ -33,7 +34,7 @@ def test_encode(adder_vocab: AdderVocabulary, sequence: str, expected_encoded: L
 
 @pytest.mark.parametrize(
     "encoded_sequence,expected_decoded",
-    list(zip(GroundTruth().encoded_sequences, GroundTruth().decoded_sequences)),
+    list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.decoded_sequences)),
 )
 def test_decode(adder_vocab: AdderVocabulary, encoded_sequence: List[int], expected_decoded: str) -> None:
     """Test that the sequence is decoded as expected.
@@ -57,4 +58,14 @@ def test_decode_batch(adder_vocab: AdderVocabulary, ground_truth: GroundTruth) -
 
 def test_len_vocab(adder_vocab: AdderVocabulary) -> None:
     """Test that the vocabulary length is correct."""
-    assert len(adder_vocab) == len(TOKENS) == adder_vocab.vocab_size
+    assert len(adder_vocab) == len(adder_vocab.TOKENS) == adder_vocab.vocab_size
+
+
+def test_vocab_token_to_index(adder_vocab: AdderVocabulary) -> None:
+    """Test that the token to index mapping is correct."""
+    assert adder_vocab.token_to_index == GROUND_TRUTH.token_to_index
+
+
+def test_vocab_index_to_token(adder_vocab: AdderVocabulary) -> None:
+    """Test that the index to token mapping is correct."""
+    assert adder_vocab.index_to_token == GROUND_TRUTH.index_to_token

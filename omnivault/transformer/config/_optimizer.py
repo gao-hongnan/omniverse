@@ -1,8 +1,10 @@
+from typing import Tuple
+
 import torch
 from torch import nn
-from omnivault.utils.config_management.dynamic import DynamicClassFactory
-from typing import Tuple
+
 from omnivault._types._generic import T
+from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
 
 # NOTE: remember to give generic class a type here, which is

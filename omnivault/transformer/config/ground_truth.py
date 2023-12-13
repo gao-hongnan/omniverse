@@ -1,11 +1,56 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Dict, List
 
 import torch
 
 
 @dataclass
 class GroundTruth:
+    token_to_index: Dict[str, int] = field(  # TODO: consider using Literal
+        default_factory=lambda: {
+            "0": 0,
+            "1": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "+": 10,
+            "*": 11,
+            "-": 12,
+            "=": 13,
+            "<BOS>": 14,
+            "<EOS>": 15,
+            "<PAD>": 16,
+            "<UNK>": 17,
+        }
+    )
+    index_to_token: Dict[int, str] = field(
+        default_factory=lambda: {
+            0: "0",
+            1: "1",
+            2: "2",
+            3: "3",
+            4: "4",
+            5: "5",
+            6: "6",
+            7: "7",
+            8: "8",
+            9: "9",
+            10: "+",
+            11: "*",
+            12: "-",
+            13: "=",
+            14: "<BOS>",
+            15: "<EOS>",
+            16: "<PAD>",
+            17: "<UNK>",
+        }
+    )
+
     # test bad sequences like 01+02=03?
     seq_len: int = 10  # all sequences are padded to this length in this test example
 

@@ -6,6 +6,8 @@ import torch
 from omnivault.transformer.config.ground_truth import GroundTruth
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 
+GROUND_TRUTH = GroundTruth()
+
 
 def test_construct_future_mask(adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth) -> None:
     """Test that the future mask is constructed correctly. Here we only test the first sequence."""
@@ -15,7 +17,7 @@ def test_construct_future_mask(adder_dataset: AdderDataset[AdderDatasetYield], g
 
 @pytest.mark.parametrize(
     "input,expected_padding_mask",
-    list(zip(GroundTruth().inputs, GroundTruth().padding_masks)),
+    list(zip(GROUND_TRUTH.inputs, GROUND_TRUTH.padding_masks)),
 )
 def test_construct_padding_mask(
     adder_dataset: AdderDataset[AdderDatasetYield], input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
@@ -27,7 +29,7 @@ def test_construct_padding_mask(
 
 @pytest.mark.parametrize(
     "encoded_sequence,expected_target",
-    list(zip(GroundTruth().encoded_sequences, GroundTruth().targets)),
+    list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.targets)),
 )
 def test_construct_target(
     adder_dataset: AdderDataset[AdderDatasetYield], encoded_sequence: List[int], expected_target: torch.LongTensor
@@ -39,7 +41,7 @@ def test_construct_target(
 
 @pytest.mark.parametrize(
     "encoded_sequence,expected_input",
-    list(zip(GroundTruth().encoded_sequences, GroundTruth().inputs)),
+    list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.inputs)),
 )
 def test_construct_input(
     adder_dataset: AdderDataset[AdderDatasetYield], encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
