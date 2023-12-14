@@ -7,6 +7,7 @@ on:
 
 env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
   CONTENT_DIR: omniverse # the directory where the book's content is stored
+  WEBSITE: www.gaohongnan.com
   WORKING_DIRECTORY: "."
   RUFF_SCRIPT_LOCATION: "scripts/devops/continuous-integration/lint_ruff.sh"
   RUFF_OUTPUT_FILENAME: "ruff_results.log"
@@ -19,7 +20,7 @@ env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! 
 
 # This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:
-  setup-env-vars:
+  setup-env-vars: # FIXME: see env comment.
     runs-on: ubuntu-latest
     outputs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
@@ -50,7 +51,7 @@ jobs:
   build-and-deploy-book:
     name: Build and Deploy JupyterBook to GitHub Pages
     runs-on: ${{ matrix.os }}
-    needs: continuous-integration # need this since we run CI first before CD, if not all jobs run in parallel
+    needs: [setup-env-vars, continuous-integration] # need this since we run CI first before CD, if not all jobs run in parallel
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -75,7 +76,7 @@ jobs:
       - name: Install Dependencies
         uses: ./.github/actions/install-dependencies
         with:
-          working-directory: "."
+          working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
       - name: Build the book
         run: |
           jupyter-book build ${{ env.CONTENT_DIR }}
@@ -84,4 +85,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.CONTENT_DIR }}/_build/html # Use environment variable
-          cname: www.gaohongnan.com
+          cname: ${{ env.WEBSITE }}
