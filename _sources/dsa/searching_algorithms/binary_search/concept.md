@@ -39,7 +39,7 @@ from typing import Iterable, TypeVar, Optional
 import sys
 from pathlib import Path
 
-def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Optional[Path]:
+def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Path | None:
     """
     Find the root directory by searching for a directory or file that serves as a
     marker.
@@ -1532,14 +1532,19 @@ search, and it does not modify the input array or list.
 
 ## References and Further Readings
 
-1. [LeetCode: Binary Search](https://leetcode.com/explore/learn/card/binary-search/125/template-i/)
-2. [LeetCode: Binary Search Editorial](https://leetcode.com/problems/binary-search/editorial/)
-3. [GeeksforGeeks: Binary Search](https://www.geeksforgeeks.org/binary-search/)
-4. [Runestone Academy: The Binary Search](https://runestone.academy/ns/books/published/pythonds3/SortSearch/TheBinarySearch.html)
-5. [Wikipedia: Binary Search Algorithm](https://en.wikipedia.org/wiki/Binary_search_algorithm)
-6. [Algomonster: Binary Search](https://algo.monster/problems/binary_search_intro)
-7. [Generic Template from Leetcode User](https://leetcode.com/problems/koko-eating-bananas/solutions/769702/python-clear-explanation-powerful-ultimate-binary-search-template-solved-many-problems/)
-8. [Strong Induction - Binary Search Correctness](http://www.cs.cornell.edu/courses/cs211/2006sp/Lectures/L06-Induction/binary_search.html)
+1. [LeetCode: Binary Search Template](https://leetcode.com/explore/learn/card/binary-search/125/template-i/)
+2. [LeetCode: Binary Search Solution with Template](https://leetcode.com/problems/binary-search/editorial/)
+3. [Runestone Academy: The Binary Search](https://runestone.academy/ns/books/published/pythonds3/SortSearch/TheBinarySearch.html)
+4. [Wikipedia: Binary Search Algorithm](https://en.wikipedia.org/wiki/Binary_search_algorithm)
+5. [Algomonster: Binary Search](https://algo.monster/problems/binary_search_intro)
+6. [Generic Template from Leetcode User](https://leetcode.com/problems/koko-eating-bananas/solutions/769702/python-clear-explanation-powerful-ultimate-binary-search-template-solved-many-problems/)
+7. [CS2112: Data Structures and Functional Programming - Loop Invariants](https://www.cs.cornell.edu/courses/cs2112/2015fa/lectures/lec_loopinv/)
+8. [CS170: Efficient Algorithms and Intractable Problems - Tutorial 1](https://inst.eecs.berkeley.edu/~cs170/fa14/tutorials/tutorial1.pdf)
+9. [CSE241: Introduction to Algorithms and Data Structures - Binary Search Handout](https://classes.engineering.wustl.edu/cse241/handouts/binsearch.pdf)
+10. [Stack Overflow: How can we prove by induction that binary search is correct?](https://stackoverflow.com/questions/13696185/how-can-we-prove-by-induction-that-binary-search-is-correct)
+11. [Math Stack Exchange: Proof of correctness of binary search](https://math.stackexchange.com/questions/117078/proof-of-correctness-of-binary-search)
+12. [Strncat's Blog: Proof of Correctness of Binary Search](https://strncat.github.io/jekyll/update/2019/08/19/binary-search-proof.html)
+13. [CS211: Data Structures and Algorithms - Lecture on Binary Search and Induction](https://www.cs.cornell.edu/courses/cs211/2006sp/Lectures/L06-Induction/binary_search.html)
 
 [^average_case]:
     The average case is about the same as the worst case, but if you want to be
