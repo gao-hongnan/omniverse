@@ -85,7 +85,7 @@ Solution Tree.
 [Wikipedia](<https://en.wikipedia.org/wiki/Master_theorem_(analysis_of_algorithms)#/media/File:Recursive_problem_solving.svg>)
 ```
 
-## Generic form
+## Generic Form
 
 The master theorem always yields
 [asymptotically tight bounds](https://en.wikipedia.org/wiki/Asymptotically_tight_bound)

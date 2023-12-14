@@ -1,8 +1,7 @@
-name: deploy-jupyterbook
+name: cicd-deploy-jupyterbook
 
 on:
-  # Trigger the workflow on push to main branch
-  push:
+  push:  # Trigger the workflow on push to main branch
     branches:
       - main
 
@@ -12,46 +11,52 @@ env:
 
 # This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:
+  continuous-integration:
+    uses: ./.github/workflows/_continuous_integration.yaml
+    with:
+      working-directory: "."
+      ruff-script-location: "scripts/devops/continuous-integration/lint_ruff.sh"
+      ruff-output-filename: "ruff_results.log"
+      black-script-location: "scripts/devops/continuous-integration/format_black.sh"
+      black-output-filename: "black_results.log"
+      mypy-script-location: "scripts/devops/continuous-integration/type_mypy.sh"
+      mypy-output-filename: "mypy_results.log"
+      unit-test-script-location: "scripts/devops/continuous-integration/test_unit_pytest.sh"
+      unit-test-output-filename: "unit_test_results.log"
+    secrets: inherit
   build-and-deploy-book:
     name: Build and Deploy JupyterBook to GitHub Pages
     runs-on: ${{ matrix.os }}
+    needs: continuous-integration # need this since we run CI first before CD, if not all jobs run in parallel
     strategy:
       matrix:
         os: [ubuntu-latest]
         python-version: [3.9]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-
       - name: Get pip cache directory path
         id: pip-cache
         run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT # set-output is deprecated.
-
       - name: Cache
         uses: actions/cache@v3
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements_dev.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements-dev.txt') }}
           restore-keys: ${{ runner.os }}-pip-
-
       - name: Install Dependencies
         uses: ./.github/actions/install-dependencies
         with:
           working-directory: "."
-
-      # Build the book
       - name: Build the book
         run: |
           jupyter-book build ${{ env.CONTENT_DIR }}
-
-      # Deploy the book's HTML to gh-pages branch
-      - name: GitHub Pages action
+      - name: GitHub Pages action # Deploy the book's HTML to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

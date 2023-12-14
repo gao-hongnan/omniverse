@@ -27,7 +27,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env: # FIXME: env cannot be passed down to jobs what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
+env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
   WORKING_DIRECTORY: "."
   RUFF_SCRIPT_LOCATION: "scripts/devops/continuous-integration/lint_ruff.sh"
   RUFF_OUTPUT_FILENAME: "ruff_results.log"
@@ -35,6 +35,8 @@ env: # FIXME: env cannot be passed down to jobs what?! https://github.com/orgs/c
   BLACK_OUTPUT_FILENAME: "black_results.log"
   MYPY_SCRIPT_LOCATION: "scripts/devops/continuous-integration/type_mypy.sh"
   MYPY_OUTPUT_FILENAME: "mypy_results.log"
+  UNIT_TEST_SCRIPT_LOCATION: "scripts/devops/continuous-integration/test_unit_pytest.sh"
+  UNIT_TEST_OUTPUT_FILENAME: "unit_test_results.log"
 
 jobs:
   continuous-integration:
@@ -47,4 +49,6 @@ jobs:
       black-output-filename: "black_results.log"
       mypy-script-location: "scripts/devops/continuous-integration/type_mypy.sh"
       mypy-output-filename: "mypy_results.log"
+      unit-test-script-location: "scripts/devops/continuous-integration/test_unit_pytest.sh"
+      unit-test-output-filename: "unit_test_results.log"
     secrets: inherit
