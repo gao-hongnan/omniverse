@@ -1,12 +1,33 @@
-name: cicd-deploy-jupyterbook
+name: continuous-integration-omnivault
 
 on:
-  push:  # Trigger the workflow on push to main branch
+  push:
     branches:
       - main
+      - dev
+      - continuous-integration
+    paths:
+      - ".github/**/*"
+      - ".ruff.toml"
+      - "pyproject.toml"
+      - "scripts/**/*"
+      - "omnivault/**"
+      - "!omnivault/**/*.md"
+      - "!omnivault/**/.gitignore"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "omnivault/**"
+      - "!omnivault/**/*.md"
+      - "!omnivault/**/.gitignore"
+
+# cancel any previous runs that are still in progress if a new one is queued.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
-  CONTENT_DIR: omniverse # the directory where the book's content is stored
   WORKING_DIRECTORY: "."
   RUFF_SCRIPT_LOCATION: "scripts/devops/continuous-integration/lint_ruff.sh"
   RUFF_OUTPUT_FILENAME: "ruff_results.log"
@@ -15,9 +36,8 @@ env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! 
   MYPY_SCRIPT_LOCATION: "scripts/devops/continuous-integration/type_mypy.sh"
   MYPY_OUTPUT_FILENAME: "mypy_results.log"
   UNIT_TEST_SCRIPT_LOCATION: "scripts/devops/continuous-integration/test_unit_pytest.sh"
-  UNIT_TEST_OUTPUT_FILENAME: "unit_test_resultss.log"
+  UNIT_TEST_OUTPUT_FILENAME: "unit_test_results.log"
 
-# This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:
   setup-env-vars:
     runs-on: ubuntu-latest
@@ -47,41 +67,3 @@ jobs:
       unit-test-script-location: ${{ needs.setup-env-vars.outputs.unit-test-script-location }}
       unit-test-output-filename: ${{ needs.setup-env-vars.outputs.unit-test-output-filename }}
     secrets: inherit
-  build-and-deploy-book:
-    name: Build and Deploy JupyterBook to GitHub Pages
-    runs-on: ${{ matrix.os }}
-    needs: continuous-integration # need this since we run CI first before CD, if not all jobs run in parallel
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.9]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-      - name: Get pip cache directory path
-        id: pip-cache
-        run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT # set-output is deprecated.
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements-dev.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
-      - name: Install Dependencies
-        uses: ./.github/actions/install-dependencies
-        with:
-          working-directory: "."
-      - name: Build the book
-        run: |
-          jupyter-book build ${{ env.CONTENT_DIR }}
-      - name: GitHub Pages action # Deploy the book's HTML to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v3.8.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ env.CONTENT_DIR }}/_build/html # Use environment variable
-          cname: www.gaohongnan.com
