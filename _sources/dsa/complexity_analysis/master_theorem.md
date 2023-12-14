@@ -350,7 +350,7 @@ solution $\mathcal{T}(n)=\Theta(n \log \log n)$.
     -   Apply Master theorem case $c = \log_b a$, where
             $a = 1, b = 2,
             c = 0, k = 0^{[5]}$
-*   -   Binary tree traversal
+*   -   Binary Tree traversal
     -   $\mathcal{T}(n) = 2\mathcal{T}\left(\frac{n}{2}\right) + \mathcal{O}(1)$
     -   $\mathcal{O}(n)$
     -   Apply Master theorem case $c < \log_b a$ where
