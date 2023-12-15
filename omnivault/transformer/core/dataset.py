@@ -31,6 +31,7 @@ class AdderDataset(Dataset[AdderDataset_co]):
     vocabulary : Vocabulary
         A `Vocabulary` object used for encoding the strings into numerical tokens.
     """
+
     def __init__(self, data: List[str], vocabulary: Vocabulary) -> None:
         super().__init__()
 
