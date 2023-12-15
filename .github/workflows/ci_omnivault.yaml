@@ -29,15 +29,10 @@ concurrency:
 
 env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
   WORKING_DIRECTORY: "."
-  RUFF_SCRIPT_LOCATION: "scripts/devops/continuous-integration/lint_ruff.sh"
   RUFF_OUTPUT_FILENAME: "ruff_results.log"
-  ISORT_SCRIPT_LOCATION: "scripts/devops/continuous-integration/format_isort.sh"
   ISORT_OUTPUT_FILENAME: "isort_results.log"
-  BLACK_SCRIPT_LOCATION: "scripts/devops/continuous-integration/format_black.sh"
   BLACK_OUTPUT_FILENAME: "black_results.log"
-  MYPY_SCRIPT_LOCATION: "scripts/devops/continuous-integration/type_mypy.sh"
   MYPY_OUTPUT_FILENAME: "mypy_results.log"
-  UNIT_TEST_SCRIPT_LOCATION: "scripts/devops/continuous-integration/test_unit_pytest.sh"
   UNIT_TEST_OUTPUT_FILENAME: "unit_test_results.log"
 
 jobs:
@@ -45,15 +40,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
-      ruff-script-location: ${{ env.RUFF_SCRIPT_LOCATION }}
       ruff-output-filename: ${{ env.RUFF_OUTPUT_FILENAME }}
-      isort-script-location: ${{ env.ISORT_SCRIPT_LOCATION }}
       isort-output-filename: ${{ env.ISORT_OUTPUT_FILENAME }}
-      black-script-location: ${{ env.BLACK_SCRIPT_LOCATION }}
       black-output-filename: ${{ env.BLACK_OUTPUT_FILENAME }}
-      mypy-script-location: ${{ env.MYPY_SCRIPT_LOCATION }}
       mypy-output-filename: ${{ env.MYPY_OUTPUT_FILENAME }}
-      unit-test-script-location: ${{ env.UNIT_TEST_SCRIPT_LOCATION }}
       unit-test-output-filename: ${{ env.UNIT_TEST_OUTPUT_FILENAME }}
     steps:
       - run: echo "Exposing env vars to reusable workflows."
@@ -62,14 +52,9 @@ jobs:
     uses: ./.github/workflows/_continuous_integration.yaml
     with:
       working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
-      ruff-script-location: ${{ needs.setup-env-vars.outputs.ruff-script-location }}
       ruff-output-filename: ${{ needs.setup-env-vars.outputs.ruff-output-filename }}
-      isort-script-location: ${{ needs.setup-env-vars.outputs.isort-script-location }}
       isort-output-filename: ${{ needs.setup-env-vars.outputs.isort-output-filename }}
-      black-script-location: ${{ needs.setup-env-vars.outputs.black-script-location }}
       black-output-filename: ${{ needs.setup-env-vars.outputs.black-output-filename }}
-      mypy-script-location: ${{ needs.setup-env-vars.outputs.mypy-script-location }}
       mypy-output-filename: ${{ needs.setup-env-vars.outputs.mypy-output-filename }}
-      unit-test-script-location: ${{ needs.setup-env-vars.outputs.unit-test-script-location }}
       unit-test-output-filename: ${{ needs.setup-env-vars.outputs.unit-test-output-filename }}
     secrets: inherit
