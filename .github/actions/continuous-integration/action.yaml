@@ -40,7 +40,7 @@ runs:
         bash security_bandit.sh | tee ${{ inputs.bandit-output-filename }}
       shell: bash
       if: always()
-    - name: Run Linter Check
+    - name: Run Linter Check (Ruff)
       run: |
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/lint_ruff.sh -o lint_ruff.sh
@@ -48,7 +48,7 @@ runs:
         bash lint_ruff.sh | tee ${{ inputs.ruff-output-filename }}
       shell: bash
       if: always()
-    - name: Run Isort Formatter Check
+    - name: Run Formatter Check (Isort)
       run: |
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/format_isort.sh -o format_isort.sh
@@ -56,7 +56,7 @@ runs:
         bash format_isort.sh | tee ${{ inputs.isort-output-filename }}
       shell: bash
       if: always()
-    - name: Run Black Formatter Check
+    - name: Run Formatter Check (Black)
       run: |
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/format_black.sh -o format_black.sh
@@ -64,7 +64,7 @@ runs:
         bash format_black.sh | tee ${{ inputs.black-output-filename }}
       shell: bash
       if: always()
-    - name: Run Type Checker Check
+    - name: Run Static Type Check (MyPy)
       run: |
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/type_mypy.sh -o type_mypy.sh
@@ -72,7 +72,7 @@ runs:
         bash type_mypy.sh | tee ${{ inputs.mypy-output-filename }}
       shell: bash
       if: always()
-    - name: Run Unit Tests
+    - name: Run Unit Tests (PyTest)
       run: |
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/test_unit_pytest.sh -o test_unit_pytest.sh

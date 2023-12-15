@@ -8,6 +8,7 @@ import subprocess
 # Insecure use of subprocess with shell=True
 subprocess.call("echo 'Hello, world!'", shell=True)
 
+
 def append_any_to_stack(stack: StackList[Any], item: Any) -> StackList[Any]:
     stack.push(item)
     return stack
