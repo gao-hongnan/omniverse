@@ -8,6 +8,11 @@ on:
         required: true
         type: string
         default: "."
+      bandit-output-filename:
+        description: "File to write Bandit output to."
+        required: false
+        type: string
+        default: "bandit_results.log"
       ruff-output-filename:
         description: "File to write Ruff output to."
         required: false
@@ -60,6 +65,7 @@ jobs:
         uses: ./.github/actions/continuous-integration
         with:
           working-directory: ${{ env.WORKING_DIRECTORY }}
+          bandit-output-filename: ${{ inputs.bandit-output-filename }}
           ruff-output-filename: ${{ inputs.ruff-output-filename }}
           isort-output-filename: ${{ inputs.isort-output-filename }}
           black-output-filename: ${{ inputs.black-output-filename }}

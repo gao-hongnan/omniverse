@@ -5,6 +5,10 @@ inputs:
     description: "Directory to change to before running checks."
     required: false
     default: "."
+  bandit-output-filename:
+    description: "File to write Bandit output to."
+    required: false
+    default: "bandit_results.log"
   ruff-output-filename:
     description: "File to write Ruff output to."
     required: false
@@ -28,6 +32,14 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Run Security Check (Bandit)
+      run: |
+        cd ${{ inputs.working-directory }} || exit 1
+        curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/security_bandit.sh -o security_bandit.sh
+        chmod +x security_bandit.sh
+        bash security_bandit.sh | tee ${{ inputs.bandit-output-filename }}
+      shell: bash
+      if: always()
     - name: Run Linter Check
       run: |
         cd ${{ inputs.working-directory }} || exit 1

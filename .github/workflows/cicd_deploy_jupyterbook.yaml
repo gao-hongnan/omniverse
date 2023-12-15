@@ -9,6 +9,7 @@ env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! 
   CONTENT_DIR: omniverse # the directory where the book's content is stored
   WEBSITE: www.gaohongnan.com
   WORKING_DIRECTORY: "."
+  BANDIT_OUTPUT_FILENAME: "bandit_results.log"
   RUFF_OUTPUT_FILENAME: "ruff_results.log"
   ISORT_OUTPUT_FILENAME: "isort_results.log"
   BLACK_OUTPUT_FILENAME: "black_results.log"
@@ -21,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       working-directory: ${{ env.WORKING_DIRECTORY }}
+      bandit-output-filename: ${{ env.BANDIT_OUTPUT_FILENAME }}
       ruff-output-filename: ${{ env.RUFF_OUTPUT_FILENAME }}
       isort-output-filename: ${{ env.ISORT_OUTPUT_FILENAME }}
       black-output-filename: ${{ env.BLACK_OUTPUT_FILENAME }}
@@ -33,6 +35,7 @@ jobs:
     uses: ./.github/workflows/_continuous_integration.yaml
     with:
       working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
+      bandit-output-filename: ${{ needs.setup-env-vars.outputs.bandit-output-filename }}
       ruff-output-filename: ${{ needs.setup-env-vars.outputs.ruff-output-filename }}
       isort-output-filename: ${{ needs.setup-env-vars.outputs.isort-output-filename }}
       black-output-filename: ${{ needs.setup-env-vars.outputs.black-output-filename }}
