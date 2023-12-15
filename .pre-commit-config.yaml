@@ -1,5 +1,6 @@
 # NOTE: It is important to have exactly the same config for all pre-commit hooks as the github action yaml. In other words, local and remote CI checks should be the same.
 # pre-commit run --all-files --verbose
+# See https://pycqa.github.io/isort/docs/configuration/black_compatibility.html for arg diff in local vs remote.
 repos:
   - repo: local
     hooks:
@@ -29,6 +30,7 @@ repos:
         name: Run Formatter Check (Isort)
         entry: >
             bash -c 'set -o pipefail;
+            export CUSTOM_FLAGS=--filter-files &&
             curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/continuous-integration/scripts/devops/continuous-integration/format_isort.sh |
             bash'
         language: system
