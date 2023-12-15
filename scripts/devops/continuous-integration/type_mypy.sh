@@ -43,7 +43,7 @@ fetch_and_source_utils_script() {
         source /dev/stdin <<<"$UTILS_SCRIPT"
         # check_bash_version # TODO: macOS old bash version does not support readarray.
         logger "INFO" "Successfully fetched and sourced '$SCRIPT_URL'."
-        logger "WARN" "🌈🌈🌈 Using custom logger for rich-like logging. Please put on your sunglasses 😎😎😎"
+        logger "WARN" "🌈🌈🌈 Using custom logger for rich-like logging."
         logger "INFO" "Current working directory: $(pwd)"
         logger "INFO" "Current user: $(whoami)"
     else

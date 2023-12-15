@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Any
 
 import torch
+
+from omnivault.transformer.core.dataset import AdderDatasetYield
 
 
 @dataclass
@@ -54,6 +56,10 @@ class GroundTruth:
     # test bad sequences like 01+02=03?
     seq_len: int = 10  # all sequences are padded to this length in this test example
 
+    collate_fn: Dict[str, Any] = field(
+        default_factory=lambda: {"batch_first": True, "pad_token_id": 16},
+        metadata={"description": "The collate function config."},
+    )
     sequences: List[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
     tokenized_sequences: List[List[str]] = field(
         default_factory=lambda: [
@@ -119,3 +125,94 @@ class GroundTruth:
             ),
         ]
     )
+
+    mock_batch: List[AdderDatasetYield] = field(init=False)
+
+    inputs_collated: torch.LongTensor = field(
+        default_factory=lambda: torch.LongTensor([[14, 1, 5, 10, 5, 7, 13, 0, 7, 2], [14, 0, 1, 10, 0, 2, 13, 0, 0, 3]])
+    )
+    targets_collated: torch.LongTensor = field(
+        default_factory=lambda: torch.LongTensor(
+            [
+                [16, 16, 16, 16, 16, 16, 0, 7, 2, 15],
+                [16, 16, 16, 16, 16, 16, 0, 0, 3, 15],
+            ]
+        )
+    )
+
+    padding_masks_collated: torch.BoolTensor = field(
+        default_factory=lambda: torch.BoolTensor(
+            [
+                [
+                    [
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                    ]
+                ],
+                [
+                    [
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                        [True, True, True, True, True, True, True, True, True, True],
+                    ]
+                ],
+            ]
+        )
+    )
+    # shape: (batch_size, 1, seq_len, seq_len)
+    future_masks_collated: torch.BoolTensor = field(
+        default_factory=lambda: torch.BoolTensor(
+            [
+                [
+                    [
+                        [True, False, False, False, False, False, False, False, False, False],
+                        [True, True, False, False, False, False, False, False, False, False],
+                        [True, True, True, False, False, False, False, False, False, False],
+                        [True, True, True, True, False, False, False, False, False, False],
+                        [True, True, True, True, True, False, False, False, False, False],
+                        [True, True, True, True, True, True, False, False, False, False],
+                        [True, True, True, True, True, True, True, False, False, False],
+                        [True, True, True, True, True, True, True, True, False, False],
+                        [True, True, True, True, True, True, True, True, True, False],
+                        [True, True, True, True, True, True, True, True, True, True],
+                    ]
+                ],
+                [
+                    [
+                        [True, False, False, False, False, False, False, False, False, False],
+                        [True, True, False, False, False, False, False, False, False, False],
+                        [True, True, True, False, False, False, False, False, False, False],
+                        [True, True, True, True, False, False, False, False, False, False],
+                        [True, True, True, True, True, False, False, False, False, False],
+                        [True, True, True, True, True, True, False, False, False, False],
+                        [True, True, True, True, True, True, True, False, False, False],
+                        [True, True, True, True, True, True, True, True, False, False],
+                        [True, True, True, True, True, True, True, True, True, False],
+                        [True, True, True, True, True, True, True, True, True, True],
+                    ]
+                ],
+            ]
+        )
+    )
+
+    def __post_init__(self) -> None:
+        # Construct mock_batch using the existing fields
+        self.mock_batch = [
+            (self.inputs[i], self.targets[i], self.padding_masks[i], self.future_masks[i])
+            for i in range(len(self.inputs))
+        ]

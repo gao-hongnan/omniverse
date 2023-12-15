@@ -4,7 +4,7 @@ import pytest
 import torch
 
 from omnivault.transformer.config.ground_truth import GroundTruth
-from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield, collate_fn
 
 GROUND_TRUTH = GroundTruth()
 
@@ -83,33 +83,34 @@ def test_dataset_integration_with_getitem(
             break
 
 
-# import pytest
-# import torch
-# from torch.utils.data.dataloader import default_collate
+def test_collate_fn(mock_batch: List[AdderDatasetYield], ground_truth: GroundTruth) -> None:
+    # Call your collate_fn function with the mock_batch
 
-# # Assuming AdderVocabulary and other necessary imports and fixtures
+    inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded = collate_fn(
+        mock_batch, **ground_truth.collate_fn
+    )
 
-# @pytest.fixture
-# def mock_batch():
-#     # Create a mock batch of data
-#     # Ensure that this mock data aligns with what your real data would look like
-#     return [
-#         (torch.tensor([1, 2, 3]), torch.tensor([4, 5, 6]), torch.tensor([True, False, True]), torch.tensor([True, True, False])),
-#         (torch.tensor([1, 2]), torch.tensor([4, 5]), torch.tensor([True, False]), torch.tensor([True, False])),
-#         # Add more tuples to represent additional data points
-#     ]
+    # Assert that the first dimension of the output tensors equals the batch size
+    assert inputs_padded.shape[0] == len(mock_batch)
+    assert targets_padded.shape[0] == len(mock_batch)
+    assert padding_masks_padded_and_expanded.shape[0] == len(mock_batch)
+    assert future_masks_expanded.shape[0] == len(mock_batch)
 
-# def test_collate_fn(mock_batch):
-#     # Call your collate_fn function with the mock_batch
-#     batch_first = True
-#     pad_token_id = 16  # Use the appropriate pad token id for your dataset
-#     inputs_padded, targets_padded, padding_masks_padded, future_masks_expanded = collate_fn(mock_batch, batch_first, pad_token_id)
+    torch.testing.assert_close(inputs_padded, ground_truth.inputs_collated)
+    torch.testing.assert_close(targets_padded, ground_truth.targets_collated)
+    torch.testing.assert_close(padding_masks_padded_and_expanded, ground_truth.padding_masks_collated)
+    torch.testing.assert_close(future_masks_expanded, ground_truth.future_masks_collated)
 
-#     # Assert the shapes of the returned tensors
-#     assert inputs_padded.shape[0] == len(mock_batch)
-#     # Add more assertions for shape, type, and values as needed
+    # Check if the padding has been applied correctly
+    for i, (input, target, _, _) in enumerate(mock_batch):
+        # Check for padding tokens in inputs and targets
+        input_len, target_len = input.size(0), target.size(0)
+        assert torch.all(inputs_padded[i, :input_len] == input)
+        assert torch.all(targets_padded[i, :target_len] == target)
 
-#     # Optionally, you can compare the output of your custom collate_fn with the default_collate to see if they behave similarly
-#     default_collated = default_collate(mock_batch)
-#     assert torch.equal(inputs_padded, default_collated[0])
-#     # Add more comparisons as needed
+        # Check padding mask shape and values
+        assert padding_masks_padded_and_expanded[i, :, :, :input_len].all()
+        assert not padding_masks_padded_and_expanded[i, :, :, input_len:].any()
+
+        # Check future mask shape
+        assert future_masks_expanded[i].size() == (1, input_len, input_len)

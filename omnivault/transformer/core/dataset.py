@@ -17,6 +17,20 @@ AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=
 # speed up the process, as we only need to load the data that we need in memory.
 # See Kapathy's https://github.com/karpathy/minGPT/tree/master/projects/adder.
 class AdderDataset(Dataset[AdderDataset_co]):
+    """
+    A Dataset class for encoding sequences for an addition problem.
+
+    This dataset class takes a list of string representations of addition
+    problems and a vocabulary object. It encodes the problems and prepares
+    input and target tensors for model training.
+
+    Parameters
+    ----------
+    data : List[str]
+        A list of strings, each representing an addition problem, e.g., "15+57=072".
+    vocabulary : Vocabulary
+        A `Vocabulary` object used for encoding the strings into numerical tokens.
+    """
     def __init__(self, data: List[str], vocabulary: Vocabulary) -> None:
         super().__init__()
 
@@ -79,15 +93,42 @@ def collate_fn(
     pad_token_id: int = 0,
 ) -> AdderDatasetYield:
     """
-    - **batch_first Parameter**: If `batch_first=True`, the resulting tensor
-    `inputs_padded` will have a shape of `(batch_size, max_seq_len)`, where
-    `batch_size` is the number of samples in the batch and `max_seq_len` is the
-    length of the longest sequence in the batch. If `batch_first=False`, the shape
-    will be `(max_seq_len, batch_size)`.
+    Collates a batch of data into padded tensors for input, target, and masks.
 
-    - **padding_value Parameter**: The `padding_value` parameter specifies the value
-    to use for padding shorter sequences. `pad_token_id` is typically used here,
-    which should correspond to the padding token's ID in your vocabulary.
+    This function takes a batch of data produced by `AdderDataset` instances and
+    pads the sequences to the same length, preparing them for batched processing
+    in models. It also reshapes padding and future masks to match the batch
+    dimensions.
+
+    Parameters
+    ----------
+    batch : List[AdderDatasetYield]
+        A batch of data, where each item is a tuple containing input, target,
+        padding mask, and future mask tensors.
+    batch_first : bool, default=True
+        If `batch_first=True`, the resulting tensor
+        `inputs_padded` will have a shape of `(batch_size, max_seq_len)`, where
+        `batch_size` is the number of samples in the batch and `max_seq_len` is the
+        length of the longest sequence in the batch. If `batch_first=False`, the shape
+        will be `(max_seq_len, batch_size)`.
+    pad_token_id : int, default=0
+        The `padding_value` parameter specifies the value
+        to use for padding shorter sequences. `pad_token_id` is typically used here,
+        which should correspond to the padding token's ID in your vocabulary.
+
+    Returns
+    -------
+    AdderDatasetYield
+        A tuple containing the following tensors:
+        - Padded input tensor
+        - Padded target tensor
+        - Reshaped padding mask tensor
+        - Reshaped and expanded future mask tensor
+
+    Notes
+    -----
+    The function assumes that all sequences in the batch are of the same type
+    and can be padded with the same `pad_token_id`.
     """
     # omega confused during zipping so put here for clarity
     # that when you unzip a batch it becomes a tuple.
@@ -115,17 +156,21 @@ def collate_fn(
 
     # padding_masks before view has shape: (batch_size, seq_len)
     # we want it to be (B, L, L) then (B, 1, L, L)
-    padding_masks_padded = padding_masks_padded.view(batch_size, 1, 1, seq_len).expand(batch_size, 1, seq_len, seq_len)
+    padding_masks_padded_and_expanded = padding_masks_padded.view(batch_size, 1, 1, seq_len).expand(
+        batch_size, 1, seq_len, seq_len
+    )
 
     # future mask has shape (L, L) but we want it to be (B, L, L) then (B, 1, L, L)
     future_masks: torch.BoolTensor = torch.stack(future_masks)  # type: ignore[assignment,no-redef]
 
     future_masks_expanded = future_masks.expand(batch_size, -1, -1).unsqueeze(1)  # type: ignore[attr-defined]
-    return cast(AdderDatasetYield, (inputs_padded, targets_padded, padding_masks_padded, future_masks_expanded))
+    return cast(
+        AdderDatasetYield, (inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded)
+    )
 
 
 if __name__ == "__main__":
-    config = Composer(dataset_size=2)
+    config = Composer()
     vocab = AdderVocabulary.from_tokens(tokens=config.constants.TOKENS, num_digits=config.constants.NUM_DIGITS)
 
     pprint(vocab.token_to_index)
@@ -135,7 +180,7 @@ if __name__ == "__main__":
     pprint(vocab.encode("+"))
 
     sequence = "15+57=072"
-    sequences = ["15+57=072", "01+02=003", "95+53=148", "15+10=025"]
+    sequences = ["15+57=072", "01+02=003"]  # , "95+53=148", "15+10=025"]
 
     encoded_sentence = vocab.encode(sequence)
     print(f"Encoded sentence: {encoded_sentence}")
@@ -197,7 +242,7 @@ if __name__ == "__main__":
         (
             inputs_padded,
             targets_padded,
-            padding_masks_padded,
+            padding_masks_padded_and_expanded,
             future_masks_expanded,
         ) = batch
 
@@ -205,13 +250,13 @@ if __name__ == "__main__":
         print(f"Batch {i+1}")
         print("Inputs Shape:", inputs_padded.shape)
         print("Targets Shape:", targets_padded.shape)
-        print("Padding Masks Shape:", padding_masks_padded.shape)
+        print("Padding Masks Shape:", padding_masks_padded_and_expanded.shape)
         print("Future Masks Shape:", future_masks_expanded.shape)
 
         # Print values (consider printing only a part of each tensor for large datasets)
         print("Inputs Values:", inputs_padded)
         print("Targets Values:", targets_padded)
-        print("Padding Masks Values:", padding_masks_padded)
+        print("Padding Masks Values:", padding_masks_padded_and_expanded)
         print("Future Masks Values:", future_masks_expanded)
 
         # Add a separator for readability between batches

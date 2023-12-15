@@ -1,3 +1,5 @@
+from typing import List
+
 import pytest
 
 from omnivault.transformer.config.constants import MaybeConstant
@@ -10,6 +12,11 @@ from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 def ground_truth() -> GroundTruth:
     """Define fixture so that we can use it in other tests with re-invoking the GroundTruth class."""
     return GroundTruth()
+
+
+@pytest.fixture(scope="module")
+def mock_batch(ground_truth: GroundTruth) -> List[AdderDatasetYield]:
+    return ground_truth.mock_batch
 
 
 @pytest.fixture(scope="module")

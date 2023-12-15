@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 import random
 import warnings
-from typing import Optional
 
 import numpy as np
 import torch
@@ -30,11 +29,12 @@ def configure_deterministic_mode() -> None:
     warnings.warn(
         "Deterministic mode is activated. This will negatively impact performance.",
         category=UserWarning,
+        stacklevel=2,
     )
 
 
 def seed_all(
-    seed: Optional[int] = 1992,
+    seed: int = 1992,
     seed_torch: bool = True,
     set_torch_deterministic: bool = True,
 ) -> int:
@@ -55,7 +55,7 @@ def seed_all(
     """
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
-    np.random.seed(seed)                           # numpy pseudo-random generator
+    np.random.default_rng(seed)                    # numpy pseudo-random generator
     random.seed(seed)                              # python's built-in pseudo-random generator
 
     if seed_torch:
