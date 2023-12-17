@@ -1,6 +1,6 @@
-from pydantic import BaseModel, Field
-
 from typing import Any, Dict, List
+
+from pydantic import BaseModel, Field
 
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.global_ import MaybeGlobal

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import List, Tuple, TypeVar, Dict, Any, cast
+from typing import Any, Dict, List, Tuple, TypeVar, cast
 
 import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset, Subset
 
+from omnivault._types._sentinel import NOT_GIVEN, _NotGiven
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
-from omnivault._types._sentinel import _NotGiven, NOT_GIVEN
 
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
