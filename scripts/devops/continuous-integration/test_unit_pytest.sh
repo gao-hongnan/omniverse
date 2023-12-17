@@ -142,12 +142,12 @@ main() {
 
     $cmd
 
+    local status=$?
+
     if [ "$run_coverage" = true ]; then
         check_if_installed "coverage" # FIXME: this is hardcoded
         coverage report -m
     fi
-
-    local status=$?
 
     if [ "$status" -eq 0 ]; then
         logger "INFO" "🎉🎉🎉 ${TOOL} testing passed."

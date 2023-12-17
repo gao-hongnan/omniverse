@@ -2,9 +2,10 @@ from typing import List
 
 import pytest
 import torch
+from torch.utils.data import Subset
 
 from omnivault.transformer.config.ground_truth import GroundTruth
-from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield, collate_fn
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield, collate_fn, split_dataset
 
 GROUND_TRUTH = GroundTruth()
 
@@ -114,3 +115,29 @@ def test_collate_fn(mock_batch: List[AdderDatasetYield], ground_truth: GroundTru
 
         # Check future mask shape
         assert future_masks_expanded[i].size() == (1, input_len, input_len)
+
+
+@pytest.mark.parametrize("split", [[0.7, 0.1, 0.2], [0.8, 0.1, 0.1], [0.6, 0.2, 0.2]])
+@pytest.mark.parametrize("seed", [42, 1992])
+def test_split_dataset(
+    adder_dataset_but_larger: AdderDataset[AdderDatasetYield], split: List[float], seed: int
+) -> None:
+    """Test splitting the dataset into train, validation, and test sets."""
+    # Perform the split
+    train_dataset, val_dataset, test_dataset = split_dataset(adder_dataset_but_larger, split, seed)
+
+    # Assert that the datasets are of type Subset
+    assert isinstance(train_dataset, Subset)
+    assert isinstance(val_dataset, Subset)
+    assert isinstance(test_dataset, Subset)
+
+    # Calculate expected lengths
+    total_len = len(adder_dataset_but_larger)
+    expected_train_len = int(total_len * split[0])
+    expected_val_len = int(total_len * split[1])
+    expected_test_len = total_len - expected_train_len - expected_val_len
+
+    # Assert that the datasets are split correctly
+    assert len(train_dataset) == expected_train_len
+    assert len(val_dataset) == expected_val_len
+    assert len(test_dataset) == expected_test_len

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List
 
 import pytest
@@ -32,5 +34,13 @@ def adder_vocab() -> Vocabulary:
 @pytest.fixture(scope="module")
 def adder_dataset(adder_vocab: Vocabulary) -> AdderDataset[AdderDatasetYield]:
     sequences = GroundTruth().sequences
+    dataset: AdderDataset[AdderDatasetYield] = AdderDataset(data=sequences, vocabulary=adder_vocab)
+    return dataset
+
+
+@pytest.fixture(scope="module")
+def adder_dataset_but_larger(adder_vocab: Vocabulary) -> AdderDataset[AdderDatasetYield]:
+    sequences = GroundTruth().sequences
+    sequences = sequences * 100
     dataset: AdderDataset[AdderDatasetYield] = AdderDataset(data=sequences, vocabulary=adder_vocab)
     return dataset
