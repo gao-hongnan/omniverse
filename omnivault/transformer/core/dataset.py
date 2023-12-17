@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Dict, List, Tuple, TypeVar, cast
+from typing import List, Tuple, TypeVar, Dict, Any, cast
 
 import torch
 from rich.pretty import pprint
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, Subset
 
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
+from omnivault._types._sentinel import _NotGiven, NOT_GIVEN
 
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
@@ -168,6 +169,38 @@ def collate_fn(
     return cast(
         AdderDatasetYield, (inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded)
     )
+
+
+def create_loader(
+    dataset: AdderDataset[AdderDatasetYield],
+    loader_config: Dict[str, Any],
+    collate_fn_config: Dict[str, Any] | _NotGiven = NOT_GIVEN,
+) -> DataLoader[AdderDatasetYield]:
+    if isinstance(
+        collate_fn_config, _NotGiven
+    ):  # TODO: excuse me mypy, why cannot I do if collate_fn_config is NOT_GIVEN?
+        collate_fn_config = {"batch_first": True, "pad_token_id": 0}
+    return DataLoader(
+        dataset=dataset,
+        collate_fn=lambda batch: collate_fn(batch, **collate_fn_config),
+        **loader_config,
+    )
+
+
+def split_dataset(
+    dataset: AdderDataset[AdderDatasetYield], split: List[float], seed: int
+) -> Tuple[
+    Subset[AdderDatasetYield], Subset[AdderDatasetYield], Subset[AdderDatasetYield]
+]:  # TODO: unclean since it should return AdderDataset[AdderDatasetYield] but mypy is not happy
+    # if sum(split) != 1.0:
+    #     raise ValueError(f"Split ratios should sum to 1 but got {sum(split)}.")
+
+    train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(
+        dataset,
+        lengths=split,
+        generator=torch.Generator().manual_seed(seed),
+    )
+    return train_dataset, val_dataset, test_dataset
 
 
 if __name__ == "__main__":

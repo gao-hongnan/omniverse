@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional
 
 import torch
 from torch import nn
@@ -9,7 +9,6 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from omnivault._types._alias import Loss
-from omnivault.transformer.core.loader import construct_batches
 
 
 def train_one_epoch(

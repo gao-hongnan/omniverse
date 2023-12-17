@@ -138,7 +138,7 @@ class AdderVocabulary(Vocabulary):
     ]
 
     def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
-        tokens = [char for char in sequence]
+        tokens = [char for char in sequence]  # noqa: C416
         if add_special_tokens:
             tokens = [AdderVocabulary.BOS] + tokens + [AdderVocabulary.EOS]
         return tokens

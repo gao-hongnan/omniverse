@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional, Tuple
 
 import torch
@@ -38,7 +40,7 @@ class ScaledDotProductAttention(Attention):
         query: torch.Tensor,
         key: torch.Tensor,
         value: torch.Tensor,
-        mask: Optional[torch.BoolTensor] = None,
+        mask: torch.BoolTensor | None = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Perform the forward pass for scaled dot-product attention.
 
@@ -64,6 +66,10 @@ class ScaledDotProductAttention(Attention):
         NOTE: We use `L` in our notes instead of `T` and `S` since we assume all query,
         key and value are of same length.
 
+        Also, we often denote the dimension of the keys and queries as `d_k`
+        instead of `d_k` and `d_q` respectively because both must have
+        the same dimensionality for them to be multiplied together.
+
         TODO: which shape is for cross-self?
 
         Parameters
@@ -73,7 +79,6 @@ class ScaledDotProductAttention(Attention):
                 vectors across multiple attention heads.
                     type :  torch.Tensor
                     shape: `(N, H, S or T, d_q)` where `d_q = D // H`
-
         key  :  A tensor of key vectors that are paired with values to form a mapping. The
                 dot product of a query with these keys determines the attention weight for the
                 corresponding values.
@@ -176,7 +181,7 @@ class MultiHeadedAttention(nn.Module):
         query: torch.Tensor,
         key: torch.Tensor,
         value: torch.Tensor,
-        mask: Optional[torch.BoolTensor] = None,
+        mask: torch.BoolTensor | None = None,
     ) -> torch.Tensor:
         """
         Notations
@@ -228,7 +233,11 @@ class MultiHeadedAttention(nn.Module):
         self.context_vector, self.attention_weights = self.attention(Q, K, V, mask)
         context_vector_concat                       = self.reverse_transpose_qkv(self.context_vector)
         # fmt: on
-        return self.W_O(context_vector_concat)
+
+        # mypy complains because it infers `O` as `Any` but it is actually a tensor.
+        # You can either cast it to tensor or use `self.W_O.forward(context_vector_concat)`.
+        O = self.W_O(context_vector_concat)
+        return O  # type: ignore[no-any-return]
 
     def _reset_parameters(self) -> None:
         """See PyTorch's code for inspiration!"""

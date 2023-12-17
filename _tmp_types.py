@@ -1,9 +1,8 @@
+import subprocess
 from typing import Any, Tuple, Union
 
 from omnivault._types._generic import T
 from omnivault.dsa.stack.concrete import StackList
-
-import subprocess
 
 # Insecure use of subprocess with shell=True
 subprocess.call("echo 'Hello, world!'", shell=True)

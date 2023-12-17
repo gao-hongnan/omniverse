@@ -85,12 +85,13 @@ Notations
   the output of the encoder, and thus the lengths can be different.
 """
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import nn
 
 
+# FIXME: consider removing ABC since nn.Module ensures forward method to be implemented.
 class Attention(ABC, nn.Module):
     """
     Base class for attention mechanisms.
@@ -121,6 +122,6 @@ class Attention(ABC, nn.Module):
         key: torch.Tensor,
         value: torch.Tensor,
         mask: Optional[torch.BoolTensor] = None,
-    ) -> torch.Tensor:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Perform the forward pass for the attention mechanism."""
         raise NotImplementedError("The forward method must be implemented by the subclass.")
