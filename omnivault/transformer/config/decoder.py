@@ -5,7 +5,6 @@ from torch import nn
 
 from omnivault.transformer.modules.attention.base import Attention
 
-
 @dataclass
 class MultiHeadedAttentionConfig:
     attention: Attention
@@ -44,4 +43,4 @@ class DecoderConfig:
     max_seq_len: int
     num_decoder_blocks: int
     dropout: float
-    decoder: DecoderBlockConfig
+    decoder_block: DecoderBlockConfig

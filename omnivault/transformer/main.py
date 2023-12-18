@@ -46,13 +46,15 @@ if __name__ == "__main__":
     pprint(optimizer)
     # train
 
-    feed_forward_config = cfg.feed_forward
+    feed_forward_config = instantiate(cfg.feed_forward)
+    pprint(feed_forward_config)
     pprint(type(feed_forward_config.activation))
+    pprint(type(feed_forward_config))
 
-    feed_forward_config = PositionwiseFeedForwardConfig(**cfg.feed_forward)
+    feed_forward_config = PositionwiseFeedForwardConfig(**feed_forward_config)
     pprint(feed_forward_config)
-    feed_forward_config.activation = instantiate(feed_forward_config.activation)
-    pprint(feed_forward_config)
+    #feed_forward_config.activation = instantiate(feed_forward_config.activation)
+    #pprint(feed_forward_config)
 
     #attention_config =
     attention = instantiate(cfg.attention)

@@ -21,13 +21,13 @@ class GPTDecoderBlock(BaseDecoderBlock):
     def __init__(self, config: DecoderConfig) -> None:
         super().__init__(config)
         # fmt: off
-        self.masked_self_attention_mha = MultiHeadedAttention(**config.decoder.masked_self_attention_mha.__dict__)
+        self.masked_self_attention_mha = MultiHeadedAttention(**config.decoder_block.masked_self_attention_mha.__dict__)
         # self.encoder_decoder_cross_attention_mha = MultiHeadedAttention(**config.decoder.encoder_decoder_cross_attention_mha)
 
-        self.feed_forward              = PositionwiseFeedForward(**config.decoder.feed_forward.__dict__)
+        self.feed_forward              = PositionwiseFeedForward(**config.decoder_block.feed_forward.__dict__)
 
-        self.add_norm_1                = AddNorm(**config.decoder.add_norm_1.__dict__)
-        self.add_norm_2                = AddNorm(**config.decoder.add_norm_2.__dict__)
+        self.add_norm_1                = AddNorm(**config.decoder_block.add_norm_1.__dict__)
+        self.add_norm_2                = AddNorm(**config.decoder_block.add_norm_2.__dict__)
 
         # self.feed_forward.register_forward_hook(forward_hook)
         # fmt: on
