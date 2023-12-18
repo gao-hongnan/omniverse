@@ -1,0 +1,49 @@
+data:
+  dataset_size: 2  # The size of the dataset.
+
+  split:  # The split ratio of the dataset.
+    - 0.7
+    - 0.1
+    - 0.2
+
+  collate_fn:  # The collate function config.
+    batch_first: true
+    pad_token_id: 16  # TODO: `pad_token_id` should be interpolated from `MaybeConstant`.
+
+  train_loader:  # The train loader config.
+    batch_size: 32
+    shuffle: true
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+
+  val_loader:  # The validation loader config.
+    batch_size: 32
+    shuffle: false
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+
+  test_loader:  # The test loader config.
+    batch_size: 32
+    shuffle: false
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+optimizer:
+  name: "torch.optim.Adam"
+  lr: 0.3
+  betas:
+    - 0.9
+    - 0.98
+  eps: 1e-9
+feed_forward:
+  d_model: 512
+  d_ff: 2048
+  activation:
+    _target_: torch.nn.ReLU
+  dropout: 0.1
+  bias: true
+attention:
+  _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
+  dropout: 0.1

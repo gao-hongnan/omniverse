@@ -1,5 +1,5 @@
+"""We use dataclass here for easy instantiating with hydra"""
 from dataclasses import dataclass, field
-from typing import Any
 
 from torch import nn
 
@@ -18,7 +18,7 @@ class MultiHeadedAttentionConfig:
 class PositionwiseFeedForwardConfig:
     d_model: int
     d_ff: int
-    activation: Any = field(default_factory=nn.ReLU())
+    activation: nn.Module = field(default_factory=nn.ReLU())
     dropout: float = 0.1
     bias: bool = True
 

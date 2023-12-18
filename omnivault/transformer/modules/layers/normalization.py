@@ -30,8 +30,8 @@ class LayerNorm(nn.Module):
         self.elementwise_affine = elementwise_affine
 
         if self.elementwise_affine:
-            self.gamma = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs))
-            self.beta = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs))
+            self.gamma = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs)) # type: ignore[arg-type]
+            self.beta = nn.Parameter(torch.empty(self.normalized_shape, **factory_kwargs)) # type: ignore[arg-type]
         else:
             self.register_parameter("gamma", None)
             self.register_parameter("beta", None)
