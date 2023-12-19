@@ -1,15 +1,25 @@
 import sys
+import time
 
 import torch
+from hydra.utils import instantiate
 from omegaconf import DictConfig
 from omegaconf import OmegaConf as om
 from rich.pretty import pprint
-import time
+
+from omnivault._types._alias import Missing
+from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
+from omnivault.transformer.config.decoder import (
+    AddNormConfig,
+    DecoderBlockConfig,
+    DecoderConfig,
+    MultiHeadedAttentionConfig,
+    PositionwiseFeedForwardConfig,
+)
 from omnivault.transformer.config.optimizer import AdamConfig, OptimizerConfig
-from omnivault.transformer.config.decoder import DecoderConfig, DecoderBlockConfig, MultiHeadedAttentionConfig, PositionwiseFeedForwardConfig, AddNormConfig
 from omnivault.transformer.utils.reproducibility import seed_all
-from hydra.utils import instantiate
+
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
 # so maybe consider using my own code base?
 
@@ -53,15 +63,18 @@ if __name__ == "__main__":
 
     feed_forward_config = PositionwiseFeedForwardConfig(**feed_forward_config)
     pprint(feed_forward_config)
-    #feed_forward_config.activation = instantiate(feed_forward_config.activation)
-    #pprint(feed_forward_config)
+    # feed_forward_config.activation = instantiate(feed_forward_config.activation)
+    # pprint(feed_forward_config)
 
-    #attention_config =
+    # attention_config =
     attention = instantiate(cfg.attention)
     pprint(attention)
 
     composer = Composer(data=data_config, optimizer=optimizer_pydantic_config)
     pprint(composer)
+    if composer.optimizer is MISSING:
+        print("optimizer is MISSING")
+        # prob raise an error?
 
     # # Define a simple dataset
     # inputs = torch.randn(100, 2)

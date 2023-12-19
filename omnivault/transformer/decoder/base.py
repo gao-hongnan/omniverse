@@ -20,15 +20,20 @@ The `memory_mask` in the context of a Transformer decoder is not the same as a f
 The `memory_mask` and the future mask are different components serving distinct purposes in a Transformer model. The former relates to how the decoder interacts with the encoder's output, and the latter is about maintaining the autoregressive property in sequence generation.
 """
 
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import Optional
 
 import torch
 from torch import nn
 
+from omnivault._types._alias import NotGiven
+from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.decoder import DecoderConfig
 
 
-class BaseDecoderBlock(nn.Module):
+class BaseDecoderBlock(ABC, nn.Module):
     """
     Abstract base class for a decoder block in a transformer-like architecture.
     """
@@ -37,12 +42,14 @@ class BaseDecoderBlock(nn.Module):
         super().__init__()
         self.config = config
 
+    @abstractmethod
     def forward(
         self,
         z: torch.Tensor,  # that's tgt in torch code base
-        encoder_hidden_states: Optional[torch.Tensor] = None,  # that's memory in torch code base
-        encoder_hidden_states_masks: Optional[torch.BoolTensor] = None,  # that's memory_mask in torch code base
-        target_masks: Optional[torch.BoolTensor] = None,  # that's tgt_mask in torch code base
+        *, # force keyword only arguments to prevent errors
+        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
+        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
+        target_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's tgt_mask in torch code base
     ) -> torch.Tensor:
         """
         Performs one decoder *block* forward pass given final encoder hidden states, the previous block's output, and
@@ -62,7 +69,7 @@ class BaseDecoderBlock(nn.Module):
         """
 
 
-class BaseDecoder(nn.Module):
+class BaseDecoder(ABC, nn.Module):
     """
     Abstract base class for a decoder in a transformer-like architecture.
     """
@@ -74,13 +81,15 @@ class BaseDecoder(nn.Module):
         super().__init__()
         self.config = config
 
+    @abstractmethod
     def forward(
         self,
         input_tokens: torch.LongTensor,
-        target_padding_masks: Optional[torch.BoolTensor] = None,
-        future_masks: Optional[torch.BoolTensor] = None,
-        encoder_hidden_states: Optional[torch.Tensor] = None,  # that's memory in torch code base
-        encoder_hidden_states_masks: Optional[torch.BoolTensor] = None,  # that's memory_mask in torch code base
+        *, # force keyword only arguments to prevent errors
+        target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
+        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
     ) -> torch.FloatTensor:
         ...
 

@@ -1,4 +1,6 @@
-from typing import Optional, Union, overload
+from __future__ import annotations
+
+from typing import Optional, overload
 
 import torch
 from torch import nn
@@ -8,7 +10,8 @@ from omnivault.transformer.decoder.base import BaseDecoder, BaseDecoderBlock
 from omnivault.transformer.modules.attention.core import MultiHeadedAttention
 from omnivault.transformer.modules.layers.addnorm import AddNorm
 from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
-
+from omnivault._types._alias import NotGiven
+from omnivault._types._sentinel import NOT_GIVEN
 
 class GPTDecoderBlock(BaseDecoderBlock):
     """GPTDecoderBlock focuses on masked self-attention and feed-forward layers.
@@ -32,7 +35,14 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # self.feed_forward.register_forward_hook(forward_hook)
         # fmt: on
 
-    def forward(self, z: torch.Tensor, target_masks: Union[torch.BoolTensor, None] = None) -> torch.Tensor:
+    def forward(
+        self,
+        z: torch.Tensor,  # that's tgt in torch code base
+        *,
+        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
+        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
+        target_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's tgt_mask in torch code base
+    ) -> torch.Tensor:
         """
         Parameters
         ----------
@@ -49,6 +59,10 @@ class GPTDecoderBlock(BaseDecoderBlock):
                         type:  torch.Tensor
                         shape: (B, S or T, D)
         """
+        assert encoder_hidden_states is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
+        assert encoder_hidden_states_masks is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
+        assert target_masks is not NOT_GIVEN
+
         z = self.add_norm_1(
             z,
             lambda z: self.masked_self_attention_mha(query=z, key=z, value=z, mask=target_masks),
@@ -79,28 +93,28 @@ class GPTDecoder(BaseDecoder):
 
     @overload
     def create_target_masks(
-        self, target_padding_masks: torch.Tensor, future_masks: Optional[torch.Tensor]
+        self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor | None
     ) -> torch.BoolTensor:
         ...
 
     @overload
     def create_target_masks(
-        self, target_padding_masks: Optional[torch.Tensor], future_masks: torch.Tensor
+        self, target_padding_masks: torch.Tensor | None, future_masks: torch.Tensor
     ) -> torch.BoolTensor:
         ...
 
     @overload
     def create_target_masks(
         self,
-        target_padding_masks: Optional[torch.Tensor],
-        future_masks: Optional[torch.Tensor],
+        target_padding_masks: torch.Tensor | None,
+        future_masks: torch.Tensor | None,
     ) -> torch.BoolTensor:
         ...
 
     def create_target_masks(
         self,
-        target_padding_masks: Optional[torch.Tensor],
-        future_masks: Optional[torch.Tensor],
+        target_padding_masks: torch.Tensor | None,
+        future_masks: torch.Tensor | None,
     ) -> torch.BoolTensor:
         if target_padding_masks is None and future_masks is None:
             raise ValueError("At least one of target_padding_masks or future_masks must not be None")
@@ -118,8 +132,11 @@ class GPTDecoder(BaseDecoder):
     def forward(
         self,
         input_tokens: torch.LongTensor,
-        target_padding_masks: Optional[torch.BoolTensor] = None,
-        future_masks: Optional[torch.BoolTensor] = None,
+        *, # force keyword only arguments to prevent errors
+        target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
+        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
     ) -> torch.FloatTensor:
         """
         Notations
@@ -154,6 +171,11 @@ class GPTDecoder(BaseDecoder):
                                 type:  torch.FloatTensor
                                 shape: (B, S or T, V)
         """
+        assert encoder_hidden_states is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
+        assert encoder_hidden_states_masks is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
+        assert target_padding_masks is not NOT_GIVEN
+        assert future_masks is not NOT_GIVEN
+
         # fmt: off
         seq_len     : int              = input_tokens.size(1)
         target_masks: torch.BoolTensor = self.create_target_masks(target_padding_masks, future_masks)
@@ -163,9 +185,9 @@ class GPTDecoder(BaseDecoder):
         z = self.dropout(z)
 
         for decoder_block in self.decoder_blocks:
-            z  = decoder_block(z, target_masks)
+            z  = decoder_block(z, target_masks=target_masks)
 
         z      = self.layer_norm(z)
-        logits = self.head(z)
+        logits: torch.FloatTensor = self.head(z)
         # fmt: on
         return logits

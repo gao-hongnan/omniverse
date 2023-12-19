@@ -4,7 +4,8 @@ from typing import Any, Dict, List, Union
 
 from pydantic import BaseModel, Field
 
-from omnivault._types._sentinel import NOT_GIVEN, _NotGiven
+from omnivault._types._alias import Missing
+from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optimizer import OptimizerConfig
@@ -43,7 +44,7 @@ class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lo
     constants: MaybeConstant = Field(default_factory=MaybeConstant)
     global_: MaybeGlobal = Field(default_factory=MaybeGlobal)
     data: DataConfig = Field(default_factory=DataConfig)
-    optimizer: Union[OptimizerConfig, _NotGiven] = Field(default=NOT_GIVEN, description="The optimizer config.")
+    optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
 
     class Config:
         """Pydantic config."""

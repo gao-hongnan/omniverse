@@ -102,8 +102,8 @@ class _NotGiven:
         return False
 
     @override
-    def __repr__(self) -> Literal["_NOT_GIVEN"]:
-        return "_NOT_GIVEN"
+    def __repr__(self) -> Literal["NOT_GIVEN"]:
+        return "NOT_GIVEN"
 
     def __setattr__(self, key: str, value: Any) -> None:
         raise AttributeError("_NotGiven instances are immutable")
@@ -113,6 +113,30 @@ class _NotGiven:
 
 
 NOT_GIVEN = _NotGiven()
+
+
+class _Missing:
+    _instance: _Missing | None = None
+
+    def __new__(cls: Type[_Missing]) -> _Missing:  # noqa: PYI034
+        if cls._instance is None:
+            cls._instance = super(_Missing, cls).__new__(cls)  # noqa: UP008
+        return cls._instance
+
+    def __bool__(self) -> Literal[False]:
+        return False
+
+    def __repr__(self) -> Literal["MISSING"]:
+        return "MISSING"
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        raise AttributeError("_Missing instances are immutable")
+
+    def __delattr__(self, key: str) -> None:
+        raise AttributeError("_Missing instances are immutable")
+
+
+MISSING = _Missing()
 
 
 class _Omit:

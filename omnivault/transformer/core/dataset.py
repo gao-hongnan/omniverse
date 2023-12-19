@@ -6,7 +6,8 @@ import torch
 from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset, Subset
 
-from omnivault._types._sentinel import NOT_GIVEN, _NotGiven
+from omnivault._types._alias import NotGiven
+from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
@@ -174,10 +175,10 @@ def collate_fn(
 def create_loader(
     dataset: AdderDataset[AdderDatasetYield],
     loader_config: Dict[str, Any],
-    collate_fn_config: Dict[str, Any] | _NotGiven = NOT_GIVEN,
+    collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
 ) -> DataLoader[AdderDatasetYield]:
     if isinstance(
-        collate_fn_config, _NotGiven
+        collate_fn_config, NotGiven
     ):  # TODO: excuse me mypy, why cannot I do if collate_fn_config is NOT_GIVEN?
         collate_fn_config = {"batch_first": True, "pad_token_id": 0}
     return DataLoader(

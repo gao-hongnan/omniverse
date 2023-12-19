@@ -5,6 +5,7 @@ from torch import nn
 
 from omnivault.transformer.modules.attention.base import Attention
 
+
 @dataclass
 class MultiHeadedAttentionConfig:
     attention: Attention
