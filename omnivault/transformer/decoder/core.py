@@ -5,13 +5,13 @@ from typing import cast, overload
 import torch
 from torch import nn
 
+from omnivault._types._alias import NotGiven
+from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.decoder.base import BaseDecoder, BaseDecoderBlock
 from omnivault.transformer.modules.attention.core import MultiHeadedAttention
 from omnivault.transformer.modules.layers.addnorm import AddNorm
 from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
-from omnivault._types._alias import NotGiven
-from omnivault._types._sentinel import NOT_GIVEN
 
 
 class GPTDecoderBlock(BaseDecoderBlock):
@@ -200,12 +200,19 @@ class GPTDecoder(BaseDecoder):
 
         # FIXME: CAN SOMEONE PLEASE HELP ME WITH TYPING HERE?? I AM SO STUCK IN CASTING HELL.
         if target_padding_masks is NOT_GIVEN:
-            target_padding_masks = cast(torch.BoolTensor, torch.ones_like(cast(torch.Tensor, future_masks), dtype=torch.bool))
+            target_padding_masks = cast(
+                torch.BoolTensor, torch.ones_like(cast(torch.Tensor, future_masks), dtype=torch.bool)
+            )
 
         if future_masks is NOT_GIVEN:
-            future_masks = cast(torch.BoolTensor, torch.ones_like(cast(torch.Tensor, target_padding_masks), dtype=torch.bool))
+            future_masks = cast(
+                torch.BoolTensor, torch.ones_like(cast(torch.Tensor, target_padding_masks), dtype=torch.bool)
+            )
 
-        return cast(torch.BoolTensor, torch.logical_and(cast(torch.Tensor, target_padding_masks), cast(torch.Tensor, future_masks)).bool())
+        return cast(
+            torch.BoolTensor,
+            torch.logical_and(cast(torch.Tensor, target_padding_masks), cast(torch.Tensor, future_masks)).bool(),
+        )
 
     def forward(
         self,

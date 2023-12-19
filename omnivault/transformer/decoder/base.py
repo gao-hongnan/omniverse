@@ -23,7 +23,6 @@ The `memory_mask` and the future mask are different components serving distinct 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 import torch
 from torch import nn
