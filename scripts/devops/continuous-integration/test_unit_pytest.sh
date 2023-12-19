@@ -24,7 +24,7 @@ PACKAGES=(${CUSTOM_PACKAGES:-"${DEFAULT_PACKAGES[@]}"})
 ################################################################################
 
 readonly SCRIPT_URL="https://raw.githubusercontent.com/gao-hongnan/common-utils/main/scripts/utils.sh"
-readonly ALLOWED_CONFIG_FILES=(".ruff.toml" "ruff.toml" "pyproject.toml")
+readonly ALLOWED_CONFIG_FILES=(".pytest.ini" "pyproject.toml")
 readonly TOOL="pytest"
 
 UTILS_SCRIPT=$(curl -s "$SCRIPT_URL")
@@ -126,7 +126,7 @@ main() {
     check_if_installed "${TOOL}"
     check_config_files "${ALLOWED_CONFIG_FILES[@]}"
 
-    logger "INFO" "Running ${TOOL} linting with flags: ${FLAGS[*]} and packages: $PACKAGES. Please change them if necessary."
+    logger "INFO" "Running ${TOOL} with flags: ${FLAGS[*]} and packages: $PACKAGES. Please change them if necessary."
     logger "INFO" "${TOOL} version: $(${TOOL} --version)"
 
     if [ "$run_coverage" = true ]; then

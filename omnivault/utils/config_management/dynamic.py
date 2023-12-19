@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 from omnivault._types._generic import DynamicClass, T, V
 
 
-class DynamicClassFactory(Generic[DynamicClass], BaseModel):
+class DynamicClassFactory(BaseModel, Generic[DynamicClass]):
     r"""
     A factory class for dynamic instantiation of classes based on a configuration.
 
