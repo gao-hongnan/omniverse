@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, overload
+from typing import cast, overload
 
 import torch
 from torch import nn
@@ -12,6 +12,7 @@ from omnivault.transformer.modules.layers.addnorm import AddNorm
 from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
+
 
 class GPTDecoderBlock(BaseDecoderBlock):
     """GPTDecoderBlock focuses on masked self-attention and feed-forward layers.
@@ -87,52 +88,129 @@ class GPTDecoder(BaseDecoder):
 
         self._reset_parameters()
 
-    @overload
-    def create_target_masks(self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor) -> torch.BoolTensor:
-        ...
+    # @overload
+    # def create_target_masks(self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor) -> torch.BoolTensor:
+    #     ...
+
+    # @overload
+    # def create_target_masks(
+    #     self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor | None
+    # ) -> torch.BoolTensor:
+    #     ...
+
+    # @overload
+    # def create_target_masks(
+    #     self, target_padding_masks: torch.Tensor | None, future_masks: torch.Tensor
+    # ) -> torch.BoolTensor:
+    #     ...
+
+    # @overload
+    # def create_target_masks(
+    #     self,
+    #     target_padding_masks: torch.Tensor | None,
+    #     future_masks: torch.Tensor | None,
+    # ) -> torch.BoolTensor:
+    #     ...
+
+    # def create_target_masks(
+    #     self,
+    #     target_padding_masks: torch.Tensor | None,
+    #     future_masks: torch.Tensor | None,
+    # ) -> torch.BoolTensor:
+    #     if target_padding_masks is None and future_masks is None:
+    #         raise ValueError("At least one of target_padding_masks or future_masks must not be None")
+
+    #     if target_padding_masks is None:
+    #         assert future_masks is not None  # for mypy
+    #         target_padding_masks = torch.ones_like(future_masks, dtype=torch.bool)
+
+    #     if future_masks is None:
+    #         assert target_padding_masks is not None  # for mypy
+    #         future_masks = torch.ones_like(target_padding_masks, dtype=torch.bool)
+
+    #     return torch.logical_and(target_padding_masks, future_masks).bool()  # type: ignore[return-value]
 
     @overload
     def create_target_masks(
-        self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor | None
+        self, target_padding_masks: torch.BoolTensor, future_masks: torch.BoolTensor
     ) -> torch.BoolTensor:
         ...
 
     @overload
-    def create_target_masks(
-        self, target_padding_masks: torch.Tensor | None, future_masks: torch.Tensor
-    ) -> torch.BoolTensor:
+    def create_target_masks(self, target_padding_masks: torch.BoolTensor, future_masks: NotGiven) -> torch.BoolTensor:
         ...
 
     @overload
+    def create_target_masks(self, target_padding_masks: NotGiven, future_masks: torch.BoolTensor) -> torch.BoolTensor:
+        ...
+
+    @overload
+    def create_target_masks(self, target_padding_masks: NotGiven, future_masks: NotGiven) -> torch.BoolTensor:
+        ...
+
     def create_target_masks(
         self,
-        target_padding_masks: torch.Tensor | None,
-        future_masks: torch.Tensor | None,
+        target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
     ) -> torch.BoolTensor:
-        ...
+        """
+        Creates a combined target mask for use in decoder layers, based on provided
+        target padding masks and future masks. If either mask is not provided (NotGiven),
+        a default mask is created using `torch.ones_like` to ensure shape compatibility
+        and neutral behavior in subsequent operations.
 
-    def create_target_masks(
-        self,
-        target_padding_masks: torch.Tensor | None,
-        future_masks: torch.Tensor | None,
-    ) -> torch.BoolTensor:
-        if target_padding_masks is None and future_masks is None:
+        The default mask created by `torch.ones_like` acts as a placeholder that
+        allows operations to proceed without altering the behavior that the mask
+        would impose. This is particularly useful when the absence of a mask should
+        not lead to masking out or altering any data, but rather to a 'pass-through'
+        behavior. For example, in the case of target padding masks, the default mask
+        allows the model to attend to all tokens in the target sequence, since the
+        default mask is all ones and thus does not mask out any tokens. What this
+        means is if the user does not provide a target padding mask, the model will
+        not mask out any tokens in the target sequence, which is the same behavior
+        as if the user had provided a target padding mask of all ones.
+
+        Parameters
+        ----------
+        target_padding_masks : torch.BoolTensor | NotGiven, optional
+            The mask for the target padding, indicating which elements of the target
+            should be masked out. If not provided, a default mask of ones is created
+            that does not mask out anything.
+
+        future_masks : torch.BoolTensor | NotGiven, optional
+            The mask for future tokens, typically used in self-attention mechanisms
+            to prevent the model from 'seeing' future tokens. If not provided, a
+            default mask of ones is created that does not prevent attending to future
+            tokens.
+
+        Returns
+        -------
+        torch.BoolTensor
+            A combined boolean mask that is the logical AND of the target padding mask
+            and future mask. The shape of the returned mask matches the input masks.
+
+        Raises
+        ------
+        ValueError
+            If both target_padding_masks and future_masks are NotGiven, a ValueError
+            is raised since at least one mask is required for the operation.
+        """
+        if target_padding_masks is NOT_GIVEN and future_masks is NOT_GIVEN:
             raise ValueError("At least one of target_padding_masks or future_masks must not be None")
 
-        if target_padding_masks is None:
-            assert future_masks is not None  # for mypy
-            target_padding_masks = torch.ones_like(future_masks, dtype=torch.bool)
+        # FIXME: CAN SOMEONE PLEASE HELP ME WITH TYPING HERE?? I AM SO STUCK IN CASTING HELL.
+        if target_padding_masks is NOT_GIVEN:
+            target_padding_masks = cast(torch.BoolTensor, torch.ones_like(cast(torch.Tensor, future_masks), dtype=torch.bool))
 
-        if future_masks is None:
-            assert target_padding_masks is not None  # for mypy
-            future_masks = torch.ones_like(target_padding_masks, dtype=torch.bool)
+        if future_masks is NOT_GIVEN:
+            future_masks = cast(torch.BoolTensor, torch.ones_like(cast(torch.Tensor, target_padding_masks), dtype=torch.bool))
 
-        return torch.logical_and(target_padding_masks, future_masks).bool()  # type: ignore[return-value]
+        return cast(torch.BoolTensor, torch.logical_and(cast(torch.Tensor, target_padding_masks), cast(torch.Tensor, future_masks)).bool())
 
     def forward(
         self,
         input_tokens: torch.LongTensor,
-        *, # force keyword only arguments to prevent errors
+        *,  # force keyword only arguments to prevent errors
         target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
@@ -173,8 +251,6 @@ class GPTDecoder(BaseDecoder):
         """
         assert encoder_hidden_states is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
         assert encoder_hidden_states_masks is NOT_GIVEN, "GPTDecoderBlock does not have encoder-decoder cross-attention"
-        assert target_padding_masks is not NOT_GIVEN
-        assert future_masks is not NOT_GIVEN
 
         # fmt: off
         seq_len     : int              = input_tokens.size(1)

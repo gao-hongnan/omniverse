@@ -46,7 +46,7 @@ class BaseDecoderBlock(ABC, nn.Module):
     def forward(
         self,
         z: torch.Tensor,  # that's tgt in torch code base
-        *, # force keyword only arguments to prevent errors
+        *,  # force keyword only arguments to prevent errors
         encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
         encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
         target_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's tgt_mask in torch code base
@@ -85,7 +85,7 @@ class BaseDecoder(ABC, nn.Module):
     def forward(
         self,
         input_tokens: torch.LongTensor,
-        *, # force keyword only arguments to prevent errors
+        *,  # force keyword only arguments to prevent errors
         target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
