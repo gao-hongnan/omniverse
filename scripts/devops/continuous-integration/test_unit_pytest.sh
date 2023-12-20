@@ -141,15 +141,18 @@ main() {
     logger "CODE" "$cmd"
 
     $cmd
-
-    local status=$?
+    pytest_status=$?
 
     if [ "$run_coverage" = true ]; then
         check_if_installed "coverage" # FIXME: this is hardcoded
         coverage report -m
+        coverage_status=$?
+    else
+        coverage_status=0
     fi
 
-    if [ "$status" -eq 0 ]; then
+    # Check if either pytest or coverage failed
+    if [ "$pytest_status" -eq 0 ] && [ "$coverage_status" -eq 0 ]; then
         logger "INFO" "🎉🎉🎉 ${TOOL} testing passed."
     else
         logger "ERROR" "💥💥💥 ${TOOL} testing failed."
