@@ -43,9 +43,9 @@ def seed_all(
 
     Parameters
     ----------
-    seed : int, optional
+    seed : int
         Seed number to be used, by default 1992.
-    seed_torch : bool, optional
+    seed_torch : bool
         Whether to seed PyTorch or not, by default True.
 
     Returns

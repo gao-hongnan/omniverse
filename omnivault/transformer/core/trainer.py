@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List
 
 import torch
 from torch import nn
@@ -9,16 +11,17 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from omnivault._types._alias import Loss
+from omnivault.transformer.core.dataset import AdderDatasetYield
 
 
 def train_one_epoch(
     model: nn.Module,
-    dataloader: DataLoader,
+    dataloader: DataLoader[AdderDatasetYield],
     criterion: nn.Module,
     optimizer: Optimizer,
-    scheduler: Optional[_LRScheduler] = None,
+    scheduler: _LRScheduler | None = None,
     grad_norm_clip: float = 1.0,
-    device: str = "cuda",
+    device: int | torch.device | None = None,
 ) -> Loss:
     """
     Variables
@@ -45,7 +48,7 @@ def train_one_epoch(
         The loss function used for evaluation.
     optimizer : Optimizer
         The optimizer used for training.
-    scheduler : Optional[_LRScheduler], optional
+    scheduler : _LRScheduler | None, optional
         The learning rate scheduler used for training, by default None.
     grad_norm_clip : float, optional
         The gradient norm clipping value, by default 1.0.
@@ -64,7 +67,7 @@ def train_one_epoch(
     # fmt: off
     epoch_running_loss: float = 0.0
     num_batches       : int   = len(dataloader)
-    progress_bar      : tqdm  =  tqdm(enumerate(dataloader, start=1), total=num_batches)
+    progress_bar      : tqdm[Any] = tqdm(enumerate(dataloader, start=1), total=num_batches) # FIXME: Find the correct type for tqdm
     # fmt: on
 
     for _batch_index, batch in progress_bar:
@@ -116,9 +119,9 @@ def train_one_epoch(
 
 def valid_one_epoch(
     model: nn.Module,
-    dataloader: DataLoader,
+    dataloader: DataLoader[AdderDatasetYield],
     criterion: nn.Module,
-    device: str = "cuda",
+    device: int | torch.device | None = None,
 ) -> Loss:
     """
     Validates the model for one epoch on the given dataloader.
@@ -191,15 +194,15 @@ class Trainer:
     def __init__(
         self,
         model: nn.Module,
-        train_dataloader: DataLoader,
-        valid_dataloader: DataLoader,
+        train_dataloader: DataLoader[AdderDatasetYield],
+        valid_dataloader: DataLoader[AdderDatasetYield],
         criterion: nn.Module,
         optimizer: Optimizer,
-        scheduler: Optional[_LRScheduler] = None,
+        scheduler: _LRScheduler | None = None,
         grad_norm_clip: float = 1.0,
-        device: str = "cuda",
+        device: int | torch.device | None = None,
         *,
-        test_dataloader: Optional[DataLoader] = None,
+        test_dataloader: DataLoader[AdderDatasetYield] | None = None,
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
@@ -216,18 +219,18 @@ class Trainer:
         self.test_dataloader  = test_dataloader
 
         # attributes not in __init__ constructor
-        self.callbacks: Dict[str, List[Callable]] = defaultdict(list)
+        self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
         # fmt: on
 
-    def add_callback(self, event: str, callback: Callable) -> None:
+    def add_callback(self, event: str, callback: Callable[[Trainer], None]) -> None:
         """Adds a callback to the list for a given event."""
         self.callbacks[event].append(callback)
 
-    def set_callback(self, event: str, callback: Callable) -> None:
+    def set_callback(self, event: str, callback: Callable[[Trainer], None]) -> None:
         """Sets a callback to the list for a given event."""
         self.callbacks[event] = [callback]
 
-    def remove_callback(self, event: str, callback: Callable) -> None:
+    def remove_callback(self, event: str, callback: Callable[[Trainer], None]) -> None:
         """Removes a callback from the list for a given event."""
         self.callbacks[event].remove(callback)
 

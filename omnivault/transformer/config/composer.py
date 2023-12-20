@@ -8,7 +8,7 @@ from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.global_ import MaybeGlobal
-from omnivault.transformer.config.optimizer import OptimizerConfig
+from omnivault.transformer.config.optim import OptimizerConfig
 
 
 class DataConfig(BaseModel):

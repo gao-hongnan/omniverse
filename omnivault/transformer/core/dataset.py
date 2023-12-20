@@ -11,6 +11,7 @@ from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
+# FIXME: Should we rename `AdderDatasetYield` to `DatasetYield` to be more generic?
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
 
@@ -183,7 +184,7 @@ def create_loader(
         collate_fn_config = {"batch_first": True, "pad_token_id": 0}
     return DataLoader(
         dataset=dataset,
-        collate_fn=lambda batch: collate_fn(batch, **collate_fn_config),
+        collate_fn=lambda batch: collate_fn(batch, **collate_fn_config),  # type: ignore[arg-type]
         **loader_config,
     )
 
