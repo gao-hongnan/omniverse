@@ -1,4 +1,10 @@
 """
+## Reference
+
+The proper implementation is in:
+https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py
+but it is slightly more complicated for this project.
+
 ## `NotGiven`
 
 - **Purpose**: Indicates that a parameter was not provided at all. It's used to
@@ -106,16 +112,27 @@ class _NotGiven:
         return "NOT_GIVEN"
 
     def __setattr__(self, key: str, value: Any) -> None:
-        raise AttributeError("_NotGiven instances are immutable")
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
 
     def __delattr__(self, key: str) -> None:
-        raise AttributeError("_NotGiven instances are immutable")
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
 
 
 NOT_GIVEN = _NotGiven()
 
 
 class _Missing:
+    """
+    -   **Primary Use:** `MISSING` is more common in data structures,
+        configurations, or APIs where you need to signify that a value hasn't been
+        set or provided, and it's expected to be present or filled in later.
+    -   **Semantics:** It indicates the absence of a value in a more passive sense,
+        as in "not yet provided" or "awaiting assignment."
+    -   **Example:** In a configuration object, `None` might be used to disable an
+        option, whereas `MISSING` would indicate that the user has not yet made a
+        decision about that option.
+    """
+
     _instance: _Missing | None = None
 
     def __new__(cls: Type[_Missing]) -> _Missing:  # noqa: PYI034
@@ -130,10 +147,10 @@ class _Missing:
         return "MISSING"
 
     def __setattr__(self, key: str, value: Any) -> None:
-        raise AttributeError("_Missing instances are immutable")
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
 
     def __delattr__(self, key: str) -> None:
-        raise AttributeError("_Missing instances are immutable")
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
 
 
 MISSING = _Missing()
@@ -159,5 +176,24 @@ class _Omit:
     ```
     """
 
+    _instance: _Omit | None = None
+
+    def __new__(cls: Type[_Omit]) -> _Omit:  # noqa: PYI034
+        if cls._instance is None:
+            cls._instance = super(_Omit, cls).__new__(cls)  # noqa: UP008
+        return cls._instance
+
     def __bool__(self) -> Literal[False]:
         return False
+
+    def __repr__(self) -> Literal["OMIT"]:
+        return "OMIT"
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
+
+    def __delattr__(self, key: str) -> None:
+        raise AttributeError(f"{self.__class__.__name__} instances are immutable")
+
+
+OMIT = _Omit()
