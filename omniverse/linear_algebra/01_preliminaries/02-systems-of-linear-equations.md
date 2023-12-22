@@ -92,7 +92,7 @@ We'll examine Example 2.1 from Section 2.1, titled 'Systems of Linear
 Equations', on page 19 of the book 'Mathematics for Machine Learning' by
 Deisenroth, Faisal, and Ong (2020) {cite}`deisenroth2020mathematics`. This
 example provides an insightful application of these concepts in a practical
-context."
+context.
 
 1. **Context**: We have a company that produces a set of products
    $N_1, \ldots, N_n$. These products require resources $R_1, \ldots, R_m$ to be
@@ -178,7 +178,7 @@ central to finding an optimal solution that maximizes resource utilization.
     - $N_1$: Loaves of whole wheat bread
     - $N_2$: Baguettes
     - $N_3$: Croissants
-    - ... and so on, up to $N_n$ being the nth type of bread or pastry.
+    - ... and so on, up to $N_n$ being the $n$-th type of bread or pastry.
 
 2. **Resources ($R_i$)**: The resources are the ingredients and materials needed
    to make these breads and pastries. Examples include:
@@ -187,14 +187,16 @@ central to finding an optimal solution that maximizes resource utilization.
     - $R_2$: Yeast
     - $R_3$: Butter
     - $R_4$: Sugar
-    - ... up to $R_m$, the mth resource.
+    - ... up to $R_m$, the $m$-th resource.
 
 3. **Resource Requirements ($a_{ij}$)**: Each type of bread or pastry requires
    specific amounts of these ingredients. For example:
 
-    - To make one loaf of whole wheat bread ($N_1$), you might need 2 units of
-      flour ($a_{11} = 2$), 1 unit of yeast ($a_{21} = 1$), and no sugar
-      ($a_{41} = 0$).
+    - To make one loaf of whole wheat bread ($N_1$), you might need:
+        - 2 units of flour ($a_{11} = 2$),
+        - 1 unit of yeast ($a_{21} = 1$),
+        - 3 units of butter ($a_{31} = 3$), and
+        - no sugar ($a_{41} = 0$).
 
 4. **Optimal Production Plan**: The bakery needs to decide how many of each type
    of bread and pastry to bake each day. This decision is based on the available
@@ -233,9 +235,12 @@ A general system of $N$ linear equations with $D$ unknowns is given by:
 \end{aligned}
 ```
 
-where $x_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) are the unknowns
-and $a_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) and $b_n$ (for
-$n = 1, \ldots, N$) are the coefficients and constants, respectively.
+where
+
+-   $x_{d}$ (for $d = 1, \ldots, D$) are the unknowns,
+-   $a_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) are the
+    coefficients of the unknowns, and
+-   $b_n$ (for $n = 1, \ldots, N$) are the constants.
 ````
 
 The choice of using $N$ and $D$ for the number of equations and unknowns instead
@@ -253,11 +258,12 @@ $N$ and $D$ are commonly used to represent the following:
     the number of rooms, square footage, location, age of the building, etc. $D$
     represents the total count of these features.
 
-Furthermore, in machine learning context, the $x_{n,d}$ presented in
+Furthermore, in machine learning context, the $a_{n,d}$ presented in
 {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1` are often
-referred to as **_features_** or **_attributes_**. The $a_{n,d}$ are referred to
-as **_weights_** or **_coefficients_**. The $b_n$ are referred to as
-**_labels_** or **_targets_**. For that reason, we often denote the linear
+referred to as **_features_** or **_attributes_**. The $x_{d}$ are referred to
+as **_weights_** or **_coefficients_** of the features (i.e. how much weight we
+give to each feature when making a prediction). The $b_n$ are referred to as
+**_labels_** or **_targets_**. For that reason, we often **reframe** the linear
 equations in {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1`
 as:
 
@@ -272,11 +278,22 @@ as:
 \end{aligned}
 ```
 
-where $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients
-or weights associated with each feature, $x_{n,d} \in \mathbb{R}$ represents the
-value of the $d$-th feature for the $n$-th sample, and $y_n \in \mathbb{R}$ (for
-$n = 1, \ldots, N$) are the target or outcome values for each sample. Also
-notice that the coefficients $\theta_{d}$ are the same for each sample $n$.
+where:
+
+-   $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients or
+    weights associated with each feature, assumed constant across all samples,
+    meaning the coefficients $\theta_{d}$ are the same for each sample $n$.
+
+    This notation replaces the $x_{d}$ in the previous definition
+    {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1` and is
+    the unknowns in the system of linear equations.
+
+-   $x_{n,d} \in \mathbb{R}$ (old $a_{n, d}$) represents the value of the $d$-th
+    feature for the $n$-th sample, and
+-   $y_n \in \mathbb{R}$ (for $n = 1, \ldots, N$) are the target or outcome
+    values for each sample. This notation replaces the $b_n$ in the previous
+    definition
+    {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1`.
 
 ## System of Linear Equations (Geometric Interpretation)
 
