@@ -40,25 +40,28 @@ import numpy as np
 import rich
 from IPython.display import display
 
-def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Path | None:
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
     """
-    Find the root directory by searching for a directory or file that serves as
-    a marker.
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
 
     Parameters
     ----------
-    current_path : Path
-        The starting path to search from.
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
     marker : str
         The name of the file or directory that signifies the root.
 
     Returns
     -------
-    Path or None
+    Path | None
         The path to the root directory. Returns None if the marker is not found.
     """
+    if not current_path:
+        current_path = Path.cwd()
     current_path = current_path.resolve()
-    for parent in current_path.parents:
+    for parent in [current_path, *current_path.parents]:
         if (parent / marker).exists():
             return parent
     return None
@@ -541,7 +544,8 @@ is also necessarily orthogonal to the normal vector $\mathbf{n}$**. Thus, we can
 have by the **orthogonal vectors has dot product $\mathbf{0}$** to get:
 
 $$
-\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = \mathbf{0} \implies \mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0
+    \mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = \mathbf{0} \ %
+    \implies \mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0
 $$
 
 This is a legit equation for the plane, and **holds for any vectors lying on the
