@@ -7,6 +7,65 @@ the general form of a system of linear equations in
 Check here for some inspiration:
 https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%201%20-%20Linear%20Equation%20System.ipynb
 
+### A Refresher on How to Plot a Plane in 3D Space
+
+Probably useful when students know what is column space?
+
+Let's say you want to plot the column space of a matrix
+
+$$\mathbf{A} = \begin{bmatrix} 3 & -1 \\ 2 & 4 \\ -1 & 1 \end{bmatrix}$$
+
+where the column space of $\mathbf{A}$ is just the span of the columns:
+
+$$
+\text{col}(\mathbf{A})=\text{span}\left\{\left[ \matrix{3\cr 2\cr -1}\right],\ \left[\matrix{-1\cr 4\cr 1}\right]\right\}
+$$
+
+then it follows that since the two column vectors are linearly independent, then
+the span or rather the column space of $\mathbf{A}$ is the **set** of points
+that make up a plane:
+
+$$\text{col}(\mathbf{A}) = \text{plane} = \{s\left[\matrix{3\cr 2\cr -1}\right] + t\left[\matrix{-1\cr 4\cr 1}\right] | s, t \in \mathbb{R} \}$$
+
+Then, to plot it, we can express the X, Y and Z components as follows:
+
+$$X = 3s - t \quad Y = 2s + 4t \quad Z = -s + t$$
+
+```{code-cell} ipython3
+fig = plt.figure(figsize = (10,10))
+ax = fig.add_subplot(projection='3d')
+
+s = np.linspace(-2, 2, 20)
+t = np.linspace(-2, 2, 20)
+S, T = np.meshgrid(s, t)
+
+X = 3*S - T
+Y = 2*S + 4*T
+Z = -S + T
+ax.plot_wireframe(X, Y, Z, linewidth = .5, color = 'r')
+```
+
+```{code-cell} ipython3
+x1 = np.linspace(25, 35, 20)
+x2 = np.linspace(10, 20, 20)
+X1, X2 = np.meshgrid(x1, x2)
+
+fig = plt.figure(figsize = (9, 9))
+ax = fig.add_subplot(111, projection = '3d')
+
+X3 = 2*X2 - X1
+ax.plot_surface(X1, X2, X3, cmap ='viridis', alpha = 1)
+
+X3 = .25*X2 - 1
+ax.plot_surface(X1, X2, X3, cmap ='summer', alpha = 1)
+
+X3 = -5/9*X2 + 4/9*X1 - 1
+ax.plot_surface(X1, X2, X3, cmap ='spring', alpha = 1)
+
+ax.scatter(29, 16, 3, s = 200, color = 'black')
+plt.show()
+```
+
 ALso mention:
 
 ### Matrix Definition (System of Linear Equations)
@@ -555,3 +614,16 @@ especially in linear regression, these solutions help us make predictions or
 understand relationships between variables. This direct application in a field
 as dynamic and impactful as machine learning demonstrates the enduring relevance
 and power of linear algebra, particularly systems of linear equations.
+
+## References and Further Readings
+
+-   [Wikipedia: System of linear equations](https://en.wikipedia.org/wiki/System_of_linear_equations)
+-   Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). _Mathematics for
+    Machine Learning_. Cambridge University Press. (Chapter 3.1, Norms).
+-   https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%201%20-%20Linear%20Equation%20System.ipynb
+-   https://github.com/fastai/numerical-linear-algebra
+-   [A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>)
+-   https://math.stackexchange.com/questions/1634411/why-adding-or-subtracting-linear-equations-finds-their-intersection-point
+-   Dr Choo Yan Min's treatment of lines and planes are good.
+-   https://tutorial.math.lamar.edu/classes/calciii/eqnsofplanes.aspx
+-   https://www.tuitionkenneth.com/h2-maths-parametric-scalar-product-cartesian
