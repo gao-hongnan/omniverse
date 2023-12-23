@@ -8,7 +8,7 @@
 
 This section outlines the common dimensions and indexing conventions utilized in
 the Transformer model. For specific notations related to attention mechanisms,
-refer to the [Attention Notations](#attention-notations) section.
+refer to the {ref}`attention-notations` section.
 
 -   $\mathcal{B}$: The minibatch size.
 -   $D$: Embedding dimension. In the original Transformer paper, this is
@@ -22,30 +22,34 @@ refer to the [Attention Notations](#attention-notations) section.
 
 ### General Notations
 
--   $\mathcal{V}$: is the set of all words in the vocabulary defined as:
+-   $\mathcal{V}$: The set of all words in the vocabulary, defined as:
 
     $$
-    \mathcal{V} = \{v_1, v_2, ..., v_V\}
-    $$
-
-    where
-
-    -   $V$: is the size of the vocabulary, also denoted as $|\mathcal{V}|$.
-    -   $v_j$: is a unique word in the vocabulary $\mathcal{V}$.
-    -   $j$: is the index of a word in the vocabulary $\mathcal{V}$.
-
--   $\mathbf{X}$: is the input sequence defined as:
-
-    $$
-    \mathbf{X} = (x_1, x_2, ..., x_L)
+    \mathcal{V} = \{v_1, v_2, \ldots, v_V\}
     $$
 
     where
 
-    -   $L$: is the sequence length.
-    -   $x_{i}$: is a token at position $i$ in the sequence. Each $x_{i}$ is a
-        token represented as an integer from the set ${0, 1, ..., V-1}$.
-    -   $i$: is the index of a token in the sequence $\mathbf{X}$.
+    -   $V$ (denoted as $|\mathcal{V}|$): The size of the vocabulary.
+    -   $v_j$: A unique word in the vocabulary $\mathcal{V}$.
+    -   $j$: The index of a word in $\mathcal{V}$, where $1 \leq j \leq V$.
+
+-   $\mathbf{X}$: The input sequence, defined as:
+
+    $$
+    \mathbf{X} = (x_1, x_2, \ldots, x_L)
+    $$
+
+    where
+
+    -   $L$: The length of the sequence.
+    -   $x_i$: A **token** at position $i$ in the sequence, represented as an
+        integer in the set $\{0, 1, \ldots, V-1\}$.
+    -   $i$: The index of a token in $\mathbf{X}$, where $1 \leq i \leq L$.
+
+-   $f_{\text{stoi}}$: The function mapping a token in the sequence to its index
+    in the vocabulary. For a token $x_i$, $f_{\text{stoi}}(x_i) = j$ means the
+    token $x_i$ corresponds to the $j$-th word in the vocabulary $\mathcal{V}$.
 
 -   $\mathbf{O}$: one-hot representation of the input sequence $\mathbf{X}$.
     This is a $L \times V$ matrix, where each row represents a token in the
@@ -110,15 +114,15 @@ refer to the [Attention Notations](#attention-notations) section.
     -   $\mathbf{z}_{i, :}$: is the $D$ dimensional embedding vector for the
         token $x_i$ at the $i$-th position in the sequence.
 
-                In this context, each token in the sequence is represented by a $D$
-                dimensional vector. So, the output tensor $\mathbf{Z}$ captures the
-                dense representation of the sequence. Each token in the sequence is
-                replaced by its corresponding embedding vector from the embedding matrix
-                $\mathbf{E}$.
+        In this context, each token in the sequence is represented by a $D$
+        dimensional vector. So, the output tensor $\mathbf{Z}$ captures the
+        dense representation of the sequence. Each token in the sequence is
+        replaced by its corresponding embedding vector from the embedding matrix
+        $\mathbf{E}$.
 
-                As before, the output tensor $\mathbf{Z}$ carries semantic information
-                about the tokens in the sequence. The closer two vectors are in this
-                embedding space, the more semantically similar they are.
+        As before, the output tensor $\mathbf{Z}$ carries semantic information
+        about the tokens in the sequence. The closer two vectors are in this
+        embedding space, the more semantically similar they are.
 
 -   $\mathbf{P}$: is the positional encoding tensor, created with sinusoidal
     functions of different frequencies:
@@ -168,7 +172,9 @@ refer to the [Attention Notations](#attention-notations) section.
 
 -   Or consider using $\mathbf{Z}^{'}$?
 
-### Attention Notations
+(attention-notations)=
+
+## Attention Notations
 
 -   $H$: Number of attention heads.
     -   $h$: Index of the attention head.
@@ -354,15 +360,7 @@ Let's break this down:
     mechanism.
 
 -   The expression
-    $\mathbf{W}_o\left[\begin{array}{c}
-\mathbf{h}_1 \\
-\vdots \\
-\mathbf{h}_h
-\end{array}\right] \in \mathbb{R}^{p_o}$
+    $\mathbf{W}_o\left[\begin{array}{c} \mathbf{h}_1 \\ \vdots \\ \mathbf{h}_h \end{array}\right] \in \mathbb{R}^{p_o}$
     represents the final output of the multi-head attention layer. It's the
     result of applying the linear transformation defined by $\mathbf{W}_o$ to
     the concatenated outputs of all attention heads.
-
-This notation helps us understand the inner workings of the multi-head attention
-mechanism, and it provides a clear path for implementing the multi-head
-attention mechanism in a neural network model.
