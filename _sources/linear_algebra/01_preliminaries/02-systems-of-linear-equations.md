@@ -40,25 +40,28 @@ import numpy as np
 import rich
 from IPython.display import display
 
-def find_root_dir(current_path: Path = Path.cwd(), marker: str = '.git') -> Path | None:
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
     """
-    Find the root directory by searching for a directory or file that serves as
-    a marker.
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
 
     Parameters
     ----------
-    current_path : Path
-        The starting path to search from.
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
     marker : str
         The name of the file or directory that signifies the root.
 
     Returns
     -------
-    Path or None
+    Path | None
         The path to the root directory. Returns None if the marker is not found.
     """
+    if not current_path:
+        current_path = Path.cwd()
     current_path = current_path.resolve()
-    for parent in current_path.parents:
+    for parent in [current_path, *current_path.parents]:
         if (parent / marker).exists():
             return parent
     return None
@@ -89,7 +92,7 @@ We'll examine Example 2.1 from Section 2.1, titled 'Systems of Linear
 Equations', on page 19 of the book 'Mathematics for Machine Learning' by
 Deisenroth, Faisal, and Ong (2020) {cite}`deisenroth2020mathematics`. This
 example provides an insightful application of these concepts in a practical
-context."
+context.
 
 1. **Context**: We have a company that produces a set of products
    $N_1, \ldots, N_n$. These products require resources $R_1, \ldots, R_m$ to be
@@ -175,7 +178,7 @@ central to finding an optimal solution that maximizes resource utilization.
     - $N_1$: Loaves of whole wheat bread
     - $N_2$: Baguettes
     - $N_3$: Croissants
-    - ... and so on, up to $N_n$ being the nth type of bread or pastry.
+    - ... and so on, up to $N_n$ being the $n$-th type of bread or pastry.
 
 2. **Resources ($R_i$)**: The resources are the ingredients and materials needed
    to make these breads and pastries. Examples include:
@@ -184,14 +187,16 @@ central to finding an optimal solution that maximizes resource utilization.
     - $R_2$: Yeast
     - $R_3$: Butter
     - $R_4$: Sugar
-    - ... up to $R_m$, the mth resource.
+    - ... up to $R_m$, the $m$-th resource.
 
 3. **Resource Requirements ($a_{ij}$)**: Each type of bread or pastry requires
    specific amounts of these ingredients. For example:
 
-    - To make one loaf of whole wheat bread ($N_1$), you might need 2 units of
-      flour ($a_{11} = 2$), 1 unit of yeast ($a_{21} = 1$), and no sugar
-      ($a_{41} = 0$).
+    - To make one loaf of whole wheat bread ($N_1$), you might need:
+        - 2 units of flour ($a_{11} = 2$),
+        - 1 unit of yeast ($a_{21} = 1$),
+        - 3 units of butter ($a_{31} = 3$), and
+        - no sugar ($a_{41} = 0$).
 
 4. **Optimal Production Plan**: The bakery needs to decide how many of each type
    of bread and pastry to bake each day. This decision is based on the available
@@ -230,9 +235,12 @@ A general system of $N$ linear equations with $D$ unknowns is given by:
 \end{aligned}
 ```
 
-where $x_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) are the unknowns
-and $a_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) and $b_n$ (for
-$n = 1, \ldots, N$) are the coefficients and constants, respectively.
+where
+
+-   $x_{d}$ (for $d = 1, \ldots, D$) are the unknowns,
+-   $a_{n,d}$ (for $n = 1, \ldots, N$ and $d = 1, \ldots, D$) are the
+    coefficients of the unknowns, and
+-   $b_n$ (for $n = 1, \ldots, N$) are the constants.
 ````
 
 The choice of using $N$ and $D$ for the number of equations and unknowns instead
@@ -250,11 +258,12 @@ $N$ and $D$ are commonly used to represent the following:
     the number of rooms, square footage, location, age of the building, etc. $D$
     represents the total count of these features.
 
-Furthermore, in machine learning context, the $x_{n,d}$ presented in
+Furthermore, in machine learning context, the $a_{n,d}$ presented in
 {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1` are often
-referred to as **_features_** or **_attributes_**. The $a_{n,d}$ are referred to
-as **_weights_** or **_coefficients_**. The $b_n$ are referred to as
-**_labels_** or **_targets_**. For that reason, we often denote the linear
+referred to as **_features_** or **_attributes_**. The $x_{d}$ are referred to
+as **_weights_** or **_coefficients_** of the features (i.e. how much weight we
+give to each feature when making a prediction). The $b_n$ are referred to as
+**_labels_** or **_targets_**. For that reason, we often **reframe** the linear
 equations in {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1`
 as:
 
@@ -269,11 +278,22 @@ as:
 \end{aligned}
 ```
 
-where $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients
-or weights associated with each feature, $x_{n,d} \in \mathbb{R}$ represents the
-value of the $d$-th feature for the $n$-th sample, and $y_n \in \mathbb{R}$ (for
-$n = 1, \ldots, N$) are the target or outcome values for each sample. Also
-notice that the coefficients $\theta_{d}$ are the same for each sample $n$.
+where:
+
+-   $\theta_{d} \in \mathbb{R}$ (for $d = 1, \ldots, D$) are the coefficients or
+    weights associated with each feature, assumed constant across all samples,
+    meaning the coefficients $\theta_{d}$ are the same for each sample $n$.
+
+    This notation replaces the $x_{d}$ in the previous definition
+    {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1` and is
+    the unknowns in the system of linear equations.
+
+-   $x_{n,d} \in \mathbb{R}$ (old $a_{n, d}$) represents the value of the $d$-th
+    feature for the $n$-th sample, and
+-   $y_n \in \mathbb{R}$ (for $n = 1, \ldots, N$) are the target or outcome
+    values for each sample. This notation replaces the $b_n$ in the previous
+    definition
+    {eq}`02-systems-of-linear-equations-definition-algebraic-form-eq-1`.
 
 ## System of Linear Equations (Geometric Interpretation)
 
@@ -294,10 +314,30 @@ where we can solve it algebraically to obtain the solution using the
 ### Solution Space in 2D (Lines)
 
 We can also interpret this system of linear equations geometrically. The point
-$(x, y)$ that satisfies both equations is the intersection of the two lines:
+$(x, y)$ that satisfies both equations is the intersection of the two lines.
+
+There are three possible outcomes:
+
+-   The lines intersect at a single point. This means there is a unique solution
+    to the system of linear equations.
+-   The lines are parallel. This means there is no solution to the system of
+    linear equations.
+-   The lines are the same. This means there are infinitely many solutions to
+    the system of linear equations.
+
+#### Case 1: Unique Solution
+
+Consider the equation in
+{eq}`02-systems-of-linear-equations-geometric-interpretation-eq-1` where the two
+lines intersect at a single point $(x, y)$. How do we know? Well, a rudimentary
+way will be to plot the two lines and see if they intersect at a single point.
+This is naive because this is the classical "proof by inspection" method, and
+there is no guarantee our eyes won't fail us. But before we learn more formal
+methods (or just solving this linear equation by hand or by a graphic
+calculator), this is a good enough approach.
 
 ```{code-cell} ipython3
-:tags: [remove-output]
+:tags: [remove-input, remove-output]
 
 # Data preparation
 x = np.linspace(-5, 5, 100)
@@ -310,7 +350,7 @@ ax.set_xlim([-5, 5])
 ax.set_ylim([-3, 8])
 ax.xaxis.set_major_locator(ticker.MultipleLocator(0.5))
 ax.yaxis.set_major_locator(ticker.MultipleLocator(0.5))
-ax.set_title("Solution of $4x+4y=5$, $-2x+4y=0$", size=22)
+ax.set_title("Solution of $4x+4y=6$, $-2x+4y=0$", size=22)
 
 # Plotting lines
 plot_line(ax, x, y1, lw=3, label="$4x+4y=6$", color="b")
@@ -343,34 +383,35 @@ $4x+4y=6$, $-2x+4y=0$.
 ```
 
 More concretely, in a system of linear equations with two variables $x, y$, each
-linear equation defines a line on the $x-y$-plane. Since a solution to a system
-of linear equations must satisfy all equations simultaneously, the solution set
-is the intersection of these lines. This intersection set can be a **line** (if
-the linear equations describe the same line), a **point**, or **empty** (when
-the lines are parallel) {cite}`deisenroth2020mathematics`. An illustration is
-given in {numref}`02-systems-of-linear-equations-geometric-interpretation` for
-the system of linear equations in
+linear equation defines a line on the $x$-$y$ plane. Since a solution to a
+system of linear equations must satisfy all equations simultaneously, the
+solution set is the intersection of these lines. This intersection set can be a
+**line** (if the linear equations describe the same line), a **point**, or
+**empty** (when the lines are parallel) {cite}`deisenroth2020mathematics`. An
+illustration is given in
+{numref}`02-systems-of-linear-equations-geometric-interpretation` for the system
+of linear equations in
 {eq}`02-systems-of-linear-equations-geometric-interpretation-eq-1` where the
 solution space is the point $(x, y) = (1, 0.5)$.
-
----
 
 For the sake of completeness, let's consider two more examples of systems of
 linear equations with two variables $x, y$ where either the solution space is a
 line or empty.
 
-1. **Case: Solution Space is a Line (Infinite Solutions)** Equations
-   representing the same line:
+#### Case 2: Infinite Solutions
 
-    ```{math}
-    \begin{aligned}
-        & \color{blue} x - y && \color{blue} = && \color{blue} 0 \\
-        & \color{red} 2x - 2y && \color{red} = && \color{red} 0
-    \end{aligned}
-    ```
+This case corresponds to the solution space being a line. Consider the system of
+linear equations that represent the same line:
 
-    These equations represent the same line. Any point on this line is a
-    solution, leading to infinitely many solutions.
+```{math}
+\begin{aligned}
+    & \color{blue} x - y && \color{blue} = && \color{blue} 0 \\
+    & \color{red} 2x - 2y && \color{red} = && \color{red} 0
+\end{aligned}
+```
+
+These equations represent the same line. Any point on this line is a solution,
+leading to infinitely many solutions.
 
 ```{code-cell} ipython3
 :tags: [remove-input]
@@ -397,19 +438,21 @@ ax.grid(which="major", axis="both", linestyle="-", alpha=0.5)
 plt.show()
 ```
 
-2. **Case: Solution Space is Empty (No Solutions)** Equations representing
-   parallel lines:
+#### Case 3: No Solution
 
-    ```{math}
-    \begin{aligned}
-        & \color{blue} x - y && \color{blue} = && \color{blue} 1 \\
-        & \color{red} x - y && \color{red} = && \color{red} 2
-    \end{aligned}
-    ```
+This case corresponds to the solution space being empty. Consider the system of
+linear equations representing parallel lines:
 
-    These equations represent parallel lines which never intersect. Therefore,
-    there is no point that satisfies both equations simultaneously, resulting in
-    no solution.
+```{math}
+\begin{aligned}
+    & \color{blue} x - y && \color{blue} = && \color{blue} 1 \\
+    & \color{red} x - y && \color{red} = && \color{red} 2
+\end{aligned}
+```
+
+These equations represent parallel lines which never intersect. Therefore, there
+is no point that satisfies both equations simultaneously, resulting in no
+solution.
 
 ```{code-cell} ipython3
 :tags: [remove-input]
@@ -437,15 +480,82 @@ ax.grid(which="major", axis="both", linestyle="-", alpha=0.5)
 plt.show()
 ```
 
-We now take a detour to visit the concept of planes in three-dimensional space
-$\mathbb{R}^3$ before returning to the interpretation of solution spaces in
-3D-space.
+## Solution Space in 3D (Planes)
+
+We have seen the geometric interpretation of the solution space in 2D-space
+where the solution space is either a line, a point, or empty. In 3D-space, there
+is a similar analogue. Consider the system of linear equations with three
+unknowns $x, y, z$:
+
+```{math}
+:label: 02-systems-of-linear-equations-geometric-interpretation-eq-2
+
+\begin{aligned}
+    & \color{blue} a_{11}x + a_{12}y + a_{13}z && \color{blue} = && \color{blue} b_1 \\
+    & \color{red}  a_{21}x + a_{22}y + a_{23}z && \color{red}  = && \color{red}  b_2 \\
+    & \color{green} a_{31}x + a_{32}y + a_{33}z && \color{green} = && \color{green} b_3 \\
+    & \vdots && && \ \ \vdots \\
+    & \color{orange} a_{N1}x + a_{N2}y + a_{N3}z && \color{orange} = && \color{orange} b_N
+\end{aligned}
+```
+
+Each equation in
+{eq}`02-systems-of-linear-equations-geometric-interpretation-eq-2` defines a
+[**plane**](<https://en.wikipedia.org/wiki/Plane_(geometry)>) in 3D-space. Since
+a solution to a system of linear equations must satisfy all equations
+simultaneously, the solution set is the intersection of these planes.
+
+This time, we have four possible outcomes:
+
+-   The planes intersect at a single point. This means there is a unique
+    solution to the system of linear equations.
+-   The planes intersect along a line. This means there are infinitely many
+    solutions to the system of linear equations.
+-   The planes intersect along a plane. This means there are infinitely many
+    solutions to the system of linear equations. This means that if two or more
+    planes are coincident (i.e., they are essentially the same plane), then
+    their intersection is indeed a plane, and there are infinitely many
+    solutions.
+-   The planes are parallel. This means there is no solution to the system of
+    linear equations.
+
+One thing to mention is that for point 1, it does not hold if you only use two
+planes, because two planes cannot intersect at a single point in 3D-space (may
+behave
+[differently](https://math.stackexchange.com/questions/219233/can-two-planes-intersect-in-a-point)
+in 4D-space). Indeed, if you have two linear equations of the form:
+
+```{math}
+\begin{aligned}
+    & \color{blue} a_{11}x + a_{12}y + a_{13}z && \color{blue} = && \color{blue} b_1 \\
+    & \color{red}  a_{21}x + a_{22}y + a_{23}z && \color{red}  = && \color{red}  b_2
+\end{aligned}
+```
+
+then it is what we call an **_underdetermined system_** of linear equations,
+where the number of equations is less than the number of unknowns. In this case,
+it coincides with our intuition that two planes can only intersect along a line,
+be parallel, or be the same plane. And if they do intersect, then it must have
+infinitely many solutions.
+
+To see all these cases in action, I refer you to follow
+[Chen Weijie's Linear Algebra with Python notebook](https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%201%20-%20Linear%20Equation%20System.ipynb).
 
 ## Planes
 
-The treatment below concerns planes embedded in three dimensions, specially in
+Here's a refresher on planes in 3D-space. If this is your first read, then you
+may want to skip this section and come back to it later because we will assume a
+future knowledge on dot product.
+
+The treatment below concerns planes embedded in three dimensions, especially in
 $\mathbb{R}^3$. Therefore, these planes are necessarily a
-2D-[**subspace**](https://en.wikipedia.org/wiki/Linear_subspace).
+2D-[**subspace**](https://en.wikipedia.org/wiki/Linear_subspace). We state this
+only for formality and for completeness, that a plane residing in 3D-space is a
+2D-subspace even though it consists of 3D-vectors is because the very definition
+of the dimensionality of a subspace is determined by the number of linearly
+independent vectors that span the subspace, not by the dimensionality of the
+ambient space (in this case, 3D-space). By extension, a line in 3D-space is a
+1D-subspace, and a point in 3D-space is a 0D-subspace.
 
 ### Properties of 2D-Planes
 
@@ -464,245 +574,276 @@ higher dimensions, though they have higher-dimensional analogues:
 
 ### Plane's Equations
 
-#### Point–Normal Form and General Form of the Equation of a Plane
+#### Plane Equation in Normal Form (Vector Form)
 
-In a manner analogous to the way lines in a two-dimensional space are described
-using a point-slope form for their equations, planes in a three dimensional
-space have a natural description using a point in the plane and a vector
-orthogonal to it (the normal vector) to indicate its "inclination".
+In linear algebra, the equation of a plane in three-dimensional space can be
+derived using the concept of
+[**normal vectors**](<https://en.wikipedia.org/wiki/Normal_(geometry)>). Let's
+consider a plane embedded in a 3-D space.
 
-Specifically, let $\mathbf{r}_0$ be the position vector of some point
-$P_0 = (x_0, y_0, z_0)$, and let $\mathbf{n} = (a, b, c)$ be a nonzero vector.
-The plane determined by the point $P_0$ and the vector $\mathbf{n}$ consists of
-those points $P$, with position vector $\mathbf{r}$, such that the vector drawn
-from $P_0$ to $P$ is perpendicular to $\mathbf{n}$. Recalling that two vectors
-are perpendicular if and only if their dot product is zero, it follows that the
-desired plane can be described as the set of all points $\mathbf{r}$ such that:
+Firstly, we assume the existence of a
+[**point**](<https://en.wikipedia.org/wiki/Point_(geometry)>)
+$P_0 = (x_0, y_0, z_0)$ on the plane. Additionally, we define a normal
+**vector** $\mathbf{n} = (a, b, c)$, which is
+[**orthogonal**](https://en.wikipedia.org/wiki/Orthogonality) to every vector
+lying in the plane. The orthogonality of $\mathbf{n}$ is a crucial aspect in
+defining the plane's orientation in space [^orthogonality-defines-orientation].
 
-$$\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = \mathbf{0}$$
+For any **point** $P = (x, y, z)$ on the plane, the position vectors
+corresponding to $P_0$ and $P$ are denoted as $\mathbf{r}_0$ and $\mathbf{r}$,
+respectively.
 
-The dot here means a dot product
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-1
 
-Expanded this becomes
+\begin{aligned}
+    \mathbf{r}_0 &= \begin{bmatrix} x_0 \\ y_0 \\ z_0 \end{bmatrix} \in \mathbb{R}^3, \ %
+    \quad \mathbf{r} = \begin{bmatrix} x \\ y \\ z \end{bmatrix} \in \mathbb{R}^3, \ %
+    \quad \mathbf{n} = \begin{bmatrix} a \\ b \\ c \end{bmatrix} \in \mathbb{R}^3
+\end{aligned}
+```
 
-$$a (x-x_0)+ b(y-y_0)+ c(z-z_0)=0$$
+```{prf:remark} Point vs. Position Vector
+:label: 02-systems-of-linear-equations-point-vs-position-vector
 
-which is the **point–normal** form of the equation of a plane. This is just a
-linear equation:
+A **point** $P$ is a geometric object that has no size or shape, it is merely
+the location/coordinatization of a position in space. A **position vector**
+$\mathbf{r}$ is a vector that describes the position of a point $P$ relative to
+an origin $O$.
+```
 
-$$ax + by + cz + d = 0$$
+It is important to note that the vector $\mathbf{r} - \mathbf{r}_0$,
+representing the difference between these two position vectors, lies within the
+plane. This property is fundamental to the derivation that follows.
 
-where
+Considering the properties of orthogonal vectors and the
+[**dot product**](https://en.wikipedia.org/wiki/Dot_product), we know that the
+dot product of orthogonal vectors is zero. Applying this to our context, since
+$\mathbf{r} - \mathbf{r}_0$ lies in the plane and is orthogonal to the normal
+vector $\mathbf{n}$, their dot product should be zero. Mathematically, this is
+represented as:
 
-$$d = -(ax_0 + by_0 + cz_0)$$
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-2
+\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = 0.
+```
 
-which is the expanded form of $-\mathbf{n} \cdot \mathbf{r}_0$.
+Expanding this, we obtain:
 
-In mathematics it is a common convention to express the normal as a unit vector,
-but the above argument holds for a normal vector of any non-zero length.
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-3
+\mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0.
+```
 
-Conversely, it is easily shown that if $a,b,c$ and $d$ are constants and $a,b,c$
-are not all zero, then the graph of the equation
+This equation is a general representation of the plane in three-dimensional
+space. It encapsulates the fundamental geometric property that any vector lying
+in the plane, when subtracted from a fixed point $P_0$ in the plane, yields a
+vector orthogonal to the normal vector $\mathbf{n}$. To validate this equation
+for any point $P$ on the plane, we can substitute the corresponding positional
+vector $\mathbf{r}$ into the equation. The resulting equality holds true for all
+points on the plane, confirming that $\mathbf{r} - \mathbf{r}_0$ is indeed
+orthogonal to $\mathbf{n}$.
 
-$$ax + by + cz + d = 0$$
+#### Scalar-Product Equation of a Plane
 
-is a plane having the vector
+The vector form of a plane's equation, as previously derived, can be expanded
+into a scalar form for a more explicit representation. This scalar form is often
+more practical for certain types of calculations and analysis.
 
-$$\mathbf{n} = (a,b,c)$$
+Let us expand the equation in
+{eq}`02-systems-of-linear-equations-plane-equation-eq-3`:
 
-as a normal. This familiar equation for a plane is called the **general form**
-of the equation of the plane.
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-4
 
-> Thus for example a regression equation of the form $y = d + ax + cz$ with
-> $b=-1$ establishes a best-fit plane in three-dimensional space when there are
-> two explanatory variables.
+\begin{aligned}
+    \mathbf{n} \cdot \mathbf{r} &= \mathbf{n} \cdot \mathbf{r}_0 \\
+    \begin{bmatrix} a \\ b \\ c \end{bmatrix} \cdot \begin{bmatrix} x \\ y \\ z \end{bmatrix} &= \begin{bmatrix} a \\ b \\ c \end{bmatrix} \cdot \begin{bmatrix} x_0 \\ y_0 \\ z_0 \end{bmatrix} \\
+    ax + by + cz &= ax_0 + by_0 + cz_0
+\end{aligned}
+```
 
-##### Intuition (Hongnan)
+If we further rearrange equation
+{eq}`02-systems-of-linear-equations-plane-equation-eq-4`,
 
-The idea is given a 2D-plane embedded in a 3-D space, then we start off by
-**assuming** there exists a point $P_0 = (x_0, y_0, z_0)$ on the plane;
-furthermore, we define a vector $\mathbf{n} = (a, b, c)$ such that this vector
-is orthogonal (perpendicular) to the plane - we call this vector a **normal
-vector**. Next, assume $P = (x, y, z)$ be **any point on the plane**, and let us
-define the position vector of $P_0$ and $P$ to be $\mathbf{r}_0$ and
-$\mathbf{r}$ respectively.
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-5
 
-From a mathematical standpoint, we are **fixing the point** $P_0$ so that for
-**any point** $P$, the vector formed by the difference of these two position
-vectors $\mathbf{r}_0$ and $\mathbf{r}$ will **always lie in the plane**. This
-is important, because now what we do next on this $\mathbf{r} - \mathbf{r}_0$
-will generalize for the whole plane.
+\begin{aligned}
+    ax + by + cz &= ax_0 + by_0 + cz_0 \\
+    ax + by + cz - ax_0 - by_0 - cz_0 &= 0 \\
+    a(x - x_0) + b(y - y_0) + c(z - z_0) &= 0
+\end{aligned}
+```
 
-By now, from the visual diagram in
-[here](https://tutorial.math.lamar.edu/classes/calciii/eqnsofplanes.aspx), one
-should realize that **given a fixed point $P_0$ and any point $P$, their
-difference in vectors $\mathbf{r} - \mathbf{r}_0$ always lie on the plane, and
-is also necessarily orthogonal to the normal vector $\mathbf{n}$**. Thus, we can
-have by the **orthogonal vectors has dot product $\mathbf{0}$** to get:
+then we obtain the **point–normal** form of the equation of a plane. It is also
+idiomatic to denote this equation as the **scalar equation** of a plane, which
+is rearranged from {eq}`02-systems-of-linear-equations-plane-equation-eq-4` to:
 
-$$
-\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = \mathbf{0} \implies \mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0
-$$
+```{math}
+:label: 02-systems-of-linear-equations-plane-equation-eq-6
 
-This is a legit equation for the plane, and **holds for any vectors lying on the
-plane**. Why so? Because recall (even geometrically) that **all vectors on the
-plane must be orthogonal/perpendicular to the normal vector**, and **therefore
-to check the validity of the equation, we just need to check if ANY POINT $P$ on
-the plane, and substitute its positional vector $\mathbf{r}_0$ into the equation
-$\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0)$, must this equation be
-$\mathbf{0}$?** The answer is yes, because $\mathbf{r} - \mathbf{r}_0$ is always
-a vector on the plane, and hence orthogonal to $\mathbf{n}$.
+\begin{aligned}
+    ax + by + cz &= ax_0 + by_0 + cz_0 \\
+    ax + by + cz &= d
+\end{aligned}
+```
 
----
+where $d = ax_0 + by_0 + cz_0$ is a constant. This scalar form is the **general
+form** of how we represent a plane's equation in most context. And we
+immediately notice that the coefficients $a, b, c$ are the same as the normal
+vector we defined earlier in
+{eq}`02-systems-of-linear-equations-plane-equation-eq-1`.
 
-##### Normal Vector need not touch the Vectors on the plane
+In mathematical literature, it's typically conventional to represent the normal
+vector as a [**unit vector**](https://en.wikipedia.org/wiki/Unit_vector), which
+has a magnitude of one. However, the reasoning outlined previously remains valid
+for any normal vector as long as it has a non-zero magnitude.
 
-If one is confused what is the meaning of the $\mathbf{r} - \mathbf{r}_0$, say
-if this equals $\mathbf{r} - \mathbf{r}_0 = (2, 3, 4)$ and the normal is
-$\mathbf{n} = (2, -8, 5)$, then even though the vector
-$\mathbf{r} - \mathbf{r}_0$ lies on the plane (which means the vector is not a
-position vector and does not start from the origin), that is okay because if one
-recalls what a vector is, we can "simply move the $\mathbf{r} - \mathbf{r}_0$ to
-make it start from the origin", and this vector will now be "position vector",
-but still perpendicular to $\mathbf{n}$ whether it touches it or not.
+#### Independence of Normal Vector from Plane Vectors' Position
 
-#### Describing a plane with a point and two vectors lying on it
+A common point of confusion in understanding the geometry of planes in
+three-dimensional space is the relationship between the normal vector and
+vectors lying in the plane. To elucidate this, consider the normal vector
+$\mathbf{n}$ and the vector $\mathbf{r} - \mathbf{r}_0$ lying in the plane.
 
-Alternatively, a plane may be described parametrically as the set of all points
-of the form
+Let's take an example where $\mathbf{r} - \mathbf{r}_0 = (2, 3, 4)$ and
+$\mathbf{n} = (2, -8, 5)$. The vector $\mathbf{r} - \mathbf{r}_0$ represents the
+difference between two position vectors and lies in the plane. It is crucial to
+note that this vector, while being a part of the plane, does not necessarily
+originate from the origin of the coordinate system.
 
-$$\mathbf{r} = \mathbf{r}_0 + s\mathbf{v} + t\mathbf{w}$$
+The key concept to understand is the nature of vectors as entities that are
+independent of their starting points. Vectors are defined by their direction and
+magnitude, not by their position in space. Therefore, the vector
+$\mathbf{r} - \mathbf{r}_0$, irrespective of its initial point, retains its
+characteristics (direction and magnitude) even when "moved" or translated in
+space.
 
-where $s$ and $t$ range over all real numbers, $\mathbf{v}$ and $\mathbf{w}$ are
-given linearly independent defining the plane, and $\mathbf{r}_0$ is the vector
-representing the position of an arbitrary (but fixed) point on the plane. The
-vectors $\mathbf{v}$ and $\mathbf{w}$ can be visualized as vectors starting at
-$\mathbf{r}_0$ and pointing in different directions along the plane. The vectors
-$\mathbf{v}$ and $\mathbf{w}$ can be perpendicular, but cannot be parallel.
+When considering the normal vector $\mathbf{n}$, it's important to understand
+that its orthogonality to the plane is an intrinsic property. This means that
+$\mathbf{n}$ is perpendicular to every vector lying in the plane, regardless of
+where those vectors are positioned in space. The concept of orthogonality in
+this context is independent of the specific points at which the vectors
+originate.
 
----
+Thus, whether $\mathbf{r} - \mathbf{r}_0$ is positioned with its tail at the
+origin (thus becoming a position vector) or elsewhere, its orthogonality to
+$\mathbf{n}$ remains unchanged. The perpendicular relationship between
+$
+\mathbf{n}$ and any vector in the plane is a property of their directions and
+magnitudes, and not of their positions in space.
 
-**Note: In Linear Algebra, most mentions of planes are associated with vector
-spaces (subspaces), and hence contains the origin. Therefore, we often describe
-the plane as the set of points spanned by two linearly independent vectors.**
-
-$$\mathbf{r} = s\mathbf{v} + t\mathbf{w}$$
-
-notice that we do not specify $\mathbf{r}_0$ here since we have the zero vector.
-
-#### Vector Equation of a Plane
-
-From the previous section, the **Vector Equation** of a plane is:
-
-$$
-\mathbf{n} \cdot (\mathbf{r} - \mathbf{r}_0) = \mathbf{0} \iff \mathbf{n} \cdot \mathbf{r} = \mathbf{n} \cdot \mathbf{r}_0 \iff \mathbf{n} \cdot \mathbf{r} = d
-$$
-
-where $d = \mathbf{n} \cdot \mathbf{r}_0$.
-
-<img src="https://storage.googleapis.com/reighns/reighns_ml_projects/docs/linear_algebra/plane_cartesian_and_vector.PNG" style="margin-left:auto; margin-right:auto"/>
-<p style="text-align: center">
-    <b>Fig; Vector and Cartesian Equation; Courtesy of https://www.tuitionkenneth.com/h2-maths-parametric-scalar-product-cartesian.</b>
-</p>
-
-#### Cartesian Equation of Plane
-
-From the previous section, the **Cartesian Equation** of a plane is:
-
-$$
-ax + by + cz + d = 0 \iff ax + by + cd = d
-$$
-
-where $d$ is a constant $-(ax_0 + by_0 + cz_0)$ and hence we are less pedantic
-about the sign in the equation above.
+In summary, the normal vector $\mathbf{n}$ does not need to physically "touch"
+or intersect with the vectors lying on the plane to be orthogonal to them. This
+independence from the vectors' positions is a fundamental aspect of vector
+geometry and is key to understanding the spatial relationships in
+three-dimensional geometry.
 
 #### Parametric Equation of a Plane
 
-The **Parametric Equation** of a plane is:
+In the study of vector spaces and geometry, a plane can be described not only by
+its normal vector and a point but also parametrically. This parametric form is
+particularly useful in visualizing and working with planes in three-dimensional
+space.
 
-$$
-\mathbf{r} = \mathbf{r}_0 + s\mathbf{v} + t\mathbf{w}
-$$
+Consider a plane in three-dimensional space. We can define this plane
+parametrically as the set of all points $\mathbf{r}$ expressed by the equation:
 
-<img src="https://storage.googleapis.com/reighns/reighns_ml_projects/docs/linear_algebra/plane_parametric.PNG" style="margin-left:auto; margin-right:auto"/>
-<p style="text-align: center">
-    <b>Fig; Parametric Equation; Courtesy of https://www.tuitionkenneth.com/h2-maths-parametric-scalar-product-cartesian.</b>
-</p>
+$$\mathbf{r} = \mathbf{r}_0 + s\mathbf{v} + t\mathbf{w},$$
 
-## How to plot a plane in Python
+where:
 
-Let's say you want to plot the column space of a matrix
+-   $\mathbf{r}_0$ is the position vector of a specific, but arbitrarily chosen,
+    point on the plane.
+-   $\mathbf{v}$ and $\mathbf{w}$ are two linearly independent vectors that lie
+    within the plane. These vectors define the plane's orientation and span.
+-   $s$ and $t$ are scalar parameters that range over all real numbers.
 
-$$\mathbf{A} = \begin{bmatrix} 3 & -1 \\ 2 & 4 \\ -1 & 1 \end{bmatrix}$$
+The vectors $\mathbf{v}$ and $\mathbf{w}$ are crucial in defining the plane and
+can be visualized as emanating from the point $\mathbf{r}_0$ in different
+directions along the plane. It is essential that these vectors are linearly
+independent, meaning they cannot be scalar multiples of each other. While
+$\mathbf{v}$ and $\mathbf{w}$ can be perpendicular, forming an orthogonal basis
+for the plane, they must not be parallel, as parallel vectors would fail to span
+a two-dimensional plane.
 
-where the column space of $\mathbf{A}$ is just the span of the columns:
+By varying the values of $s$ and $t$, we can generate every point on the plane.
+Each pair of values $(s, t)$ corresponds to a unique point on the plane, and
+conversely, every point on the plane can be represented by a unique pair
+$(s, t)$. This parametric representation offers a versatile way to describe and
+manipulate planes in a three-dimensional space, providing a foundation for
+further geometric and algebraic exploration.
 
-$$
-\text{col}(\mathbf{A})=\text{span}\left\{\left[ \matrix{3\cr 2\cr -1}\right],\ \left[\matrix{-1\cr 4\cr 1}\right]\right\}
-$$
+## Linking Plane and Hyperplane Equations to Linear Regression
 
-then it follows that since the two column vectors are linearly independent, then
-the span or rather the column space of $\mathbf{A}$ is the **set** of points
-that make up a plane:
+In the context of linear regression, especially in multi-dimensional spaces, the
+concept of planes and hyperplanes is pivotal. Linear regression aims to find the
+best-fit line, plane, or hyperplane that minimizes the error between the
+predicted and actual values.
 
-$$\text{col}(\mathbf{A}) = \text{plane} = \{s\left[\matrix{3\cr 2\cr -1}\right] + t\left[\matrix{-1\cr 4\cr 1}\right] | s, t \in \mathbb{R} \}$$
-
-Then, to plot it, we can express the X, Y and Z components as follows:
-
-$$X = 3s - t \quad Y = 2s + 4t \quad Z = -s + t$$
-
-```{code-cell} ipython3
-fig = plt.figure(figsize = (10,10))
-ax = fig.add_subplot(projection='3d')
-
-s = np.linspace(-2, 2, 20)
-t = np.linspace(-2, 2, 20)
-S, T = np.meshgrid(s, t)
-
-X = 3*S - T
-Y = 2*S + 4*T
-Z = -S + T
-ax.plot_wireframe(X, Y, Z, linewidth = .5, color = 'r')
-```
-
-## Determination by contained points and lines in hyperplane D-dimension?
-
-Clarify
-
-In a Euclidean space of any number of dimensions, a plane is uniquely determined
-by any of the following:
-
--   Three non-collinear points (points not on a single line).
--   A line and a point not on that line.
--   Two distinct but intersecting lines.
--   Two distinct but parallel lines.
-
-The phrase "in a Euclidean space of any number of dimensions" in the context of
-the Wikipedia article might be a bit misleading. The specific ways to determine
-a plane, such as using two distinct parallel lines, are uniquely applicable to
-three-dimensional space, $\mathbf{R}^3$.
-
-In higher-dimensional spaces, the concept of a "plane" as a 2D subspace still
-holds, but the ways in which you define or determine it change due to the
-additional dimensions. For instance, in 4D or higher, two parallel lines don't
-uniquely determine a plane because there's more spatial freedom for the plane to
-exist in different orientations.
-
-So, it's important to contextualize these statements: while the methods listed
-can define a plane in 3D space, they might not directly apply or mean the same
-in higher dimensions.
-
-## Solution Space in 3D (Planes)
+-   **Two-Dimensional Space (2D)**: In a simple linear regression model with one
+    explanatory variable, the best-fit line is described by the equation
+    $\hat{y}=\hat{\beta}_0+\hat{\beta}_1 x$. Here, $\hat{\beta}_0$ is the
+    estimated intercept, and $\hat{\beta}_1$ is the estimated slope of the line.
+    This line represents the best approximation of the relationship between the
+    explanatory variable $x$ and the response variable $y$.
+-   **Three-Dimensional Space (3D)**: For a model with two explanatory
+    variables, the best-fit plane is represented by
+    $\hat{y}=\hat{\beta}_0+\hat{\beta}_1 x_1+\hat{\beta}_2 x_2$. This equation
+    represents the relationship among the two explanatory variables $x_1, x_2$,
+    and the response variable $y$. The coefficients
+    $\hat{\beta}_0, \hat{\beta}_1, \hat{\beta}_2$ are the estimated parameters
+    determined through regression analysis to best fit the data in this
+    three-dimensional space.
+-   **Higher-Dimensional Spaces**: : In cases with three or more explanatory
+    variables, the representation becomes a
+    [**hyperplanes**](https://en.wikipedia.org/wiki/Hyperplane) in a
+    higher-dimensional space. For example, with three explanatory variables, the
+    regression equation
+    $\hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \hat{\beta}_3 x_3$
+    represents a hyperplane in a four-dimensional space and our aim is to find
+    the solution set of
+    $\hat{\beta}_0, \hat{\beta}_1, \hat{\beta}_2, \hat{\beta}_3$ that minimizes
+    the error between the predicted and actual values. This set of solution
+    defines the hyperplane that best fits the data.
 
 ## References and Further Readings
 
--   [Wikipedia: System of linear equations](https://en.wikipedia.org/wiki/System_of_linear_equations)
--   Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). _Mathematics for
-    Machine Learning_. Cambridge University Press. (Chapter 3.1, Norms).
--   https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%201%20-%20Linear%20Equation%20System.ipynb
--   https://github.com/fastai/numerical-linear-algebra
--   [A First Course in Linear Algebra by Ken Kuttler](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>)
--   https://math.stackexchange.com/questions/1634411/why-adding-or-subtracting-linear-equations-finds-their-intersection-point
--   Dr Choo Yan Min's treatment of lines and planes are good.
--   https://tutorial.math.lamar.edu/classes/calciii/eqnsofplanes.aspx
--   https://www.tuitionkenneth.com/h2-maths-parametric-scalar-product-cartesian
+1. **Euclidean Planes in Three-Dimensional Space**. Wikipedia. Available at:
+   [Euclidean planes in three-dimensional space - Wikipedia](https://en.wikipedia.org/wiki/Euclidean_planes_in_three-dimensional_space).
+
+2. **System of Linear Equations**. Wikipedia. Available at:
+   [System of linear equations - Wikipedia](https://en.wikipedia.org/wiki/System_of_linear_equations).
+
+3. Deisenroth, M. P., Faisal, A. A., & Ong, C. S. (2020). _Mathematics for
+   Machine Learning_. Cambridge University Press. Chapter 2.1: Systems of Linear
+   Equations. Available at:
+   [Cambridge University Press](https://www.cambridge.org/core/books/mathematics-for-machine-learning/).
+
+4. **Linear Algebra With Python**. GitHub repository by Weijie Chen. Available
+   at:
+   [Linear Equation System - GitHub](https://github.com/weijie-chen/Linear-Algebra-With-Python/blob/master/Chapter%201%20-%20Linear%20Equation%20System.ipynb).
+
+5. Kuttler, K. (n.d.). _A First Course in Linear Algebra_. Available at:
+   [A First Course in Linear Algebra - LibreTexts](<https://math.libretexts.org/Bookshelves/Linear_Algebra/A_First_Course_in_Linear_Algebra_(Kuttler)>).
+
+6. **Why Adding or Subtracting Linear Equations Finds Their Intersection
+   Point**. Math Stack Exchange. Available at:
+   [Math Stack Exchange Discussion](https://math.stackexchange.com/questions/1634411/why-adding-or-subtracting-linear-equations-finds-their-intersection-point).
+
+7. Choo, Y. M. (n.d.). _H2 Mathematics Textbook_. Available at:
+   [H2 Mathematics Textbook - Google Drive](https://drive.google.com/file/d/0By83v5TWkGjvdEN4VmJUcnVxbkE/edit?resourcekey=0-Z4PO9IPiQz-GaYr_IlDK9A).
+
+8. **Equations of Planes**. Paul's Online Math Notes. Available at:
+   [Equations of Planes - Lamar University](https://tutorial.math.lamar.edu/classes/calciii/eqnsofplanes.aspx).
+
+9. **H2 Maths: Parametric, Scalar Product, Cartesian**. Tuition Kenneth.
+   Available at:
+   [H2 Maths - Tuition Kenneth](https://www.tuitionkenneth.com/h2-maths-parametric-scalar-product-cartesian).
+
+[^orthogonality-defines-orientation]:
+    The direction of the normal vector $\mathbf{n}$ can be seen as defining the
+    orientation of a plane. Since it is orthogonal to the plane, it provides a
+    reference for understanding the plane's inclination or tilt relative to
+    other planes or axes in the space.
