@@ -1,7 +1,7 @@
 # Notations
 
-```{tableofcontents}
-
+```{contents}
+:local:
 ```
 
 ## Dimensions and Indexing
@@ -20,32 +20,61 @@ refer to the {ref}`attention-notations` section.
 -   $V$: Size of the vocabulary.
     -   $j$: Index of a word in the vocabulary, where $0 \leq j < V$.
 
-### General Notations
+## General Notations
 
--   $\mathcal{V}$: The set of all words in the vocabulary, defined as:
+### Vocabulary
 
-    $$
-    \mathcal{V} = \{v_1, v_2, \ldots, v_V\}
-    $$
+$\mathcal{V}$: The set of all unique words in the vocabulary, defined as:
 
-    where
+$$
+\mathcal{V} = \{v_1, v_2, \ldots, v_V\}
+$$
 
-    -   $V$ (denoted as $|\mathcal{V}|$): The size of the vocabulary.
-    -   $v_j$: A unique word in the vocabulary $\mathcal{V}$.
-    -   $j$: The index of a word in $\mathcal{V}$, where $1 \leq j \leq V$.
+where
 
--   $\mathbf{X}$: The input sequence, defined as:
+-   $V$ (denoted as $|\mathcal{V}|$): The size of the vocabulary.
+-   $v_j$: A unique word in the vocabulary $\mathcal{V}$, where
+    $v_j \in \mathcal{V}$.
+-   $j$: The index of a word in $\mathcal{V}$, explicitly defined as
+    $1 \leq j \leq V$.
 
-    $$
-    \mathbf{X} = (x_1, x_2, \ldots, x_L)
-    $$
+For example, consider the following sentences in the training set:
 
-    where
+-   "cat eat mouse"
+-   "dog chase cat"
+-   "mouse eat cheese"
 
-    -   $L$: The length of the sequence.
-    -   $x_i$: A **token** at position $i$ in the sequence, represented as an
-        integer in the set $\{0, 1, \ldots, V-1\}$.
-    -   $i$: The index of a token in $\mathbf{X}$, where $1 \leq i \leq L$.
+The resulting vocabulary $\mathcal{V}$ is:
+
+$$
+\mathcal{V} = \{\text{cat}, \text{eat}, \text{mouse}, \text{dog}, \text{chase}, \text{cheese}\}
+$$
+
+where
+
+-   $V = 6$.
+-   $v_1 = \text{cat}, v_2 = \text{eat}, v_3 = \text{mouse}, v_4 = \text{dog}, v_5 = \text{chase}, v_6 = \text{cheese}$.
+-   $j = 1, 2, \ldots, 6$.
+
+Note: Depending on the transformer model, special tokens (e.g., `[PAD]`,
+`[CLS]`, `[BOS]`, `[EOS]`, `[UNK]`, etc.) may also be included in $\mathcal{V}$.
+
+### Input Sequence
+
+$\mathbf{X}$: The input sequence, defined as:
+
+$$
+\mathbf{X} = (x_1, x_2, \ldots, x_L)
+$$
+
+where
+
+-   $L$: The length of the sequence.
+-   $x_i$: A **token** at position $i$ in the sequence, represented as an
+    integer in the set $\{0, 1, \ldots, V-1\}$.
+-   $i$: The index of a token in $\mathbf{X}$, where $1 \leq i \leq L$.
+
+## Others
 
 -   $f_{\text{stoi}}$: The function mapping a token in the sequence to its index
     in the vocabulary. For a token $x_i$, $f_{\text{stoi}}(x_i) = j$ means the
