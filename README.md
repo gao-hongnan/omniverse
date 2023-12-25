@@ -21,7 +21,8 @@ This section provides detailed instructions on how to build and run the
 provides a containerized environment for building and serving the Jupyter Book
 website.
 
-> [!WARNING] This section is only tested on macOS Ventura 13.4.1.
+> [!WARNING]
+> This section is only tested on macOS Ventura 13.4.1.
 
 First, ensure you are in the root directory of the repository, if not, change
 directories to the root directory:
