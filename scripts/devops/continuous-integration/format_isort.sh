@@ -49,13 +49,13 @@ log_env_override() {
     if [ -n "$CUSTOM_FLAGS" ]; then
         logger "WARN" "Custom flags provided via environment variable: $CUSTOM_FLAGS"
     else
-        logger "INFO" "Using default flags."
+        logger "INFO" "Using default flags: ${DEFAULT_FLAGS[*]}"
     fi
 
     if [ -n "$CUSTOM_PACKAGES" ]; then
         logger "WARN" "Custom packages provided via environment variable: $CUSTOM_PACKAGES"
     else
-        logger "INFO" "Using default packages."
+        logger "INFO" "Using default packages: ${DEFAULT_PACKAGES[*]}"
     fi
 }
 
