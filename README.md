@@ -28,7 +28,7 @@ First, ensure you are in the root directory of the repository, if not, change
 directories to the root directory:
 
 ```bash
-cd <path/to/omniverse>
+~/ $ cd <path/to/omniverse>
 ```
 
 Replace `<path/to/omniverse>` with the actual path to your repository's root
@@ -41,9 +41,9 @@ directory.
    image uniquely.
 
     ```bash
-    export GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
-    export IMAGE_NAME=omniverse
-    export IMAGE_TAG=$GIT_COMMIT_HASH
+    ~/omniverse $ export GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
+    ~/omniverse $ export IMAGE_NAME=omniverse
+    ~/omniverse $ export IMAGE_TAG=$GIT_COMMIT_HASH
     ```
 
 2. **Build the Image**: Execute the following Docker command to build the image,
@@ -51,10 +51,10 @@ directory.
    set environment variables.
 
     ```bash
-    docker build \
-        --file scripts/docker/documentation/jupyterbook.Dockerfile \
-        --tag $IMAGE_NAME:$IMAGE_TAG \
-        .
+    ~/omniverse $ docker build \
+    >   --file scripts/docker/documentation/jupyterbook.Dockerfile \
+    >   --tag $IMAGE_NAME:$IMAGE_TAG \
+    >   .
     ```
 
 ### Running the Docker Container
@@ -62,9 +62,9 @@ directory.
 To run the Docker container:
 
 ```bash
-docker run \
-    --publish 80:80 \
-    $IMAGE_NAME:$IMAGE_TAG
+~/omniverse $ docker run \
+>   --publish 80:80 \
+>   $IMAGE_NAME:$IMAGE_TAG
 ```
 
 This command will start a container from the built image, mapping port 80 of the
@@ -76,11 +76,11 @@ accessible at `http://localhost:80`.
 To stop the Docker container:
 
 ```bash
-export CONTAINER_ID=$(docker ps --filter ancestor=$IMAGE_NAME:$IMAGE_TAG --format "{{.ID}}")
-docker stop $CONTAINER_ID
+~/omniverse $ export CONTAINER_ID=$(docker ps --filter ancestor=$IMAGE_NAME:$IMAGE_TAG --format "{{.ID}}")
+~/omniverse $ docker stop $CONTAINER_ID
 ```
 
-### References and Further Readings
+### Further Enhancements
 
 This is a relatively simple Dockerfile. Further enhancements can include, but
 not limited to:
@@ -93,5 +93,7 @@ not limited to:
     use a Docker image for development, and mount the source code directory to
     the container. This way, users can develop on their host machine, and the
     changes will be reflected in the container.
+
+### References and Further Readings
 
 -   [How to run Nginx within a Docker container without halting?](https://stackoverflow.com/questions/18861300/how-to-run-nginx-within-a-docker-container-without-halting)
