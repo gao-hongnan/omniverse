@@ -21,6 +21,8 @@ This section provides detailed instructions on how to build and run the
 provides a containerized environment for building and serving the Jupyter Book
 website.
 
+> [!WARNING] This section is only tested on macOS Ventura 13.4.1.
+
 First, ensure you are in the root directory of the repository, if not, change
 directories to the root directory:
 
@@ -28,34 +30,54 @@ directories to the root directory:
 cd <path/to/omniverse>
 ```
 
+Replace `<path/to/omniverse>` with the actual path to your repository's root
+directory.
+
 ### Building the Docker Image
 
-```bash
-export GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
-export IMAGE_NAME=omniverse
-export IMAGE_TAG=$GIT_COMMIT_HASH
-docker build \
-  --file scripts/docker/documentation/jupyterbook.Dockerfile \
-  --tag $IMAGE_NAME:$IMAGE_TAG \
-  .
-```
+1. **Set Environment Variables**: Set the `GIT_COMMIT_HASH`, `IMAGE_NAME`, and
+   `IMAGE_TAG` environment variables. These will be used to tag your Docker
+   image uniquely.
+
+    ```bash
+    export GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
+    export IMAGE_NAME=omniverse
+    export IMAGE_TAG=$GIT_COMMIT_HASH
+    ```
+
+2. **Build the Image**: Execute the following Docker command to build the image,
+   specifying the Dockerfile path and assigning the tag based on the previously
+   set environment variables.
+
+    ```bash
+    docker build \
+        --file scripts/docker/documentation/jupyterbook.Dockerfile \
+        --tag $IMAGE_NAME:$IMAGE_TAG \
+        .
+    ```
 
 ### Running the Docker Container
 
 To run the Docker container:
 
 ```bash
-export GIT_COMMIT_HASH=$(git rev-parse --short HEAD)
-export IMAGE_NAME=omniverse
-export IMAGE_TAG=$GIT_COMMIT_HASH
 docker run \
-  --publish 80:80 \
-  $IMAGE_NAME:$IMAGE_TAG
+    --publish 80:80 \
+    $IMAGE_NAME:$IMAGE_TAG
 ```
 
 This command will start a container from the built image, mapping port 80 of the
 **container** to port 80 on the **host** machine. The website should now be
 accessible at `http://localhost:80`.
+
+### Stopping the Docker Container
+
+To stop the Docker container:
+
+```bash
+export CONTAINER_ID=$(docker ps --filter ancestor=$IMAGE_NAME:$IMAGE_TAG --format "{{.ID}}")
+docker stop $CONTAINER_ID
+```
 
 ### References and Further Readings
 
