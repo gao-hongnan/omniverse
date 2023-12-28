@@ -12,6 +12,13 @@
         -   [Stopping the Docker Container](#stopping-the-docker-container)
         -   [Further Enhancements](#further-enhancements)
         -   [References and Further Readings](#references-and-further-readings)
+    -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
+        -   [Versioning](#versioning)
+            -   [Semantic Versioning Format](#semantic-versioning-format)
+            -   [Example Versioning](#example-versioning)
+            -   [Additional Labels](#additional-labels)
+        -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
+        -   [References and Further Readings](#references-and-further-readings-1)
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
 science, math, and software engineering explorations. Dive into the universe of
@@ -104,3 +111,72 @@ not limited to:
 ### References and Further Readings
 
 -   [How to run Nginx within a Docker container without halting?](https://stackoverflow.com/questions/18861300/how-to-run-nginx-within-a-docker-container-without-halting)
+
+## Release using GitHub Actions CI/CD Workflows
+
+### Versioning
+
+The conventional way to name software versions is by following
+[**Semantic Versioning**](https://semver.org/) (SemVer). Semantic Versioning is
+a widely adopted system for versioning software in a way that conveys meaning
+about the underlying changes. It helps in managing dependencies and avoiding
+compatibility issues.
+
+#### Semantic Versioning Format
+
+A Semantic Version number is typically formatted as `MAJOR.MINOR.PATCH`, where:
+
+1. **MAJOR version**:
+
+    - Incremented for incompatible API changes or major changes in
+      functionality.
+    - Indicates that the new version might not be backward compatible with
+      previous major versions.
+
+2. **MINOR version**:
+
+    - Incremented for adding functionality in a backward-compatible manner.
+    - Indicates new features or improvements which do not break existing
+      functionalities.
+
+3. **PATCH version**:
+    - Incremented for backward-compatible bug fixes.
+    - Focuses on resolving bugs and issues without adding new features or
+      breaking existing functionality.
+
+#### Example Versioning
+
+-   `1.0.0`: The first stable release of a software.
+-   `1.0.1`: A subsequent release that includes bug fixes but no new features.
+-   `1.1.0`: A release that introduces new features but is still backward
+    compatible with the `1.0.x` series.
+-   `2.0.0`: A release that makes changes significant enough to potentially
+    break compatibility with the `1.x.x` series.
+
+#### Additional Labels
+
+Semantic Versioning also supports additional labels for pre-release and build
+metadata:
+
+-   Pre-release versions can be denoted with a hyphen and additional identifiers
+    (e.g., `2.0.0-alpha`, `2.0.0-beta.1`).
+-   Build metadata can be appended using a plus sign and additional identifiers
+    (e.g., `2.0.0+build.20230315`).
+
+### Release using GitHub Actions CI/CD Workflows
+
+Follow
+[Publishing Package Distribution Releases Using GitHub Actions CI/CD Workflows - Python Packaging User Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
+for detailed instructions on how to release a Python package using GitHub
+Actions CI/CD workflows.
+
+One thing that is not mentioned in the guide, but is a good practice, is to do
+all the necessary pre-release checks before releasing your package, that
+includes all the pre-merge checks, and additional checks such as running tests,
+linting, and building the documentation. This ensures that the release is of
+high quality and is ready to be used by others.
+
+### References and Further Readings
+
+-   [Packaging Projects - Python Packaging User Guide](https://packaging.python.org/tutorials/packaging-projects/)
+-   [Publishing Package Distribution Releases Using GitHub Actions CI/CD Workflows - Python Packaging User Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
