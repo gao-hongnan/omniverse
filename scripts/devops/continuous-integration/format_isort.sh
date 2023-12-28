@@ -15,6 +15,7 @@ DEFAULT_FLAGS=(
 )
 DEFAULT_PACKAGES=(
     "omnivault"
+    "tests"
     # Add more packages here if necessary
 )
 

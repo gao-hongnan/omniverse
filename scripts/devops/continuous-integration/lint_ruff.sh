@@ -13,7 +13,7 @@ DEFAULT_FLAGS=(
 )
 DEFAULT_PACKAGES=(
     "omnivault"
-    # "_tmp_types.py"
+    "tests"
     # Add more default packages here if necessary
 )
 
