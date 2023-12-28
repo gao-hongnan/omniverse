@@ -1,9 +1,10 @@
 # NOTE: It is important to have exactly the same config for all pre-commit hooks as the github action yaml. In other words, local and remote CI checks should be the same.
 # pre-commit run --all-files --verbose
 # See https://pycqa.github.io/isort/docs/configuration/black_compatibility.html for arg diff in local vs remote.
+# Reference: https://github.com/mosaicml/composer/blob/dev/.pre-commit-config.yaml
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.1.0
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
       - id: check-ast
@@ -12,7 +13,6 @@ repos:
       - id: check-docstring-first
       - id: check-executables-have-shebangs
       - id: check-json
-      - id: check-merge-conflict
       - id: check-shebang-scripts-are-executable
       - id: check-symlinks
       - id: check-toml
@@ -46,6 +46,11 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+  # - repo: https://github.com/igorshubovych/markdownlint-cli
+  #   rev: v0.38.0
+  #   hooks:
+  #   - id: markdownlint
+  #     args: [--config, .markdownlint.json]
   - repo: local
     hooks:
       - id: ci-format-isort
@@ -93,3 +98,7 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict

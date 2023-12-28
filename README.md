@@ -1,5 +1,13 @@
 # Omniverse
 
+-   [Omniverse](#omniverse)
+    -   [Building and Running the Jupyter Book Docker Image](#building-and-running-the-jupyter-book-docker-image)
+        -   [Building the Docker Image](#building-the-docker-image)
+        -   [Running the Docker Container](#running-the-docker-container)
+        -   [Stopping the Docker Container](#stopping-the-docker-container)
+        -   [Further Enhancements](#further-enhancements)
+        -   [References and Further Readings](#references-and-further-readings)
+
 ![Python version](https://img.shields.io/badge/Python-3.9-3776AB)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/gaohongnan.svg?style=social&label=Follow%20%40gaohongnan)](https://twitter.com/gaohongnan)
 [![LinkedIn](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -21,8 +29,7 @@ This section provides detailed instructions on how to build and run the
 provides a containerized environment for building and serving the Jupyter Book
 website.
 
-> [!WARNING]
-> This section is only tested on macOS Ventura 13.4.1.
+> [!WARNING] This section is only tested on macOS Ventura 13.4.1.
 
 First, ensure you are in the root directory of the repository, if not, change
 directories to the root directory:
