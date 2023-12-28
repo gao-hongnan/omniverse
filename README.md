@@ -1,5 +1,10 @@
 # Omniverse
 
+![Python version](https://img.shields.io/badge/Python-3.9-3776AB)
+[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/gaohongnan.svg?style=social&label=Follow%20%40gaohongnan)](https://twitter.com/gaohongnan)
+[![LinkedIn](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![Continuous Integration Checks on Omnivault.](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml/badge.svg)](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml)
+
 -   [Omniverse](#omniverse)
     -   [Building and Running the Jupyter Book Docker Image](#building-and-running-the-jupyter-book-docker-image)
         -   [Building the Docker Image](#building-the-docker-image)
@@ -7,11 +12,6 @@
         -   [Stopping the Docker Container](#stopping-the-docker-container)
         -   [Further Enhancements](#further-enhancements)
         -   [References and Further Readings](#references-and-further-readings)
-
-![Python version](https://img.shields.io/badge/Python-3.9-3776AB)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/gaohongnan.svg?style=social&label=Follow%20%40gaohongnan)](https://twitter.com/gaohongnan)
-[![LinkedIn](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
-[![Continuous Integration Checks on Omnivault.](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml/badge.svg)](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml)
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
 science, math, and software engineering explorations. Dive into the universe of
