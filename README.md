@@ -18,6 +18,7 @@
             -   [Example Versioning](#example-versioning)
             -   [Additional Labels](#additional-labels)
         -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
+        -   [Example Workflow](#example-workflow)
         -   [References and Further Readings](#references-and-further-readings-1)
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
@@ -166,7 +167,7 @@ metadata:
 ### Release using GitHub Actions CI/CD Workflows
 
 Follow
-[Publishing Package Distribution Releases Using GitHub Actions CI/CD Workflows - Python Packaging User Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
+[the guide here](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
 for detailed instructions on how to release a Python package using GitHub
 Actions CI/CD workflows.
 
@@ -176,7 +177,22 @@ includes all the pre-merge checks, and additional checks such as running tests,
 linting, and building the documentation. This ensures that the release is of
 high quality and is ready to be used by others.
 
+### Example Workflow
+
+Update the `version` field in `pyproject.toml` to the new version, and commit
+the changes to the `dev` branch (or any other branch that satisfies the
+`on.push.branches` condition in the workflow).
+
+```bash
+git commit -m "Bump version to 0.0.3"
+git tag -a v0.0.3 -m "Release version 0.0.3"
+git push origin dev
+git push origin v0.0.3
+```
+
 ### References and Further Readings
 
 -   [Packaging Projects - Python Packaging User Guide](https://packaging.python.org/tutorials/packaging-projects/)
 -   [Publishing Package Distribution Releases Using GitHub Actions CI/CD Workflows - Python Packaging User Guide](https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
+-   [Publishing Python Packages](https://carpentries-incubator.github.io/python_packaging/instructor/05-publishing.html)
+-   [Publishing Python Packages from GitHub Actions](https://www.seanh.cc/2022/05/21/publishing-python-packages-from-github-actions/)
