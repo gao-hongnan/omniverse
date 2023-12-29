@@ -177,17 +177,24 @@ includes all the pre-merge checks, and additional checks such as running tests,
 linting, and building the documentation. This ensures that the release is of
 high quality and is ready to be used by others.
 
+Furthermore, we add a `release-docker` workflow to build and publish a Docker
+image to Docker Hub. The workflow is triggered when a new release is published
+to PyPI. I followed
+[langchain's workflow](https://github.com/langchain-ai/langchain/blob/master/.github/workflows/langchain_release.yml)
+on how to publish a Docker image to Docker Hub via GitHub Actions. The rationale
+is ..?
+
 ### Example Workflow
 
 Update the `version` field in `pyproject.toml` to the new version, and commit
-the changes to the `dev` branch (or any other branch that satisfies the
+the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-git commit -m "Bump version to 0.0.3"
-git tag -a v0.0.3 -m "Release version 0.0.3"
-git push origin dev
-git push origin v0.0.3
+git commit -m "Bump version to 0.0.8"
+git tag -a v0.0.8 -m "Release version 0.0.8"
+git push origin main
+git push origin v0.0.8
 ```
 
 Then the workflow will be triggered, and the package will be published to PyPI.
