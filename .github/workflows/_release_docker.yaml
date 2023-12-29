@@ -25,11 +25,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Get git tag
-        uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
+        run: |
+          echo "LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
       - name: Set docker tag
         env:
-          VERSION: ${{ steps.get-latest-tag.outputs.tag }}
+          VERSION: ${{ env.LATEST_TAG }}
         run: |
           echo "VERSION_TAG=${{ inputs.image }}:${VERSION#v}" >> $GITHUB_ENV
       - name: Set up QEMU

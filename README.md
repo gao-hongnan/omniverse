@@ -179,10 +179,11 @@ high quality and is ready to be used by others.
 
 Furthermore, we add a `release-docker` workflow to build and publish a Docker
 image to Docker Hub. The workflow is triggered when a new release is published
-to PyPI. I followed
+to PyPI. This approach is inspired by
 [langchain's workflow](https://github.com/langchain-ai/langchain/blob/master/.github/workflows/langchain_release.yml)
-on how to publish a Docker image to Docker Hub via GitHub Actions. The rationale
-is ..?
+for publishing a Docker image via GitHub Actions. The rationale behind
+incorporating a Docker release alongside the PyPI release is to ensure the
+package `omniverse` is able to be imported and used across different platforms.
 
 ### Example Workflow
 
@@ -191,10 +192,10 @@ the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-git commit -m "bump version to 0.0.8"
-git tag -a v0.0.8 -m "Release version 0.0.8"
+git commit -m "bump version to 0.0.9"
+git tag -a v0.0.9 -m "Release version 0.0.9"
 git push origin main
-git push origin v0.0.8
+git push origin v0.0.9
 ```
 
 Then the workflow will be triggered, and the package will be published to PyPI.
