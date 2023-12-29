@@ -3,4 +3,5 @@ ARG PACKAGE=omniverse
 
 FROM python:${PYTHON_VERSION}
 
+ARG PACKAGE
 RUN pip install ${PACKAGE}
