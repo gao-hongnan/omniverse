@@ -191,7 +191,7 @@ the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-git commit -m "Bump version to 0.0.8"
+git commit -m "bump version to 0.0.8"
 git tag -a v0.0.8 -m "Release version 0.0.8"
 git push origin main
 git push origin v0.0.8
