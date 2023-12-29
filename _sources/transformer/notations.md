@@ -74,11 +74,13 @@ where
     integer in the set $\{0, 1, \ldots, V-1\}$.
 -   $i$: The index of a token in $\mathbf{X}$, where $1 \leq i \leq L$.
 
-## Others
+### Token to Index, and Index to Token Mappings
 
 -   $f_{\text{stoi}}$: The function mapping a token in the sequence to its index
     in the vocabulary. For a token $x_i$, $f_{\text{stoi}}(x_i) = j$ means the
     token $x_i$ corresponds to the $j$-th word in the vocabulary $\mathcal{V}$.
+
+## Others
 
 -   $\mathbf{O}$: one-hot representation of the input sequence $\mathbf{X}$.
     This is a $L \times V$ matrix, where each row represents a token in the
