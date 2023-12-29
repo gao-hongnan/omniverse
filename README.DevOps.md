@@ -262,3 +262,400 @@ intent.
 
 -   [Indexing on search engines](https://github.com/executablebooks/jupyter-book/issues/1934)
 -   [Generate sitemap.xml for SEO](https://github.com/executablebooks/jupyter-book/issues/880)
+
+---
+
+# CI
+
+-   [DevOps Best Practices](#devops-best-practices)
+    -   [Pre-commit Setup Guide](#pre-commit-setup-guide)
+        -   [Step 1: Install Pre-commit](#step-1-install-pre-commit)
+        -   [Step 2: Create a Configuration File](#step-2-create-a-configuration-file)
+        -   [Step 3: Install Hooks](#step-3-install-hooks)
+        -   [Step 4: Run Against All Files](#step-4-run-against-all-files)
+        -   [Step 5: Make a Commit](#step-5-make-a-commit)
+    -   [GitHub Actions](#github-actions)
+        -   [Environment Variables](#environment-variables)
+            -   [`WORKDIR`](#workdir)
+    -   [Continuous Integration](#continuous-integration)
+        -   [Pinning DevOps Tool Versions](#pinning-devops-tool-versions)
+            -   [Example: Pinning `pylint` Version](#example-pinning-pylint-version)
+                -   [Scenario Without Pinning](#scenario-without-pinning)
+                -   [Scenario With Pinning](#scenario-with-pinning)
+                -   [Implementing Pinning](#implementing-pinning)
+            -   [Conclusion](#conclusion)
+        -   [Linter](#linter)
+    -   [Building the book](#building-the-book)
+    -   [How to Index Jupyter Book?](#how-to-index-jupyter-book)
+-   [CI](#ci)
+    -   [Motivation](#motivation)
+        -   [Introduction to the Problem](#introduction-to-the-problem)
+        -   [Broader Implications](#broader-implications)
+        -   [Impact on Development Workflow](#impact-on-development-workflow)
+        -   [Long-Term Consequences](#long-term-consequences)
+        -   [Advocating for a Solution](#advocating-for-a-solution)
+        -   [Enhancing Resilience and Reducing Bugs with Linting, Testing, and Static Type Checking](#enhancing-resilience-and-reducing-bugs-with-linting-testing-and-static-type-checking)
+            -   [Introduction: The Role of Quality Assurance Tools](#introduction-the-role-of-quality-assurance-tools)
+            -   [Benefits of Linting](#benefits-of-linting)
+            -   [Advantages of Automated Testing](#advantages-of-automated-testing)
+            -   [Introduction: Python's Typing Landscape](#introduction-pythons-typing-landscape)
+            -   [Role of Static Type Checking](#role-of-static-type-checking)
+            -   [Reducing Runtime Errors](#reducing-runtime-errors)
+            -   [Conclusion: Building a Resilient Codebase](#conclusion-building-a-resilient-codebase)
+    -   [Version Control](#version-control)
+    -   [Code Quality and Standards](#code-quality-and-standards)
+    -   [Dependency Management](#dependency-management)
+    -   [Testing](#testing)
+    -   [Continuous Integration (CI)](#continuous-integration-ci)
+    -   [Continuous Deployment/Delivery (CD)](#continuous-deploymentdelivery-cd)
+    -   [Monitoring and Logging](#monitoring-and-logging)
+    -   [Security](#security)
+    -   [Infrastructure](#infrastructure)
+    -   [Documentation](#documentation)
+    -   [Others](#others)
+    -   [Best Practices](#best-practices)
+    -   [Continuous Improvement](#continuous-improvement)
+
+## Motivation
+
+### Introduction to the Problem
+
+-   **Immediate Challenge**:When cloning repositories from previous team
+    members, we often find that the code fails to pass basic checks. This not
+    only hinders immediate local development but also fails to integrate with
+    our Jenkins automated process.
+
+    Furthermore, we will not have time and resource to correct tens of thousands
+    of lines of code. This is **technical debt**. What are the broader
+    implications?s
+
+### Broader Implications
+
+-   **Quality and Reliability Concerns**: The code failing such checks is often
+    symptomatic of deeper quality issues, potentially leading to unreliable and
+    unstable applications. Unchecked code is more likely to contain bugs,
+    security vulnerabilities, or performance issues.
+
+    This is **technical debt** and often results in code breaking during
+    **production**. One may ask, even if we do the checking of quality, it does
+    not 100% reduce the occurence of bugs. That is 100% correct, but the
+    argument here is not to **eradicate**, but to **reduce** - a numbers game.
+
+### Impact on Development Workflow
+
+**Technical debt** again. Why? Because if the new developer comes, he faces:
+
+-   **Increased Onboarding Time**: Highlight that new team members or those
+    inheriting the code spend unnecessary time fixing these basic issues,
+    delaying their ability to contribute effectively.
+-   **Inefficient Use of Resources**: Point out that developers often spend a
+    significant amount of time troubleshooting and resolving issues that could
+    have been easily prevented with proper checks in place.
+
+He will also need to decide with the team if it is worth refactoring potentially
+tens of thousands of code!!!
+
+### Long-Term Consequences
+
+-   **Technical Debt Accumulation**: Emphasize that allowing such code practices
+    creates and accumulates technical debt. Over time, this debt becomes harder
+    to address, leading to a slower development cycle and increased costs.
+-   **Scalability and Maintenance Issues**: Stress that as the codebase grows,
+    maintaining code that hasn't been properly vetted for quality becomes
+    increasingly challenging, leading to scalability issues.
+-   **Erosion of Best Practices**: Mention that neglecting these checks sets a
+    precedent that might lead to a gradual erosion of coding standards and best
+    practices within the team.
+
+### Advocating for a Solution
+
+**A good example
+[here](https://ci4.corp.dbs.com:8443/job/CBBA_REGIONAL/job/synthetic-data-generation/job/feature%252Fmultitable/).
+But it is missing static type check I think - everybody is scared to fix typing
+issues in python but look at how big companies do it. It enforced good code
+hygience. **
+
+![](cicd-sample.PNG)
+
+-   **Need for Stringent Checks**: Advocate for stringent linting, testing, and
+    static type checking as part of your CI/CD pipeline. This ensures that all
+    code, regardless of its origin, meets a certain quality standard before it's
+    integrated.
+-   **Preventing Future Issues**: Argue that by enforcing these checks, future
+    teams will inherit healthier, more robust codebases, reducing the time and
+    effort needed to get up to speed and start contributing effectively.
+
+Certainly! The section you're looking to write focuses on the benefits of
+linting, testing, and static type checking in enhancing resilience and reducing
+bugs in production. These tools are crucial in a robust development process
+because they help identify potential issues early in the development cycle, thus
+preventing them from becoming more significant problems in production. Here's a
+structured way to articulate this:
+
+### Enhancing Resilience and Reducing Bugs with Linting, Testing, and Static Type Checking
+
+#### Introduction: The Role of Quality Assurance Tools
+
+-   **Overview**: Linting, testing, and static type checking are foundational
+    tools in a developer's arsenal to ensure code quality, resilience, and
+    reliability.
+
+#### Benefits of Linting
+
+-   **Code Consistency and Readability**: Linting tools enforce coding standards
+    and styles, leading to more readable and maintainable code. Consistent code
+    is easier to understand, troubleshoot, and debug.
+-   **Early Bug Detection**: Linters can catch syntax errors, undefined
+    variables, and other potential bugs that might otherwise go unnoticed until
+    later stages or even into production.
+-   **Enhancing Code Quality**: By enforcing best practices, linting helps in
+    avoiding common coding pitfalls, improving the overall quality of the
+    codebase.
+
+#### Advantages of Automated Testing
+
+-   **Catching Bugs Early**: Automated tests, including unit and integration
+    tests, are designed to catch bugs at the earliest possible stage. This early
+    detection prevents bugs from propagating to later stages of development or
+    into production.
+-   **Ensuring Code Functionality**: Tests validate that the code performs as
+    expected, reducing the likelihood of functional errors in production.
+-   **Facilitating Refactoring and Updates**: With a robust test suite,
+    developers can confidently refactor and update code, knowing that tests will
+    catch any inadvertent breakages or regressions.
+
+#### Introduction: Python's Typing Landscape
+
+-   **Dynamic Typing in Python**: While Python's dynamic typing allows for rapid
+    development and iteration, it can also introduce subtle bugs, especially in
+    larger or more complex codebases.
+
+#### Role of Static Type Checking
+
+-   **Type Safety**: Static type checkers ensure that variables and functions
+    are used correctly according to their defined types, preventing type-related
+    errors that can be hard to trace in dynamically typed languages like Python.
+-   **Catching Type Errors Early**: Static type checking tools like `mypy`
+    analyze code for type consistency before it is run. This early detection of
+    type mismatches prevents runtime type errors that could otherwise occur in
+    production.
+-   **Improved Code Readability and Maintainability**: Type annotations make the
+    code more readable and self-documenting. They clarify the intended use of
+    variables, functions, and classes, making the codebase easier to understand
+    and maintain, especially for teams.
+-   **Facilitating Better Code Design**: The practice of adding type hints
+    encourages developers to think more carefully about their data structures
+    and function interfaces, often leading to better designed, more robust code.
+
+#### Reducing Runtime Errors
+
+-   **Preventing Common Python Bugs**: Type checking helps to prevent common
+    bugs in Python related to incorrect type usage, such as passing an incorrect
+    data type to a function or incorrectly handling return types.
+-   **Enhancing Safety in Refactoring**: When modifying existing code, type
+    annotations provide an extra layer of safety, ensuring that changes do not
+    inadvertently alter the expected type behavior of the code.
+
+#### Conclusion: Building a Resilient Codebase
+
+-   **Proactive Approach to Quality**: Summarize by emphasizing that integrating
+    linting, testing, and static type checking into the development process is a
+    proactive approach to building a resilient and robust codebase.
+-   **Reducing Production Bugs and Downtime**: Highlight that these tools
+    significantly reduce the likelihood of bugs reaching production, thereby
+    minimizing downtime and the associated costs.
+-   **Long-Term Benefits**: Conclude by mentioning the long-term benefits: a
+    healthier codebase, smoother development process, and increased confidence
+    in the code's reliability and performance.
+
+---
+
+## Version Control
+
+-   **Git** with a platform like GitHub, GitLab, or Bitbucket.
+-   **Branching Strategy**: Implement a strategy like Git Flow or Trunk Based
+    Development.
+
+## Code Quality and Standards
+
+-   **Linting**: Use tools like `flake8` or `pylint`.
+-   **Code Formatting**: Tools like `black` or `autopep8`.
+-   **Type Checking**: Optional but recommended, using `mypy` or `pytype`.
+-   **Code Reviews**: Enforce via merge/pull request policies.
+
+## Dependency Management
+
+-   **Dependency Specification**: Use `pyproject.toml` (PEP 518) to define
+    dependencies.
+-   **Virtual Environments**: Use `venv`, `pipenv`, or `poetry` for isolated
+    environments.
+-   **Dependency Scanning**: Tools like `snyk` or `dependabot` for vulnerability
+    scanning.
+
+## Testing
+
+1. **Unit Testing**:
+
+    - Tests individual units or components of the software in isolation (e.g.,
+      functions, methods).
+    - Ensures that each part works correctly on its own.
+
+2. **Integration Testing**:
+
+    - Tests the integration or interfaces between components or systems.
+    - Ensures that different parts of the system work together as expected.
+
+3. **System Testing**:
+
+    - Tests the complete and integrated software system.
+    - Verifies that the system meets its specified requirements.
+
+4. **Acceptance Testing**:
+
+    - Performed by end-users or clients to validate the end-to-end business
+      flow.
+    - Ensures that the software meets the business requirements and is ready for
+      delivery.
+
+5. **Regression Testing**:
+
+    - Conducted after changes (like enhancements or bug fixes) to ensure
+      existing functionalities work as before.
+    - Helps catch bugs introduced by recent changes.
+
+6. **Functional Testing**:
+
+    - Tests the software against functional specifications/requirements.
+    - Focuses on checking functionalities of the software.
+
+7. **Non-Functional Testing**:
+
+    - Includes testing of non-functional aspects like performance, usability,
+      reliability, etc.
+    - Examples include Performance Testing, Load Testing, Stress Testing,
+      Usability Testing, Security Testing, etc.
+
+8. **End-to-End Testing**:
+
+    - Tests the complete flow of the application from start to end.
+    - Ensures the system behaves as expected in real-world scenarios.
+
+9. **Smoke Testing**:
+
+    - Preliminary testing to check if the basic functions of the software work
+      correctly.
+    - Often done to ensure it's stable enough for further testing.
+
+10. **Exploratory Testing**:
+
+    - Unscripted testing to explore the application's capabilities.
+    - Helps to find unexpected issues that may not be covered in other tests.
+
+11. **Load Testing**:
+
+    - Evaluates system performance under a specific expected load.
+    - Identifies performance bottlenecks.
+
+12. **Stress Testing**:
+
+    - Tests the system under extreme conditions, often beyond its normal
+      operational capacity.
+    - Checks how the system handles overload.
+
+13. **Usability Testing**:
+
+    - Focuses on the user's ease of using the application, user interface, and
+      user satisfaction.
+    - Helps improve user experience and interface design.
+
+14. **Security Testing**:
+
+    - Identifies vulnerabilities in the software and ensures that the data and
+      resources are protected.
+    - Checks for potential exploits and security flaws.
+
+15. **Compatibility Testing**:
+
+    - Checks if the software is compatible with different environments like
+      operating systems, browsers, devices, etc.
+
+16. **Sanity Testing**:
+    - A subset of regression testing, focused on testing specific
+      functionalities after making changes.
+    - Usually quick and verifies whether a particular function of the
+      application is still working after a minor change.
+
+## Continuous Integration (CI)
+
+-   **Automated Builds**: On every commit/merge to main branches.
+-   **Automated Tests**: Run all tests on build.
+-   **Quality Gates**: No merge if tests, linting, or type checks fail.
+-   **Docker Integration**: For packaging and consistent test environments.
+
+## Continuous Deployment/Delivery (CD)
+
+-   **Automated Deployment**: Use tools like Jenkins, GitLab CI/CD, GitHub
+    Actions, or CircleCI.
+-   **Environment Management**: Dev, Staging, and Production environments with
+    promotion strategy.
+-   **Infrastructure as Code (IaC)**: Tools like Terraform or AWS
+    CloudFormation.
+-   **Configuration Management**: Tools like Ansible, Chef, or Puppet.
+
+## Monitoring and Logging
+
+-   **Application Performance Monitoring (APM)**: Tools like New Relic, Datadog,
+    or Prometheus.
+-   **Logging**: Centralized logging with ELK stack (Elasticsearch, Logstash,
+    Kibana) or similar.
+-   **Error Tracking**: Tools like Sentry.
+
+## Security
+
+-   **Static Application Security Testing (SAST)**: Tools like Bandit for Python
+    code.
+-   **Dynamic Application Security Testing (DAST)**: Automated scanning of web
+    applications.
+-   **Secrets Management**: Avoid hardcoding secrets, use tools like HashiCorp
+    Vault or AWS Secrets Manager.
+
+## Infrastructure
+
+-   **Containerization**: Docker for packaging and Kubernetes for orchestration.
+-   **Cloud Providers**: AWS, GCP, Azure, or a combination for cloud
+    infrastructure.
+
+## Documentation
+
+-   **Code Documentation**: Inline comments and external documentation (e.g.,
+    Sphinx for Python).
+-   **Pipeline Documentation**: Document the CI/CD process, setup, and any
+    manual steps required.
+
+## Others
+
+-   **Feature Flags**: For controlled rollouts of new features.
+-   **Rollback Strategies**: Automated rollback in case of failed deployments.
+-   **Load Testing and Stress Testing**: Regularly test the system's
+    performance.
+
+## Best Practices
+
+-   **Immutable Artifacts**: Build once and promote the same artifact through
+    environments.
+-   **Blue/Green or Canary Deployments**: For zero-downtime deployments and A/B
+    testing.
+-   **Microservices Architecture**: If applicable, for better scalability and
+    maintenance.
+
+## Continuous Improvement
+
+-   **Regular Review of Tools and Processes**: Stay updated with evolving best
+    practices and tools.
+-   **Feedback Loops**: Implement mechanisms for continuous feedback from all
+    stakeholders.
+
+Remember, the exact tools and practices may vary depending on the specific
+requirements, team size, and existing infrastructure of your organization. The
+key is to maintain a balance between rigorous quality controls and efficient
+development workflows.

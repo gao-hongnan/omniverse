@@ -13,10 +13,10 @@
         -   [Further Enhancements](#further-enhancements)
         -   [References and Further Readings](#references-and-further-readings)
     -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
-        -   [Versioning](#versioning)
-            -   [Semantic Versioning Format](#semantic-versioning-format)
+        -   [Semantic Versioning](#semantic-versioning)
+            -   [Format](#format)
             -   [Example Versioning](#example-versioning)
-            -   [Additional Labels](#additional-labels)
+            -   [Pre-release and Build Metadata](#pre-release-and-build-metadata)
         -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
         -   [Example Workflow](#example-workflow)
         -   [References and Further Readings](#references-and-further-readings-1)
@@ -32,10 +32,10 @@ commands, you can use shell variables and command substitutions.
 
 ## Building and Running the Jupyter Book Docker Image
 
-This section provides detailed instructions on how to build and run the
-`scripts/docker/documentation/jupyterbook.Dockerfile` Docker image. The image
-provides a containerized environment for building and serving the Jupyter Book
-website.
+This section provides detailed instructions on how to build the Dockerfile
+(`docker/documentation/jupyterbook.Dockerfile`) and run the Docker image. The
+image provides a containerized environment for building and serving the Jupyter
+Book website.
 
 > [!WARNING] This section is only tested on macOS Ventura 13.4.1.
 
@@ -67,7 +67,7 @@ directory.
 
     ```bash
     ~/omniverse $ docker build \
-    >   --file scripts/docker/documentation/jupyterbook.Dockerfile \
+    >   --file docker/documentation/jupyterbook.Dockerfile \
     >   --tag $IMAGE_NAME:$IMAGE_TAG \
     >   .
     ```
@@ -115,7 +115,7 @@ not limited to:
 
 ## Release using GitHub Actions CI/CD Workflows
 
-### Versioning
+### Semantic Versioning
 
 The conventional way to name software versions is by following
 [**Semantic Versioning**](https://semver.org/) (SemVer). Semantic Versioning is
@@ -123,7 +123,7 @@ a widely adopted system for versioning software in a way that conveys meaning
 about the underlying changes. It helps in managing dependencies and avoiding
 compatibility issues.
 
-#### Semantic Versioning Format
+#### Format
 
 A Semantic Version number is typically formatted as `MAJOR.MINOR.PATCH`, where:
 
@@ -154,7 +154,7 @@ A Semantic Version number is typically formatted as `MAJOR.MINOR.PATCH`, where:
 -   `2.0.0`: A release that makes changes significant enough to potentially
     break compatibility with the `1.x.x` series.
 
-#### Additional Labels
+#### Pre-release and Build Metadata
 
 Semantic Versioning also supports additional labels for pre-release and build
 metadata:
@@ -189,6 +189,10 @@ git tag -a v0.0.3 -m "Release version 0.0.3"
 git push origin dev
 git push origin v0.0.3
 ```
+
+Then the workflow will be triggered, and the package will be published to PyPI.
+It is worth noting that we will do a pre-release check before publishing the
+package.
 
 ### References and Further Readings
 
