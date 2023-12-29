@@ -192,10 +192,10 @@ the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-git commit -m "bump version to 0.0.13"
-git tag -a v0.0.13 -m "Release version 0.0.13"
+git commit -am "cicd: bump version to 0.0.15 #38."
+git tag -a v0.0.15 -m "Release version 0.0.15"
 git push origin main
-git push origin v0.0.13
+git push origin v0.0.15
 ```
 
 Then the workflow will be triggered, and the package will be published to PyPI.
