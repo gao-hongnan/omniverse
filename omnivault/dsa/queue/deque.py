@@ -50,9 +50,6 @@ class Deque(MutableSequence[T], Generic[T]):
         else:
             raise OverflowError("Deque is at its maximum size")
 
-    # Additional methods like copy, count, extend, remove, etc., should be implemented here.
-    # ...
-
 
 # Example usage
 my_deque = Deque([1, 2, 3], maxlen=3)
