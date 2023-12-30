@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Dict, List, Type
 
 
@@ -169,6 +170,42 @@ class AdderVocabulary(Vocabulary):
             self.decode(encoded_sequence, remove_special_tokens=remove_special_tokens)
             for encoded_sequence in encoded_sequences
         ]
+
+    def __len__(self) -> int:
+        return len(self.token_to_index)
+
+    @property
+    def vocab_size(self) -> int:
+        return len(self)
+
+
+class TextCharacterVocabulary(ABC):
+    """
+    A vocabulary class for character-level text processing. This class is designed
+    to handle the encoding and decoding of characters in text data. It is particularly
+    useful for tasks involving character-level models, such as GPT-style language models.
+
+    The vocabulary consists of a set of unique characters found in a given text corpus.
+    """
+
+    PAD = "<PAD>"
+
+    def __init__(self, token_to_index: Dict[str, int], index_to_token: Dict[int, str]) -> None:
+        self.token_to_index = token_to_index
+        self.index_to_token = index_to_token
+
+    @classmethod
+    def from_corpus(cls: Type[TextCharacterVocabulary], corpus: str) -> TextCharacterVocabulary:
+        vocabulary = sorted(set(corpus))
+        token_to_index = {token: idx for idx, token in enumerate(vocabulary)}
+        index_to_token = {idx: token for token, idx in token_to_index.items()}
+        return cls(token_to_index, index_to_token)
+
+    @classmethod
+    def from_file(cls: Type[TextCharacterVocabulary], file_path: str | Path) -> TextCharacterVocabulary:
+        with open(file_path, "r") as f:
+            text_corpus = f.read()
+        return cls.from_corpus(text_corpus)
 
     def __len__(self) -> int:
         return len(self.token_to_index)

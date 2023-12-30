@@ -10,7 +10,7 @@ from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield, 
 GROUND_TRUTH = GroundTruth()
 
 
-def test_construct_future_mask(adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth) -> None:
+def test_construct_future_mask(adder_dataset: AdderDataset, ground_truth: GroundTruth) -> None:
     """Test that the future mask is constructed correctly. Here we only test the first sequence."""
     future_mask = adder_dataset.construct_future_mask(ground_truth.seq_len)
     torch.testing.assert_close(future_mask, ground_truth.future_masks[0])
@@ -21,7 +21,7 @@ def test_construct_future_mask(adder_dataset: AdderDataset[AdderDatasetYield], g
     list(zip(GROUND_TRUTH.inputs, GROUND_TRUTH.padding_masks)),
 )
 def test_construct_padding_mask(
-    adder_dataset: AdderDataset[AdderDatasetYield], input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
+    adder_dataset: AdderDataset, input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
 ) -> None:
     """Test that the padding mask is constructed correctly. Here we only test the first sequence."""
     padding_mask = adder_dataset.construct_padding_mask(input)
@@ -33,7 +33,7 @@ def test_construct_padding_mask(
     list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.targets)),
 )
 def test_construct_target(
-    adder_dataset: AdderDataset[AdderDatasetYield], encoded_sequence: List[int], expected_target: torch.LongTensor
+    adder_dataset: AdderDataset, encoded_sequence: List[int], expected_target: torch.LongTensor
 ) -> None:
     """Test that the target is constructed correctly. Here we only test the first sequence."""
     target = adder_dataset.construct_target_tensor(torch.LongTensor(encoded_sequence))
@@ -45,16 +45,14 @@ def test_construct_target(
     list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.inputs)),
 )
 def test_construct_input(
-    adder_dataset: AdderDataset[AdderDatasetYield], encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
+    adder_dataset: AdderDataset, encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
 ) -> None:
     """Test that the input is constructed correctly. Here we only test the first sequence."""
     input = adder_dataset.construct_input_tensor(torch.LongTensor(encoded_sequence))
     torch.testing.assert_close(input, expected_input)
 
 
-def test_dataset_integration_with_getitem(
-    adder_dataset: AdderDataset[AdderDatasetYield], ground_truth: GroundTruth
-) -> None:
+def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, ground_truth: GroundTruth) -> None:
     """Test that the dataset returns the correct item."""
     index = 0
     length = len(adder_dataset)
@@ -119,9 +117,7 @@ def test_collate_fn(mock_batch: List[AdderDatasetYield], ground_truth: GroundTru
 
 @pytest.mark.parametrize("split", [[0.7, 0.1, 0.2], [0.8, 0.1, 0.1], [0.6, 0.2, 0.2]])
 @pytest.mark.parametrize("seed", [42, 1992])
-def test_split_dataset(
-    adder_dataset_but_larger: AdderDataset[AdderDatasetYield], split: List[float], seed: int
-) -> None:
+def test_split_dataset(adder_dataset_but_larger: AdderDataset, split: List[float], seed: int) -> None:
     """Test splitting the dataset into train, validation, and test sets."""
     # Perform the split
     train_dataset, val_dataset, test_dataset = split_dataset(adder_dataset_but_larger, split, seed)

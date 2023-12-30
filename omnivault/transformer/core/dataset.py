@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple, TypeVar, cast
+from pathlib import Path
+from typing import Any, Dict, List, Tuple, TypeVar, Union, cast
 
 import torch
 from rich.pretty import pprint
@@ -9,17 +10,26 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.composer import Composer
+from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
-# FIXME: Should we rename `AdderDatasetYield` to `DatasetYield` to be more generic?
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
-AdderDataset_co = TypeVar("AdderDataset_co", bound=AdderDatasetYield, covariant=True)
+TextCharacterDatasetYield = Tuple[torch.LongTensor, torch.LongTensor]
+DatasetYield = Union[AdderDatasetYield, TextCharacterDatasetYield]
+Dataset_co = TypeVar(
+    "Dataset_co", bound=DatasetYield, covariant=True
+)  # using covariant as pytorch Dataset is covariant in its type parameter
+
+
+class BaseDataset(Dataset[Dataset_co]):
+    """Dataset base class, currently not filled in, but act as a conveyor for
+    us to use Dataset[Dataset_co] as type hinting."""
 
 
 # TODO: ideally splitting data should be done within the dataset class to
 # speed up the process, as we only need to load the data that we need in memory.
 # See Kapathy's https://github.com/karpathy/minGPT/tree/master/projects/adder.
-class AdderDataset(Dataset[AdderDataset_co]):
+class AdderDataset(BaseDataset[AdderDatasetYield]):
     """
     A Dataset class for encoding sequences for an addition problem.
 
@@ -70,7 +80,7 @@ class AdderDataset(Dataset[AdderDataset_co]):
         target[: where_equal_index + 1] = self.pad_token_id
         return torch.LongTensor(target[1:])
 
-    def __getitem__(self, index: int) -> AdderDataset_co:
+    def __getitem__(self, index: int) -> AdderDatasetYield:
         """
         data = ["15+57=072", "92+00=092", "95+53=148", "15+10=025"]
         getitem selects one index randomly, say 2, to obtain
@@ -88,7 +98,71 @@ class AdderDataset(Dataset[AdderDataset_co]):
         target = self.construct_target_tensor(input_sequence)  # y
         padding_mask = self.construct_padding_mask(input)
         future_mask = self.construct_future_mask(input.size(0))
-        return cast(AdderDataset_co, (input, target, padding_mask, future_mask))  # TODO: really mypy?
+        return cast(AdderDatasetYield, (input, target, padding_mask, future_mask))  # TODO: really mypy?
+
+
+class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
+    """
+    A Dataset class for encoding sequences from a text corpus at the character level.
+
+    This dataset class takes a text corpus and a vocabulary object. It encodes the text corpus
+    into numerical tokens and prepares input and target tensors for model training, based on
+    the specified context length.
+
+    Parameters
+    ----------
+    text_corpus : str
+        A string representing the entire text corpus.
+    vocabulary : List[str]
+        A list of unique characters representing the vocabulary.
+    context_length : int
+        The length of the context window used for creating each training example.
+    """
+
+    def __init__(self, corpus: str, context_length: int, tokenizer: TextCharacterTokenizer) -> None:
+        super().__init__()
+
+        self.corpus = corpus
+        self.context_length = context_length
+        self.tokenizer = tokenizer
+        self.vocabulary = tokenizer.vocabulary
+
+
+    @classmethod
+    def from_file(cls, file_path: str | Path, context_length: int, tokenizer: TextCharacterTokenizer) -> TextCharacterDataset:
+        with open(file_path, "r") as f:
+            corpus = f.read()
+        return cls(corpus, context_length, tokenizer)
+
+    @property
+    def corpus_size(self) -> int:
+        return len(self.corpus)
+
+    def __len__(self) -> int:
+        return len(self.corpus) - self.context_length
+
+    def __getitem__(self, idx: int) -> TextCharacterDatasetYield:
+        """
+        Retrieves a training example based on the specified index.
+
+        The method selects a context window from the text corpus and encodes it into numerical tokens.
+        It then splits the encoded context into input and target tensors for training.
+
+        Parameters
+        ----------
+        idx : int
+            The index at which to start the context window.
+
+        Returns
+        -------
+        Tuple[torch.LongTensor, torch.LongTensor]
+            A tuple containing the input and target tensors.
+        """
+        context = self.corpus[idx : idx + self.context_length + 1]
+        context_encoded = self.tokenizer.encode(context)
+        x = torch.tensor(context_encoded[:-1], dtype=torch.long)
+        y = torch.tensor(context_encoded[1:], dtype=torch.long)
+        return cast(TextCharacterDatasetYield, (x, y))
 
 
 def collate_fn(
@@ -175,7 +249,7 @@ def collate_fn(
 
 
 def create_loader(
-    dataset: AdderDataset[AdderDatasetYield],
+    dataset: AdderDataset,
     loader_config: Dict[str, Any],
     collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
 ) -> DataLoader[AdderDatasetYield]:
@@ -191,7 +265,7 @@ def create_loader(
 
 
 def split_dataset(
-    dataset: AdderDataset[AdderDatasetYield], split: List[float], seed: int
+    dataset: AdderDataset, split: List[float], seed: int
 ) -> Tuple[
     Subset[AdderDatasetYield], Subset[AdderDatasetYield], Subset[AdderDatasetYield]
 ]:  # TODO: unclean since it should return AdderDataset[AdderDatasetYield] but mypy is not happy
@@ -229,7 +303,7 @@ if __name__ == "__main__":
     decoded_sentences = vocab.decode_batch(encoded_sentences)  # type: ignore[attr-defined]
     pprint(decoded_sentences)
 
-    dataset: AdderDataset[AdderDatasetYield] = AdderDataset(data=sequences, vocabulary=vocab)
+    dataset: AdderDataset = AdderDataset(data=sequences, vocabulary=vocab)
 
     print()
 
