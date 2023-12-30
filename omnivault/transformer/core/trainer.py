@@ -151,9 +151,6 @@ def valid_one_epoch(
 
     with torch.no_grad():  # Disable gradient computation
         for _batch_index, batch in progress_bar:
-            # decoded_equations: List[str] = batch_decode_equation(x)
-            # pprint(decoded_equations)
-
             (
                 inputs,
                 targets,

@@ -127,14 +127,6 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         self.tokenizer = tokenizer
         self.vocabulary = tokenizer.vocabulary
 
-    @classmethod
-    def from_file(
-        cls, file_path: str | Path, context_length: int, tokenizer: TextCharacterTokenizer
-    ) -> TextCharacterDataset:
-        with open(file_path, "r") as f:
-            corpus = f.read()
-        return cls(corpus, context_length, tokenizer)
-
     @property
     def corpus_size(self) -> int:
         return len(self.corpus)
@@ -142,7 +134,7 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
     def __len__(self) -> int:
         return len(self.corpus) - self.context_length
 
-    def __getitem__(self, idx: int) -> TextCharacterDatasetYield:
+    def __getitem__(self, index: int) -> TextCharacterDatasetYield:
         """
         Retrieves a training example based on the specified index.
 
@@ -151,7 +143,7 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
 
         Parameters
         ----------
-        idx : int
+        index : int
             The index at which to start the context window.
 
         Returns
@@ -159,7 +151,7 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         Tuple[torch.LongTensor, torch.LongTensor]
             A tuple containing the input and target tensors.
         """
-        context = self.corpus[idx : idx + self.context_length + 1]
+        context = self.corpus[index : index + self.context_length + 1]
         context_encoded = self.tokenizer.encode(context)
         x = torch.tensor(context_encoded[:-1], dtype=torch.long)
         y = torch.tensor(context_encoded[1:], dtype=torch.long)

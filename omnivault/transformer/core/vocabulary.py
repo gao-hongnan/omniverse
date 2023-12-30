@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List, Type
 
+import requests
+
 
 class Vocabulary(ABC):
     # Special tokens as class attributes
@@ -194,6 +196,23 @@ class TextCharacterVocabulary:
         self.token_to_index = token_to_index
         self.index_to_token = index_to_token
 
+    @staticmethod
+    def _download(url: str, dest_folder: Path | str) -> Path:
+        dest_folder_path = Path(dest_folder)
+        dest_folder_path.mkdir(parents=True, exist_ok=True)
+
+        local_filename = Path(url).name
+        filepath = dest_folder_path / local_filename
+
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+
+        with open(filepath, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        return filepath
+
     @classmethod
     def from_corpus(cls: Type[TextCharacterVocabulary], corpus: str) -> TextCharacterVocabulary:
         vocabulary = sorted(set(corpus))
@@ -204,8 +223,21 @@ class TextCharacterVocabulary:
     @classmethod
     def from_file(cls: Type[TextCharacterVocabulary], file_path: str | Path) -> TextCharacterVocabulary:
         with open(file_path, "r") as f:
-            text_corpus = f.read()
-        return cls.from_corpus(text_corpus)
+            corpus = f.read()
+        return cls.from_corpus(corpus)
+
+    @classmethod
+    def from_url(
+        cls: Type[TextCharacterVocabulary], url: str, dest_folder: str | Path | None = None
+    ) -> TextCharacterVocabulary:
+        if not dest_folder:
+            response = requests.get(url)
+            response.raise_for_status()
+            corpus = response.text
+            return cls.from_corpus(corpus)
+
+        file_path = cls._download(url, dest_folder)
+        return cls.from_file(file_path)
 
     def __len__(self) -> int:
         return len(self.token_to_index)

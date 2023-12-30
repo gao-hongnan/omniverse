@@ -1,4 +1,8 @@
+from __future__ import annotations
+
 from typing import List
+
+import torch
 
 from omnivault.transformer.core.vocabulary import Vocabulary
 
@@ -19,11 +23,13 @@ class TextCharacterTokenizer(Tokenizer):
     encoding, and decoding text sequences using a given character vocabulary.
     """
 
-    def tokenize(self, text: str) -> List[str]:
-        return list(text)  # Tokenizes the text into a list of characters
+    def tokenize(self, sequence: str) -> List[str]:
+        return list(sequence)  # Tokenizes the text into a list of characters
 
-    def encode(self, text: str) -> List[int]:
-        return [self.vocabulary.token_to_index.get(char, -1) for char in text]  # -1 for unknown characters
+    def encode(self, sequence: str) -> List[int]:
+        return [self.vocabulary.token_to_index.get(char, -1) for char in sequence]  # -1 for unknown characters
 
-    def decode(self, tokens: List[int]) -> str:
-        return "".join([self.vocabulary.index_to_token.get(token, "") for token in tokens])
+    def decode(self, encoded_sequence: List[int] | torch.Tensor) -> str:
+        if isinstance(encoded_sequence, torch.Tensor):
+            encoded_sequence = encoded_sequence.tolist()
+        return "".join([self.vocabulary.index_to_token.get(char, "") for char in encoded_sequence])
