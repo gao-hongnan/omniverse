@@ -179,7 +179,7 @@ class AdderVocabulary(Vocabulary):
         return len(self)
 
 
-class TextCharacterVocabulary(ABC):
+class TextCharacterVocabulary:
     """
     A vocabulary class for character-level text processing. This class is designed
     to handle the encoding and decoding of characters in text data. It is particularly

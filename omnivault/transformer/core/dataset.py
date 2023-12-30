@@ -127,9 +127,10 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         self.tokenizer = tokenizer
         self.vocabulary = tokenizer.vocabulary
 
-
     @classmethod
-    def from_file(cls, file_path: str | Path, context_length: int, tokenizer: TextCharacterTokenizer) -> TextCharacterDataset:
+    def from_file(
+        cls, file_path: str | Path, context_length: int, tokenizer: TextCharacterTokenizer
+    ) -> TextCharacterDataset:
         with open(file_path, "r") as f:
             corpus = f.read()
         return cls(corpus, context_length, tokenizer)
