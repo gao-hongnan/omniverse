@@ -9,8 +9,8 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.composer import Composer
-from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
-from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
+from omnivault.transformer.core.tokenizer import AdderTokenizer, TextCharacterTokenizer
+from omnivault.transformer.core.vocabulary import AdderVocabulary
 
 # if both yield are same, then no point having the union of them except for semantics.
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
@@ -45,14 +45,15 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
         A `Vocabulary` object used for encoding the strings into numerical tokens.
     """
 
-    def __init__(self, data: List[str], vocabulary: Vocabulary) -> None:
+    def __init__(self, data: List[str], tokenizer: AdderTokenizer) -> None:
         super().__init__()
 
         self.data = data
-        self.vocabulary = vocabulary
+        self.tokenizer = tokenizer
+        self.vocabulary = tokenizer.vocabulary
 
-        self.equal_token_id: int = vocabulary.token_to_index[AdderVocabulary.EQUAL]
-        self.pad_token_id: int = vocabulary.token_to_index[AdderVocabulary.PAD]
+        self.equal_token_id: int = self.vocabulary.token_to_index[AdderVocabulary.EQUAL]
+        self.pad_token_id: int = self.vocabulary.token_to_index[AdderVocabulary.PAD]
 
     def __len__(self) -> int:
         return len(self.data)
@@ -90,7 +91,7 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
         y takes all but first token
         """
         raw_sequence: str = self.data[index]
-        encoded_sequence: List[int] = self.vocabulary.encode(raw_sequence)
+        encoded_sequence: List[int] = self.tokenizer.encode(raw_sequence)
 
         input_sequence: torch.LongTensor = torch.tensor(encoded_sequence, dtype=torch.long)  # type: ignore[assignment]
 
@@ -291,23 +292,24 @@ if __name__ == "__main__":
     pprint(vocab.token_to_index)
     pprint(vocab.index_to_token)
 
-    pprint(vocab.encode("1"))
-    pprint(vocab.encode("+"))
+    tokenizer = AdderTokenizer(vocabulary=vocab)
+    pprint(tokenizer.encode("1"))
+    pprint(tokenizer.encode("+"))
 
     sequence = "15+57=072"
     sequences = ["15+57=072", "01+02=003"]  # , "95+53=148", "15+10=025"]
 
-    encoded_sentence = vocab.encode(sequence)
+    encoded_sentence = tokenizer.encode(sequence)
     print(f"Encoded sentence: {encoded_sentence}")
-    decoded_sentence = vocab.decode(encoded_sentence)
+    decoded_sentence = tokenizer.decode(encoded_sentence)
     pprint(decoded_sentence)
 
-    encoded_sentences = vocab.encode_batch(sequences)  # type: ignore[attr-defined]
+    encoded_sentences = tokenizer.encode_batch(sequences)  # type: ignore[attr-defined]
     pprint(encoded_sentences)
-    decoded_sentences = vocab.decode_batch(encoded_sentences)  # type: ignore[attr-defined]
+    decoded_sentences = tokenizer.decode_batch(encoded_sentences)  # type: ignore[attr-defined]
     pprint(decoded_sentences)
 
-    dataset: AdderDataset = AdderDataset(data=sequences, vocabulary=vocab)
+    dataset: AdderDataset = AdderDataset(data=sequences, tokenizer=tokenizer)
 
     print()
 

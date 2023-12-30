@@ -7,6 +7,7 @@ import pytest
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.ground_truth import GroundTruth
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
+from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
 
@@ -32,15 +33,20 @@ def adder_vocab() -> Vocabulary:
 
 
 @pytest.fixture(scope="module")
-def adder_dataset(adder_vocab: Vocabulary) -> AdderDataset:
+def adder_tokenizer(adder_vocab: AdderVocabulary) -> AdderTokenizer:
+    return AdderTokenizer(vocabulary=adder_vocab)
+
+
+@pytest.fixture(scope="module")
+def adder_dataset(adder_tokenizer: AdderTokenizer) -> AdderDataset:
     sequences = GroundTruth().sequences
-    dataset: AdderDataset = AdderDataset(data=sequences, vocabulary=adder_vocab)
+    dataset: AdderDataset = AdderDataset(data=sequences, tokenizer=adder_tokenizer)
     return dataset
 
 
 @pytest.fixture(scope="module")
-def adder_dataset_but_larger(adder_vocab: Vocabulary) -> AdderDataset:
+def adder_dataset_but_larger(adder_tokenizer: AdderTokenizer) -> AdderDataset:
     sequences = GroundTruth().sequences
     sequences = sequences * 100
-    dataset: AdderDataset = AdderDataset(data=sequences, vocabulary=adder_vocab)
+    dataset: AdderDataset = AdderDataset(data=sequences, tokenizer=adder_tokenizer)
     return dataset
