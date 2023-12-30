@@ -13,6 +13,8 @@ from omnivault.transformer.modules.attention.core import MultiHeadedAttention
 from omnivault.transformer.modules.layers.addnorm import AddNorm
 from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
 
+__all__ = ["GPTDecoderBlock", "GPTDecoder"]
+
 
 class GPTDecoderBlock(BaseDecoderBlock):
     """GPTDecoderBlock focuses on masked self-attention and feed-forward layers.
@@ -78,7 +80,7 @@ class GPTDecoder(BaseDecoder):
         # fmt: off
         self.d_model       : int           = config.d_model
         self.tok_embed     : nn.Embedding  = nn.Embedding(config.vocab_size, config.d_model)
-        self.pos_embed     : nn.Parameter  = nn.Parameter(torch.zeros(1, config.max_seq_len, config.d_model))
+        self.pos_embed     : nn.Parameter  = nn.Parameter(torch.zeros(1, config.context_length, config.d_model))
         self.decoder_blocks: nn.ModuleList = nn.ModuleList([GPTDecoderBlock(config) for _ in range(config.num_decoder_blocks)]) # PyTorch did not make ModuleList a proper container, maybe open a PR to make it inherit Generic[T]???
 
         self.dropout       : nn.Dropout    = nn.Dropout(config.dropout)
@@ -88,47 +90,15 @@ class GPTDecoder(BaseDecoder):
 
         self._reset_parameters()
 
-    # @overload
-    # def create_target_masks(self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor) -> torch.BoolTensor:
-    #     ...
+    @property
+    def total_trainable_parameters(self) -> int:
+        """Returns the number of trainable parameters in the model."""
+        return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
-    # @overload
-    # def create_target_masks(
-    #     self, target_padding_masks: torch.Tensor, future_masks: torch.Tensor | None
-    # ) -> torch.BoolTensor:
-    #     ...
-
-    # @overload
-    # def create_target_masks(
-    #     self, target_padding_masks: torch.Tensor | None, future_masks: torch.Tensor
-    # ) -> torch.BoolTensor:
-    #     ...
-
-    # @overload
-    # def create_target_masks(
-    #     self,
-    #     target_padding_masks: torch.Tensor | None,
-    #     future_masks: torch.Tensor | None,
-    # ) -> torch.BoolTensor:
-    #     ...
-
-    # def create_target_masks(
-    #     self,
-    #     target_padding_masks: torch.Tensor | None,
-    #     future_masks: torch.Tensor | None,
-    # ) -> torch.BoolTensor:
-    #     if target_padding_masks is None and future_masks is None:
-    #         raise ValueError("At least one of target_padding_masks or future_masks must not be None")
-
-    #     if target_padding_masks is None:
-    #         assert future_masks is not None  # for mypy
-    #         target_padding_masks = torch.ones_like(future_masks, dtype=torch.bool)
-
-    #     if future_masks is None:
-    #         assert target_padding_masks is not None  # for mypy
-    #         future_masks = torch.ones_like(target_padding_masks, dtype=torch.bool)
-
-    #     return torch.logical_and(target_padding_masks, future_masks).bool()  # type: ignore[return-value]
+    @property
+    def total_parameters(self) -> int:
+        """Returns the total number of parameters in the model, including non-trainable."""
+        return sum(p.numel() for p in self.parameters())
 
     @overload
     def create_target_masks(

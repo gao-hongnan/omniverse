@@ -6,6 +6,8 @@
 # from src.utils.reproducibility import seed_all
 # from torch import nn
 
+# TODO: change max_seq_len to context_length for consistency?
+
 
 # class PositionalEncoding(ABC, nn.Module):
 #     def __init__(self, d_model: int, dropout: float = 0.0) -> None:

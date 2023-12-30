@@ -114,7 +114,8 @@ def collate_fn(
         `inputs_padded` will have a shape of `(batch_size, max_seq_len)`, where
         `batch_size` is the number of samples in the batch and `max_seq_len` is the
         length of the longest sequence in the batch. If `batch_first=False`, the shape
-        will be `(max_seq_len, batch_size)`.
+        will be `(max_seq_len, batch_size)`. Note here `max_seq_len` is similar to
+        `context_length` in our terminology.
     pad_token_id : int, default=0
         The `padding_value` parameter specifies the value
         to use for padding shorter sequences. `pad_token_id` is typically used here,

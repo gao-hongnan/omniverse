@@ -41,7 +41,7 @@ class DecoderBlockConfig:
 class DecoderConfig:
     d_model: int
     vocab_size: int
-    max_seq_len: int
+    context_length: int # NOTE: alias=max_seq_len,block_size
     num_decoder_blocks: int
     dropout: float
     decoder_block: DecoderBlockConfig

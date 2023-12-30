@@ -8,6 +8,8 @@ from torch import nn
 from omnivault.transformer.modules.attention.base import Attention
 
 
+__all__ = ["MultiHeadedAttention", "ScaledDotProductAttention"]
+
 class ScaledDotProductAttention(Attention):
     """
     Implements scaled dot-product attention mechanism.
