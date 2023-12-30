@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, Dict, List, Tuple, TypeVar, Union, cast
 
 import torch
@@ -13,8 +12,9 @@ from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary, Vocabulary
 
+# if both yield are same, then no point having the union of them except for semantics.
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
-TextCharacterDatasetYield = Tuple[torch.LongTensor, torch.LongTensor]
+TextCharacterDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 DatasetYield = Union[AdderDatasetYield, TextCharacterDatasetYield]
 Dataset_co = TypeVar(
     "Dataset_co", bound=DatasetYield, covariant=True
@@ -127,6 +127,12 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         self.tokenizer = tokenizer
         self.vocabulary = tokenizer.vocabulary
 
+    def construct_future_mask(self, seq_len: int) -> torch.BoolTensor:
+        future_mask = torch.triu(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=1).to(torch.bool)
+        future_mask = future_mask.contiguous()
+        future_mask = future_mask == 0
+        return torch.BoolTensor(future_mask)
+
     @property
     def corpus_size(self) -> int:
         return len(self.corpus)
@@ -155,7 +161,13 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         context_encoded = self.tokenizer.encode(context)
         x = torch.tensor(context_encoded[:-1], dtype=torch.long)
         y = torch.tensor(context_encoded[1:], dtype=torch.long)
-        return cast(TextCharacterDatasetYield, (x, y))
+
+        seq_len = x.size(0)
+        assert seq_len == self.context_length, f"seq_len {seq_len} != context_length {self.context_length}"
+        future_mask = self.construct_future_mask(seq_len)
+        padding_mask = torch.ones_like(x, dtype=torch.bool)
+
+        return cast(TextCharacterDatasetYield, (x, y, padding_mask, future_mask))
 
 
 def collate_fn(
@@ -222,7 +234,6 @@ def collate_fn(
     padding_masks_padded: torch.Tensor = torch.nn.utils.rnn.pad_sequence(
         list(padding_masks), batch_first=batch_first, padding_value=pad_token_id
     )
-
     # Reshaping padding masks
     batch_size, seq_len = inputs_padded.size(0), inputs_padded.size(1)
 
@@ -245,7 +256,7 @@ def create_loader(
     dataset: AdderDataset,
     loader_config: Dict[str, Any],
     collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
-) -> DataLoader[AdderDatasetYield]:
+) -> DataLoader[DatasetYield]:
     if isinstance(
         collate_fn_config, NotGiven
     ):  # TODO: excuse me mypy, why cannot I do if collate_fn_config is NOT_GIVEN?

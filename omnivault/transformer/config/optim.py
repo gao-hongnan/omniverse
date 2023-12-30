@@ -8,7 +8,7 @@ from torch import nn
 from omnivault._types._generic import T
 from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
-RegisteredOptimizers = Literal["torch.optim.Adam", "torch.optim.SGD"]
+RegisteredOptimizers = Literal["torch.optim.Adam", "torch.optim.AdamW", "torch.optim.SGD"]
 OPTIMIZER_REGISTRY: Dict[RegisteredOptimizers, Type[OptimizerConfig]] = {}
 
 
@@ -104,6 +104,17 @@ class AdamConfig(OptimizerConfig):
 
     betas: Tuple[float, float] = (0.9, 0.98)
     eps: float = 1e-9
+
+
+@register_optimizer(name="torch.optim.AdamW")
+class AdamWConfig(OptimizerConfig):
+    name: str = "torch.optim.AdamW"
+    lr: float = 0.2
+
+    betas: Tuple[float, float] = (0.9, 0.999)
+    eps: float = 1e-8
+    weight_decay: float = 1e-2
+    amsgrad: bool = False
 
 
 @register_optimizer(name="torch.optim.SGD")

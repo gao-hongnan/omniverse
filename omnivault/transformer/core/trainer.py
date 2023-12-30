@@ -11,12 +11,12 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from omnivault._types._alias import Loss
-from omnivault.transformer.core.dataset import AdderDatasetYield
+from omnivault.transformer.core.dataset import DatasetYield
 
 
 def train_one_epoch(
     model: nn.Module,
-    dataloader: DataLoader[AdderDatasetYield],
+    dataloader: DataLoader[DatasetYield],
     criterion: nn.Module,
     optimizer: Optimizer,
     scheduler: _LRScheduler | None = None,
@@ -83,6 +83,7 @@ def train_one_epoch(
             target_padding_masks.to(device),
             future_masks.to(device),
         )
+
         batch_size = inputs.size(0)
 
         # fmt: off
@@ -104,13 +105,12 @@ def train_one_epoch(
             scheduler.step()
 
         if _batch_index > 0 and _batch_index % 50 == 0:
+            lr_info = f"LR: {scheduler.get_last_lr()[0]:.9f}" if scheduler else "LR: N/A"
             progress_bar.set_description(
                 f"Epoch: {scheduler.last_epoch // num_batches if scheduler else _batch_index // num_batches}, "
-                f"Total Train Loss: {this_batch_loss:.3f}, "
-                f"Average Train Loss: {batch_average_loss:.3f}, "
-                f"LR: {scheduler.get_last_lr()[0]:.5f}"
-                if scheduler
-                else "N/A"
+                f"This Batch Train Loss: {this_batch_loss:.3f}, "
+                f"This Batch Average Train Loss: {batch_average_loss:.3f}, "
+                f"LR: {lr_info}"
             )
     # average loss for this epoch for each sample
     epoch_average_loss = epoch_running_loss / num_batches
@@ -119,7 +119,7 @@ def train_one_epoch(
 
 def valid_one_epoch(
     model: nn.Module,
-    dataloader: DataLoader[AdderDatasetYield],
+    dataloader: DataLoader[DatasetYield],
     criterion: nn.Module,
     device: int | torch.device | None = None,
 ) -> Loss:
@@ -191,15 +191,15 @@ class Trainer:
     def __init__(
         self,
         model: nn.Module,
-        train_dataloader: DataLoader[AdderDatasetYield],
-        valid_dataloader: DataLoader[AdderDatasetYield],
+        train_dataloader: DataLoader[DatasetYield],
+        valid_dataloader: DataLoader[DatasetYield],
         criterion: nn.Module,
         optimizer: Optimizer,
         scheduler: _LRScheduler | None = None,
         grad_norm_clip: float = 1.0,
         device: int | torch.device | None = None,
         *,
-        test_dataloader: DataLoader[AdderDatasetYield] | None = None,
+        test_dataloader: DataLoader[DatasetYield] | None = None,
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
@@ -273,6 +273,7 @@ class Trainer:
             print("-" * 10)
 
             self.train_loss = self.train_epoch()
+
             self.valid_loss = self.valid_epoch()
 
             print(f"Training Loss   : {self.train_loss:.5f}")
