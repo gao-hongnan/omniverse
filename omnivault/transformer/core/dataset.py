@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader, Dataset, Subset
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
 from omnivault.transformer.config.composer import Composer
+from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.core.tokenizer import AdderTokenizer, TextCharacterTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 
@@ -286,8 +287,32 @@ def split_dataset(
 
 
 if __name__ == "__main__":
-    config = Composer()
-    vocab = AdderVocabulary.from_tokens(tokens=config.constants.TOKENS, num_digits=config.constants.NUM_DIGITS)
+    maybe_constant = MaybeConstant(
+        NUM_DIGITS=2,
+        TOKENS=[
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "+",
+            "*",
+            "-",
+            "=",
+            "<BOS>",
+            "<EOS>",
+            "<PAD>",
+            "<UNK>",
+        ],
+    )
+    pprint(maybe_constant)
+    config = Composer(constants=maybe_constant)
+    vocab = AdderVocabulary.from_tokens(tokens=config.constants.TOKENS, num_digits=config.constants.NUM_DIGITS)  # type: ignore[attr-defined]
 
     pprint(vocab.token_to_index)
     pprint(vocab.index_to_token)

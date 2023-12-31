@@ -16,7 +16,7 @@ class DataConfig(BaseModel):
 
     dataset_size: int = Field(default=2, description="The size of the dataset.")
 
-    split: List[float] = Field(default=[0.7, 0.1, 0.2], description="The split ratio of the dataset.")
+    split: Union[List[float], None] = Field(default=[0.7, 0.1, 0.2], description="The split ratio of the dataset.")
 
     collate_fn: Dict[str, Any] = Field(
         default={

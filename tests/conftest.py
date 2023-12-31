@@ -29,7 +29,7 @@ def maybe_constant() -> MaybeConstant:
 
 @pytest.fixture(scope="module")
 def adder_vocab() -> Vocabulary:
-    return AdderVocabulary.from_tokens(tokens=MaybeConstant().TOKENS, num_digits=MaybeConstant().NUM_DIGITS)
+    return AdderVocabulary.from_tokens(tokens=MaybeConstant().TOKENS, num_digits=MaybeConstant().NUM_DIGITS)  # type: ignore[attr-defined]
 
 
 @pytest.fixture(scope="module")
