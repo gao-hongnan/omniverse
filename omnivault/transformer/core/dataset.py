@@ -3,17 +3,16 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple, TypeVar, Union, cast
 
 import torch
-from rich.pretty import pprint
 from torch.utils.data import DataLoader, Dataset, Subset
 
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
-from omnivault.transformer.config.composer import Composer
-from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.core.tokenizer import AdderTokenizer, TextCharacterTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 
-# if both yield are same, then no point having the union of them except for semantics.
+# TODO: if both yield are same, then no point having the union of them except for semantics.
+#       to fix this simply only use DatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
+#       and remove the union and the typevar.
 AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 TextCharacterDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 DatasetYield = Union[AdderDatasetYield, TextCharacterDatasetYield]
@@ -105,11 +104,12 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
 
 class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
     """
-    A Dataset class for encoding sequences from a text corpus at the character level.
+    A Dataset class for encoding sequences from a text corpus at the character
+    level.
 
-    This dataset class takes a text corpus and a vocabulary object. It encodes the text corpus
-    into numerical tokens and prepares input and target tensors for model training, based on
-    the specified context length.
+    This dataset class takes a text corpus and a vocabulary object. It encodes the
+    text corpus into numerical tokens and prepares input and target tensors for
+    model training, based on the specified context length.
 
     Parameters
     ----------
@@ -164,19 +164,20 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         x = torch.tensor(context_encoded[:-1], dtype=torch.long)
         y = torch.tensor(context_encoded[1:], dtype=torch.long)
 
+        padding_mask = torch.ones_like(x, dtype=torch.bool)
+
         seq_len = x.size(0)
         assert seq_len == self.context_length, f"seq_len {seq_len} != context_length {self.context_length}"
         future_mask = self.construct_future_mask(seq_len)
-        padding_mask = torch.ones_like(x, dtype=torch.bool)
 
         return cast(TextCharacterDatasetYield, (x, y, padding_mask, future_mask))
 
 
 def collate_fn(
-    batch: List[AdderDatasetYield],
+    batch: List[DatasetYield],
     batch_first: bool = True,
     pad_token_id: int = 0,
-) -> AdderDatasetYield:
+) -> DatasetYield:
     """
     Collates a batch of data into padded tensors for input, target, and masks.
 
@@ -187,24 +188,23 @@ def collate_fn(
 
     Parameters
     ----------
-    batch : List[AdderDatasetYield]
+    batch : List[DatasetYield]
         A batch of data, where each item is a tuple containing input, target,
         padding mask, and future mask tensors.
     batch_first : bool, default=True
-        If `batch_first=True`, the resulting tensor
-        `inputs_padded` will have a shape of `(batch_size, max_seq_len)`, where
-        `batch_size` is the number of samples in the batch and `max_seq_len` is the
-        length of the longest sequence in the batch. If `batch_first=False`, the shape
-        will be `(max_seq_len, batch_size)`. Note here `max_seq_len` is similar to
-        `context_length` in our terminology.
+        If `batch_first=True`, the resulting tensor `inputs_padded` will have a shape of
+        `(batch_size, max_seq_len)`, where `batch_size` is the number of samples in the
+        batch and `max_seq_len` is the length of the longest sequence in the batch. If
+        `batch_first=False`, the shape will be `(max_seq_len, batch_size)`. Note here
+        `max_seq_len` is similar to `context_length` in our terminology.
     pad_token_id : int, default=0
-        The `padding_value` parameter specifies the value
-        to use for padding shorter sequences. `pad_token_id` is typically used here,
-        which should correspond to the padding token's ID in your vocabulary.
+        The `padding_value` parameter specifies the value to use for padding shorter
+        sequences. `pad_token_id` is typically used here, which should correspond to the
+        padding token's ID in your vocabulary.
 
     Returns
     -------
-    AdderDatasetYield
+    DatasetYield
         A tuple containing the following tensors:
         - Padded input tensor
         - Padded target tensor
@@ -255,10 +255,10 @@ def collate_fn(
 
 
 def create_loader(
-    dataset: AdderDataset,
+    dataset: Dataset[Dataset_co],
     loader_config: Dict[str, Any],
     collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
-) -> DataLoader[DatasetYield]:
+) -> DataLoader[Dataset_co]:
     if isinstance(
         collate_fn_config, NotGiven
     ):  # TODO: excuse me mypy, why cannot I do if collate_fn_config is NOT_GIVEN?
@@ -271,139 +271,13 @@ def create_loader(
 
 
 def split_dataset(
-    dataset: AdderDataset, split: List[float], seed: int
+    dataset: Dataset[Dataset_co], split: List[float], seed: int
 ) -> Tuple[
-    Subset[AdderDatasetYield], Subset[AdderDatasetYield], Subset[AdderDatasetYield]
+    Subset[DatasetYield], Subset[DatasetYield], Subset[DatasetYield]
 ]:  # TODO: unclean since it should return AdderDataset[AdderDatasetYield] but mypy is not happy
-    # if sum(split) != 1.0:
-    #     raise ValueError(f"Split ratios should sum to 1 but got {sum(split)}.")
-
     train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(
         dataset,
         lengths=split,
         generator=torch.Generator().manual_seed(seed),
     )
     return train_dataset, val_dataset, test_dataset
-
-
-if __name__ == "__main__":
-    maybe_constant = MaybeConstant(
-        NUM_DIGITS=2,
-        TOKENS=[
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "+",
-            "*",
-            "-",
-            "=",
-            "<BOS>",
-            "<EOS>",
-            "<PAD>",
-            "<UNK>",
-        ],
-    )
-    pprint(maybe_constant)
-    config = Composer(constants=maybe_constant)
-    vocab = AdderVocabulary.from_tokens(tokens=config.constants.TOKENS, num_digits=config.constants.NUM_DIGITS)  # type: ignore[attr-defined]
-
-    pprint(vocab.token_to_index)
-    pprint(vocab.index_to_token)
-
-    tokenizer = AdderTokenizer(vocabulary=vocab)
-    pprint(tokenizer.encode("1"))
-    pprint(tokenizer.encode("+"))
-
-    sequence = "15+57=072"
-    sequences = ["15+57=072", "01+02=003"]  # , "95+53=148", "15+10=025"]
-
-    encoded_sentence = tokenizer.encode(sequence)
-    print(f"Encoded sentence: {encoded_sentence}")
-    decoded_sentence = tokenizer.decode(encoded_sentence)
-    pprint(decoded_sentence)
-
-    encoded_sentences = tokenizer.encode_batch(sequences)  # type: ignore[attr-defined]
-    pprint(encoded_sentences)
-    decoded_sentences = tokenizer.decode_batch(encoded_sentences)  # type: ignore[attr-defined]
-    pprint(decoded_sentences)
-
-    dataset: AdderDataset = AdderDataset(data=sequences, tokenizer=tokenizer)
-
-    print()
-
-    counter = 1
-    for x, y, pad_mask, future_mask in dataset:  # type: ignore[attr-defined]
-        print("x")
-        pprint(x)
-        pprint(isinstance(x, torch.LongTensor))
-
-        print("y")
-        pprint(y)
-        print("pad")
-        pprint(pad_mask)
-        print("future")
-        pprint(future_mask)
-        if counter == 2:
-            break
-    # at this junction it is possible for the seq len
-    # to vary. Dataset only cares about generating 1 single
-    # sample data point and do not worry about different
-    # sequence length across other samples.
-    # but in torch we train via batches, and with different
-    # batch sizes we may encounter issues like you know
-    # matrix multiplication may not work.
-
-    # As we see later, the collate fn will be passed into
-    # dataloader. where dataloader gather individual samples
-    # from dataset into BATCHES \mathcal{B}. But they
-    # dont care if your individual samples from dataset
-    # is of diff length, or if you want to broadcast some
-    # padding or future mask TO BE THE SAME AS BATCH SIZE
-    # IN SOME DIMENSION.
-
-    # The `collate_fn` defines how to combine these variable-length samples into a
-    # batch. This usually involves padding the sequences in the batch to a common
-    # length, which is typically the length of the longest sequence in the batch.
-
-    # Assuming your dataset is initialized as `my_dataset`
-    # and your `collate_fn` is defined as shown above
-    dataloader = DataLoader(
-        dataset,
-        batch_size=4,
-        collate_fn=lambda batch: collate_fn(batch, batch_first=True, pad_token_id=16),
-    )
-
-    for i, batch in enumerate(dataloader):
-        (
-            inputs_padded,
-            targets_padded,
-            padding_masks_padded_and_expanded,
-            future_masks_expanded,
-        ) = batch
-
-        # Print shapes
-        print(f"Batch {i+1}")
-        print("Inputs Shape:", inputs_padded.shape)
-        print("Targets Shape:", targets_padded.shape)
-        print("Padding Masks Shape:", padding_masks_padded_and_expanded.shape)
-        print("Future Masks Shape:", future_masks_expanded.shape)
-
-        # Print values (consider printing only a part of each tensor for large datasets)
-        print("Inputs Values:", inputs_padded)
-        print("Targets Values:", targets_padded)
-        print("Padding Masks Values:", padding_masks_padded_and_expanded)
-        print("Future Masks Values:", future_masks_expanded)
-
-        # Add a separator for readability between batches
-        print("-" * 50)
-
-        # Optionally, break after a few batches to avoid too much output
-        if i >= 2:  # Change this number based on how many batches you want to inspect
-            break

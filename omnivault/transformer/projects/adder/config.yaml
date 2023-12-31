@@ -1,0 +1,69 @@
+constants:
+  NUM_DIGITS: 2
+  TOKENS:
+    - "0"
+    - "1"
+    - "2"
+    - "3"
+    - "4"
+    - "5"
+    - "6"
+    - "7"
+    - "8"
+    - "9"
+    - "+"
+    - "*"
+    - "-"
+    - "="
+    - "<BOS>"
+    - "<EOS>"
+    - "<PAD>"
+    - "<UNK>"
+global_:
+  seed: 42
+  debug: false
+data:
+  dataset_size: 2
+  dataset_path: ./data/adder/dataset_str.txt
+  split:
+    - 0.7
+    - 0.1
+    - 0.2
+  collate_fn:  # The collate function config.
+    batch_first: true
+    pad_token_id: 16  # TODO: `pad_token_id` should be interpolated from `MaybeConstant`.
+  train_loader:
+    batch_size: 32
+    shuffle: true
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+  val_loader:
+    batch_size: 32
+    shuffle: false
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+  test_loader:
+    batch_size: 32
+    shuffle: false
+    num_workers: 0
+    pin_memory: false
+    drop_last: false
+optimizer:
+  name: "torch.optim.Adam"
+  lr: 0.3
+  betas:
+    - 0.9
+    - 0.98
+  eps: 1e-9
+feed_forward:
+  d_model: 512
+  d_ff: 2048
+  activation:
+    _target_: torch.nn.ReLU
+  dropout: 0.1
+  bias: true
+attention:
+  _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
+  dropout: 0.1

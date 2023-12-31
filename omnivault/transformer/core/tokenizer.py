@@ -117,19 +117,31 @@ class AdderTokenizer(Tokenizer[AdderVocabulary]):
         ]
 
 
-# class TextCharacterTokenizer(Tokenizer[TextCharacterVocabulary]):
-#     """
-#     A tokenizer for character-level text processing, responsible for tokenizing,
-#     encoding, and decoding text sequences using a given character vocabulary.
-#     """
+class TextCharacterTokenizer(Tokenizer[TextCharacterVocabulary]):
+    """
+    A tokenizer for character-level text processing, responsible for tokenizing,
+    encoding, and decoding text sequences using a given character vocabulary.
+    """
 
-#     def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
-#         return list(sequence)  # Tokenizes the text into a list of characters
+    def tokenize(self, sequence: str, add_special_tokens: bool = False) -> List[str]:
+        tokens = list(sequence)  # Tokenizes the text into a list of characters
+        if add_special_tokens:
+            tokens = [TextCharacterVocabulary.BOS] + tokens + [TextCharacterVocabulary.EOS]
+        return tokens
 
-#     def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
-#         return [self.vocabulary.token_to_index.get(char, -1) for char in sequence]  # -1 for unknown characters
+    def encode(self, sequence: str, add_special_tokens: bool = False) -> List[int]:
+        tokens = self.tokenize(sequence, add_special_tokens=add_special_tokens)
+        return [self.vocabulary.token_to_index.get(char, -1) for char in tokens]  # -1 for unknown characters
 
-#     def decode(self, encoded_sequence: List[int] | torch.Tensor, remove_special_tokens: bool = True) -> str:
-#         if isinstance(encoded_sequence, torch.Tensor):
-#             encoded_sequence = encoded_sequence.tolist()
-#         return "".join([self.vocabulary.index_to_token.get(char, "") for char in encoded_sequence])
+    def decode(self, encoded_sequence: List[int] | torch.Tensor, remove_special_tokens: bool = False) -> str:
+        if isinstance(encoded_sequence, torch.Tensor):
+            encoded_sequence = encoded_sequence.tolist()
+
+        decoded_sequence = "".join([self.vocabulary.index_to_token.get(char, "") for char in encoded_sequence])
+
+        if remove_special_tokens:
+            # Remove special tokens from the decoded string
+            special_tokens = {self.vocabulary.BOS, self.vocabulary.EOS, self.vocabulary.PAD, self.vocabulary.UNK}
+            decoded_sequence = "".join(char for char in decoded_sequence if char not in special_tokens)
+
+        return decoded_sequence

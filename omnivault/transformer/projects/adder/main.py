@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import sys
 import time
 
 import torch
 from hydra.utils import instantiate
-from omegaconf import DictConfig
+from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
 from rich.pretty import pprint
 
-from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
+from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.decoder import (
     AddNormConfig,
     DecoderBlockConfig,
@@ -17,34 +19,59 @@ from omnivault.transformer.config.decoder import (
     MultiHeadedAttentionConfig,
     PositionwiseFeedForwardConfig,
 )
+from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY, AdamConfig, OptimizerConfig
+from omnivault.transformer.core.dataset import AdderDataset, collate_fn, create_loader, split_dataset
+from omnivault.transformer.core.tokenizer import AdderTokenizer
+from omnivault.transformer.core.vocabulary import AdderVocabulary
+from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
 # so maybe consider using my own code base?
 
-seed_all(42)
 
-# OPTIMIZER_REGISTRY = {
-#     "torch.optim.Adam": AdamConfig,
-# }
+def main(cfg: DictConfig | ListConfig) -> None:
+    """Main driver."""
+    seed_all(42)
 
-pprint(OPTIMIZER_REGISTRY)
+    constants = MaybeConstant(**cfg.constants)
+    global_ = MaybeGlobal(**cfg.global_)
+    data = DataConfig(**cfg.data)
 
-if __name__ == "__main__":
-    # python omnivault/transformer/main.py omnivault/transformer/config.yaml data.train_loader.batch_size=22
-    yaml_path, args_list = sys.argv[1], sys.argv[2:]
-    with open(yaml_path) as f:
-        yaml_cfg = om.load(f)
-    cli_cfg = om.from_cli(args_list)
-    cfg = om.merge(yaml_cfg, cli_cfg)
-    om.resolve(cfg)
-    pprint(cfg)
-    assert isinstance(cfg, DictConfig)
+    composer = Composer(constants=constants, global_=global_, data=data)
+    pprint(composer)
 
-    data_config = DataConfig(**cfg.data)
-    pprint(data_config)
+    vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
+    tokenizer = AdderTokenizer(vocabulary=vocabulary)
+    # TODO: consider classmethod from file_path
+    assert composer.data.dataset_path is not None
+    with open(composer.data.dataset_path, "r") as file:
+        sequences = [line.strip() for line in file]
 
+    dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
+    if composer.data.split:
+        train_dataset, val_dataset, test_dataset = split_dataset(
+            dataset=dataset, split=composer.data.split, seed=composer.global_.seed
+        )
+    train_loader = create_loader(
+        dataset=train_dataset,
+        loader_config=composer.data.train_loader,
+        collate_fn_config=composer.data.collate_fn,
+    )
+
+    val_loader = create_loader(
+        dataset=val_dataset,
+        loader_config=composer.data.val_loader,
+        collate_fn_config=composer.data.collate_fn,
+    )
+
+    test_loader = create_loader(
+        dataset=test_dataset,
+        loader_config=composer.data.test_loader,
+        collate_fn_config=composer.data.collate_fn,
+    )
+    time.sleep(1000)
     optimizer_config_cls = OPTIMIZER_REGISTRY[cfg.optimizer.name]
     optimizer_pydantic_config = optimizer_config_cls(**cfg.optimizer)
 
@@ -76,7 +103,7 @@ if __name__ == "__main__":
     attention = instantiate(cfg.attention)
     pprint(attention)
 
-    composer = Composer(data=data_config, optimizer=optimizer_pydantic_config)
+    composer = Composer(data=data, optimizer=optimizer_pydantic_config)
     pprint(composer)
     if composer.optimizer is MISSING:
         print("optimizer is MISSING")
@@ -95,4 +122,15 @@ if __name__ == "__main__":
     #     optimizer.step()
     #     print(f"Epoch {epoch} loss: {loss}")
 
-    # main(cfg)
+
+if __name__ == "__main__":
+    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=22
+    yaml_path = sys.argv[1]
+    args_list = sys.argv[2:]
+
+    yaml_cfg = load_yaml_config(yaml_path)
+    cfg = merge_configs(yaml_cfg, args_list)
+    om.resolve(cfg)  # inplace ops
+    pprint(cfg)
+
+    main(cfg)

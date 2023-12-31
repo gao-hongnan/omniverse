@@ -106,7 +106,7 @@ def train_one_epoch(
 
         if _batch_index > 0 and _batch_index % 50 == 0:
             lr_info = f"LR: {scheduler.get_last_lr()[0]:.9f}" if scheduler else "LR: N/A"
-            progress_bar.set_description(
+            progress_bar.set_description(  # FIXME: wrong epoch info
                 f"Epoch: {scheduler.last_epoch // num_batches if scheduler else _batch_index // num_batches}, "
                 f"This Batch Train Loss: {this_batch_loss:.3f}, "
                 f"This Batch Average Train Loss: {batch_average_loss:.3f}, "

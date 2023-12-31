@@ -8,6 +8,8 @@ from pydantic import BaseModel, Field, field_validator
 # from omnivault.transformer.utils.device import get_device
 # import torch
 
+__all__ = ["MaybeGlobal"]
+
 
 class MaybeGlobal(BaseModel):
     seed: int = Field(default=42, description="The seed for reproducibility.")

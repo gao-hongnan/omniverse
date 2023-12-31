@@ -1,11 +1,20 @@
 from typing import Any
 
+from pydantic import BaseModel
 
-class MaybeConstant:
+__all__ = ["MaybeConstant"]
+
+
+class MaybeConstant(BaseModel):
     """The maybe constant config that allows arbitrary fields. Not type safe
     for sure! So have to use type ignore if mypy cannot locate dynamically
     generated fields."""
 
     def __init__(self, **arbitrary: Any) -> None:
-        for key, value in arbitrary.items():
-            setattr(self, key, value)
+        super().__init__(**arbitrary)
+
+    class Config:
+        """Pydantic config."""
+
+        arbitrary_types_allowed = True
+        extra = "allow"
