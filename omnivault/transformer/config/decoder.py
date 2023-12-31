@@ -1,44 +1,49 @@
 """We use dataclass here for easy instantiating with hydra"""
-from dataclasses import dataclass, field
 
+from pydantic import BaseModel, Field
 from torch import nn
 
 from omnivault.transformer.modules.attention.base import Attention
 
 
-@dataclass
-class MultiHeadedAttentionConfig:
+class MultiHeadedAttentionConfig(BaseModel):
     attention: Attention
     d_model: int
     H: int
     dropout: float = 0.1
 
+    class Config:
+        """Pydantic config."""
 
-@dataclass
-class PositionwiseFeedForwardConfig:
+        arbitrary_types_allowed = True
+
+
+class PositionwiseFeedForwardConfig(BaseModel):
     d_model: int
     d_ff: int
-    activation: nn.Module = field(default_factory=nn.ReLU())
+    activation: nn.Module = Field(default=nn.GELU(approximate="tanh"))
     dropout: float = 0.1
     bias: bool = True
 
+    class Config:
+        """Pydantic config."""
 
-@dataclass
-class AddNormConfig:
+        arbitrary_types_allowed = True
+
+
+class AddNormConfig(BaseModel):
     feature_dim: int
     dropout: float
 
 
-@dataclass
-class DecoderBlockConfig:
+class DecoderBlockConfig(BaseModel):
     masked_self_attention_mha: MultiHeadedAttentionConfig
     feed_forward: PositionwiseFeedForwardConfig
     add_norm_1: AddNormConfig
     add_norm_2: AddNormConfig
 
 
-@dataclass
-class DecoderConfig:
+class DecoderConfig(BaseModel):
     d_model: int
     vocab_size: int
     context_length: int  # NOTE: alias=max_seq_len,block_size

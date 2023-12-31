@@ -23,6 +23,7 @@ global_:
   seed: 42
   debug: false
 data:
+  context_length: 11
   dataset_size: 2
   dataset_path: ./data/adder/dataset_str.txt
   split:
@@ -52,18 +53,41 @@ data:
     drop_last: false
 optimizer:
   name: "torch.optim.Adam"
-  lr: 0.3
+  lr: 0.2
   betas:
     - 0.9
     - 0.98
   eps: 1e-9
-feed_forward:
-  d_model: 512
-  d_ff: 2048
-  activation:
-    _target_: torch.nn.ReLU
+criterion:
+  name: "torch.nn.CrossEntropyLoss"
+  ignore_index: 16
+  reduction: "mean"
+model:
+  d_model: 128
+  vocab_size: ??? # MISSING so need fill up later
+  context_length: ${data.context_length}
+  num_decoder_blocks: 2
   dropout: 0.1
-  bias: true
-attention:
-  _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
-  dropout: 0.1
+  decoder_block:
+    masked_self_attention_mha:
+      attention:
+        _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
+      d_model: ${model.d_model}
+      H: 4
+      dropout: 0.1
+    feed_forward:
+      d_model: ${model.d_model}
+      d_ff: 256
+      activation:
+        _target_: torch.nn.GELU
+        approximate: "tanh"
+      dropout: 0.1
+      bias: true
+    add_norm_1:
+      feature_dim: ${model.d_model}
+      dropout: 0.1
+    add_norm_2:
+      feature_dim: ${model.d_model}
+      dropout: 0.1
+trainer:
+  device: "auto"

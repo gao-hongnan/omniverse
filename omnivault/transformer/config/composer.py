@@ -7,16 +7,22 @@ from pydantic import BaseModel, Field
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.constants import MaybeConstant
+from omnivault.transformer.config.criterion import CriterionConfig
 from omnivault.transformer.config.data import DataConfig
+from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OptimizerConfig
+from omnivault.transformer.config.trainer import TrainerConfig
 
 
 class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lols
     constants: MaybeConstant = Field(default_factory=MaybeConstant)
     global_: MaybeGlobal = Field(default_factory=MaybeGlobal)
     data: DataConfig = Field(default_factory=DataConfig)
+    model: Union[DecoderConfig, Missing] = Field(default=MISSING, description="The model config.")
     optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
+    criterion: Union[CriterionConfig, Missing] = Field(default=MISSING, description="The criterion config.")
+    trainer: TrainerConfig = Field(default_factory=TrainerConfig)
 
     class Config:
         """Pydantic config."""

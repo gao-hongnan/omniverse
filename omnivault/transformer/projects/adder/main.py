@@ -9,22 +9,22 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
 from rich.pretty import pprint
+from torch import nn
 
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
-from omnivault.transformer.config.decoder import (
-    AddNormConfig,
-    DecoderBlockConfig,
-    DecoderConfig,
-    MultiHeadedAttentionConfig,
-    PositionwiseFeedForwardConfig,
-)
+from omnivault.transformer.config.criterion import CRITERION_REGISTRY
+from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
-from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY, AdamConfig, OptimizerConfig
+from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
+from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import AdderDataset, collate_fn, create_loader, split_dataset
 from omnivault.transformer.core.tokenizer import AdderTokenizer
+from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
+from omnivault.transformer.decoder.core import GPTDecoder
+from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
 
@@ -34,17 +34,42 @@ from omnivault.transformer.utils.reproducibility import seed_all
 
 def main(cfg: DictConfig | ListConfig) -> None:
     """Main driver."""
-    seed_all(42)
+    seed_all(cfg.global_.seed)
 
     constants = MaybeConstant(**cfg.constants)
     global_ = MaybeGlobal(**cfg.global_)
     data = DataConfig(**cfg.data)
-
-    composer = Composer(constants=constants, global_=global_, data=data)
-    pprint(composer)
+    trainer_config = TrainerConfig(**cfg.trainer)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
+
+    # assign back model.vocab_size from ??? to vocabulary.vocab_size
+    cfg.model.vocab_size = vocabulary.vocab_size
+    model_config = instantiate(cfg.model)
+    model_pydantic_config = DecoderConfig(**model_config)
+
+    optimizer_config_cls = OPTIMIZER_REGISTRY[cfg.optimizer.name]
+    optimizer_pydantic_config = optimizer_config_cls(**cfg.optimizer)
+
+    criterion_config_cls = CRITERION_REGISTRY[cfg.criterion.name]
+    criterion_pydantic_config = criterion_config_cls(**cfg.criterion)
+
+    composer = Composer(
+        constants=constants,
+        global_=global_,
+        data=data,
+        model=model_pydantic_config,
+        optimizer=optimizer_pydantic_config,
+        criterion=criterion_pydantic_config,
+        trainer=trainer_config,
+    )
+    assert composer.model is not MISSING
+    assert composer.optimizer is not MISSING
+    assert composer.criterion is not MISSING
+
+    pprint(composer)
+
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
     with open(composer.data.dataset_path, "r") as file:
@@ -72,56 +97,49 @@ def main(cfg: DictConfig | ListConfig) -> None:
         loader_config=composer.data.test_loader,
         collate_fn_config=composer.data.collate_fn,
     )
-    time.sleep(1000)
-    optimizer_config_cls = OPTIMIZER_REGISTRY[cfg.optimizer.name]
-    optimizer_pydantic_config = optimizer_config_cls(**cfg.optimizer)
 
-    # optimizer_config = OptimizerConfig(**cfg.optimizer)
-    # pprint(optimizer_config)
-    # optimizer_name = optimizer_config.name
-    # optimizer_config_cls = OPTIMIZER_REGISTRY[optimizer_name]
-    # optimizer_pydantic_config = optimizer_config_cls(**cfg.optimizer)
-    # pprint(optimizer_pydantic_config)
+    # Create model
+    model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)
+    model_size = model.total_trainable_parameters
+    print(f"model_size: {model_size}, train_size: {len(train_dataset)}")
 
-    # Define a model with a non-linear activation function
-    model = torch.nn.Sequential(torch.nn.Linear(2, 4), torch.nn.ReLU(), torch.nn.Linear(4, 2))
+    # Create optimizer based on model parameters
     optimizer = optimizer_pydantic_config.build(params=model.parameters())
     pprint(optimizer)
+
+    # Create criterion
+    criterion = criterion_pydantic_config.create_instance()
+    assert criterion.ignore_index == vocabulary.token_to_index[vocabulary.PAD]
+
+    # Create Scheduler
+
+    warmup_steps = 3 * len(train_loader)
+
+    # lr first increases in the warmup steps, and then decays
+    lr_fn = lambda step: composer.model.d_model ** (-0.5) * min(  # type: ignore[union-attr]
+        [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
+    )
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
+    pprint(scheduler)
+    pprint(optimizer)
+
     # train
+    device: torch.device = composer.trainer.device
+    trainer = Trainer(
+        model=model,
+        train_dataloader=train_loader,
+        valid_dataloader=val_loader,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        grad_norm_clip=1.0,
+        device=device,
+        # test_dataloader=test_loader,
+        # NOTE: uncomment the above line to enable testing after each epoch
+        # but seeding will affect.
+    )
+    trained_model = trainer.fit(num_epochs=2)
     time.sleep(1000)
-
-    feed_forward_config = instantiate(cfg.feed_forward)
-    pprint(feed_forward_config)
-    pprint(type(feed_forward_config.activation))
-    pprint(type(feed_forward_config))
-
-    feed_forward_config = PositionwiseFeedForwardConfig(**feed_forward_config)
-    pprint(feed_forward_config)
-    # feed_forward_config.activation = instantiate(feed_forward_config.activation)
-    # pprint(feed_forward_config)
-
-    # attention_config =
-    attention = instantiate(cfg.attention)
-    pprint(attention)
-
-    composer = Composer(data=data, optimizer=optimizer_pydantic_config)
-    pprint(composer)
-    if composer.optimizer is MISSING:
-        print("optimizer is MISSING")
-        # prob raise an error?
-
-    # # Define a simple dataset
-    # inputs = torch.randn(100, 2)
-    # targets = torch.randn(100, 2)  # Targets should have some relationship to inputs
-
-    # # Train the model
-    # for epoch in range(100):
-    #     optimizer.zero_grad()
-    #     output = model(inputs)
-    #     loss = torch.nn.functional.mse_loss(output, targets)
-    #     loss.backward()
-    #     optimizer.step()
-    #     print(f"Epoch {epoch} loss: {loss}")
 
 
 if __name__ == "__main__":

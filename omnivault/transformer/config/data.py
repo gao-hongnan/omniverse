@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 class DataConfig(BaseModel):
     """The data config."""
 
+    context_length: int = Field(default=128, description="The context length.")
     dataset_size: int = Field(default=2, description="The size of the dataset.")
     dataset_path: Union[str, None] = Field(default=None, description="The path to the dataset.")
 
