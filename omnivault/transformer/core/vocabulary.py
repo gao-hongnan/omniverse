@@ -108,17 +108,12 @@ class TextCharacterVocabulary(Vocabulary):
         self.index_to_token = index_to_token
 
     @staticmethod
-    def _download(url: str, dest_folder: Path | str) -> Path:
+    def _download(url: str, dataset_name: str, dest_folder: Path | str) -> Path:
         dest_folder_path = Path(dest_folder)
-
-        if dest_folder_path.is_file():
-            # dangerous operation
-            dest_folder_path = dest_folder_path.parent
 
         dest_folder_path.mkdir(parents=True, exist_ok=True)
 
-        local_filename = Path(url).name
-        filepath = dest_folder_path / local_filename
+        filepath = dest_folder_path / f"{dataset_name}.txt"
 
         response = requests.get(url, stream=True)
         response.raise_for_status()
@@ -144,7 +139,7 @@ class TextCharacterVocabulary(Vocabulary):
 
     @classmethod
     def from_url(
-        cls: Type[TextCharacterVocabulary], url: str, dest_folder: str | Path | None = None
+        cls: Type[TextCharacterVocabulary], url: str, dataset_name: str, dest_folder: str | Path | None = None
     ) -> TextCharacterVocabulary:
         if not dest_folder:
             response = requests.get(url)
@@ -152,5 +147,5 @@ class TextCharacterVocabulary(Vocabulary):
             corpus = response.text
             return cls.from_corpus(corpus)
 
-        file_path = cls._download(url, dest_folder)
+        file_path = cls._download(url, dataset_name, dest_folder)
         return cls.from_file(file_path)

@@ -19,7 +19,7 @@ def configure_deterministic_mode() -> None:
     and https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
     """
     # fmt: off
-    torch.use_deterministic_algorithms(True)
+    torch.use_deterministic_algorithms(True, warn_only=True)
     torch.backends.cudnn.benchmark        = False
     torch.backends.cudnn.deterministic    = True
     torch.backends.cudnn.enabled          = False

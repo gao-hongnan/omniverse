@@ -43,7 +43,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     trainer_config = TrainerConfig(**cfg.trainer)
 
     assert data.dataset_url is not None
-    vocabulary = TextCharacterVocabulary.from_url(url=data.dataset_url, dest_folder=data.dataset_path)
+    vocabulary = TextCharacterVocabulary.from_url(url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir)
     tokenizer = TextCharacterTokenizer(vocabulary=vocabulary)
 
     # assign back model.vocab_size from ??? to vocabulary.vocab_size
