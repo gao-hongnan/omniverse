@@ -44,7 +44,7 @@ class DataConfig(BaseModel):
     # FIXME: hard to handle since collate_fn can be NotGiven but yaml config can only indicate null.
     # unless I do __target__?
     @field_validator("collate_fn")
-    def coerce_collate_fn(cls: Type["DataConfig"], v: Union[Dict[str, Any], NotGiven, None]) -> Dict[str, Any]: # type: ignore
+    def coerce_collate_fn(cls: Type["DataConfig"], v: Union[Dict[str, Any], NotGiven, None]) -> Dict[str, Any]:  # type: ignore
         if v is None:
             return {}
         if isinstance(v, NotGiven):

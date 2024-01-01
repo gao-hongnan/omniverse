@@ -18,6 +18,7 @@ class MultiHeadedAttentionConfig(BaseModel):
         arbitrary_types_allowed = True
 
 
+# TODO: add `field_validator` such that if `d_ff` is `None`, then `d_ff` is set to `4 * d_model`.
 class PositionwiseFeedForwardConfig(BaseModel):
     d_model: int
     d_ff: int

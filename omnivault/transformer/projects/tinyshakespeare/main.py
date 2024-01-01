@@ -43,7 +43,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
     trainer_config = TrainerConfig(**cfg.trainer)
 
     assert data.dataset_url is not None
-    vocabulary = TextCharacterVocabulary.from_url(url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir)
+    vocabulary = TextCharacterVocabulary.from_url(
+        url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir
+    )
     tokenizer = TextCharacterTokenizer(vocabulary=vocabulary)
 
     # assign back model.vocab_size from ??? to vocabulary.vocab_size
@@ -97,6 +99,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
         loader_config=composer.data.train_loader,
         collate_fn_config=composer.data.collate_fn,
     )
+    for batch in train_loader:
+        x, y, padding_masks, future_masks = batch
+        pprint(x)
+        pprint(y)
+        pprint(padding_masks)
+        pprint(future_masks)
+        time.sleep(1000)
+        break
 
     # Create model
     model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)

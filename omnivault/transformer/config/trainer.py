@@ -13,6 +13,12 @@ __all__ = ["TrainerConfig"]
 class TrainerConfig(BaseModel):
     device: str = Field(default="auto", description="Device to use for training.")
     num_epochs: int = Field(default=10, description="Number of epochs to train for.")
+    eval_interval: int = Field(default=1, description="Number of epochs between evaluations.")
+
+    # saving stuff
+    save_dir: str = Field(default="checkpoints", description="Directory to save checkpoints to.")
+    always_save: bool = Field(default=False, description="Always save the model after each epoch.")
+
 
     @field_validator("device")
     @classmethod
