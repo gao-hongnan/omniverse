@@ -33,18 +33,18 @@ model:
   d_model: 128
   vocab_size: ??? # MISSING so need fill up later
   context_length: ${data.context_length}
-  num_decoder_blocks: 2
+  num_decoder_blocks: 5
   dropout: 0.1
   decoder_block:
     masked_self_attention_mha:
       attention:
         _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
       d_model: ${model.d_model}
-      H: 4
+      H: 8
       dropout: 0.1
     feed_forward:
       d_model: ${model.d_model}
-      d_ff: 256
+      d_ff: 512
       activation:
         _target_: torch.nn.GELU
         approximate: "tanh"

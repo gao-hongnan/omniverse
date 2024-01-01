@@ -119,7 +119,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     lr_fn = lambda step: composer.model.d_model ** (-0.5) * min(  # type: ignore[union-attr]
         [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
     )
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
+    # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
+    scheduler = None
 
     # train
     device: torch.device = composer.trainer.device
