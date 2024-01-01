@@ -17,8 +17,7 @@ class TrainerConfig(BaseModel):
 
     # saving stuff
     save_dir: str = Field(default="checkpoints", description="Directory to save checkpoints to.")
-    always_save: bool = Field(default=False, description="Always save the model after each epoch.")
-
+    save_every_epoch: bool = Field(default=False, description="Always save the model after each epoch.")
 
     @field_validator("device")
     @classmethod

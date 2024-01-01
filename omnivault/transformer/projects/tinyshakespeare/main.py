@@ -144,9 +144,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
         grad_norm_clip=1.0,
         device=device,
     )
-    trained_model = trainer.fit(composer.trainer.num_epochs)
-    torch.save(trained_model.state_dict(), "model_debug.pt")
-    time.sleep(1000)
+    trained_model = trainer.fit(
+        num_epochs=composer.trainer.num_epochs, save_every_epoch=composer.trainer.save_every_epoch
+    )
+    time.sleep(10)
 
 
 if __name__ == "__main__":

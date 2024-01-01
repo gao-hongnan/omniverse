@@ -270,12 +270,15 @@ class Trainer:
             device=self.device,
         )
 
-    def fit(self, num_epochs: int) -> nn.Module:
+    def fit(self, num_epochs: int, save_every_epoch: bool = False) -> nn.Module:
         for epoch in range(1, num_epochs + 1):
             print(f"Epoch {epoch}/{num_epochs}")
             print("-" * 10)
 
             self.train_loss = self.train_epoch()
+            if save_every_epoch:
+                torch.save(self.model.state_dict(), f"model_{epoch}.pth")
+
             print(f"Training Loss   : {self.train_loss:.5f}")
 
             if self.valid_dataloader:
