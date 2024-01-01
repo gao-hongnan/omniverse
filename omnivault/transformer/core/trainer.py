@@ -279,15 +279,15 @@ class Trainer:
             if save_every_epoch:
                 torch.save(self.model.state_dict(), f"model_{epoch}.pth")
 
-            print(f"Training Loss   : {self.train_loss:.5f}")
+            print(f"Average Epoch Training Loss   : {self.train_loss:.5f}")
 
             if self.valid_dataloader:
                 self.valid_loss = self.valid_epoch()
-                print(f"Validation Loss : {self.valid_loss:.5f}")
+                print(f"Average Epoch Validation Loss : {self.valid_loss:.5f}")
 
             if self.test_dataloader:
                 test_loss = self.test_epoch()
-                print(f"Test Loss       : {test_loss:.5f}")
+                print(f"Average Epoch Test Loss       : {test_loss:.5f}")
 
         print("Training complete")
         return self.model
