@@ -187,18 +187,19 @@ def valid_one_epoch(
     return epoch_average_loss
 
 
+# FIXME: make valid dataloader optional
 class Trainer:
     def __init__(
         self,
         model: nn.Module,
         train_dataloader: DataLoader[DatasetYield],
-        valid_dataloader: DataLoader[DatasetYield],
         criterion: nn.Module,
         optimizer: Optimizer,
         scheduler: _LRScheduler | None = None,
         grad_norm_clip: float = 1.0,
         device: int | torch.device | None = None,
         *,
+        valid_dataloader: DataLoader[DatasetYield] | None = None,
         test_dataloader: DataLoader[DatasetYield] | None = None,
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
@@ -207,12 +208,13 @@ class Trainer:
         # fmt: off
         self.model            = model
         self.train_dataloader = train_dataloader
-        self.valid_dataloader = valid_dataloader
         self.criterion        = criterion
         self.optimizer        = optimizer
         self.scheduler        = scheduler
         self.grad_norm_clip   = grad_norm_clip
         self.device           = device
+
+        self.valid_dataloader = valid_dataloader
         self.test_dataloader  = test_dataloader
 
         # attributes not in __init__ constructor
@@ -248,6 +250,7 @@ class Trainer:
         )
 
     def valid_epoch(self) -> Loss:
+        assert self.valid_dataloader is not None, "Valid dataloader must be provided for validation."
         return valid_one_epoch(
             model=self.model,
             dataloader=self.valid_dataloader,
@@ -273,11 +276,11 @@ class Trainer:
             print("-" * 10)
 
             self.train_loss = self.train_epoch()
-
-            self.valid_loss = self.valid_epoch()
-
             print(f"Training Loss   : {self.train_loss:.5f}")
-            print(f"Validation Loss : {self.valid_loss:.5f}")
+
+            if self.valid_dataloader:
+                self.valid_loss = self.valid_epoch()
+                print(f"Validation Loss : {self.valid_loss:.5f}")
 
             if self.test_dataloader:
                 test_loss = self.test_epoch()

@@ -259,10 +259,11 @@ def create_loader(
     loader_config: Dict[str, Any],
     collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
 ) -> DataLoader[Dataset_co]:
-    if isinstance(
-        collate_fn_config, NotGiven
-    ):  # TODO: excuse me mypy, why cannot I do if collate_fn_config is NOT_GIVEN?
-        collate_fn_config = {"batch_first": True, "pad_token_id": 0}
+    if collate_fn_config is NOT_GIVEN:
+        return DataLoader(
+            dataset=dataset,
+            **loader_config,
+        )
     return DataLoader(
         dataset=dataset,
         collate_fn=lambda batch: collate_fn(batch, **collate_fn_config),  # type: ignore[arg-type]

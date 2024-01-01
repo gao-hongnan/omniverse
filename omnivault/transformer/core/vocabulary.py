@@ -110,6 +110,11 @@ class TextCharacterVocabulary(Vocabulary):
     @staticmethod
     def _download(url: str, dest_folder: Path | str) -> Path:
         dest_folder_path = Path(dest_folder)
+
+        if dest_folder_path.is_file():
+            # dangerous operation
+            dest_folder_path = dest_folder_path.parent
+
         dest_folder_path.mkdir(parents=True, exist_ok=True)
 
         local_filename = Path(url).name

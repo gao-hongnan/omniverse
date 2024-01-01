@@ -20,10 +20,10 @@ from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
-from omnivault.transformer.core.dataset import AdderDataset, collate_fn, create_loader, split_dataset
-from omnivault.transformer.core.tokenizer import AdderTokenizer
+from omnivault.transformer.core.dataset import TextCharacterDataset, collate_fn, create_loader, split_dataset
+from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.trainer import Trainer
-from omnivault.transformer.core.vocabulary import AdderVocabulary
+from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
@@ -42,8 +42,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
     data = DataConfig(**cfg.data)
     trainer_config = TrainerConfig(**cfg.trainer)
 
-    vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
-    tokenizer = AdderTokenizer(vocabulary=vocabulary)
+    assert data.dataset_url is not None
+    vocabulary = TextCharacterVocabulary.from_url(url=data.dataset_url, dest_folder=data.dataset_path)
+    tokenizer = TextCharacterTokenizer(vocabulary=vocabulary)
 
     # assign back model.vocab_size from ??? to vocabulary.vocab_size
     cfg.model.vocab_size = vocabulary.vocab_size
@@ -74,37 +75,26 @@ def main(cfg: DictConfig | ListConfig) -> None:
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
     with open(composer.data.dataset_path, "r") as file:
-        sequences = [line.strip() for line in file]
+        corpus = file.read()
 
-    dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
+    dataset = TextCharacterDataset(corpus=corpus, context_length=composer.data.context_length, tokenizer=tokenizer)
+
     if composer.data.split:
         train_dataset, val_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
         )
+    else:
+        train_dataset = dataset
 
     # you do these asserts to make sure that the loaders are not None
     # because create loader expects non-None loaders and collate_fn.
     # if you don't do these asserts, mypy cannot guarantee that the loaders are not None
     # so they cannot infer properly.
     assert composer.data.train_loader is not None
-    assert composer.data.val_loader is not None
-    assert composer.data.test_loader is not None
-    assert composer.data.collate_fn is not None
+
     train_loader = create_loader(
         dataset=train_dataset,
         loader_config=composer.data.train_loader,
-        collate_fn_config=composer.data.collate_fn,
-    )
-
-    val_loader = create_loader(
-        dataset=val_dataset,
-        loader_config=composer.data.val_loader,
-        collate_fn_config=composer.data.collate_fn,
-    )
-
-    test_loader = create_loader(
-        dataset=test_dataset,
-        loader_config=composer.data.test_loader,
         collate_fn_config=composer.data.collate_fn,
     )
 
@@ -119,7 +109,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # Create criterion
     criterion = criterion_pydantic_config.create_instance()
-    assert criterion.ignore_index == vocabulary.token_to_index[vocabulary.PAD]
+    pprint(vocabulary.token_to_index)
 
     # Create Scheduler
 
@@ -130,30 +120,26 @@ def main(cfg: DictConfig | ListConfig) -> None:
         [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
     )
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
-    pprint(scheduler)
-    pprint(optimizer)
 
     # train
     device: torch.device = composer.trainer.device
+    pprint(device)
     trainer = Trainer(
         model=model,
         train_dataloader=train_loader,
-        valid_dataloader=val_loader,
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
         grad_norm_clip=1.0,
         device=device,
-        # test_dataloader=test_loader,
-        # NOTE: uncomment the above line to enable testing after each epoch
-        # but seeding will affect.
     )
-    trained_model = trainer.fit(num_epochs=2)
+    trained_model = trainer.fit(composer.trainer.num_epochs)
+    torch.save(trained_model.state_dict(), "model_debug.pt")
     time.sleep(1000)
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=22
+    # python omnivault/transformer/projects/tinyshakespeare/main.py omnivault/transformer/projects/tinyshakespeare/config.yaml
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 

@@ -12,6 +12,7 @@ __all__ = ["TrainerConfig"]
 
 class TrainerConfig(BaseModel):
     device: str = Field(default="auto", description="Device to use for training.")
+    num_epochs: int = Field(default=10, description="Number of epochs to train for.")
 
     @field_validator("device")
     @classmethod
