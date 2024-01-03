@@ -10,6 +10,7 @@ from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CriterionConfig
 from omnivault.transformer.config.data import DataConfig
 from omnivault.transformer.config.decoder import DecoderConfig
+from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OptimizerConfig
 from omnivault.transformer.config.trainer import TrainerConfig
@@ -23,6 +24,7 @@ class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lo
     optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
     criterion: Union[CriterionConfig, Missing] = Field(default=MISSING, description="The criterion config.")
     trainer: TrainerConfig = Field(default_factory=TrainerConfig)
+    generator: GeneratorConfig = Field(default_factory=GeneratorConfig)
 
     class Config:
         """Pydantic config."""

@@ -105,7 +105,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         pprint(y)
         pprint(padding_masks)
         pprint(future_masks)
-        time.sleep(1000)
+        # time.sleep(1000)
         break
 
     # Create model

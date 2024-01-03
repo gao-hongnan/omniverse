@@ -59,9 +59,8 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
         return len(self.data)
 
     def construct_future_mask(self, seq_len: int) -> torch.BoolTensor:
-        future_mask = torch.triu(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=1).to(torch.bool)
+        future_mask = torch.tril(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=0).to(torch.bool)
         future_mask = future_mask.contiguous()
-        future_mask = future_mask == 0
         return torch.BoolTensor(future_mask)
 
     def construct_padding_mask(self, input_sequence: torch.Tensor) -> torch.BoolTensor:
@@ -130,9 +129,8 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         self.vocabulary = tokenizer.vocabulary
 
     def construct_future_mask(self, seq_len: int) -> torch.BoolTensor:
-        future_mask = torch.triu(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=1).to(torch.bool)
+        future_mask = torch.tril(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=0).to(torch.bool)
         future_mask = future_mask.contiguous()
-        future_mask = future_mask == 0
         return torch.BoolTensor(future_mask)
 
     @property
@@ -171,6 +169,25 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
         future_mask = self.construct_future_mask(seq_len)
 
         return cast(TextCharacterDatasetYield, (x, y, padding_mask, future_mask))
+
+
+def construct_dummy_batch_future_masks(batch_size: int, seq_len: int) -> torch.BoolTensor:
+    """Broadcast future mask from shape (L, L) to (B, L, L) then (B, 1, L, L)."""
+    # Create a lower triangular mask for a single sequence
+    future_mask = torch.tril(torch.ones((seq_len, seq_len), dtype=torch.bool), diagonal=0).to(torch.bool)
+    future_mask = future_mask.contiguous()
+    # broadcast future mask from shape (L, L) to (B, L, L)
+    future_masks = future_mask.unsqueeze(0).expand(batch_size, -1, -1)
+    # broadcast future mask from shape (B, L, L) to (B, 1, L, L)
+    future_masks = future_masks.unsqueeze(1)
+    return torch.BoolTensor(future_masks)
+
+
+def construct_dummy_batch_target_padding_masks(batch_size: int, seq_len: int) -> torch.BoolTensor:
+    """Construct a dummy batch of target padding masks of shape (B, 1, L, L) which
+    assumes there is no padding token involved."""
+
+    return torch.BoolTensor(torch.ones((batch_size, 1, seq_len, seq_len), dtype=torch.bool))
 
 
 def collate_fn(
