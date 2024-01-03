@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import cast, overload
+from typing_extensions import override
 
 import torch
 from torch import nn
@@ -88,7 +89,14 @@ class GPTDecoder(BaseDecoder):
         self.head          : nn.Linear     = nn.Linear(config.d_model, config.vocab_size)  # last layer
         # fmt: on
 
-        self._reset_parameters()
+        self.apply(self._init_weights)
+
+        # apply special scaled init to the residual projections, per GPT-2 paper
+        for parameter_name, parameter in self.named_parameters():
+            if parameter_name.endswith("context_projection.weight"):
+                mean = 0.0
+                std_dev = 0.02 / torch.sqrt(torch.tensor(2 * config.num_decoder_blocks, dtype=torch.float))
+                torch.nn.init.normal_(parameter, mean=mean, std=std_dev)
 
     @property
     def total_trainable_parameters(self) -> int:
@@ -99,6 +107,14 @@ class GPTDecoder(BaseDecoder):
     def total_parameters(self) -> int:
         """Returns the total number of parameters in the model, including non-trainable."""
         return sum(p.numel() for p in self.parameters())
+
+    @override
+    def _init_weights(self, module: nn.Module) -> None:
+        normal_init_modules = (nn.Linear, nn.Embedding)
+        if isinstance(module, normal_init_modules):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if hasattr(module, "bias") and module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
 
     @overload
     def create_target_masks(
@@ -124,12 +140,11 @@ class GPTDecoder(BaseDecoder):
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
     ) -> torch.BoolTensor:
         """
-        Creates a combined target mask for use in decoder layers, based on provided
-        target padding masks and future masks. If either mask is not provided (NotGiven),
-        a default mask is created using `torch.ones_like` to ensure shape compatibility
-        and neutral behavior in subsequent operations.
+        Creates a combined target mask for use in decoder layers. If target_padding_masks
+        is not provided, a default mask of ones is created. If future_masks is not provided,
+        a default lower triangular mask is created to mask future tokens.
 
-        The default mask created by `torch.ones_like` acts as a placeholder that
+        The default mask created by `torch.ones_like` or `torch.tril` acts as a placeholder that
         allows operations to proceed without altering the behavior that the mask
         would impose. This is particularly useful when the absence of a mask should
         not lead to masking out or altering any data, but rather to a 'pass-through'
@@ -139,6 +154,10 @@ class GPTDecoder(BaseDecoder):
         means is if the user does not provide a target padding mask, the model will
         not mask out any tokens in the target sequence, which is the same behavior
         as if the user had provided a target padding mask of all ones.
+
+        Something to note is for future masks, if user does not provide outside,
+        then the default mask is a lower triangular matrix of ones, which means
+        that the model will not be able to attend to future tokens.
 
         Parameters
         ----------
@@ -175,9 +194,9 @@ class GPTDecoder(BaseDecoder):
             )
 
         if future_masks is NOT_GIVEN:
-            future_masks = cast(
-                torch.BoolTensor, torch.ones_like(cast(torch.Tensor, target_padding_masks), dtype=torch.bool)
-            )
+            seq_len = target_padding_masks.size(-1)  # type: ignore[union-attr]
+            # note seq_len == context_length in decoder
+            future_masks = cast(torch.BoolTensor, torch.tril(torch.ones((seq_len, seq_len), dtype=torch.bool)))
 
         return cast(
             torch.BoolTensor,

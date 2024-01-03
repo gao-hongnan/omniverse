@@ -47,9 +47,9 @@ class PositionwiseFeedForward(nn.Module):
 
         })
 
-        # self._reset_parameters()
+        # self._init_weights()
 
-    def _reset_parameters(self) -> None:
+    def _init_weights(self) -> None:
         """Initialize parameters of the linear layers."""
         nn.init.xavier_uniform_(self.ffn["context_fc"].weight)
         if self.ffn["context_fc"].bias is not None:

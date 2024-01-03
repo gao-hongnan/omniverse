@@ -68,7 +68,7 @@ class BaseDecoderBlock(ABC, nn.Module):
         """
 
 
-class BaseDecoder(ABC, nn.Module):
+class BaseDecoder(nn.Module, ABC):
     """
     Abstract base class for a decoder in a transformer-like architecture.
     """
@@ -92,7 +92,8 @@ class BaseDecoder(ABC, nn.Module):
     ) -> torch.FloatTensor:
         ...
 
-    def _reset_parameters(self) -> None:
-        for p in self.parameters():
+    def _init_weights(self, module: nn.Module) -> None:
+        """Initializes weights of the given module using Xavier uniform initialization."""
+        for p in module.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)

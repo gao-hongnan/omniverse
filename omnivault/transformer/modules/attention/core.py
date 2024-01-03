@@ -175,7 +175,7 @@ class MultiHeadedAttention(nn.Module):
         self.context_vector: torch.Tensor
         self.attention_weights: torch.Tensor
 
-        # self._reset_parameters()
+        # self._init_weights()
         # fmt: on
 
     def forward(
@@ -241,7 +241,7 @@ class MultiHeadedAttention(nn.Module):
         O = self.W_O(context_vector_concat)
         return O  # type: ignore[no-any-return]
 
-    def _reset_parameters(self) -> None:
+    def _init_weights(self) -> None:
         """See PyTorch's code for inspiration!"""
         # we assume _qkv_same_embed_dim is True
         nn.init.xavier_uniform_(self.W_Q.weight)
