@@ -100,6 +100,7 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
 
         extra = "forbid"
 
+
 @register_optimizer(name="torch.optim.Adam")
 class AdamConfig(OptimizerConfig):
     name: str = "torch.optim.Adam"

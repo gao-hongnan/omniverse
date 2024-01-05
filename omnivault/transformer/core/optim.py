@@ -4,7 +4,9 @@ from typing import Dict, List, Literal, Set, Tuple, Type
 
 import torch
 from torch import nn
+
 from omnivault.transformer.modules.layers.normalization import LayerNorm
+
 
 # FIXME: I have my own implementation of AddNorm, should I blacklist it or not?
 def apply_weight_decay_to_different_param_groups(
@@ -62,7 +64,9 @@ def apply_weight_decay_to_different_param_groups(
             elif parameter_name.endswith("weight") and isinstance(module, blacklist_weight_modules):
                 # weights of blacklisted modules are not decayed
                 no_decay.add(full_parameter_name)
-            elif (parameter_name.endswith("gamma") or parameter_name.endswith("beta")) and isinstance(module, LayerNorm):
+            elif (parameter_name.endswith("gamma") or parameter_name.endswith("beta")) and isinstance(
+                module, LayerNorm
+            ):
                 # weights of LayerNorm modules are not decayed
                 # TODO: why do I need to do this is because my custom LayerNorm has gamma and beta
                 # as their "weight" and "bias" attributes, respectively.
@@ -70,7 +74,7 @@ def apply_weight_decay_to_different_param_groups(
             elif parameter_name.endswith("pos_embed"):
                 no_decay.add(full_parameter_name)
 
-    param_dict = {parameter_name: parameter for parameter_name, parameter in model.named_parameters()} # noqa: C416
+    param_dict = {parameter_name: parameter for parameter_name, parameter in model.named_parameters()}  # noqa: C416
     inter_params = decay & no_decay
     union_params = decay | no_decay
     assert not inter_params, f"Parameters {inter_params} are in both decay and no_decay sets."

@@ -18,11 +18,13 @@ from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
+from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY
+
 from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
+from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
-from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
@@ -127,13 +129,20 @@ def main(cfg: DictConfig | ListConfig) -> None:
     assert criterion.ignore_index == vocabulary.token_to_index[vocabulary.PAD]
 
     # Create Scheduler
-
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
     lr_fn = lambda step: composer.model.d_model ** (-0.5) * min(  # type: ignore[union-attr]
         [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
     )
+
+    # scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
+    # scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)
+    # from rich.pretty import pprint
+    # pprint(scheduler_pydantic_config)
+    # scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
+
+
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
 
     # train

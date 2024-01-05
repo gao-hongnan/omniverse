@@ -14,6 +14,7 @@ from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OptimizerConfig
+from omnivault.transformer.config.scheduler import SchedulerConfig
 from omnivault.transformer.config.trainer import TrainerConfig
 
 
@@ -24,6 +25,7 @@ class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lo
     model: Union[DecoderConfig, Missing] = Field(default=MISSING, description="The model config.")
     optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
     criterion: Union[CriterionConfig, Missing] = Field(default=MISSING, description="The criterion config.")
+    scheduler: Union[SchedulerConfig, Missing] = Field(default=MISSING, description="The scheduler config.")
     trainer: TrainerConfig = Field(default_factory=TrainerConfig)
     generator: GeneratorConfig = Field(default_factory=GeneratorConfig)
 
