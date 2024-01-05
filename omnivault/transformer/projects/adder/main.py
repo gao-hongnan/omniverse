@@ -10,7 +10,6 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
 from rich.pretty import pprint
-from torch import nn
 
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
@@ -87,7 +86,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     # if you don't do these asserts, mypy cannot guarantee that the loaders are not None
     # so they cannot infer properly.
     assert composer.data.train_loader is not None
-    assert composer.data.val_loader is not None
+    assert composer.data.valid_loader is not None
     assert composer.data.test_loader is not None
     assert composer.data.collate_fn is not None
     train_loader = create_loader(
@@ -96,9 +95,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
         collate_fn_config=composer.data.collate_fn,
     )
 
-    val_loader = create_loader(
+    valid_loader = create_loader(
         dataset=val_dataset,
-        loader_config=composer.data.val_loader,
+        loader_config=composer.data.valid_loader,
         collate_fn_config=composer.data.collate_fn,
     )
 
@@ -138,7 +137,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     trainer = Trainer(
         model=model,
         train_dataloader=train_loader,
-        valid_dataloader=val_loader,
+        valid_dataloader=valid_loader,
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
@@ -149,11 +148,11 @@ def main(cfg: DictConfig | ListConfig) -> None:
         # but seeding will affect.
     )
     trained_model = trainer.fit(num_epochs=2)
-    time.sleep(1000)
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=22
+    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
+    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 

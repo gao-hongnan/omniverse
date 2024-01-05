@@ -29,7 +29,7 @@ class DataConfig(BaseModel):
         default={"batch_size": 32, "shuffle": True, "num_workers": 0, "pin_memory": False, "drop_last": False},
         description="The train loader config.",
     )
-    val_loader: Union[Dict[str, Any], None] = Field(
+    valid_loader: Union[Dict[str, Any], None] = Field(
         default={"batch_size": 32, "shuffle": False, "num_workers": 0, "pin_memory": False, "drop_last": False},
         description="The validation loader config.",
     )
