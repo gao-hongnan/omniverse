@@ -12,6 +12,9 @@ __all__ = ["TrainerConfig"]
 
 class TrainerConfig(BaseModel):
     device: str = Field(default="auto", description="Device to use for training.")
+    apply_weight_decay_to_different_param_groups: bool = Field(
+        default=False, description="Whether to apply weight decay to different parameter groups."
+    )
     num_epochs: int = Field(default=10, description="Number of epochs to train for.")
     eval_interval: int = Field(default=1, description="Number of epochs between evaluations.")
 

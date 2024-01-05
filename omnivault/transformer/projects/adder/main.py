@@ -9,7 +9,6 @@ import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from rich.pretty import pprint
 
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
@@ -19,12 +18,12 @@ from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
-from omnivault.transformer.core.dataset import AdderDataset, collate_fn, create_loader, split_dataset
+from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
+from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
 
@@ -69,7 +68,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     assert composer.criterion is not MISSING
 
     composer.pretty_print()
-    time.sleep(100)
+    time.sleep(1)
 
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
@@ -114,7 +113,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
     print(f"model_size: {model_size}, train_size: {len(train_dataset)}")
 
     # Create optimizer based on model parameters
-    optimizer = optimizer_pydantic_config.build(params=model.parameters())
+    if composer.trainer.apply_weight_decay_to_different_param_groups:
+        optimizer = optimizer_pydantic_config.build(
+            params=apply_weight_decay_to_different_param_groups(
+                model=model, weight_decay=composer.optimizer.weight_decay
+            )
+        )
+    else:
+        optimizer = optimizer_pydantic_config.build(params=model.parameters())
 
     # Create criterion
     criterion = criterion_pydantic_config.create_instance()
@@ -151,6 +157,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 if __name__ == "__main__":
     # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
     # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256
+    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 

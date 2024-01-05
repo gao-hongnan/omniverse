@@ -95,6 +95,10 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
         """Builder method for creating an optimizer instance."""
         return self.create_instance(params=params, **kwargs)
 
+    class Config:
+        """Pydantic configuration for `OptimizerConfig`."""
+
+        extra = "forbid"
 
 @register_optimizer(name="torch.optim.Adam")
 class AdamConfig(OptimizerConfig):
@@ -103,6 +107,7 @@ class AdamConfig(OptimizerConfig):
 
     betas: Tuple[float, float] = (0.9, 0.98)
     eps: float = 1e-9
+    weight_decay: float = 0.0
 
 
 @register_optimizer(name="torch.optim.AdamW")
