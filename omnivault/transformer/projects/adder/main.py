@@ -68,7 +68,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     assert composer.optimizer is not MISSING
     assert composer.criterion is not MISSING
 
-    pprint(composer)
+    composer.pretty_print()
+    time.sleep(100)
 
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
@@ -114,7 +115,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # Create optimizer based on model parameters
     optimizer = optimizer_pydantic_config.build(params=model.parameters())
-    pprint(optimizer)
 
     # Create criterion
     criterion = criterion_pydantic_config.create_instance()
@@ -129,8 +129,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
         [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
     )
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
-    pprint(scheduler)
-    pprint(optimizer)
 
     # train
     device: torch.device = composer.trainer.device
@@ -159,6 +157,5 @@ if __name__ == "__main__":
     yaml_cfg = load_yaml_config(yaml_path)
     cfg = merge_configs(yaml_cfg, args_list)
     om.resolve(cfg)  # inplace ops
-    pprint(cfg)
 
     main(cfg)

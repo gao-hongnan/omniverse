@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Union
 
 from pydantic import BaseModel, Field
+from rich.pretty import pprint
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
@@ -30,3 +31,7 @@ class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lo
         """Pydantic config."""
 
         arbitrary_types_allowed = True
+
+    def pretty_print(self) -> None:
+        """Pretty print the config."""
+        pprint(self)
