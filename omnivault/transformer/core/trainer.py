@@ -73,7 +73,6 @@ def train_one_epoch(
     criterion: nn.Module,
     optimizer: Optimizer,
     scheduler: LRScheduler | None = None,
-    grad_norm_clip: float = 1.0,
 ) -> Loss:
     """
     Variables
@@ -141,7 +140,7 @@ def train_one_epoch(
         # fmt: on
 
         if composer.trainer.clip_grad_norm:
-            nn.utils.clip_grad_norm_(model.parameters(), grad_norm_clip)
+            nn.utils.clip_grad_norm_(model.parameters(), **composer.trainer.clip_grad_norm)
 
         optimizer.step()
         if scheduler:
@@ -219,7 +218,6 @@ def valid_one_epoch(
     return epoch_average_loss
 
 
-# FIXME: make valid dataloader optional
 class Trainer:
     def __init__(
         self,
@@ -236,6 +234,8 @@ class Trainer:
         self.composer         = composer
 
         self.model            = state.model
+        self.model.to(device=device, dtype=next(state.model.parameters()).dtype, non_blocking=True)
+
         self.criterion        = state.criterion
         self.optimizer        = state.optimizer
         self.scheduler        = state.scheduler
@@ -250,7 +250,6 @@ class Trainer:
         self.log_every_n_steps = composer.trainer.log_every_n_steps
         self.eval_every_n_steps = composer.trainer.eval_every_n_steps
 
-
         # training stability
         self.clip_grad_norm   = composer.trainer.clip_grad_norm
         self.apply_weight_decay_to_different_param_groups = composer.trainer.apply_weight_decay_to_different_param_groups # but this is applied outside, anti-pattern?
@@ -260,6 +259,7 @@ class Trainer:
         self.save_every_epoch = composer.trainer.save_every_epoch
 
         # attributes not in __init__ constructor
+        self.epoch_index = 0
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
         # fmt: on
 
@@ -279,6 +279,54 @@ class Trainer:
         """Triggers all callbacks associated with a given event."""
         for callback in self.callbacks[event]:
             callback(self)
+
+    def train_one_epoch(self, loader: DataLoader[DatasetYield]) -> Loss:
+        self.model.train()
+
+        # fmt: off
+        epoch_running_loss: float = 0.0
+        num_batches       : int   = len(loader)
+        progress_bar      : tqdm[Tuple[int, DatasetYield]] = tqdm(enumerate(loader, start=1), total=num_batches) # FIXME: Find the correct type for tqdm
+        # fmt: on
+        for _batch_index, batch in progress_bar:
+            inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
+            batch_size = inputs.size(0)
+
+            # fmt: off
+            logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
+            loss: torch.nn.Module   = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+            # model vs optimizer zero grad, the former is safer if you have >=2 optimizers
+            self.model.zero_grad(set_to_none=True)
+            loss.backward()
+
+            this_batch_loss: float = loss.item()
+            batch_average_loss     = this_batch_loss / batch_size
+            epoch_running_loss    += this_batch_loss
+            # fmt: on
+
+            if self.clip_grad_norm:
+                nn.utils.clip_grad_norm_(self.model.parameters(), **self.clip_grad_norm)
+
+            self.optimizer.step()
+            if self.scheduler:
+                self.scheduler.step()
+
+            if _batch_index % self.log_every_n_steps == 0:
+                self.logger.info("Step %d - Loss: %.5f", _batch_index, this_batch_loss)
+                lr_info = f"LR: {self.scheduler.get_last_lr()[0]:.9f}" if self.scheduler else "LR: N/A"
+                self.logger.info(
+                    "Epoch: %d, Step: %d, Batch Loss: %.3f, Avg Batch Loss: %.3f, %s",
+                    self.epoch_index,  # assuming you have a variable 'epoch'
+                    _batch_index,
+                    this_batch_loss,
+                    batch_average_loss,
+                    lr_info,
+                )
+
+        epoch_average_loss = epoch_running_loss / num_batches
+        self.epoch_index += 1
+        self.trigger_callbacks("on_epoch_end")
+        return epoch_average_loss
 
     def train_epoch(self) -> Loss:
         return train_one_epoch(
@@ -345,10 +393,10 @@ class Trainer:
 
         for epoch in range(1, self.max_epochs + 1):
             self.logger.info("Epoch %d/%d", epoch, self.max_epochs)
-            import time
+            # import time
 
-            time.sleep(100)
-            self.train_loss = self.train_epoch()
+            # self.train_loss = self.train_epoch()
+            self.train_loss = self.train_one_epoch(train_loader)
             if self.save_every_epoch:
                 torch.save(self.model.state_dict(), f"model_{epoch}.pth")
 
