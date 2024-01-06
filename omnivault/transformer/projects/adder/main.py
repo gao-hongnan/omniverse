@@ -17,11 +17,11 @@ from omnivault.transformer.config.criterion import CRITERION_REGISTRY
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
-from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY
-
+from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
+from omnivault.transformer.core.scheduler import noam_lr_decay
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
@@ -68,9 +68,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
     assert composer.model is not MISSING
     assert composer.optimizer is not MISSING
     assert composer.criterion is not MISSING
-
-    composer.pretty_print()
-    time.sleep(1)
 
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
@@ -128,22 +125,22 @@ def main(cfg: DictConfig | ListConfig) -> None:
     criterion = criterion_pydantic_config.create_instance()
     assert criterion.ignore_index == vocabulary.token_to_index[vocabulary.PAD]
 
-    # Create Scheduler
+    # Create Scheduler Noam
+    # TODO: this part is hardcoded in a way since we are using LambdaLR.
+    # I do not have time to make it more "automated" so this is anti-config-pattern.
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
-    lr_fn = lambda step: composer.model.d_model ** (-0.5) * min(  # type: ignore[union-attr]
-        [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
-    )
+    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)
 
-    # scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
-    # scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)
-    # from rich.pretty import pprint
-    # pprint(scheduler_pydantic_config)
-    # scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
+    scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
+    scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+    assert composer.scheduler is MISSING  # now it is MISSING for us to fill up.
+    composer.scheduler = scheduler_pydantic_config
+    scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
 
-
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
+    composer.pretty_print()
+    time.sleep(1)
 
     # train
     device: torch.device = composer.trainer.device
