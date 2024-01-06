@@ -1,27 +1,62 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any, Callable, Dict, List
+from typing import Callable, Dict, List, Tuple, no_type_check
 
 import torch
 from torch import nn
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import _LRScheduler
+from torch.optim.lr_scheduler import LRScheduler
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from omnivault._types._alias import Loss
+from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.dataset import DatasetYield
+from omnivault.transformer.core.state import State
+
+
+@no_type_check
+def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
+    """
+    Moves the elements of a batch to the specified device.
+
+    Parameters
+    ----------
+    batch : tuple
+        A tuple containing the elements of the batch.
+        Expected format: (inputs, targets, target_padding_masks, future_masks)
+
+    device : torch.device or str
+        The target device to move the batch elements to.
+
+    Returns
+    -------
+    Tuple[torch.Tensor, ...]
+        The batch with all elements moved to the specified device.
+
+    Note
+    ----
+    1. We usually set `pin_memory=True` and `non_blocking=True` together.
+       This allows us to move them to GPU asynchronously.
+    2. `mps` seems to be buggy with `non_blocking=True` so we set it to False.
+    3. `cpu` we set to False too because it is not asynchronous?
+    """
+    if device.type in ["cpu", "mps"]:
+        return tuple(tensor.to(device) for tensor in batch)
+    return tuple(tensor.pin_memory().to(device, non_blocking=True) for tensor in batch)
 
 
 def train_one_epoch(
+    *,
+    composer: Composer,
     model: nn.Module,
+    device: torch.device,
     dataloader: DataLoader[DatasetYield],
     criterion: nn.Module,
     optimizer: Optimizer,
-    scheduler: _LRScheduler | None = None,
+    scheduler: LRScheduler | None = None,
     grad_norm_clip: float = 1.0,
-    device: int | torch.device | None = None,
 ) -> Loss:
     """
     Variables
@@ -48,12 +83,13 @@ def train_one_epoch(
         The loss function used for evaluation.
     optimizer : Optimizer
         The optimizer used for training.
-    scheduler : _LRScheduler | None, optional
+    scheduler : LRScheduler | None, optional
         The learning rate scheduler used for training, by default None.
     grad_norm_clip : float, optional
         The gradient norm clipping value, by default 1.0.
-    device : str
-        The device to run the evaluation on, defaults to 'cuda'.
+    device : torch.device
+        The device to run the training on. We restrict to only accept
+        torch.device instead of the overloaded variants such as str or int.
 
     Returns
     -------
@@ -67,28 +103,17 @@ def train_one_epoch(
     # fmt: off
     epoch_running_loss: float = 0.0
     num_batches       : int   = len(dataloader)
-    progress_bar      : tqdm[Any] = tqdm(enumerate(dataloader, start=1), total=num_batches) # FIXME: Find the correct type for tqdm
+    progress_bar      : tqdm[Tuple[int, DatasetYield]] = tqdm(enumerate(dataloader, start=1), total=num_batches) # FIXME: Find the correct type for tqdm
     # fmt: on
 
     for _batch_index, batch in progress_bar:
-        (
-            inputs,
-            targets,
-            target_padding_masks,
-            future_masks,
-        ) = batch  # construct_batches(batch)
-        inputs, targets, target_padding_masks, future_masks = (
-            inputs.to(device),
-            targets.to(device),
-            target_padding_masks.to(device),
-            future_masks.to(device),
-        )
+        inputs, targets, target_padding_masks, future_masks = move_to_device(batch, device)
 
         batch_size = inputs.size(0)
 
         # fmt: off
-        logits = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
-        loss   = criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+        logits: torch.FloatTensor = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
+        loss: torch.nn.Module   = criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
         # model vs optimizer zero grad, the former is safer if you have >=2 optimizers
         model.zero_grad(set_to_none=True)
         loss.backward()
@@ -98,7 +123,8 @@ def train_one_epoch(
         epoch_running_loss    += this_batch_loss
         # fmt: on
 
-        nn.utils.clip_grad_norm_(model.parameters(), grad_norm_clip)
+        if composer.trainer.clip_grad_norm:
+            nn.utils.clip_grad_norm_(model.parameters(), grad_norm_clip)
 
         optimizer.step()
         if scheduler:
@@ -119,9 +145,9 @@ def train_one_epoch(
 
 def valid_one_epoch(
     model: nn.Module,
+    device: torch.device,
     dataloader: DataLoader[DatasetYield],
     criterion: nn.Module,
-    device: int | torch.device | None = None,
 ) -> Loss:
     """
     Validates the model for one epoch on the given dataloader.
@@ -151,18 +177,7 @@ def valid_one_epoch(
 
     with torch.no_grad():  # Disable gradient computation
         for _batch_index, batch in progress_bar:
-            (
-                inputs,
-                targets,
-                target_padding_masks,
-                future_masks,
-            ) = batch  # construct_batches(batch)
-            inputs, targets, target_padding_masks, future_masks = (
-                inputs.to(device),
-                targets.to(device),
-                target_padding_masks.to(device),
-                future_masks.to(device),
-            )
+            inputs, targets, target_padding_masks, future_masks = move_to_device(batch, device)
 
             # fmt: off
             logits = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
@@ -191,14 +206,11 @@ def valid_one_epoch(
 class Trainer:
     def __init__(
         self,
-        model: nn.Module,
+        state: State,
+        composer: Composer,
         train_dataloader: DataLoader[DatasetYield],
-        criterion: nn.Module,
-        optimizer: Optimizer,
-        scheduler: _LRScheduler | None = None,
-        grad_norm_clip: float = 1.0,
-        device: int | torch.device | None = None,
         *,
+        device: torch.device | None = None,
         valid_dataloader: DataLoader[DatasetYield] | None = None,
         test_dataloader: DataLoader[DatasetYield] | None = None,
     ) -> None:
@@ -206,16 +218,23 @@ class Trainer:
         spend time to make it extremely modular...but I have learnt that
         not all scenarios demand such code."""
         # fmt: off
-        self.model            = model
-        self.train_dataloader = train_dataloader
-        self.criterion        = criterion
-        self.optimizer        = optimizer
-        self.scheduler        = scheduler
-        self.grad_norm_clip   = grad_norm_clip
-        self.device           = device
+        self.state            = state
+        self.composer         = composer
 
+        self.model            = state.model
+        self.criterion        = state.criterion
+        self.optimizer        = state.optimizer
+        self.scheduler        = state.scheduler
+
+        self.train_dataloader = train_dataloader
         self.valid_dataloader = valid_dataloader
         self.test_dataloader  = test_dataloader
+
+        # training stability
+        self.clip_grad_norm   = composer.trainer.clip_grad_norm
+
+        self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
+
 
         # attributes not in __init__ constructor
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
@@ -240,12 +259,12 @@ class Trainer:
 
     def train_epoch(self) -> Loss:
         return train_one_epoch(
+            composer=self.composer,
             model=self.model,
             dataloader=self.train_dataloader,
             criterion=self.criterion,
             optimizer=self.optimizer,
             scheduler=self.scheduler,
-            grad_norm_clip=self.grad_norm_clip,
             device=self.device,
         )
 

@@ -1,5 +1,5 @@
 # ruff: noqa
-# type: ignore
+
 from __future__ import annotations
 
 import sys
@@ -9,7 +9,7 @@ import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-
+from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
@@ -17,11 +17,12 @@ from omnivault.transformer.config.criterion import CRITERION_REGISTRY
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
-from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY
+from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY, LambdaLRConfig
 from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.scheduler import noam_lr_decay
+from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
@@ -65,9 +66,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
         criterion=criterion_pydantic_config,
         trainer=trainer_config,
     )
-    assert composer.model is not MISSING
-    assert composer.optimizer is not MISSING
-    assert composer.criterion is not MISSING
+    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
+    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
+    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
 
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
@@ -113,6 +114,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # Create optimizer based on model parameters
     if composer.trainer.apply_weight_decay_to_different_param_groups:
+        assert hasattr(composer.optimizer, "weight_decay")
         optimizer = optimizer_pydantic_config.build(
             params=apply_weight_decay_to_different_param_groups(
                 model=model, weight_decay=composer.optimizer.weight_decay
@@ -134,7 +136,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
     noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)
 
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
-    scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+
+    if issubclass(scheduler_config_cls, LambdaLRConfig):
+        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+    else:
+        scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler) # type: ignore[assignment]
+
     assert composer.scheduler is MISSING  # now it is MISSING for us to fill up.
     composer.scheduler = scheduler_pydantic_config
     scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
@@ -142,17 +149,24 @@ def main(cfg: DictConfig | ListConfig) -> None:
     composer.pretty_print()
     time.sleep(1)
 
-    # train
-    device: torch.device = composer.trainer.device
-    trainer = Trainer(
+    state = State(
         model=model,
-        train_dataloader=train_loader,
-        valid_dataloader=valid_loader,
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
-        grad_norm_clip=1.0,
-        device=device,
+    )
+    state.pretty_print()
+    time.sleep(1)
+
+    device = composer.trainer.device
+
+    # train
+    trainer = Trainer(
+        state=state,
+        composer=composer,
+        train_dataloader=train_loader,
+        valid_dataloader=valid_loader,
+        device=device, # type: ignore[arg-type]
         # test_dataloader=test_loader,
         # NOTE: uncomment the above line to enable testing after each epoch
         # but seeding will affect.

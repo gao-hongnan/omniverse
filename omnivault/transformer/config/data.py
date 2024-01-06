@@ -8,7 +8,10 @@ from omnivault._types._alias import NotGiven
 class DataConfig(BaseModel):
     """The data config."""
 
-    context_length: int = Field(default=128, description="The context length.")
+    context_length: int = Field(
+        default=128,
+        description="The context length depends on how we tokenize, whether on a character level or word level.",
+    )
     dataset_name: Union[str, None] = Field(default=None, description="The name of the dataset.")
     dataset_size: Union[int, None] = Field(default=2, description="The size of the dataset.")
     dataset_path: Union[str, None] = Field(default=None, description="The path to the dataset.")

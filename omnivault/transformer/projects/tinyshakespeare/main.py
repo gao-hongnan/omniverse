@@ -10,7 +10,6 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
 from rich.pretty import pprint
-from torch import nn
 
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
@@ -21,6 +20,7 @@ from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import TextCharacterDataset, collate_fn, create_loader, split_dataset
+from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
@@ -122,27 +122,27 @@ def main(cfg: DictConfig | ListConfig) -> None:
     pprint(vocabulary.token_to_index)
 
     # Create Scheduler
-
-    warmup_steps = 3 * len(train_loader)
-
-    # lr first increases in the warmup steps, and then decays
-    lr_fn = lambda step: composer.model.d_model ** (-0.5) * min(  # type: ignore[union-attr]
-        [(step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)]
-    )
-    # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=lr_fn)
     scheduler = None
 
-    # train
-    device: torch.device = composer.trainer.device
-    pprint(device)
-    trainer = Trainer(
+    composer.pretty_print()
+    time.sleep(1)
+
+    state = State(
         model=model,
-        train_dataloader=train_loader,
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
-        grad_norm_clip=1.0,
+    )
+    state.pretty_print()
+    time.sleep(1)
+
+    # train
+    device: torch.device = composer.trainer.device
+    trainer = Trainer(
+        state=state,
         device=device,
+        train_dataloader=train_loader,
+        grad_norm_clip=1.0,
     )
     trained_model = trainer.fit(
         num_epochs=composer.trainer.num_epochs, save_every_epoch=composer.trainer.save_every_epoch

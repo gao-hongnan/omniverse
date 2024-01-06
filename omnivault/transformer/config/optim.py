@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterator, Literal, Tuple, Type
+from typing import Any, Callable, Dict, Iterator, List, Literal, Tuple, Type
 
 import torch
 from torch import nn
@@ -91,7 +91,15 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
     name: str
     lr: float  # assume all optimizers have this parameter
 
-    def build(self, *, params: nn.ParameterList | Iterator[nn.Parameter], **kwargs: Any) -> torch.optim.Optimizer:
+    # FIXME: how do we loosen this params type?
+    def build(
+        self,
+        *,
+        params: List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]]
+        | nn.ParameterList
+        | Iterator[nn.Parameter],
+        **kwargs: Any,
+    ) -> torch.optim.Optimizer:
         """Builder method for creating an optimizer instance."""
         return self.create_instance(params=params, **kwargs)
 

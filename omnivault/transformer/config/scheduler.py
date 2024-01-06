@@ -24,7 +24,7 @@ def register_scheduler(name: str) -> Callable[[Type[SchedulerConfig]], Type[Sche
     return register_scheduler_cls
 
 
-class SchedulerConfig(DynamicClassFactory[torch.optim.lr_scheduler._LRScheduler]):
+class SchedulerConfig(DynamicClassFactory[torch.optim.lr_scheduler.LRScheduler]):
     """
     Base class for creating PyTorch scheduler instances dynamically.
 
@@ -33,13 +33,13 @@ class SchedulerConfig(DynamicClassFactory[torch.optim.lr_scheduler._LRScheduler]
 
     Methods
     -------
-    build(optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler._LRScheduler
+    build(optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.LRScheduler
         Creates and returns a scheduler instance with the specified optimizer.
     """
 
     name: str
 
-    def build(self, optimizer: torch.optim.Optimizer, **kwargs: Any) -> torch.optim.lr_scheduler._LRScheduler:
+    def build(self, optimizer: torch.optim.Optimizer, **kwargs: Any) -> torch.optim.lr_scheduler.LRScheduler:
         """Builder method for creating a scheduler instance."""
         return self.create_instance(optimizer=optimizer, **kwargs)
 
