@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import logging
 from collections import defaultdict
 from typing import Callable, Dict, List, Tuple, no_type_check
 
 import torch
+from rich.console import Console
+from rich.logging import RichHandler
 from torch import nn
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LRScheduler
@@ -14,6 +17,20 @@ from omnivault._types._alias import Loss
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
+from omnivault.transformer.utils.format import format_lr
+
+# Create a Rich console instance
+console = Console()
+
+# Configure Python logging to use RichHandler
+logging.basicConfig(
+    level="INFO",  # Set the logging level (e.g., DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    format="%(message)s",  # No need for time and level since Rich will provide this
+    datefmt="[%X]",
+    handlers=[RichHandler(console=console)],
+)
+
+logger = logging.getLogger("rich")
 
 
 @no_type_check
@@ -208,11 +225,8 @@ class Trainer:
         self,
         state: State,
         composer: Composer,
-        train_dataloader: DataLoader[DatasetYield],
         *,
         device: torch.device | None = None,
-        valid_dataloader: DataLoader[DatasetYield] | None = None,
-        test_dataloader: DataLoader[DatasetYield] | None = None,
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
@@ -226,15 +240,24 @@ class Trainer:
         self.optimizer        = state.optimizer
         self.scheduler        = state.scheduler
 
-        self.train_dataloader = train_dataloader
-        self.valid_dataloader = valid_dataloader
-        self.test_dataloader  = test_dataloader
+        self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
+
+        # logger
+        self.logger = logger
+
+        # general
+        self.max_epochs = composer.trainer.max_epochs
+        self.log_every_n_steps = composer.trainer.log_every_n_steps
+        self.eval_every_n_steps = composer.trainer.eval_every_n_steps
+
 
         # training stability
         self.clip_grad_norm   = composer.trainer.clip_grad_norm
+        self.apply_weight_decay_to_different_param_groups = composer.trainer.apply_weight_decay_to_different_param_groups # but this is applied outside, anti-pattern?
 
-        self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
-
+        # saving shenanigans
+        self.save_dir = composer.trainer.save_dir
+        self.save_every_epoch = composer.trainer.save_every_epoch
 
         # attributes not in __init__ constructor
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
@@ -289,24 +312,55 @@ class Trainer:
             device=self.device,
         )
 
-    def fit(self, num_epochs: int, save_every_epoch: bool = False) -> nn.Module:
-        for epoch in range(1, num_epochs + 1):
-            print(f"Epoch {epoch}/{num_epochs}")
-            print("-" * 10)
+    # def _train_batch(self, batch: DatasetYield) -> Loss:
+    #     self.optimizer.zero_grad(set_to_none=True)
 
+    def _get_current_lr_or_lrs(self) -> float | List[float]:
+        """Get current learning rate."""
+        if len(self.optimizer.param_groups) == 1:
+            # we are sure the key "lr" should return a float
+            return self.optimizer.param_groups[0]["lr"]  # type: ignore[no-any-return]
+
+        lrs = [param_group["lr"] for param_group in self.optimizer.param_groups]
+        return lrs
+
+    def fit(
+        self,
+        *,
+        train_loader: DataLoader[DatasetYield],
+        valid_loader: DataLoader[DatasetYield] | None = None,
+        test_loader: DataLoader[DatasetYield] | None = None,
+    ) -> nn.Module:
+        self.train_dataloader = train_loader
+        self.valid_dataloader = valid_loader
+        self.test_dataloader = test_loader
+
+        initial_lr_or_lrs = self._get_current_lr_or_lrs()
+        lr_str = format_lr(initial_lr_or_lrs, precision=9)
+        # Log the initial learning rate(s)
+        if isinstance(initial_lr_or_lrs, list):
+            self.logger.info("Initial learning rates for each parameter group: %s", lr_str)
+        else:
+            self.logger.info("Initial learning rate: %s", initial_lr_or_lrs)
+
+        for epoch in range(1, self.max_epochs + 1):
+            self.logger.info("Epoch %d/%d", epoch, self.max_epochs)
+            import time
+
+            time.sleep(100)
             self.train_loss = self.train_epoch()
-            if save_every_epoch:
+            if self.save_every_epoch:
                 torch.save(self.model.state_dict(), f"model_{epoch}.pth")
 
-            print(f"Average Epoch Training Loss   : {self.train_loss:.5f}")
+            self.logger.info("Average Epoch Training Loss: %.5f", self.train_loss)
 
-            if self.valid_dataloader:
+            if valid_loader:
                 self.valid_loss = self.valid_epoch()
-                print(f"Average Epoch Validation Loss : {self.valid_loss:.5f}")
+                self.logger.info("Average Epoch Validation Loss: %.5f", self.valid_loss)
 
-            if self.test_dataloader:
+            if test_loader:
                 test_loss = self.test_epoch()
-                print(f"Average Epoch Test Loss       : {test_loss:.5f}")
+                self.logger.info("Average Epoch Test Loss: %.5f", test_loss)
 
         print("Training complete")
         return self.model

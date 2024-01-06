@@ -9,6 +9,7 @@ import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
+
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
 from omnivault.transformer.config.composer import Composer, DataConfig
@@ -140,7 +141,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     if issubclass(scheduler_config_cls, LambdaLRConfig):
         scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
     else:
-        scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler) # type: ignore[assignment]
+        scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
 
     assert composer.scheduler is MISSING  # now it is MISSING for us to fill up.
     composer.scheduler = scheduler_pydantic_config
@@ -164,14 +165,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
     trainer = Trainer(
         state=state,
         composer=composer,
-        train_dataloader=train_loader,
-        valid_dataloader=valid_loader,
-        device=device, # type: ignore[arg-type]
+        device=device,  # type: ignore[arg-type]
         # test_dataloader=test_loader,
         # NOTE: uncomment the above line to enable testing after each epoch
         # but seeding will affect.
     )
-    trained_model = trainer.fit(num_epochs=2)
+    trained_model = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
 
 
 if __name__ == "__main__":

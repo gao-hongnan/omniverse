@@ -12,11 +12,11 @@ __all__ = ["TrainerConfig"]
 
 class TrainerConfig(BaseModel):
     device: str = Field(default="auto", description="Device to use for training.")
-    apply_weight_decay_to_different_param_groups: bool = Field(
-        default=False, description="Whether to apply weight decay to different parameter groups."
-    )
-    num_epochs: int = Field(default=10, description="Number of epochs to train for.")
-    eval_interval: int = Field(default=1, description="Number of epochs between evaluations.")
+
+    # general
+    max_epochs: int = Field(default=2, description="Number of epochs to train for.")
+    log_every_n_steps: int = Field(default=1, description="Log every n steps.")
+    eval_every_n_steps: int = Field(default=1, description="Number of epochs between evaluations.")
 
     # training stability
     # 1. gradient clipping
@@ -25,8 +25,13 @@ class TrainerConfig(BaseModel):
         description="Gradient clipping, for details of the params, see `torch.nn.utils.clip_grad_norm_`.",
     )
 
-    # saving stuff
-    save_dir: str = Field(default="checkpoints", description="Directory to save checkpoints to.")
+    # 2. weight decay on targetted parameter groups
+    apply_weight_decay_to_different_param_groups: bool = Field(
+        default=False, description="Whether to apply weight decay to different parameter groups."
+    )
+
+    # saving shenanigans
+    save_dir: Union[str, None] = Field(default="checkpoints", description="Directory to save checkpoints to.")
     save_every_epoch: bool = Field(default=False, description="Always save the model after each epoch.")
 
     @field_validator("device", mode="plain")

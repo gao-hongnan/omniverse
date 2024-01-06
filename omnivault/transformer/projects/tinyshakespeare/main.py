@@ -145,7 +145,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         grad_norm_clip=1.0,
     )
     trained_model = trainer.fit(
-        num_epochs=composer.trainer.num_epochs, save_every_epoch=composer.trainer.save_every_epoch
+        max_epochs=composer.trainer.max_epochs, save_every_epoch=composer.trainer.save_every_epoch
     )
     time.sleep(10)
 
