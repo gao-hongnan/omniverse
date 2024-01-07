@@ -159,8 +159,6 @@ main() {
         logger "ERROR" "💥💥💥 ${TOOL} testing failed."
         exit 1
     fi
-
-exit 1
 }
 
 main "$@"

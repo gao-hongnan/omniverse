@@ -174,10 +174,15 @@ def main(cfg: DictConfig | ListConfig) -> None:
         composer=composer,
         logger=logger,
         device=device,  # type: ignore[arg-type]
-        # test_dataloader=test_loader,
-        # NOTE: uncomment the above line to enable testing after each epoch
-        # but seeding will affect.
     )
+
+    # save_checkpoint_callback_config = ...
+    # def save_checkpoint_callback(trainer: Trainer) -> None:
+    #     print(f"trainer.batch_index: {trainer.batch_index}")
+    #     if trainer.batch_index % trainer.eval_every_n_steps == 0:
+    #         import torch
+    #         torch.save(trainer.state.model.state_dict(), f"model_{trainer.batch_index}.pt")
+    # trainer.add_callback(event="on_train_batch_end", callback=save_checkpoint_callback)
     _trained_model = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
 
 

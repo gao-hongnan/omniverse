@@ -105,6 +105,7 @@ class Trainer:
 
         # attributes not in __init__ constructor
         self.epoch_index = 0
+        self.batch_index = 0
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
         # fmt: on
 
@@ -148,6 +149,7 @@ class Trainer:
         if self.scheduler and self.step_scheduler_on_batch_or_epoch == "batch":
             self.scheduler.step()
 
+        self.batch_index += 1
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_END.value)
         return this_batch_average_loss, this_batch_total_loss
 
