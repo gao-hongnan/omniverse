@@ -13,6 +13,7 @@ from omnivault.transformer.config.data import DataConfig
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
+from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OptimizerConfig
 from omnivault.transformer.config.scheduler import SchedulerConfig
 from omnivault.transformer.config.trainer import TrainerConfig
@@ -20,6 +21,7 @@ from omnivault.transformer.config.trainer import TrainerConfig
 
 class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lols
     constants: MaybeConstant = Field(default_factory=MaybeConstant)
+    logger: LoggerConfig = Field(default_factory=LoggerConfig)
     global_: MaybeGlobal = Field(default_factory=MaybeGlobal)
     data: DataConfig = Field(default_factory=DataConfig)
     model: Union[DecoderConfig, Missing] = Field(default=MISSING, description="The model config.")

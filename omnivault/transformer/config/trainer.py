@@ -17,6 +17,12 @@ class TrainerConfig(BaseModel):
     max_epochs: int = Field(default=2, description="Number of epochs to train for.")
     log_every_n_steps: int = Field(default=1, description="Log every n steps.")
     eval_every_n_steps: int = Field(default=1, description="Number of epochs between evaluations.")
+    step_scheduler_on_batch_or_epoch: str = Field(
+        default="epoch",
+        description="Whether to step the scheduler on batch or epoch. "
+        "If set to 'epoch', the scheduler will be stepped after each epoch. "
+        "If set to 'batch', the scheduler will be stepped after each batch.",
+    )
 
     # training stability
     # 1. gradient clipping

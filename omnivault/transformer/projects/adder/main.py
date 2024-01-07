@@ -1,22 +1,22 @@
-# ruff: noqa
-
 from __future__ import annotations
 
+import logging
 import sys
 import time
 
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
+from omnivault.core.logger import RichLogger
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
+from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY, LambdaLRConfig
 from omnivault.transformer.config.trainer import TrainerConfig
@@ -40,9 +40,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
     seed_all(cfg.global_.seed)
 
     constants = MaybeConstant(**cfg.constants) if cfg.constants is not None else MaybeConstant()
+    logger_pydantic_config = LoggerConfig(**cfg.logger)
     global_ = MaybeGlobal(**cfg.global_)
     data = DataConfig(**cfg.data)
     trainer_config = TrainerConfig(**cfg.trainer)
+
+    # logger
+    logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
+    assert isinstance(logger, logging.Logger)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
@@ -60,6 +65,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     composer = Composer(
         constants=constants,
+        logger=logger_pydantic_config,
         global_=global_,
         data=data,
         model=model_pydantic_config,
@@ -102,7 +108,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         collate_fn_config=composer.data.collate_fn,
     )
 
-    test_loader = create_loader(
+    test_loader = create_loader(  # noqa: F841
         dataset=test_dataset,
         loader_config=composer.data.test_loader,
         collate_fn_config=composer.data.collate_fn,
@@ -134,7 +140,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
-    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)
+    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)  # noqa: E731
 
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
 
@@ -162,15 +168,17 @@ def main(cfg: DictConfig | ListConfig) -> None:
     device = composer.trainer.device
 
     # train
+
     trainer = Trainer(
         state=state,
         composer=composer,
+        logger=logger,
         device=device,  # type: ignore[arg-type]
         # test_dataloader=test_loader,
         # NOTE: uncomment the above line to enable testing after each epoch
         # but seeding will affect.
     )
-    trained_model = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+    _trained_model = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
 
 
 if __name__ == "__main__":
@@ -186,4 +194,4 @@ if __name__ == "__main__":
     om.resolve(cfg)  # inplace ops
 
     main(cfg)
-    # 1.15630
+    # 1.38283, 1.15584
