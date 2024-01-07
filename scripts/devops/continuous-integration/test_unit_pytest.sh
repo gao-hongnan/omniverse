@@ -154,9 +154,12 @@ main() {
     # Check if either pytest or coverage failed
     if [ "$pytest_status" -eq 0 ] && [ "$coverage_status" -eq 0 ]; then
         logger "INFO" "🎉🎉🎉 ${TOOL} testing passed."
+        exit 0
     else
         logger "ERROR" "💥💥💥 ${TOOL} testing failed."
+        exit 1
     fi
+
 }
 
 main "$@"
