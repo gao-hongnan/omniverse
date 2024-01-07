@@ -17,7 +17,7 @@ from omnivault.transformer.core.state import State
 from omnivault.transformer.utils.format import format_lr, get_default_rich_logger
 
 
-class TrainerEvent(Enum ):
+class TrainerEvent(Enum):
     ON_TRAIN_EPOCH_START = "on_train_epoch_start"
     ON_TRAIN_EPOCH_END = "on_train_epoch_end"
     ON_VALID_EPOCH_START = "on_valid_epoch_start"
