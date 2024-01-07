@@ -160,6 +160,7 @@ main() {
         exit 1
     fi
 
+exit 1
 }
 
 main "$@"
