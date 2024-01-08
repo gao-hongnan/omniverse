@@ -271,8 +271,6 @@ class GPTDecoder(BaseDecoder):
         target_masks: torch.BoolTensor = self.create_target_masks(batch_size=batch_size, seq_len=seq_len, target_padding_masks=target_padding_masks, future_masks=future_masks)
 
         target_masks = target_masks.to(input_tokens.device)
-        print(input_tokens.device)
-        print(target_masks.device)
 
         z = self.tok_embed(input_tokens) # * math.sqrt(self.d_model) for better optimization landscape
         z = z + self.pos_embed[:, :seq_len, :]
