@@ -7,6 +7,7 @@ import pytest
 
 from omnivault.core.logger import RichLogger
 
+
 @pytest.fixture(scope="function")
 def log_dir():
     """

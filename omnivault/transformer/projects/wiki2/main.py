@@ -1,25 +1,26 @@
-from torchtext.datasets import WikiText2
-from torchtext.data.utils import get_tokenizer
-from torchtext.vocab import build_vocab_from_iterator
-import torch
-from rich.pretty import pprint
 import math
 import os
 from tempfile import TemporaryDirectory
 from typing import Tuple
-from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.config.decoder import *
 
 import torch
-from torch import nn, Tensor
+from rich.pretty import pprint
+from torch import Tensor, nn
+from torch.utils.data import DataLoader, TensorDataset, dataset
+from torchtext.data.utils import get_tokenizer
+from torchtext.datasets import WikiText2
+from torchtext.vocab import build_vocab_from_iterator
+
+from omnivault.transformer.config.decoder import *
+from omnivault.transformer.core.dataset import (
+    construct_dummy_batch_future_masks,
+    construct_dummy_batch_target_padding_masks,
+)
+from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
-from torch.utils.data import dataset
-from torch.utils.data import DataLoader, TensorDataset
-from torch.utils.data import TensorDataset
-from omnivault.transformer.core.dataset import construct_dummy_batch_future_masks, construct_dummy_batch_target_padding_masks
 from omnivault.transformer.utils.device import get_device
 
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 pprint(DEVICE)
 
 
@@ -40,17 +41,17 @@ def get_data_loader(data: Tensor, batch_size: int) -> DataLoader:
     return DataLoader(dataset, batch_size=1, shuffle=False)
 
 
+train_iter = WikiText2(split="train")
+tokenizer = get_tokenizer("basic_english")
+vocab = build_vocab_from_iterator(map(tokenizer, train_iter), specials=["<unk>"])
+vocab.set_default_index(vocab["<unk>"])
 
-
-train_iter = WikiText2(split='train')
-tokenizer = get_tokenizer('basic_english')
-vocab = build_vocab_from_iterator(map(tokenizer, train_iter), specials=['<unk>'])
-vocab.set_default_index(vocab['<unk>'])
 
 def data_process(raw_text_iter: dataset.IterableDataset) -> Tensor:
     """Converts raw text into a flat Tensor."""
     data = [torch.tensor(vocab(tokenizer(item)), dtype=torch.long) for item in raw_text_iter]
     return torch.cat(tuple(filter(lambda t: t.numel() > 0, data)))
+
 
 # ``train_iter`` was "consumed" by the process of building the vocab,
 # so we have to create it again
@@ -61,7 +62,8 @@ test_data = data_process(test_iter)
 pprint(train_data)
 pprint(train_data.shape)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 def batchify(data: Tensor, bsz: int) -> Tensor:
     """Divides the data into ``bsz`` separate sequences, removing extra elements
@@ -75,9 +77,10 @@ def batchify(data: Tensor, bsz: int) -> Tensor:
         Tensor of shape ``[N // bsz, bsz]``
     """
     seq_len = data.size(0) // bsz
-    data = data[:seq_len * bsz]
+    data = data[: seq_len * bsz]
     data = data.view(bsz, seq_len).t().contiguous()
     return data.to(device)
+
 
 batch_size = 20
 eval_batch_size = 10
@@ -89,6 +92,8 @@ pprint(train_data)
 pprint(train_data.shape)
 
 bptt = 35
+
+
 def get_batch(source: Tensor, i: int) -> Tuple[Tensor, Tensor]:
     """
     Args:
@@ -100,16 +105,16 @@ def get_batch(source: Tensor, i: int) -> Tuple[Tensor, Tensor]:
         target has shape ``[seq_len * batch_size]``
     """
     seq_len = min(bptt, len(source) - 1 - i)
-    data = source[i:i+seq_len]
-    target = source[i+1:i+1+seq_len].reshape(-1)
+    data = source[i : i + seq_len]
+    target = source[i + 1 : i + 1 + seq_len].reshape(-1)
     return data, target
+
 
 ###############################################################################
 
 # Create individual component configurations
 masked_self_attention_mha_config = MultiHeadedAttentionConfig(
-     attention=ScaledDotProductAttention(),
-    d_model=200, H=2, dropout=0.1
+    attention=ScaledDotProductAttention(), d_model=200, H=2, dropout=0.1
 )
 
 feed_forward_config = PositionwiseFeedForwardConfig(
@@ -145,7 +150,7 @@ model_config = DecoderConfig(
 model = GPTDecoder(model_config).to(DEVICE)
 
 model_size = sum([p.numel() for p in model.parameters()])
-print(f'model_size: {model_size}, train_set_size: {len(train_data)}')
+print(f"model_size: {model_size}, train_set_size: {len(train_data)}")
 
 import time
 
@@ -154,9 +159,10 @@ lr = 5.0  # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
+
 def train(model: nn.Module) -> None:
     model.train()  # turn on train mode
-    total_loss = 0.
+    total_loss = 0.0
     log_interval = 200
     start_time = time.time()
 
@@ -178,15 +184,18 @@ def train(model: nn.Module) -> None:
             ms_per_batch = (time.time() - start_time) * 1000 / log_interval
             cur_loss = total_loss / log_interval
             ppl = math.exp(cur_loss)
-            print(f'| epoch {epoch:3d} | {batch:5d}/{num_batches:5d} batches | '
-                  f'lr {lr:02.2f} | ms/batch {ms_per_batch:5.2f} | '
-                  f'loss {cur_loss:5.2f} | ppl {ppl:8.2f}')
+            print(
+                f"| epoch {epoch:3d} | {batch:5d}/{num_batches:5d} batches | "
+                f"lr {lr:02.2f} | ms/batch {ms_per_batch:5.2f} | "
+                f"loss {cur_loss:5.2f} | ppl {ppl:8.2f}"
+            )
             total_loss = 0
             start_time = time.time()
 
+
 def evaluate(model: nn.Module, eval_data: Tensor) -> float:
     model.eval()  # turn on evaluation mode
-    total_loss = 0.
+    total_loss = 0.0
     with torch.no_grad():
         for i in range(0, eval_data.size(0) - 1, bptt):
             data, targets = get_batch(eval_data, i)
@@ -197,7 +206,7 @@ def evaluate(model: nn.Module, eval_data: Tensor) -> float:
     return total_loss / (len(eval_data) - 1)
 
 
-best_val_loss = float('inf')
+best_val_loss = float("inf")
 epochs = 3
 
 tempdir = "~/Downloads"
@@ -210,10 +219,11 @@ for epoch in range(1, epochs + 1):
     val_loss = evaluate(model, val_data)
     val_ppl = math.exp(val_loss)
     elapsed = time.time() - epoch_start_time
-    print('-' * 89)
-    print(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
-        f'valid loss {val_loss:5.2f} | valid ppl {val_ppl:8.2f}')
-    print('-' * 89)
+    print("-" * 89)
+    print(
+        f"| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | " f"valid loss {val_loss:5.2f} | valid ppl {val_ppl:8.2f}"
+    )
+    print("-" * 89)
 
     if val_loss < best_val_loss:
         best_val_loss = val_loss

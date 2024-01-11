@@ -12,12 +12,15 @@ from tqdm import tqdm
 
 from omnivault._types._alias import Loss
 from omnivault.transformer.config.composer import Composer
+from omnivault.transformer.core.callbacks import save_state
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
 from omnivault.transformer.utils.format import format_lr, get_default_rich_logger
 
 
 class TrainerEvent(Enum):
+    """Callback events for the trainer."""
+
     ON_TRAIN_EPOCH_START = "on_train_epoch_start"
     ON_TRAIN_EPOCH_END = "on_train_epoch_end"
     ON_VALID_EPOCH_START = "on_valid_epoch_start"
@@ -102,12 +105,18 @@ class Trainer:
         # saving shenanigans
         self.save_dir = composer.trainer.save_dir
         self.save_every_epoch = composer.trainer.save_every_epoch
+        self.best_monitored_score: None | float = None  # or -float('inf') if higher metric indicates better performance
+        self.metrics_dict: Dict[str, float] = {}
+        self.save_best_only = composer.trainer.save_best_only
+        self.mode = composer.trainer.mode
+        self.monitor = composer.trainer.monitor
 
         # attributes not in __init__ constructor
         self.epoch_index = 0
         self.batch_index = 0
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
         # fmt: on
+        self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
 
     def add_callback(self, event: str, callback: Callable[[Trainer], None]) -> None:
         """Adds a callback to the list for a given event."""
@@ -125,6 +134,9 @@ class Trainer:
         """Triggers all callbacks associated with a given event."""
         for callback in self.callbacks[event]:
             callback(self)
+
+    def update_metrics(self, metric_name: str, metric_value: float) -> None:
+        self.metrics_dict[metric_name] = metric_value
 
     def _train_one_batch(self, batch: DatasetYield) -> Tuple[float, float]:
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
@@ -224,6 +236,7 @@ class Trainer:
         self.logger.info("Total Samples: %d, Total Batches: %d", total_samples, num_batches)
 
         this_epoch_average_loss = this_epoch_total_running_loss / total_samples
+        self.update_metrics("train_this_epoch_average_loss", this_epoch_average_loss)
         self.epoch_index += 1
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_END.value)
         return this_epoch_average_loss
@@ -283,6 +296,7 @@ class Trainer:
 
         # average loss for this epoch for each sample
         this_epoch_average_loss = this_epoch_total_running_loss / total_samples
+        self.update_metrics("valid_this_epoch_average_loss", this_epoch_average_loss)
         self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_END.value)
         return this_epoch_average_loss
 
@@ -301,7 +315,7 @@ class Trainer:
         train_loader: DataLoader[DatasetYield],
         valid_loader: DataLoader[DatasetYield] | None = None,
         test_loader: DataLoader[DatasetYield] | None = None,
-    ) -> nn.Module:
+    ) -> State:
         self.train_dataloader = train_loader
         self.valid_dataloader = valid_loader
         self.test_dataloader = test_loader
@@ -334,4 +348,4 @@ class Trainer:
                 self.logger.info("Average Epoch Test Loss: %.5f", test_loss)
 
         self.logger.info("Training complete")
-        return self.model
+        return self.state

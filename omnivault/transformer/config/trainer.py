@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, Type, Union
 
 import torch
@@ -39,6 +41,11 @@ class TrainerConfig(BaseModel):
     # saving shenanigans
     save_dir: Union[str, None] = Field(default="checkpoints", description="Directory to save checkpoints to.")
     save_every_epoch: bool = Field(default=False, description="Always save the model after each epoch.")
+    save_best_only: bool = Field(default=True, description="Only save the best model.")
+    monitor: str = Field(
+        default="valid_this_epoch_average_loss", description="The metric to monitor for saving best model."
+    )
+    mode: str = Field(default="min", description="The mode to monitor for saving best model.")
 
     @field_validator("device", mode="plain")
     @classmethod
@@ -46,3 +53,12 @@ class TrainerConfig(BaseModel):
         if v == "auto":
             return get_device()
         return torch.device(v)
+
+    @field_validator("save_dir")
+    @classmethod
+    def set_and_create_timestamped_save_dir(cls: Type[TrainerConfig], v: str) -> str:
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        v = f"{v}/{timestamp}"
+
+        Path(v).mkdir(parents=True, exist_ok=True)
+        return v

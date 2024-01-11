@@ -4,6 +4,7 @@ import logging
 import sys
 import time
 
+import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
@@ -23,7 +24,7 @@ from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.scheduler import noam_lr_decay
-from omnivault.transformer.core.state import State
+from omnivault.transformer.core.state import State, compare_models
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
@@ -176,14 +177,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
         device=device,  # type: ignore[arg-type]
     )
 
-    # save_checkpoint_callback_config = ...
-    # def save_checkpoint_callback(trainer: Trainer) -> None:
-    #     print(f"trainer.batch_index: {trainer.batch_index}")
-    #     if trainer.batch_index % trainer.eval_every_n_steps == 0:
-    #         import torch
-    #         torch.save(trainer.state.model.state_dict(), f"model_{trainer.batch_index}.pt")
-    # trainer.add_callback(event="on_train_batch_end", callback=save_checkpoint_callback)
-    _trained_model = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+    _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+
+    loaded_state = State.load_snapshots(filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_2.pt", device=device)
+    assert loaded_state == _trained_state, "Cherry picked 2 epochs, so the last trained state should be the same."
 
 
 if __name__ == "__main__":
