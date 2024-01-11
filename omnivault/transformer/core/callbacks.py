@@ -5,6 +5,14 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from omnivault.transformer.core.trainer import Trainer
 
+def update_state(trainer: Trainer) -> None:
+    trainer.state.model = trainer.model
+    trainer.state.criterion = trainer.criterion
+    trainer.state.optimizer = trainer.optimizer
+    trainer.state.scheduler = trainer.scheduler
+    trainer.state.epoch_index = trainer.epoch_index
+    trainer.state.batch_index = trainer.batch_index
+
 
 def save_state(trainer: Trainer) -> None:
     # Initialize best_monitored_score if it's not set

@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 from omnivault._types._alias import Loss
 from omnivault.transformer.config.composer import Composer
-from omnivault.transformer.core.callbacks import save_state
+from omnivault.transformer.core.callbacks import save_state, update_state
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
 from omnivault.transformer.utils.format import format_lr, get_default_rich_logger
@@ -117,6 +117,7 @@ class Trainer:
         self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
         # fmt: on
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
+        self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, update_state)
 
     def add_callback(self, event: str, callback: Callable[[Trainer], None]) -> None:
         """Adds a callback to the list for a given event."""

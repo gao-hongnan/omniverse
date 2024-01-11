@@ -4,7 +4,7 @@ import logging
 import sys
 import time
 
-import torch
+import copy
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
@@ -169,7 +169,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
     device = composer.trainer.device
 
     # train
-
     trainer = Trainer(
         state=state,
         composer=composer,
@@ -178,10 +177,19 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
 
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+    # _trained_state.pretty_print()
 
-    loaded_state = State.load_snapshots(filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_2.pt", device=device)
-    assert loaded_state == _trained_state, "Cherry picked 2 epochs, so the last trained state should be the same."
 
+    loaded_state = State.load_snapshots(
+        filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_1.pt",
+        device=device, # type: ignore[arg-type]
+        model=copy.deepcopy(model),
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+    )
+
+    assert _trained_state == loaded_state, "Cherry picked 2 epochs, so the last trained state should be the same."
 
 if __name__ == "__main__":
     # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
