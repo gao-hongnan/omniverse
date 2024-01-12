@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import copy
 import logging
 import sys
 import time
 
-import copy
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
@@ -24,7 +24,7 @@ from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.scheduler import noam_lr_decay
-from omnivault.transformer.core.state import State, compare_models
+from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
@@ -179,9 +179,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
     # _trained_state.pretty_print()
 
-
     loaded_state = State.load_snapshots(
-        filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_1.pt",
+        filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_2.pt",
         device=device, # type: ignore[arg-type]
         model=copy.deepcopy(model),
         criterion=criterion,
