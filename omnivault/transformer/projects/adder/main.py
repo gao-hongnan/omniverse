@@ -33,7 +33,7 @@ from omnivault.transformer.core.dataset import (
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.scheduler import noam_lr_decay
 from omnivault.transformer.core.state import State
-from omnivault.transformer.core.tokenizer import AdderTokenizer
+from omnivault.transformer.core.tokenizer import AdderTokenizer, Vocabulary_t
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
@@ -44,7 +44,7 @@ from omnivault.transformer.utils.reproducibility import seed_all
 # so maybe consider using my own code base?
 
 
-def decode_equation(vocab: AdderVocabulary, equation: torch.Tensor | List[int]) -> str:
+def decode_equation(vocab: Vocabulary_t, equation: torch.Tensor | List[int]) -> str:
     """
     Convert an equation in list format to string format.
 
@@ -186,6 +186,8 @@ def generate_evaluation_samples(trainer: Trainer, num_samples=5) -> None:
             ans = equation[: loc_EOS + 1].tolist()
             ans_pred = compute_sum(model, input)
             print(f"ans_pred: {ans_pred}")
+            answer_decoded = decode_equation(vocab=trainer.state.vocabulary, equation=ans_pred)
+            print(f"answer_decoded: {answer_decoded}")
             if count > 5:
                 break
 
@@ -314,6 +316,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
+        vocabulary=vocabulary,
     )
     state.pretty_print()
     time.sleep(1)
@@ -327,7 +330,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    #trainer.add_callback("on_valid_epoch_end", generate_evaluation_samples)
+    trainer.add_callback("on_valid_epoch_end", generate_evaluation_samples)
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
     # _trained_state.pretty_print()
 

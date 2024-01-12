@@ -296,6 +296,7 @@ class GPTDecoder(BaseDecoder):
         temperature: float = 1.0,  # temperature for sampling
         greedy: bool = False,  # if True, sample greedily
         top_k: int | None = None,  # if not None, sample from top k tokens
+        top_p: float | None = None, # neclueus sampling
     ) -> torch.LongTensor:
         """
         Generates a sequence of tokens based on the provided
@@ -325,6 +326,10 @@ class GPTDecoder(BaseDecoder):
         top_k : Optional[int], optional
             Limits the sampling pool to the top k most likely tokens.
             If None, no limit is applied. Default is None.
+        top_p : Optional[float], optional
+            Limits the sampling pool to the smallest set of tokens
+            whose cumulative probability exceeds the threshold p.
+            If None, no limit is applied. Default is None.
 
         Returns
         -------
@@ -333,10 +338,19 @@ class GPTDecoder(BaseDecoder):
 
         Notes
         -----
-        - `temperature` affects the distribution sharpness; a lower
+        1. `temperature` affects the distribution sharpness; a lower
         temperature results in a sharper distribution.
-        - `greedy` and `top_k` provide mechanisms to control the
-        exploration-exploitation balance in the generation process.
+        2. **Top-K Sampling**:
+            - This method involves selecting the `k` most likely next words from the
+            model's output and sampling from this reduced set.
+            - The logits that are not in the top `k` are set to a very large negative
+            value (like `-inf`), effectively zeroing their probability.
+        3. **Top-P (Nucleus) Sampling**:
+            - Top-P sampling involves choosing the smallest set of words whose
+            cumulative probability exceeds a threshold `p`.
+            - You sort the probabilities in descending order and then cumulatively add
+            them up until the sum exceeds `p`. Only these words are considered for
+            sampling.
         """
 
         if self.training:
@@ -386,7 +400,29 @@ class GPTDecoder(BaseDecoder):
             # optional cropping of logits to top k
             if top_k is not None:
                 top_k_values, _ = torch.topk(logits, k=top_k)
+                # The masking out to -inf is to prevent the sampling from
+                # non-top k values, effectively making the sampling pool
+                # to be only the top k values. We are zeroing out the
+                # probabilities of non-top k values.
                 logits[logits < top_k_values[:, [-1]]] = float("-inf")
+
+            if top_p is not None:
+                def top_p_logits(logits: torch.Tensor, p: float) -> torch.Tensor:
+                    sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+                    cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
+
+                    # Remove tokens with cumulative probability above the threshold
+                    sorted_indices_to_remove = cumulative_probs > p
+                    # Shift the indices to the right to keep also the first token above the threshold
+                    sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+                    sorted_indices_to_remove[..., 0] = 0
+
+                    # Scatter sorted tensors to original indexing
+                    indices_to_remove = sorted_indices.scatter(dim=-1, index=sorted_indices, src=sorted_indices_to_remove)
+                    logits[indices_to_remove] = float('-inf')
+                    return logits
+
+                logits = top_p_logits(logits, top_p)
 
             # convert logits to softmax probabilities
             probs = torch.softmax(logits, dim=-1)

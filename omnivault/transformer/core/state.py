@@ -7,7 +7,7 @@ import torch
 from pydantic import BaseModel, Field
 from rich.pretty import pprint
 from torch import nn
-
+from omnivault.transformer.core.vocabulary import Vocabulary
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
     """
@@ -45,6 +45,8 @@ class State(BaseModel):
 
     epoch_index: int = Field(default=0, description="Current epoch index.")
     batch_index: int = Field(default=0, description="Current batch index.")
+
+    vocabulary: Vocabulary = Field(default=None, description="Vocabulary.")
 
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""

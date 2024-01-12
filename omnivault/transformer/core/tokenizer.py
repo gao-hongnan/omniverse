@@ -8,10 +8,10 @@ import torch
 
 from omnivault.transformer.core.vocabulary import AdderVocabulary, TextCharacterVocabulary, Vocabulary
 
-Vocabularies = TypeVar("Vocabularies", bound=Vocabulary)
+Vocabulary_t = TypeVar("Vocabulary_t", bound=Vocabulary)
 
 
-class Tokenizer(ABC, Generic[Vocabularies]):
+class Tokenizer(ABC, Generic[Vocabulary_t]):
     def __init__(self, vocabulary: Vocabulary):
         self.vocabulary = vocabulary
 
