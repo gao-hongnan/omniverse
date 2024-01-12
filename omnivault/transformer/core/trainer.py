@@ -4,7 +4,7 @@ import inspect
 import logging
 from collections import defaultdict
 from enum import Enum
-from typing import Any, Callable, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
+from typing import Any, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
 
 import torch
 from torch import nn
@@ -16,6 +16,7 @@ from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.core.callbacks import (
     log_on_epoch_end,
     log_on_fit_start,
+    log_on_fit_start_model_summary,
     log_on_train_epoch_start,
     save_state,
     update_state,
@@ -144,6 +145,7 @@ class Trainer:
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_START.value, log_on_train_epoch_start)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, log_on_epoch_end)
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, log_on_epoch_end)
+        self.add_callback(TrainerEvent.ON_FIT_START.value, log_on_fit_start_model_summary)
 
     def add_callback(self, event: str, callback: TrainerCallback) -> None:
         """Adds a callback to the list for a given event."""
@@ -366,8 +368,6 @@ class Trainer:
 
             if test_loader:
                 self.test_loss = self.valid_one_epoch(dataloader=test_loader)
-
-
 
         self.trigger_callbacks(TrainerEvent.ON_FIT_END.value)
         return self.state

@@ -12,7 +12,10 @@ class DataConfig(BaseModel):
         default=128,
         description="The context length depends on how we tokenize, whether on a character level or word level.",
     )
-    dataset_name: Union[str, None] = Field(default=None, description="The name of the dataset.")
+    dataset_name: Union[str, None] = Field(
+        default=None,
+        description="The name of the dataset. Also the stem of the url or data path, for example, if the filepath is `data/abc.txt`, then the dataset name is `abc`.",
+    )
     dataset_size: Union[int, None] = Field(default=2, description="The size of the dataset.")
     dataset_path: Union[str, None] = Field(default=None, description="The path to the dataset.")
     dataset_dir: Union[str, None] = Field(default=None, description="The directory to the dataset.")

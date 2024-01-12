@@ -163,9 +163,7 @@ class RichLogger:
 
     def _create_stream_handler(self) -> RichHandler:
         stream_handler = RichHandler(**self.rich_handler_config)
-        from rich.pretty import pprint
 
-        pprint(stream_handler.__dict__)
         # FIXME: If you set custom formatter, it will duplicate level and time.
         # stream_handler.setFormatter(
         #     CustomFormatter(

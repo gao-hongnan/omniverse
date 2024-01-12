@@ -50,6 +50,7 @@ def save_state(trainer: Trainer) -> None:
         trainer.state.save_snapshots(filepath=save_path)
         trainer.logger.info("Saved checkpoint at epoch %s to %s", trainer.epoch_index, save_path)
 
+
 def log_on_fit_start(trainer: Trainer) -> None:
     initial_lr_or_lrs = trainer._get_current_lr_or_lrs()
     lr_str = format_lr(initial_lr_or_lrs, precision=9)
@@ -62,7 +63,10 @@ def log_on_fit_start(trainer: Trainer) -> None:
 
 def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     phase_capitalized = phase.capitalize()
-    trainer.logger.info("\n=== Starting %s Epoch: %d/%d ===\n", phase_capitalized, trainer.epoch_index, trainer.max_epochs)
+    trainer.logger.info(
+        "\n=== Starting %s Epoch: %d/%d ===\n", phase_capitalized, trainer.epoch_index, trainer.max_epochs
+    )
+
 
 def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     dataloader = getattr(trainer, f"{phase}_dataloader")
@@ -73,3 +77,10 @@ def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"])
     phase_capitalized = phase.capitalize()
     trainer.logger.info("%s - Total Samples: %d, Total Batches: %d", phase_capitalized, total_samples, total_batches)
     trainer.logger.info("Average Epoch %s Loss: %.5f", phase_capitalized, average_loss)
+
+
+def log_on_fit_start_model_summary(trainer: Trainer) -> None:
+    # TODO: add torchinfo's summary
+    total_params = trainer.model.total_parameters
+    trainable_params = trainer.model.total_trainable_parameters
+    trainer.logger.info("Total Parameters: %d, Trainable Parameters: %d", total_params, trainable_params)

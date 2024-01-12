@@ -111,9 +111,6 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
 
 @register_optimizer(name="torch.optim.Adam")
 class AdamConfig(OptimizerConfig):
-    name: str = "torch.optim.Adam"
-    lr: float = 0.2
-
     betas: Tuple[float, float] = (0.9, 0.98)
     eps: float = 1e-9
     weight_decay: float = 0.0
@@ -121,9 +118,6 @@ class AdamConfig(OptimizerConfig):
 
 @register_optimizer(name="torch.optim.AdamW")
 class AdamWConfig(OptimizerConfig):
-    name: str = "torch.optim.AdamW"
-    lr: float = 0.2
-
     betas: Tuple[float, float] = (0.9, 0.999)
     eps: float = 1e-8
     weight_decay: float = 1e-2
