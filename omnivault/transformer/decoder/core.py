@@ -290,7 +290,7 @@ class GPTDecoder(BaseDecoder):
     @torch.no_grad()
     def generate(
         self,
-        input_tokens: torch.LongTensor | List[int],
+        input_tokens: torch.LongTensor | List[int], # alias is starting_tokens
         *,
         max_tokens: int = 100,  # max tokens to generate
         temperature: float = 1.0,  # temperature for sampling
@@ -309,7 +309,7 @@ class GPTDecoder(BaseDecoder):
         Parameters
         ----------
         input_tokens : Union[torch.LongTensor, List[int]]
-            The initial tokens from which the generation begins.
+            The initial tokens / starting_tokens from which the generation begins.
             Can be a list of integers or a LongTensor.
             Shape: (L,)
         max_tokens : int

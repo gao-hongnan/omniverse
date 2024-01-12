@@ -64,7 +64,7 @@ def log_on_fit_start(trainer: Trainer) -> None:
 def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     phase_capitalized = phase.capitalize()
     trainer.logger.info(
-        "\n=== Starting %s Epoch: %d/%d ===\n", phase_capitalized, trainer.epoch_index, trainer.max_epochs
+        "\n=== Starting %s Epoch: %d/%d ===", phase_capitalized, trainer.epoch_index, trainer.max_epochs
     )
 
 

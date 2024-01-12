@@ -32,6 +32,7 @@ class TrainerCallback(Protocol):
         ...
 
 
+
 class TrainerEvent(Enum):
     """Callback events for the trainer."""
 
@@ -137,6 +138,7 @@ class Trainer:
         self.epoch_index = 0
         self.batch_index = 0
         self.callbacks: Dict[str, List[TrainerCallback]] = defaultdict(list)
+
         # fmt: on
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, update_state)

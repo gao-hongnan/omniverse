@@ -141,6 +141,25 @@ Some quirks to note:
             - "<UNK>"
     ```
 
+### Run The Pipeline
+
+```bash
+python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
+python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256
+python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.max_epochs=30
+# if weight decay is 0, then it is as good as not applying custom weight decay to diff param groups:
+python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
+```
+
+To test the "generalization", we can ask some questions that are not in the
+training set:
+
+```bash
+97+98=195
+96+96=192
+95+95=190
+```
+
 ```python
 Composer(
 │   constants=MaybeConstant(NUM_DIGITS=2, TOKENS=['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '*', '-', '=', '<BOS>', '<EOS>', '<PAD>', '<UNK>']),

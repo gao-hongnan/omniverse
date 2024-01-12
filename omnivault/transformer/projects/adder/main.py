@@ -321,7 +321,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    trainer.add_callback("on_valid_epoch_end", generate_evaluation_samples)
+    #trainer.add_callback("on_valid_epoch_end", generate_evaluation_samples)
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
     # _trained_state.pretty_print()
 
@@ -338,10 +338,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
-    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256
-    # if weight decay is 0, then it is as good as not applying custom weight decay to diff param groups:
-    # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 
