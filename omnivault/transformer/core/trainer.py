@@ -30,6 +30,7 @@ class TrainerCallback(Protocol):
     def __call__(self, trainer: Trainer, *args: Any, **kwargs: Any) -> None:
         ...
 
+
 class TrainerEvent(Enum):
     """Callback events for the trainer."""
 
@@ -44,12 +45,14 @@ class TrainerEvent(Enum):
     ON_FIT_START = "on_fit_start"
     ON_FIT_END = "on_fit_end"
 
+
 class TrainerPhase(Enum):
     """Phase of training."""
 
     TRAIN = "train"
     VALID = "valid"
     TEST = "test"
+
 
 @no_type_check
 def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
@@ -132,15 +135,15 @@ class Trainer:
         # attributes not in __init__ constructor
         self.epoch_index = 0
         self.batch_index = 0
-        self.callbacks: Dict[str, List[Callable[[Trainer], None]]] = defaultdict(list)
+        self.callbacks: Dict[str, List[TrainerCallback]] = defaultdict(list)
         # fmt: on
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, update_state)
         self.add_callback(TrainerEvent.ON_FIT_START.value, log_on_fit_start)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_START.value, log_on_train_epoch_start)
+        self.add_callback(TrainerEvent.ON_VALID_EPOCH_START.value, log_on_train_epoch_start)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, log_on_epoch_end)
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, log_on_epoch_end)
-
 
     def add_callback(self, event: str, callback: TrainerCallback) -> None:
         """Adds a callback to the list for a given event."""
@@ -233,13 +236,15 @@ class Trainer:
         Loss
             The average loss over the training dataset.
         """
-        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_START.value)
+        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_START.value, phase=TrainerPhase.TRAIN.value)
         self.model.train()
 
         total_samples: int = 0
         this_epoch_total_running_loss: float = 0.0
         num_batches: int = len(dataloader)
-        progress_bar: tqdm[Tuple[int, DatasetYield]] = tqdm(enumerate(dataloader, start=1), total=num_batches, leave=False)
+        progress_bar: tqdm[Tuple[int, DatasetYield]] = tqdm(
+            enumerate(dataloader, start=1), total=num_batches, leave=False
+        )
 
         for _batch_index, batch in progress_bar:
             batch_size = batch[0].size(0)
@@ -263,11 +268,8 @@ class Trainer:
             if self.scheduler and self.step_scheduler_on_batch_or_epoch == "epoch":
                 self.scheduler.step()
 
-        self.logger.info("Total Samples: %d, Total Batches: %d", total_samples, num_batches)
-
         this_epoch_average_loss = this_epoch_total_running_loss / total_samples
         self.update_metrics("train_this_epoch_average_loss", this_epoch_average_loss)
-        self.epoch_index += 1
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_END.value, phase=TrainerPhase.TRAIN.value)
         return this_epoch_average_loss
 
@@ -312,6 +314,7 @@ class Trainer:
         Loss
             The average loss over the validation dataset.
         """
+        self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_START.value, phase=TrainerPhase.VALID.value)
         self.model.eval()
 
         total_samples: int = 0
@@ -355,6 +358,7 @@ class Trainer:
         self.trigger_callbacks(TrainerEvent.ON_FIT_START.value)
 
         for _ in range(1, self.max_epochs + 1):
+            self.epoch_index += 1
             self.train_loss = self.train_one_epoch(dataloader=train_loader)
 
             if valid_loader:
@@ -362,6 +366,8 @@ class Trainer:
 
             if test_loader:
                 self.test_loss = self.valid_one_epoch(dataloader=test_loader)
+
+
 
         self.trigger_callbacks(TrainerEvent.ON_FIT_END.value)
         return self.state

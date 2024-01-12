@@ -25,7 +25,10 @@ def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
     bool
         Returns True if both models have identical parameters, False otherwise.
     """
-    return all(torch.equal(param_a[1], param_b[1]) for param_a, param_b in zip(model_a.state_dict().items(), model_b.state_dict().items()))
+    return all(
+        torch.equal(param_a[1], param_b[1])
+        for param_a, param_b in zip(model_a.state_dict().items(), model_b.state_dict().items())
+    )
 
 
 class State(BaseModel):

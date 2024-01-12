@@ -60,8 +60,9 @@ def log_on_fit_start(trainer: Trainer) -> None:
         trainer.logger.info("Initial learning rate: %s", initial_lr_or_lrs)
 
 
-def log_on_train_epoch_start(trainer: Trainer) -> None:
-    trainer.logger.info("Epoch %d/%d", trainer.epoch_index + 1, trainer.max_epochs)
+def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
+    phase_capitalized = phase.capitalize()
+    trainer.logger.info("\n=== Starting %s Epoch: %d/%d ===\n", phase_capitalized, trainer.epoch_index, trainer.max_epochs)
 
 def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     dataloader = getattr(trainer, f"{phase}_dataloader")

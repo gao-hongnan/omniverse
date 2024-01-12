@@ -177,11 +177,11 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
 
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
-    # _trained_state.pretty_print()
+    _trained_state.pretty_print()
 
     loaded_state = State.load_snapshots(
         filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_2.pt",
-        device=device, # type: ignore[arg-type]
+        device=device,  # type: ignore[arg-type]
         model=copy.deepcopy(model),
         criterion=criterion,
         optimizer=optimizer,
@@ -189,6 +189,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
 
     assert _trained_state == loaded_state, "Cherry picked 2 epochs, so the last trained state should be the same."
+
 
 if __name__ == "__main__":
     # python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
