@@ -42,7 +42,7 @@ from omnivault.transformer.utils.reproducibility import seed_all
 
 
 @torch.no_grad()
-def generate_evaluation_samples(
+def evaluate_and_generate_on_valid_epoch_end(
     trainer: Trainer,
     num_batches_to_eval: int | None = None,
 ) -> None:
@@ -50,6 +50,7 @@ def generate_evaluation_samples(
     assert (
         generator_config.max_tokens == trainer.composer.constants.NUM_DIGITS + 1 + 1  # type: ignore[attr-defined]
     ), "In this dataset, the max tokens to generate is fixed and derived from the number of digits. If we add two 2-digits together, it does not make sense for us to keep generating since the max digits for answer is 3 digits, with an optional `<EOS` token if it is in our vocabulary."
+    assert generator_config.greedy is True, "We should use greedy generation for this task in particular."
 
     vocabulary = trainer.state.vocabulary
     assert isinstance(vocabulary, AdderVocabulary)
@@ -277,9 +278,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    trainer.add_callback(
-        "on_valid_epoch_end", lambda trainer: generate_evaluation_samples(trainer, num_batches_to_eval=2)
-    )
+    # trainer.add_callback(
+    #     "on_valid_epoch_end", lambda trainer: evaluate_and_generate_on_valid_epoch_end(trainer, num_batches_to_eval=2)
+    # )
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
     # _trained_state.pretty_print()
 
@@ -304,4 +305,5 @@ if __name__ == "__main__":
     om.resolve(cfg)  # inplace ops
 
     main(cfg)
-    # 1.38283, 1.15267
+    # epoch 2 : 1.38283, 1.15267
+    # epoch 20: 0.11087, 0.04235

@@ -184,15 +184,7 @@ Composer(
 │   │   module_name=None,
 │   │   propagate=False,
 │   │   log_root_dir='./logs',
-│   │   rich_handler_config={
-│   │   │   'level': 'INFO',
-│   │   │   'show_level': True,
-│   │   │   'show_path': True,
-│   │   │   'show_time': True,
-│   │   │   'rich_tracebacks': True,
-│   │   │   'markup': True,
-│   │   │   'log_time_format': '[%Y-%m-%d %H:%M:%S]'
-│   │   }
+│   │   rich_handler_config={'level': 'INFO', 'show_level': True, 'show_path': True, 'show_time': True, 'rich_tracebacks': True, 'markup': True, 'log_time_format': '[%Y-%m-%d %H:%M:%S]'}
 │   ),
 │   global_=MaybeGlobal(seed=42, debug=False),
 │   data=DataConfig(
@@ -202,11 +194,11 @@ Composer(
 │   │   dataset_path='./data/adder/adder_dataset.txt',
 │   │   dataset_dir='./data/adder',
 │   │   dataset_url='https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/omnivault/transformer/projects/adder/assets/adder_dataset.txt',
-│   │   split=[0.7, 0.1, 0.2],
+│   │   split=[0.7, 0.2, 0.1],
 │   │   collate_fn={'batch_first': True, 'pad_token_id': 16},
 │   │   train_loader={'batch_size': 256, 'shuffle': True, 'num_workers': 0, 'pin_memory': False, 'drop_last': False},
 │   │   valid_loader={'batch_size': 256, 'shuffle': False, 'num_workers': 0, 'pin_memory': False, 'drop_last': False},
-│   │   test_loader={'batch_size': 32, 'shuffle': False, 'num_workers': 0, 'pin_memory': False, 'drop_last': False}
+│   │   test_loader={'batch_size': 128, 'shuffle': False, 'num_workers': 0, 'pin_memory': False, 'drop_last': False}
 │   ),
 │   model=DecoderConfig(
 │   │   d_model=128,
@@ -215,14 +207,9 @@ Composer(
 │   │   num_decoder_blocks=2,
 │   │   dropout=0.1,
 │   │   decoder_block=DecoderBlockConfig(
-│   │   │   masked_self_attention_mha=MultiHeadedAttentionConfig(
-│   │   │   │   attention=ScaledDotProductAttention(
+│   │   │   masked_self_attention_mha=MultiHeadedAttentionConfig(attention=ScaledDotProductAttention(
   (dropout): Dropout(p=0.0, inplace=False)
-),
-│   │   │   │   d_model=128,
-│   │   │   │   H=4,
-│   │   │   │   dropout=0.1
-│   │   │   ),
+), d_model=128, H=4, dropout=0.1),
 │   │   │   feed_forward=PositionwiseFeedForwardConfig(d_model=128, d_ff=256, activation=GELU(approximate='tanh'), dropout=0.1, bias=True),
 │   │   │   add_norm_1=AddNormConfig(feature_dim=128, dropout=0.1),
 │   │   │   add_norm_2=AddNormConfig(feature_dim=128, dropout=0.1)
@@ -230,21 +217,79 @@ Composer(
 │   ),
 │   optimizer=AdamConfig(name='torch.optim.Adam', lr=0.2, betas=(0.9, 0.98), eps=1e-09, weight_decay=0.0),
 │   criterion=CrossEntropyLossConfig(name='torch.nn.CrossEntropyLoss', weight=None, size_average=None, ignore_index=16, reduction='mean', label_smoothing=0.0),
-│   scheduler=LambdaLRConfig(name='torch.optim.lr_scheduler.LambdaLR', lr_lambda=<function main.<locals>.<lambda> at 0x127ef7700>),
+│   scheduler=LambdaLRConfig(name='torch.optim.lr_scheduler.LambdaLR', lr_lambda=<function main.<locals>.<lambda> at 0x137d57d30>),
 │   trainer=TrainerConfig(
 │   │   device=device(type='mps'),
-│   │   max_epochs=2,
+│   │   max_epochs=20,
 │   │   log_every_n_steps=100,
 │   │   eval_every_n_steps=4,
 │   │   step_scheduler_on_batch_or_epoch='epoch',
 │   │   clip_grad_norm={'max_norm': 1.0, 'norm_type': 2.0, 'error_if_nonfinite': False, 'foreach': None},
 │   │   apply_weight_decay_to_different_param_groups=False,
-│   │   save_dir='./data/adder/checkpoints/2024-01-12_14-10-11',
+│   │   save_dir='./data/adder/checkpoints/2024-01-13_19-19-33',
 │   │   save_every_epoch=False,
 │   │   save_best_only=True,
 │   │   monitor='valid_this_epoch_average_loss',
 │   │   mode='min'
 │   ),
-│   generator=GeneratorConfig(max_tokens=1000, temperature=1.0, greedy=False, top_k=None)
+│   generator=GeneratorConfig(max_tokens=4, temperature=1.0, greedy=True, top_k=None, top_p=None)
+)
+State(
+│   model=GPTDecoder(
+  (tok_embed): Embedding(18, 128)
+  (decoder_blocks): ModuleList(
+│   (0-1): 2 x GPTDecoderBlock(
+│     (masked_self_attention_mha): MultiHeadedAttention(
+│   │   (W_Q): Linear(in_features=128, out_features=128, bias=False)
+│   │   (W_K): Linear(in_features=128, out_features=128, bias=False)
+│   │   (W_V): Linear(in_features=128, out_features=128, bias=False)
+│   │   (W_O): Linear(in_features=128, out_features=128, bias=False)
+│   │   (attention): ScaledDotProductAttention(
+│   │     (dropout): Dropout(p=0.0, inplace=False)
+│   │   )
+│   │   (dropout): Dropout(p=0.1, inplace=False)
+│     )
+│     (feed_forward): PositionwiseFeedForward(
+│   │   (ffn): ModuleDict(
+│   │     (context_fc): Linear(in_features=128, out_features=256, bias=True)
+│   │     (activation): GELU(approximate='tanh')
+│   │     (context_projection): Linear(in_features=256, out_features=128, bias=True)
+│   │     (dropout): Dropout(p=0.1, inplace=False)
+│   │   )
+│     )
+│     (add_norm_1): AddNorm(
+│   │   (dropout): Dropout(p=0.1, inplace=False)
+│   │   (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+│     )
+│     (add_norm_2): AddNorm(
+│   │   (dropout): Dropout(p=0.1, inplace=False)
+│   │   (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+│     )
+│   )
+  )
+  (dropout): Dropout(p=0.1, inplace=False)
+  (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
+  (head): Linear(in_features=128, out_features=18, bias=True)
+),
+│   criterion=CrossEntropyLoss(),
+│   optimizer=Adam (
+Parameter Group 0
+│   amsgrad: False
+│   betas: (0.9, 0.98)
+│   capturable: False
+│   differentiable: False
+│   eps: 1e-09
+│   foreach: None
+│   fused: None
+│   initial_lr: 0.2
+│   lr: 2.2961808030073203e-05
+│   maximize: False
+│   weight_decay: 0.0
+),
+│   scheduler=<torch.optim.lr_scheduler.LambdaLR object at 0x137d80bb0>,
+│   epoch_index=0,
+│   batch_index=0,
+│   vocabulary=<omnivault.transformer.core.vocabulary.AdderVocabulary object at 0x137d4eb50>,
+│   tokenizer=<omnivault.transformer.core.tokenizer.AdderTokenizer object at 0x137d4ec40>
 )
 ```
