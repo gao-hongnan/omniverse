@@ -69,7 +69,7 @@ def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", 
 
 
 def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
-    dataloader = getattr(trainer, f"{phase}_dataloader")
+    dataloader = getattr(trainer, f"{phase}_loader")
     total_batches = len(dataloader)
     total_samples = len(dataloader.dataset)
     average_loss = trainer.metrics_dict[f"{phase}_this_epoch_average_loss"]

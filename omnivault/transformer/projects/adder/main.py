@@ -4,12 +4,14 @@ import copy
 import logging
 import sys
 import time
-from typing import List
 
+import pandas as pd
 import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
+from rich.pretty import pprint
+from tqdm import tqdm
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
@@ -18,22 +20,17 @@ from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
 from omnivault.transformer.config.decoder import DecoderConfig
+from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY, LambdaLRConfig
 from omnivault.transformer.config.trainer import TrainerConfig
-from omnivault.transformer.core.dataset import (
-    AdderDataset,
-    construct_dummy_batch_future_masks,
-    construct_dummy_batch_target_padding_masks,
-    create_loader,
-    split_dataset,
-)
+from omnivault.transformer.core.dataset import AdderDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.scheduler import noam_lr_decay
 from omnivault.transformer.core.state import State
-from omnivault.transformer.core.tokenizer import AdderTokenizer, Vocabulary_t
+from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
@@ -41,156 +38,102 @@ from omnivault.transformer.utils.config_utils import load_yaml_config, merge_con
 from omnivault.transformer.utils.reproducibility import seed_all
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
-# so maybe consider using my own code base?
-
-
-def decode_equation(vocab: Vocabulary_t, equation: torch.Tensor | List[int]) -> str:
-    """
-    Convert an equation in list format to string format.
-
-    Parameters
-    ----------
-    equation : List[int]
-        The equation in list format.
-
-    Returns
-    -------
-    str
-        The equation in string format.
-    """
-    if isinstance(equation, torch.Tensor):
-        equation = equation.tolist()
-
-    index_to_token = vocab.index_to_token
-
-    UNK = vocab.token_to_index[vocab.UNK]
-    decoded_equation = "".join([str(index_to_token.get(x, UNK)) for x in equation])
-    return decoded_equation.replace(vocab.BOS, "").replace(vocab.EOS, "")
+# so maybe consider using my own code base
 
 
 @torch.no_grad()
-def compute_sum(model, x, num_digits=2, EOS=15):
-    # x=[[15,  9,  8, 10,  3,  5, 13]]
-    for _ in range(num_digits + 2):
-        # print(x)
-        # print(decode_equation(vocab=vocab, equation=x[0]))
-        # print(x.shape)
-        batch_size, seq_len = x.size()
-        # pad_mask = (x != PAD).view(1, 1, 1, x.size(-1)).to(DEVICE)
-        pad_mask = construct_dummy_batch_target_padding_masks(batch_size=batch_size, seq_len=seq_len)
-        future_mask = construct_dummy_batch_future_masks(batch_size=batch_size, seq_len=seq_len)
-        # print(future_mask.shape)
-        # print(pad_mask.shape)
+def generate_evaluation_samples(
+    trainer: Trainer,
+    num_batches_to_eval: int | None = None,
+) -> None:
+    generator_config = trainer.composer.generator
+    assert (
+        generator_config.max_tokens == trainer.composer.constants.NUM_DIGITS + 1 + 1  # type: ignore[attr-defined]
+    ), "In this dataset, the max tokens to generate is fixed and derived from the number of digits. If we add two 2-digits together, it does not make sense for us to keep generating since the max digits for answer is 3 digits, with an optional `<EOS` token if it is in our vocabulary."
 
-        # future_mask = future_mask.view(1, seq_len, seq_len).expand(size=(batch_size, -1, -1)).unsqueeze(1)
-        # print(pad_mask.shape, future_mask.shape)
-        # inputs, targets, target_padding_masks, future_masks = construct_batches(x)
-        # print(target_padding_masks.shape, future_masks.shape)
-        logits = model(input_tokens=x, target_padding_masks=pad_mask, future_masks=future_mask)
-
-        # logits = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
-
-        last_output = logits.argmax(-1)[:, -1].view(1, 1)
-        x = torch.cat((x, last_output), 1)
-        # STOPPING CONDITION!
-        if last_output.item() == EOS:
-            break
-        # return
-    return x[0]
-
-
-# def evaluate(model, dataloader, num_batch=None):
-#     """
-#     Function for evaluation the model.
-
-#     This function take equations, and truncate them up to the equal-sign, and feed
-#     them to the model to get the predictions, compare them with the correct answers,
-#     and output the accuracy.
-#     """
-#     model.eval()
-#     acc, count = 0, 0
-#     num_wrong_to_display = 5
-#     for idx, batch in enumerate(dataloader):
-#         (
-#             inputs,
-#             targets,
-#             target_padding_masks,
-#             future_masks,
-#         ) = batch  # construct_batches(batch)
-#         for equation in inputs:
-#             # pprint(equation)
-#             # add EOS behind equation
-#             equation = torch.cat((equation, torch.tensor([EOS])), 0) # TODO: PLEASE DO NOT DO THIS - DO NOT MODIFY LIKE THIS.
-#             # fmt: off
-#             loc_equal_sign = equation.tolist().index(EQUAL)
-#             loc_EOS        = equation.tolist().index(EOS)
-#             input          = equation[0 : loc_equal_sign + 1].view(1, -1).to(DEVICE)
-#             ans            = equation[: loc_EOS + 1].tolist()
-#             ans_pred       = compute_sum(model, input)
-#             count += 1
-#             # fmt: on
-
-#             if ans == ans_pred.tolist():
-#                 acc += 1
-#             else:
-#                 if num_wrong_to_display > 0:
-#                     print(
-#                         f'correct equation: {decode_equation(vocab=vocab, equation=equation).replace("<PAD>","")}'
-#                     )
-#                     print(f"wrongly predicted as:        {decode_equation(vocab=vocab, equation=ans_pred)}")
-#                     num_wrong_to_display -= 1
-#         if num_batch and idx > num_batch:
-#             break
-#     return acc / count
-
-
-@torch.no_grad()
-def generate_evaluation_samples(trainer: Trainer, num_samples=5) -> None:
-    """
-    Generates and logs samples from the evaluation/validation dataset.
-
-    Args:
-        trainer (Trainer): The trainer instance containing the model and dataloaders.
-        num_samples (int): Number of samples to generate and log.
-    """
-    EQUAL = 13
-    EOS = 15
-    BOS = 14
-    PAD = 16
+    vocabulary = trainer.state.vocabulary
+    assert isinstance(vocabulary, AdderVocabulary)
+    EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
+    EOS = vocabulary.token_to_index[vocabulary.EOS]
+    eos_token = torch.tensor([EOS], device=trainer.device)
 
     model = trainer.model
-    dataloader = trainer.valid_dataloader  # Assuming this is your validation dataloader
     model.eval()
 
-    acc, count = 0, 0
-    num_wrong_to_display = 5
+    dataloader = trainer.test_loader
+    assert dataloader is not None
+    total_samples = 0
+    num_batches = len(dataloader)
 
-    for index, batch in enumerate(dataloader):
-        (
-            inputs,
-            targets,
-            target_padding_masks,
-            future_masks,
-        ) = batch
+    total_correct_across_samples = 0
+    progress_bar = tqdm(
+        enumerate(dataloader, start=1), total=num_batches, desc="Evaluating and Generation.", leave=False
+    )
+
+    all_predictions = []
+    for _batch_index, batch in progress_bar:
+        inputs, _, _, _ = batch
         inputs = inputs.to(trainer.device)
 
-        for equation in inputs:
-            count += 1
-            # pprint(equation)
-            # add EOS behind equation
-            eos_token = torch.tensor([EOS], device=trainer.device)
+        # inputs:   [14, 9, 8, 10, 9, 9, 13, 1, 9, 7]
+        # targets:  [    9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
+        # equation: [14, 9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
+        # equal_index: 6'th position
+        # starting_tokens: [14, 9, 8, 10, 9, 9, 13] -> <BOS>98+99=
+        # generated_tokens: [14, 9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
+        # generated_tokens_decoded: 98+99=197
 
-            equation = torch.cat((equation, eos_token), 0)
-            loc_equal_sign = equation.tolist().index(EQUAL)
-            loc_EOS = equation.tolist().index(EOS)
-            input = equation[0 : loc_equal_sign + 1].view(1, -1).to(trainer.device)
-            ans = equation[: loc_EOS + 1].tolist()
-            ans_pred = compute_sum(model, input)
-            print(f"ans_pred: {ans_pred}")
-            answer_decoded = decode_equation(vocab=trainer.state.vocabulary, equation=ans_pred)
-            print(f"answer_decoded: {answer_decoded}")
-            if count > 5:
-                break
+        batch_correct_predictions = 0
+        batch_size = inputs.size(0)
+
+        for input in inputs:
+            total_samples += 1  # for sure it is 1 sample anyways
+
+            equation = torch.cat((input, eos_token), 0)  # this is the answer also
+            equation_decoded = trainer.state.tokenizer.decode(encoded_sequence=equation, remove_special_tokens=True)
+
+            equal_mask = equation == EQUAL
+            equal_index = torch.where(equal_mask)[0][0]
+            starting_tokens = equation[: equal_index + 1].unsqueeze(0)
+
+            generated_tokens = model.generate(
+                starting_tokens=starting_tokens,
+                **generator_config.model_dump(mode="python"),
+            )
+            generated_tokens = generated_tokens.squeeze(0)
+            generated_tokens_decoded = trainer.state.tokenizer.decode(
+                encoded_sequence=generated_tokens, remove_special_tokens=True
+            )
+
+            is_correct = torch.all(torch.eq(generated_tokens, equation))
+
+            prediction_details = {
+                "epoch": trainer.epoch_index,
+                "batch_index": _batch_index,
+                "equation": equation_decoded,
+                "generated": generated_tokens_decoded,
+                "correct": is_correct.item(),
+            }
+
+            if is_correct:
+                total_correct_across_samples += 1
+                batch_correct_predictions += 1
+
+            batch_accuracy = batch_correct_predictions / batch_size
+            progress_bar.set_postfix_str(f"accuracy: {batch_accuracy:.4f}")
+
+            all_predictions.append(prediction_details)
+
+        if num_batches_to_eval and _batch_index >= num_batches_to_eval:
+            trainer.logger.info("Early stopping evaluation.")
+            break
+
+    trainer.logger.info("Correct/Total Samples: %d/%d", total_correct_across_samples, total_samples)
+    accuracy = total_correct_across_samples / total_samples
+    df = pd.DataFrame(all_predictions)
+
+    trainer.logger.info("Accuracy: %s", accuracy)
+    pprint(df)
 
 
 def main(cfg: DictConfig | ListConfig) -> None:
@@ -202,6 +145,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     global_ = MaybeGlobal(**cfg.global_)
     data = DataConfig(**cfg.data)
     trainer_config = TrainerConfig(**cfg.trainer)
+    generator_config = GeneratorConfig(**cfg.generator)
 
     # logger
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
@@ -230,6 +174,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         optimizer=optimizer_pydantic_config,
         criterion=criterion_pydantic_config,
         trainer=trainer_config,
+        generator=generator_config,
     )
     assert composer.model is not MISSING and not isinstance(composer.model, Missing)
     assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
@@ -318,6 +263,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         optimizer=optimizer,
         scheduler=scheduler,
         vocabulary=vocabulary,
+        tokenizer=tokenizer,
     )
     state.pretty_print()
     time.sleep(1)
@@ -331,8 +277,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    trainer.add_callback("on_valid_epoch_end", generate_evaluation_samples)
-    _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+    trainer.add_callback(
+        "on_valid_epoch_end", lambda trainer: generate_evaluation_samples(trainer, num_batches_to_eval=2)
+    )
+    _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
     # _trained_state.pretty_print()
 
     loaded_state = State.load_snapshots(
@@ -356,4 +304,4 @@ if __name__ == "__main__":
     om.resolve(cfg)  # inplace ops
 
     main(cfg)
-    # 1.38283, 1.15584
+    # 1.38283, 1.15267

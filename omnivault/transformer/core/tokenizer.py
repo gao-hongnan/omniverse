@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar
+from typing import Generic, List, TypeVar, Union
 
 import torch
 
@@ -15,9 +15,9 @@ class Tokenizer(ABC, Generic[Vocabulary_t]):
     def __init__(self, vocabulary: Vocabulary):
         self.vocabulary = vocabulary
 
-    # NOTE: for simplicity, I do not add more args in tokenizer, encode and decode here in fear of violating
-    # the Liskov Substitution Principle, which is not something I want to worry
-    # about in a naive implementation.
+    # NOTE: for simplicity, I do not add more args in tokenizer, encode and decode
+    # here in fear of violating the Liskov Substitution Principle, which is not
+    # something I want to worry about in a naive implementation.
 
     @abstractmethod
     def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
@@ -145,3 +145,6 @@ class TextCharacterTokenizer(Tokenizer[TextCharacterVocabulary]):
             decoded_sequence = "".join(char for char in decoded_sequence if char not in special_tokens)
 
         return decoded_sequence
+
+
+Tokenizers = Union[AdderTokenizer, TextCharacterTokenizer]

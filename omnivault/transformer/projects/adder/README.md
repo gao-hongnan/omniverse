@@ -145,8 +145,15 @@ Some quirks to note:
 
 ```bash
 python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml
-python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256
-python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.max_epochs=30
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=20
 # if weight decay is 0, then it is as good as not applying custom weight decay to diff param groups:
 python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
 ```
@@ -159,6 +166,15 @@ training set:
 96+96=192
 95+95=190
 ```
+
+but we do not really need to do this since we split into `train-valid-test`
+already, and in a sense, the `valid` and `test` sets are "unseen" by the model,
+acting as a rough holdout.
+
+> Important, we must use greedy generation and not top-k or top-p (nuclues)
+> sampling here because we really just want the model to output the exact
+> answer, and not some other answer that is close to the correct answer in the
+> distribution of the model's vocabulary.
 
 ```python
 Composer(

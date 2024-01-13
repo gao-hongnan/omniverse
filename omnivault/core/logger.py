@@ -16,6 +16,8 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
 
+from omnivault._types._sentinel import MISSING
+
 DEFAULT_CONSOLE = Console(
     theme=Theme(
         {
@@ -124,7 +126,7 @@ class RichLogger:
     rich_handler_config: Dict[str, Any] = field(
         default_factory=lambda: {
             "level": "INFO",  # logging.INFO,
-            "console": DEFAULT_CONSOLE,
+            "console": MISSING,
             "show_level": True,
             "show_path": True,
             "show_time": True,
@@ -143,6 +145,8 @@ class RichLogger:
             self.log_file is not None and self.log_root_dir is not None
         ), "Both log_file and log_root_dir must be provided, or neither should be provided."
 
+        if not self.rich_handler_config.get("console") or self.rich_handler_config["console"] is MISSING:
+            self.rich_handler_config["console"] = DEFAULT_CONSOLE
         self.logger = self._init_logger()
 
     def _create_log_output_dir(self) -> Path:

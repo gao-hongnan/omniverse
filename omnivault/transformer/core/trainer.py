@@ -337,6 +337,12 @@ class Trainer:
         self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_END.value, phase=TrainerPhase.VALID.value)
         return this_epoch_average_loss
 
+    def test_one_epoch(self, dataloader: DataLoader[DatasetYield]) -> Loss:
+        raise NotImplementedError(
+            "The method `test_one_epoch` is not implemented. "
+            "Please override this method in a subclass or use a custom callback."
+        )
+
     def _get_current_lr_or_lrs(self) -> float | List[float]:
         """Get current learning rate."""
         if len(self.optimizer.param_groups) == 1:
@@ -353,9 +359,10 @@ class Trainer:
         valid_loader: DataLoader[DatasetYield] | None = None,
         test_loader: DataLoader[DatasetYield] | None = None,
     ) -> State:
-        self.train_dataloader = train_loader
-        self.valid_dataloader = valid_loader
-        self.test_dataloader = test_loader
+        # add as attributes purely for callback's Trainer to access it.
+        self.train_loader = train_loader
+        self.valid_loader = valid_loader
+        self.test_loader = test_loader
 
         # put callback here because depends on dataloader
         self.trigger_callbacks(TrainerEvent.ON_FIT_START.value)
@@ -368,7 +375,10 @@ class Trainer:
                 self.valid_loss = self.valid_one_epoch(dataloader=valid_loader)
 
             if test_loader:
-                self.test_loss = self.valid_one_epoch(dataloader=test_loader)
+                try:
+                    self.test_loss = self.test_one_epoch(dataloader=test_loader)
+                except NotImplementedError as err:
+                    self.logger.warning(err)
 
         self.trigger_callbacks(TrainerEvent.ON_FIT_END.value)
         return self.state

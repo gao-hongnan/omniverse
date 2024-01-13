@@ -5,6 +5,8 @@ from typing import Any, Dict, Type, Union
 
 from pydantic import BaseModel, Field, field_validator
 
+from omnivault._types._sentinel import MISSING
+
 
 class LoggerConfig(BaseModel):
     """The data config."""
@@ -16,7 +18,7 @@ class LoggerConfig(BaseModel):
     rich_handler_config: Dict[str, Any] = Field(
         default_factory=lambda: {
             "level": "INFO",  # logging.INFO,
-            # "console": DEFAULT_CONSOLE,
+            "console": MISSING,
             "show_level": True,
             "show_path": True,
             "show_time": True,

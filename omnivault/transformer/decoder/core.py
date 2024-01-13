@@ -290,7 +290,7 @@ class GPTDecoder(BaseDecoder):
     @torch.no_grad()
     def generate(
         self,
-        input_tokens: torch.LongTensor | List[int],  # alias is starting_tokens
+        starting_tokens: torch.LongTensor | List[int],  # alias is starting_tokens
         *,
         max_tokens: int = 100,  # max tokens to generate
         temperature: float = 1.0,  # temperature for sampling
@@ -309,10 +309,10 @@ class GPTDecoder(BaseDecoder):
 
         Parameters
         ----------
-        input_tokens : Union[torch.LongTensor, List[int]]
+        starting_tokens : Union[torch.LongTensor, List[int]]
             The initial tokens / starting_tokens from which the generation begins.
             Can be a list of integers or a LongTensor.
-            Shape: (L,)
+            Shape: (L,) or (1, L)
         max_tokens : int
             The maximum number of tokens to generate. Default is 100.
         temperature : float
@@ -359,28 +359,33 @@ class GPTDecoder(BaseDecoder):
             # training as a form of validation/evaluation.
             self.eval()
 
-        # NOTE: `input_tokens` is a list of integers, or a torch.LongTensor of shape (S or T).
-        # the distinction between this `input_tokens` versus the one in `forward` is this is
+        # NOTE: `starting_tokens` is a list of integers, or a torch.LongTensor of shape (S or T).
+        # the distinction between this `starting_tokens` versus the one in `forward` is this is
         # not batched! It is a single sequence of tokens so in order for it to be compatible
         # with the model, we need to expand the first dimension to 1 - making it a batch.
-        input_tokens = cast(torch.LongTensor, torch.as_tensor(input_tokens, dtype=torch.long)[None, ...])  # type: ignore[no-redef]
+        if isinstance(starting_tokens, list):
+            starting_tokens = cast(torch.LongTensor, torch.as_tensor(starting_tokens, dtype=torch.long)[None, ...])
+
+        if starting_tokens.dim() == 1:
+            starting_tokens = cast(torch.LongTensor, torch.as_tensor(starting_tokens, dtype=torch.long)[None, ...])  # type: ignore[no-redef]
+        assert starting_tokens.dim() == 2, "starting_tokens must be a 1D or 2D tensor"
 
         for _ in range(max_tokens):
             # if the sequence context is growing too long we must crop it at context_length
-            input_tokens_cropped = (
-                input_tokens[:, -self.config.context_length :]
-                if input_tokens.size(1) > self.config.context_length
-                else input_tokens
+            starting_tokens_cropped = (
+                starting_tokens[:, -self.config.context_length :]
+                if starting_tokens.size(1) > self.config.context_length
+                else starting_tokens
             )
 
-            batch_size = input_tokens_cropped.size(0)
-            seq_len = input_tokens_cropped.size(1)  # this must be less than or equal to self.config.context_length
+            batch_size = starting_tokens_cropped.size(0)
+            seq_len = starting_tokens_cropped.size(1)  # this must be less than or equal to self.config.context_length
 
             target_padding_masks = construct_dummy_batch_target_padding_masks(batch_size, seq_len)
             future_masks = construct_dummy_batch_future_masks(batch_size, seq_len)
 
             logits = self(
-                input_tokens_cropped,
+                starting_tokens_cropped,
                 target_padding_masks=target_padding_masks,
                 future_masks=future_masks,
             )
@@ -438,5 +443,5 @@ class GPTDecoder(BaseDecoder):
 
             # append the next token to the input tokens, aka append sampled index
             # to the running sequence context and continue the generation
-            input_tokens = torch.cat([input_tokens, next_token], dim=1)  # type: ignore[assignment]
-        return input_tokens
+            starting_tokens = torch.cat([starting_tokens, next_token], dim=1)  # type: ignore[assignment]
+        return starting_tokens

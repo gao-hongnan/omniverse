@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from pathlib import Path
-from typing import Dict, List, Type
+from typing import Dict, List, Type, Union
 
 import requests
 from typing_extensions import override
@@ -149,3 +149,6 @@ class TextCharacterVocabulary(Vocabulary):
 
         file_path = cls._download(url, dataset_name, dest_folder)
         return cls.from_file(file_path)
+
+
+Vocabularies = Union[AdderVocabulary, TextCharacterVocabulary]

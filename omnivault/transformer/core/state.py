@@ -8,7 +8,8 @@ from pydantic import BaseModel, Field
 from rich.pretty import pprint
 from torch import nn
 
-from omnivault.transformer.core.vocabulary import Vocabulary
+from omnivault.transformer.core.tokenizer import Tokenizers
+from omnivault.transformer.core.vocabulary import Vocabularies
 
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
@@ -48,7 +49,8 @@ class State(BaseModel):
     epoch_index: int = Field(default=0, description="Current epoch index.")
     batch_index: int = Field(default=0, description="Current batch index.")
 
-    vocabulary: Vocabulary = Field(default=None, description="Vocabulary.")
+    vocabulary: Vocabularies = Field(default=None, description="Vocabulary.")
+    tokenizer: Tokenizers = Field(default=None, description="Tokenizer.")
 
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""
@@ -87,6 +89,8 @@ class State(BaseModel):
             "scheduler": self.scheduler.state_dict() if self.scheduler else None,
             "epoch_index": self.epoch_index,
             "batch_index": self.batch_index,
+            "vocabulary": self.vocabulary,
+            "tokenizer": self.tokenizer,
         }
         torch.save(state, filepath)
 
