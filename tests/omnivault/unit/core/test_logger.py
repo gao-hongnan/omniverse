@@ -26,6 +26,7 @@ def log_dir() -> Generator[str, None, None]:
     yield test_log_dir
     shutil.rmtree(test_log_dir)
 
+
 @pytest.mark.parametrize(
     "module_name, propagate",
     [
@@ -62,6 +63,7 @@ def test_logger_init(log_dir: str, module_name: str | None, propagate: bool) -> 
     assert logger_obj.log_file is not None
     log_file_path: Path = Path(logger_obj.session_log_dir) / Path(logger_obj.log_file)
     assert log_file_path.exists()
+
 
 @pytest.mark.parametrize(
     "message",

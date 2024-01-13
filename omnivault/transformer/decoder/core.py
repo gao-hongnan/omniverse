@@ -290,13 +290,13 @@ class GPTDecoder(BaseDecoder):
     @torch.no_grad()
     def generate(
         self,
-        input_tokens: torch.LongTensor | List[int], # alias is starting_tokens
+        input_tokens: torch.LongTensor | List[int],  # alias is starting_tokens
         *,
         max_tokens: int = 100,  # max tokens to generate
         temperature: float = 1.0,  # temperature for sampling
         greedy: bool = False,  # if True, sample greedily
         top_k: int | None = None,  # if not None, sample from top k tokens
-        top_p: float | None = None, # neclueus sampling
+        top_p: float | None = None,  # neclueus sampling
     ) -> torch.LongTensor:
         """
         Generates a sequence of tokens based on the provided
@@ -407,6 +407,7 @@ class GPTDecoder(BaseDecoder):
                 logits[logits < top_k_values[:, [-1]]] = float("-inf")
 
             if top_p is not None:
+
                 def top_p_logits(logits: torch.Tensor, p: float) -> torch.Tensor:
                     sorted_logits, sorted_indices = torch.sort(logits, descending=True)
                     cumulative_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
@@ -418,8 +419,10 @@ class GPTDecoder(BaseDecoder):
                     sorted_indices_to_remove[..., 0] = 0
 
                     # Scatter sorted tensors to original indexing
-                    indices_to_remove = sorted_indices.scatter(dim=-1, index=sorted_indices, src=sorted_indices_to_remove)
-                    logits[indices_to_remove] = float('-inf')
+                    indices_to_remove = sorted_indices.scatter(
+                        dim=-1, index=sorted_indices, src=sorted_indices_to_remove
+                    )
+                    logits[indices_to_remove] = float("-inf")
                     return logits
 
                 logits = top_p_logits(logits, top_p)

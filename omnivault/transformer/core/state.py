@@ -7,7 +7,9 @@ import torch
 from pydantic import BaseModel, Field
 from rich.pretty import pprint
 from torch import nn
+
 from omnivault.transformer.core.vocabulary import Vocabulary
+
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
     """

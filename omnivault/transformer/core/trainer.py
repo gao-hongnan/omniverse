@@ -32,7 +32,6 @@ class TrainerCallback(Protocol):
         ...
 
 
-
 class TrainerEvent(Enum):
     """Callback events for the trainer."""
 

@@ -67,35 +67,37 @@ def decode_equation(vocab: Vocabulary_t, equation: torch.Tensor | List[int]) -> 
     decoded_equation = "".join([str(index_to_token.get(x, UNK)) for x in equation])
     return decoded_equation.replace(vocab.BOS, "").replace(vocab.EOS, "")
 
+
 @torch.no_grad()
 def compute_sum(model, x, num_digits=2, EOS=15):
     # x=[[15,  9,  8, 10,  3,  5, 13]]
     for _ in range(num_digits + 2):
-        #print(x)
-        #print(decode_equation(vocab=vocab, equation=x[0]))
+        # print(x)
+        # print(decode_equation(vocab=vocab, equation=x[0]))
         # print(x.shape)
         batch_size, seq_len = x.size()
-        #pad_mask = (x != PAD).view(1, 1, 1, x.size(-1)).to(DEVICE)
+        # pad_mask = (x != PAD).view(1, 1, 1, x.size(-1)).to(DEVICE)
         pad_mask = construct_dummy_batch_target_padding_masks(batch_size=batch_size, seq_len=seq_len)
         future_mask = construct_dummy_batch_future_masks(batch_size=batch_size, seq_len=seq_len)
-        #print(future_mask.shape)
-        #print(pad_mask.shape)
+        # print(future_mask.shape)
+        # print(pad_mask.shape)
 
-        #future_mask = future_mask.view(1, seq_len, seq_len).expand(size=(batch_size, -1, -1)).unsqueeze(1)
-        #print(pad_mask.shape, future_mask.shape)
-        #inputs, targets, target_padding_masks, future_masks = construct_batches(x)
-        #print(target_padding_masks.shape, future_masks.shape)
+        # future_mask = future_mask.view(1, seq_len, seq_len).expand(size=(batch_size, -1, -1)).unsqueeze(1)
+        # print(pad_mask.shape, future_mask.shape)
+        # inputs, targets, target_padding_masks, future_masks = construct_batches(x)
+        # print(target_padding_masks.shape, future_masks.shape)
         logits = model(input_tokens=x, target_padding_masks=pad_mask, future_masks=future_mask)
 
-        #logits = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
+        # logits = model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
 
         last_output = logits.argmax(-1)[:, -1].view(1, 1)
         x = torch.cat((x, last_output), 1)
         # STOPPING CONDITION!
         if last_output.item() == EOS:
             break
-        #return
+        # return
     return x[0]
+
 
 # def evaluate(model, dataloader, num_batch=None):
 #     """
@@ -162,7 +164,6 @@ def generate_evaluation_samples(trainer: Trainer, num_samples=5) -> None:
 
     acc, count = 0, 0
     num_wrong_to_display = 5
-
 
     for index, batch in enumerate(dataloader):
         (
