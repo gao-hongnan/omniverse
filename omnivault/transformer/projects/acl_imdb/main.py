@@ -74,3 +74,5 @@ for data in tqdm(train_data):
     train_dataset.append(encoding.encode(data, disallowed_special=()))
 
 pprint(encoding.decode(train_dataset[0]))
+
+vocab_size = 50304 # rounded up to gpt2 vocab size for simplicity and efficiency

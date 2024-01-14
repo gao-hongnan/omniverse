@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List
+from typing import List, Literal
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -14,7 +14,7 @@ def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
     return format_str % lr_or_lrs
 
 
-def get_default_rich_logger(logger: logging.Logger | None = None) -> logging.Logger:
+def get_default_logger(logger_type: Literal['rich'] | None = None) -> logging.Logger:
     """
     Sets up and returns a logger with RichHandler. If an existing logger is provided,
     it returns the same logger without modifying it.
@@ -33,11 +33,19 @@ def get_default_rich_logger(logger: logging.Logger | None = None) -> logging.Log
     logging.Logger
         Configured logger.
     """
-    if logger is None:
+    logger = logging.getLogger(name=logger_type)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False  # To avoid duplicate logs in parent loggers
+
+    if logger_type == "rich":
+        # Setup for Rich logging
         console = Console()
         rich_handler = RichHandler(console=console, level="INFO", show_time=True, show_path=False, show_level=True)
-        logger = logging.getLogger("rich")
-        logger.setLevel(logging.INFO)
         logger.addHandler(rich_handler)
-        logger.propagate = False  # To avoid duplicate logs in parent loggers
+    else:
+        # Setup for basic logging
+        basic_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(basic_formatter)
+        logger.addHandler(stream_handler)
     return logger
