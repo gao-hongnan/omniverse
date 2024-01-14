@@ -1,31 +1,32 @@
-# ruff: noqa
-# type: ignore
 from __future__ import annotations
 
+import logging
 import sys
 import time
 
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from rich.pretty import pprint
 
+from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
+from omnivault.core.logger import RichLogger
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
 from omnivault.transformer.config.decoder import DecoderConfig
+from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
+from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
-from omnivault.transformer.core.dataset import TextCharacterDataset, collate_fn, create_loader, split_dataset
+from omnivault.transformer.core.dataset import TextCharacterDataset, create_loader, split_dataset
+from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
 
@@ -38,11 +39,16 @@ def main(cfg: DictConfig | ListConfig) -> None:
     seed_all(cfg.global_.seed)
 
     constants = MaybeConstant(**cfg.constants) if cfg.constants is not None else MaybeConstant()
+    logger_pydantic_config = LoggerConfig(**cfg.logger)
     global_ = MaybeGlobal(**cfg.global_)
     data = DataConfig(**cfg.data)
     trainer_config = TrainerConfig(**cfg.trainer)
+    generator_config = GeneratorConfig(**cfg.generator)
 
-    assert data.dataset_url is not None
+    # logger
+    logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
+    assert isinstance(logger, logging.Logger)
+
     vocabulary = TextCharacterVocabulary.from_url(
         url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir
     )
@@ -68,11 +74,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
         criterion=criterion_pydantic_config,
         trainer=trainer_config,
     )
-    assert composer.model is not MISSING
-    assert composer.optimizer is not MISSING
-    assert composer.criterion is not MISSING
-
-    pprint(composer)
+    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
+    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
+    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
 
     # TODO: consider classmethod from file_path
     assert composer.data.dataset_path is not None
@@ -82,44 +86,56 @@ def main(cfg: DictConfig | ListConfig) -> None:
     dataset = TextCharacterDataset(corpus=corpus, context_length=composer.data.context_length, tokenizer=tokenizer)
 
     if composer.data.split:
-        train_dataset, val_dataset, test_dataset = split_dataset(
+        train_dataset, valid_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
         )
     else:
-        train_dataset = dataset
+        train_dataset = dataset  # type: ignore[assignment]
+        valid_dataset = None
+        test_dataset = None
 
-    # you do these asserts to make sure that the loaders are not None
-    # because create loader expects non-None loaders and collate_fn.
-    # if you don't do these asserts, mypy cannot guarantee that the loaders are not None
-    # so they cannot infer properly.
     assert composer.data.train_loader is not None
+    assert composer.data.collate_fn is not None
 
     train_loader = create_loader(
         dataset=train_dataset,
         loader_config=composer.data.train_loader,
         collate_fn_config=composer.data.collate_fn,
     )
-    for batch in train_loader:
-        x, y, padding_masks, future_masks = batch
-        pprint(x)
-        pprint(y)
-        pprint(padding_masks)
-        pprint(future_masks)
-        # time.sleep(1000)
-        break
+
+    if valid_dataset is not None:
+        assert composer.data.valid_loader is not None
+        valid_loader = create_loader(  # noqa: F841
+            dataset=valid_dataset,
+            loader_config=composer.data.valid_loader,
+            collate_fn_config=composer.data.collate_fn,
+        )
+
+    if test_dataset is not None:
+        assert composer.data.test_loader is not None
+        test_loader = create_loader(  # noqa: F841
+            dataset=test_dataset,
+            loader_config=composer.data.test_loader,
+            collate_fn_config=composer.data.collate_fn,
+        )
 
     # Create model
     model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)
-    model_size = model.total_trainable_parameters
-    print(f"model_size: {model_size}, train_size: {len(train_dataset)}")
 
     # Create optimizer based on model parameters
-    optimizer = optimizer_pydantic_config.build(params=model.parameters())
-    pprint(optimizer)
+    if composer.trainer.apply_weight_decay_to_different_param_groups:
+        assert hasattr(composer.optimizer, "weight_decay")
+        optimizer = optimizer_pydantic_config.build(
+            params=apply_weight_decay_to_different_param_groups(
+                model=model, weight_decay=composer.optimizer.weight_decay
+            )
+        )
+    else:
+        optimizer = optimizer_pydantic_config.build(params=model.parameters())
 
     # Create criterion
     criterion = criterion_pydantic_config.create_instance()
-    pprint(vocabulary.token_to_index)
+    assert criterion.ignore_index == -100
 
     # Create Scheduler
     scheduler = None
@@ -132,22 +148,22 @@ def main(cfg: DictConfig | ListConfig) -> None:
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
+        vocabulary=vocabulary,
+        tokenizer=tokenizer,
     )
     state.pretty_print()
     time.sleep(1)
 
+    device = composer.trainer.device
+
     # train
-    device: torch.device = composer.trainer.device
     trainer = Trainer(
         state=state,
-        device=device,
-        train_dataloader=train_loader,
-        grad_norm_clip=1.0,
+        composer=composer,
+        logger=logger,
+        device=device,  # type: ignore[arg-type]
     )
-    trained_model = trainer.fit(
-        max_epochs=composer.trainer.max_epochs, save_every_epoch=composer.trainer.save_every_epoch
-    )
-    time.sleep(10)
+    _trained_state = trainer.fit(train_loader=train_loader)
 
 
 if __name__ == "__main__":
@@ -158,6 +174,5 @@ if __name__ == "__main__":
     yaml_cfg = load_yaml_config(yaml_path)
     cfg = merge_configs(yaml_cfg, args_list)
     om.resolve(cfg)  # inplace ops
-    pprint(cfg)
 
     main(cfg)

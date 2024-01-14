@@ -188,9 +188,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
     if composer.data.split:
-        train_dataset, val_dataset, test_dataset = split_dataset(
+        train_dataset, valid_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
         )
+    else:
+        # no need to cater to mypy as either Subset or Dataset is fine.
+        train_dataset = dataset  # type: ignore[assignment]
 
     # you do these asserts to make sure that the loaders are not None
     # because create loader expects non-None loaders and collate_fn.
@@ -200,23 +203,26 @@ def main(cfg: DictConfig | ListConfig) -> None:
     assert composer.data.valid_loader is not None
     assert composer.data.test_loader is not None
     assert composer.data.collate_fn is not None
+
     train_loader = create_loader(
         dataset=train_dataset,
         loader_config=composer.data.train_loader,
         collate_fn_config=composer.data.collate_fn,
     )
 
-    valid_loader = create_loader(
-        dataset=val_dataset,
-        loader_config=composer.data.valid_loader,
-        collate_fn_config=composer.data.collate_fn,
-    )
+    if valid_dataset is not None:
+        valid_loader = create_loader(
+            dataset=valid_dataset,
+            loader_config=composer.data.valid_loader,
+            collate_fn_config=composer.data.collate_fn,
+        )
 
-    test_loader = create_loader(  # noqa: F841
-        dataset=test_dataset,
-        loader_config=composer.data.test_loader,
-        collate_fn_config=composer.data.collate_fn,
-    )
+    if test_dataset is not None:
+        test_loader = create_loader(  # noqa: F841
+            dataset=test_dataset,
+            loader_config=composer.data.test_loader,
+            collate_fn_config=composer.data.collate_fn,
+        )
 
     # Create model
     model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)
@@ -285,7 +291,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     # _trained_state.pretty_print()
 
     loaded_state = State.load_snapshots(
-        filepath=f"{composer.trainer.save_dir}/model_checkpoint_epoch_2.pt",
+        filepath=trainer.best_checkpoint_path,
         device=device,  # type: ignore[arg-type]
         model=copy.deepcopy(model),
         criterion=criterion,

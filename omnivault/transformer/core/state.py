@@ -1,7 +1,7 @@
 """State...Metadata...See how composer does it, quite elegant I'd say."""
 from __future__ import annotations
 
-from typing import Type
+from typing import Type, Union
 
 import torch
 from pydantic import BaseModel, Field
@@ -44,7 +44,7 @@ class State(BaseModel):
 
     criterion: nn.Module = Field(default=None, description="Loss function.")
     optimizer: torch.optim.Optimizer = Field(default=None, description="Optimizer.")
-    scheduler: torch.optim.lr_scheduler.LRScheduler = Field(default=None, description="Scheduler.")
+    scheduler: Union[torch.optim.lr_scheduler.LRScheduler, None] = Field(default=None, description="Scheduler.")
 
     epoch_index: int = Field(default=0, description="Current epoch index.")
     batch_index: int = Field(default=0, description="Current batch index.")

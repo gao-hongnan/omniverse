@@ -132,6 +132,7 @@ class Trainer:
         self.save_best_only = composer.trainer.save_best_only
         self.mode = composer.trainer.mode
         self.monitor = composer.trainer.monitor
+        self.best_checkpoint_path: str = "" # NOTE: not in __init__ constructor and not in composer, set in callback
 
         # attributes not in __init__ constructor
         self.epoch_index = 0
@@ -256,6 +257,14 @@ class Trainer:
             this_batch_average_loss, this_batch_total_loss = self._train_one_batch(batch)
             this_epoch_total_running_loss += this_batch_total_loss
 
+            progress_bar.set_description(f"Epoch: {self.epoch_index}, Step: {_batch_index}")
+            progress_bar.set_postfix(
+                {
+                    "total_batch_loss": f"{this_batch_total_loss:.5f}",
+                    "average_batch_loss": f"{this_batch_average_loss:.5f}",
+                }
+            )
+
             # fmt: on
             if _batch_index % self.log_every_n_steps == 0:
                 lr_info = f"LR: {self.scheduler.get_last_lr()[0]:.9f}" if self.scheduler else "LR: N/A"
@@ -328,8 +337,16 @@ class Trainer:
         for _batch_index, batch in progress_bar:
             batch_size = batch[0].size(0)
             total_samples += batch_size
-            _this_batch_loss, this_batch_total_loss = self._valid_one_batch(batch)
+            this_batch_average_loss, this_batch_total_loss = self._valid_one_batch(batch)
             this_epoch_total_running_loss += this_batch_total_loss
+
+            progress_bar.set_description(f"Epoch: {self.epoch_index}, Step: {_batch_index}")
+            progress_bar.set_postfix(
+                {
+                    "total_batch_loss": f"{this_batch_total_loss:.5f}",
+                    "average_batch_loss": f"{this_batch_average_loss:.5f}",
+                }
+            )
 
         # average loss for this epoch for each sample
         this_epoch_average_loss = this_epoch_total_running_loss / total_samples

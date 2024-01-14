@@ -1,4 +1,17 @@
 constants: null
+logger:
+  log_file: 'decoder.log'
+  module_name: null
+  propagate: false
+  log_root_dir: './logs'
+  rich_handler_config:
+    level: "INFO"
+    show_level: true
+    show_path: true
+    show_time: true
+    rich_tracebacks: true
+    markup: true
+    log_time_format: "[%Y-%m-%d %H:%M:%S]"
 global_:
   seed: 42
   debug: false
@@ -19,13 +32,6 @@ data:
     drop_last: false
   valid_loader: null
   test_loader: null
-optimizer:
-  name: "torch.optim.AdamW"
-  lr: 0.0005
-  weight_decay: 0.01
-criterion:
-  name: "torch.nn.CrossEntropyLoss"
-  reduction: "mean"
 model:
   d_model: 128
   vocab_size: ??? # MISSING so need fill up later
@@ -53,12 +59,29 @@ model:
     add_norm_2:
       feature_dim: ${model.d_model}
       dropout: 0.1
+optimizer:
+  name: "torch.optim.AdamW"
+  lr: 0.0005
+  weight_decay: 0.01
+criterion:
+  name: "torch.nn.CrossEntropyLoss"
+  reduction: "mean"
 trainer:
   device: "auto"
-  max_epochs: 5
-  save_every_epoch: true
+  max_epochs: 2
+  log_every_n_steps: 100
+  eval_every_n_steps: 4
+  step_scheduler_on_batch_or_epoch: "epoch"
+  clip_grad_norm: {max_norm: 1.0, norm_type: 2.0, error_if_nonfinite: false, "foreach": null}
+  apply_weight_decay_to_different_param_groups: false
+  save_dir: ./data/tinyshakespeare/checkpoints
+  save_every_epoch: false
+  save_best_only: true
+  monitor: "train_this_epoch_average_loss"
+  mode: "min"
 generator:
   temperature: 1.0
   max_tokens: 1000
   greedy: false
-  top_k: 5
+  top_k: 10
+  top_p: null

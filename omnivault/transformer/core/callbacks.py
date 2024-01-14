@@ -46,6 +46,7 @@ def save_state(trainer: Trainer) -> None:
             trainer.best_monitored_score = current_monitored_score
 
         save_path = f"{trainer.save_dir}/model_checkpoint_epoch_{trainer.epoch_index}.pt"
+        trainer.best_checkpoint_path = save_path
 
         trainer.state.save_snapshots(filepath=save_path)
         trainer.logger.info("Saved checkpoint at epoch %s to %s", trainer.epoch_index, save_path)
