@@ -83,7 +83,7 @@ def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
     """
     if device.type in ["cpu", "mps"]:
         return tuple(tensor.to(device) for tensor in batch)
-    return tuple(tensor.pin_memory().to(device, non_blocking=True) for tensor in batch)
+    return tuple(tensor.clone().pin_memory().to(device, non_blocking=True) for tensor in batch)
 
 
 class Trainer:
