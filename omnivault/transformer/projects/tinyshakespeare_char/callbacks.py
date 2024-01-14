@@ -12,7 +12,7 @@ def evaluate_generate_and_save_on_train_batch_end(trainer: Trainer) -> None:
     tokenizer = trainer.state.tokenizer
     generator_config = trainer.composer.generator
 
-    if trainer.train_batch_index % 4 == 0:
+    if trainer.train_batch_index % trainer.eval_every_n_steps == 0:
         # Perform evaluation and sample generation
         model = trainer.model
         model.eval()
