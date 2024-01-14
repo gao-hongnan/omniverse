@@ -277,6 +277,7 @@ class Trainer:
                 {
                     "total_batch_loss": f"{this_batch_total_loss:.5f}",
                     "average_batch_loss": f"{this_batch_average_loss:.5f}",
+                    "lr": f"{self._get_current_lr_or_lrs():.9f}",
                 }
             )
 
