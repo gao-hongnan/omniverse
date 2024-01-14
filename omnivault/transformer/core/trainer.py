@@ -24,7 +24,7 @@ from omnivault.transformer.core.callbacks import (
 )
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
-from omnivault.transformer.utils.format import get_default_rich_logger
+from omnivault.transformer.utils.format import get_default_logger
 
 
 @runtime_checkable
@@ -124,7 +124,7 @@ class Trainer:
         self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
 
         # logger
-        self.logger = logger or get_default_rich_logger()
+        self.logger = logger or get_default_logger()
 
         # general
         self.max_epochs = composer.trainer.max_epochs
