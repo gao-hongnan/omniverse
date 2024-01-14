@@ -300,7 +300,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         scheduler=scheduler,
     )
 
-    assert _trained_state == loaded_state, "Cherry picked 2 epochs, so the last trained state should be the same."
+    assert _trained_state == loaded_state, "Loading the last saved state, should be the same as the trained state."
 
 
 if __name__ == "__main__":

@@ -43,9 +43,20 @@ class TrainerConfig(BaseModel):
     save_every_epoch: bool = Field(default=False, description="Always save the model after each epoch.")
     save_best_only: bool = Field(default=True, description="Only save the best model.")
     monitor: str = Field(
-        default="valid_this_epoch_average_loss", description="The metric to monitor for saving best model."
+        default="valid_this_epoch_average_loss",
+        description="The metric to monitor for saving best model.",
+        examples=[
+            "valid_this_epoch_average_loss",
+            "valid_this_batch_average_loss",
+            "train_this_epoch_average_loss",
+            "train_this_batch_average_loss",
+            "train_this_epoch_average_accuracy",
+            "train_this_batch_average_accuracy",
+            "valid_this_epoch_average_accuracy",
+            "valid_this_batch_average_accuracy",
+        ],
     )
-    mode: str = Field(default="min", description="The mode to monitor for saving best model.")
+    mode: str = Field(default="min", description="The mode to monitor for saving best model.", examples=["min", "max"])
 
     @field_validator("device", mode="plain")
     @classmethod

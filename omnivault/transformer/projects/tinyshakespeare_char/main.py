@@ -21,6 +21,7 @@ from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
+from omnivault.transformer.core.callbacks import save_state
 from omnivault.transformer.core.dataset import TextCharacterDataset, create_loader, split_dataset
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.state import State
@@ -28,12 +29,9 @@ from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
 from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_and_save_on_train_batch_end
+from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_on_train_batch_end
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
-
-# TODO: I have a callable instead of _target_ field for me to use importlib to parse.
-# so maybe consider using my own code base?
 
 
 def main(cfg: DictConfig | ListConfig) -> None:
@@ -169,13 +167,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, evaluate_generate_and_save_on_train_batch_end)
+    trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, evaluate_generate_on_train_batch_end)
+    trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, save_state)
 
     _trained_state = trainer.fit(train_loader=train_loader)
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/tinyshakespeare_char/main.py omnivault/transformer/projects/tinyshakespeare_char/config.yaml global_.debug=true trainer.max_epochs=5
+    # python omnivault/transformer/projects/tinyshakespeare_char/main.py omnivault/transformer/projects/tinyshakespeare_char/config.yaml global_.debug=true trainer.max_epochs=5 generator.max_tokens=100
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 
