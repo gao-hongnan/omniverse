@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import warnings
 from collections import defaultdict
 from enum import Enum
 from typing import Any, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
@@ -83,7 +84,18 @@ def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
     """
     if device.type in ["cpu", "mps"]:
         return tuple(tensor.to(device) for tensor in batch)
-    return tuple(tensor.clone().pin_memory().to(device, non_blocking=True) for tensor in batch)
+    else:
+        batch_on_device = []
+        for tensor in batch:
+            try:
+                if tensor.is_pinned():
+                    batch_on_device.append(tensor.to(device, non_blocking=True))
+                else:
+                    batch_on_device.append(tensor.to(device))
+            except RuntimeError as err:  # noqa: PERF203
+                warnings.warn(err, stacklevel=2)
+                batch_on_device.append(tensor.to(device))
+        return tuple(batch_on_device)
 
 
 class Trainer:
@@ -136,7 +148,8 @@ class Trainer:
 
         # attributes not in __init__ constructor
         self.epoch_index = 0
-        self.batch_index = 0
+        self.train_batch_index = 0
+        self.step_index = 0
         self.callbacks: Dict[str, List[TrainerCallback]] = defaultdict(list)
 
         # fmt: on
@@ -197,7 +210,8 @@ class Trainer:
         if self.scheduler and self.step_scheduler_on_batch_or_epoch == "batch":
             self.scheduler.step()
 
-        self.batch_index += 1
+        self.train_batch_index += 1
+        self.step_index += 1
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_END.value)
         return this_batch_average_loss, this_batch_total_loss
 
@@ -250,6 +264,7 @@ class Trainer:
             enumerate(dataloader, start=1), total=num_batches, leave=False
         )
 
+        self.train_batch_index = 0
         for _batch_index, batch in progress_bar:
             batch_size = batch[0].size(0)
             total_samples += batch_size

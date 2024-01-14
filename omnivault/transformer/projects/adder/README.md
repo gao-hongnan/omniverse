@@ -288,7 +288,7 @@ Parameter Group 0
 ),
 │   scheduler=<torch.optim.lr_scheduler.LambdaLR object at 0x137d80bb0>,
 │   epoch_index=0,
-│   batch_index=0,
+│   train_batch_index=0,
 │   vocabulary=<omnivault.transformer.core.vocabulary.AdderVocabulary object at 0x137d4eb50>,
 │   tokenizer=<omnivault.transformer.core.tokenizer.AdderTokenizer object at 0x137d4ec40>
 )

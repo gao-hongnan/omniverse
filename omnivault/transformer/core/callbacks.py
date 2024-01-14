@@ -15,7 +15,8 @@ def update_state(trainer: Trainer) -> None:
     trainer.state.optimizer = trainer.optimizer
     trainer.state.scheduler = trainer.scheduler
     trainer.state.epoch_index = trainer.epoch_index
-    trainer.state.batch_index = trainer.batch_index
+    trainer.state.train_batch_index = trainer.train_batch_index
+    trainer.state.step_index = trainer.step_index
 
 
 def save_state(trainer: Trainer) -> None:

@@ -47,7 +47,13 @@ class State(BaseModel):
     scheduler: Union[torch.optim.lr_scheduler.LRScheduler, None] = Field(default=None, description="Scheduler.")
 
     epoch_index: int = Field(default=0, description="Current epoch index.")
-    batch_index: int = Field(default=0, description="Current batch index.")
+    train_batch_index: int = Field(
+        default=0, description="Current batch index and is only referring to the training batch index."
+    )
+    step_index: int = Field(
+        default=0,
+        description="We do not add prefix train because it is understood and implied that the step number is the train due to how many gradients been stepped. Current step index and is only referring to the training step index. What is the difference between step and batch? In general, they coincide for when the epoch number is 1, but after the first epoch, we usually reset the batch index to 0, while the step index keeps increasing to the next epoch.",
+    )
 
     vocabulary: Vocabularies = Field(default=None, description="Vocabulary.")
     tokenizer: Tokenizers = Field(default=None, description="Tokenizer.")
@@ -68,7 +74,7 @@ class State(BaseModel):
         #     and (self.scheduler.state_dict() if self.scheduler else None)
         #     == (other.scheduler.state_dict() if other.scheduler else None)
         #     and self.epoch_index == other.epoch_index
-        #     and self.batch_index == other.batch_index
+        #     and self.train_batch_index == other.train_batch_index
         # )
 
     class Config:
@@ -88,7 +94,8 @@ class State(BaseModel):
             "optimizer": self.optimizer.state_dict() if self.optimizer else None,
             "scheduler": self.scheduler.state_dict() if self.scheduler else None,
             "epoch_index": self.epoch_index,
-            "batch_index": self.batch_index,
+            "train_batch_index": self.train_batch_index,
+            "step_index": self.step_index,
             "vocabulary": self.vocabulary,
             "tokenizer": self.tokenizer,
         }
@@ -109,7 +116,11 @@ class State(BaseModel):
         state = torch.load(filepath, map_location=device)
 
         epoch_index = state["epoch_index"]
-        batch_index = state["batch_index"]
+        train_batch_index = state["train_batch_index"]
+        step_index = state["step_index"]
+        vocabulary = state["vocabulary"]
+        tokenizer = state["tokenizer"]
+
         # Create a new instance of State with loaded state
         new_state = cls(
             model=model,
@@ -117,7 +128,10 @@ class State(BaseModel):
             optimizer=optimizer,
             scheduler=scheduler,
             epoch_index=epoch_index,
-            batch_index=batch_index,
+            train_batch_index=train_batch_index,
+            step_index=step_index,
+            vocabulary=vocabulary,
+            tokenizer=tokenizer,
         )
 
         # Load state dicts into the model, criterion, etc., if they exist

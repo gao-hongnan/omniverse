@@ -31,7 +31,7 @@ from omnivault.transformer.core.optim import apply_weight_decay_to_different_par
 from omnivault.transformer.core.scheduler import noam_lr_decay
 from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import AdderTokenizer
-from omnivault.transformer.core.trainer import Trainer
+from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
@@ -285,10 +285,11 @@ def main(cfg: DictConfig | ListConfig) -> None:
         device=device,  # type: ignore[arg-type]
     )
     # trainer.add_callback(
-    #     "on_valid_epoch_end", lambda trainer: evaluate_and_generate_on_valid_epoch_end(trainer, num_batches_to_eval=2)
+    #     TrainerEvent.ON_VALID_EPOCH_END.value,
+    #     lambda trainer: evaluate_and_generate_on_valid_epoch_end(trainer, num_batches_to_eval=2),
     # )
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
-    # _trained_state.pretty_print()
+    _trained_state.pretty_print()
 
     loaded_state = State.load_snapshots(
         filepath=trainer.best_checkpoint_path,

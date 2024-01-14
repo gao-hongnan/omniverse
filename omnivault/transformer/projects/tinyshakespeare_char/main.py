@@ -7,6 +7,7 @@ import time
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
+from torch.utils.data import Subset
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
@@ -24,9 +25,10 @@ from omnivault.transformer.core.dataset import TextCharacterDataset, create_load
 from omnivault.transformer.core.optim import apply_weight_decay_to_different_param_groups
 from omnivault.transformer.core.state import State
 from omnivault.transformer.core.tokenizer import TextCharacterTokenizer
-from omnivault.transformer.core.trainer import Trainer
+from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
+from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_and_save_on_train_batch_end
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
 
@@ -84,6 +86,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
         corpus = file.read()
 
     dataset = TextCharacterDataset(corpus=corpus, context_length=composer.data.context_length, tokenizer=tokenizer)
+
+    if composer.global_.debug:
+        debug_samples = composer.global_.debug_samples or 256
+        dataset = Subset(dataset, indices=range(debug_samples))  # type: ignore[assignment]
 
     if composer.data.split:
         train_dataset, valid_dataset, test_dataset = split_dataset(
@@ -163,11 +169,13 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
+    trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, evaluate_generate_and_save_on_train_batch_end)
+
     _trained_state = trainer.fit(train_loader=train_loader)
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/tinyshakespeare/main.py omnivault/transformer/projects/tinyshakespeare/config.yaml
+    # python omnivault/transformer/projects/tinyshakespeare_char/main.py omnivault/transformer/projects/tinyshakespeare_char/config.yaml global_.debug=true trainer.max_epochs=5
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 
