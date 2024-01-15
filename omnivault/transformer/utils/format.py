@@ -14,7 +14,7 @@ def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
     return format_str % lr_or_lrs
 
 
-def get_default_logger(logger_type: Literal['rich'] | None = None) -> logging.Logger:
+def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Logger:
     """
     Sets up and returns a logger with RichHandler. If an existing logger is provided,
     it returns the same logger without modifying it.

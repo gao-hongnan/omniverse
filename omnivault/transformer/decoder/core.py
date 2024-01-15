@@ -226,8 +226,11 @@ class GPTDecoder(BaseDecoder):
         *,  # force keyword only arguments to prevent errors
         target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
-        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
-        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
+        # fmt: off
+        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base and is ensured not used here
+        encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
+        # that's memory_mask in torch code base and is ensured not used here
+        # fmt: on
     ) -> torch.FloatTensor:
         """
         Notations
@@ -283,9 +286,6 @@ class GPTDecoder(BaseDecoder):
         logits: torch.FloatTensor = self.head(z)
         # fmt: on
         return logits
-
-    def estimate_mfu(self) -> None:
-        ...
 
     @torch.no_grad()
     def generate(
