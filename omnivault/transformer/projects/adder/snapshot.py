@@ -8,6 +8,7 @@ from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
+from omnivault.transformer.utils.general_utils import download_and_read_sequences
 
 
 @dataclass
@@ -242,9 +243,9 @@ data = DataConfig(
     valid_loader={"batch_size": 256, "shuffle": False, "num_workers": 0, "pin_memory": False, "drop_last": False},
     test_loader={"batch_size": 128, "shuffle": False, "num_workers": 0, "pin_memory": False, "drop_last": False},
 )
-with open(data.dataset_path, "r") as file:
-    sequences = [line.strip() for line in file]
 
+
+sequences = list(download_and_read_sequences(url=data.dataset_url, dataset_name=data.dataset_name))
 adder_dataset_ = AdderDataset(
     data=sequences, tokenizer=adder_tokenizer_
 )  # NOTE: for end2end test, so load a small dataset here.
