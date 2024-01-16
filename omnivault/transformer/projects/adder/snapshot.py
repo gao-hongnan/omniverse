@@ -248,4 +248,4 @@ with open(data.dataset_path, "r") as file:
 adder_dataset_ = AdderDataset(
     data=sequences, tokenizer=adder_tokenizer_
 )  # NOTE: for end2end test, so load a small dataset here.
-adder_mock_dataset_ = AdderDataset(data=adder_mock_batch_, tokenizer=adder_tokenizer_)  # type: ignore[arg-type]
+adder_mock_dataset_ = AdderDataset(data=ADDER_GROUND_TRUTH.sequences, tokenizer=adder_tokenizer_)  # type: ignore[arg-type]
