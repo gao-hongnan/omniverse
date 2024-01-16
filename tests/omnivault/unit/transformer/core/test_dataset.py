@@ -4,21 +4,19 @@ import pytest
 import torch
 from torch.utils.data import Subset
 
-from omnivault.transformer.config.ground_truth import GroundTruth
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield, collate_fn, split_dataset
+from omnivault.transformer.projects.adder.snapshot import ADDER_GROUND_TRUTH, AdderGroundTruth, data
 
-GROUND_TRUTH = GroundTruth()
 
-
-def test_construct_future_mask(adder_dataset: AdderDataset, ground_truth: GroundTruth) -> None:
+def test_construct_future_mask(adder_dataset: AdderDataset, adder_ground_truth: AdderGroundTruth) -> None:
     """Test that the future mask is constructed correctly. Here we only test the first sequence."""
-    future_mask = adder_dataset.construct_future_mask(ground_truth.seq_len)
-    torch.testing.assert_close(future_mask, ground_truth.future_masks[0])
+    future_mask = adder_dataset.construct_future_mask(adder_ground_truth.seq_len)
+    torch.testing.assert_close(future_mask, adder_ground_truth.future_masks[0])
 
 
 @pytest.mark.parametrize(
     "input,expected_padding_mask",
-    list(zip(GROUND_TRUTH.inputs, GROUND_TRUTH.padding_masks)),
+    list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks)),
 )
 def test_construct_padding_mask(
     adder_dataset: AdderDataset, input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
@@ -30,7 +28,7 @@ def test_construct_padding_mask(
 
 @pytest.mark.parametrize(
     "encoded_sequence,expected_target",
-    list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.targets)),
+    list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets)),
 )
 def test_construct_target(
     adder_dataset: AdderDataset, encoded_sequence: List[int], expected_target: torch.LongTensor
@@ -42,7 +40,7 @@ def test_construct_target(
 
 @pytest.mark.parametrize(
     "encoded_sequence,expected_input",
-    list(zip(GROUND_TRUTH.encoded_sequences, GROUND_TRUTH.inputs)),
+    list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs)),
 )
 def test_construct_input(
     adder_dataset: AdderDataset, encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
@@ -52,15 +50,15 @@ def test_construct_input(
     torch.testing.assert_close(input, expected_input)
 
 
-def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, ground_truth: GroundTruth) -> None:
+def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, adder_ground_truth: AdderGroundTruth) -> None:
     """Test that the dataset returns the correct item."""
     index = 0
     length = len(adder_dataset)
     for input, target, padding_mask, future_mask in adder_dataset:  # type: ignore[attr-defined]
-        torch.testing.assert_close(input, ground_truth.inputs[index])
-        torch.testing.assert_close(target, ground_truth.targets[index])
-        torch.testing.assert_close(padding_mask, ground_truth.padding_masks[index])
-        torch.testing.assert_close(future_mask, ground_truth.future_masks[index])
+        torch.testing.assert_close(input, adder_ground_truth.inputs[index])
+        torch.testing.assert_close(target, adder_ground_truth.targets[index])
+        torch.testing.assert_close(padding_mask, adder_ground_truth.padding_masks[index])
+        torch.testing.assert_close(future_mask, adder_ground_truth.future_masks[index])
 
         assert input.shape == (10,)
         assert target.shape == (10,)
@@ -82,26 +80,27 @@ def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, ground_tr
             break
 
 
-def test_collate_fn(mock_batch: List[AdderDatasetYield], ground_truth: GroundTruth) -> None:
-    # Call your collate_fn function with the mock_batch
+def test_collate_fn(adder_mock_batch: List[AdderDatasetYield], adder_ground_truth: AdderGroundTruth) -> None:
+    # Call your collate_fn function with the adder_mock_batch
 
+    assert isinstance(data.collate_fn, dict)
     inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded = collate_fn(
-        mock_batch, **ground_truth.collate_fn
+        adder_mock_batch, **data.collate_fn
     )
 
     # Assert that the first dimension of the output tensors equals the batch size
-    assert inputs_padded.shape[0] == len(mock_batch)
-    assert targets_padded.shape[0] == len(mock_batch)
-    assert padding_masks_padded_and_expanded.shape[0] == len(mock_batch)
-    assert future_masks_expanded.shape[0] == len(mock_batch)
+    assert inputs_padded.shape[0] == len(adder_mock_batch)
+    assert targets_padded.shape[0] == len(adder_mock_batch)
+    assert padding_masks_padded_and_expanded.shape[0] == len(adder_mock_batch)
+    assert future_masks_expanded.shape[0] == len(adder_mock_batch)
 
-    torch.testing.assert_close(inputs_padded, ground_truth.inputs_collated)
-    torch.testing.assert_close(targets_padded, ground_truth.targets_collated)
-    torch.testing.assert_close(padding_masks_padded_and_expanded, ground_truth.padding_masks_collated)
-    torch.testing.assert_close(future_masks_expanded, ground_truth.future_masks_collated)
+    torch.testing.assert_close(inputs_padded, adder_ground_truth.inputs_collated)
+    torch.testing.assert_close(targets_padded, adder_ground_truth.targets_collated)
+    torch.testing.assert_close(padding_masks_padded_and_expanded, adder_ground_truth.padding_masks_collated)
+    torch.testing.assert_close(future_masks_expanded, adder_ground_truth.future_masks_collated)
 
     # Check if the padding has been applied correctly
-    for i, (input, target, _, _) in enumerate(mock_batch):
+    for i, (input, target, _, _) in enumerate(adder_mock_batch):
         # Check for padding tokens in inputs and targets
         input_len, target_len = input.size(0), target.size(0)
         assert torch.all(inputs_padded[i, :input_len] == input)

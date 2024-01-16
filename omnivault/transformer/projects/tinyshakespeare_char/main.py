@@ -73,6 +73,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         optimizer=optimizer_pydantic_config,
         criterion=criterion_pydantic_config,
         trainer=trainer_config,
+        generator=generator_config,
     )
     assert composer.model is not MISSING and not isinstance(composer.model, Missing)
     assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)

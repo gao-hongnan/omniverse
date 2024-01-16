@@ -1,13 +1,17 @@
 from dataclasses import dataclass, field
-from typing import Any, Dict, List
+from typing import Dict, List
 
 import torch
 
-from omnivault.transformer.core.dataset import AdderDatasetYield
+from omnivault.transformer.config.composer import DataConfig
+from omnivault.transformer.config.constants import MaybeConstant
+from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
+from omnivault.transformer.core.tokenizer import AdderTokenizer
+from omnivault.transformer.core.vocabulary import AdderVocabulary
 
 
 @dataclass
-class GroundTruth:
+class AdderGroundTruth:
     token_to_index: Dict[str, int] = field(  # TODO: consider using Literal
         default_factory=lambda: {
             "0": 0,
@@ -56,10 +60,6 @@ class GroundTruth:
     # test bad sequences like 01+02=03?
     seq_len: int = 10  # all sequences are padded to this length in this test example
 
-    collate_fn: Dict[str, Any] = field(
-        default_factory=lambda: {"batch_first": True, "pad_token_id": 16},
-        metadata={"description": "The collate function config."},
-    )
     sequences: List[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
     tokenized_sequences: List[List[str]] = field(
         default_factory=lambda: [
@@ -216,3 +216,36 @@ class GroundTruth:
             (self.inputs[i], self.targets[i], self.padding_masks[i], self.future_masks[i])
             for i in range(len(self.inputs))
         ]
+
+
+ADDER_GROUND_TRUTH = AdderGroundTruth()
+
+adder_mock_batch_ = ADDER_GROUND_TRUTH.mock_batch
+
+constants = MaybeConstant(
+    NUM_DIGITS=2,
+    TOKENS=["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "*", "-", "=", "<BOS>", "<EOS>", "<PAD>", "<UNK>"],
+)
+adder_vocab_ = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
+adder_tokenizer_ = AdderTokenizer(vocabulary=adder_vocab_)
+
+data = DataConfig(
+    context_length=11,
+    dataset_name="adder_dataset",
+    dataset_size=10000,
+    dataset_path="./data/adder/adder_dataset.txt",
+    dataset_dir="./data/adder",
+    dataset_url="https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/omnivault/transformer/projects/adder/assets/adder_dataset.txt",
+    split=[0.7, 0.2, 0.1],
+    collate_fn={"batch_first": True, "pad_token_id": 16},
+    train_loader={"batch_size": 256, "shuffle": True, "num_workers": 0, "pin_memory": False, "drop_last": False},
+    valid_loader={"batch_size": 256, "shuffle": False, "num_workers": 0, "pin_memory": False, "drop_last": False},
+    test_loader={"batch_size": 128, "shuffle": False, "num_workers": 0, "pin_memory": False, "drop_last": False},
+)
+with open(data.dataset_path, "r") as file:
+    sequences = [line.strip() for line in file]
+
+adder_dataset_ = AdderDataset(
+    data=sequences, tokenizer=adder_tokenizer_
+)  # NOTE: for end2end test, so load a small dataset here.
+adder_mock_dataset_ = AdderDataset(data=adder_mock_batch_, tokenizer=adder_tokenizer_)  # type: ignore[arg-type]
