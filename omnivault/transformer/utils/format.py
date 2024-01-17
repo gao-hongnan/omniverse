@@ -25,7 +25,7 @@ def process_history(history: Dict[str, List[float]], plot: bool = False) -> Tupl
         steps_df.plot(ax=axes[0], title="Steps")
         epochs_df.plot(ax=axes[1], title="Epochs")
         plt.tight_layout()
-        plt.show() # type: ignore[no-untyped-call]
+        plt.show()  # type: ignore[no-untyped-call]
 
     return steps_df, epochs_df
 
