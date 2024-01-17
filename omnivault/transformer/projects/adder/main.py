@@ -35,6 +35,7 @@ from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
+from omnivault.transformer.utils.format import plot_history
 from omnivault.transformer.utils.reproducibility import seed_all
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
@@ -290,6 +291,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
     _trained_state.pretty_print()
+    history = _trained_state.history
+    _ = plot_history(history)
 
     loaded_state = State.load_snapshots(
         filepath=trainer.best_checkpoint_path,

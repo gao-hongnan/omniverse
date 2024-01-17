@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Literal, Tuple
+import math
+from typing import Dict, List, Literal
 
 import matplotlib.pyplot as plt
-import pandas as pd
 from rich.console import Console
 from rich.logging import RichHandler
+import seaborn as sns
 
 
 def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
@@ -16,19 +17,30 @@ def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
     return format_str % lr_or_lrs
 
 
-def process_history(history: Dict[str, List[float]], plot: bool = False) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    steps_df = pd.DataFrame({k: v for k, v in history.items() if "step" in k})
-    epochs_df = pd.DataFrame({k: v for k, v in history.items() if "epoch" in k})
 
-    if plot:
-        fig, axes = plt.subplots(2)
-        steps_df.plot(ax=axes[0], title="Steps")
-        epochs_df.plot(ax=axes[1], title="Epochs")
-        plt.tight_layout()
-        plt.show()  # type: ignore[no-untyped-call]
+def plot_history(history: Dict[str, List[float]]) -> None:
+    sns.set(style="whitegrid")
+    plt.rcParams["font.family"] = "DejaVu Sans"
 
-    return steps_df, epochs_df
+    num_metrics = len(history.keys())
+    num_cols = 2
+    num_rows = math.ceil(num_metrics / num_cols)
 
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(15, 10))
+
+    axs = axs.flatten()
+
+    for i, metric in enumerate(history.keys()):
+        axs[i].plot(history[metric])
+        axs[i].set_title(metric)
+        axs[i].xaxis.set_major_locator(plt.MaxNLocator(integer=True))
+
+    # Remove unused subplots
+    for i in range(num_metrics, len(axs)):
+        fig.delaxes(axs[i])
+
+    plt.tight_layout()
+    plt.show()
 
 def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Logger:
     """
