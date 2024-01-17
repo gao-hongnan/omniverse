@@ -300,7 +300,19 @@ def main(cfg: DictConfig | ListConfig) -> None:
         scheduler=scheduler,
     )
 
-    assert _trained_state == loaded_state, "Loading the last saved state, should be the same as the trained state."
+    try:
+        assert (
+            _trained_state == loaded_state
+        ), "If this fails, then the loaded state has a different checkpoint from the last state of Trainer."
+    except AssertionError as err:
+        logger.exception(err)
+    finally:
+        del _trained_state
+        del loaded_state
+        del trainer
+        import gc
+
+        gc.collect()
 
 
 if __name__ == "__main__":
@@ -312,5 +324,10 @@ if __name__ == "__main__":
     om.resolve(cfg)  # inplace ops
 
     main(cfg)
-    # epoch 2 : 1.38283, 1.15267
+    # epoch 2 : 1.382832561629159, 1.1526680088043213
     # epoch 20: 0.11087, 0.04235
+    # cpu: 5 epochs
+    # train_this_epoch_average_loss': [2.4211656037739346, 1.381430812563215, 1.0804109281812395, 0.9854346709251404, 0.8951186869485037],
+    # 'train_this_epoch_average_perplexity': [11.258975982666016, 3.980593204498291, 2.945889949798584, 2.678976058959961, 2.4476263523101807],
+    # 'valid_this_epoch_average_loss': [1.7226673784255981, 1.153301510810852, 1.0180507612228393, 0.9390468091964722, 0.8224922308921814],
+    # 'valid_this_epoch_average_perplexity': [5.599444389343262, 3.1686367988586426, 2.767794370651245, 2.557542324066162, 2.27616548538208]

@@ -149,11 +149,7 @@ python omnivault/transformer/projects/adder/main.py \
     omnivault/transformer/projects/adder/config.yaml \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256
-python omnivault/transformer/projects/adder/main.py \
-    omnivault/transformer/projects/adder/config.yaml \
-    data.train_loader.batch_size=256 \
-    data.valid_loader.batch_size=256 \
-    trainer.max_epochs=20
+
 # if weight decay is 0, then it is as good as not applying custom weight decay to diff param groups:
 python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
 ```
@@ -293,3 +289,52 @@ Parameter Group 0
 │   tokenizer=<omnivault.transformer.core.tokenizer.AdderTokenizer object at 0x137d4ec40>
 )
 ```
+
+## Results
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=3 \
+    trainer.device='cpu'
+```
+
+│ 'valid_this_epoch_average_loss': [1.7226673784255981, 1.1581441555023193,
+1.000551365852356], │ │ 'valid_this_epoch_average_perplexity':
+[5.599444389343262, 3.184018611907959, 2.719780921936035]
+
+### Run 1. CPU Bound 20 Epochs
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=20 \
+    trainer.device='cpu'
+```
+
+| Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
+| ----- | -------------- | -------------------- | -------------- | -------------------- |
+| 1     | 2.42116560     | 11.25897598          | 1.72266738     | 5.59944439           |
+| 2     | 1.38095001     | 3.97867942           | 1.15814416     | 3.18401861           |
+| 3     | 1.08565636     | 2.96138310           | 1.00055137     | 2.71978092           |
+| 4     | 0.97149544     | 2.64189243           | 0.90245709     | 2.46565390           |
+| 5     | 0.84379837     | 2.32518220           | 0.73687689     | 2.08939981           |
+| 6     | 0.70981541     | 2.03361583           | 0.64679867     | 1.90941834           |
+| 7     | 0.62240242     | 1.86339939           | 0.50294402     | 1.65358222           |
+| 8     | 0.51285011     | 1.67004418           | 0.38060882     | 1.46317518           |
+| 9     | 0.38310490     | 1.46683192           | 0.25848040     | 1.29496074           |
+| 10    | 0.29655651     | 1.34521854           | 0.20162616     | 1.22339058           |
+| 11    | 0.24845436     | 1.28204226           | 0.15636847     | 1.16925693           |
+| 12    | 0.21495370     | 1.23980451           | 0.13172702     | 1.14079690           |
+| 13    | 0.18957461     | 1.20873535           | 0.13184627     | 1.14093292           |
+| 14    | 0.16487235     | 1.17924261           | 0.08768568     | 1.09164488           |
+| 15    | 0.14672471     | 1.15803516           | 0.08021968     | 1.08352506           |
+| 16    | 0.13451685     | 1.14398396           | 0.06706810     | 1.06936824           |
+| 17    | 0.11999019     | 1.12748575           | 0.06959521     | 1.07207417           |
+| 18    | 0.11789565     | 1.12512672           | 0.05264705     | 1.05405760           |
+| 19    | 0.10456036     | 1.11022246           | 0.04009689     | 1.04091167           |
+| 20    | 0.10515899     | 1.11088717           | 0.04866121     | 1.04986465           |

@@ -1,7 +1,7 @@
 """State...Metadata...See how composer does it, quite elegant I'd say."""
 from __future__ import annotations
 
-from typing import Type, Union
+from typing import Dict, List, Type, Union
 
 import torch
 from pydantic import BaseModel, Field
@@ -54,6 +54,7 @@ class State(BaseModel):
         default=0,
         description="We do not add prefix train because it is understood and implied that the step number is the train due to how many gradients been stepped. Current step index and is only referring to the training step index. What is the difference between step and batch? In general, they coincide for when the epoch number is 1, but after the first epoch, we usually reset the batch index to 0, while the step index keeps increasing to the next epoch.",
     )
+    history: Dict[str, List[float]] = Field(default={}, description="History of metrics.")
 
     vocabulary: Vocabularies = Field(default=None, description="Vocabulary.")
     tokenizer: Tokenizers = Field(default=None, description="Tokenizer.")
@@ -96,6 +97,7 @@ class State(BaseModel):
             "epoch_index": self.epoch_index,
             "train_batch_index": self.train_batch_index,
             "step_index": self.step_index,
+            "history": self.history,
             "vocabulary": self.vocabulary,
             "tokenizer": self.tokenizer,
         }
@@ -118,6 +120,7 @@ class State(BaseModel):
         epoch_index = state["epoch_index"]
         train_batch_index = state["train_batch_index"]
         step_index = state["step_index"]
+        history = state["history"]
         vocabulary = state["vocabulary"]
         tokenizer = state["tokenizer"]
 
@@ -130,6 +133,7 @@ class State(BaseModel):
             epoch_index=epoch_index,
             train_batch_index=train_batch_index,
             step_index=step_index,
+            history=history,
             vocabulary=vocabulary,
             tokenizer=tokenizer,
         )
