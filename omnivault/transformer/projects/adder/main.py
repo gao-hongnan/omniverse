@@ -35,8 +35,9 @@ from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
-from omnivault.transformer.utils.format import plot_history
+from omnivault.transformer.utils.general_utils import create_directory, download_file, validate_and_cleanup
 from omnivault.transformer.utils.reproducibility import seed_all
+from omnivault.transformer.utils.visualization import save_plot_history
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
 # so maybe consider using my own code base
@@ -152,6 +153,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
     # logger
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
     assert isinstance(logger, logging.Logger)
+
+    create_directory(data.dataset_dir)
+    download_file(url=data.dataset_url, output_path=data.dataset_path)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
@@ -292,7 +296,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
     _trained_state.pretty_print()
     history = _trained_state.history
-    _ = plot_history(history)
+    _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
 
     loaded_state = State.load_snapshots(
         filepath=trainer.best_checkpoint_path,
@@ -303,19 +307,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
         scheduler=scheduler,
     )
 
-    try:
-        assert (
-            _trained_state == loaded_state
-        ), "If this fails, then the loaded state has a different checkpoint from the last state of Trainer."
-    except AssertionError as err:
-        logger.exception(err)
-    finally:
-        del _trained_state
-        del loaded_state
-        del trainer
-        import gc
-
-        gc.collect()
+    validate_and_cleanup(
+        state_1=_trained_state,
+        state_2=loaded_state,
+        objects=[model, criterion, optimizer, scheduler, tokenizer, vocabulary, trainer],
+        logger=None,
+    )
 
 
 if __name__ == "__main__":
@@ -327,10 +324,3 @@ if __name__ == "__main__":
     om.resolve(cfg)  # inplace ops
 
     main(cfg)
-    # epoch 2 : 1.382832561629159, 1.1526680088043213
-    # epoch 20: 0.11087, 0.04235
-    # cpu: 5 epochs
-    # train_this_epoch_average_loss': [2.4211656037739346, 1.381430812563215, 1.0804109281812395, 0.9854346709251404, 0.8951186869485037],
-    # 'train_this_epoch_average_perplexity': [11.258975982666016, 3.980593204498291, 2.945889949798584, 2.678976058959961, 2.4476263523101807],
-    # 'valid_this_epoch_average_loss': [1.7226673784255981, 1.153301510810852, 1.0180507612228393, 0.9390468091964722, 0.8224922308921814],
-    # 'valid_this_epoch_average_perplexity': [5.599444389343262, 3.1686367988586426, 2.767794370651245, 2.557542324066162, 2.27616548538208]

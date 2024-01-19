@@ -25,7 +25,7 @@ from omnivault.transformer.core.callbacks import (
 )
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
-from omnivault.transformer.utils.format import get_default_logger
+from omnivault.transformer.utils.general_utils import get_default_logger
 
 
 @runtime_checkable

@@ -70,6 +70,5 @@ class TrainerConfig(BaseModel):
     def set_and_create_timestamped_save_dir(cls: Type[TrainerConfig], v: str) -> str:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         v = f"{v}/{timestamp}"
-
         Path(v).mkdir(parents=True, exist_ok=True)
         return v

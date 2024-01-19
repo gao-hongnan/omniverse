@@ -1,13 +1,6 @@
 from __future__ import annotations
 
-import logging
-import math
-from typing import Dict, List, Literal
-
-import matplotlib.pyplot as plt
-from rich.console import Console
-from rich.logging import RichHandler
-import seaborn as sns
+from typing import Dict, List
 
 
 def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
@@ -17,63 +10,29 @@ def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
     return format_str % lr_or_lrs
 
 
+def create_markdown_table(data: Dict[str, List[int | float]]) -> str:
+    """Create a markdown table from a dictionary of lists. Run through prettier
+    for auto markdown formatting.
 
-def plot_history(history: Dict[str, List[float]]) -> None:
-    sns.set(style="whitegrid")
-    plt.rcParams["font.family"] = "DejaVu Sans"
-
-    num_metrics = len(history.keys())
-    num_cols = 2
-    num_rows = math.ceil(num_metrics / num_cols)
-
-    fig, axs = plt.subplots(num_rows, num_cols, figsize=(15, 10))
-
-    axs = axs.flatten()
-
-    for i, metric in enumerate(history.keys()):
-        axs[i].plot(history[metric])
-        axs[i].set_title(metric)
-        axs[i].xaxis.set_major_locator(plt.MaxNLocator(integer=True))
-
-    # Remove unused subplots
-    for i in range(num_metrics, len(axs)):
-        fig.delaxes(axs[i])
-
-    plt.tight_layout()
-    plt.show()
-
-def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Logger:
-    """
-    Sets up and returns a logger with RichHandler. If an existing logger is provided,
-    it returns the same logger without modifying it.
-
-    Parameters
-    ----------
-    name : str
-        The name of the logger.
-    level : str, optional
-        Logging level, by default "INFO".
-    logger : Optional[logging.Logger], optional
-        An existing logger instance, by default None.
-
-    Returns
+    Example
     -------
-    logging.Logger
-        Configured logger.
+    >>> data = {
+    ...     "Epoch": list(range(1, 4)),
+    ...     "Train Avg Loss": [2.4211656037739346, 1.3809500090735298, 1.0856563610349383],
+    ...     "Train Avg Perplexity": [11.258975982666016, 3.9786794185638428, 2.961383104324341],
+    ...     "Valid Avg Loss": [1.7226673784255981, 1.1581441555023193, 1.000551365852356],
+    ...     "Valid Avg Perplexity": [5.599444389343262, 3.184018611907959, 2.719780921936035]
+    ... }
+    >>> print(create_markdown_table(data))
     """
-    logger = logging.getLogger(name=logger_type)
-    logger.setLevel(logging.INFO)
-    logger.propagate = False  # To avoid duplicate logs in parent loggers
+    headers = " | ".join(data.keys())
+    markdown_table = f"| {headers} |\n"
 
-    if logger_type == "rich":
-        # Setup for Rich logging
-        console = Console()
-        rich_handler = RichHandler(console=console, level="INFO", show_time=True, show_path=False, show_level=True)
-        logger.addHandler(rich_handler)
-    else:
-        # Setup for basic logging
-        basic_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(basic_formatter)
-        logger.addHandler(stream_handler)
-    return logger
+    separator = " | ".join(["-----"] * len(data))
+    markdown_table += f"| {separator} |\n"
+
+    for i in range(len(next(iter(data.values())))):
+        row = " | ".join(f"{values[i]:.0f}" if key == "Epoch" else f"{values[i]:.8f}" for key, values in data.items())
+        markdown_table += f"| {row} |\n"
+
+    return markdown_table

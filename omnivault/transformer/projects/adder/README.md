@@ -290,7 +290,9 @@ Parameter Group 0
 )
 ```
 
-## Results
+## Experiments
+
+### Run 1. CPU Bound 3 Epochs (Debug)
 
 ```bash
 python omnivault/transformer/projects/adder/main.py \
@@ -301,11 +303,15 @@ python omnivault/transformer/projects/adder/main.py \
     trainer.device='cpu'
 ```
 
-│ 'valid_this_epoch_average_loss': [1.7226673784255981, 1.1581441555023193,
-1.000551365852356], │ │ 'valid_this_epoch_average_perplexity':
-[5.599444389343262, 3.184018611907959, 2.719780921936035]
+![history-cpu-3-epochs](./assets/history_cpu_3_epochs.png)
 
-### Run 1. CPU Bound 20 Epochs
+| Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
+| ----- | -------------- | -------------------- | -------------- | -------------------- |
+| 1     | 2.42116560     | 11.25897598          | 1.72266738     | 5.59944439           |
+| 2     | 1.38095001     | 3.97867942           | 1.15814416     | 3.18401861           |
+| 3     | 1.08565636     | 2.96138310           | 1.00055137     | 2.71978092           |
+
+### Run 2. CPU Bound 20 Epochs
 
 ```bash
 python omnivault/transformer/projects/adder/main.py \
@@ -315,6 +321,8 @@ python omnivault/transformer/projects/adder/main.py \
     trainer.max_epochs=20 \
     trainer.device='cpu'
 ```
+
+![history-cpu-20-epochs](./assets/history_cpu_20_epochs.png)
 
 | Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
 | ----- | -------------- | -------------------- | -------------- | -------------------- |
