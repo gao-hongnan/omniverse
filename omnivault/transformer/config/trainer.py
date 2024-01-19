@@ -39,7 +39,7 @@ class TrainerConfig(BaseModel):
     )
 
     # saving shenanigans
-    save_dir: Union[str, None] = Field(default="checkpoints", description="Directory to save checkpoints to.")
+    save_dir: str = Field(default="checkpoints", description="Directory to save checkpoints to.")
     save_every_epoch: bool = Field(default=False, description="Always save the model after each epoch.")
     save_best_only: bool = Field(default=True, description="Only save the best model.")
     monitor: str = Field(
