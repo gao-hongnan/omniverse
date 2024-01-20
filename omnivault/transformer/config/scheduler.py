@@ -1,3 +1,5 @@
+"""Module for creating PyTorch scheduler instances dynamically."""
+
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, Literal, Type
@@ -7,7 +9,11 @@ import torch
 from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
 RegisteredSchedulers = Literal[
-    "torch.optim.lr_scheduler.StepLR", "torch.optim.lr_scheduler.CosineAnnealingLR", "torch.optim.lr_scheduler.LambdaLR"
+    "torch.optim.lr_scheduler.StepLR",
+    "torch.optim.lr_scheduler.CosineAnnealingLR",
+    "torch.optim.lr_scheduler.LambdaLR",
+    "torch.optim.lr_scheduler.CosineAnnealingWarmRestarts",
+    "torch.optim.lr_scheduler.OneCycleLR",
 ]
 SCHEDULER_REGISTRY: Dict[str, Type[SchedulerConfig]] = {}
 
@@ -59,6 +65,47 @@ class StepLRConfig(SchedulerConfig):
 class CosineAnnealingLRConfig(SchedulerConfig):
     T_max: int
     eta_min: float = 0
+    last_epoch: int = -1
+    verbose: bool = False
+
+
+@register_scheduler("torch.optim.lr_scheduler.CosineAnnealingWarmRestarts")
+class CosineAnnealingWarmRestartsConfig(SchedulerConfig):
+    """See
+    https://wandb.ai/wandb_fc/tips/reports/How-to-Properly-Use-PyTorch-s-CosineAnnealingWarmRestarts-Scheduler--VmlldzoyMTA3MjM2
+    to see how to use this scheduler.
+    """
+
+    T_0: int
+    T_mult: int = 1
+    eta_min: float = 0
+    last_epoch: int = -1
+    verbose: bool = False
+
+
+@register_scheduler("torch.optim.lr_scheduler.OneCycleLR")
+class OneCycleLRConfig(SchedulerConfig):
+    """You can use a utils function to retrieve the constructor args of a class
+    dynamically.
+
+    Example
+    -------
+    >>> from omnivault.utils.general.python_shenanigans import get_init_args
+    >>> get_init_args(OneCycleLRConfig)
+    """
+
+    max_lr: float
+    total_steps: int
+    epochs: int
+    steps_per_epoch: int
+    pct_start: float = 0.3
+    anneal_strategy: Literal["cos", "linear"] = "cos"
+    cycle_momentum: bool = True
+    base_momentum: float = 0.85
+    max_momentum: float = 0.95
+    div_factor: float = 25.0
+    final_div_factor: float = 10000.0
+    three_phase: bool = False
     last_epoch: int = -1
     verbose: bool = False
 
