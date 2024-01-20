@@ -158,6 +158,13 @@ class Trainer:
         self.eval_every_n_steps = composer.trainer.eval_every_n_steps
         self.step_scheduler_on_batch_or_epoch = composer.trainer.step_scheduler_on_batch_or_epoch
 
+        # mixed precision training
+        self.use_amp = composer.trainer.use_amp
+        self.autocast_config = composer.trainer.autocast_config
+        self.context_manager = torch.autocast(device_type=self.device.type, **self.autocast_config) # no ops if not enabled
+        self.scaler_config = composer.trainer.scaler_config
+        self.scaler = torch.cuda.amp.GradScaler(**self.scaler_config) # type: ignore[no-untyped-call]
+
         # training stability
         self.clip_grad_norm   = composer.trainer.clip_grad_norm
         self.apply_weight_decay_to_different_param_groups = composer.trainer.apply_weight_decay_to_different_param_groups # but this is applied outside, anti-pattern?
@@ -231,8 +238,9 @@ class Trainer:
         batch_size = inputs.size(0)
 
         # fmt: off
-        logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
-        loss: torch.nn.Module   = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+        with self.context_manager:
+            logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
+            loss: torch.nn.Module   = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
         # model vs optimizer zero grad, the former is safer if you have >=2 optimizers
         self.model.zero_grad(set_to_none=True)
         loss.backward()

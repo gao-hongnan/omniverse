@@ -300,6 +300,9 @@ python omnivault/transformer/projects/adder/main.py \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
     trainer.max_epochs=3 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=False \
+    trainer.scaler_config.enabled=False \
     trainer.device='cpu'
 ```
 
@@ -319,6 +322,9 @@ python omnivault/transformer/projects/adder/main.py \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
     trainer.max_epochs=20 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=False \
+    trainer.scaler_config.enabled=False \
     trainer.device='cpu'
 ```
 
@@ -346,3 +352,21 @@ python omnivault/transformer/projects/adder/main.py \
 | 18    | 0.11789565     | 1.12512672           | 0.05264705     | 1.05405760           |
 | 19    | 0.10456036     | 1.11022246           | 0.04009689     | 1.04091167           |
 | 20    | 0.10515899     | 1.11088717           | 0.04866121     | 1.04986465           |
+
+### Run 2. CPU Bound 20 Epochs with Automatic Mixed Precision
+
+Note from
+[PyTorch's Autocasting documentation](https://pytorch.org/docs/stable/amp.html)
+you can also use `autocast` with `cpu` devices.
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=20 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=bfloat16 \
+    trainer.device='cpu'
+```

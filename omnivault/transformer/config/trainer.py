@@ -5,9 +5,10 @@ from pathlib import Path
 from typing import Any, Dict, Type, Union
 
 import torch
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from omnivault.transformer.utils.device import get_device
+from omnivault.transformer.utils.general_utils import PYTORCH_DTYPE_MAP
 
 __all__ = ["TrainerConfig"]
 
@@ -24,6 +25,23 @@ class TrainerConfig(BaseModel):
         description="Whether to step the scheduler on batch or epoch. "
         "If set to 'epoch', the scheduler will be stepped after each epoch. "
         "If set to 'batch', the scheduler will be stepped after each batch.",
+    )
+
+    # mixed precision training
+    use_amp: bool = Field(default=False, description="Whether to use automatic mixed precision training.")
+    autocast_config: Dict[str, Any] = Field(
+        default={"enabled": False, "dtype": torch.float16, "cache_enabled": True},
+        description="Autocast configuration, for details of the params, see `torch.cuda.amp.autocast`.",
+    )
+    scaler_config: Dict[str, Any] = Field(
+        default={
+            "enabled": False,
+            "init_scale": 2.0**16,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+        },
+        description="Grad scaler configuration, for details of the params, see `torch.cuda.amp.GradScaler`. If not enabled, it is a no ops.",
     )
 
     # training stability
@@ -72,3 +90,15 @@ class TrainerConfig(BaseModel):
         v = f"{v}/{timestamp}"
         Path(v).mkdir(parents=True, exist_ok=True)
         return v
+
+    @model_validator(mode="after")
+    def validate_autocast_config(self) -> TrainerConfig:
+        use_amp = self.use_amp
+        autocast_config = self.autocast_config
+        if use_amp and not autocast_config["enabled"]:
+            raise ValueError("If use_amp is True, autocast_config must be enabled.")
+
+        for key, value in autocast_config.items():
+            if key == "dtype" and value in PYTORCH_DTYPE_MAP:
+                autocast_config[key] = PYTORCH_DTYPE_MAP[value]
+        return self
