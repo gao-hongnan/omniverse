@@ -16,7 +16,8 @@ from rich.logging import RichHandler
 
 from omnivault.transformer.core.state import State
 
-PYTORCH_DTYPE_MAP = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}
+PYTORCH_DTYPE_MAP = {"float32": torch.float32, "bfloat16": torch.bfloat16, "float16": torch.float16}
+
 
 def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Logger:
     """

@@ -1,4 +1,4 @@
-# type: ignore[no-untyped-call]
+# mypy: disable-error-code="no-untyped-call"
 from __future__ import annotations
 
 import inspect
@@ -245,8 +245,8 @@ class Trainer:
         # fmt: off
         with self.context_manager: # no ops if not enabled
             logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
-            loss: torch.nn.Module   = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
-            loss: torch.nn.Module   = loss / self.gradient_accumulation_steps # NOTE: no ops if gradient_accumulation_steps=1
+            loss: torch.Tensor  = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+            loss: torch.Tensor  = loss / self.gradient_accumulation_steps # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
 
         self.scaler.scale(loss).backward() # NOTE: no ops if scaler is not enabled
 
