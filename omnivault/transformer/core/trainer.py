@@ -1,3 +1,4 @@
+# type: ignore[no-untyped-call]
 from __future__ import annotations
 
 import inspect
@@ -163,7 +164,10 @@ class Trainer:
         self.autocast_config = composer.trainer.autocast_config
         self.context_manager = torch.autocast(device_type=self.device.type, **self.autocast_config) # no ops if not enabled
         self.scaler_config = composer.trainer.scaler_config
-        self.scaler = torch.cuda.amp.GradScaler(**self.scaler_config) # type: ignore[no-untyped-call]
+        self.scaler = torch.cuda.amp.GradScaler(**self.scaler_config)
+
+        # gradient accumulation
+        self.gradient_accumulation_steps = composer.trainer.gradient_accumulation_steps
 
         # training stability
         self.clip_grad_norm   = composer.trainer.clip_grad_norm
@@ -184,6 +188,7 @@ class Trainer:
         self.epoch_index = 0
         self.train_batch_index = 0
         self.step_index = 0
+        self.tokens_per_step = composer.data.train_loader["batch_size"] * composer.data.context_length # see nanogpt
         self.callbacks: Dict[str, List[TrainerCallback]] = defaultdict(list)
 
         # additional metrics, ideally metrics is implemented as callback and injected into trainer
@@ -238,21 +243,28 @@ class Trainer:
         batch_size = inputs.size(0)
 
         # fmt: off
-        with self.context_manager:
+        with self.context_manager: # no ops if not enabled
             logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
             loss: torch.nn.Module   = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
-        # model vs optimizer zero grad, the former is safer if you have >=2 optimizers
-        self.model.zero_grad(set_to_none=True)
-        loss.backward()
+            loss: torch.nn.Module   = loss / self.gradient_accumulation_steps # NOTE: no ops if gradient_accumulation_steps=1
+
+        self.scaler.scale(loss).backward() # NOTE: no ops if scaler is not enabled
 
         this_batch_average_loss: float = loss.item() # because reduction="mean"
         this_batch_total_loss  : float = this_batch_average_loss * batch_size
         this_batch_average_perplexity: float = self.perplexity(logits, targets).item() # torch.exp(this_batch_average_loss)
 
-        if self.clip_grad_norm:
-            nn.utils.clip_grad_norm_(self.model.parameters(), **self.clip_grad_norm)
+        # if grad accum is 1 then this is our normal training because any integer
+        # modulo 1 is 0 so this if loop will be executed after every batch!
+        if (self.train_batch_index + 1) % self.gradient_accumulation_steps == 0:
+            if self.clip_grad_norm and self.clip_grad_norm["max_norm"] != 0.0:
+                self.scaler.unscale_(self.optimizer)
+                nn.utils.clip_grad_norm_(self.model.parameters(), **self.clip_grad_norm)
 
-        self.optimizer.step()
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+            # model vs optimizer zero grad, the former is safer if you have >=2 optimizers
+            self.model.zero_grad(set_to_none=True)
 
         # Step the scheduler after each batch if specified
         if self.scheduler and self.step_scheduler_on_batch_or_epoch == "batch":

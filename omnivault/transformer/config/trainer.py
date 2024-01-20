@@ -44,6 +44,11 @@ class TrainerConfig(BaseModel):
         description="Grad scaler configuration, for details of the params, see `torch.cuda.amp.GradScaler`. If not enabled, it is a no ops.",
     )
 
+    # gradient accumulation
+    gradient_accumulation_steps: int = Field(
+        default=1, description="Number of gradient accumulation steps before performing a backward/update pass."
+    )
+
     # training stability
     # 1. gradient clipping
     clip_grad_norm: Union[Dict[str, Any], None] = Field(

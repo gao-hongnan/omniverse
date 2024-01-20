@@ -1,5 +1,21 @@
 # Two Digits Adder
 
+-   [Two Digits Adder](#two-digits-adder)
+    -   [Overview](#overview)
+    -   [Setup and Installation](#setup-and-installation)
+        -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
+        -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
+        -   [Step 3: Install Dependencies](#step-3-install-dependencies)
+        -   [Step 4: Download and Set Up the Adder Dataset](#step-4-download-and-set-up-the-adder-dataset)
+        -   [Step 5: Configuring the Dataset](#step-5-configuring-the-dataset)
+        -   [Run The Pipeline](#run-the-pipeline)
+    -   [Experiments](#experiments)
+        -   [Run 1. CPU Bound 3 Epochs (Debug)](#run-1-cpu-bound-3-epochs-debug)
+        -   [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
+        -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
+        -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+        -   [Run X: Gradient Accumulation](#run-x-gradient-accumulation)
+
 ## Overview
 
 This project implements a training pipeline for the Adder dataset, with
@@ -292,6 +308,12 @@ Parameter Group 0
 
 ## Experiments
 
+Note that for general CPU bound experiments, I expect my seeding mechanism to
+work and is reproducible almost everywhere. But for GPU bound experiments, I
+expect my seeding mechanism to work only on the same class of GPU (e.g. A100)
+and not across different classes of GPUs (e.g. A100 vs V100) but the difference
+is almost negligible. Do not ask me about MPS, thank you.
+
 ### Run 1. CPU Bound 3 Epochs (Debug)
 
 ```bash
@@ -322,6 +344,7 @@ python omnivault/transformer/projects/adder/main.py \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
     trainer.max_epochs=20 \
+    trainer.gradient_accumulation_steps=1 \
     trainer.use_amp=False \
     trainer.autocast_config.enabled=False \
     trainer.scaler_config.enabled=False \
@@ -353,7 +376,7 @@ python omnivault/transformer/projects/adder/main.py \
 | 19    | 0.10456036     | 1.11022246           | 0.04009689     | 1.04091167           |
 | 20    | 0.10515899     | 1.11088717           | 0.04866121     | 1.04986465           |
 
-### Run 2. CPU Bound 20 Epochs with Automatic Mixed Precision
+### Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision
 
 Note from
 [PyTorch's Autocasting documentation](https://pytorch.org/docs/stable/amp.html)
@@ -365,8 +388,75 @@ python omnivault/transformer/projects/adder/main.py \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
     trainer.max_epochs=20 \
-    trainer.use_amp=False \
+    trainer.use_amp=True \
     trainer.autocast_config.enabled=True \
     trainer.autocast_config.dtype=bfloat16 \
+    trainer.scaler_config.enabled=False \
     trainer.device='cpu'
 ```
+
+| Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
+| ----- | -------------- | -------------------- | -------------- | -------------------- |
+| 1     | 2.42121410     | 11.25952148          | 1.72274739     | 5.59989262           |
+| 2     | 1.38103134     | 3.97900343           | 1.15812683     | 3.18396354           |
+| 3     | 1.08579203     | 2.96178484           | 1.00137327     | 2.72201729           |
+| 4     | 0.96206112     | 2.61708498           | 0.87629939     | 2.40199447           |
+| 5     | 0.84047511     | 2.31746769           | 0.73473563     | 2.08493066           |
+| 6     | 0.69479896     | 2.00330615           | 0.61569004     | 1.85093343           |
+| 7     | 0.62559632     | 1.86936045           | 0.52938478     | 1.69788742           |
+| 8     | 0.56361997     | 1.75702143           | 0.50377386     | 1.65495503           |
+| 9     | 0.51176658     | 1.66823566           | 0.40421455     | 1.49812531           |
+| 10    | 0.41958063     | 1.52132344           | 0.28967084     | 1.33598769           |
+| 11    | 0.34217327     | 1.40800428           | 0.22319898     | 1.25006926           |
+| 12    | 0.28290846     | 1.32698369           | 0.17602104     | 1.19246316           |
+| 13    | 0.24093854     | 1.27244282           | 0.16882722     | 1.18391562           |
+| 14    | 0.21423461     | 1.23891330           | 0.12139948     | 1.12907588           |
+| 15    | 0.18088057     | 1.19827211           | 0.10155004     | 1.10688531           |
+| 16    | 0.15750701     | 1.17058897           | 0.08484399     | 1.08854723           |
+| 17    | 0.14483654     | 1.15585065           | 0.07683181     | 1.07986045           |
+| 18    | 0.12972381     | 1.13851392           | 0.05752651     | 1.05921340           |
+| 19    | 0.11486193     | 1.12171853           | 0.05551502     | 1.05708492           |
+| 20    | 0.11150095     | 1.11795485           | 0.04883840     | 1.05005062           |
+
+### Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=20 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=bfloat16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cpu'
+```
+
+| Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
+| ----- | -------------- | -------------------- | -------------- | -------------------- |
+| 1     | 2.42121410     | 11.25952148          | 1.72274739     | 5.59989262           |
+| 2     | 1.38103134     | 3.97900343           | 1.15812683     | 3.18396354           |
+| 3     | 1.08579203     | 2.96178484           | 1.00137327     | 2.72201729           |
+| 4     | 0.96206112     | 2.61708498           | 0.87629939     | 2.40199447           |
+| 5     | 0.84047511     | 2.31746769           | 0.73473563     | 2.08493066           |
+| 6     | 0.69479896     | 2.00330615           | 0.61569004     | 1.85093343           |
+| 7     | 0.62559632     | 1.86936045           | 0.52938478     | 1.69788742           |
+| 8     | 0.56361997     | 1.75702143           | 0.50377386     | 1.65495503           |
+| 9     | 0.51176658     | 1.66823566           | 0.40421455     | 1.49812531           |
+| 10    | 0.41958063     | 1.52132344           | 0.28967084     | 1.33598769           |
+| 11    | 0.34217327     | 1.40800428           | 0.22319898     | 1.25006926           |
+| 12    | 0.28290846     | 1.32698369           | 0.17602104     | 1.19246316           |
+| 13    | 0.24093854     | 1.27244282           | 0.16882722     | 1.18391562           |
+| 14    | 0.21423461     | 1.23891330           | 0.12139948     | 1.12907588           |
+| 15    | 0.18088057     | 1.19827211           | 0.10155004     | 1.10688531           |
+| 16    | 0.15750701     | 1.17058897           | 0.08484399     | 1.08854723           |
+| 17    | 0.14483654     | 1.15585065           | 0.07683181     | 1.07986045           |
+| 18    | 0.12972381     | 1.13851392           | 0.05752651     | 1.05921340           |
+| 19    | 0.11486193     | 1.12171853           | 0.05551502     | 1.05708492           |
+| 20    | 0.11150095     | 1.11795485           | 0.04883840     | 1.05005062           |
+
+### Run X: Gradient Accumulation
+
+See
+[the playbook here](https://pytorch.org/docs/stable/notes/amp_examples.html).
