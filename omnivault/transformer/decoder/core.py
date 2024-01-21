@@ -311,8 +311,9 @@ class GPTDecoder(BaseDecoder):
         ----------
         starting_tokens : Union[torch.LongTensor, List[int]]
             The initial tokens / starting_tokens from which the generation begins.
-            Can be a list of integers or a LongTensor.
-            Shape: (L,) or (1, L)
+            Can be a list of integers or a LongTensor. It can be a batch of sequences
+            too.
+            Shape: (L,) or (1, L) or (B, L)
         max_tokens : int
             The maximum number of tokens to generate. Default is 100.
         temperature : float
