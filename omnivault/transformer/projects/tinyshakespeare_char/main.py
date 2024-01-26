@@ -175,7 +175,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
 
 if __name__ == "__main__":
-    # python omnivault/transformer/projects/tinyshakespeare_char/main.py omnivault/transformer/projects/tinyshakespeare_char/config.yaml global_.debug=true trainer.max_epochs=5 generator.max_tokens=100
     yaml_path = sys.argv[1]
     args_list = sys.argv[2:]
 
