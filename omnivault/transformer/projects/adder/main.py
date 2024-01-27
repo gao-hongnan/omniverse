@@ -4,13 +4,13 @@ import copy
 import logging
 import sys
 import time
+import warnings
 
 import pandas as pd
 import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from rich.pretty import pprint
 from tqdm import tqdm
 
 from omnivault._types._alias import Missing
@@ -38,6 +38,8 @@ from omnivault.transformer.utils.config_utils import load_yaml_config, merge_con
 from omnivault.transformer.utils.general_utils import create_directory, download_file, validate_and_cleanup
 from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+
+warnings.filterwarnings("ignore", category=UserWarning)  # usually related to deterministic behavior of pytorch
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
 # so maybe consider using my own code base
@@ -145,12 +147,14 @@ def evaluate_and_generate_on_valid_epoch_end(
             trainer.logger.info("Early stopping evaluation.")
             break
 
-    trainer.logger.info("Correct/Total Samples: %d/%d", total_correct_across_samples, total_samples)
     accuracy = total_correct_across_samples / total_samples
     df = pd.DataFrame(all_predictions)
 
-    trainer.logger.info("Accuracy: %s", accuracy)
-    pprint(df)
+    trainer.logger.info("%-32s %d/%d", "Correct/Total Samples:", total_correct_across_samples, total_samples)
+    trainer.logger.info("%-32s %s", "Eval Accuracy:", accuracy)
+
+    df_str = df.to_string(index=False)
+    trainer.logger.info("\n%s", df_str)
 
 
 def main(cfg: DictConfig | ListConfig) -> None:

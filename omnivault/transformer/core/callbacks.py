@@ -66,7 +66,10 @@ def log_on_fit_start(trainer: Trainer) -> None:
 def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     phase_capitalized = phase.capitalize()
     trainer.logger.info(
-        "\n=== Starting %s Epoch: %d/%d ===", phase_capitalized, trainer.epoch_index, trainer.max_epochs
+        "====================================================== Starting %s Epoch: %d/%d ======================================================",
+        phase_capitalized,
+        trainer.epoch_index,
+        trainer.max_epochs,
     )
 
 
@@ -75,10 +78,23 @@ def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"])
     total_batches = len(dataloader)
     total_samples = len(dataloader.dataset)
     average_loss = trainer.metrics_dict[f"{phase}_this_epoch_average_loss"]
+    average_perplexity = trainer.metrics_dict[f"{phase}_this_epoch_average_perplexity"]
 
     phase_capitalized = phase.capitalize()
-    trainer.logger.info("%s - Total Samples: %d, Total Batches: %d", phase_capitalized, total_samples, total_batches)
-    trainer.logger.info("Average Epoch %s Loss: %.5f", phase_capitalized, average_loss)
+
+    labels = [
+        "Total Samples:",
+        "Total Batches:",
+        f"Average Epoch {phase_capitalized} Loss:",
+        f"Average Epoch {phase_capitalized} Perplexity:",
+    ]
+    max_width = max(len(label) for label in labels) + 1  # +1 for the space after the label
+
+    trainer.logger.info(f"%-{max_width}s %d", "Total Samples:", total_samples)
+    trainer.logger.info(f"%-{max_width}s %d", "Total Batches:", total_batches)
+    trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Loss:", average_loss)
+    trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Perplexity:", average_perplexity)
+    trainer.logger.info("\n")
 
 
 def log_on_fit_start_model_summary(trainer: Trainer) -> None:

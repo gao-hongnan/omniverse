@@ -14,7 +14,7 @@
         -   [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
         -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
         -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-        -   [Run 5. GPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+        -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
         -   [Run X: Gradient Accumulation](#run-x-gradient-accumulation)
 
 ## Overview
@@ -460,7 +460,7 @@ python omnivault/transformer/projects/adder/main.py \
 | 19    | 0.11486193     | 1.12171853           | 0.05551502     | 1.05708492           |
 | 20    | 0.11150095     | 1.11795485           | 0.04883840     | 1.05005062           |
 
-### Run 5. GPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler
+### Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler
 
 ```bash
 python omnivault/transformer/projects/adder/main.py \
@@ -468,7 +468,7 @@ python omnivault/transformer/projects/adder/main.py \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
     trainer.gradient_accumulation_steps=1 \
-    trainer.max_epochs=20 \
+    trainer.max_epochs=30 \
     trainer.use_amp=True \
     trainer.autocast_config.enabled=True \
     trainer.autocast_config.dtype=float16 \
