@@ -62,7 +62,6 @@ def evaluate_and_generate_on_valid_epoch_end(
 
     EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
     EOS = vocabulary.token_to_index[vocabulary.EOS]
-    eos_token = torch.tensor([EOS], device=trainer.device)
 
     model = trainer.model
     model.eval()
