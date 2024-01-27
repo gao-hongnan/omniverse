@@ -110,7 +110,9 @@ class AdderTokenizer(Tokenizer[AdderVocabulary]):
             )
         return decoded
 
-    def decode_batch(self, encoded_sequences: List[List[int]], remove_special_tokens: bool = True) -> List[str]:
+    def decode_batch(
+        self, encoded_sequences: List[List[int]] | torch.Tensor, remove_special_tokens: bool = True
+    ) -> List[str]:
         return [
             self.decode(encoded_sequence, remove_special_tokens=remove_special_tokens)
             for encoded_sequence in encoded_sequences

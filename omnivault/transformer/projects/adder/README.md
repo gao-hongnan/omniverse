@@ -467,6 +467,7 @@ python omnivault/transformer/projects/adder/main.py \
     omnivault/transformer/projects/adder/config.yaml \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
+    trainer.gradient_accumulation_steps=1 \
     trainer.max_epochs=20 \
     trainer.use_amp=True \
     trainer.autocast_config.enabled=True \

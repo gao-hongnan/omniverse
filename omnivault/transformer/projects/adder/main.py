@@ -56,6 +56,10 @@ def evaluate_and_generate_on_valid_epoch_end(
 
     vocabulary = trainer.state.vocabulary
     assert isinstance(vocabulary, AdderVocabulary)
+
+    tokenizer = trainer.state.tokenizer
+    assert isinstance(tokenizer, AdderTokenizer)
+
     EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
     EOS = vocabulary.token_to_index[vocabulary.EOS]
     eos_token = torch.tensor([EOS], device=trainer.device)
@@ -78,6 +82,7 @@ def evaluate_and_generate_on_valid_epoch_end(
         inputs, _, _, _ = batch
         inputs = inputs.to(trainer.device)
 
+        # example of 1 batch with 1 sample:
         # inputs:   [14, 9, 8, 10, 9, 9, 13, 1, 9, 7]
         # targets:  [    9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
         # equation: [14, 9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
@@ -89,43 +94,53 @@ def evaluate_and_generate_on_valid_epoch_end(
         batch_correct_predictions = 0
         batch_size = inputs.size(0)
 
-        for input in inputs:
-            total_samples += 1  # for sure it is 1 sample anyways
+        # [batch_size, 1]
+        # [[15], [15], ...]
+        eos_tokens_batch = torch.full((batch_size, 1), EOS, dtype=torch.long, device=trainer.device)
 
-            equation = torch.cat((input, eos_token), 0)  # this is the answer also
-            equation_decoded = trainer.state.tokenizer.decode(encoded_sequence=equation, remove_special_tokens=True)
+        # [batch_size, context_length] = [batch_size, 11] including <BOS> and <EOS>
+        # [[14,  1,  3, 10,  4,  8, 13,  0,  6,  1, 15], [14,  1,  6, 10,  5,  5, 13,  0,  7,  1, 15]]
+        equations = torch.cat((inputs, eos_tokens_batch), dim=1)  # this is the full equation with answer
+        equations_decoded = tokenizer.decode_batch(encoded_sequences=equations, remove_special_tokens=True)
 
-            equal_mask = equation == EQUAL
-            equal_index = torch.where(equal_mask)[0][0]
-            starting_tokens = equation[: equal_index + 1].unsqueeze(0)
+        # [batch_size,] = [6, 6, ...]
+        equal_indices = torch.where(equations == EQUAL)[1]  # .view(batch_size, -1)[:, 0]
 
-            generated_tokens = model.generate(
-                starting_tokens=starting_tokens,
-                **generator_config.model_dump(mode="python"),
+        # [batch_size, 7] because each starting token is <BOS>AB+CD=
+        starting_tokens_batch = torch.zeros(
+            batch_size, int(equal_indices[0].item()) + 1, dtype=torch.long, device=trainer.device
+        )
+        for i in range(batch_size):
+            starting_tokens_batch[i] = equations[i, : equal_indices[i] + 1]
+
+        # [batch_size, context_length] = [batch_size, 11] including <BOS> and <EOS>
+        generated_tokens_batch = model.generate(
+            starting_tokens=starting_tokens_batch,
+            **generator_config.model_dump(mode="python"),
+        )
+        generated_tokens_decoded = tokenizer.decode_batch(
+            encoded_sequences=generated_tokens_batch, remove_special_tokens=True
+        )
+        is_correct_batch = torch.all(torch.eq(generated_tokens_batch, equations), dim=1)
+
+        batch_correct_predictions = torch.sum(is_correct_batch).item()  # type: ignore[assignment]
+        total_correct_across_samples += batch_correct_predictions
+        batch_accuracy = batch_correct_predictions / batch_size
+        progress_bar.set_postfix_str(f"accuracy: {batch_accuracy:.4f}")
+
+        for _sample_index in range(batch_size):
+            total_samples += 1
+            is_correct = is_correct_batch[_sample_index]
+            all_predictions.append(
+                {
+                    "epoch": trainer.epoch_index,
+                    "batch_index": _batch_index,
+                    "sample_index": _sample_index,
+                    "equation": equations_decoded[_sample_index],
+                    "generated": generated_tokens_decoded[_sample_index],
+                    "correct": is_correct.item(),
+                }
             )
-            generated_tokens = generated_tokens.squeeze(0)
-            generated_tokens_decoded = trainer.state.tokenizer.decode(
-                encoded_sequence=generated_tokens, remove_special_tokens=True
-            )
-
-            is_correct = torch.all(torch.eq(generated_tokens, equation))
-
-            prediction_details = {
-                "epoch": trainer.epoch_index,
-                "batch_index": _batch_index,
-                "equation": equation_decoded,
-                "generated": generated_tokens_decoded,
-                "correct": is_correct.item(),
-            }
-
-            if is_correct:
-                total_correct_across_samples += 1
-                batch_correct_predictions += 1
-
-            batch_accuracy = batch_correct_predictions / batch_size
-            progress_bar.set_postfix_str(f"accuracy: {batch_accuracy:.4f}")
-
-            all_predictions.append(prediction_details)
 
         if num_batches_to_eval and _batch_index >= num_batches_to_eval:
             trainer.logger.info("Early stopping evaluation.")
