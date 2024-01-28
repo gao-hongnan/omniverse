@@ -72,6 +72,7 @@ def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", 
         trainer.max_epochs,
     )
 
+
 # TODO: add `phase` so can support valid and test
 def log_every_n_steps_on_batch_end(trainer: Trainer) -> None:
     if trainer.step_index % trainer.log_every_n_steps == 0:
@@ -86,8 +87,6 @@ def log_every_n_steps_on_batch_end(trainer: Trainer) -> None:
             train_this_batch_average_perplexity,
             lr_info,
         )
-
-
 
 
 def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
