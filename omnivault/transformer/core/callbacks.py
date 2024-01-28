@@ -72,6 +72,23 @@ def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", 
         trainer.max_epochs,
     )
 
+# TODO: add `phase` so can support valid and test
+def log_every_n_steps_on_batch_end(trainer: Trainer) -> None:
+    if trainer.step_index % trainer.log_every_n_steps == 0:
+        lr_info = f"LR: {trainer.scheduler.get_last_lr()[0]:.9f}" if trainer.scheduler else "LR: N/A"
+        train_this_batch_average_loss = trainer.metrics_dict["train_this_batch_average_loss"]
+        train_this_batch_average_perplexity = trainer.metrics_dict["train_this_batch_average_perplexity"]
+        trainer.logger.info(
+            "Epoch: %d, Step: %d, Avg Batch Loss: %.5f, Avg Batch Perplexity: %.5f, %s",
+            trainer.epoch_index,
+            trainer.step_index,
+            train_this_batch_average_loss,
+            train_this_batch_average_perplexity,
+            lr_info,
+        )
+
+
+
 
 def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
     dataloader = getattr(trainer, f"{phase}_loader")

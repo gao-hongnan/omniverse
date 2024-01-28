@@ -23,6 +23,7 @@ from omnivault.transformer.core.callbacks import (
     log_on_train_epoch_start,
     save_state,
     update_state,
+    log_every_n_steps_on_batch_end
 )
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
@@ -198,6 +199,7 @@ class Trainer:
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, update_state)
         self.add_callback(TrainerEvent.ON_FIT_START.value, log_on_fit_start)
+        self.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, log_every_n_steps_on_batch_end)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_START.value, log_on_train_epoch_start)
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_START.value, log_on_train_epoch_start)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, log_on_epoch_end)
@@ -242,17 +244,20 @@ class Trainer:
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
         batch_size = inputs.size(0)
 
-        # fmt: off
-        with self.context_manager: # no ops if not enabled
-            logits: torch.FloatTensor = self.model(inputs, target_padding_masks=target_padding_masks, future_masks=future_masks)
-            loss: torch.Tensor  = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
-            loss: torch.Tensor  = loss / self.gradient_accumulation_steps # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
+        with self.context_manager:  # no ops if not enabled
+            logits: torch.FloatTensor = self.model(
+                inputs, target_padding_masks=target_padding_masks, future_masks=future_masks
+            )
+            loss: torch.Tensor = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+            loss: torch.Tensor = loss / self.gradient_accumulation_steps  # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
 
-        self.scaler.scale(loss).backward() # NOTE: no ops if scaler is not enabled
+        self.scaler.scale(loss).backward()  # NOTE: no ops if scaler is not enabled
 
-        this_batch_average_loss: float = loss.item() # because reduction="mean"
-        this_batch_total_loss  : float = this_batch_average_loss * batch_size
-        this_batch_average_perplexity: float = self.perplexity(logits, targets).item() # torch.exp(this_batch_average_loss)
+        this_batch_average_loss: float = loss.item()  # because reduction="mean"
+        this_batch_total_loss: float = this_batch_average_loss * batch_size
+        this_batch_average_perplexity: float = self.perplexity(
+            logits, targets
+        ).item()  # torch.exp(this_batch_average_loss)
 
         # if grad accum is 1 then this is our normal training because any integer
         # modulo 1 is 0 so this if loop will be executed after every batch!
@@ -273,7 +278,10 @@ class Trainer:
         self.train_batch_index += 1
         self.step_index += 1
 
-        self.update_metrics_and_history(metric_name_or_names=["train_this_batch_average_loss", "train_this_batch_average_perplexity"], metric_value_or_values=[this_batch_average_loss, this_batch_average_perplexity])
+        self.update_metrics_and_history(
+            metric_name_or_names=["train_this_batch_average_loss", "train_this_batch_average_perplexity"],
+            metric_value_or_values=[this_batch_average_loss, this_batch_average_perplexity],
+        )
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_END.value)
         return this_batch_average_loss, this_batch_total_loss, this_batch_average_perplexity
 
@@ -343,18 +351,6 @@ class Trainer:
                     "lr": f"{self._get_current_lr_or_lrs():.9f}",
                 }
             )
-
-            # fmt: on
-            if _batch_index % self.log_every_n_steps == 0:
-                lr_info = f"LR: {self.scheduler.get_last_lr()[0]:.9f}" if self.scheduler else "LR: N/A"
-                self.logger.info(
-                    "Epoch: %d, Step: %d, Total Batch Loss: %.5f, Avg Batch Loss: %.5f, %s",
-                    self.epoch_index,
-                    _batch_index,
-                    this_batch_total_loss,
-                    this_batch_average_loss,
-                    lr_info,
-                )
 
             if self.scheduler and self.step_scheduler_on_batch_or_epoch == "epoch":
                 self.scheduler.step()
