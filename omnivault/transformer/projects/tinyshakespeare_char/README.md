@@ -39,6 +39,7 @@ python omnivault/transformer/projects/tinyshakespeare_char/main.py \
 ```bash
 python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     omnivault/transformer/projects/tinyshakespeare_char/config.yaml \
+    global_.debug=False \
     trainer.device=auto \
     trainer.max_epochs=5 \
     trainer.log_every_n_steps=10000 \
@@ -63,7 +64,19 @@ python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     trainer.save_best_only=True \
     trainer.monitor=train_this_epoch_average_loss \
     trainer.mode=min \
-    model.d_model=128 \
+    data.context_length=256 \
     model.context_length=256 \
-    model.num_decoder_blocks=5
+    model.d_model=256 \
+    model.dropout=0.2 \
+    model.num_decoder_blocks=6 \
+    model.decoder_block.masked_self_attention_mha.H=6 \
+    model.decoder_block.masked_self_attention_mha.dropout=0.2 \
+    model.decoder_block.feed_forward.dropout=0.2 \
+    model.decoder_block.add_norm_1.dropout=0.2 \
+    model.decoder_block.add_norm_1.dropout=0.2 \
+    model.decoder_block.feed_forward.d_ff=1024 \
+    generator.max_tokens=1000 \
+    generator.temperature=1.0 \
+    generator.greedy=False \
+    generator.top_k=10
 ```
