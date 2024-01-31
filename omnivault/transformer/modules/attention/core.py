@@ -238,7 +238,7 @@ class MultiHeadedAttention(nn.Module):
 
         # mypy complains because it infers `O` as `Any` but it is actually a tensor.
         # You can either cast it to tensor or use `self.W_O.forward(context_vector_concat)`.
-        O = self.W_O(context_vector_concat) # context_vector_concat @ W_O -> LxD @ DxD = LxD
+        O = self.W_O(context_vector_concat)  # context_vector_concat @ W_O -> LxD @ DxD = LxD
         return O  # type: ignore[no-any-return]
 
     def _init_weights(self) -> None:
