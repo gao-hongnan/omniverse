@@ -1,5 +1,10 @@
 ```bash
-python omnivault/transformer/projects/tinyshakespeare_char/main.py omnivault/transformer/projects/tinyshakespeare_char/config.yaml global_.debug=true trainer.max_epochs=5 generator.max_tokens=100
+python omnivault/transformer/projects/tinyshakespeare_char/main.py \
+    omnivault/transformer/projects/tinyshakespeare_char/config.yaml \
+    global_.debug=true \
+    trainer.max_epochs=5 \
+    generator.max_tokens=100 \
+    trainer.device=cpu
 ```
 
 ```bash
