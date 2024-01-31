@@ -256,7 +256,7 @@ class Trainer:
         this_batch_average_loss: float = loss.item()  # because reduction="mean"
         this_batch_total_loss: float = this_batch_average_loss * batch_size
         this_batch_average_perplexity: float = self.perplexity(
-            logits.permute(0, 2, 1).contiguous(), targets.contiguous()
+            logits, targets
         ).item()  # torch.exp(this_batch_average_loss)
 
         # if grad accum is 1 then this is our normal training because any integer
@@ -382,7 +382,7 @@ class Trainer:
 
         this_batch_average_loss: float = loss.item()
         this_batch_total_loss: float = this_batch_average_loss * batch_size
-        this_batch_average_perplexity: float = self.perplexity(logits.permute(0, 2, 1).contiguous(), targets.contiguous()).item()
+        this_batch_average_perplexity: float = self.perplexity(logits, targets).item()
 
         self.update_metrics_and_history(
             metric_name_or_names=["valid_this_batch_average_loss", "valid_this_batch_average_perplexity"],

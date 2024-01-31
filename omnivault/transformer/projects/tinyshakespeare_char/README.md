@@ -39,7 +39,7 @@ python omnivault/transformer/projects/tinyshakespeare_char/main.py \
 ```bash
 python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     omnivault/transformer/projects/tinyshakespeare_char/config.yaml \
-    trainer.device=cpu \
+    trainer.device=auto \
     trainer.max_epochs=5 \
     trainer.log_every_n_steps=10000 \
     trainer.eval_every_n_steps=4000 \
