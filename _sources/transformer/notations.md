@@ -80,7 +80,7 @@ where
     in the vocabulary. For a token $x_i$, $f_{\text{stoi}}(x_i) = j$ means the
     token $x_i$ corresponds to the $j$-th word in the vocabulary $\mathcal{V}$.
 
-## Others
+### One-Hot Representation of Input Sequence $\mathbf{X}$
 
 -   $\mathbf{O}$: one-hot representation of the input sequence $\mathbf{X}$.
     This is a $L \times V$ matrix, where each row represents a token in the
@@ -106,6 +106,8 @@ where
         at the $i$-th position in the sequence $\mathbf{X}$. This row form is
         more important than column form.
 
+### $\mathbf{E}$: Embedding Matrix
+
 -   $\mathbf{E}$: is the embedding matrix defined as:
 
     $$
@@ -119,6 +121,8 @@ where
     -   $e_{j, d}$: is the embedding element at position $j, d$. For a word
         $v_j$ in the vocabulary $\mathcal{V}$, the corresponding row in
         $\mathbf{E}$ is the embedding vector for that word.
+
+### $\mathbf{Z}$: Output of the Embedding Layer
 
 -   $\mathbf{Z}$: is the output tensor of the embedding layer, obtained by
     matrix multiplying $\mathbf{O}$ with $\mathbf{E}$, and it is defined as:
@@ -155,6 +159,8 @@ where
         about the tokens in the sequence. The closer two vectors are in this
         embedding space, the more semantically similar they are.
 
+### $\mathbf{P}$: Positional Encoding Layer
+
 -   $\mathbf{P}$: is the positional encoding tensor, created with sinusoidal
     functions of different frequencies:
 
@@ -185,23 +191,26 @@ where
     -   $p_{i, d}$: is the element at position $i, d$ in the tensor
         $\mathbf{P}$.
 
--   Note that $\mathbf{P}$ is independent of $\mathbf{Z}$, and it's computed
+    Note that $\mathbf{P}$ is independent of $\mathbf{Z}$, and it's computed
     based on the positional encoding formula used in transformers, which uses
-    sinusoidal functions of different frequencies:
+    sinusoidal functions of different frequencies.
 
--   OVERWRITING $\mathbf{Z}$: After computing the positional encoding tensor
+### $\tilde{\mathbf{Z}}$: Output of the Positional Encoding Layer
+
+-   $\tilde{\mathbf{Z}}$: After computing the positional encoding tensor
     $\mathbf{P}$, we can update our original embeddings tensor $\mathbf{Z}$ to
     include positional information:
 
     $$
-    \mathbf{Z} = \mathbf{Z} + \mathbf{P}
+    \tilde{\mathbf{Z}} := \mathbf{Z} + \mathbf{P}
     $$
 
     This operation adds the positional encodings to the original embeddings,
     giving the final embeddings that are passed to subsequent layers in the
     Transformer model.
 
--   Or consider using $\mathbf{Z}^{'}$?
+    For simplicity of notation, we will use $\mathbf{Z}$ to refer to
+    $\tilde{\mathbf{Z}}$.
 
 (attention-notations)=
 
@@ -353,45 +362,19 @@ where
         $\text{softmax}(\cdot)$ is applied row-wise. The division by
         $\sqrt{d_k}$ is a scaling factor that helps in training stability.
 
----
-
--   $\mathbf{h}_i \in \mathbb{R}^{p_v}$: Output of the $i$-th attention head.
-
--   $\mathbf{W}_o \in \mathbb{R}^{p_o \times h p_v}$: Output weight matrix, used
-    to transform the concatenation of all head outputs.
-
--   $p_o$: Dimension of the final output after applying the output weight matrix
-    $\mathbf{W}_o$.
-
-Let's break this down:
-
--   $\mathbf{h}_i \in \mathbb{R}^{p_v}$: Output of the $i$-th attention head. It
-    is computed as a function $f$ which applies attention (such as additive
-    attention or scaled dot-product attention) to the transformed queries, keys
-    and values. This function depends on the query $\mathbf{q}$, key
-    $\mathbf{k}$, and value $\mathbf{v}$, and the weight matrices
-    $\mathbf{W}_i^{(q)}$, $\mathbf{W}_i^{(k)}$, and $\mathbf{W}_i^{(v)}$. The
-    dimensions $p_q$, $p_k$, and $p_v$ denote the output dimensions of the
-    query, key and value transformations respectively, for the $i$-th head.
-
--   $\mathbf{W}_i^{(q)} \in \mathbb{R}^{p_q \times d_q}$,
-    $\mathbf{W}_i^{(k)} \in \mathbb{R}^{p_k \times d_k}$, and
-    $\mathbf{W}_i^{(v)} \in \mathbb{R}^{p_v \times d_v}$: The weight matrices
-    for the $i$-th attention head. These are used to transform the query, key,
-    and value inputs to the dimensions suitable for the attention mechanism.
-
--   $f(\cdot)$: This function represents the attention mechanism (like additive
-    attention or scaled dot-product attention). It takes as input the
-    transformed query, key, and value vectors and produces the output of the
-    attention head.
-
--   $\mathbf{W}_o \in \mathbb{R}^{p_o \times h p_v}$: This is the output weight
+-   $\mathbf{W}^{o} \in \mathbb{R}^{D \times D}$: This is the output weight
     matrix that linearly transforms the concatenation of the outputs from all
     attention heads to produce the final output of the multi-head attention
     mechanism.
 
--   The expression
-    $\mathbf{W}_o\left[\begin{array}{c} \mathbf{h}_1 \\ \vdots \\ \mathbf{h}_h \end{array}\right] \in \mathbb{R}^{p_o}$
+-   $\text{context_vector}$ is the output of one single head.
+-   $\text{context_vector_concat}$ is the concatenation of all heads. Consider
+    use symbols here.
+
+-   MHA outputs:
+    $\text{context_vector_concat} \in \mathbb{R}^{L \times D} @ \mathbf{W}^{o} \in \mathbb{R}^{D \times D} = \mathbf{O} \in \mathbb{R}^{L \times D}$
     represents the final output of the multi-head attention layer. It's the
     result of applying the linear transformation defined by $\mathbf{W}_o$ to
     the concatenated outputs of all attention heads.
+
+    Abuse of notation again with $\mathbf{O}$.
