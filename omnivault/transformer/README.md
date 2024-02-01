@@ -19,7 +19,7 @@
             -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
             -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
             -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-        -   [Run X: Gradient Accumulation](#run-x-gradient-accumulation)
+        -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
             -   [Generalization](#generalization)
 
 ## Overview
@@ -495,7 +495,7 @@ python omnivault/transformer/projects/adder/main.py \
     trainer.device='cpu'
 ```
 
-![history-cpu-3-epochs](./assets/history_cpu_3_epochs.png)
+![history-cpu-3-epochs](./projects/adder/assets/history_cpu_3_epochs.png)
 
 | Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
 | ----- | -------------- | -------------------- | -------------- | -------------------- |
@@ -518,7 +518,7 @@ python omnivault/transformer/projects/adder/main.py \
     trainer.device='cpu'
 ```
 
-![history-cpu-20-epochs](./assets/history_cpu_20_epochs.png)
+![history-cpu-20-epochs](./projects/adder/assets/history_cpu_20_epochs.png)
 
 | Epoch | Train Avg Loss | Train Avg Perplexity | Valid Avg Loss | Valid Avg Perplexity |
 | ----- | -------------- | -------------------- | -------------- | -------------------- |
@@ -630,6 +630,7 @@ python omnivault/transformer/projects/adder/main.py \
     omnivault/transformer/projects/adder/config.yaml \
     data.train_loader.batch_size=256 \
     data.valid_loader.batch_size=256 \
+    optimizer.lr=0.2 \
     trainer.gradient_accumulation_steps=1 \
     trainer.max_epochs=30 \
     trainer.use_amp=True \
@@ -639,7 +640,7 @@ python omnivault/transformer/projects/adder/main.py \
     trainer.device='cuda'
 ```
 
-![history-cpu-20-epochs](./assets/history_gpu_amp_30_epochs.png)
+![history-cpu-30-epochs](./projects/adder/assets/history_gpu_amp_30_epochs.png)
 
 | Epoch | Train Avg Loss      | Train Avg Perplexity | Valid Avg Loss       | Valid Avg Perplexity |
 | ----- | ------------------- | -------------------- | -------------------- | -------------------- |
@@ -674,9 +675,49 @@ python omnivault/transformer/projects/adder/main.py \
 | 29    | 0.0783526828118733  | 1.081503987312317    | 0.028568922132253646 | 1.0289809703826904   |
 | 30    | 0.07325152178747313 | 1.0760011672973633   | 0.024026787236332895 | 1.024317741394043    |
 
-### Run X: Gradient Accumulation
+### Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    optimizer.lr=0.8 \
+    trainer.gradient_accumulation_steps=4 \
+    trainer.max_epochs=30 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda'
+```
+
+```bash
+# if weight decay is 0, then it is as good as not applying custom weight decay to diff param groups:
+python omnivault/transformer/projects/adder/main.py omnivault/transformer/projects/adder/config.yaml data.train_loader.batch_size=256 data.valid_loader.batch_size=256 trainer.apply_weight_decay_to_different_param_groups=True optimizer.weight_decay=1e-2
+```
 
 #### Generalization
 
+To test the "generalization", we can ask some questions that are not in the
+training set:
+
+```bash
+97+98=195
+96+96=192
+95+95=190
+```
+
+but we do not really need to do this since we split into `train-valid-test`
+already, and in a sense, the `valid` and `test` sets are "unseen" by the model,
+acting as a _rough_ holdout. Note this is very rough because there are leakage,
+the split does not guarantee that equations in the `train` set do not appear in
+the `valid` or `test` sets.
+
+> Important, we must use greedy generation and not top-k or top-p (nuclues)
+> sampling here because we really just want the model to output the exact
+> answer, and not some other answer that is close to the correct answer in the
+> distribution of the model's vocabulary.
+
 This also yields an validation accuracy of about 97.4% over 1000 samples
-(974/1000). Note however
+(974/1000).

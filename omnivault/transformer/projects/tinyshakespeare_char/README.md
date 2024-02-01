@@ -30,6 +30,13 @@ nohup python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     data.train_loader.batch_size=128 \
     data.train_loader.num_workers=8 \
     data.context_length=256 \
+    optimizer.name=torch.optim.AdamW \
+    optimizer.lr=0.0005 \
+    optimizer.weight_decay=0.01 \
+    criterion.name=torch.nn.CrossEntropyLoss \
+    criterion.reduction=mean \
+    criterion.label_smoothing=0.0 \
+    scheduler.name=torch.optim.lr_scheduler.CosineAnnealingLR \
     trainer.device=auto \
     trainer.max_epochs=5 \
     trainer.log_every_n_steps=10000 \
@@ -68,6 +75,25 @@ nohup python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     generator.temperature=1.0 \
     generator.greedy=False \
     generator.top_k=10 > nohup.log 2>&1 &
+```
+
+```
+│   optimizer=AdamWConfig(
+│   │   name='torch.optim.AdamW',
+│   │   lr=0.0005,
+│   │   betas=(0.9, 0.999),
+│   │   eps=1e-08,
+│   │   weight_decay=0.01,
+│   │   amsgrad=False
+│   ),
+│   criterion=CrossEntropyLossConfig(
+│   │   name='torch.nn.CrossEntropyLoss',
+│   │   weight=None,
+│   │   size_average=None,
+│   │   ignore_index=-100,
+│   │   reduction='mean',
+│   │   label_smoothing=0.0
+│   ),
 ```
 
 ```bash

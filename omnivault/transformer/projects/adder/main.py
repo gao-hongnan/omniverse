@@ -265,7 +265,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     criterion = criterion_pydantic_config.create_instance()
     assert criterion.ignore_index == vocabulary.token_to_index[vocabulary.PAD]
 
-    # Create Scheduler Noam
+    # Create Scheduler noam
     # TODO: this part is hardcoded in a way since we are using LambdaLR.
     # I do not have time to make it more "automated" so this is anti-config-pattern.
     warmup_steps = 3 * len(train_loader)

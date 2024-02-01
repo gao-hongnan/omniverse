@@ -20,6 +20,7 @@ from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
 from omnivault.transformer.config.logger import LoggerConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
+from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.callbacks import save_state
 from omnivault.transformer.core.dataset import TextCharacterDataset, create_loader, split_dataset
@@ -143,8 +144,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
     criterion = criterion_pydantic_config.create_instance()
     assert criterion.ignore_index == -100
 
-    # Create Scheduler
-    scheduler = None
+    # Create scheduler
+    scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
+    scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
+    assert composer.scheduler is MISSING  # now it is MISSING for us to fill up.
+    composer.scheduler = scheduler_pydantic_config
+    scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
 
     composer.pretty_print()
     time.sleep(1)
