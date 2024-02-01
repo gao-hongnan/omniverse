@@ -19,8 +19,8 @@
             -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
             -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
             -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-        -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
-            -   [Generalization](#generalization)
+            -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+        -   [Generalization](#generalization)
 
 ## Overview
 
@@ -719,7 +719,7 @@ Some examples of correct vs incorrect equations:
 | 30    | 1           | 55           | 92+98=190        | 92+98=180          | False   |
 | 30    | 1           | 90           | 66+83=149        | 66+83=159          | False   |
 
-### Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation
+#### Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation
 
 ```bash
 python omnivault/transformer/projects/adder/main.py \
@@ -771,7 +771,7 @@ python omnivault/transformer/projects/adder/main.py \
 | 29    | 0.07016685660396303 | 1.0726871490478516   | 0.026176551282405855 | 1.026522159576416    |
 | 30    | 0.06965843281575612 | 1.0721418857574463   | 0.024125553995370867 | 1.0244189500808716   |
 
-#### Generalization
+### Generalization
 
 To test the "generalization", we can ask some questions that are not in the
 training set:
