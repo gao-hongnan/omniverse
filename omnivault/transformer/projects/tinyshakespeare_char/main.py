@@ -32,6 +32,7 @@ from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_on_train_batch_end
 from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.reproducibility import seed_all
+from omnivault.transformer.utils.visualization import save_plot_history
 
 
 def main(cfg: DictConfig | ListConfig) -> None:
@@ -172,6 +173,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, save_state)
 
     _trained_state = trainer.fit(train_loader=train_loader)
+    history = _trained_state.history
+    _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
 
 
 if __name__ == "__main__":
