@@ -21,6 +21,10 @@
             -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
             -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
         -   [Generalization](#generalization)
+    -   [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
+        -   [Experiments](#experiments-1)
+            -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
+            -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
 
 ## Overview
 
@@ -681,24 +685,22 @@ python omnivault/transformer/projects/adder/main.py \
 
 Logs for the last epoch:
 
-```text
-                      INFO     ====================================================== Starting Train Epoch: 30/30 ======================================================                                                                                       callbacks.py:68
-[2024-02-01 09:09:31] INFO     Total Samples:                   7000                                                                                                                                                                                          callbacks.py:109
-                      INFO     Total Batches:                   28                                                                                                                                                                                            callbacks.py:110
-                      INFO     Average Epoch Train Loss:        0.06010                                                                                                                                                                                       callbacks.py:111
-                      INFO     Average Epoch Train Perplexity:  1.06194                                                                                                                                                                                       callbacks.py:112
-                      INFO                                                                                                                                                                                                                                    callbacks.py:113
+```log
+2024-02-01 09:09:29 [INFO] omnivault/transformer/core/callbacks.py log_on_train_epoch_start L68: ====================================================== Starting Train Epoch: 30/30 ======================================================
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L109: Total Samples:                   7000
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L110: Total Batches:                   28
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L111: Average Epoch Train Loss:        0.06010
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L112: Average Epoch Train Perplexity:  1.06194
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L113:
 
-                      INFO     ====================================================== Starting Valid Epoch: 30/30 ======================================================                                                                                       callbacks.py:68
-                      INFO     Total Samples:                   2000                                                                                                                                                                                          callbacks.py:109
-                      INFO     Total Batches:                   8                                                                                                                                                                                             callbacks.py:110
-                      INFO     Average Epoch Valid Loss:        0.02372                                                                                                                                                                                       callbacks.py:111
-                      INFO     Average Epoch Valid Perplexity:  1.02401                                                                                                                                                                                       callbacks.py:112
-                      INFO                                                                                                                                                                                                                                    callbacks.py:113
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_train_epoch_start L68: ====================================================== Starting Valid Epoch: 30/30 ======================================================
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L109: Total Samples:                   2000
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L110: Total Batches:                   8
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L111: Average Epoch Valid Loss:        0.02372
+2024-02-01 09:09:31 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L112: Average Epoch Valid Perplexity:  1.02401
 
-[2024-02-01 09:09:32] INFO     Correct/Total Samples:           981/1000                                                                                                                                                                                           main.py:153
-                      INFO     Eval Accuracy:                   0.981                                                                                                                                                                                              main.py:154
-                      INFO
+2024-02-01 09:09:32 [INFO] omnivault/transformer/projects/adder/main.py evaluate_and_generate_on_valid_epoch_end L153: Correct/Total Samples:           981/1000
+2024-02-01 09:09:32 [INFO] omnivault/transformer/projects/adder/main.py evaluate_and_generate_on_valid_epoch_end L154: Eval Accuracy:                   0.981
 ```
 
 Some examples of correct vs incorrect equations:
@@ -771,6 +773,27 @@ python omnivault/transformer/projects/adder/main.py \
 | 29    | 0.07016685660396303 | 1.0726871490478516   | 0.026176551282405855 | 1.026522159576416    |
 | 30    | 0.06965843281575612 | 1.0721418857574463   | 0.024125553995370867 | 1.0244189500808716   |
 
+Logs for the last epoch:
+
+```log
+2024-02-01 09:13:52 [INFO] omnivault/transformer/core/callbacks.py log_on_train_epoch_start L68: ====================================================== Starting Train Epoch: 30/30 ======================================================
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L109: Total Samples:                   7000
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L110: Total Batches:                   28
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L111: Average Epoch Train Loss:        0.06966
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L112: Average Epoch Train Perplexity:  1.07214
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L113:
+
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_train_epoch_start L68: ====================================================== Starting Valid Epoch: 30/30 ======================================================
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py save_state L53: Saved checkpoint at epoch 30 to ./data/adder/checkpoints/2024-02-01_09-11-54/model_checkpoint_epoch_30.pt
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L109: Total Samples:                   2000
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L110: Total Batches:                   8
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L111: Average Epoch Valid Loss:        0.02413
+2024-02-01 09:13:54 [INFO] omnivault/transformer/core/callbacks.py log_on_epoch_end L112: Average Epoch Valid Perplexity:  1.02442
+
+2024-02-01 09:13:55 [INFO] omnivault/transformer/projects/adder/main.py evaluate_and_generate_on_valid_epoch_end L153: Correct/Total Samples:           972/1000
+2024-02-01 09:13:55 [INFO] omnivault/transformer/projects/adder/main.py evaluate_and_generate_on_valid_epoch_end L154: Eval Accuracy:                   0.972
+```
+
 ### Generalization
 
 To test the "generalization", we can ask some questions that are not in the
@@ -795,3 +818,119 @@ the `valid` or `test` sets.
 
 This also yields an validation accuracy of about 97.4% over 1000 samples
 (974/1000).
+
+## Tiny Shakespeare (Character Token Level)
+
+### Experiments
+
+#### Run 1: CPU Bound 5 Epochs using Debug Mode
+
+```bash
+python omnivault/transformer/projects/tinyshakespeare_char/main.py \
+    omnivault/transformer/projects/tinyshakespeare_char/config.yaml \
+    global_.debug=true \
+    trainer.max_epochs=5 \
+    generator.max_tokens=100 \
+    trainer.device=cpu
+```
+
+#### Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler
+
+Note `NPROC` is to know what number to set for `num_workers` in the `DataLoader`
+for `train` and `valid` datasets.
+
+The command below is used in a VM training, remove the `nohup` and the logging
+pipes if you want to run it in your local machine.
+
+```bash
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+export NPROC=$(nproc)
+nohup python omnivault/transformer/projects/tinyshakespeare_char/main.py \
+    omnivault/transformer/projects/tinyshakespeare_char/config.yaml \
+    global_.debug=False \
+    data.train_loader.batch_size=128 \
+    data.train_loader.num_workers=8 \
+    data.context_length=256 \
+    optimizer.name=torch.optim.AdamW \
+    optimizer.lr=0.0005 \
+    optimizer.weight_decay=0.01 \
+    criterion.name=torch.nn.CrossEntropyLoss \
+    criterion.reduction=mean \
+    criterion.label_smoothing=0.0 \
+    scheduler.name=torch.optim.lr_scheduler.CosineAnnealingLR \
+    trainer.device=auto \
+    trainer.max_epochs=5 \
+    trainer.log_every_n_steps=10000 \
+    trainer.eval_every_n_steps=4000 \
+    trainer.step_scheduler_on_batch_or_epoch=epoch \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.scaler_config.init_scale=65536.0 \
+    trainer.scaler_config.growth_factor=2.0 \
+    trainer.scaler_config.backoff_factor=0.5 \
+    trainer.scaler_config.growth_interval=2000 \
+    trainer.gradient_accumulation_steps=1 \
+    trainer.clip_grad_norm.max_norm=1.0 \
+    trainer.clip_grad_norm.norm_type=2.0 \
+    trainer.clip_grad_norm.error_if_nonfinite=False \
+    trainer.clip_grad_norm.foreach=None \
+    trainer.apply_weight_decay_to_different_param_groups=False \
+    trainer.save_dir=./data/tinyshakespeare_char/checkpoints \
+    trainer.save_every_epoch=False \
+    trainer.save_best_only=True \
+    trainer.monitor=train_this_epoch_average_loss \
+    trainer.mode=min \
+    model.context_length=256 \
+    model.d_model=128 \
+    model.dropout=0.1 \
+    model.num_decoder_blocks=5 \
+    model.decoder_block.masked_self_attention_mha.H=8 \
+    model.decoder_block.masked_self_attention_mha.dropout=0.1 \
+    model.decoder_block.feed_forward.dropout=0.1 \
+    model.decoder_block.add_norm_1.dropout=0.1 \
+    model.decoder_block.add_norm_1.dropout=0.1 \
+    model.decoder_block.feed_forward.d_ff=512 \
+    generator.max_tokens=1000 \
+    generator.temperature=1.0 \
+    generator.greedy=False \
+    generator.top_k=10 > nohup.log 2>&1 &
+```
+
+![history-gpu-amp-30-epochs](./projects/tinyshakespeare_char/assets/history_gpu_amp_30_epochs.png)
+
+Some generated text towards the end of the 5th epoch, I cannot expect super
+coherence since it is a character level model, but it is still quite impressive:
+
+```log
+PAULINA:
+Some commonwealth men,
+When he shall not be censured, how that is,
+They was strike to be this prepared brother
+Should be things and condemn'd, forth other's life,
+She lies as she may be for our loves fly.
+
+Lord, if you will not, you shall share, say I
+There certainly to you find one or time
+To the sea with me; for I'll give the wear:
+On who should not less awth a sheart than your good father?
+
+DUKE VINCENTIO:
+I may sure these were a my heart:
+To cheer than the profings of your children's meant;
+Why, and, if you be a contruct hateful,
+If you not so, both, that you like a matter,
+For this days, therefore lay, be pleased
+A scamed that these may be not she is a coward.
+
+DERBY:
+Tell him, my lords,
+Throughly, bastard the matter-shapen that hath swear'd,
+And seems war a who too black and living firmls,
+Am I dash'd it stamp'd to dwell for my feast,
+For I wash the sight's duke of words to her son.
+
+HISTRENS OVERDONE:
+O capol! he is his head, and as he says he should.
+```
