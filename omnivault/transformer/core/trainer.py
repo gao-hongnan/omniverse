@@ -254,7 +254,7 @@ class Trainer:
         self.scaler.scale(loss).backward()  # NOTE: no ops if scaler is not enabled
 
         this_batch_average_loss: float = loss.item()  # because reduction="mean"
-        this_batch_total_loss: float = this_batch_average_loss * batch_size
+        this_batch_total_loss: float = this_batch_average_loss * batch_size * self.gradient_accumulation_steps
         this_batch_average_perplexity: float = self.perplexity(
             logits, targets
         ).item()  # torch.exp(this_batch_average_loss)
