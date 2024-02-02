@@ -9,33 +9,40 @@ import keras
 import keras_nlp
 import numpy as np
 import tensorflow as tf
-import tensorflow.data as tf_data
-import tensorflow.strings as tf_strings
 import tensorflow_datasets as tfds
 import torch
 from keras.saving import deserialize_keras_object
-from rich.pretty import pprint
-from tensorflow.data import TextLineDataset
-from tensorflow.keras.utils import get_file
+from keras_nlp.samplers import Sampler
+from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
 from omnivault.transformer.config.composer import Composer
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
-from omnivault.transformer.config.decoder import *
+from omnivault.transformer.config.decoder import (
+    AddNormConfig,
+    DecoderBlockConfig,
+    DecoderConfig,
+    MultiHeadedAttentionConfig,
+    PositionwiseFeedForwardConfig,
+)
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.optim import OPTIMIZER_REGISTRY
-from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY, LambdaLRConfig
+from omnivault.transformer.config.scheduler import SCHEDULER_REGISTRY
 from omnivault.transformer.config.trainer import TrainerConfig
 from omnivault.transformer.core.dataset import (
     construct_dummy_batch_future_masks,
     construct_dummy_batch_target_padding_masks,
 )
 from omnivault.transformer.core.state import State
-from omnivault.transformer.core.trainer import Trainer, TrainerEvent
+from omnivault.transformer.core.trainer import Trainer
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
+from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+
+seed_all()
+tf.random.set_seed(1992)
 
 # Paths
 DATA_URL: str = "https://dldata-public.s3.us-east-2.amazonaws.com/simplebooks.zip"
@@ -60,10 +67,12 @@ def download_and_extract_data(url: str) -> str:
     return keras.utils.get_file(origin=url, extract=True)
 
 
-def prepare_dataset(file_path: str, batch_size: int, min_string_len: int, shuffle: bool = False) -> TextLineDataset:
+def prepare_dataset(
+    file_path: str, batch_size: int, min_string_len: int, shuffle: bool = False
+) -> tf.data.TextLineDataset:
     """Prepare the dataset by loading, filtering and batching."""
-    dataset = TextLineDataset(file_path)
-    dataset = dataset.filter(lambda x: tf_strings.length(x) > min_string_len)
+    dataset = tf.data.TextLineDataset(file_path)
+    dataset = dataset.filter(lambda x: tf.strings.length(x) > min_string_len)
     if shuffle:
         dataset = dataset.shuffle(buffer_size=256)
     return dataset.batch(batch_size)
@@ -80,9 +89,9 @@ def load_vocab(vocab_file: str) -> List[str]:
         with open(vocab_file, "rb") as f:
             vocab_config = pickle.load(f)
     except FileNotFoundError:
-        raise Exception(f"Vocabulary file not found: {vocab_file}")
-    except Exception as e:
-        raise Exception(f"Error loading vocabulary: {str(e)}")
+        raise Exception(f"Vocabulary file not found: {vocab_file}") from None
+    except Exception as err:
+        raise Exception(f"Error loading vocabulary: {str(err)}") from err
 
     return deserialize_keras_object(vocab_config)
 
@@ -155,7 +164,7 @@ def prepare_dataset(
     tf.data.Dataset
         The processed and batched dataset.
     """
-    return dataset.map(preprocess_fn, num_parallel_calls=tf_data.AUTOTUNE).prefetch(tf_data.AUTOTUNE)
+    return dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
 
 
 train_ds = prepare_dataset(raw_train_ds, preprocess)
@@ -354,21 +363,13 @@ gc.collect()
 # Clear GPU memory cache
 torch.cuda.empty_cache()
 
-import tensorflow as tf
-
-from omnivault.transformer.utils.reproducibility import seed_all
-
-seed_all()
-tf.random.set_seed(1992)
-
 model.eval()  # important!
 
 # The "packer" layers adds the [BOS] token for us.
 prompt_tokens = start_packer(tokenizer([""]))
-prompt_tokens
 
 
-def next(prompt, cache, index):
+def next(prompt: tf.Tensor, cache, index):
     prompt = prompt.numpy()
     prompt = torch.from_numpy(prompt).to(composer.trainer.device)
     #     print(prompt)
