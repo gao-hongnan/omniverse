@@ -25,6 +25,7 @@
         -   [Experiments](#experiments-1)
             -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
             -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+    -   [SimpleBooks-92](#simplebooks-92)
 
 ## Overview
 
@@ -934,3 +935,13 @@ For I wash the sight's duke of words to her son.
 HISTRENS OVERDONE:
 O capol! he is his head, and as he says he should.
 ```
+
+## SimpleBooks-92
+
+This project is based upon
+[GPT text generation from scratch with KerasNLP](https://keras.io/examples/generative/text_generation_gpt/).
+
+The dataset is a collection of 92 books from Project Gutenberg.
+
+I am lazy so I am using vocabulary and tokenizer from `keras_nlp`'s
+`WordPieceTokenizer`.
