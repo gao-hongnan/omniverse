@@ -285,7 +285,6 @@ scheduler_pydantic_config = scheduler_config_cls(name="torch.optim.lr_scheduler.
 trainer_config = TrainerConfig(
     device="cuda",
     max_epochs=6,
-    save_dir="./data/simplybooks92/checkpoints",
     eval_every_n_steps=10000,
     log_every_n_steps=10000,
     use_amp=True,
