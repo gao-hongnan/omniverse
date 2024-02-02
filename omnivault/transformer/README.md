@@ -75,6 +75,14 @@ and to develop the project, install the development dependencies using:
 (venv) $ pip install -r requirements-dev.txt
 ```
 
+Or you can simply do:
+
+```bash
+(venv) $ pip install --editable '.[dev]'
+```
+
+to install both the project dependencies and the development dependencies.
+
 ## Training Techniques
 
 ### Mixed Precision, Gradient Scaling and Gradient Accumulation

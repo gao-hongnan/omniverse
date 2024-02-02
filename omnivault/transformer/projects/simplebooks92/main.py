@@ -361,19 +361,20 @@ from omnivault.transformer.utils.reproducibility import seed_all
 seed_all()
 tf.random.set_seed(1992)
 
-model.eval() # important!
+model.eval()  # important!
 
 # The "packer" layers adds the [BOS] token for us.
 prompt_tokens = start_packer(tokenizer([""]))
 prompt_tokens
 
+
 def next(prompt, cache, index):
     prompt = prompt.numpy()
     prompt = torch.from_numpy(prompt).to(composer.trainer.device)
-#     print(prompt)
-#     print(prompt.shape)
-#     print(model(prompt))
-#     print(index)
+    #     print(prompt)
+    #     print(prompt.shape)
+    #     print(model(prompt))
+    #     print(index)
 
     index = int(index)
     with torch.no_grad():
@@ -383,6 +384,7 @@ def next(prompt, cache, index):
     # Ignore hidden states for now; only needed for contrastive search.
     hidden_states = None
     return logits, hidden_states, cache
+
 
 sampler = keras_nlp.samplers.GreedySampler()
 output_tokens = sampler(
