@@ -355,8 +355,9 @@ gc.collect()
 # Clear GPU memory cache
 torch.cuda.empty_cache()
 
-from omnivault.transformer.utils.reproducibility import seed_all
 import tensorflow as tf
+
+from omnivault.transformer.utils.reproducibility import seed_all
 
 seed_all()
 tf.random.set_seed(1992)
