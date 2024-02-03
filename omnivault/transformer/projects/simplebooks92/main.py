@@ -40,6 +40,7 @@ from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+from dataclasses import dataclass
 
 seed_all()
 tf.random.set_seed(1992)
@@ -58,6 +59,12 @@ SEQ_LEN = 128  # Length of training sequences, in tokens
 # Vocabulary
 VOCABULARY_SERIALIZABLED: str = "./assets/vocabulary_serializabled.pkl"
 
+# Training
+GRADIENT_ACCUMULATION_STEPS = 4
+BASE_LR = 0.00025
+BASE_TRAIN_BATCH_SIZE = 16
+NUM_GPUS = 1
+
 # Inference
 NUM_TOKENS_TO_GENERATE = 80
 
@@ -67,7 +74,7 @@ def download_and_extract_data(url: str) -> str:
     return keras.utils.get_file(origin=url, extract=True)
 
 
-def prepare_dataset(
+def load_and_prepare_dataset(
     file_path: str, batch_size: int, min_string_len: int, shuffle: bool = False
 ) -> tf.data.TextLineDataset:
     """Prepare the dataset by loading, filtering and batching."""
@@ -76,11 +83,6 @@ def prepare_dataset(
     if shuffle:
         dataset = dataset.shuffle(buffer_size=256)
     return dataset.batch(batch_size)
-
-
-download_and_extract_data(DATA_URL)
-raw_train_ds = prepare_dataset(TRAIN_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=True)
-raw_valid_ds = prepare_dataset(VALID_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=False)
 
 
 def load_vocab(vocab_file: str) -> List[str]:
@@ -96,17 +98,15 @@ def load_vocab(vocab_file: str) -> List[str]:
     return deserialize_keras_object(vocab_config)
 
 
-vocab = load_vocab(VOCABULARY_SERIALIZABLED)
-
-
 def create_tokenizer_and_packer(
-    vocab: dict, seq_len: int
+    vocabulary: List[str], seq_len: int
 ) -> Tuple[keras_nlp.tokenizers.WordPieceTokenizer, keras_nlp.layers.StartEndPacker]:
     """
-    Create a WordPiece tokenizer and a StartEnd packer using the given vocabulary and sequence length.
+    Create a WordPiece tokenizer and a StartEnd packer using the given
+    vocabulary and sequence length.
     """
     tokenizer = keras_nlp.tokenizers.WordPieceTokenizer(
-        vocabulary=vocab,
+        vocabulary=vocabulary,
         sequence_length=seq_len,
         lowercase=True,
     )
@@ -117,9 +117,6 @@ def create_tokenizer_and_packer(
     )
 
     return tokenizer, start_packer
-
-
-tokenizer, start_packer = create_tokenizer_and_packer(vocab, SEQ_LEN)
 
 
 def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
@@ -144,7 +141,7 @@ def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
     return features, labels
 
 
-def prepare_dataset(
+def prepare_and_preprocess_dataset(
     dataset: tf.data.Dataset, preprocess_fn: Callable[[tf.Tensor], Tuple[tf.Tensor, tf.Tensor]]
 ) -> tf.data.Dataset:
     """
@@ -152,11 +149,11 @@ def prepare_dataset(
 
     Parameters
     ----------
-    dataset : tf.data.Dataset
+    dataset: tf.data.Dataset
         The raw dataset to be processed.
-    preprocess_fn : callable
+    preprocess_fn: callable
         The preprocessing function to be applied to the dataset.
-    batch_size : int
+    batch_size: int
         The size of batches to divide the dataset into.
 
     Returns
@@ -166,12 +163,6 @@ def prepare_dataset(
     """
     return dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
 
-
-train_ds = prepare_dataset(raw_train_ds, preprocess)
-valid_ds = prepare_dataset(raw_valid_ds, preprocess)
-
-train_ds_as_numpy = list(tfds.as_numpy(train_ds))
-valid_ds_as_numpy = list(tfds.as_numpy(valid_ds))
 
 
 def flatten_dataset(dataset: List[Tuple[np.ndarray, np.ndarray]]) -> List[Tuple[np.ndarray, np.ndarray]]:
@@ -196,10 +187,6 @@ def flatten_dataset(dataset: List[Tuple[np.ndarray, np.ndarray]]) -> List[Tuple[
     return flattened_data
 
 
-train_ds_as_numpy = flatten_dataset(train_ds_as_numpy)
-valid_ds_as_numpy = flatten_dataset(valid_ds_as_numpy)
-
-
 class TFDatasetWrapper(Dataset):
     def __init__(self, tf_dataset_as_numpy: List[int]) -> None:
         super().__init__()
@@ -220,139 +207,18 @@ class TFDatasetWrapper(Dataset):
 def custom_collate_fn(
     batch: List[Tuple[torch.Tensor, torch.Tensor]]
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    # Unzip the batch into separate lists for sources and targets
     sources, targets = zip(*batch)
 
-    # Convert lists to tensors
     sources = torch.stack(sources)
     targets = torch.stack(targets)
 
-    # Get batch size and sequence length
     batch_size, seq_len = targets.size(0), targets.size(1)
 
-    # Generate dummy future masks and target padding masks
     future_masks = construct_dummy_batch_future_masks(batch_size, seq_len)
     target_padding_masks = construct_dummy_batch_target_padding_masks(batch_size, seq_len)
 
     return sources, targets, future_masks, target_padding_masks
 
-
-train_ds_pytorch = TFDatasetWrapper(train_ds_as_numpy)
-valid_ds_pytorch = TFDatasetWrapper(valid_ds_as_numpy)
-
-# Create a PyTorch data loader
-train_loader = DataLoader(
-    train_ds_pytorch, shuffle=False, batch_size=16, collate_fn=custom_collate_fn
-)  # shuffled by tensorflow earlier
-valid_loader = DataLoader(
-    valid_ds_pytorch, shuffle=False, batch_size=32, collate_fn=custom_collate_fn
-)  # shuffled by tensorflow earlier
-
-masked_self_attention_mha_config = MultiHeadedAttentionConfig(
-    attention=ScaledDotProductAttention(), d_model=256, H=4, dropout=0.2
-)
-
-feed_forward_config = PositionwiseFeedForwardConfig(
-    d_model=256, d_ff=256 * 4, activation=nn.GELU(approximate="tanh"), dropout=0.2, bias=True
-)
-
-add_norm_config_1 = AddNormConfig(feature_dim=256, dropout=0.2)
-add_norm_config_2 = AddNormConfig(feature_dim=256, dropout=0.2)
-
-# Create DecoderBlockConfig
-decoder_block_config = DecoderBlockConfig(
-    masked_self_attention_mha=masked_self_attention_mha_config,
-    feed_forward=feed_forward_config,
-    add_norm_1=add_norm_config_1,
-    add_norm_2=add_norm_config_2,
-)
-
-vocab_size = len(vocab)
-context_length = SEQ_LEN
-
-# Create the overall DecoderConfig
-model_config = DecoderConfig(
-    d_model=256,
-    vocab_size=vocab_size,
-    context_length=context_length,
-    num_decoder_blocks=2,
-    dropout=0.2,
-    decoder_block=decoder_block_config,
-)
-
-GRADIENT_ACCUMULATION_STEPS = 4
-
-optimizer_config_cls = OPTIMIZER_REGISTRY["torch.optim.Adam"]
-optimizer_pydantic_config = optimizer_config_cls(name="torch.optim.Adam", lr=0.00025 * GRADIENT_ACCUMULATION_STEPS)
-
-criterion_config_cls = CRITERION_REGISTRY["torch.nn.CrossEntropyLoss"]
-criterion_pydantic_config = criterion_config_cls(name="torch.nn.CrossEntropyLoss")
-
-scheduler_config_cls = SCHEDULER_REGISTRY["torch.optim.lr_scheduler.CosineAnnealingLR"]
-scheduler_pydantic_config = scheduler_config_cls(name="torch.optim.lr_scheduler.CosineAnnealingLR", T_max=6)
-
-trainer_config = TrainerConfig(
-    device="cuda",
-    max_epochs=6,
-    eval_every_n_steps=10000,
-    log_every_n_steps=10000,
-    use_amp=True,
-    autocast_config={"enabled": True, "dtype": torch.float16, "cache_enabled": True},
-    scaler_config={
-        "enabled": True,
-        "init_scale": 2.0**16,
-        "growth_factor": 2.0,
-        "backoff_factor": 0.5,
-        "growth_interval": 2000,
-    },
-    gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
-    clip_grad_norm={"max_norm": 1.0, "norm_type": 2.0, "error_if_nonfinite": False, "foreach": None},
-    apply_weight_decay_to_different_param_groups=False,
-    step_scheduler_on_batch_or_epoch="epoch",
-    save_dir="./data/simplybooks92/checkpoints",
-    save_every_epoch=False,
-    save_best_only=True,
-    monitor="valid_this_epoch_average_loss",
-    mode="min",
-)
-
-generator_config = GeneratorConfig(temperature=1.0, max_tokens=80, greedy=False, top_k=10, top_p=None)
-
-composer = Composer(
-    model=model_config,
-    optimizer=optimizer_pydantic_config,
-    criterion=criterion_pydantic_config,
-    scheduler=scheduler_pydantic_config,
-    trainer=trainer_config,
-    generator=generator_config,
-)
-composer.pretty_print()
-
-model = GPTDecoder(model_config).to(composer.trainer.device)
-optimizer = optimizer_pydantic_config.build(params=model.parameters())
-criterion = criterion_pydantic_config.create_instance()
-
-state = State(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    scheduler=None,
-    # vocabulary=vocab,
-    # tokenizer=tokenizer,
-)
-
-device = composer.trainer.device
-trainer = Trainer(
-    state=state,
-    composer=composer,
-    logger=None,
-    device=device,  # type: ignore[arg-type]
-)
-
-_trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
-# _trained_state.pretty_print()
-history = _trained_state.history
-_ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
 
 # Delete variables
 del optimizer, state, trainer
@@ -413,3 +279,134 @@ output_tokens = sampler(
 )
 txt = tokenizer.detokenize(output_tokens)
 print(f"Top-P search generated text: \n{txt}\n")
+
+if __name__ == "__main__":
+    download_and_extract_data(DATA_URL)
+    raw_train_ds = load_and_prepare_dataset(TRAIN_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=True)
+    raw_valid_ds = load_and_prepare_dataset(VALID_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=False)
+
+    vocabulary = load_vocab(VOCABULARY_SERIALIZABLED)
+    tokenizer, start_packer = create_tokenizer_and_packer(vocabulary=vocabulary, seq_len=SEQ_LEN)
+
+    train_ds = prepare_and_preprocess_dataset(raw_train_ds, preprocess)
+    valid_ds = prepare_and_preprocess_dataset(raw_valid_ds, preprocess)
+
+    train_ds_as_list_of_numpy = list(tfds.as_numpy(train_ds))
+    valid_ds_as_list_of_numpy = list(tfds.as_numpy(valid_ds))
+
+    train_ds_as_numpy = flatten_dataset(train_ds_as_list_of_numpy)
+    valid_ds_as_numpy = flatten_dataset(valid_ds_as_list_of_numpy)
+
+    train_ds_pytorch = TFDatasetWrapper(train_ds_as_numpy)
+    valid_ds_pytorch = TFDatasetWrapper(valid_ds_as_numpy)
+
+    # Create a PyTorch data loader
+    train_loader = DataLoader(
+        train_ds_pytorch, shuffle=False, batch_size=16, collate_fn=custom_collate_fn
+    )  # shuffled by tensorflow earlier
+    valid_loader = DataLoader(
+        valid_ds_pytorch, shuffle=False, batch_size=32, collate_fn=custom_collate_fn
+    )  # shuffled by tensorflow earlier
+
+    masked_self_attention_mha_config = MultiHeadedAttentionConfig(
+        attention=ScaledDotProductAttention(), d_model=256, H=4, dropout=0.2
+    )
+
+    feed_forward_config = PositionwiseFeedForwardConfig(
+        d_model=256, d_ff=256 * 4, activation=nn.GELU(approximate="tanh"), dropout=0.2, bias=True
+    )
+
+    add_norm_config_1 = AddNormConfig(feature_dim=256, dropout=0.2)
+    add_norm_config_2 = AddNormConfig(feature_dim=256, dropout=0.2)
+
+    # Create DecoderBlockConfig
+    decoder_block_config = DecoderBlockConfig(
+        masked_self_attention_mha=masked_self_attention_mha_config,
+        feed_forward=feed_forward_config,
+        add_norm_1=add_norm_config_1,
+        add_norm_2=add_norm_config_2,
+    )
+
+    # Create the overall DecoderConfig
+    model_config = DecoderConfig(
+        d_model=256,
+        vocab_size=len(vocab),
+        context_length=SEQ_LEN,
+        num_decoder_blocks=2,
+        dropout=0.2,
+        decoder_block=decoder_block_config,
+    )
+
+
+
+    optimizer_config_cls = OPTIMIZER_REGISTRY["torch.optim.Adam"]
+    optimizer_pydantic_config = optimizer_config_cls(name="torch.optim.Adam", lr=BASE_LR * GRADIENT_ACCUMULATION_STEPS)
+
+    criterion_config_cls = CRITERION_REGISTRY["torch.nn.CrossEntropyLoss"]
+    criterion_pydantic_config = criterion_config_cls(name="torch.nn.CrossEntropyLoss")
+
+    scheduler_config_cls = SCHEDULER_REGISTRY["torch.optim.lr_scheduler.CosineAnnealingLR"]
+    scheduler_pydantic_config = scheduler_config_cls(name="torch.optim.lr_scheduler.CosineAnnealingLR", T_max=6)
+
+    trainer_config = TrainerConfig(
+        device="cuda",
+        max_epochs=6,
+        eval_every_n_steps=10000,
+        log_every_n_steps=10000,
+        use_amp=True,
+        autocast_config={"enabled": True, "dtype": torch.float16, "cache_enabled": True},
+        scaler_config={
+            "enabled": True,
+            "init_scale": 2.0**16,
+            "growth_factor": 2.0,
+            "backoff_factor": 0.5,
+            "growth_interval": 2000,
+        },
+        gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
+        clip_grad_norm={"max_norm": 1.0, "norm_type": 2.0, "error_if_nonfinite": False, "foreach": None},
+        apply_weight_decay_to_different_param_groups=False,
+        step_scheduler_on_batch_or_epoch="epoch",
+        save_dir="./data/simplybooks92/checkpoints",
+        save_every_epoch=False,
+        save_best_only=True,
+        monitor="valid_this_epoch_average_loss",
+        mode="min",
+    )
+
+    generator_config = GeneratorConfig(temperature=1.0, max_tokens=80, greedy=False, top_k=10, top_p=None)
+
+    composer = Composer(
+        model=model_config,
+        optimizer=optimizer_pydantic_config,
+        criterion=criterion_pydantic_config,
+        scheduler=scheduler_pydantic_config,
+        trainer=trainer_config,
+        generator=generator_config,
+    )
+    composer.pretty_print()
+
+    model = GPTDecoder(model_config).to(composer.trainer.device)
+    optimizer = optimizer_pydantic_config.build(params=model.parameters())
+    criterion = criterion_pydantic_config.create_instance()
+
+    state = State(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=None,
+        # vocabulary=vocab,
+        # tokenizer=tokenizer,
+    )
+
+    device = composer.trainer.device
+    trainer = Trainer(
+        state=state,
+        composer=composer,
+        logger=None,
+        device=device,  # type: ignore[arg-type]
+    )
+
+    _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
+    # _trained_state.pretty_print()
+    history = _trained_state.history
+    _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")

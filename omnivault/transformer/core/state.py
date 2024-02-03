@@ -1,15 +1,12 @@
 """State...Metadata...See how composer does it, quite elegant I'd say."""
 from __future__ import annotations
 
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Type, Union, Any
 
 import torch
 from pydantic import BaseModel, Field
 from rich.pretty import pprint
 from torch import nn
-
-from omnivault.transformer.core.tokenizer import Tokenizers
-from omnivault.transformer.core.vocabulary import Vocabularies
 
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
@@ -56,8 +53,9 @@ class State(BaseModel):
     )
     history: Dict[str, List[float]] = Field(default={}, description="History of metrics.")
 
-    vocabulary: Vocabularies = Field(default=None, description="Vocabulary.")
-    tokenizer: Tokenizers = Field(default=None, description="Tokenizer.")
+    # FIXME: loosen `Vocabularies` and `Tokenizers` to `Any` for now as it is too strict.
+    vocabulary: Any = Field(default=None, description="Vocabulary.")
+    tokenizer: Any = Field(default=None, description="Tokenizer.")
 
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""
