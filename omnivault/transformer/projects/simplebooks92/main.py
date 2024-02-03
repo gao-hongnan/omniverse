@@ -1,9 +1,8 @@
 # type: ignore
-# ruff: noqa
-import gc
 import os
 import pickle
-from typing import Callable, List, Tuple
+from pathlib import Path
+from typing import Any, Callable, List, Tuple
 
 import keras
 import keras_nlp
@@ -11,8 +10,11 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import torch
-from keras.saving import deserialize_keras_object
+from keras.saving import deserialize_keras_object, serialize_keras_object
 from keras_nlp.samplers import Sampler
+from numpy.typing import NDArray
+from rich.pretty import pprint
+from tensorflow.python.framework.ops import EagerTensor
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
@@ -35,12 +37,12 @@ from omnivault.transformer.core.dataset import (
     construct_dummy_batch_target_padding_masks,
 )
 from omnivault.transformer.core.state import State
-from omnivault.transformer.core.trainer import Trainer
+from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
+from omnivault.transformer.utils.general_utils import cleanup
 from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
-from dataclasses import dataclass
 
 seed_all()
 tf.random.set_seed(1992)
@@ -51,13 +53,24 @@ BASE_DATA_DIR: str = os.path.join(os.path.expanduser("~/.keras/datasets/"), "sim
 TRAIN_FILE: str = os.path.join(BASE_DATA_DIR, "simplebooks-92-raw/train.txt")
 VALID_FILE: str = os.path.join(BASE_DATA_DIR, "simplebooks-92-raw/valid.txt")
 
+TRAIN_DATASET_PICKLED_PATH = "/kaggle/input/simplebooks-92/train_dataset.pkl"
+VALID_DATASET_PICKLED_PATH = "/kaggle/input/simplebooks-92/valid_dataset.pkl"
+SAVE_DATASET_AS_PICKLE = False
+LOAD_DATASET_FROM_PICKLE = True
+COMPUTE_WORD_PIECE_VOCABULARY = False
+
+
 # Data
 BATCH_SIZE = 64
 MIN_STRING_LEN = 512  # Strings shorter than this will be discarded
 SEQ_LEN = 128  # Length of training sequences, in tokens
+CURRENT_WORKING_DIR = Path.cwd()
+pprint(CURRENT_WORKING_DIR)
+
 
 # Vocabulary
 VOCABULARY_SERIALIZABLED: str = "./assets/vocabulary_serializabled.pkl"
+VOCAB_SIZE = 5000  # Limits parameters in model.
 
 # Training
 GRADIENT_ACCUMULATION_STEPS = 4
@@ -98,9 +111,7 @@ def load_vocab(vocab_file: str) -> List[str]:
     return deserialize_keras_object(vocab_config)
 
 
-def create_tokenizer_and_packer(
-    vocabulary: List[str], seq_len: int
-) -> Tuple[keras_nlp.tokenizers.WordPieceTokenizer, keras_nlp.layers.StartEndPacker]:
+def create_tokenizer(vocabulary: List[str], seq_len: int) -> keras_nlp.tokenizers.WordPieceTokenizer:
     """
     Create a WordPiece tokenizer and a StartEnd packer using the given
     vocabulary and sequence length.
@@ -111,12 +122,15 @@ def create_tokenizer_and_packer(
         lowercase=True,
     )
 
-    start_packer = keras_nlp.layers.StartEndPacker(
-        sequence_length=seq_len,
+    return tokenizer
+
+
+def create_start_packer(tokenizer: keras_nlp.tokenizers.WordPieceTokenizer) -> keras_nlp.layers.StartEndPacker:
+    """Create a StartEnd packer using the given tokenizer."""
+    return keras_nlp.layers.StartEndPacker(
+        sequence_length=tokenizer.sequence_length,
         start_value=tokenizer.token_to_id("[BOS]"),
     )
-
-    return tokenizer, start_packer
 
 
 def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
@@ -162,7 +176,6 @@ def prepare_and_preprocess_dataset(
         The processed and batched dataset.
     """
     return dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
-
 
 
 def flatten_dataset(dataset: List[Tuple[np.ndarray, np.ndarray]]) -> List[Tuple[np.ndarray, np.ndarray]]:
@@ -220,79 +233,96 @@ def custom_collate_fn(
     return sources, targets, future_masks, target_padding_masks
 
 
-# Delete variables
-del optimizer, state, trainer
+def next(prompt: tf.Tensor, cache: Tuple[Any, ...], index: EagerTensor) -> Tuple[tf.Tensor, None, Tuple[Any, ...]]:
+    prompt: NDArray[np.int32] = prompt.numpy()
+    prompt: torch.LongTensor = torch.from_numpy(prompt).to(composer.trainer.device)
 
-# Collect garbage
-gc.collect()
-
-# Clear GPU memory cache
-torch.cuda.empty_cache()
-
-model.eval()  # important!
-
-# The "packer" layers adds the [BOS] token for us.
-prompt_tokens = start_packer(tokenizer([""]))
-
-
-def next(prompt: tf.Tensor, cache, index):
-    prompt = prompt.numpy()
-    prompt = torch.from_numpy(prompt).to(composer.trainer.device)
-    #     print(prompt)
-    #     print(prompt.shape)
-    #     print(model(prompt))
-    #     print(index)
-
-    index = int(index)
+    index: int = int(index)
     with torch.no_grad():
-        logits = model(prompt)[:, index - 1, :]
-    logits = logits.detach().cpu().numpy()
-    logits = tf.convert_to_tensor(logits)
+        logits: torch.Tensor = model(prompt)[:, index - 1, :]
+    logits: NDArray[float] = logits.detach().cpu().numpy()
+    logits: tf.Tensor = tf.convert_to_tensor(logits)
     # Ignore hidden states for now; only needed for contrastive search.
     hidden_states = None
     return logits, hidden_states, cache
 
 
-sampler = keras_nlp.samplers.GreedySampler()
-output_tokens = sampler(
-    next=next,
-    prompt=prompt_tokens,
-    index=1,  # Start sampling immediately after the [BOS] token.
-)
-txt = tokenizer.detokenize(output_tokens)
-print(f"Greedy search generated text: \n{txt}\n")
+@torch.no_grad()
+def generate_on_train_epoch_end(trainer: Trainer) -> None:
+    """Evaluate and generate on train batch end."""
 
-sampler = keras_nlp.samplers.TopKSampler(k=10)
-output_tokens = sampler(
-    next=next,
-    prompt=prompt_tokens,
-    index=1,
-)
-txt = tokenizer.detokenize(output_tokens)
-print(f"Top-K search generated text: \n{txt}\n")
+    model = trainer.model
+    model.eval()
 
-sampler = keras_nlp.samplers.TopPSampler(p=0.5)
-output_tokens = sampler(
-    next=next,
-    prompt=prompt_tokens,
-    index=1,
-)
-txt = tokenizer.detokenize(output_tokens)
-print(f"Top-P search generated text: \n{txt}\n")
+    def get_samplers() -> List[Sampler]:
+        samplers = [
+            keras_nlp.samplers.GreedySampler(temperature=1.0),
+            keras_nlp.samplers.BeamSampler(num_beams=10, temperature=1.0),
+            keras_nlp.samplers.RandomSampler(temperature=1.0),
+            keras_nlp.samplers.TopKSampler(k=10, temperature=1.0),
+            keras_nlp.samplers.TopPSampler(p=0.5, temperature=1.0),
+        ]
+        return samplers
+
+    samplers = get_samplers()
+    tokenizer = trainer.state.tokenizer
+
+    start_packer = create_start_packer(tokenizer)
+    # The "packer" layers adds the [BOS] token for us.
+    prompt_tokens = start_packer(tokenizer([""]))
+
+    for sampler in samplers:
+        generated_tokens = sampler(
+            next=next,
+            prompt=prompt_tokens,
+            index=1,  # Start sampling immediately after the [BOS] token.
+        )
+        generated_tokens_decoded = tokenizer.detokenize(generated_tokens)
+        sampler_name = sampler.__class__.__name__
+        trainer.logger.info("%s search Generated text %s", sampler_name, generated_tokens_decoded)
+    # Revert model to training mode
+    model.train()
+
 
 if __name__ == "__main__":
     download_and_extract_data(DATA_URL)
     raw_train_ds = load_and_prepare_dataset(TRAIN_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=True)
     raw_valid_ds = load_and_prepare_dataset(VALID_FILE, BATCH_SIZE, MIN_STRING_LEN, shuffle=False)
 
-    vocabulary = load_vocab(VOCABULARY_SERIALIZABLED)
-    tokenizer, start_packer = create_tokenizer_and_packer(vocabulary=vocabulary, seq_len=SEQ_LEN)
+    if COMPUTE_WORD_PIECE_VOCABULARY:
+        vocabulary = keras_nlp.tokenizers.compute_word_piece_vocabulary(
+            raw_train_ds,
+            vocabulary_size=VOCAB_SIZE,
+            lowercase=True,
+            reserved_tokens=["[PAD]", "[UNK]", "[BOS]"],
+        )
+        with open(VOCABULARY_SERIALIZABLED, "wb") as f:
+            pickle.dump(serialize_keras_object(vocabulary), f)
+    else:
+        vocabulary = load_vocab(VOCABULARY_SERIALIZABLED)
+
+    tokenizer = create_tokenizer(vocabulary, SEQ_LEN)
+    start_packer = create_start_packer(tokenizer)
 
     train_ds = prepare_and_preprocess_dataset(raw_train_ds, preprocess)
     valid_ds = prepare_and_preprocess_dataset(raw_valid_ds, preprocess)
 
-    train_ds_as_list_of_numpy = list(tfds.as_numpy(train_ds))
-    valid_ds_as_list_of_numpy = list(tfds.as_numpy(valid_ds))
+    if LOAD_DATASET_FROM_PICKLE:
+        with open(TRAIN_DATASET_PICKLED_PATH, "rb") as file:
+            train_ds_as_list_of_numpy = pickle.load(file)
+
+        with open(VALID_DATASET_PICKLED_PATH, "rb") as file:
+            valid_ds_as_list_of_numpy = pickle.load(file)
+
+    if SAVE_DATASET_AS_PICKLE and not LOAD_DATASET_FROM_PICKLE:
+        train_ds_as_list_of_numpy = list(tfds.as_numpy(train_ds))
+        valid_ds_as_list_of_numpy = list(tfds.as_numpy(valid_ds))
+
+        with open(TRAIN_DATASET_PICKLED_PATH, "wb") as file:
+            pickle.dump(train_ds_as_list_of_numpy, file)
+
+        with open(VALID_DATASET_PICKLED_PATH, "wb") as file:
+            pickle.dump(valid_ds_as_list_of_numpy, file)
 
     train_ds_as_numpy = flatten_dataset(train_ds_as_list_of_numpy)
     valid_ds_as_numpy = flatten_dataset(valid_ds_as_list_of_numpy)
@@ -330,14 +360,12 @@ if __name__ == "__main__":
     # Create the overall DecoderConfig
     model_config = DecoderConfig(
         d_model=256,
-        vocab_size=len(vocab),
+        vocab_size=len(vocabulary),
         context_length=SEQ_LEN,
         num_decoder_blocks=2,
         dropout=0.2,
         decoder_block=decoder_block_config,
     )
-
-
 
     optimizer_config_cls = OPTIMIZER_REGISTRY["torch.optim.Adam"]
     optimizer_pydantic_config = optimizer_config_cls(name="torch.optim.Adam", lr=BASE_LR * GRADIENT_ACCUMULATION_STEPS)
@@ -394,8 +422,8 @@ if __name__ == "__main__":
         criterion=criterion,
         optimizer=optimizer,
         scheduler=None,
-        # vocabulary=vocab,
-        # tokenizer=tokenizer,
+        vocabulary=vocabulary,
+        tokenizer=tokenizer,
     )
 
     device = composer.trainer.device
@@ -405,8 +433,11 @@ if __name__ == "__main__":
         logger=None,
         device=device,  # type: ignore[arg-type]
     )
+    trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, generate_on_train_epoch_end)
 
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader)
-    # _trained_state.pretty_print()
+    _trained_state.pretty_print()
     history = _trained_state.history
     _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
+
+    cleanup([optimizer, state, trainer])

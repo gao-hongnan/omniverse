@@ -106,6 +106,8 @@ note that GPT models are after all, language models, and not well trained on
 arithmetic problems. This is why ChatGPT sometimes hallucinates and gives wrong
 answers to simple arithmetic problems.
 
+The commit to check for this repo is `916aabd`.
+
 ### Composer (Configuration)
 
 The core configuration for the project is defined in the
@@ -829,6 +831,8 @@ This also yields an validation accuracy of about 97.4% over 1000 samples
 (974/1000).
 
 ## Tiny Shakespeare (Character Token Level)
+
+The commit to check for this repo is `916aabd`.
 
 ### Experiments
 

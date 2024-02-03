@@ -75,7 +75,7 @@ def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str, N
         shutil.rmtree(temp_dir)
 
 
-def cleanup(objects: List[Any]) -> None:
+def cleanup(object_or_objects: Any | List[Any]) -> None:
     """
     Deletes the provided objects and performs cleanup.
 
@@ -84,11 +84,15 @@ def cleanup(objects: List[Any]) -> None:
     objects: List[Any]
         The list of objects to be deleted.
     """
-    for obj in objects:
-        del obj
+    if isinstance(object_or_objects, list):
+        for obj in object_or_objects:
+            del obj
+    else:
+        del object_or_objects
 
     gc.collect()
-    torch.cuda.empty_cache()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
 
 def validate_and_cleanup(

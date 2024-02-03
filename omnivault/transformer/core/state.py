@@ -1,7 +1,7 @@
 """State...Metadata...See how composer does it, quite elegant I'd say."""
 from __future__ import annotations
 
-from typing import Dict, List, Type, Union, Any
+from typing import Any, Dict, List, Type, Union
 
 import torch
 from pydantic import BaseModel, Field
