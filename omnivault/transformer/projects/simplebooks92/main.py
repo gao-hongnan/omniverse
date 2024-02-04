@@ -64,12 +64,10 @@ COMPUTE_WORD_PIECE_VOCABULARY = False
 BATCH_SIZE = 64
 MIN_STRING_LEN = 512  # Strings shorter than this will be discarded
 SEQ_LEN = 128  # Length of training sequences, in tokens
-CURRENT_WORKING_DIR = Path.cwd()
-pprint(CURRENT_WORKING_DIR)
-
+CURRENT_SCRIPT_DIR = Path(__file__).resolve().parent
 
 # Vocabulary
-VOCABULARY_SERIALIZABLED: str = "./assets/vocabulary_serializabled.pkl"
+VOCABULARY_SERIALIZABLED: str = CURRENT_SCRIPT_DIR / "./assets/vocabulary_serializabled.pkl"
 VOCAB_SIZE = 5000  # Limits parameters in model.
 
 # Training
@@ -259,8 +257,8 @@ def generate_on_train_epoch_end(trainer: Trainer) -> None:
             keras_nlp.samplers.GreedySampler(temperature=1.0),
             keras_nlp.samplers.BeamSampler(num_beams=10, temperature=1.0),
             keras_nlp.samplers.RandomSampler(temperature=1.0),
-            keras_nlp.samplers.TopKSampler(k=10, temperature=1.0),
-            keras_nlp.samplers.TopPSampler(p=0.5, temperature=1.0),
+            keras_nlp.samplers.TopKSampler(k=20, temperature=0.7),
+            keras_nlp.samplers.TopPSampler(p=0.5, temperature=0.7, k=20),
         ]
         return samplers
 
@@ -374,11 +372,11 @@ if __name__ == "__main__":
     criterion_pydantic_config = criterion_config_cls(name="torch.nn.CrossEntropyLoss")
 
     scheduler_config_cls = SCHEDULER_REGISTRY["torch.optim.lr_scheduler.CosineAnnealingLR"]
-    scheduler_pydantic_config = scheduler_config_cls(name="torch.optim.lr_scheduler.CosineAnnealingLR", T_max=6)
+    scheduler_pydantic_config = scheduler_config_cls(name="torch.optim.lr_scheduler.CosineAnnealingLR", T_max=8)
 
     trainer_config = TrainerConfig(
         device="cuda",
-        max_epochs=6,
+        max_epochs=8,
         eval_every_n_steps=10000,
         log_every_n_steps=10000,
         use_amp=True,
@@ -411,17 +409,20 @@ if __name__ == "__main__":
         trainer=trainer_config,
         generator=generator_config,
     )
-    composer.pretty_print()
-
     model = GPTDecoder(model_config).to(composer.trainer.device)
     optimizer = optimizer_pydantic_config.build(params=model.parameters())
     criterion = criterion_pydantic_config.create_instance()
+
+    composer.scheduler = scheduler_pydantic_config
+    scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
+
+    composer.pretty_print()
 
     state = State(
         model=model,
         criterion=criterion,
         optimizer=optimizer,
-        scheduler=None,
+        scheduler=scheduler,
         vocabulary=vocabulary,
         tokenizer=tokenizer,
     )

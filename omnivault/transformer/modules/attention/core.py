@@ -40,6 +40,20 @@ class ScaledDotProductAttention(Attention):
         same sequence `z` (e.g., the output of the token embedding and positional
         encoding layers).
 
+    1. **Self-Attention** (also known as intra-attention) is used within a single
+    sequence to relate different positions of this sequence. In self-attention,
+    the queries (Q), keys (K), and values (V) all come from the same previous
+    layer output. This is common in both the encoder and the decoder layers of a
+    Transformer. For example, in a standalone GPT-Decoder variant, the initial
+    queries, keys, and values all originates from the same input sequence, which
+    becomes the `z` in the token embedding and positional encoding layers.
+
+    2. **Cross-Attention** is used in the decoder to attend to the output of the
+    encoder. In cross-attention, the queries (Q) come from the previous layer of
+    the decoder, but the keys (K) and values (V) come from the output of the
+    encoder. This allows each position in the decoder to attend to all positions
+    in the input sequence.
+
     Methods
     -------
     forward(query, key, value, mask)
@@ -69,19 +83,18 @@ class ScaledDotProductAttention(Attention):
         - `d_k`: Dimension of the keys    = D // H
         - `d_q`: Dimension of the queries = D // H
         - `d_v`: Dimension of the values  = D // H
-        - `N`  : Batch size
         - `T`  : Sequence length for `query`
         - `S`  : Sequence length for `key` and `value`
         - `L`  : Sequence length for `query`, `key` and `value` generic.
 
-        NOTE: We use `L` in our notes instead of `T` and `S` since we assume all query,
-        key and value are of same length.
+        Note
+        ----
+        -   We use `L` in our notes instead of `T` and `S` since we assume all query,
+            key and value are of same length.
 
-        Also, we often denote the dimension of the keys and queries as `d_k`
-        instead of `d_k` and `d_q` respectively because both must have
-        the same dimensionality for them to be multiplied together.
-
-        TODO: which shape is for cross-self?
+        -   We often denote the dimension of the keys and queries as `d_k` instead of
+            `d_k` and `d_q` respectively because both must have the same dimensionality
+            for them to be multiplied together.
 
         Parameters
         ----------
@@ -89,22 +102,25 @@ class ScaledDotProductAttention(Attention):
                 is seeking to attend to. It contains a batch of sequences, each with a set of
                 vectors across multiple attention heads.
                     type :  torch.Tensor
-                    shape: `(N, H, S or T, d_q)` where `d_q = D // H`
+                    shape: `(B, H, T, d_q)` where `d_q = D // H`
+                    shape: `(B, H, L, d_q)` if in pure self-attention (GPT)
         key  :  A tensor of key vectors that are paired with values to form a mapping. The
                 dot product of a query with these keys determines the attention weight for the
                 corresponding values.
                     type :  torch.Tensor
-                    shape: `(N, H, S or T, d_k)` where `d_k = D // H`
+                    shape: `(B, H, S, d_k)` where `d_k = D // H`
+                    shape: `(B, H, L, d_k)` if in pure self-attention (GPT)
         value: A tensor of value vectors that are aggregated based on the attention
                weights to form the output of the attention mechanism.
                     type :  torch.Tensor
-                    shape: `(N, H, S or T, d_v)` where `d_v = D // H`
+                    shape: `(B, H, S, d_v)` where `d_v = D // H`
+                    shape: `(B, H, L, d_v)` if in pure self-attention (GPT)
         mask : An optional boolean mask tensor that can be used to mask out certain positions
                from the attention mechanism. For self-attention, the mask shape is typically
-               `(B, T, T)`. For cross-attention, the mask typically has a shape of `(B, T, S)`
-               allowing different target positions to attend to different source positions.
+               `(B, T, T)` or `(B, L, L). For cross-attention, the mask typically has a shape of
+               `(B, T, S)` allowing different target positions to attend to different source positions.
                Here, `T` is the sequence length of the queries (note `T` is the same for
-               self-attention), `T_k` and `T_v` are the sequence lengths of the keys and values
+               self-attention), `S` is the sequence lengths of the keys and values
                which could be equal to `T` in self-attention or vary in cross-attention, and
                `S` is the sequence length of the source (encoder) when using cross-attention.
 
@@ -114,13 +130,13 @@ class ScaledDotProductAttention(Attention):
 
         Returns
         -------
-        Tuple[torch.Tensor, torch.Tensor]
+        context_vector, attention_weights: Tuple[torch.Tensor, torch.Tensor]
             The context vectors and the attention weights. The context vectors are the weighted sum
             of the `value` vectors, representing the information to be attended to.
             The attention weights represent the attention probabilities.
 
-            - Context Vectors shape:   `(N, T, d_k)`
-            - Attention Weights shape: `(N, T, S)`
+            - Context Vectors shape:   `(B, T, d_k)` or `(B, H, T, d_k)` or `(B, H, L, d_k)` if in pure self-attention (GPT)
+            - Attention Weights shape: `(B, T, S)` or `(B, H, T, S)` or `(B, H, L, L)` if in pure self-attention (GPT)
         """
         # fmt: off
         d_q               = query.size(dim=-1)
