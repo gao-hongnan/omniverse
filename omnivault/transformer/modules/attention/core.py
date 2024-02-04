@@ -11,25 +11,34 @@ __all__ = ["MultiHeadedAttention", "ScaledDotProductAttention"]
 
 
 class ScaledDotProductAttention(Attention):
-    """
-    Implements scaled dot-product attention mechanism.
+    """Implements scaled dot-product attention mechanism.
 
-    This class is a derived instance of the Attention class that computes the
+    This class is a derived instance of the `Attention` class that computes the
     scaled dot-product attention, defined by the following operation:
 
     .. math::
         \\text{Attention}(Q, K, V) = \\text{softmax} \\left( \\frac{QK^T}{\\sqrt{d_k}} \\right) V
 
     where:
-    - Q is the query matrix
-    - K is the key matrix
-    - V is the value matrix
-    - d_k is the dimension of the keys
 
+    -   Q is the query matrix
+    -   K is the key matrix
+    -   V is the value matrix
+    -   d_k is the dimension of the keys
+
+    Note
+    ----
     The attention mechanism can be applied in two different contexts: self-attention
     and cross-attention. Self-attention allows the model to integrate information
     from the entire sequence, while cross-attention allows the model to focus on
     information from a different sequence (e.g., encoder outputs).
+
+    Consequently, we have the following implicit assumptions:
+
+    -   For self-attention, the sequence lengths of `query`, `key`, and `value` are
+        the same. This is because the query, key, and value are all derived from the
+        same sequence `z` (e.g., the output of the token embedding and positional
+        encoding layers).
 
     Methods
     -------

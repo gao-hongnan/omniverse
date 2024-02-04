@@ -194,7 +194,61 @@ See <https://www.youtube.com/watch?v=UPtG_38Oq8o> around 16 min.
 ### Why Scale in Attention Mechanism?
 
 -   <https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html>
+
+Let's look at the notes:
+
 -   <https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html>
+
+1. **Scaling Factor Introduction**: The author introduces the concept of a
+   scaling factor $\frac{1}{\sqrt{d_k}}$, which is applied during the attention
+   mechanism in transformers. This scaling factor is used to maintain an
+   appropriate variance of the attention scores after initialization.
+
+2. **Initialization Goal**: The goal of initialization is to have each layer of
+   the neural network maintain equal variance throughout. This is to ensure that
+   the gradients are neither vanishing nor exploding as they propagate through
+   the layers, which is crucial for effective learning.
+
+3. **Variance in Dot Products**: The author then explains that when taking a dot
+   product of two vectors, both sampled from normal distributions with variance
+   $\sigma^2$, the resulting scalar will have a variance that is $d_k$ times
+   higher, specifically $\sigma^4 \cdot d_k$. Here, $d_k$ represents the
+   dimension of the key/query vectors in the attention mechanism, and $q_i$ and
+   $k_i$ are the components of the query and key vectors respectively.
+
+4. **Scaling Down the Variance**: Without scaling down the variance of the dot
+   product (which is $\sigma^4 \cdot d_k$), the softmax function, which is
+   applied to the attention scores to obtain the probabilities, would become
+   saturated. This means that one logit (the vector of raw (non-normalized)
+   predictions that a classification model generates, which is then passed to a
+   normalization function) would have a very high score close to 1, while the
+   rest would have scores close to 0. This saturation makes it difficult for the
+   network to learn because the gradients would be close to zero for all
+   elements except the one with the highest score.
+
+5. **Maintaining Variance Close to 1**: The author notes that despite the
+   multiplication by $\sigma^4$, the practice of keeping the original variance
+   $\sigma^2$ close to 1 means that the scaling factor does not introduce a
+   significant issue. By multiplying the dot product by $\frac{1}{\sqrt{d_k}}$,
+   the variance of the product is effectively scaled back to the original level
+   of $\sigma^2$, preventing the softmax function from saturating and allowing
+   the model to learn effectively.
+
+The gist is:
+
+It is important to maintain equal variance across all layers in a neural
+network, particularly in the context of the transformer model's attention
+mechanism. By doing so, the model helps to ensure that the gradients are stable
+during backpropagation, avoiding the vanishing or exploding gradients problem
+and enabling effective learning.
+
+In the specific context of the attention mechanism, the variance of the dot
+products used to calculate attention scores is scaled down by the factor
+$\frac{1}{\sqrt{d_k}}$ to prevent softmax saturation. This allows each element
+to have a chance to influence the model's learning, rather than having a single
+element dominate because of the variance scaling with $d_k$. This practice is
+crucial for the learning process because it ensures the gradients are meaningful
+and not diminished to the point where the model cannot learn from the data.
 
 ### Why do need Positional Encoding? What happens if we don't use it?
 
