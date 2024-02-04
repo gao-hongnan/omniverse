@@ -13,7 +13,6 @@ import torch
 from keras.saving import deserialize_keras_object, serialize_keras_object
 from keras_nlp.samplers import Sampler
 from numpy.typing import NDArray
-from rich.pretty import pprint
 from tensorflow.python.framework.ops import EagerTensor
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
