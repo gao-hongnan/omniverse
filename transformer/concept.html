@@ -598,8 +598,56 @@ attending to all tokens up to itself.</p></li>
 <h3><a class="toc-backref" href="#id12" role="doc-backlink">Why Scale in Attention Mechanism?</a><a class="headerlink" href="#why-scale-in-attention-mechanism" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html">https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html</a></p></li>
+</ul>
+<p>Let’s look at the notes:</p>
+<ul class="simple">
 <li><p><a class="reference external" href="https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html">https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html</a></p></li>
 </ul>
+<ol class="arabic simple">
+<li><p><strong>Scaling Factor Introduction</strong>: The author introduces the concept of a
+scaling factor <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{d_k}}\)</span>, which is applied during the attention
+mechanism in transformers. This scaling factor is used to maintain an
+appropriate variance of the attention scores after initialization.</p></li>
+<li><p><strong>Initialization Goal</strong>: The goal of initialization is to have each layer of
+the neural network maintain equal variance throughout. This is to ensure that
+the gradients are neither vanishing nor exploding as they propagate through
+the layers, which is crucial for effective learning.</p></li>
+<li><p><strong>Variance in Dot Products</strong>: The author then explains that when taking a dot
+product of two vectors, both sampled from normal distributions with variance
+<span class="math notranslate nohighlight">\(\sigma^2\)</span>, the resulting scalar will have a variance that is <span class="math notranslate nohighlight">\(d_k\)</span> times
+higher, specifically <span class="math notranslate nohighlight">\(\sigma^4 \cdot d_k\)</span>. Here, <span class="math notranslate nohighlight">\(d_k\)</span> represents the
+dimension of the key/query vectors in the attention mechanism, and <span class="math notranslate nohighlight">\(q_i\)</span> and
+<span class="math notranslate nohighlight">\(k_i\)</span> are the components of the query and key vectors respectively.</p></li>
+<li><p><strong>Scaling Down the Variance</strong>: Without scaling down the variance of the dot
+product (which is <span class="math notranslate nohighlight">\(\sigma^4 \cdot d_k\)</span>), the softmax function, which is
+applied to the attention scores to obtain the probabilities, would become
+saturated. This means that one logit (the vector of raw (non-normalized)
+predictions that a classification model generates, which is then passed to a
+normalization function) would have a very high score close to 1, while the
+rest would have scores close to 0. This saturation makes it difficult for the
+network to learn because the gradients would be close to zero for all
+elements except the one with the highest score.</p></li>
+<li><p><strong>Maintaining Variance Close to 1</strong>: The author notes that despite the
+multiplication by <span class="math notranslate nohighlight">\(\sigma^4\)</span>, the practice of keeping the original variance
+<span class="math notranslate nohighlight">\(\sigma^2\)</span> close to 1 means that the scaling factor does not introduce a
+significant issue. By multiplying the dot product by <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{d_k}}\)</span>,
+the variance of the product is effectively scaled back to the original level
+of <span class="math notranslate nohighlight">\(\sigma^2\)</span>, preventing the softmax function from saturating and allowing
+the model to learn effectively.</p></li>
+</ol>
+<p>The gist is:</p>
+<p>It is important to maintain equal variance across all layers in a neural
+network, particularly in the context of the transformer model’s attention
+mechanism. By doing so, the model helps to ensure that the gradients are stable
+during backpropagation, avoiding the vanishing or exploding gradients problem
+and enabling effective learning.</p>
+<p>In the specific context of the attention mechanism, the variance of the dot
+products used to calculate attention scores is scaled down by the factor
+<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{d_k}}\)</span> to prevent softmax saturation. This allows each element
+to have a chance to influence the model’s learning, rather than having a single
+element dominate because of the variance scaling with <span class="math notranslate nohighlight">\(d_k\)</span>. This practice is
+crucial for the learning process because it ensures the gradients are meaningful
+and not diminished to the point where the model cannot learn from the data.</p>
 </section>
 <section id="why-do-need-positional-encoding-what-happens-if-we-don-t-use-it">
 <h3><a class="toc-backref" href="#id13" role="doc-backlink">Why do need Positional Encoding? What happens if we don’t use it?</a><a class="headerlink" href="#why-do-need-positional-encoding-what-happens-if-we-don-t-use-it" title="Permalink to this heading">#</a></h3>
