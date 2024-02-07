@@ -1,0 +1,902 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Dependency Inversion Principle &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'software_engineering/design_patterns/dependency-inversion-principle';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/software_engineering/design_patterns/dependency-inversion-principle.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Complexity Analysis" href="../../dsa/complexity_analysis/intro.html" />
+    <link rel="prev" title="Styling, Formatting, and Linting" href="../devops/continuous-integration/styling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Dependency Inversion Principle</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/software_engineering/design_patterns/dependency-inversion-principle.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Dependency Inversion Principle</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#low-level-and-high-level-modules">Low Level and High Level Modules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-violation-of-dependency-inversion-principle">A Violation of Dependency Inversion Principle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-the-violation">Correcting the Violation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependency-inversion-principle-and-dependency-injection">Dependency Inversion Principle and Dependency Injection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="dependency-inversion-principle">
+<h1>Dependency Inversion Principle<a class="headerlink" href="#dependency-inversion-principle" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definition" id="id7">Definition</a></p></li>
+<li><p><a class="reference internal" href="#low-level-and-high-level-modules" id="id8">Low Level and High Level Modules</a></p></li>
+<li><p><a class="reference internal" href="#a-violation-of-dependency-inversion-principle" id="id9">A Violation of Dependency Inversion Principle</a></p></li>
+<li><p><a class="reference internal" href="#correcting-the-violation" id="id10">Correcting the Violation</a></p></li>
+<li><p><a class="reference internal" href="#dependency-inversion-principle-and-dependency-injection" id="id11">Dependency Inversion Principle and Dependency Injection</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="definition">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h2>
+<p>In object-oriented design, the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">dependency inversion principle</a>
+is a specific methodology for loosely coupling software modules. When following
+this principle, the conventional dependency relationships established from
+high-level, policy-setting modules to low-level, dependency modules are
+reversed, thus rendering high-level modules independent of the low-level module
+implementation details. The principle states<a class="footnote-reference brackets" href="#id4" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<ul class="simple">
+<li><p>High-level modules should not import anything from low-level modules. Both
+should depend on abstractions (e.g., interfaces).</p></li>
+<li><p>Abstractions should not depend on details. Details (concrete
+implementations) should depend on abstractions.</p></li>
+</ul>
+<p>By dictating that both high-level and low-level objects must depend on the same
+abstraction, this design principle inverts the way some people may think about
+object-oriented programming<a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="low-level-and-high-level-modules">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Low Level and High Level Modules</a><a class="headerlink" href="#low-level-and-high-level-modules" title="Permalink to this heading">#</a></h2>
+<p>Low level modules are “low level” because they have no dependencies, or no
+relevant dependencies. Very often, they can be easily reused in different
+contexts without introducing any separate, formal interfaces - which means,
+reusing them is straightforward, simple and does not require any Dependency
+Inversion.</p>
+<p>High level modules, however, are “high level”, because they require other, lower
+level modules to work. But if they are tied to a specific low-level
+implementation, this often prevents to reuse them in a different context.</p>
+<p>High level modules depend on low level modules, but shouldn’t depend on their
+implementation. This can be achieved by using interfaces, thus decoupling the
+definition of the service from the implementation<a class="footnote-reference brackets" href="#id6" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="a-violation-of-dependency-inversion-principle">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">A Violation of Dependency Inversion Principle</a><a class="headerlink" href="#a-violation-of-dependency-inversion-principle" title="Permalink to this heading">#</a></h2>
+<p>Let’s look at a code example that violates the <strong>Dependency Inversion
+Principle</strong>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="sd">&quot;&quot;&quot;Violation of DII.&quot;&quot;&quot;</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">TransformFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="k">class</span> <span class="nc">ImageClassificationTransforms</span><span class="p">:</span>
+<span class="linenos">10</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy class for image classification transforms.&quot;&quot;&quot;</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>    <span class="k">def</span> <span class="nf">get_train_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">13</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get train transforms.&quot;&quot;&quot;</span>
+<span class="linenos">14</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for training: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>    <span class="k">def</span> <span class="nf">get_test_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">17</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get test transforms.&quot;&quot;&quot;</span>
+<span class="linenos">18</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for testing: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="k">class</span> <span class="nc">ImageSegmentationTransforms</span><span class="p">:</span>
+<span class="linenos">22</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy class for image segmentation transforms.&quot;&quot;&quot;</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span>    <span class="k">def</span> <span class="nf">get_train_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">25</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get train transforms.&quot;&quot;&quot;</span>
+<span class="linenos">26</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for training: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span>    <span class="k">def</span> <span class="nf">get_test_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">29</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get test transforms.&quot;&quot;&quot;</span>
+<span class="linenos">30</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for testing: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="c1"># violates DIP</span>
+<span class="linenos">34</span><span class="k">class</span> <span class="nc">CustomDataset</span><span class="p">:</span>
+<span class="linenos">35</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced class for a custom dataset, with a real __getitem__ method.&quot;&quot;&quot;</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">38</span>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+<span class="linenos">39</span>        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span>        <span class="c1"># Directly using ImageClassificationTransforms without interface/abstraction</span>
+<span class="linenos">42</span>        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="p">:</span> <span class="n">ImageClassificationTransforms</span> <span class="o">=</span> <span class="n">ImageClassificationTransforms</span><span class="p">()</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span>    <span class="k">def</span> <span class="nf">apply_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos">45</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply transforms to a single data item based on stage.&quot;&quot;&quot;</span>
+<span class="linenos">46</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+<span class="linenos">47</span>            <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">get_train_transforms</span><span class="p">()(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">48</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">49</span>            <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">get_test_transforms</span><span class="p">()(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">50</span>        <span class="k">return</span> <span class="n">transformed</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="linenos">53</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch and transform item(s) from dataset by index.&quot;&quot;&quot;</span>
+<span class="linenos">54</span>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># Single item requested</span>
+<span class="linenos">55</span>            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="linenos">56</span>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_transforms</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">57</span>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>  <span class="c1"># Slice of items requested</span>
+<span class="linenos">58</span>            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="linenos">59</span>            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_transforms</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+<span class="linenos">60</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">61</span>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid index type. Must be int or slice.&quot;</span><span class="p">)</span>
+<span class="linenos">62</span>
+<span class="linenos">63</span>
+<span class="linenos">64</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">65</span>    <span class="n">dummy_data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="s2">&quot;data3&quot;</span><span class="p">,</span> <span class="s2">&quot;data4&quot;</span><span class="p">,</span> <span class="s2">&quot;data5&quot;</span><span class="p">]</span>
+<span class="linenos">66</span>    <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dummy_data</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+<span class="linenos">67</span>    <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dummy_data</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="linenos">68</span>
+<span class="linenos">69</span>    <span class="c1"># Access single item</span>
+<span class="linenos">70</span>    <span class="n">single_item_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Should apply training transform to &#39;data3&#39;</span>
+<span class="linenos">71</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">single_item_train</span><span class="p">)</span>
+<span class="linenos">72</span>    <span class="n">single_item_test</span> <span class="o">=</span> <span class="n">dataset_test</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Should apply testing transform to &#39;data3&#39;</span>
+<span class="linenos">73</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">single_item_test</span><span class="p">)</span>
+<span class="linenos">74</span>
+<span class="linenos">75</span>    <span class="c1"># Access a slice of items</span>
+<span class="linenos">76</span>    <span class="n">slice_items_train</span> <span class="o">=</span> <span class="n">dataset_train</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># Should apply training transform to &#39;data2&#39;, &#39;data3&#39;, &#39;data4&#39;</span>
+<span class="linenos">77</span>    <span class="n">slice_items_test</span> <span class="o">=</span> <span class="n">dataset_test</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>  <span class="c1"># Should apply testing transform to &#39;data2&#39;, &#39;data3&#39;, &#39;data4&#39;</span>
+<span class="linenos">78</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">slice_items_train</span><span class="p">)</span>
+<span class="linenos">79</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">slice_items_test</span><span class="p">)</span>
+<span class="linenos">80</span>
+<span class="linenos">81</span>    <span class="c1"># you cannot change transforms from ImageClassification to ImageSegmentation</span>
+<span class="linenos">82</span>    <span class="c1"># without changing the code in CustomDataset class.</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for training: data3'</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for testing: data3'</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for training: data2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for training: data3'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for training: data4'</span>
+<span style="font-weight: bold">]</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for testing: data2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for testing: data3'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for testing: data4'</span>
+<span style="font-weight: bold">]</span>
+</pre>
+</div></div>
+</div>
+<p>In the provided code example, we encounter a clear violation of the Dependency
+Inversion Principle (DIP), which affects the design’s flexibility and
+maintainability. Let’s dissect the relationship and dependency structure between
+the modules involved:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code></strong>: This is a <strong>high-level</strong> module designed to manage
+dataset items and apply specific transformations to these items based on the
+dataset’s stage (training or testing). Its responsibilities include fetching
+data items by index and applying the appropriate transformation functions to
+prepare data for either training or testing scenarios.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> and <code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code></strong>: These
+<strong>low-level</strong> modules are responsible for providing the actual
+transformation functions applicable to the dataset items. Each module
+defines two methods, <code class="docutils literal notranslate"><span class="pre">get_train_transforms</span></code> and <code class="docutils literal notranslate"><span class="pre">get_test_transforms</span></code>, which
+return transformation functions tailored to either training or testing.</p></li>
+<li><p>In our code, the high level module depends on the low level module such that
+the <strong>creation</strong> of <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> is done inside the
+<code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> constructor. This leads to <strong>high coupling</strong>.</p></li>
+<li><p><strong>Direct Dependency</strong>: Within the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> constructor, an instance
+of <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> is directly instantiated. This direct
+instantiation tightly couples the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> class to the
+<code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> class. As a result, <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> is not
+just dependent on the abstraction of transformation functions but on a
+specific implementation of these functions provided by
+<code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>.</p></li>
+<li><p><strong>Coupling and Flexibility Issues</strong>: This coupling between the high-level
+<code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> module and the low-level <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>
+module restricts the flexibility of the dataset management system. Should
+there be a need to apply a different set of transformations (e.g., using
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code> for a segmentation task), the current design
+requires modifying the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> class itself to change the
+dependency. This design goes against the DIP’s guidance, which suggests that
+both high-level and low-level modules should depend on abstractions, not on
+concrete implementations.</p></li>
+</ul>
+<p>In other words:</p>
+<ul class="simple">
+<li><p>The code looks fine but if we want to change the
+<code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> to <code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code>, then we
+have to change the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> code in two places:</p>
+<ul>
+<li><p>Type hint of <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> to
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code>;</p></li>
+<li><p>Change manually the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> to
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code> in the constructor.</p></li>
+</ul>
+</li>
+<li><p>Things soon get out of hand if we have a lot more of such dependencies, such
+as <code class="docutils literal notranslate"><span class="pre">ObjectDetectionTransforms</span></code>, <code class="docutils literal notranslate"><span class="pre">ImageCaptioningTransforms</span></code>, etc.</p></li>
+</ul>
+</section>
+<section id="correcting-the-violation">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Correcting the Violation</a><a class="headerlink" href="#correcting-the-violation" title="Permalink to this heading">#</a></h2>
+<p>To adhere to the Dependency Inversion Principle, the design should be refactored
+such that:</p>
+<ol class="arabic simple">
+<li><p><strong>Depend on Abstractions</strong>: Both <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> and the transformation
+providing modules (<code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code>) should depend on a common abstraction (e.g.,
+an interface or a base class) that defines the contract for transformation
+functions.</p></li>
+<li><p><strong>Injection of Dependencies</strong>: Instead of directly instantiating a specific
+transformations class within the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> constructor, the
+transformation provider should be passed in as a parameter (dependency
+injection). This approach allows the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> to remain agnostic of
+the concrete implementation of transformation functions, enhancing
+modularity, flexibility, and the ease of testing.</p></li>
+</ol>
+<p>More concretely, we can create an interface <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> that will be
+implemented by <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>, <code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code>,
+etc. Then, we can pass the <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> object to the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code>
+constructor <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method. This way, the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> will depend on the
+<code class="docutils literal notranslate"><span class="pre">Transforms</span></code> interface and not on the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> class.
+This way, we can change the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> to
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code> without changing the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> code. This is
+called <strong>Dependency Inversion</strong>.</p>
+<p>The abstraction does not depend on details simply mean the abstract class should
+not hold any implementation. The implementation should be done in the concrete
+class.</p>
+<p>For example, in my <code class="docutils literal notranslate"><span class="pre">Transforms(ABC)</span></code> abstract class/interface below, I have two
+abstract methods <code class="docutils literal notranslate"><span class="pre">get_train_transforms</span></code> and <code class="docutils literal notranslate"><span class="pre">get_test_transforms</span></code>. These methods
+are not implemented in the abstract class. They are implemented in the concrete
+class <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>. This is the second rule in <strong>Dependency
+Inversion Principle</strong>.</p>
+<p>In the high level module <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code>, I have a constructor <code class="docutils literal notranslate"><span class="pre">__init__</span></code> that
+takes in a <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> abstract class/interface. Now my <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> depends
+on the <code class="docutils literal notranslate"><span class="pre">Transforms</span></code> abstraction and not on the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code>
+class. This is the first rule in <strong>Dependency Inversion Principle</strong>.
+Furthermore, if you were to switch your task from image classification to image
+segmentation, you can simply change the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> to
+<code class="docutils literal notranslate"><span class="pre">ImageSegmentationTransforms</span></code> without changing the <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> code as you
+are not <strong>creating/coupled</strong> to the <code class="docutils literal notranslate"><span class="pre">ImageClassificationTransforms</span></code> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="sd">&quot;&quot;&quot;Less violation but everything is contained in one script, the inversion is not obvious.&quot;&quot;&quot;</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Union</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="n">TransformFunc</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="k">class</span> <span class="nc">Transforms</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="linenos">11</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class for transforms.&quot;&quot;&quot;</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>    <span class="nd">@abstractmethod</span>
+<span class="linenos">14</span>    <span class="k">def</span> <span class="nf">get_train_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">15</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get train transforms.&quot;&quot;&quot;</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span>    <span class="nd">@abstractmethod</span>
+<span class="linenos">18</span>    <span class="k">def</span> <span class="nf">get_test_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">19</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get test transforms.&quot;&quot;&quot;</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="k">class</span> <span class="nc">ImageClassificationTransforms</span><span class="p">(</span><span class="n">Transforms</span><span class="p">):</span>
+<span class="linenos">23</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy class for image classification transforms.&quot;&quot;&quot;</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span>    <span class="k">def</span> <span class="nf">get_train_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">26</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get train transforms.&quot;&quot;&quot;</span>
+<span class="linenos">27</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for training: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span>    <span class="k">def</span> <span class="nf">get_test_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">30</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get test transforms.&quot;&quot;&quot;</span>
+<span class="linenos">31</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for testing: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span>
+<span class="linenos">34</span><span class="k">class</span> <span class="nc">ImageSegmentationTransforms</span><span class="p">(</span><span class="n">Transforms</span><span class="p">):</span>
+<span class="linenos">35</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Dummy class for image segmentation transforms.&quot;&quot;&quot;</span>
+<span class="linenos">36</span>
+<span class="linenos">37</span>    <span class="k">def</span> <span class="nf">get_train_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">38</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get train transforms.&quot;&quot;&quot;</span>
+<span class="linenos">39</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for training: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span>    <span class="k">def</span> <span class="nf">get_test_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransformFunc</span><span class="p">:</span>
+<span class="linenos">42</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get test transforms.&quot;&quot;&quot;</span>
+<span class="linenos">43</span>        <span class="k">return</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> for testing: </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="k">class</span> <span class="nc">CustomDataset</span><span class="p">:</span>
+<span class="linenos">47</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Enhanced class for a custom dataset, with a real __getitem__ method.&quot;&quot;&quot;</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">:</span> <span class="n">Transforms</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">stage</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">50</span>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+<span class="linenos">51</span>        <span class="bp">self</span><span class="o">.</span><span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span>        <span class="c1"># Directly using ImageClassificationTransforms without interface/abstraction</span>
+<span class="linenos">54</span>        <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span>    <span class="k">def</span> <span class="nf">apply_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos">57</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply transforms to a single data item based on stage.&quot;&quot;&quot;</span>
+<span class="linenos">58</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span><span class="p">:</span>
+<span class="linenos">59</span>            <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">get_train_transforms</span><span class="p">()(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">60</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">61</span>            <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">get_test_transforms</span><span class="p">()(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">62</span>        <span class="k">return</span> <span class="n">transformed</span>
+<span class="linenos">63</span>
+<span class="linenos">64</span>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">slice</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="linenos">65</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch and transform item(s) from dataset by index.&quot;&quot;&quot;</span>
+<span class="linenos">66</span>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c1"># Single item requested</span>
+<span class="linenos">67</span>            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="linenos">68</span>            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_transforms</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">69</span>        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>  <span class="c1"># Slice of items requested</span>
+<span class="linenos">70</span>            <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="linenos">71</span>            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_transforms</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+<span class="linenos">72</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">73</span>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Invalid index type. Must be int or slice.&quot;</span><span class="p">)</span>
+<span class="linenos">74</span>
+<span class="linenos">75</span>
+<span class="linenos">76</span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="linenos">77</span>    <span class="n">dummy_data</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data1&quot;</span><span class="p">,</span> <span class="s2">&quot;data2&quot;</span><span class="p">,</span> <span class="s2">&quot;data3&quot;</span><span class="p">,</span> <span class="s2">&quot;data4&quot;</span><span class="p">,</span> <span class="s2">&quot;data5&quot;</span><span class="p">]</span>
+<span class="linenos">78</span>
+<span class="linenos">79</span>    <span class="n">image_classification_transforms</span> <span class="o">=</span> <span class="n">ImageClassificationTransforms</span><span class="p">()</span>
+<span class="linenos">80</span>    <span class="n">dataset_train</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="n">image_classification_transforms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dummy_data</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">)</span>
+<span class="linenos">81</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">dataset_train</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="linenos">82</span>
+<span class="linenos">83</span>    <span class="c1"># you can change transforms from ImageClassification to ImageSegmentation</span>
+<span class="linenos">84</span>    <span class="n">image_segmentation_transforms</span> <span class="o">=</span> <span class="n">ImageSegmentationTransforms</span><span class="p">()</span>
+<span class="linenos">85</span>    <span class="n">dataset_test</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="n">image_segmentation_transforms</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dummy_data</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="linenos">86</span>    <span class="n">pprint</span><span class="p">(</span><span class="n">dataset_test</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'Using ImageClassificationTransforms for training: data1'</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">'Using ImageSegmentationTransforms for testing: data1'</span>
+</pre>
+</div></div>
+</div>
+<p>Originally, <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> <strong>creates</strong> its own dependency and it is the one
+controlling the dependency. Now after applying <strong>Dependency Inversion
+Principle</strong>, <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> is no longer creating its own dependency. It is now
+<strong>injected</strong> with the dependency. This <strong>inverts the control</strong> of the dependency
+from <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code> to the caller of <code class="docutils literal notranslate"><span class="pre">CustomDataset</span></code>. This is the <strong>Dependency
+Inversion Principle</strong>.</p>
+<p>In traditional sense, since class A depends on class B, then class A is the one
+creating the dependency. But after applying <strong>Dependency Inversion Principle</strong>,
+class A is no longer creating the dependency. Instead, the dependency is
+instantiated outside of class A at runtime and is injected into class A. This is
+the <strong>Dependency Inversion Principle</strong>, a form of <strong>Inversion of Control</strong>.</p>
+</section>
+<section id="dependency-inversion-principle-and-dependency-injection">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Dependency Inversion Principle and Dependency Injection</a><a class="headerlink" href="#dependency-inversion-principle-and-dependency-injection" title="Permalink to this heading">#</a></h2>
+<p>The Dependency Inversion Principle (DIP) is just one part of the larger concept
+of Dependency Injection (DI). While DIP is about the static structure of your
+code (i.e., how classes and modules are related to each other), DI is about how
+the dependencies are provided to an object at runtime.</p>
+<p>DIP is primarily concerned with the design and static structure of code, guiding
+developers on how to write modules that remain as independent as possible from
+the implementations of the modules they rely on.</p>
+<p>DI, on the other hand, is a design pattern that <strong>implements</strong> the Dependency
+Inversion Principle. It’s about the actual mechanics of providing an object with
+the outside resources (dependencies) it needs to perform its functions.</p>
+<p>In summary, DIP advocates for a particular structure of code relationships to
+reduce the coupling between high-level and low-level modules, while DI is a
+practical way to achieve this by handling the creation and binding of
+dependencies externally. Adhering to DIP will allow your software to become more
+modular, easier to test, and more maintainable.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://martinfowler.com/articles/dipInTheWild.html">DIP in the Wild - Martin Fowler</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=Kv5jhbSkqLE">Dependency Inversion - ArjanCodes</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://stackoverflow.com/questions/52857145/what-is-mean-by-abstractions-should-not-depend-on-details-details-should-depen">Abstractions should not depend on implementations.</a></p>
+</aside>
+<aside class="footnote brackets" id="id5" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Wikipedia: Dependency Inversion Principle</a></p>
+</aside>
+<aside class="footnote brackets" id="id6" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://stackoverflow.com/questions/3780388/what-are-high-level-modules-and-low-level-modules-in-the-context-of-depende">What are “High-level modules” and “low-level modules” (in the context of Dependency inversion principle)?</a></p>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./software_engineering/design_patterns"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../devops/continuous-integration/styling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Styling, Formatting, and Linting</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../dsa/complexity_analysis/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Complexity Analysis</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#low-level-and-high-level-modules">Low Level and High Level Modules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-violation-of-dependency-inversion-principle">A Violation of Dependency Inversion Principle</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#correcting-the-violation">Correcting the Violation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependency-inversion-principle-and-dependency-injection">Dependency Inversion Principle and Dependency Injection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
