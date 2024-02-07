@@ -56,7 +56,7 @@ understand and modify. This is crucial for long-term **maintenance** and
 The [PEP8 guide](https://peps.python.org/pep-0008/) offers essential coding
 conventions.
 
-### Simple Styling Practices
+#### Simple Styling Practices
 
 1. **Indentation**: PEP8 recommends 4 spaces per indentation level. While Python
    is flexible with indentation size (any consistent `k` spaces), adhering to

@@ -1,3 +1,89 @@
+r"""
+Scaled Dot-Product Attention Module
+===================================
+
+This module defines the Scaled Dot-Product Attention mechanism, which is a key
+component in transformer architectures. It follows the equations:
+
+.. math::
+    \text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) V
+
+The attention mechanism is computed as follows:
+1. Find the embedding dimension $D$ or $d_q$ from the query feature vector. Note
+   the query vector has the below representation:
+
+   .. math::
+       Q   = Z @ W_Q  \in  \mathbb{R}^{L \times D}
+       Q_h = Q @ W_Q^h \in \mathbb{R}^{L \times d_q}
+
+2. Compute the dot product of the query feature vector with the key feature
+   vector. Note since key is of dim (batch_size, L, $d_k$) so we operate the
+   transpose on the last two dimensions, specified by dim0 and dim1.
+   key.transpose(dim0=-2, dim1=-1) means let the second last dimension be the
+   last dimension and let the last dimension be the second last dimension.
+
+   This is the attention scores. Initially, the raw attention scores are scaled
+   by the inverse square root of the dimensionality of the key vectors to
+   stabilize the gradients during training.
+
+3. Apply mask to the scores if mask is not None. Softmax of -INF is zero,
+   effectively zeroing out masked logits. If False in mask is we ignore, then we
+   should fill attention scores with -INF. masked_fill fills tensor with value
+   -INF whenever mask's value is True. So we want the converse, so mask==0 means
+   whenever mask has False, then mask==0 evaluates to True, and we fill that.
+
+   Now attention scores are filled with -INF whenever mask is False.
+
+4. Context vector formation: The final context vectors are calculated as a
+weighted sum of the value vectors, with the weights provided by the
+attention weights. This step effectively combines the value vectors based on
+the computed attention, focusing the model's attention on certain elements.
+
+    .. math::
+        \text{context_vector} = \text{attention_weights} \cdot V
+
+5. Output generation: The computed context vectors and the attention weights
+are then output from the attention mechanism. The context vectors serve as a
+synthesis of the input sequence as seen by the model, incorporating the most
+relevant pieces of information according to the attention weights.
+
+Self-Attention versus Cross-Attention
+=====================================
+
+In the context of attention mechanisms, especially in sequence-to-sequence
+models like transformers, the terms "query", "key", and "value" can come from
+different parts of the model and have different sequence lengths:
+
+- The "query" usually comes from the decoder side of a transformer model. The
+  sequence length of the query is often referred to as $T$ (target sequence
+  length) because it relates to the target sequence that the model is trying to
+  generate.
+- The "key" and "value" usually come from the encoder side. The sequence length
+  of the key and value is often referred to as $S$ (source sequence length)
+  because they relate to the source sequence that is being encoded.
+
+This distinction becomes particularly important in cross-attention modules where
+the decoder (target) needs to attend to the output of the encoder (source). In
+self-attention modules within either the encoder or decoder, the sequence
+lengths of query, key, and value would be the same, and this distinction
+wouldn't be necessary.
+
+Notations
+=========
+
+- For a decoder-only model (like GPT), where self-attention is used, the
+  sequence lengths for query, key, and value are the same. It's common to use a
+  single term for the sequence length, such as $L$ or $T$, because there is no
+  need to differentiate between different sequence lengths within the attention
+  mechanism.
+
+- For a full encoder-decoder model (like the Transformer), it is beneficial to
+  differentiate the sequence lengths. Here, $T$ typically denotes the sequence
+  length of the query vectors that come from the decoder, and $S$ denotes the
+  sequence length of the key and value vectors that come from the encoder. This
+  distinction is important during cross-attention, where the decoder attends to
+  the output of the encoder, and thus the lengths can be different.
+"""
 from __future__ import annotations
 
 from typing import Tuple
@@ -77,20 +163,21 @@ class ScaledDotProductAttention(Attention):
 
         Notations
         ---------
-        - `B`  : Batch size
-        - `D`  : Embedding dimension
-        - `H`  : Number of heads
-        - `d_k`: Dimension of the keys    = D // H
-        - `d_q`: Dimension of the queries = D // H
-        - `d_v`: Dimension of the values  = D // H
-        - `T`  : Sequence length for `query`
-        - `S`  : Sequence length for `key` and `value`
-        - `L`  : Sequence length for `query`, `key` and `value` generic.
+        - B   : Batch size
+        - D   : Embedding dimension
+        - H   : Number of heads
+        - d_k : Dimension of the keys    = D // H
+        - d_q : Dimension of the queries = D // H
+        - d_v : Dimension of the values  = D // H
+        - T   : Sequence length for `query`
+        - S   : Sequence length for `key` and `value`
+        - L   : Sequence length for `query`, `key` and `value` generic.
 
         Note
         ----
         -   We use `L` in our notes instead of `T` and `S` since we assume all query,
-            key and value are of same length.
+            key and value are of same length as we are dealing with self-attention in
+            GPT decoder.
 
         -   We often denote the dimension of the keys and queries as `d_k` instead of
             `d_k` and `d_q` respectively because both must have the same dimensionality
@@ -178,7 +265,7 @@ class MultiHeadedAttention(nn.Module):
         bias: bool = False,
     ) -> None:
         super().__init__()
-        assert d_model % H == 0
+        assert d_model % H == 0, "The number of heads must divide the embedding dimension."
 
         # fmt: off
         self.d_model   = d_model       # D
@@ -217,26 +304,35 @@ class MultiHeadedAttention(nn.Module):
         S or L: Source sequence length
         T or L: Target sequence length
         D:      Embedding dimension
+        H:      Number of heads
 
         Parameters
         ----------
-        query:  Although named as query, it is the embeddings Z from the token_embedding + positional_embedding layer.
+        query:  Although named as query, it is the embeddings `z` from the token_embedding + positional_embedding layer.
                 type:  torch.Tensor
                 shape: (B, S or T, D)
-        key:    Although named as key, it is the embeddings Z from the token_embedding + positional_embedding layer.
+        key:    Although named as key, it is the embeddings `z` from the token_embedding + positional_embedding layer.
                 type:  torch.Tensor
                 shape: (B, S or T, D)
-        value:  Although named as value, it is the embeddings Z from the token_embedding + positional_embedding layer.
+        value:  Although named as value, it is the embeddings `z` from the token_embedding + positional_embedding layer.
                 type:  torch.Tensor
                 shape: (B, S or T, D)
         mask:   Mask to be applied to the attention scores.
                 type:  torch.BoolTensor
                 shape: (B, 1, S or T, S or T)
 
+        Returns
+        -------
+        O:  The output of the multi-headed attention mechanism.
+            type:  torch.Tensor
+            shape: (B, S or T, D)
+
         Variables
         ---------
         W_Q.weight (D, D)
-
+        W_K.weight (D, D)
+        W_V.weight (D, D)
+        W_O.weight (D, D)
         """
         # fmt: off
         if mask is not None:
@@ -250,13 +346,11 @@ class MultiHeadedAttention(nn.Module):
         K = self.W_K(key).contiguous()   # Z @ W_K
         V = self.W_V(value).contiguous() # Z @ W_V
 
-
         Q = self.transpose_qkv(Q)        # [B, H, L, D]
         K = self.transpose_qkv(K)
         V = self.transpose_qkv(V)
 
         # Attention
-        # same as the other code: x = torch.matmul(p_atten, value)
         self.context_vector, self.attention_weights = self.attention(Q, K, V, mask)
         context_vector_concat                       = self.reverse_transpose_qkv(self.context_vector)
         # fmt: on
@@ -267,7 +361,7 @@ class MultiHeadedAttention(nn.Module):
         return O  # type: ignore[no-any-return]
 
     def _init_weights(self) -> None:
-        """See PyTorch's code for inspiration!"""
+        """See PyTorch's MultiHeadAttention code for reference."""
         # we assume _qkv_same_embed_dim is True
         nn.init.xavier_uniform_(self.W_Q.weight)
         nn.init.xavier_uniform_(self.W_K.weight)
@@ -276,7 +370,23 @@ class MultiHeadedAttention(nn.Module):
 
     def transpose_qkv(self, q_or_k_or_v: torch.Tensor) -> torch.Tensor:
         """Transposition for parallel computation of multiple attention heads.
-        TODO: Why does transpose allow parallel computation?
+        Why does transpose allow parallel computation? So originally the shape of
+        the query, key, and value is (B, L, D), and we want to split the D into H
+        heads to become (B, L, H, D / H). But this is not the shape we want (could
+        be due to efficiency reasons), so we transpose the shape to (B, H, L, D / H)
+        so all heads can be computed in parallel (efficiently).
+
+        Parameters
+        ----------
+        q_or_k_or_v: The query, key, or value tensor.
+            type:  torch.Tensor
+            shape: (B, L, D)
+
+        Returns
+        -------
+        q_or_k_or_v: The transposed query, key, or value tensor.
+            type:  torch.Tensor
+            shape: (B, H, L, D / H)
         """
         # fmt: off
         # 1. q_or_k_or_v is shape (B, L, D)
@@ -284,13 +394,27 @@ class MultiHeadedAttention(nn.Module):
         batch_size, seq_len, _ = q_or_k_or_v.shape
         q_or_k_or_v            = q_or_k_or_v.view(batch_size, seq_len, self.H, self.d_model // self.H)
 
-        # 3. switch H from 3rd to 2nd dimension, or in python swap 2nd to 1st
+        # 3. switch H from 3rd to 2nd dimension, or in python swap 2nd to 1st dimension and 1st to 2nd dimension
+        #    shape (B, H, L, D / H = d_qkv)
         q_or_k_or_v            = q_or_k_or_v.permute(0, 2, 1, 3)
         # fmt: on
         return q_or_k_or_v
 
     def reverse_transpose_qkv(self, q_or_k_or_v: torch.Tensor) -> torch.Tensor:
-        """Reverse the transposition operation for concatenating multiple attention heads."""
+        """Reverse the transposition operation for concatenating multiple attention heads.
+
+        Parameters
+        ----------
+        q_or_k_or_v: The query, key, or value tensor.
+            type:  torch.Tensor
+            shape: (B, H, L, D / H)
+
+        Returns
+        -------
+        q_or_k_or_v: The transposed query, key, or value tensor.
+            type:  torch.Tensor
+            shape: (B, L, D)
+        """
         # fmt: off
         # 1. q_or_k_or_v is shape (B, H, L, D / H = d_qkv)
         # 2. aim to make it of shape (B, L, H, D / H = d_qkv)

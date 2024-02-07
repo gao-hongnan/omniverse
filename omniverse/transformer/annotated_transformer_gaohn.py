@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 import copy
 import math
 from abc import ABC, abstractmethod
