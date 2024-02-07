@@ -68,6 +68,23 @@ self-attention modules within either the encoder or decoder, the sequence
 lengths of query, key, and value would be the same, and this distinction
 wouldn't be necessary.
 
+Multi-Head Attention Module
+===========================
+
+This module defines the Multi-Head Attention mechanism, which is a key
+component in transformer architectures. It follows the equations:
+
+.. math::
+    \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, ..., \text{head}_H)W^O
+
+where each head is computed as:
+
+.. math::
+    \text{head}_h = \text{Attention}(QW^Q_h, KW^K_h, VW^V_h) where h \in [1, H]
+
+Here, Q, K, V are the query, key, and value vectors. W^Q_h, W^K_h, W^V_h are
+parameter matrices. H is the number of heads.
+
 Notations
 =========
 
