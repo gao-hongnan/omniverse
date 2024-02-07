@@ -29,26 +29,36 @@ Note that it is similar to Strategy Pattern. But we will not be changing the
 behavior of the algorithm at runtime. We will be changing the algorithm at
 compile time.
 """
-from typing import Any
+from typing import Any, List, Literal, Union
 
 from src.dii_base import Transforms  # from abstract interface import Transforms
 
 
 class CustomDataset:
-    """Dummy class for custom dataset."""
+    """Enhanced class for a custom dataset, with a real __getitem__ method."""
 
-    def __init__(self, transforms: Transforms, stage: str = "train") -> None:
-        self.stage = stage
+    def __init__(self, transforms: Transforms, data: List[Any], stage: Literal["train", "test"] = "train") -> None:
+        self.data: List[Any] = data
+        self.stage: str = stage
+
+        # Directly using ImageClassificationTransforms without interface/abstraction
         self.transforms = transforms
 
-    def apply_transforms(self, dummy_data: Any = None) -> Any:
-        """Apply transforms to dataset based on stage."""
+    def apply_transforms(self, item: Any) -> str:
+        """Apply transforms to a single data item based on stage."""
         if self.stage == "train":
-            transformed = self.transforms.get_train_transforms()(dummy_data)
+            transformed = self.transforms.get_train_transforms()(item)
         else:
-            transformed = self.transforms.get_test_transforms()(dummy_data)
+            transformed = self.transforms.get_test_transforms()(item)
         return transformed
 
-    def getitem(self, dummy_data: Any = None) -> Any:
-        """Replace __getitem__ method as normal method for simplicity."""
-        return self.apply_transforms(dummy_data=dummy_data)
+    def __getitem__(self, index: Union[int, slice]) -> Union[str, List[str]]:
+        """Fetch and transform item(s) from dataset by index."""
+        if isinstance(index, int):  # Single item requested
+            item = self.data[index]
+            return self.apply_transforms(item)
+        elif isinstance(index, slice):  # Slice of items requested
+            items = self.data[index]
+            return [self.apply_transforms(item) for item in items]
+        else:
+            raise TypeError("Invalid index type. Must be int or slice.")
