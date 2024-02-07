@@ -46,3 +46,8 @@
 
 -   https://github.com/openai/openai-cookbook/tree/main
 -   https://github.com/mlabonne/llm-course
+
+## CICD
+
+-   https://microsoft.github.io/code-with-engineering-playbook/continuous-integration/#code-style-checks
+    -   7th February 2024
