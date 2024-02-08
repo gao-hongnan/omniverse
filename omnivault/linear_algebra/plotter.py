@@ -146,6 +146,8 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         self.vectors.append(vector)
 
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
+        """Currently only works in notebooks, if in script, please add
+        `plt.show()` after calling this method."""
         for vector in self.vectors:
             # fmt: off
             X, Y = vector.origin

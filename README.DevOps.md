@@ -1,5 +1,50 @@
 # DevOps Best Practices
 
+-   [DevOps Best Practices](#devops-best-practices)
+    -   [Pre-commit Setup Guide](#pre-commit-setup-guide)
+        -   [Step 1: Install Pre-commit](#step-1-install-pre-commit)
+        -   [Step 2: Create a Configuration File](#step-2-create-a-configuration-file)
+        -   [Step 3: Install Hooks](#step-3-install-hooks)
+        -   [Step 4: Run Against All Files](#step-4-run-against-all-files)
+        -   [Step 5: Make a Commit](#step-5-make-a-commit)
+    -   [GitHub Actions](#github-actions)
+        -   [Environment Variables](#environment-variables)
+            -   [`WORKDIR`](#workdir)
+    -   [Continuous Integration](#continuous-integration)
+        -   [Pinning DevOps Tool Versions](#pinning-devops-tool-versions)
+            -   [Example: Pinning `pylint` Version](#example-pinning-pylint-version)
+                -   [Scenario Without Pinning](#scenario-without-pinning)
+                -   [Scenario With Pinning](#scenario-with-pinning)
+                -   [Implementing Pinning](#implementing-pinning)
+            -   [Conclusion](#conclusion)
+    -   [Building the book](#building-the-book)
+    -   [How to Index Jupyter Book?](#how-to-index-jupyter-book)
+-   [CI](#ci)
+    -   [Motivation](#motivation)
+        -   [Introduction to the Problem](#introduction-to-the-problem)
+        -   [Broader Implications](#broader-implications)
+        -   [Impact on Development Workflow](#impact-on-development-workflow)
+        -   [Long-Term Consequences](#long-term-consequences)
+        -   [Advocating for a Solution](#advocating-for-a-solution)
+        -   [Enhancing Resilience and Reducing Bugs with Linting, Testing, and Static Type Checking](#enhancing-resilience-and-reducing-bugs-with-linting-testing-and-static-type-checking)
+            -   [Introduction: The Role of Quality Assurance Tools](#introduction-the-role-of-quality-assurance-tools)
+            -   [Advantages of Automated Testing](#advantages-of-automated-testing)
+            -   [Introduction: Python's Typing Landscape](#introduction-pythons-typing-landscape)
+            -   [Role of Static Type Checking](#role-of-static-type-checking)
+            -   [Reducing Runtime Errors](#reducing-runtime-errors)
+            -   [Conclusion: Building a Resilient Codebase](#conclusion-building-a-resilient-codebase)
+    -   [Version Control](#version-control)
+    -   [Dependency Management](#dependency-management)
+    -   [Continuous Integration (CI)](#continuous-integration-ci)
+    -   [Continuous Deployment/Delivery (CD)](#continuous-deploymentdelivery-cd)
+    -   [Monitoring and Logging](#monitoring-and-logging)
+    -   [Security](#security)
+    -   [Infrastructure](#infrastructure)
+    -   [Documentation](#documentation)
+    -   [Others](#others)
+    -   [Best Practices](#best-practices)
+    -   [Continuous Improvement](#continuous-improvement)
+
 ## Pre-commit Setup Guide
 
 Pre-commit is a framework that manages and maintains multi-language pre-commit
@@ -194,17 +239,6 @@ stability, and security, but it requires a balance with maintenance effort to
 ensure tools don’t become outdated. Regularly scheduled reviews and updates of
 these pinned versions can help maintain this balance.
 
-### Linter
-
-One source of truth between the CI environment and the development environment.
-
--   [PyTorch](https://github.com/pytorch/pytorch/blob/main/pyproject.toml)
--   [OpenAI](https://github.com/openai/openai-python/blob/main/pyproject.toml)
--   [FastAPI](https://github.com/tiangolo/fastapi/blob/master/pyproject.toml)
-
-Check whether we need black formatting options in ruff if we already have one to
-use for black?
-
 ## Building the book
 
 To use a custom domain with GitHub Pages and with Jupyter Book, we would need to
@@ -284,7 +318,6 @@ intent.
                 -   [Scenario With Pinning](#scenario-with-pinning)
                 -   [Implementing Pinning](#implementing-pinning)
             -   [Conclusion](#conclusion)
-        -   [Linter](#linter)
     -   [Building the book](#building-the-book)
     -   [How to Index Jupyter Book?](#how-to-index-jupyter-book)
 -   [CI](#ci)
@@ -302,9 +335,7 @@ intent.
             -   [Reducing Runtime Errors](#reducing-runtime-errors)
             -   [Conclusion: Building a Resilient Codebase](#conclusion-building-a-resilient-codebase)
     -   [Version Control](#version-control)
-    -   [Code Quality and Standards](#code-quality-and-standards)
     -   [Dependency Management](#dependency-management)
-    -   [Testing](#testing)
     -   [Continuous Integration (CI)](#continuous-integration-ci)
     -   [Continuous Deployment/Delivery (CD)](#continuous-deploymentdelivery-cd)
     -   [Monitoring and Logging](#monitoring-and-logging)
@@ -367,12 +398,6 @@ tens of thousands of code!!!
     practices within the team.
 
 ### Advocating for a Solution
-
-**A good example
-[here](https://ci4.corp.dbs.com:8443/job/CBBA_REGIONAL/job/synthetic-data-generation/job/feature%252Fmultitable/).
-But it is missing static type check I think - everybody is scared to fix typing
-issues in python but look at how big companies do it. It enforced good code
-hygience. **
 
 ![](cicd-sample.PNG)
 
@@ -463,13 +488,6 @@ structured way to articulate this:
 -   **Branching Strategy**: Implement a strategy like Git Flow or Trunk Based
     Development.
 
-## Code Quality and Standards
-
--   **Linting**: Use tools like `flake8` or `pylint`.
--   **Code Formatting**: Tools like `black` or `autopep8`.
--   **Type Checking**: Optional but recommended, using `mypy` or `pytype`.
--   **Code Reviews**: Enforce via merge/pull request policies.
-
 ## Dependency Management
 
 -   **Dependency Specification**: Use `pyproject.toml` (PEP 518) to define
@@ -478,99 +496,6 @@ structured way to articulate this:
     environments.
 -   **Dependency Scanning**: Tools like `snyk` or `dependabot` for vulnerability
     scanning.
-
-## Testing
-
-1. **Unit Testing**:
-
-    - Tests individual units or components of the software in isolation (e.g.,
-      functions, methods).
-    - Ensures that each part works correctly on its own.
-
-2. **Integration Testing**:
-
-    - Tests the integration or interfaces between components or systems.
-    - Ensures that different parts of the system work together as expected.
-
-3. **System Testing**:
-
-    - Tests the complete and integrated software system.
-    - Verifies that the system meets its specified requirements.
-
-4. **Acceptance Testing**:
-
-    - Performed by end-users or clients to validate the end-to-end business
-      flow.
-    - Ensures that the software meets the business requirements and is ready for
-      delivery.
-
-5. **Regression Testing**:
-
-    - Conducted after changes (like enhancements or bug fixes) to ensure
-      existing functionalities work as before.
-    - Helps catch bugs introduced by recent changes.
-
-6. **Functional Testing**:
-
-    - Tests the software against functional specifications/requirements.
-    - Focuses on checking functionalities of the software.
-
-7. **Non-Functional Testing**:
-
-    - Includes testing of non-functional aspects like performance, usability,
-      reliability, etc.
-    - Examples include Performance Testing, Load Testing, Stress Testing,
-      Usability Testing, Security Testing, etc.
-
-8. **End-to-End Testing**:
-
-    - Tests the complete flow of the application from start to end.
-    - Ensures the system behaves as expected in real-world scenarios.
-
-9. **Smoke Testing**:
-
-    - Preliminary testing to check if the basic functions of the software work
-      correctly.
-    - Often done to ensure it's stable enough for further testing.
-
-10. **Exploratory Testing**:
-
-    - Unscripted testing to explore the application's capabilities.
-    - Helps to find unexpected issues that may not be covered in other tests.
-
-11. **Load Testing**:
-
-    - Evaluates system performance under a specific expected load.
-    - Identifies performance bottlenecks.
-
-12. **Stress Testing**:
-
-    - Tests the system under extreme conditions, often beyond its normal
-      operational capacity.
-    - Checks how the system handles overload.
-
-13. **Usability Testing**:
-
-    - Focuses on the user's ease of using the application, user interface, and
-      user satisfaction.
-    - Helps improve user experience and interface design.
-
-14. **Security Testing**:
-
-    - Identifies vulnerabilities in the software and ensures that the data and
-      resources are protected.
-    - Checks for potential exploits and security flaws.
-
-15. **Compatibility Testing**:
-
-    - Checks if the software is compatible with different environments like
-      operating systems, browsers, devices, etc.
-
-16. **Sanity Testing**:
-    - A subset of regression testing, focused on testing specific
-      functionalities after making changes.
-    - Usually quick and verifies whether a particular function of the
-      application is still working after a minor change.
 
 ## Continuous Integration (CI)
 

@@ -215,6 +215,14 @@ such that:
    the concrete implementation of transformation functions, enhancing
    modularity, flexibility, and the ease of testing.
 
+```{figure} ./assets/uml.drawio.svg
+---
+name: UML Diagram.
+---
+
+A very ugly UML diagram.
+```
+
 More concretely, we can create an interface `Transforms` that will be
 implemented by `ImageClassificationTransforms`, `ImageSegmentationTransforms`,
 etc. Then, we can pass the `Transforms` object to the `CustomDataset`
