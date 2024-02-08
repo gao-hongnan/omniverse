@@ -209,6 +209,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
 </ul>
 </li>
 </ul>
@@ -393,6 +394,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-start">Where to Start?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -444,7 +446,8 @@ document.write(`
 </ul>
 </li>
 <li><p><a class="reference internal" href="#summary" id="id23">Summary</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id24">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#where-to-start" id="id24">Where to Start?</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id25">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="intuition">
@@ -533,38 +536,80 @@ new list. This ensures that each function call operates on a fresh list unless
 otherwise specified.</p>
 <p>Let’s see this in action.</p>
 <p>Consider the following code snippet:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span>
-
-<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">add_to_list</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">some_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-    <span class="n">some_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">some_list</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="k">def</span> <span class="nf">add_to_list</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">some_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="linenos">8</span>    <span class="n">some_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">9</span>    <span class="k">return</span> <span class="n">some_list</span>
 </pre></div>
+</div>
+</div>
 </div>
 <p>This looks harmless, but if you run the below code, you will see that the
 function does not behave as expected:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">list_1</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [0]</span>
-<span class="n">list_2</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [0, 1]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">list_1</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [0]</span>
+<span class="linenos">2</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_1: </span><span class="si">{</span><span class="n">list_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="n">list_2</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [0, 1]</span>
+<span class="linenos">5</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_2: </span><span class="si">{</span><span class="n">list_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_1: </span><span class="si">{</span><span class="n">list_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># [0, 1]</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>list_1: [0]
+list_2: [0, 1]
+list_1: [0, 1]
+</pre></div>
+</div>
+</div>
 </div>
 <p>Why did <code class="docutils literal notranslate"><span class="pre">list_2</span></code> not return <code class="docutils literal notranslate"><span class="pre">[1]</span></code>? The issue lies in the default argument
 <code class="docutils literal notranslate"><span class="pre">some_list:</span> <span class="pre">List[T]</span> <span class="pre">=</span> <span class="pre">[]</span></code>. This default argument is evaluated only once, when
 the function is defined, and not every time the function is called. This means
 that the same list is used every time the function is called without the
-<code class="docutils literal notranslate"><span class="pre">some_list</span></code> argument. To fix this, you can use <code class="docutils literal notranslate"><span class="pre">None</span></code> as the default argument
-and then initialize the list inside the function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add_to_list</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">some_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">some_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">some_list</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">some_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">some_list</span>
+<code class="docutils literal notranslate"><span class="pre">some_list</span></code> argument. This means that if you use a mutable default argument and
+mutate it, you will and have mutated that object for all future calls to the
+function as well. And if you print <code class="docutils literal notranslate"><span class="pre">list_1</span></code> again after <code class="docutils literal notranslate"><span class="pre">list_2</span></code>, you will see
+that <code class="docutils literal notranslate"><span class="pre">list_1</span></code> has also been mutated!</p>
+<p>To fix this, you can use <code class="docutils literal notranslate"><span class="pre">None</span></code> as the default argument and then initialize the
+list inside the function:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span> <span class="nf">add_to_list</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">some_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<span class="linenos">2</span>    <span class="k">if</span> <span class="n">some_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">3</span>        <span class="n">some_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">4</span>    <span class="n">some_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">5</span>    <span class="k">return</span> <span class="n">some_list</span>
 </pre></div>
 </div>
+</div>
+</div>
 <p>Then the function will behave as expected:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">list_1</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [0]</span>
-<span class="n">list_2</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [1]</span>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">list_1</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># [0]</span>
+<span class="linenos">2</span><span class="n">list_2</span> <span class="o">=</span> <span class="n">add_to_list</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [1]</span>
+<span class="linenos">3</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_1: </span><span class="si">{</span><span class="n">list_1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">4</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_2: </span><span class="si">{</span><span class="n">list_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>list_1: [0]
+list_2: [1]
+</pre></div>
+</div>
+</div>
 </div>
 <p>If this goes into <strong>production</strong>, it could lead to a <strong>bug</strong> that is <em>hard</em> to
 catch.</p>
@@ -726,8 +771,16 @@ detection and resolution of minor issues. This approach enhances transparency,
 facilitates progress tracking, and encourages team communication, ultimately
 leading to a more cohesive and productive development process<a class="footnote-reference brackets" href="#id3" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 </section>
+<section id="where-to-start">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Where to Start?</a><a class="headerlink" href="#where-to-start" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/pytorch/pytorch/blob/main/pyproject.toml">PyTorch</a></p></li>
+<li><p><a class="reference external" href="https://github.com/openai/openai-python/blob/main/pyproject.toml">OpenAI</a></p></li>
+<li><p><a class="reference external" href="https://github.com/tiangolo/fastapi/blob/master/pyproject.toml">FastAPI</a></p></li>
+</ul>
+</section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id24" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://microsoft.github.io/code-with-engineering-playbook/continuous-integration/#code-style-checks">Code Style Checks - Microsoft</a></p></li>
 <li><p><a class="reference external" href="https://microsoft.github.io/code-with-engineering-playbook/code-reviews/recipes/python/#code-analysis-linting">Code Analysis Linting - Microsoft</a></p></li>
@@ -838,6 +891,7 @@ leading to a more cohesive and productive development process<a class="footnote-
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-start">Where to Start?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>

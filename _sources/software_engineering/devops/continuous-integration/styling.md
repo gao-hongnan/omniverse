@@ -1,3 +1,20 @@
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
 # Styling, Formatting, and Linting
 
 ```{contents}
@@ -96,7 +113,9 @@ Let's see this in action.
 
 Consider the following code snippet:
 
-```python
+```{code-cell} ipython3
+from __future__ import annotations
+
 from typing import List, TypeVar
 
 T = TypeVar('T')
@@ -109,19 +128,29 @@ def add_to_list(item: T, some_list: List[T] = []) -> List[T]:
 This looks harmless, but if you run the below code, you will see that the
 function does not behave as expected:
 
-```python
+```{code-cell} ipython3
 list_1 = add_to_list(0)  # [0]
+print(f"list_1: {list_1}")
+
 list_2 = add_to_list(1)  # [0, 1]
+print(f"list_2: {list_2}")
+
+print(f"list_1: {list_1}") # [0, 1]
 ```
 
 Why did `list_2` not return `[1]`? The issue lies in the default argument
 `some_list: List[T] = []`. This default argument is evaluated only once, when
 the function is defined, and not every time the function is called. This means
 that the same list is used every time the function is called without the
-`some_list` argument. To fix this, you can use `None` as the default argument
-and then initialize the list inside the function:
+`some_list` argument. This means that if you use a mutable default argument and
+mutate it, you will and have mutated that object for all future calls to the
+function as well. And if you print `list_1` again after `list_2`, you will see
+that `list_1` has also been mutated!
 
-```python
+To fix this, you can use `None` as the default argument and then initialize the
+list inside the function:
+
+```{code-cell} ipython3
 def add_to_list(item: T, some_list: List[T] | None = None) -> List[T]:
     if some_list is None:
         some_list = []
@@ -131,9 +160,11 @@ def add_to_list(item: T, some_list: List[T] | None = None) -> List[T]:
 
 Then the function will behave as expected:
 
-```python
+```{code-cell} ipython3
 list_1 = add_to_list(0)  # [0]
 list_2 = add_to_list(1)  # [1]
+print(f"list_1: {list_1}")
+print(f"list_2: {list_2}")
 ```
 
 If this goes into **production**, it could lead to a **bug** that is _hard_ to
@@ -305,6 +336,12 @@ detection and resolution of minor issues. This approach enhances transparency,
 facilitates progress tracking, and encourages team communication, ultimately
 leading to a more cohesive and productive development process[^1].
 
+## Where to Start?
+
+-   [PyTorch](https://github.com/pytorch/pytorch/blob/main/pyproject.toml)
+-   [OpenAI](https://github.com/openai/openai-python/blob/main/pyproject.toml)
+-   [FastAPI](https://github.com/tiangolo/fastapi/blob/master/pyproject.toml)
+
 ## References and Further Readings
 
 -   [Code Style Checks - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/continuous-integration/#code-style-checks)
@@ -316,3 +353,5 @@ leading to a more cohesive and productive development process[^1].
 
 [^1]:
     [Deliver Quickly and Daily - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/continuous-integration/#deliver-quickly-and-daily)
+
+[^2]: [Common Gotchas](https://docs.python-guide.org/writing/gotchas/)
