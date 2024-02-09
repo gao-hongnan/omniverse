@@ -22,3 +22,9 @@ So, learning these concepts is definitely not confined to Python. They are
 fundamental to computer science and software engineering, providing a foundation
 for understanding type systems in various programming languages and their role
 in software design and architecture.
+
+## Table of Contents
+
+```{tableofcontents}
+
+```

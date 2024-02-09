@@ -119,7 +119,8 @@ print(isinstance(dog, Animal))  # True, Dog is a nominal subtype of Animal
 In this example, `Dog` and `Cat` are nominal subtypes of `Animal` because they
 explicitly inherit from the `Animal` class. Note that python allows unsafe
 overriding of attributes and methods, so we really want static type checker to
-ensure we do not violate any rules such as Liskov Substitution Principle.
+ensure we do not violate any rules such as
+[Liskov Substitution Principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle).
 
 ### Structural Subtyping
 
