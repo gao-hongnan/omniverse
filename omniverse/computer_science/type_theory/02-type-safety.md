@@ -241,6 +241,7 @@ old = new  # Unsafe because int <: float
 
 -   [Unit 2: Variable and Type - CS2030S](https://nus-cs2030s.github.io/2021-s2/02-type.html)
 -   [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
+-   [Subtyping - eduNitas](https://wiki.edunitas.com/IT/en/114-10/Subtyping_4238_eduNitas.html)
 
 [^what-is-a-criterion]:
     A criterion is a principle or standard by which something may be judged or

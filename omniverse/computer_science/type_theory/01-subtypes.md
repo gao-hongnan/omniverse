@@ -224,6 +224,7 @@ classes, inclusive and coercive [^subtype-schemes-wikipedia].
 -   [mypy - Protocols](https://mypy.readthedocs.io/en/stable/protocols.html)
 -   [Subtyping schemes - Wikipedia](https://en.wikipedia.org/wiki/Subtyping#Subtyping_schemes)
 -   [Type Systems: Structural vs. Nominal Typing Explained - Medium](https://medium.com/@thejameskyle/type-systems-structural-vs-nominal-typing-explained-56511dd969f4)
+-   [Subtyping - eduNitas](https://wiki.edunitas.com/IT/en/114-10/Subtyping_4238_eduNitas.html)
 
 [^subtype-wikipedia]:
     [Subtyping - Wikipedia](https://en.wikipedia.org/wiki/Subtyping)
