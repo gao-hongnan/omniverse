@@ -128,12 +128,12 @@ def process_misleading_pair(pair: Pair) -> None:
         first_element = int(pair.get_first())  # Mistakenly assuming it's an int
         second_element = str(pair.get_second())  # Mistakenly assuming it's a str
         if TYPE_CHECKING:
+            reveal_type(pair.get_first())
+            reveal_type(pair.get_second())
             reveal_type(first_element)
             reveal_type(second_element)
             reveal_locals()
 
-        print(f"First element (assumed int): {first_element * 2}")
-        print(f"Second element (assumed str): {second_element.upper()}")
     except ValueError as err:
         print(f"Error: {err}")
 
@@ -514,6 +514,80 @@ specifically on a list of integers. The type argument ensures that the generic
 function can be applied to a specific data type, in this context, integers,
 thereby tailoring the generic function to a particular use case while preserving
 type safety.
+
+### Pair Problem Revisited
+
+To resolve the issues with the `Pair` class in the motivation, we can use type
+variables to parameterize the `Pair` class. This will allow us to specify the
+types of the `first` and `second` attributes, as well as the return types of the
+`get_first` and `get_second` methods. This will provide type safety and
+consistency, ensuring that the types of the elements in the pair are correctly
+enforced.
+
+```{code-cell} ipython3
+S = TypeVar("S")
+T = TypeVar("T")
+
+@dataclass
+class Pair(Generic[S, T]):
+    first: S
+    second: T
+
+    def get_first(self) -> S:
+        return self.first
+
+    def get_second(self) -> T:
+        return self.second
+
+def create_misleading_pair() -> Pair[str, int]: # 101: error: Missing type parameters for generic type "Pair"  [type-arg]
+    """This function creates a Pair with a string and an integer."""
+    return Pair("hello", 4)
+
+def process_misleading_pair(pair: Pair[str, int]) -> None:
+    """
+    Process elements of the pair, with incorrect assumptions about their types.
+    """
+
+    # The programmer incorrectly assumes the first element is an integer
+    # and the second element is a string.
+    try:
+        first_element = int(pair.get_first())  # Mistakenly assuming it's an int
+        second_element = str(pair.get_second())  # Mistakenly assuming it's a str
+
+        if TYPE_CHECKING:
+            reveal_type(pair.get_first())
+            reveal_type(pair.get_second())
+            reveal_type(first_element)
+            reveal_type(second_element)
+            reveal_locals()
+
+    except ValueError as err:
+        print(f"Error: {err}")
+
+# Example Usage
+pair = create_misleading_pair()
+process_misleading_pair(pair)
+```
+
+However, `mypy` actually does not raise any issue on line `27` because Python
+allows a string type to be **_coerced_** to an integer type. But the example, if
+set in Java, will allow the type checker to catch the type mismatch and stop the
+program from crashing during run-time. Why? Because Java does not allow a string
+type to be coerced to an integer type.
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+        // Create a String object
+        String stringValue = "hello";
+
+        // Attempt to cast the String to an Integer
+        Integer intValue = (Integer) stringValue;
+        System.out.println(intValue);
+    }
+}
+```
 
 ## Scopes of Type Variables
 
