@@ -520,9 +520,7 @@ type safety.
 To resolve the issues with the `Pair` class in the motivation, we can use type
 variables to parameterize the `Pair` class. This will allow us to specify the
 types of the `first` and `second` attributes, as well as the return types of the
-`get_first` and `get_second` methods. This will provide type safety and
-consistency, ensuring that the types of the elements in the pair are correctly
-enforced.
+`get_first` and `get_second` methods.
 
 ```{code-cell} ipython3
 S = TypeVar("S")
@@ -570,10 +568,13 @@ process_misleading_pair(pair)
 ```
 
 However, `mypy` actually does not raise any issue on line `27` because Python
-allows a string type to be **_coerced_** to an integer type. But the example, if
-set in Java, will allow the type checker to catch the type mismatch and stop the
-program from crashing during run-time. Why? Because Java does not allow a string
-type to be coerced to an integer type.
+allows a string type to be _dynamically converted_ to an integer type if and
+only if the string is a valid "integer" string.
+
+But the example, if set in Java, will allow the type checker to catch the type
+mismatch and stop the program from crashing during run-time. Why? Because Java
+does not allow a string type to be coerced to an integer type. Below I show a
+small snippet of Java code that will raise a `ClassCastException` at run-time.
 
 ```java
 public class Main {
@@ -589,56 +590,67 @@ public class Main {
 }
 ```
 
-## Scopes of Type Variables
+````{prf:example} I came all the way just for a Moot Example
+:label: computer-science-type-theory-generics-moot-example
 
-## I do not know how to connect the below
+I converted the notes of CS2030S from Java to Python, just to reach a moot point
+where the type checker does not raise any issue on line 27. But the point should
+be clear. If we do not parameterize the `Pair` class and use `Any` instead, then
+even in a strongly typed language like Java, the type mismatch may not be caught
+at compile time.
 
-We should note the example given by the author is about pairs, but in fact even
-single type annotation of `Any` can lead to the same kind of errors!
-
-Next, let's define the `find_min_max` function, which will return a
-`Pair[int, int]`:
-
-```python
-def find_min_max(array: Tuple[int, ...]) -> Pair[int, int]:
-    if not array:
-        raise ValueError("Array must not be empty")
-
-    min_val, max_val = float('inf'), float('-inf')
-    for i in array:
-        if i < min_val:
-            min_val = i
-        if i > max_val:
-            max_val = i
-    return Pair(min_val, max_val)
-```
-
-In this function, `Tuple[int, ...]` is used to specify that the input should be
-a tuple of integers. The function then calculates the minimum and maximum values
-and returns them as a `Pair[int, int]`.
-
-Finally, let's demonstrate the use of this `Pair` class with a function that
-returns a `Pair` of different types, like `str` and `int`:
+Let's just construct another simple example where `mypy` will actually raise an
+error.
 
 ```python
-def example_function() -> Pair[str, int]:
-    return Pair("hello", 4)
+K = TypeVar("K")
+V = TypeVar("V")
+
+@dataclass
+class Pair(Generic[K, V]):
+    key: K
+    value: V
+
+    def get_key(self) -> K:
+        return self.key
+
+    def get_value(self) -> V:
+        return self.value
+
+def log_user_info(user_info: Pair[str, int]) -> None:
+    """
+    Logs user information, expecting a username (str) and user ID (int).
+    """
+    username: str = user_info.get_key()
+    user_id: int = user_info.get_value()
+    print(f"User: {username}, ID: {user_id}")
+
+def create_incorrect_pair() -> Pair[int, str]:
+    """
+    Incorrectly creates a pair intended to represent user info,
+    but swaps the types of the key and value.
+    """
+    # Mistakenly swapped the order of types, creating a Pair[int, str] instead of Pair[str, int]
+    return Pair(12345, "john_doe")
 
 # Example Usage
-p = example_function()
-first_element = p.get_first()  # Will be inferred as str
-second_element = p.get_second()  # Will be inferred as int
+incorrect_pair = create_incorrect_pair()
+log_user_info(incorrect_pair)  # This line should raise a mypy error due to type mismatch
 ```
 
-This implementation in Python, with strict type hinting, provides the benefits
-of type safety and clarity while maintaining Python's dynamic nature. It
-addresses the issues of type safety and human error in the original example by
-leveraging Python's type hinting system.
+Indeed, running `mypy` on the above code will yield:
+
+```bash
+33: error: Argument 1 to "log_user_info" has incompatible type "Pair[int, str]"; expected "Pair[str, int]"  [arg-type]
+    log_user_info(incorrect_pair)  # This line should raise a mypy error due to type mismatch
+```
+````
+
+## Scopes of Type Variables
 
 ## References and Further Readings
 
-[Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
-
+-   [Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
 -   [Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
 -   [Generics - Python Docs](https://docs.python.org/3/library/typing.html#generics)
 -   [User-defined generic types - Python Docs](https://docs.python.org/3/library/typing.html#user-defined-generic-types)
