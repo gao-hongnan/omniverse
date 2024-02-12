@@ -837,17 +837,17 @@ class Stack(Generic[T]):
         return False
 
 
-stack_of_strings = Stack[str]()
-stack_of_strings.push("hello")
-stack_of_strings.push("world")
-pprint(stack_of_strings._container)
+stack = Stack[str]()
+stack.push("hello")
+stack.push("world")
+pprint(stack._container)
 
 to_find: int = 123
-result: bool = stack_of_strings.contains(to_find) # error from mypy
+result: bool = stack.contains(to_find) # error from mypy
 pprint(result)
 
 to_find: str = "hello"
-result: bool = stack_of_strings.contains(to_find) # no error from mypy
+result: bool = stack.contains(to_find) # no error from mypy
 ```
 
 Notably, if we define the `Stack` class as `Stack[str]`, then the `T` is now
@@ -860,9 +860,6 @@ from `mypy`:
 28: error: Argument 1 to "contains" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
     result: bool = stack.contains(to_find)
 ```
-
-Similarly, you can define the `Stack` class as `Stack[int]`, and the `T` is now
-bound to `int`.
 
 The above example **scopes** the type variable `T` to the `Stack` class in its
 entirety. Unlike functions, creating a generic class does not automatically
