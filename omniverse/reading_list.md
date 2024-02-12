@@ -52,3 +52,8 @@
 -   https://microsoft.github.io/code-with-engineering-playbook/continuous-integration/#code-style-checks
     -   7th February 2024
 -   https://martinfowler.com/articles/continuousIntegration.html
+
+## Computer Science
+
+-   https://nus-cs2030s.github.io/2021-s2/20-generics.html
+    -   Read most of the typing theory.
