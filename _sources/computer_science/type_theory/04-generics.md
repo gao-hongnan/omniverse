@@ -837,17 +837,17 @@ class Stack(Generic[T]):
         return False
 
 
-stack = Stack[str]()
-stack.push("hello")
-stack.push("world")
-pprint(stack._container)
+stack_of_strings = Stack[str]()
+stack_of_strings.push("hello")
+stack_of_strings.push("world")
+pprint(stack_of_strings._container)
 
 to_find: int = 123
-result: bool = stack.contains(to_find) # error from mypy
+result: bool = stack_of_strings.contains(to_find) # error from mypy
 pprint(result)
 
 to_find: str = "hello"
-result: bool = stack.contains(to_find) # no error from mypy
+result: bool = stack_of_strings.contains(to_find) # no error from mypy
 ```
 
 Notably, if we define the `Stack` class as `Stack[str]`, then the `T` is now
@@ -860,6 +860,9 @@ from `mypy`:
 28: error: Argument 1 to "contains" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
     result: bool = stack.contains(to_find)
 ```
+
+Similarly, you can define the `Stack` class as `Stack[int]`, and the `T` is now
+bound to `int`.
 
 The above example **scopes** the type variable `T` to the `Stack` class in its
 entirety. Unlike functions, creating a generic class does not automatically
@@ -877,6 +880,10 @@ scope them depends on the use cases.
 -   [Use of Generic and TypeVar](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
 -   [Stack - Omniverse](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
 -   [Implementing Generics via Type Erasure - CS2030S](https://nus-cs2030s.github.io/2021-s2/21-erasure.html)
+-   [python Generics (intermediate) anthony explains #430](https://www.youtube.com/watch?v=LcfxUU1A-RQ)
+-   [Scoping rules for type variables](https://peps.python.org/pep-0484/#scoping-rules-for-type-variables)
+-   [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
+-   [PEP 484 – Type Hints](https://peps.python.org/pep-0484/)
 
 [^1]:
     [Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
