@@ -880,6 +880,10 @@ scope them depends on the use cases.
 -   [Use of Generic and TypeVar](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
 -   [Stack - Omniverse](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
 -   [Implementing Generics via Type Erasure - CS2030S](https://nus-cs2030s.github.io/2021-s2/21-erasure.html)
+-   [python Generics (intermediate) anthony explains #430](https://www.youtube.com/watch?v=LcfxUU1A-RQ)
+-   [Scoping rules for type variables](https://peps.python.org/pep-0484/#scoping-rules-for-type-variables)
+-   [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
+-   [PEP 484 – Type Hints](https://peps.python.org/pep-0484/)
 
 [^1]:
     [Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
