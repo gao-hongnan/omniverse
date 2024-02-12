@@ -1,0 +1,866 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Bound and Constraint in Generics and Type Variables &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'computer_science/type_theory/05-typevar-bound-constraints';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/computer_science/type_theory/05-typevar-bound-constraints.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bibliography" href="../../bibliography.html" />
+    <link rel="prev" title="Generics and Type Variables" href="04-generics.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Type Theory, A Very Rudimentary Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Bound and Constraint in Generics and Type Variables</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/computer_science/type_theory/05-typevar-bound-constraints.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Bound and Constraint in Generics and Type Variables</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraining-type-variable">Constraining Type Variable</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#revisiting-add-example">Revisiting Add Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upper-bounding-type-variables">Upper Bounding Type Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-type-variables-with-upper-bounds">Defining Type Variables with Upper Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-ensuring-type-safety-with-sized">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bounding-and-semantic-clarity">Bounding and Semantic Clarity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-versus-constraints">Bound versus Constraints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="bound-and-constraint-in-generics-and-type-variables">
+<h1>Bound and Constraint in Generics and Type Variables<a class="headerlink" href="#bound-and-constraint-in-generics-and-type-variables" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#constraining-type-variable" id="id3">Constraining Type Variable</a></p>
+<ul>
+<li><p><a class="reference internal" href="#revisiting-add-example" id="id4">Revisiting Add Example</a></p></li>
+<li><p><a class="reference internal" href="#union-type-versus-constrained-type-variable" id="id5">Union Type versus Constrained Type Variable</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#upper-bounding-type-variables" id="id6">Upper Bounding Type Variables</a></p>
+<ul>
+<li><p><a class="reference internal" href="#defining-type-variables-with-upper-bounds" id="id7">Defining Type Variables with Upper Bounds</a></p></li>
+<li><p><a class="reference internal" href="#example-ensuring-type-safety-with-sized" id="id8">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></p></li>
+<li><p><a class="reference internal" href="#bounding-and-semantic-clarity" id="id9">Bounding and Semantic Clarity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#bound-versus-constraints" id="id10">Bound versus Constraints</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id11">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p>If you recall from
+<a class="reference internal" href="04-generics.html#computer-science-type-theory-04-generics-generic-functions"><span class="std std-ref">Generic Functions</span></a> section, we
+made up a simple example on <code class="docutils literal notranslate"><span class="pre">add</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>And note that running mypy above will yield two particular errors:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Returning<span class="w"> </span>Any<span class="w"> </span>from<span class="w"> </span><span class="k">function</span><span class="w"> </span>declared<span class="w"> </span>to<span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;T&quot;</span><span class="w">  </span><span class="o">[</span>no-any-return<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
+<span class="w">        </span>^~~~~~~~~~~~
+<span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Unsupported<span class="w"> </span>left<span class="w"> </span>operand<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>+<span class="w"> </span><span class="o">(</span><span class="s2">&quot;T&quot;</span><span class="o">)</span><span class="w">  </span><span class="o">[</span>operator<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
+<span class="w">               </span>^~~~~
+</pre></div>
+</div>
+<p>As a recap, this is because <code class="docutils literal notranslate"><span class="pre">T</span></code> can represent literally any type, and not all
+type can do <code class="docutils literal notranslate"><span class="pre">add</span></code>. For instance, two dictionaries cannot be added together
+because their <code class="docutils literal notranslate"><span class="pre">__add__</span></code> is not well defined. This error that <code class="docutils literal notranslate"><span class="pre">mypy</span></code> raised
+forces you to rethink your code design - in that what types of type the type
+variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can take on. Assume for the sake of simplicity, that your program’s
+<code class="docutils literal notranslate"><span class="pre">add</span></code> would only operate on a few types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code></p></li>
+</ul>
+<p>And if we can somehow tell our type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on any one of the 3
+types above, then our job is done. This is where we would use the
+<strong>constraints</strong>.</p>
+<section id="constraining-type-variable">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Constraining Type Variable</a><a class="headerlink" href="#constraining-type-variable" title="Permalink to this heading">#</a></h2>
+<p><strong>Constraints</strong> allow you to specify a list of explicit types that a type
+variable (<code class="docutils literal notranslate"><span class="pre">TypeVar</span></code>) can take. This is akin to saying that the type variable can
+represent any one of these specified types, and no others.</p>
+<ul class="simple">
+<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar('T',</span> <span class="pre">Type1,</span> <span class="pre">Type2,</span> <span class="pre">...)</span></code></p></li>
+<li><p><strong>Meaning</strong>: The type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can be any one of <code class="docutils literal notranslate"><span class="pre">Type1</span></code>, <code class="docutils literal notranslate"><span class="pre">Type2</span></code>, etc.</p></li>
+</ul>
+<section id="revisiting-add-example">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Revisiting Add Example</a><a class="headerlink" href="#revisiting-add-example" title="Permalink to this heading">#</a></h3>
+<p>In our <code class="docutils literal notranslate"><span class="pre">add</span></code> example, since we only want the type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on 3, and
+only 3 types, we can thus re-write the type variable as such:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos">4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then running <code class="docutils literal notranslate"><span class="pre">mypy</span></code> again, will yield no errors, because the static type checker
+is intelligent enough to know that <code class="docutils literal notranslate"><span class="pre">T</span></code> can only take on <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code> or
+<code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code>, all of which has the add operator well defined.</p>
+</section>
+<section id="union-type-versus-constrained-type-variable">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Union Type versus Constrained Type Variable</a><a class="headerlink" href="#union-type-versus-constrained-type-variable" title="Permalink to this heading">#</a></h3>
+<p>The definition of constrained type variable may not be immediately clear on why
+we cannot just use an <code class="docutils literal notranslate"><span class="pre">Union</span></code> type.</p>
+<p>Consider the following union type:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
+<span class="linenos"> 4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="n">add_two_int</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_two_int</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">add_int_and_float</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">9.99</span><span class="p">)</span>
+<span class="linenos">11</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_int_and_float</span><span class="p">)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="n">add_int_and_ndarray</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<span class="linenos">14</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_int_and_ndarray</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12.99</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">array</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span><span style="font-weight: bold">])</span>
+</pre>
+</div></div>
+</div>
+<p>With <code class="docutils literal notranslate"><span class="pre">Union</span></code>, the operation we use between arguments (i.e. <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>) is
+supported by any <em>permutation order</em><a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. As we can see, we added two <code class="docutils literal notranslate"><span class="pre">int</span></code>,
+added <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">float</span></code>, and lastly, added <code class="docutils literal notranslate"><span class="pre">int</span></code> and an <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>! Is this
+really what we want? Do we really want to allow <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">NDArray</span></code> to be added
+together freely (they can, but some may regard it as not safe as it might lead
+to undesirable consequences via broadcasting). Consequently, there will be no
+error raised.</p>
+<p>Furthermore, what if your programming logic changes and now you only want to add
+<code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">str</span></code>. This will be problematic because if we use union type, then it
+has potential of adding an <code class="docutils literal notranslate"><span class="pre">int</span></code> and a <code class="docutils literal notranslate"><span class="pre">str</span></code>, which is likely lead a type error
+saying unsupported operand type for the add operator between <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
+<span class="linenos">4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our static type checker is fast to spot this potential error and raised aptly
+the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Unsupported<span class="w"> </span>operand<span class="w"> </span>types<span class="w"> </span><span class="k">for</span><span class="w"> </span>+<span class="w"> </span><span class="o">(</span><span class="s2">&quot;int&quot;</span><span class="w"> </span>and<span class="w"> </span><span class="s2">&quot;str&quot;</span><span class="o">)</span><span class="w">  </span><span class="o">[</span>operator<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>a<span class="w"> </span>+<span class="w"> </span>b
+<span class="w">               </span>^
+<span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Unsupported<span class="w"> </span>operand<span class="w"> </span>types<span class="w"> </span><span class="k">for</span><span class="w"> </span>+<span class="w"> </span><span class="o">(</span><span class="s2">&quot;str&quot;</span><span class="w"> </span>and<span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="o">)</span><span class="w">  </span><span class="o">[</span>operator<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>a<span class="w"> </span>+<span class="w"> </span>b
+<span class="w">               </span>^
+<span class="m">4</span>:<span class="w"> </span>note:<span class="w"> </span>Both<span class="w"> </span>left<span class="w"> </span>and<span class="w"> </span>right<span class="w"> </span>operands<span class="w"> </span>are<span class="w"> </span>unions
+</pre></div>
+</div>
+<p>This is when type variable prove to be more type safe here.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos">5</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="n">add_int_and_ndarray</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>And now, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> will raise an error here, telling you that you need to abide to
+the contract, that within the scope of the function <code class="docutils literal notranslate"><span class="pre">add</span></code>, all type variable
+must be the same type! So <code class="docutils literal notranslate"><span class="pre">add_int_and_ndarray</span></code> will raise an error.</p>
+<p>Furthermore, now the below example will be okay because the static type checker
+has piece of mind that both <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> must of same type and no mixing is
+involved.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos">5</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="upper-bounding-type-variables">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Upper Bounding Type Variables</a><a class="headerlink" href="#upper-bounding-type-variables" title="Permalink to this heading">#</a></h2>
+<p><strong>Bounds</strong> specify an upper bound for the type variable. This means that the
+type variable can represent any type that is a subtype of the specified bound.</p>
+<ul class="simple">
+<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar('T',</span> <span class="pre">bound=SuperType)</span></code></p></li>
+<li><p><strong>Meaning</strong>: The type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can be any type that is a subtype of
+<code class="docutils literal notranslate"><span class="pre">SuperType</span></code> (including <code class="docutils literal notranslate"><span class="pre">SuperType</span></code> itself).</p></li>
+</ul>
+<p>The excerpt discusses how to enforce type constraints in Python using the
+<code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> function from the <code class="docutils literal notranslate"><span class="pre">typing</span></code> module, focusing on the concept of an upper
+bound. Here’s a more structured explanation for clarity:</p>
+<section id="defining-type-variables-with-upper-bounds">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Defining Type Variables with Upper Bounds</a><a class="headerlink" href="#defining-type-variables-with-upper-bounds" title="Permalink to this heading">#</a></h3>
+<p>In Python’s type hinting system, you can define a type variable that restricts
+which types can be used in place of it by specifying an upper bound. This is
+done using the <code class="docutils literal notranslate"><span class="pre">bound=&lt;type&gt;</span></code> argument in the <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> function. The key point
+is that any type that replaces this type variable must be a subtype of the
+specified boundary type. It’s important to note that the boundary type itself
+cannot be another type variable or a parameterized type.</p>
+</section>
+<section id="example-ensuring-type-safety-with-sized">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a><a class="headerlink" href="#example-ensuring-type-safety-with-sized" title="Permalink to this heading">#</a></h3>
+<p>Consider the <code class="docutils literal notranslate"><span class="pre">Sized</span></code> protocol from Python’s <code class="docutils literal notranslate"><span class="pre">typing</span></code> module, which represents
+any type that supports the <code class="docutils literal notranslate"><span class="pre">len()</span></code> function. We define a type variable <code class="docutils literal notranslate"><span class="pre">ST</span></code> with
+<code class="docutils literal notranslate"><span class="pre">Sized</span></code> as its upper bound:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Sized</span>
+
+<span class="n">ST</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ST&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Sized</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This definition means that <code class="docutils literal notranslate"><span class="pre">ST</span></code> can be replaced by any type that has a <code class="docutils literal notranslate"><span class="pre">len()</span></code>
+method, ensuring that objects of type <code class="docutils literal notranslate"><span class="pre">ST</span></code> can be measured for their size.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">longer</span></code> takes two parameters, <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>, both of type <code class="docutils literal notranslate"><span class="pre">ST</span></code>. It
+returns the object with the greater length:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">longer</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">ST</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">ST</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ST</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>Because <code class="docutils literal notranslate"><span class="pre">ST</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">Sized</span></code>, we can safely use <code class="docutils literal notranslate"><span class="pre">len()</span></code> on <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. This
+allows the function to work with any sized collection, such as lists or sets.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">longer([1],</span> <span class="pre">[1,</span> <span class="pre">2])</span></code> correctly returns the longer list, with the return
+type being <code class="docutils literal notranslate"><span class="pre">List[int]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">longer({1},</span> <span class="pre">{1,</span> <span class="pre">2})</span></code> operates on sets, returning the larger set as
+<code class="docutils literal notranslate"><span class="pre">Set[int]</span></code>.</p></li>
+<li><p>The statement about <code class="docutils literal notranslate"><span class="pre">longer([1],</span> <span class="pre">{1,</span> <span class="pre">2})</span></code> being okay and returning a type
+<code class="docutils literal notranslate"><span class="pre">Collection[int]</span></code> is correct as well. This is because unlike constraints, we
+do not need both <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> to be of the same exact type, they just need to
+be subclass of the bound super type.</p></li>
+</ul>
+</section>
+<section id="bounding-and-semantic-clarity">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Bounding and Semantic Clarity</a><a class="headerlink" href="#bounding-and-semantic-clarity" title="Permalink to this heading">#</a></h3>
+<p>Bounding also offers more clarity and semantic meaning, than say, an <code class="docutils literal notranslate"><span class="pre">Union</span></code>
+type.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Dog</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Cat</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
+    <span class="o">...</span>
+
+
+<span class="k">class</span> <span class="nc">Car</span><span class="p">:</span>
+    <span class="o">...</span>
+
+
+<span class="n">AnimalType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;AnimalType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Animal</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">function_with_bound</span><span class="p">(</span><span class="n">arg</span><span class="p">:</span> <span class="n">AnimalType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnimalType</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">arg</span>
+
+
+<span class="k">def</span> <span class="nf">function_with_union</span><span class="p">(</span><span class="n">arg</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Car</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dog</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Car</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">arg</span>
+</pre></div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">function_with_bound</span></code>, the argument arg must be an instance of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> or a
+subclass of <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. This means you could pass in an instance of <code class="docutils literal notranslate"><span class="pre">Dog</span></code> or
+<code class="docutils literal notranslate"><span class="pre">Cat</span></code>, but not <code class="docutils literal notranslate"><span class="pre">Car</span></code>, because <code class="docutils literal notranslate"><span class="pre">Car</span></code> is not a subclass of <code class="docutils literal notranslate"><span class="pre">Animal</span></code>.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">function_with_union</span></code>, the argument arg can be an instance of <code class="docutils literal notranslate"><span class="pre">Dog</span></code>, <code class="docutils literal notranslate"><span class="pre">Cat</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">Car</span></code>. There’s no requirement that these types are related in any way.</p>
+</section>
+</section>
+<section id="bound-versus-constraints">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Bound versus Constraints</a><a class="headerlink" href="#bound-versus-constraints" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Bounds</strong> are used to specify that a type variable must be a subtype of a
+particular type. This is akin to setting an upper limit (or in some
+contexts, a lower limit) on what the type variable can be. The purpose of
+bounds is to ensure that the type variable adheres to a hierarchical type
+constraint, typically ensuring that it inherits certain methods or
+properties.</p></li>
+<li><p><strong>Constraints</strong>, on the other hand, specify a list of explicit types that a
+type variable can represent, without implying any hierarchical relationship
+between them. The purpose of constraints is to allow a type variable to be
+more flexible by being one of several types, rather than restricting it to a
+subtype of a specific class or interface.</p></li>
+</ul>
+<p>The comparison is pretty superficial but something to remember is that you can
+mix types within arguments if you use bound, which behaves a little like
+<code class="docutils literal notranslate"><span class="pre">Union</span></code>, whereas in constraint, all arguments must be of the exact same type.</p>
+<p>Let’s see an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AnimalType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;AnimalType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Animal</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">function_with_bound</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="n">AnimalType</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="n">AnimalType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AnimalType</span><span class="p">,</span> <span class="n">AnimalType</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span>
+
+<span class="n">cat</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">()</span>
+<span class="n">tabby</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">()</span>
+<span class="n">dog</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">()</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">function_with_bound</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">dog</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This above code will not raise any issue when compared to the below code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">AnimalType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;AnimalType&quot;</span><span class="p">,</span> <span class="n">Cat</span><span class="p">,</span> <span class="n">Dog</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">function_with_bound</span><span class="p">(</span><span class="n">arg1</span><span class="p">:</span> <span class="n">AnimalType</span><span class="p">,</span> <span class="n">arg2</span><span class="p">:</span> <span class="n">AnimalType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AnimalType</span><span class="p">,</span> <span class="n">AnimalType</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span>
+
+<span class="n">cat</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">()</span>
+<span class="n">tabby</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">()</span>
+<span class="n">dog</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">()</span>
+
+<span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">function_with_bound</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">dog</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is because if we use constraint, our contract is that within the scope, all
+arguments must be of type <code class="docutils literal notranslate"><span class="pre">AnimalType</span></code>, whereas when in bound, <code class="docutils literal notranslate"><span class="pre">arg1</span></code> and <code class="docutils literal notranslate"><span class="pre">arg2</span></code>
+can be different, as long as both are upper bounded by <code class="docutils literal notranslate"><span class="pre">Animal</span></code>.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/58903906/whats-the-difference-between-a-constrained-typevar-and-a-union">What’s the difference between a constrained TypeVar and a Union?</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0484/#type-variables-with-an-upper-bound">Type variables with an upper bound - PEP484</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/59933946/difference-between-typevart-a-b-and-typevart-bound-uniona-b">Difference between TypeVar(‘T’, A, B) and TypeVar(‘T’, bound=Union[A, B])</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://stackoverflow.com/questions/58903906/whats-the-difference-between-a-constrained-typevar-and-a-union">What’s the difference between a constrained TypeVar and a Union?</a></p>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./computer_science/type_theory"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04-generics.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Generics and Type Variables</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraining-type-variable">Constraining Type Variable</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#revisiting-add-example">Revisiting Add Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upper-bounding-type-variables">Upper Bounding Type Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-type-variables-with-upper-bounds">Defining Type Variables with Upper Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-ensuring-type-safety-with-sized">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bounding-and-semantic-clarity">Bounding and Semantic Clarity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bound-versus-constraints">Bound versus Constraints</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

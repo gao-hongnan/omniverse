@@ -34,17 +34,20 @@ from typing_extensions import reveal_type
 from rich.pretty import pprint
 ```
 
-This post follows closely with the notes from
-[Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
-from the National University of Singapore.
+This article is closely aligned with and draws inspiration from the materials
+provided in
+[Unit 20: Generics](https://nus-cs2030s.github.io/2021-s2/20-generics.html) of
+the CS2030S course at the National University of Singapore. Some sections have
+been adapted and rephrased for clarity and context, in particular translating
+the Java code to Python.
 
 ## The Motivation
 
-Sometimes it is useful to have a lightweight class to bundle a pair of variables
-together. One could, for instance, write a method that returns two values. The
-example defines a class `IntPair` that bundles two int variables together. This
-is a utility class with no semantics nor methods associated with it and so, we
-did not attempt to hide the implementation details.
+In some scenarios, crafting a simple class to aggregate a duo of variables
+proves beneficial, especially when a method needs to output two distinct values.
+Consider, for instance, the `IntPair` class, which groups two integer variables.
+This class serves merely as a utility, lacking any complex semantics or methods,
+and thus, its internal workings are left exposed for simplicity.
 
 ```{code-cell} ipython3
 from dataclasses import dataclass
@@ -61,10 +64,11 @@ class IntPair:
         return self.second
 ```
 
-This class can be used, for instance, in a function that returns two int values.
-What the author mentioned here is trying to say is this `IntPair` works well
-with a function such as `find_min_max` below, but what if `find_min_max` wants
-to find the min and max of `float` too?
+Such a class is ideal for use cases like a function that needs to return a pair
+of integers, exemplified by a hypothetical `find_min_max` function that
+determines the minimum and maximum values in an array of integers. However, this
+raises a question: what if the need arises to identify the minimum and maximum
+in an array of floats?
 
 ```{code-cell} ipython3
 def find_min_max(array: List[int]) -> IntPair:
@@ -80,13 +84,15 @@ def find_min_max(array: List[int]) -> IntPair:
     return IntPair(min_val, max_val)
 ```
 
-We could similarly define a pair class for two (DoublePair), two booleans
-(BooleanPair), etc. In other situations, it is useful to define a pair class
-that bundles two variables of two different types, say, a Customer and a
-ServiceCounter; a String and an int; etc.
+To address a broader range of types, one could theorize the creation of
+additional pair classes, such as `DoublePair` for floats or `BooleanPair` for
+booleans. Alternatively, designing a pair class that accommodates a combination
+of different types, like pairing a `Customer` object with a `ServiceCounter`, or
+a string with an integer, could offer more versatility.
 
-We should not, however, create one class for each possible combination of types.
-A better idea is to define a class that stores two Object references:
+However, it's impractical and inefficient to design a separate class for each
+potential type pairing. A more elegant solution is to design a generic pair
+class capable of encapsulating any two types.
 
 ```{code-cell} ipython3
 @dataclass
@@ -101,20 +107,18 @@ class Pair:
         return self.second
 ```
 
-This `Pair` class can now hold any two types specified at instantiation.
+This generic `Pair` class can encompass any two types designated upon its
+instantiation, providing a versatile structure that can hold any value types,
+mirroring the flexibility previously applied in methods to accommodate various
+object types.
 
-At the cost of using a wrapper class in place of primitive types, we get a
-single class that can be used to store any type of values.
-
-You might recall that we used a similar approach for our contains method to
-implement a general method that works for any type of object. Here, we are using
-this approach for a general class that encapsulates any type of object.
-
-Unfortunately, the issues we faced with narrowing type conversion and potential
-run-time errors apply to the Pair class as well. Suppose that a function returns
-a Pair containing a String and an Integer, and we accidentally treat this as an
-Integer and a String instead, the compiler will not be able to detect the type
-mismatch and stop the program from crashing during run-time.
+Nevertheless, this approach is not without its drawbacks, notably the issue of
+type conversion narrowing and the potential for runtime errors. For example, if
+a function mistakenly returns a `Pair` with a string and an integer but treats
+it inversely, static type checking at compile-time won't catch this discrepancy,
+possibly leading to errors or crashes during execution. This highlights the
+importance of careful type management and the limitations of relying solely on
+runtime type identification.
 
 ```{code-cell} ipython3
 def create_misleading_pair() -> Pair:
@@ -146,11 +150,11 @@ pair = create_misleading_pair()
 process_misleading_pair(pair)
 ```
 
-Why does the author say the compiler will not be able to detect the type
-mismatch and stop the program from crashing during run-time? Yes, in fact, if
-you run the type checker `mypy` on the above code, it will not raise any error.
-You can also add `reveal_type` and `reveal_locals` to the code to see the type
-of `first_element` and `second_element` and the local variables.
+Why does the compiler not be able to detect the type mismatch and stop the
+program from crashing during run-time? In fact, if you run the type checker
+`mypy` on the above code, it will not raise any error. You can also add
+`reveal_type` and `reveal_locals` to the code to see the type of `first_element`
+and `second_element` and the local variables.
 
 ```python
 16: note: Revealed type is "builtins.int"
@@ -667,6 +671,8 @@ In the course
 it is written in Java, so there is only mention of generic methods. But in
 Python, we can also define generic functions where the function signature and
 return type (need not be both) are parameterized by type variables.
+
+(computer-science-type-theory-04-generics-generic-functions)=
 
 ### Generic Functions
 
