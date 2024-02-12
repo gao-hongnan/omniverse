@@ -225,16 +225,6 @@ appropriate. Proper use of covariance in generics ensures type safety and
 consistency, adhering to the Liskov Substitution Principle in object-oriented
 design.
 
-## Overload and Coercion
-
-```
-a: int   = 2
-b: float = 3.0
-c = a + b
-```
-
-implement `__add__` as overload variant.
-
 ## WHAT NEXT
 
 -   LSP and justify why we need it esp oop: The concept of subtyping has gained
@@ -415,6 +405,8 @@ design.
 
 ## Overload
 
+### Example BaseEstimator
+
 Use
 
 ```
@@ -454,6 +446,16 @@ class MyEstimator(BaseEstimator):
             ...
         return self
 ```
+
+### Overload and Coercion Relationship
+
+```
+a: int   = 2
+b: float = 3.0
+c = a + b
+```
+
+implement `__add__` as overload variant.
 
 ## References and Further Readings
 
