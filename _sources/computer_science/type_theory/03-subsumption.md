@@ -210,6 +210,14 @@ Consider the real number system $\mathbb{R}$, then we say that the integers
 (whole numbers) $\mathbb{Z}$ is a **_subtype_** of $\mathbb{R}$ because it
 fulfills the criteria for subsumption {prf:ref}`type-theory-subtype-criterion`.
 
+By demonstrating that integers $\mathbb{Z}$ meet all three criteria under the
+subtype definition, we can formally argue that $\mathbb{Z}$ is indeed a subtype
+of $\mathbb{R}$. The fact that integers can have additional operations that are
+not defined for all real numbers (like the bitshift operation) does not violate
+any of the subtype criteria; it simply means that the subtype $\mathbb{Z}$ has
+more operations than its supertype $\mathbb{R}$, which is permissible in
+subtyping.
+
 ### Fulfilling the Subtype Criterion
 
 1. **Value Inclusion (Set Membership)**:

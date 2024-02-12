@@ -381,7 +381,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pair-problem-revisited">Pair Problem Revisited</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scopes-of-type-variables">Scopes of Type Variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scope-of-generic-methods-and-functions">Scope of Generic Methods and Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-functions">Generic Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-methods">Generic Methods</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -398,22 +402,30 @@ document.write(`
 <h1>Generics and Type Variables<a class="headerlink" href="#generics-and-type-variables" title="Permalink to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#the-motivation" id="id8">The Motivation</a></p></li>
-<li><p><a class="reference internal" href="#containers-are-generics" id="id9">Containers are Generics</a></p></li>
-<li><p><a class="reference internal" href="#id2" id="id10">Generics and Type Variables</a></p>
+<li><p><a class="reference internal" href="#the-motivation" id="id10">The Motivation</a></p></li>
+<li><p><a class="reference internal" href="#containers-are-generics" id="id11">Containers are Generics</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id12">Generics and Type Variables</a></p>
 <ul>
-<li><p><a class="reference internal" href="#generics" id="id11">Generics</a></p></li>
-<li><p><a class="reference internal" href="#type-variable-and-type-parameter" id="id12">Type Variable and Type Parameter</a></p></li>
-<li><p><a class="reference internal" href="#type-argument" id="id13">Type Argument</a></p></li>
-<li><p><a class="reference internal" href="#pair-problem-revisited" id="id14">Pair Problem Revisited</a></p></li>
+<li><p><a class="reference internal" href="#generics" id="id13">Generics</a></p></li>
+<li><p><a class="reference internal" href="#type-variable-and-type-parameter" id="id14">Type Variable and Type Parameter</a></p></li>
+<li><p><a class="reference internal" href="#type-argument" id="id15">Type Argument</a></p></li>
+<li><p><a class="reference internal" href="#pair-problem-revisited" id="id16">Pair Problem Revisited</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#scopes-of-type-variables" id="id15">Scopes of Type Variables</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id16">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#scope-of-generic-methods-and-functions" id="id17">Scope of Generic Methods and Functions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#generic-functions" id="id18">Generic Functions</a></p></li>
+<li><p><a class="reference internal" href="#generic-methods" id="id19">Generic Methods</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id20">References and Further Readings</a></p></li>
 </ul>
 </nav>
+<p>This post follows closely with the notes from
+<a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/20-generics.html">Unit 20: Generics - CS2030S</a>
+from the National University of Singapore.</p>
 <section id="the-motivation">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">The Motivation</a><a class="headerlink" href="#the-motivation" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">The Motivation</a><a class="headerlink" href="#the-motivation" title="Permalink to this heading">#</a></h2>
 <p>Sometimes it is useful to have a lightweight class to bundle a pair of variables
 together. One could, for instance, write a method that returns two values. The
 example defines a class <code class="docutils literal notranslate"><span class="pre">IntPair</span></code> that bundles two int variables together. This
@@ -589,7 +601,7 @@ the return type of <code class="docutils literal notranslate"><span class="pre">
 do that, our problems may be solved.</p>
 </section>
 <section id="containers-are-generics">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Containers are Generics</a><a class="headerlink" href="#containers-are-generics" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Containers are Generics</a><a class="headerlink" href="#containers-are-generics" title="Permalink to this heading">#</a></h2>
 <p>Let’s defer the solution to the motivation above and first understand some
 practical examples of generics in Python. This is adapted from
 <a class="reference external" href="https://www.playfulpython.com/python-type-hinting-generics-inheritance/">Type Hinting: Generics &amp; Inheritance</a></p>
@@ -787,7 +799,7 @@ function is called.</p>
 <code class="docutils literal notranslate"><span class="pre">List[Employee]</span></code>, etc and <code class="docutils literal notranslate"><span class="pre">T</span></code> is called a variable because it is literally a
 <em>variable of types</em>. <code class="docutils literal notranslate"><span class="pre">List[str]</span></code> is a <em>specific</em> type, and <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> is a
 <em>generic</em> type that can represent any specific type. Consequently, <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> is
-a <em>generic type</em> and <code class="docutils literal notranslate"><span class="pre">T</span></code> is a <em>type variable</em><a class="footnote-reference brackets" href="#id5" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+a <em>generic type</em> and <code class="docutils literal notranslate"><span class="pre">T</span></code> is a <em>type variable</em><a class="footnote-reference brackets" href="#id6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <div class="proof remark admonition" id="computer-science-type-theory-generics-why-use-t">
 <p class="admonition-title"><span class="caption-number">Remark 8 </span> (Why not just use Any?)</p>
 <section class="remark-content" id="proof-content">
@@ -821,9 +833,9 @@ the
 page.</p>
 </section>
 <section id="id2">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Generics and Type Variables</a><a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Generics and Type Variables</a><a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h2>
 <section id="generics">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Generics</a><a class="headerlink" href="#generics" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Generics</a><a class="headerlink" href="#generics" title="Permalink to this heading">#</a></h3>
 <p>Generics enable the construction of new, more specific types from abstract type
 definitions by using what are known as <strong>generic type constructors</strong>. These
 constructors operate at the type level, similar to how functions operate at the
@@ -835,7 +847,7 @@ constructed. For example, <code class="docutils literal notranslate"><span class
 Python’s typing syntax) is the generic type. It’s not <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> itself that’s
 the generic type, but rather <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> parameterized with type variables like
 <code class="docutils literal notranslate"><span class="pre">T</span></code> or with specific types (we usually call the realization of the generic
-type as a <em>parameterized type</em><a class="footnote-reference brackets" href="#id6" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (concrete type)).</p></li>
+type as a <em>parameterized type</em><a class="footnote-reference brackets" href="#id7" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (concrete type)).</p></li>
 <li><p><strong>Generic Type Constructor</strong>: This term refers to the mechanism by which
 generic types like <code class="docutils literal notranslate"><span class="pre">Tuple[T,</span> <span class="pre">...]</span></code> are used to create new, parameterized
 types. The constructor takes a type (or types) as an argument and “returns”
@@ -860,10 +872,10 @@ argument.</p></li>
 </ol>
 <p>Such semantics is known as <em>generic type constructor</em>, which is similar to the
 semantics of functions, where a function takes a value and returns a value. In
-this case, a generic type constructor takes a type and returns a type<a class="footnote-reference brackets" href="#id7" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+this case, a generic type constructor takes a type and returns a type<a class="footnote-reference brackets" href="#id8" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="type-variable-and-type-parameter">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Type Variable and Type Parameter</a><a class="headerlink" href="#type-variable-and-type-parameter" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Type Variable and Type Parameter</a><a class="headerlink" href="#type-variable-and-type-parameter" title="Permalink to this heading">#</a></h3>
 <p>A <strong>type variable</strong> is a placeholder used in generic programming to denote a
 type that is not specified at the point of declaration but will be determined
 later, at the time of use. Type variables allow the definition of generic types
@@ -890,7 +902,7 @@ looking at the function below:</p>
 that <code class="docutils literal notranslate"><span class="pre">T</span></code> will be a type of the list and the element when the function is called.</p>
 </section>
 <section id="type-argument">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">Type Argument</a><a class="headerlink" href="#type-argument" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Type Argument</a><a class="headerlink" href="#type-argument" title="Permalink to this heading">#</a></h3>
 <p>A <strong>type argument</strong> refers to the concrete type that is supplied in place of a
 type variable or parameter when a generic class, interface, or method is
 actually used. It effectively “fills in” the generic placeholder with a specific
@@ -924,7 +936,7 @@ thereby tailoring the generic function to a particular use case while preserving
 type safety.</p>
 </section>
 <section id="pair-problem-revisited">
-<h3><a class="toc-backref" href="#id14" role="doc-backlink">Pair Problem Revisited</a><a class="headerlink" href="#pair-problem-revisited" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Pair Problem Revisited</a><a class="headerlink" href="#pair-problem-revisited" title="Permalink to this heading">#</a></h3>
 <p>To resolve the issues with the <code class="docutils literal notranslate"><span class="pre">Pair</span></code> class in the motivation, we can use type
 variables to parameterize the <code class="docutils literal notranslate"><span class="pre">Pair</span></code> class. This will allow us to specify the
 types of the <code class="docutils literal notranslate"><span class="pre">first</span></code> and <code class="docutils literal notranslate"><span class="pre">second</span></code> attributes, as well as the return types of the
@@ -982,6 +994,16 @@ types of the <code class="docutils literal notranslate"><span class="pre">first<
 </div>
 </div>
 </div>
+<p>To recap:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">S</span></code> and <code class="docutils literal notranslate"><span class="pre">T</span></code> are type variables/parameters that represent the types of the
+<code class="docutils literal notranslate"><span class="pre">first</span></code> and <code class="docutils literal notranslate"><span class="pre">second</span></code> attributes, respectively.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Pair[S,</span> <span class="pre">T]</span></code> is a generic class that is parameterized with <code class="docutils literal notranslate"><span class="pre">S</span></code> and <code class="docutils literal notranslate"><span class="pre">T</span></code>,
+allowing the <code class="docutils literal notranslate"><span class="pre">first</span></code> and <code class="docutils literal notranslate"><span class="pre">second</span></code> attributes to be of different types.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Pair[str,</span> <span class="pre">int]</span></code> is a parameterized type that represents a pair of a string
+and an integer. This just means “subsitution” of <code class="docutils literal notranslate"><span class="pre">S</span></code> and <code class="docutils literal notranslate"><span class="pre">T</span></code> with <code class="docutils literal notranslate"><span class="pre">str</span></code> and
+<code class="docutils literal notranslate"><span class="pre">int</span></code> respectively, just like how we assign normal variables.</p></li>
+</ul>
 <p>However, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> actually does not raise any issue on line <code class="docutils literal notranslate"><span class="pre">27</span></code> because Python
 allows a string type to be <em>dynamically converted</em> to an integer type if and
 only if the string is a valid “integer” string.</p>
@@ -1044,22 +1066,228 @@ error.</p>
 
 <span class="c1"># Example Usage</span>
 <span class="n">incorrect_pair</span> <span class="o">=</span> <span class="n">create_incorrect_pair</span><span class="p">()</span>
-<span class="n">log_user_info</span><span class="p">(</span><span class="n">incorrect_pair</span><span class="p">)</span>  <span class="c1"># This line should raise a mypy error due to type mismatch</span>
+<span class="n">log_user_info</span><span class="p">(</span><span class="n">user_info</span><span class="o">=</span><span class="n">incorrect_pair</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Indeed, running <code class="docutils literal notranslate"><span class="pre">mypy</span></code> on the above code will yield:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">33</span>:<span class="w"> </span>error:<span class="w"> </span>Argument<span class="w"> </span><span class="m">1</span><span class="w"> </span>to<span class="w"> </span><span class="s2">&quot;log_user_info&quot;</span><span class="w"> </span>has<span class="w"> </span>incompatible<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;Pair[int, str]&quot;</span><span class="p">;</span><span class="w"> </span>expected<span class="w"> </span><span class="s2">&quot;Pair[str, int]&quot;</span><span class="w">  </span><span class="o">[</span>arg-type<span class="o">]</span>
-<span class="w">    </span>log_user_info<span class="o">(</span>incorrect_pair<span class="o">)</span><span class="w">  </span><span class="c1"># This line should raise a mypy error due to type mismatch</span>
+<span class="w">    </span>log_user_info<span class="o">(</span>incorrect_pair<span class="o">)</span>
 </pre></div>
 </div>
 </section>
 </div></section>
 </section>
-<section id="scopes-of-type-variables">
-<h2><a class="toc-backref" href="#id15" role="doc-backlink">Scopes of Type Variables</a><a class="headerlink" href="#scopes-of-type-variables" title="Permalink to this heading">#</a></h2>
+<section id="scope-of-generic-methods-and-functions">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Scope of Generic Methods and Functions</a><a class="headerlink" href="#scope-of-generic-methods-and-functions" title="Permalink to this heading">#</a></h2>
+<p>In the course
+<a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/20-generics.html">Unit 20: Generics - CS2030S</a>,
+it is written in Java, so there is only mention of generic methods. But in
+Python, we can also define generic functions where the function signature and
+return type (need not be both) are parameterized by type variables.</p>
+<section id="generic-functions">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Generic Functions</a><a class="headerlink" href="#generic-functions" title="Permalink to this heading">#</a></h3>
+<p>It is possible to use <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> (type variables) to parameterize the types of
+the arguments and return type of a <strong>function</strong> <em>without</em> the need to define a
+<code class="docutils literal notranslate"><span class="pre">Generic</span></code> (generic) class. This is because functions are <strong><em>naturally and
+automatically</em></strong> scoped to the type variables defined in the function. What does
+that mean?</p>
+<p>Let’s walk through an example<a class="footnote-reference brackets" href="#id9" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> to find out.</p>
+<p>Consider a function that adds two <em>things</em> (not necessarily numbers) together.
+In this particular case, if we want to find out the answer of <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">4</span></code>, we can
+use the <code class="docutils literal notranslate"><span class="pre">add</span></code> function to add <code class="docutils literal notranslate"><span class="pre">3</span></code> and <code class="docutils literal notranslate"><span class="pre">4</span></code> together.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">():</span>
+    <span class="k">return</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span>
+</pre></div>
+</div>
+<p>Adding two <em>literal</em> things together is <strong>valid</strong> but <strong>restricted</strong> and
+obviously is a bad pattern. Polymorphism taught us to <em>parameterize</em> the the two
+<em>things</em> to add:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>And injecting <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> is the act of parameterizing the function with what we
+call the <strong><em>regular variables</em></strong>.</p>
+<p>Now, we want to type hint the <code class="docutils literal notranslate"><span class="pre">add</span></code> function. You may likely do the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>This is again <strong>valid</strong> but <strong>restricted</strong>. The <code class="docutils literal notranslate"><span class="pre">add</span></code> function is now restricted
+to adding two integers together. What if we want to add two strings together?
+What if we want to add two floats together? What if we want to add two <code class="docutils literal notranslate"><span class="pre">Item</span></code>
+objects with <code class="docutils literal notranslate"><span class="pre">__add__</span></code> method defined together?</p>
+<p>This is where you would consider using <strong><em>type variables</em></strong> to parameterize the
+types of the arguments and return type of the function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+</pre></div>
+</div>
+<p>This means that <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> can be of any type, and the return type of the
+function will be the same as the type of <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. A contract is born because
+now if <code class="docutils literal notranslate"><span class="pre">x</span></code> is defined as an <code class="docutils literal notranslate"><span class="pre">int</span></code> type, then <code class="docutils literal notranslate"><span class="pre">y</span></code> must also be an <code class="docutils literal notranslate"><span class="pre">int</span></code> type, and
+the return type of the function will be an <code class="docutils literal notranslate"><span class="pre">int</span></code> type.</p>
+<p>Note however, running mypy above will yield two particular errors:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Returning<span class="w"> </span>Any<span class="w"> </span>from<span class="w"> </span><span class="k">function</span><span class="w"> </span>declared<span class="w"> </span>to<span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;T&quot;</span><span class="w">  </span><span class="o">[</span>no-any-return<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
+<span class="w">        </span>^~~~~~~~~~~~
+<span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Unsupported<span class="w"> </span>left<span class="w"> </span>operand<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>+<span class="w"> </span><span class="o">(</span><span class="s2">&quot;T&quot;</span><span class="o">)</span><span class="w">  </span><span class="o">[</span>operator<span class="o">]</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
+<span class="w">               </span>^~~~~
+</pre></div>
+</div>
+<p>This is because there is no guarantee that the <code class="docutils literal notranslate"><span class="pre">+</span></code> operator is defined for the
+type <code class="docutils literal notranslate"><span class="pre">T</span></code>. What if <code class="docutils literal notranslate"><span class="pre">T</span></code> is a <code class="docutils literal notranslate"><span class="pre">Dict[int,</span> <span class="pre">int]</span></code> type, then adding two dictionaries
+together is not defined (likely no <code class="docutils literal notranslate"><span class="pre">__add__</span></code> method defined for the <code class="docutils literal notranslate"><span class="pre">dict</span></code>
+type). But let’s ignore this and appreciate the bigger picture.</p>
+<p>We will talk about bound and constraints later, which will easily solve this
+problem:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">complex</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="c1"># yields no error from mypy</span>
+</pre></div>
+</div>
+<p>In conclusion, the <code class="docutils literal notranslate"><span class="pre">add</span></code> function is now a <strong><em>generic function</em></strong> because it can
+operate on any type of object, and the type of the arguments and return type of
+the function are parameterized by type variables. But note that the type
+variables are <strong>only</strong> scoped to the function, and they are not available
+outside the function.</p>
+</section>
+<section id="generic-methods">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Generic Methods</a><a class="headerlink" href="#generic-methods" title="Permalink to this heading">#</a></h3>
+<p>In the context of classes, it is also possible to define <strong><em>generic methods</em></strong>
+where the method signature and return type (need not both) are parameterized by
+type variables.</p>
+<p>We first look at another violation of type safety via the <code class="docutils literal notranslate"><span class="pre">Stack</span></code> class.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="k">class</span> <span class="nc">Stack</span><span class="p">:</span>
+<span class="linenos"> 7</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 8</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">11</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># __contains__ method</span>
+<span class="linenos">14</span>        <span class="k">for</span> <span class="n">curr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="p">:</span>
+<span class="linenos">15</span>            <span class="k">if</span> <span class="n">curr</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+<span class="linenos">16</span>                <span class="k">return</span> <span class="kc">True</span>
+<span class="linenos">17</span>        <span class="k">return</span> <span class="kc">False</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span><span class="n">stack</span> <span class="o">=</span> <span class="n">Stack</span><span class="p">()</span>
+<span class="linenos">21</span><span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="linenos">22</span><span class="n">stack</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;world&quot;</span><span class="p">)</span>
+<span class="linenos">23</span><span class="n">pprint</span><span class="p">(</span><span class="n">stack</span><span class="o">.</span><span class="n">_container</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'hello'</span>, <span style="color: #008000; text-decoration-color: #008000">'world'</span><span style="font-weight: bold">]</span>
+</pre>
+</div></div>
+</div>
+<p>As you can see, the <code class="docutils literal notranslate"><span class="pre">contains</span></code> method is not type safe. The <code class="docutils literal notranslate"><span class="pre">item</span></code> parameter is
+of type <code class="docutils literal notranslate"><span class="pre">Any</span></code>, and the method will return <code class="docutils literal notranslate"><span class="pre">True</span></code> if the <code class="docutils literal notranslate"><span class="pre">item</span></code> is found in the
+stack. The problem with <code class="docutils literal notranslate"><span class="pre">Any</span></code>, as repeated many times, is that it is too generic
+and does not provide a contract to abide by. For example, our stack above as we
+see it, contains strings, and only strings. Now if we want to search for an
+integer <code class="docutils literal notranslate"><span class="pre">to_find</span> <span class="pre">=</span> <span class="pre">123</span></code> in the stack, the <code class="docutils literal notranslate"><span class="pre">contains</span></code> method will return <code class="docutils literal notranslate"><span class="pre">False</span></code>
+because the <code class="docutils literal notranslate"><span class="pre">item</span></code> is not found in the stack. The problem is that the integer
+type will never be found in the stack because the stack only contains strings.
+However, because both the <code class="docutils literal notranslate"><span class="pre">self._container</span></code> and <code class="docutils literal notranslate"><span class="pre">item</span></code> are of type <code class="docutils literal notranslate"><span class="pre">Any</span></code>, the
+type checker will not raise any error.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">to_find</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="linenos">2</span><span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">to_find</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">pprint</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>
+</pre>
+</div></div>
+</div>
+<p>We want to bind a contract such that if the <code class="docutils literal notranslate"><span class="pre">self._container</span></code> is of type
+<code class="docutils literal notranslate"><span class="pre">List[str]</span></code>, then the <code class="docutils literal notranslate"><span class="pre">item</span></code> must also be of type <code class="docutils literal notranslate"><span class="pre">str</span></code>. If the
+<code class="docutils literal notranslate"><span class="pre">self._container</span></code> is of type <code class="docutils literal notranslate"><span class="pre">List[int]</span></code>, then the <code class="docutils literal notranslate"><span class="pre">item</span></code> must also be of type
+<code class="docutils literal notranslate"><span class="pre">int</span></code>. This is where we can use type variables to parameterize the types of the
+arguments and return type of the method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="k">class</span> <span class="nc">Stack</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="linenos"> 9</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">10</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">13</span>        <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># __contains__ method</span>
+<span class="linenos">16</span>        <span class="k">for</span> <span class="n">curr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_container</span><span class="p">:</span>
+<span class="linenos">17</span>            <span class="k">if</span> <span class="n">curr</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+<span class="linenos">18</span>                <span class="k">return</span> <span class="kc">True</span>
+<span class="linenos">19</span>        <span class="k">return</span> <span class="kc">False</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="n">stack_of_strings</span> <span class="o">=</span> <span class="n">Stack</span><span class="p">[</span><span class="nb">str</span><span class="p">]()</span>
+<span class="linenos">23</span><span class="n">stack_of_strings</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">)</span>
+<span class="linenos">24</span><span class="n">stack_of_strings</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;world&quot;</span><span class="p">)</span>
+<span class="linenos">25</span><span class="n">pprint</span><span class="p">(</span><span class="n">stack_of_strings</span><span class="o">.</span><span class="n">_container</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">to_find</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">123</span>
+<span class="linenos">28</span><span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">stack_of_strings</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">to_find</span><span class="p">)</span> <span class="c1"># error from mypy</span>
+<span class="linenos">29</span><span class="n">pprint</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="n">to_find</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hello&quot;</span>
+<span class="linenos">32</span><span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">stack_of_strings</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">to_find</span><span class="p">)</span> <span class="c1"># no error from mypy</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'hello'</span>, <span style="color: #008000; text-decoration-color: #008000">'world'</span><span style="font-weight: bold">]</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>
+</pre>
+</div></div>
+</div>
+<p>Notably, if we define the <code class="docutils literal notranslate"><span class="pre">Stack</span></code> class as <code class="docutils literal notranslate"><span class="pre">Stack[str]</span></code>, then the <code class="docutils literal notranslate"><span class="pre">T</span></code> is now
+bound to <code class="docutils literal notranslate"><span class="pre">str</span></code>. This means that any type hints in the <code class="docutils literal notranslate"><span class="pre">Stack</span></code> class that uses
+<code class="docutils literal notranslate"><span class="pre">T</span></code> will now be bound to <code class="docutils literal notranslate"><span class="pre">str</span></code>. This would include the <code class="docutils literal notranslate"><span class="pre">item</span></code> parameter in the
+<code class="docutils literal notranslate"><span class="pre">contains</span></code> method. Consequently, the above code will actually yield an error
+from <code class="docutils literal notranslate"><span class="pre">mypy</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">28</span>:<span class="w"> </span>error:<span class="w"> </span>Argument<span class="w"> </span><span class="m">1</span><span class="w"> </span>to<span class="w"> </span><span class="s2">&quot;contains&quot;</span><span class="w"> </span>of<span class="w"> </span><span class="s2">&quot;Stack&quot;</span><span class="w"> </span>has<span class="w"> </span>incompatible<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;int&quot;</span><span class="p">;</span><span class="w"> </span>expected<span class="w"> </span><span class="s2">&quot;str&quot;</span><span class="w">  </span><span class="o">[</span>arg-type<span class="o">]</span>
+<span class="w">    </span>result:<span class="w"> </span><span class="nv">bool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>stack.contains<span class="o">(</span>to_find<span class="o">)</span>
+</pre></div>
+</div>
+<p>Similarly, you can define the <code class="docutils literal notranslate"><span class="pre">Stack</span></code> class as <code class="docutils literal notranslate"><span class="pre">Stack[int]</span></code>, and the <code class="docutils literal notranslate"><span class="pre">T</span></code> is now
+bound to <code class="docutils literal notranslate"><span class="pre">int</span></code>.</p>
+<p>The above example <strong>scopes</strong> the type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to the <code class="docutils literal notranslate"><span class="pre">Stack</span></code> class in its
+entirety. Unlike functions, creating a generic class does not automatically
+scope the type variables across attributes and methods. You have to explicitly
+define the type hints yourself. Consequently, it is not uncommon to only scope
+the type variable to some attributes and methods to the generic class. How you
+scope them depends on the use cases.</p>
+</section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id16" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.playfulpython.com/python-type-hinting-generics-inheritance/">Type Hinting: Generics &amp; Inheritance</a></p></li>
 <li><p><a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/20-generics.html">Unit 20: Generics - CS2030S</a></p></li>
@@ -1070,17 +1298,21 @@ error.</p>
 <li><p><a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/21-erasure.html">Implementing Generics via Type Erasure - CS2030S</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
-<aside class="footnote brackets" id="id5" role="note">
+<aside class="footnote brackets" id="id6" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://www.playfulpython.com/python-type-hinting-generics-inheritance/">Type Hinting: Generics &amp; Inheritance</a></p>
 </aside>
-<aside class="footnote brackets" id="id6" role="note">
+<aside class="footnote brackets" id="id7" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/20-generics.html">Unit 20: Generics - CS2030S</a></p>
 </aside>
-<aside class="footnote brackets" id="id7" role="note">
+<aside class="footnote brackets" id="id8" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://peps.python.org/pep-0483/#generic-types">PEP 483 – The Theory of Type Hints</a></p>
+</aside>
+<aside class="footnote brackets" id="id9" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">4</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar">Use of Generic and TypeVar</a></p>
 </aside>
 </section>
 </section>
@@ -1158,7 +1390,11 @@ error.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pair-problem-revisited">Pair Problem Revisited</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scopes-of-type-variables">Scopes of Type Variables</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#scope-of-generic-methods-and-functions">Scope of Generic Methods and Functions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-functions">Generic Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-methods">Generic Methods</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>

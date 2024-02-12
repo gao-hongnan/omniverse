@@ -34,6 +34,10 @@ from typing_extensions import reveal_type
 from rich.pretty import pprint
 ```
 
+This post follows closely with the notes from
+[Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
+from the National University of Singapore.
+
 ## The Motivation
 
 Sometimes it is useful to have a lightweight class to bundle a pair of variables
@@ -567,6 +571,16 @@ pair = create_misleading_pair()
 process_misleading_pair(pair)
 ```
 
+To recap:
+
+-   `S` and `T` are type variables/parameters that represent the types of the
+    `first` and `second` attributes, respectively.
+-   `Pair[S, T]` is a generic class that is parameterized with `S` and `T`,
+    allowing the `first` and `second` attributes to be of different types.
+-   `Pair[str, int]` is a parameterized type that represents a pair of a string
+    and an integer. This just means "subsitution" of `S` and `T` with `str` and
+    `int` respectively, just like how we assign normal variables.
+
 However, `mypy` actually does not raise any issue on line `27` because Python
 allows a string type to be _dynamically converted_ to an integer type if and
 only if the string is a valid "integer" string.
@@ -635,18 +649,227 @@ def create_incorrect_pair() -> Pair[int, str]:
 
 # Example Usage
 incorrect_pair = create_incorrect_pair()
-log_user_info(incorrect_pair)  # This line should raise a mypy error due to type mismatch
+log_user_info(user_info=incorrect_pair)
 ```
 
 Indeed, running `mypy` on the above code will yield:
 
 ```bash
 33: error: Argument 1 to "log_user_info" has incompatible type "Pair[int, str]"; expected "Pair[str, int]"  [arg-type]
-    log_user_info(incorrect_pair)  # This line should raise a mypy error due to type mismatch
+    log_user_info(incorrect_pair)
 ```
 ````
 
-## Scopes of Type Variables
+## Scope of Generic Methods and Functions
+
+In the course
+[Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html),
+it is written in Java, so there is only mention of generic methods. But in
+Python, we can also define generic functions where the function signature and
+return type (need not be both) are parameterized by type variables.
+
+### Generic Functions
+
+It is possible to use `TypeVar` (type variables) to parameterize the types of
+the arguments and return type of a **function** _without_ the need to define a
+`Generic` (generic) class. This is because functions are **_naturally and
+automatically_** scoped to the type variables defined in the function. What does
+that mean?
+
+Let's walk through an example[^4] to find out.
+
+Consider a function that adds two _things_ (not necessarily numbers) together.
+In this particular case, if we want to find out the answer of `3 + 4`, we can
+use the `add` function to add `3` and `4` together.
+
+```python
+def add():
+    return 3 + 4
+```
+
+Adding two _literal_ things together is **valid** but **restricted** and
+obviously is a bad pattern. Polymorphism taught us to _parameterize_ the the two
+_things_ to add:
+
+```python
+def add(x, y):
+    return x + y
+```
+
+And injecting `x` and `y` is the act of parameterizing the function with what we
+call the **_regular variables_**.
+
+Now, we want to type hint the `add` function. You may likely do the following:
+
+```python
+def add(x: int, y: int) -> int:
+    return x + y
+```
+
+This is again **valid** but **restricted**. The `add` function is now restricted
+to adding two integers together. What if we want to add two strings together?
+What if we want to add two floats together? What if we want to add two `Item`
+objects with `__add__` method defined together?
+
+This is where you would consider using **_type variables_** to parameterize the
+types of the arguments and return type of the function.
+
+```python
+T = TypeVar('T')
+
+def add(x: T, y: T) -> T:
+    return x + y
+```
+
+This means that `x` and `y` can be of any type, and the return type of the
+function will be the same as the type of `x` and `y`. A contract is born because
+now if `x` is defined as an `int` type, then `y` must also be an `int` type, and
+the return type of the function will be an `int` type.
+
+Note however, running mypy above will yield two particular errors:
+
+```bash
+4: error: Returning Any from function declared to return "T"  [no-any-return]
+        return x + y
+        ^~~~~~~~~~~~
+4: error: Unsupported left operand type for + ("T")  [operator]
+        return x + y
+               ^~~~~
+```
+
+This is because there is no guarantee that the `+` operator is defined for the
+type `T`. What if `T` is a `Dict[int, int]` type, then adding two dictionaries
+together is not defined (likely no `__add__` method defined for the `dict`
+type). But let's ignore this and appreciate the bigger picture.
+
+We will talk about bound and constraints later, which will easily solve this
+problem:
+
+```python
+T = TypeVar('T', int, float, complex)
+
+def add(x: T, y: T) -> T:
+    return x + y # yields no error from mypy
+```
+
+In conclusion, the `add` function is now a **_generic function_** because it can
+operate on any type of object, and the type of the arguments and return type of
+the function are parameterized by type variables. But note that the type
+variables are **only** scoped to the function, and they are not available
+outside the function.
+
+### Generic Methods
+
+In the context of classes, it is also possible to define **_generic methods_**
+where the method signature and return type (need not both) are parameterized by
+type variables.
+
+We first look at another violation of type safety via the `Stack` class.
+
+```{code-cell} ipython3
+from typing import Any, Generic, List, TypeVar
+
+from rich.pretty import pprint
+
+
+class Stack:
+    def __init__(self) -> None:
+        self._container: List[Any] = []
+
+    def push(self, item: Any) -> None:
+        self._container.append(item)
+
+    def contains(self, item: Any) -> bool:  # __contains__ method
+        for curr in self._container:
+            if curr == item:
+                return True
+        return False
+
+
+stack = Stack()
+stack.push("hello")
+stack.push("world")
+pprint(stack._container)
+```
+
+As you can see, the `contains` method is not type safe. The `item` parameter is
+of type `Any`, and the method will return `True` if the `item` is found in the
+stack. The problem with `Any`, as repeated many times, is that it is too generic
+and does not provide a contract to abide by. For example, our stack above as we
+see it, contains strings, and only strings. Now if we want to search for an
+integer `to_find = 123` in the stack, the `contains` method will return `False`
+because the `item` is not found in the stack. The problem is that the integer
+type will never be found in the stack because the stack only contains strings.
+However, because both the `self._container` and `item` are of type `Any`, the
+type checker will not raise any error.
+
+```{code-cell} ipython3
+to_find: int = 123
+result: bool = stack.contains(to_find)
+pprint(result)
+```
+
+We want to bind a contract such that if the `self._container` is of type
+`List[str]`, then the `item` must also be of type `str`. If the
+`self._container` is of type `List[int]`, then the `item` must also be of type
+`int`. This is where we can use type variables to parameterize the types of the
+arguments and return type of the method.
+
+```{code-cell} ipython3
+from typing import Any, Generic, List, TypeVar
+
+from rich.pretty import pprint
+
+T = TypeVar("T")
+
+
+class Stack(Generic[T]):
+    def __init__(self) -> None:
+        self._container: List[T] = []
+
+    def push(self, item: T) -> None:
+        self._container.append(item)
+
+    def contains(self, item: T) -> bool:  # __contains__ method
+        for curr in self._container:
+            if curr == item:
+                return True
+        return False
+
+
+stack_of_strings = Stack[str]()
+stack_of_strings.push("hello")
+stack_of_strings.push("world")
+pprint(stack_of_strings._container)
+
+to_find: int = 123
+result: bool = stack_of_strings.contains(to_find) # error from mypy
+pprint(result)
+
+to_find: str = "hello"
+result: bool = stack_of_strings.contains(to_find) # no error from mypy
+```
+
+Notably, if we define the `Stack` class as `Stack[str]`, then the `T` is now
+bound to `str`. This means that any type hints in the `Stack` class that uses
+`T` will now be bound to `str`. This would include the `item` parameter in the
+`contains` method. Consequently, the above code will actually yield an error
+from `mypy`:
+
+```bash
+28: error: Argument 1 to "contains" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
+    result: bool = stack.contains(to_find)
+```
+
+Similarly, you can define the `Stack` class as `Stack[int]`, and the `T` is now
+bound to `int`.
+
+The above example **scopes** the type variable `T` to the `Stack` class in its
+entirety. Unlike functions, creating a generic class does not automatically
+scope the type variables across attributes and methods. You have to explicitly
+define the type hints yourself. Consequently, it is not uncommon to only scope
+the type variable to some attributes and methods to the generic class. How you
+scope them depends on the use cases.
 
 ## References and Further Readings
 
@@ -666,3 +889,6 @@ Indeed, running `mypy` on the above code will yield:
 
 [^3]:
     [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/#generic-types)
+
+[^4]:
+    [Use of Generic and TypeVar](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
