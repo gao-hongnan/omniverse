@@ -30,6 +30,7 @@
     -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
         -   [Commit Hash](#commit-hash-2)
         -   [KerasNLP Example](#kerasnlp-example)
+        -   [Training](#training)
 
 ## Overview
 
@@ -1013,6 +1014,8 @@ Some notes from the original KerasNLP example:
 -   Keras team limit the vocabulary size to 5000.
 -   They use a context window of 128 tokens.
 
+### Training
+
 Conversion to PyTorch and adaptation to my training framework have been done,
 yielding results that align closely with those from the original KerasNLP
 example.
@@ -1048,3 +1051,9 @@ mate had gone , but
 
 This text exhibits some degree of coherence and a logical narrative structure,
 demonstrating the model's capacity to generate meaningful content.
+
+If you want to reproduce the example, please use the
+[notebook](./projects/simplebooks92/gptdecoder-simplebooks-92.ipynb). This is
+because we shuffled before batching earlier, causing deviations from the
+original KerasNLP example. Therefore, please rerun the training on the
+vocabulary and tokenizer as shown in the notebook.
