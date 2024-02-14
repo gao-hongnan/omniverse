@@ -79,8 +79,8 @@ The LSP is a foundational guideline in object-oriented design, ensuring that
 subclasses extend superclasses in a manner that does not compromise the
 functionality and integrity of the superclass.
 
-Following the Liskov Substitution Principle, let's explore the criteria that
-define a valid subtype relationship.
+Understanding (at least the definition) of the LSP serves as a precursor to
+understanding subsumption in type theory.
 
 ## Subsumption
 
@@ -169,6 +169,18 @@ $$
 In other words, consider without loss of generality that $\mathcal{T}_1$ has $N$
 functionalities (methods), $f_1, f_2, \ldots, f_N$, then $\mathcal{T}_2$ also
 have these $N$ functionalities (methods), $f_1, f_2, \ldots, f_N$ or more.
+
+### Connection to Liskov Substitution Principle
+
+The subsumption criterion is closely related to the Liskov Substitution
+Principle (LSP). The LSP emphasizes that a subtype should not only fulfill the
+structural requirements of its supertype but also adhere to its behavioral
+expectations.
+
+The LSP, by requiring that objects of a superclass be replaceable with objects
+of its subclasses without affecting the correctness of the program, inherently
+sets the stage for the behavioral compatibility and preservation of semantics
+criterion in the subsumption criterion.
 
 ### Reflexivity, Transivity and Antisymmetry
 

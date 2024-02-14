@@ -21,18 +21,6 @@ kernelspec:
 :local:
 ```
 
-```{code-cell} ipython3
-:tags: [remove-cell]
-
-%config InlineBackend.figure_format = 'svg'
-
-from __future__ import annotations
-
-import math
-from typing import Generator, List, Union, Any, Generic, Literal, TypeVar, Dict, Tuple
-from rich.pretty import pprint
-```
-
 ```
 import torch
 from typing import TypeVar, Generic, List
@@ -166,17 +154,56 @@ class NLPModelTrainer(ModelTrainer[BertForSequenceClassification, TextDataset]):
             print(f"Epoch {epoch}, Loss: {total_loss / len(self.dataloader)}")
 ```
 
-## Covariance, Contravariance and Invariance
-
-Variance refers to places where one data type can be substituted for another.
-
--   Covariance means that a data type can be substituted with a more specific
-    type
--   Contravariance means that a data type can be substituted with a more general
-    type
--   Invariance means that a data type cannot be substituted either way
-
 ### Covariant?
+
+In the context of type generics and `TypeVar` in Python, covariance (covariant)
+refers to a way of defining how types can change through inheritance in a
+type-safe manner.
+
+To understand covariance, it's important to first grasp the concepts of
+subtyping and inheritance. In object-oriented programming, a class can inherit
+from another class, becoming a subtype of it. For instance, if you have a class
+`Animal` and a class `Dog` that inherits from `Animal`, `Dog` is a subtype of
+`Animal`.
+
+Now, let's consider generics and `TypeVar`:
+
+-   `TypeVar` is a utility for defining generic types in Python. You can create
+    a `TypeVar` with or without constraints, and it can be invariant, covariant,
+    or contravariant.
+-   A type variable is covariant if it allows a subtype relationship to be
+    transferred from its base types to the constructed types. In simpler terms,
+    if `Dog` is a subtype of `Animal`, and you have a generic type
+    `Container[T]`, then `Container[Dog]` can be considered a subtype of
+    `Container[Animal]` if `T` is defined as covariant.
+
+Here's a basic example:
+
+```python
+from typing import TypeVar, Generic
+
+T_co = TypeVar('T_co', covariant=True)
+
+class Container(Generic[T_co]):
+    ...
+```
+
+In this example, `T_co` is covariant. This means if you have a function that
+expects `Container[Animal]`, you can safely pass `Container[Dog]` to it, because
+`Dog` is a subtype of `Animal`, and due to covariance, `Container[Dog]` is
+considered a subtype of `Container[Animal]`.
+
+Covariance is particularly useful for return types. If a method in a base class
+returns a type `T_co`, and in a derived class this method returns a subtype of
+`T_co`, this is a safe and natural use of covariance.
+
+However, covariance has its limitations and isn't suitable for all situations,
+especially when dealing with method arguments where contravariance might be more
+appropriate. Proper use of covariance in generics ensures type safety and
+consistency, adhering to the Liskov Substitution Principle in object-oriented
+design.
+
+## Covariant?
 
 In the context of type generics and `TypeVar` in Python, covariance (covariant)
 refers to a way of defining how types can change through inheritance in a
@@ -260,6 +287,7 @@ design.
     - **Example**: In many languages, record types are represented as `structs`
       or `classes` without methods.
     - **Syntax Example**:
+
         ```python
         class Person:
             def __init__(self, name: str, age: int):
@@ -279,6 +307,7 @@ design.
     - **Example**: The type of a function that takes an integer and returns a
       string could be written as `int → string`.
     - **Syntax Example**:
+
         ```python
         def int_to_string(num: int) -> str:
             return str(num)
@@ -305,103 +334,6 @@ design.
             def area(self) -> float:
                 return 3.14 * self.radius * self.radius
         ```
-
-## Tricky Subtype example
-
-The tricky example you mentioned highlights a subtle issue in type theory
-related to subtype relationships and the concept of variance in generic types.
-
-1. **Subtyping Condition**: While every `int` is a `float`, making one inclined
-   to think `List[int]` is a subtype of `List[float]`, this is not the case. The
-   reason is due to the second condition of subtyping related to function
-   applicability.
-
-2. **Function Applicability Issue**: `List[int]` and `List[float]` differ in how
-   they react to certain operations. You can append a `float` to a
-   `List[float]`, but not to a `List[int]`. Therefore, passing `List[int]` where
-   `List[float]` is expected can lead to operations that are invalid for
-   `List[int]`.
-
-3. **Example Breakdown**: In the given code, appending `3.14` (a `float`) to
-   `my_list` (typed as `List[int]`) would be invalid. This invalid operation
-   would either fail or incorrectly alter the list's type integrity. The
-   subsequent operation `my_list[-1] << 5` expects an integer (due to the
-   bitwise shift operation), which would fail or behave unexpectedly if
-   `my_list[-1]` is a float.
-
-This example underscores the importance of understanding variance (covariance
-and contravariance) in generic types and why certain intuitive subtype
-relationships might not hold in practice, especially for mutable types like
-lists.
-
-It fails the second criterion of subtyping (function applicability) because the
-set of valid operations for `List[int]` is not the same as for `List[float]`.
-Specifically, appending a `float` to a `List[int]` is not valid. This difference
-means that while `List[int]` can be used wherever `List[float]` is expected in
-terms of containing only numerical values, it cannot be used in contexts where
-operations specific to `List[float]` (like appending a `float` value) are
-required. This violation of function applicability criteria makes `List[int]`
-not a subtype of `List[float]`.
-
-```python
-def append_pi(lst: List[float]) -> None:
-    lst += [3.14]
-
-my_list = [1, 3, 5]  # type: List[int]
-
-append_pi(my_list)   # Naively, this should be safe...
-
-my_list[-1] << 5     # ... but this fails
-```
-
-## Covariant?
-
-In the context of type generics and `TypeVar` in Python, covariance (covariant)
-refers to a way of defining how types can change through inheritance in a
-type-safe manner.
-
-To understand covariance, it's important to first grasp the concepts of
-subtyping and inheritance. In object-oriented programming, a class can inherit
-from another class, becoming a subtype of it. For instance, if you have a class
-`Animal` and a class `Dog` that inherits from `Animal`, `Dog` is a subtype of
-`Animal`.
-
-Now, let's consider generics and `TypeVar`:
-
--   `TypeVar` is a utility for defining generic types in Python. You can create
-    a `TypeVar` with or without constraints, and it can be invariant, covariant,
-    or contravariant.
--   A type variable is covariant if it allows a subtype relationship to be
-    transferred from its base types to the constructed types. In simpler terms,
-    if `Dog` is a subtype of `Animal`, and you have a generic type
-    `Container[T]`, then `Container[Dog]` can be considered a subtype of
-    `Container[Animal]` if `T` is defined as covariant.
-
-Here's a basic example:
-
-```python
-from typing import TypeVar, Generic
-
-T = TypeVar('T', covariant=True)
-
-class Container(Generic[T]):
-    ...
-```
-
-In this example, `T` is covariant. This means if you have a function that
-expects `Container[Animal]`, you can safely pass `Container[Dog]` to it, because
-`Dog` is a subtype of `Animal`, and due to covariance, `Container[Dog]` is
-considered a subtype of `Container[Animal]`.
-
-Covariance is particularly useful for return types. If a method in a base class
-returns a type `T`, and in a derived class this method returns a subtype of `T`,
-this is a safe and natural use of covariance.
-
-However, covariance has its limitations and isn't suitable for all situations,
-especially when dealing with method arguments where contravariance might be more
-appropriate. Proper use of covariance in generics ensures type safety and
-consistency, adhering to the Liskov Substitution Principle in object-oriented
-design.
 
 ## Overload
 
