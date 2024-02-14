@@ -221,6 +221,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Subsumption</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
 </ul>
 </li>
 </ul>
@@ -378,6 +379,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#liskov-substitution-principle">Liskov Substitution Principle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Subsumption</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterion-for-subtype-relationships">Criterion for Subtype Relationships</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-to-liskov-substitution-principle">Connection to Liskov Substitution Principle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reflexivity-transivity-and-antisymmetry">Reflexivity, Transivity and Antisymmetry</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#narrowing-values-widening-functions">Narrowing Values, Widening Functions</a></li>
 </ul>
@@ -415,26 +417,27 @@ document.write(`
 <li><p><a class="reference internal" href="#id1" id="id3">Subsumption</a></p>
 <ul>
 <li><p><a class="reference internal" href="#criterion-for-subtype-relationships" id="id4">Criterion for Subtype Relationships</a></p></li>
-<li><p><a class="reference internal" href="#reflexivity-transivity-and-antisymmetry" id="id5">Reflexivity, Transivity and Antisymmetry</a></p></li>
-<li><p><a class="reference internal" href="#narrowing-values-widening-functions" id="id6">Narrowing Values, Widening Functions</a></p></li>
+<li><p><a class="reference internal" href="#connection-to-liskov-substitution-principle" id="id5">Connection to Liskov Substitution Principle</a></p></li>
+<li><p><a class="reference internal" href="#reflexivity-transivity-and-antisymmetry" id="id6">Reflexivity, Transivity and Antisymmetry</a></p></li>
+<li><p><a class="reference internal" href="#narrowing-values-widening-functions" id="id7">Narrowing Values, Widening Functions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#integers-as-a-subtype-of-real-numbers" id="id7">Integers as a Subtype of Real Numbers</a></p>
+<li><p><a class="reference internal" href="#integers-as-a-subtype-of-real-numbers" id="id8">Integers as a Subtype of Real Numbers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#fulfilling-the-subtype-criterion" id="id8">Fulfilling the Subtype Criterion</a></p></li>
-<li><p><a class="reference internal" href="#satisfies-narrowing-values-widening-functions" id="id9">Satisfies Narrowing Values, Widening Functions</a></p></li>
+<li><p><a class="reference internal" href="#fulfilling-the-subtype-criterion" id="id9">Fulfilling the Subtype Criterion</a></p></li>
+<li><p><a class="reference internal" href="#satisfies-narrowing-values-widening-functions" id="id10">Satisfies Narrowing Values, Widening Functions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#circle-as-a-subtype-of-shape-in-2d-euclidean-geometry" id="id10">Circle as a Subtype of Shape in 2D Euclidean Geometry</a></p>
+<li><p><a class="reference internal" href="#circle-as-a-subtype-of-shape-in-2d-euclidean-geometry" id="id11">Circle as a Subtype of Shape in 2D Euclidean Geometry</a></p>
 <ul>
-<li><p><a class="reference internal" href="#criteria-1-value-inclusion-set-membership" id="id11">Criteria 1: Value Inclusion (Set Membership)</a></p></li>
-<li><p><a class="reference internal" href="#criteria-2-function-applicability" id="id12">Criteria 2: Function Applicability</a></p></li>
-<li><p><a class="reference internal" href="#criteria-3-property-preservation-invariant-maintenance" id="id13">Criteria 3: Property Preservation (Invariant Maintenance)</a></p></li>
-<li><p><a class="reference internal" href="#circle-is-a-subtype-of-shape" id="id14">Circle is a Subtype of Shape</a></p></li>
+<li><p><a class="reference internal" href="#criteria-1-value-inclusion-set-membership" id="id12">Criteria 1: Value Inclusion (Set Membership)</a></p></li>
+<li><p><a class="reference internal" href="#criteria-2-function-applicability" id="id13">Criteria 2: Function Applicability</a></p></li>
+<li><p><a class="reference internal" href="#criteria-3-property-preservation-invariant-maintenance" id="id14">Criteria 3: Property Preservation (Invariant Maintenance)</a></p></li>
+<li><p><a class="reference internal" href="#circle-is-a-subtype-of-shape" id="id15">Circle is a Subtype of Shape</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#demonstrating-reflexivity-transivity-and-antisymmetry" id="id15">Demonstrating Reflexivity, Transivity and Antisymmetry</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id16">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#demonstrating-reflexivity-transivity-and-antisymmetry" id="id16">Demonstrating Reflexivity, Transivity and Antisymmetry</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id17">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>In this post, we will discuss the concept of subsumption in type theory.
@@ -477,8 +480,8 @@ the supertype.</p></li>
 <p>The LSP is a foundational guideline in object-oriented design, ensuring that
 subclasses extend superclasses in a manner that does not compromise the
 functionality and integrity of the superclass.</p>
-<p>Following the Liskov Substitution Principle, let’s explore the criteria that
-define a valid subtype relationship.</p>
+<p>Understanding (at least the definition) of the LSP serves as a precursor to
+understanding subsumption in type theory.</p>
 </section>
 <section id="id1">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">Subsumption</a><a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
@@ -562,8 +565,19 @@ also be applicable to <span class="math notranslate nohighlight">\(\mathcal{T}_2
 functionalities (methods), <span class="math notranslate nohighlight">\(f_1, f_2, \ldots, f_N\)</span>, then <span class="math notranslate nohighlight">\(\mathcal{T}_2\)</span> also
 have these <span class="math notranslate nohighlight">\(N\)</span> functionalities (methods), <span class="math notranslate nohighlight">\(f_1, f_2, \ldots, f_N\)</span> or more.</p>
 </section>
+<section id="connection-to-liskov-substitution-principle">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Connection to Liskov Substitution Principle</a><a class="headerlink" href="#connection-to-liskov-substitution-principle" title="Permalink to this heading">#</a></h3>
+<p>The subsumption criterion is closely related to the Liskov Substitution
+Principle (LSP). The LSP emphasizes that a subtype should not only fulfill the
+structural requirements of its supertype but also adhere to its behavioral
+expectations.</p>
+<p>The LSP, by requiring that objects of a superclass be replaceable with objects
+of its subclasses without affecting the correctness of the program, inherently
+sets the stage for the behavioral compatibility and preservation of semantics
+criterion in the subsumption criterion.</p>
+</section>
 <section id="reflexivity-transivity-and-antisymmetry">
-<h3><a class="toc-backref" href="#id5" role="doc-backlink">Reflexivity, Transivity and Antisymmetry</a><a class="headerlink" href="#reflexivity-transivity-and-antisymmetry" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Reflexivity, Transivity and Antisymmetry</a><a class="headerlink" href="#reflexivity-transivity-and-antisymmetry" title="Permalink to this heading">#</a></h3>
 <p>A subtype relation is transitive, reflexive and obeys antisymmetry. These are
 fundamental properties of the subtype relationship in type theory:</p>
 <ol class="arabic simple">
@@ -585,7 +599,7 @@ distinct types are each other’s subtypes.</p></li>
 </ol>
 </section>
 <section id="narrowing-values-widening-functions">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Narrowing Values, Widening Functions</a><a class="headerlink" href="#narrowing-values-widening-functions" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Narrowing Values, Widening Functions</a><a class="headerlink" href="#narrowing-values-widening-functions" title="Permalink to this heading">#</a></h3>
 <p>In the subtype process, the set of values of <span class="math notranslate nohighlight">\(S\)</span> is a subset (or equal to) of
 <span class="math notranslate nohighlight">\(T\)</span>, and the set of functions applicable to <span class="math notranslate nohighlight">\(S\)</span> is a superset (or equal to) of
 those applicable to <span class="math notranslate nohighlight">\(T\)</span>. Stated in points for clarity:</p>
@@ -598,7 +612,7 @@ process of subtyping.</p></li>
 </section>
 </section>
 <section id="integers-as-a-subtype-of-real-numbers">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Integers as a Subtype of Real Numbers</a><a class="headerlink" href="#integers-as-a-subtype-of-real-numbers" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Integers as a Subtype of Real Numbers</a><a class="headerlink" href="#integers-as-a-subtype-of-real-numbers" title="Permalink to this heading">#</a></h2>
 <p>Consider the real number system <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>, then we say that the integers
 (whole numbers) <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span> is a <strong><em>subtype</em></strong> of <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> because it
 fulfills the criteria for subsumption <a class="reference internal" href="#type-theory-subtype-criterion">Criterion 1</a>.</p>
@@ -610,7 +624,7 @@ any of the subtype criteria; it simply means that the subtype <span class="math 
 more operations than its supertype <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>, which is permissible in
 subtyping.</p>
 <section id="fulfilling-the-subtype-criterion">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Fulfilling the Subtype Criterion</a><a class="headerlink" href="#fulfilling-the-subtype-criterion" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Fulfilling the Subtype Criterion</a><a class="headerlink" href="#fulfilling-the-subtype-criterion" title="Permalink to this heading">#</a></h3>
 <ol class="arabic">
 <li><p><strong>Value Inclusion (Set Membership)</strong>:</p>
 <ul class="simple">
@@ -661,7 +675,7 @@ satisfies the property preservation criterion:</p>
 </ol>
 </section>
 <section id="satisfies-narrowing-values-widening-functions">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Satisfies Narrowing Values, Widening Functions</a><a class="headerlink" href="#satisfies-narrowing-values-widening-functions" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Satisfies Narrowing Values, Widening Functions</a><a class="headerlink" href="#satisfies-narrowing-values-widening-functions" title="Permalink to this heading">#</a></h3>
 <p>Indeed, if we consider the integer number system as a subtype of the real number
 system, then the set of integers values is indeed a subset of real numbers
 (narrowing values), and the set of operations/functions applicable by the set of
@@ -673,9 +687,9 @@ in computer systems).</p>
 </section>
 </section>
 <section id="circle-as-a-subtype-of-shape-in-2d-euclidean-geometry">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Circle as a Subtype of Shape in 2D Euclidean Geometry</a><a class="headerlink" href="#circle-as-a-subtype-of-shape-in-2d-euclidean-geometry" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Circle as a Subtype of Shape in 2D Euclidean Geometry</a><a class="headerlink" href="#circle-as-a-subtype-of-shape-in-2d-euclidean-geometry" title="Permalink to this heading">#</a></h2>
 <section id="criteria-1-value-inclusion-set-membership">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Criteria 1: Value Inclusion (Set Membership)</a><a class="headerlink" href="#criteria-1-value-inclusion-set-membership" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Criteria 1: Value Inclusion (Set Membership)</a><a class="headerlink" href="#criteria-1-value-inclusion-set-membership" title="Permalink to this heading">#</a></h3>
 <p>Consider the class <code class="docutils literal notranslate"><span class="pre">Shape</span></code> to represent all 2 dimensional Euclidean Geometry. We
 will show how to use the criterion to deduce that the <code class="docutils literal notranslate"><span class="pre">Circle</span></code> class is not only
 a subclass of <code class="docutils literal notranslate"><span class="pre">Shape</span></code>, but is also a subtype. We denote <span class="math notranslate nohighlight">\(\mathcal{T}_1\)</span> as
@@ -732,7 +746,7 @@ instances of <code class="docutils literal notranslate"><span class="pre">Circle
 </div>
 </section>
 <section id="criteria-2-function-applicability">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Criteria 2: Function Applicability</a><a class="headerlink" href="#criteria-2-function-applicability" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Criteria 2: Function Applicability</a><a class="headerlink" href="#criteria-2-function-applicability" title="Permalink to this heading">#</a></h3>
 <p>This criterion ensures that all methods/functions defined in the supertype
 (<code class="docutils literal notranslate"><span class="pre">Shape</span></code>) are also implemented in the subtype (<code class="docutils literal notranslate"><span class="pre">Circle</span></code>), with the same
 signature and expected behavior.</p>
@@ -766,7 +780,7 @@ values for known inputs.</p></li>
 </div>
 </section>
 <section id="criteria-3-property-preservation-invariant-maintenance">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">Criteria 3: Property Preservation (Invariant Maintenance)</a><a class="headerlink" href="#criteria-3-property-preservation-invariant-maintenance" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Criteria 3: Property Preservation (Invariant Maintenance)</a><a class="headerlink" href="#criteria-3-property-preservation-invariant-maintenance" title="Permalink to this heading">#</a></h3>
 <p>This part is usually associated with the inherent invariance of the parent
 class.</p>
 <p>An invariant in the context of the <code class="docutils literal notranslate"><span class="pre">Shape</span></code> class could be a property that is
@@ -780,13 +794,13 @@ The area, being a measure of the extent of a shape in a plane, cannot be
 negative.</p>
 </section>
 <section id="circle-is-a-subtype-of-shape">
-<h3><a class="toc-backref" href="#id14" role="doc-backlink">Circle is a Subtype of Shape</a><a class="headerlink" href="#circle-is-a-subtype-of-shape" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Circle is a Subtype of Shape</a><a class="headerlink" href="#circle-is-a-subtype-of-shape" title="Permalink to this heading">#</a></h3>
 <p>Thus, we have shown <code class="docutils literal notranslate"><span class="pre">Circle</span></code> to obey all 3 criterion, and is therefore a subtype
 of <code class="docutils literal notranslate"><span class="pre">Shape</span></code>.</p>
 </section>
 </section>
 <section id="demonstrating-reflexivity-transivity-and-antisymmetry">
-<h2><a class="toc-backref" href="#id15" role="doc-backlink">Demonstrating Reflexivity, Transivity and Antisymmetry</a><a class="headerlink" href="#demonstrating-reflexivity-transivity-and-antisymmetry" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Demonstrating Reflexivity, Transivity and Antisymmetry</a><a class="headerlink" href="#demonstrating-reflexivity-transivity-and-antisymmetry" title="Permalink to this heading">#</a></h2>
 <p>We will use the <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Animal</span></code> to illustrate these 3 points, but this is a
 very loose demonstration and may not cover all nuances.</p>
 <div class="cell docutils container">
@@ -863,7 +877,7 @@ the context of our example:</p>
 property.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id16" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a></p></li>
 <li><p><a class="reference external" href="https://peps.python.org/pep-0483/">PEP 483 – The Theory of Type Hints</a></p></li>
@@ -941,6 +955,7 @@ property.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#liskov-substitution-principle">Liskov Substitution Principle</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Subsumption</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#criterion-for-subtype-relationships">Criterion for Subtype Relationships</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-to-liskov-substitution-principle">Connection to Liskov Substitution Principle</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reflexivity-transivity-and-antisymmetry">Reflexivity, Transivity and Antisymmetry</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#narrowing-values-widening-functions">Narrowing Values, Widening Functions</a></li>
 </ul>

@@ -1,0 +1,818 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Invariance, Covariance and Contravariance &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'computer_science/type_theory/06-invariance-covariance-contravariance';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/computer_science/type_theory/06-invariance-covariance-contravariance.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bibliography" href="../../bibliography.html" />
+    <link rel="prev" title="Bound and Constraint in Generics and Type Variables" href="05-typevar-bound-constraints.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Type Theory, A Very Rudimentary Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Invariance, Covariance and Contravariance</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/computer_science/type_theory/06-invariance-covariance-contravariance.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Invariance, Covariance and Contravariance</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-motivation">The Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-definitions">The Definitions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance">Covariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariance">Contravariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#invariance">Invariance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-is-invariant">List is Invariant</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Covariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Contravariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Invariance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariant-in-the-return-type-vs-contravariant-in-the-argument-type">Covariant in the return type vs Contravariant in the argument type</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="invariance-covariance-and-contravariance">
+<h1>Invariance, Covariance and Contravariance<a class="headerlink" href="#invariance-covariance-and-contravariance" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-motivation" id="id4">The Motivation</a></p></li>
+<li><p><a class="reference internal" href="#the-definitions" id="id5">The Definitions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#covariance" id="id6">Covariance</a></p></li>
+<li><p><a class="reference internal" href="#contravariance" id="id7">Contravariance</a></p></li>
+<li><p><a class="reference internal" href="#invariance" id="id8">Invariance</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#list-is-invariant" id="id9">List is Invariant</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id10">Covariance</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id11">Contravariance</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id12">Invariance</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#covariant-in-the-return-type-vs-contravariant-in-the-argument-type" id="id13">Covariant in the return type vs Contravariant in the argument type</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id14">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="the-motivation">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">The Motivation</a><a class="headerlink" href="#the-motivation" title="Permalink to this heading">#</a></h2>
+<p>This section is not particulary easy. So let’s open with an example, a classic
+one written by the author of Python, Guido van Rossum.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span> <span class="nf">append_pi</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">2</span>    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span> <span class="c1"># original is lst += [3.14]</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>  <span class="c1"># type: List[int]</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="n">_</span> <span class="o">=</span> <span class="n">append_pi</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>   <span class="c1"># Naively, this should be safe..</span>
+<span class="linenos">7</span><span class="n">pprint</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3.14</span><span style="font-weight: bold">]</span>
+</pre>
+</div></div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">append_pi</span></code> is supposed to append the value of <span class="math notranslate nohighlight">\(\pi\)</span> to the list
+<code class="docutils literal notranslate"><span class="pre">lst</span></code>. However, the type of <code class="docutils literal notranslate"><span class="pre">lst</span></code> is <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, and the type of <code class="docutils literal notranslate"><span class="pre">my_list</span></code> is
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code>. The function <code class="docutils literal notranslate"><span class="pre">append_pi</span></code> is supposed to be safe, but it is not. Why
+not? Isn’t <code class="docutils literal notranslate"><span class="pre">int</span></code> (integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>) a subtype of <code class="docutils literal notranslate"><span class="pre">float</span></code> (real numbers
+<span class="math notranslate nohighlight">\(\mathbb{R}\)</span>)? Did we not establish this in the section on subsumption?</p>
+<p>Yes, we did. However, <code class="docutils literal notranslate"><span class="pre">int</span></code> being a subtype of <code class="docutils literal notranslate"><span class="pre">float</span></code> does not imply that
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>. Upon reflection, this makes sense,
+because the above code would break the second criterion of subtyping (
+<a class="reference internal" href="03-subsumption.html#type-theory-subtype-criterion">Criterion 1</a>). The second criterion states that the
+if the type <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then if <span class="math notranslate nohighlight">\(T\)</span> has <span class="math notranslate nohighlight">\(N\)</span> methods, then <span class="math notranslate nohighlight">\(S\)</span> must
+have at least the same set of <span class="math notranslate nohighlight">\(N\)</span> methods. Furthermore, it must preserve the
+semantics of the functions. Let’s build a mental model to understand why this is
+the case. Consider the python implementation of <code class="docutils literal notranslate"><span class="pre">List</span></code>,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">list</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__object</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__index</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
+    <span class="c1"># Signature of `list.index` should be kept in line with `collections.UserList.index()`</span>
+    <span class="c1"># and multiprocessing.managers.ListProxy.index()</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="n">__start</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">__stop</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__index</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="n">__object</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="c1"># Signature of `list.sort` should be kept inline with `collections.UserList.sort()`</span>
+    <span class="c1"># and multiprocessing.managers.ListProxy.sort()</span>
+    <span class="c1">#</span>
+    <span class="c1"># Use list[SupportsRichComparisonT] for the first overload rather than [SupportsRichComparison]</span>
+    <span class="c1"># to work around invariance</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SupportsRichComparisonT</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_T</span><span class="p">],</span> <span class="n">SupportsRichComparison</span><span class="p">],</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="fm">__hash__</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>  <span class="c1"># type: ignore[assignment]</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__i</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__s</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="c1"># Overloading looks unnecessary, but is needed to work around complex mypy problems</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span> <span class="o">|</span> <span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># type: ignore[misc]</span>
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__imul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__reversed__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">__item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GenericAlias</span><span class="p">:</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>and now consider the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">append_pi</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And since we parametrized the generic <code class="docutils literal notranslate"><span class="pre">_T</span></code> in <code class="docutils literal notranslate"><span class="pre">List</span></code> with <code class="docutils literal notranslate"><span class="pre">float</span></code>, the type
+append method <code class="docutils literal notranslate"><span class="pre">append</span></code> is now <code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">float)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code> instead of
+<code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">_T)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>. And since <code class="docutils literal notranslate"><span class="pre">my_list</span></code> is of type
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code>, the corresponding method <code class="docutils literal notranslate"><span class="pre">append</span></code> should be
+<code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>. If we were to append a <code class="docutils literal notranslate"><span class="pre">float</span></code> to
+<code class="docutils literal notranslate"><span class="pre">my_list</span></code>, the method <code class="docutils literal notranslate"><span class="pre">append</span></code> would break the second criterion of subtyping
+(and also Liskov’s substitution principle). Furthermore, when we pass <code class="docutils literal notranslate"><span class="pre">my_list</span></code>
+to <code class="docutils literal notranslate"><span class="pre">append_pi</span></code>, we are essentially <strong>assigning</strong> <code class="docutils literal notranslate"><span class="pre">my_list:</span> <span class="pre">List[int]</span></code> to
+<code class="docutils literal notranslate"><span class="pre">lst:</span> <span class="pre">List[float]</span></code>. This is not a safe operation because their signature in
+<code class="docutils literal notranslate"><span class="pre">append</span></code> are different. So even though both have the same method name <code class="docutils literal notranslate"><span class="pre">append</span></code>,
+they are not the same method.</p>
+<p>And indeed running through this piece of code via a static type checker like
+<code class="docutils literal notranslate"><span class="pre">mypy</span></code> will raise an error.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">6</span>:<span class="w"> </span>error:<span class="w"> </span>Argument<span class="w"> </span><span class="m">1</span><span class="w"> </span>to<span class="w"> </span><span class="s2">&quot;append_pi&quot;</span><span class="w"> </span>has<span class="w"> </span>incompatible<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;list[int]&quot;</span><span class="p">;</span><span class="w"> </span>expected<span class="w"> </span><span class="s2">&quot;list[float]&quot;</span><span class="w">  </span><span class="o">[</span>arg-type<span class="o">]</span>
+<span class="w">    </span>append_pi<span class="o">(</span>my_list<span class="o">)</span><span class="w">   </span><span class="c1"># Naively, this should be safe..</span>
+<span class="w">              </span>^~~~~~~
+<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span><span class="s2">&quot;List&quot;</span><span class="w"> </span>is<span class="w"> </span>invariant<span class="w"> </span>--<span class="w"> </span>see<span class="w"> </span>https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span>Consider<span class="w"> </span>using<span class="w"> </span><span class="s2">&quot;Sequence&quot;</span><span class="w"> </span>instead,<span class="w"> </span>which<span class="w"> </span>is<span class="w"> </span>covariant
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">mypy</span></code> error message even gave you some suggestion that <code class="docutils literal notranslate"><span class="pre">List</span></code> is
+<strong>invariant</strong>.</p>
+</section>
+<section id="the-definitions">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">The Definitions</a><a class="headerlink" href="#the-definitions" title="Permalink to this heading">#</a></h2>
+<p>Let <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span> be two types, and <span class="math notranslate nohighlight">\(C[U]\)</span> denotes a generic class and an
+application of a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Type_constructor">type constructor</a> <span class="math notranslate nohighlight">\(C\)</span>
+parameterized by a type <span class="math notranslate nohighlight">\(U\)</span>.</p>
+<p>It is helpful for one to think of type constructors as classes. For example,
+<code class="docutils literal notranslate"><span class="pre">List</span></code> is a type constructor, and <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is an application of the type.</p>
+<section id="covariance">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Covariance</a><a class="headerlink" href="#covariance" title="Permalink to this heading">#</a></h3>
+<div class="proof definition admonition" id="computer-science-type-theory-covariance">
+<p class="admonition-title"><span class="caption-number">Definition 19 </span> (Covariance)</p>
+<section class="definition-content" id="proof-content">
+<p>Within the context of type theory, we say that the type constructor <span class="math notranslate nohighlight">\(C\)</span> is
+<strong>covariant</strong> if for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then
+<span class="math notranslate nohighlight">\(C[S]\)</span> is a subtype of <span class="math notranslate nohighlight">\(C[T]\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+S \leq T \implies C[S] \leq C[T]
+\]</div>
+<p>This behaviour preserves the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">ordering of types</a>, which orders types
+from more specific to more generic.</p>
+</section>
+</div></section>
+<section id="contravariance">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Contravariance</a><a class="headerlink" href="#contravariance" title="Permalink to this heading">#</a></h3>
+<div class="proof definition admonition" id="computer-science-type-theory-contravariance">
+<p class="admonition-title"><span class="caption-number">Definition 20 </span> (Contravariance)</p>
+<section class="definition-content" id="proof-content">
+<p>Within the context of type theory, a type constructor <span class="math notranslate nohighlight">\(C\)</span> is <strong>contravariant</strong>
+if for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then <span class="math notranslate nohighlight">\(C[T]\)</span> is a
+subtype of <span class="math notranslate nohighlight">\(C[S]\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+S \leq T \implies C[T] \leq C[S]
+\]</div>
+<p>This behaviour reverses the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">ordering of types</a>, moving from more
+generic to more specific. Contravariance is typically relevant in scenarios
+where the type constructor represents a producer or consumer that operates
+contrarily to the direction of subtype relationships in covariance.</p>
+</section>
+</div></section>
+<section id="invariance">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Invariance</a><a class="headerlink" href="#invariance" title="Permalink to this heading">#</a></h3>
+<div class="proof definition admonition" id="computer-science-type-theory-invariance">
+<p class="admonition-title"><span class="caption-number">Definition 21 </span> (Invariance)</p>
+<section class="definition-content" id="proof-content">
+<p>Invariance means that if you have a type constructor <span class="math notranslate nohighlight">\(C\)</span> and two types <span class="math notranslate nohighlight">\(S\)</span> and
+<span class="math notranslate nohighlight">\(T\)</span>, then <span class="math notranslate nohighlight">\(C[S]\)</span> is neither a subtype nor a supertype of <span class="math notranslate nohighlight">\(C[T]\)</span> unless <span class="math notranslate nohighlight">\(S\)</span> and
+<span class="math notranslate nohighlight">\(T\)</span> are the same.</p>
+<p>Equivalently, for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, <span class="math notranslate nohighlight">\(C[S]\)</span> and <span class="math notranslate nohighlight">\(C[T]\)</span> are considered
+compatible or equivalent only if <span class="math notranslate nohighlight">\(S = T\)</span>.</p>
+<p>Mathematically, this concept does not have a direct inequality representation
+like covariance or contravariance because it states a condition of equality
+rather than a relational order. However, it implies:</p>
+<div class="math notranslate nohighlight">
+\[
+(S \neq T) \implies (C[S] \nleq C[T] \text{ and } C[T] \nleq C[S])
+\]</div>
+<p>And conversely:</p>
+<div class="math notranslate nohighlight">
+\[
+(S = T) \implies (C[S] = C[T])
+\]</div>
+<p>This means for invariance, the specific type instantiation of <span class="math notranslate nohighlight">\(C\)</span> with <span class="math notranslate nohighlight">\(S\)</span> can
+only be used in contexts expecting exactly <span class="math notranslate nohighlight">\(C[S]\)</span>, not <span class="math notranslate nohighlight">\(C[T]\)</span> where <span class="math notranslate nohighlight">\(T\)</span> is
+different from <span class="math notranslate nohighlight">\(S\)</span>, regardless of whether <span class="math notranslate nohighlight">\(T\)</span> is a subtype or supertype of <span class="math notranslate nohighlight">\(S\)</span>.</p>
+</section>
+</div></section>
+</section>
+<section id="list-is-invariant">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">List is Invariant</a><a class="headerlink" href="#list-is-invariant" title="Permalink to this heading">#</a></h2>
+<p>Let’s connect back to our earlier example on why <code class="docutils literal notranslate"><span class="pre">List</span></code> is invariant. We will
+now use backticks instead of latex symbols to denote types and type
+constructors.</p>
+<section id="id1">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Covariance</a><a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>Covariance describes a relationship between types where a type <code class="docutils literal notranslate"><span class="pre">T</span></code> is considered
+a subtype of a type <code class="docutils literal notranslate"><span class="pre">U</span></code> (written as <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">≤</span> <span class="pre">U</span></code>) if and only if a container of <code class="docutils literal notranslate"><span class="pre">T</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Container[T]</span></code>) is considered a subtype of a container of <code class="docutils literal notranslate"><span class="pre">U</span></code> (<code class="docutils literal notranslate"><span class="pre">Container[U]</span></code>).
+This is natural for operations that produce or return values of the generic type
+(e.g., getters). In the context of our example, <code class="docutils literal notranslate"><span class="pre">List[int]</span> <span class="pre">≤</span> <span class="pre">List[float]</span></code> would
+hold true if <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were covariant, meaning that a list of integers could be
+used wherever a list of floats is expected, because every integer can be
+considered a float.</p>
+<p>However, this relationship does not hold because the <code class="docutils literal notranslate"><span class="pre">append</span></code> method of a
+<code class="docutils literal notranslate"><span class="pre">List[float]</span></code> can accept any <code class="docutils literal notranslate"><span class="pre">float</span></code> as an argument, while <code class="docutils literal notranslate"><span class="pre">append</span></code> for a
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> can only accept <code class="docutils literal notranslate"><span class="pre">int</span></code> values. Since appending a <code class="docutils literal notranslate"><span class="pre">float</span></code> to a
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is not type-safe (a float is not necessarily an int), the <code class="docutils literal notranslate"><span class="pre">List</span></code>
+type cannot be considered covariant. More concretely, if we assume that
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is indeed a subtype of <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, then the append method of
+<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> should do <strong><em>exactly</em></strong> the same thing as the append method of
+<code class="docutils literal notranslate"><span class="pre">List[float]</span></code>. But this is not the case.</p>
+</section>
+<section id="id2">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Contravariance</a><a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<p>Contravariance is the opposite: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">≤</span> <span class="pre">U</span></code> implies <code class="docutils literal notranslate"><span class="pre">Container[U]</span> <span class="pre">≤</span> <span class="pre">Container[T]</span></code>.
+This makes sense for containers that consume or operate on the generic type
+(e.g., setters). Using our example, <code class="docutils literal notranslate"><span class="pre">List[float]</span> <span class="pre">≤</span> <span class="pre">List[int]</span></code> would be true if
+<code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were contravariant, meaning you could use a list expecting floats
+where a list of integers is required. This is because it’s safe to pass an
+integer where a float is expected, not the other way around.</p>
+<p>The example illustrates that this relationship also doesn’t hold because the
+<code class="docutils literal notranslate"><span class="pre">pop</span></code> method returns a more specific type (<code class="docutils literal notranslate"><span class="pre">int</span></code>) in <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> than in
+<code class="docutils literal notranslate"><span class="pre">List[float]</span></code> (which returns <code class="docutils literal notranslate"><span class="pre">float</span></code>). If <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were contravariant, we would
+expect operations that work on <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> to work on <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, but the
+narrower return type of <code class="docutils literal notranslate"><span class="pre">pop()</span></code> in <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> contradicts this, making it not
+contravariant.</p>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Invariance</a><a class="headerlink" href="#id3" title="Permalink to this heading">#</a></h3>
+<p>Given that the <code class="docutils literal notranslate"><span class="pre">List</span></code> type is neither covariant nor contravariant as
+demonstrated, it is termed invariant. Invariance means that you cannot
+substitute <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> with <code class="docutils literal notranslate"><span class="pre">List[U]</span></code> or vice versa unless <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">U</span></code> are exactly
+the same type. In practical terms, a <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is only a <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> and
+cannot be treated as a <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, and vice versa.</p>
+</section>
+</section>
+<section id="covariant-in-the-return-type-vs-contravariant-in-the-argument-type">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Covariant in the return type vs Contravariant in the argument type</a><a class="headerlink" href="#covariant-in-the-return-type-vs-contravariant-in-the-argument-type" title="Permalink to this heading">#</a></h2>
+<p>…</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://peps.python.org/pep-0483/#covariance-and-contravariance">https://peps.python.org/pep-0483/#covariance-and-contravariance</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0484/#covariance-and-contravariance">https://peps.python.org/pep-0484/#covariance-and-contravariance</a></p></li>
+<li><p><a class="reference external" href="https://www.playfulpython.com/type-hinting-covariance-contra-variance/">https://www.playfulpython.com/type-hinting-covariance-contra-variance/</a></p></li>
+<li><p><a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/18-variance.html">https://nus-cs2030s.github.io/2021-s2/18-variance.html</a></p></li>
+<li><p><a class="reference external" href="https://mypy.readthedocs.io/en/stable/generics.html#variance-of-generics">https://mypy.readthedocs.io/en/stable/generics.html#variance-of-generics</a></p></li>
+<li><p><a class="reference external" href="https://blog.daftcode.pl/covariance-contravariance-and-invariance-the-ultimate-python-guide-8fabc0c24278">https://blog.daftcode.pl/covariance-contravariance-and-invariance-the-ultimate-python-guide-8fabc0c24278</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./computer_science/type_theory"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05-typevar-bound-constraints.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Bound and Constraint in Generics and Type Variables</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../bibliography.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bibliography</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-motivation">The Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-definitions">The Definitions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance">Covariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariance">Contravariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#invariance">Invariance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-is-invariant">List is Invariant</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Covariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Contravariance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Invariance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#covariant-in-the-return-type-vs-contravariant-in-the-argument-type">Covariant in the return type vs Contravariant in the argument type</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
