@@ -10,6 +10,7 @@
         -   [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
         -   [Improving Performance](#improving-performance)
     -   [Adder](#adder)
+        -   [Commit Hash](#commit-hash)
         -   [Composer (Configuration)](#composer-configuration)
         -   [State](#state)
         -   [Some Quirks of the Adder Project](#some-quirks-of-the-adder-project)
@@ -22,10 +23,13 @@
             -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
         -   [Generalization](#generalization)
     -   [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
+        -   [Commit Hash](#commit-hash-1)
         -   [Experiments](#experiments-1)
             -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
             -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-    -   [SimpleBooks-92](#simplebooks-92)
+    -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
+        -   [Commit Hash](#commit-hash-2)
+        -   [KerasNLP Example](#kerasnlp-example)
 
 ## Overview
 
@@ -105,6 +109,8 @@ expected to predict the result of the addition problem. It seems trivial, but
 note that GPT models are after all, language models, and not well trained on
 arithmetic problems. This is why ChatGPT sometimes hallucinates and gives wrong
 answers to simple arithmetic problems.
+
+### Commit Hash
 
 The commit to check for this repo is `916aabd`.
 
@@ -832,6 +838,8 @@ This also yields an validation accuracy of about 97.4% over 1000 samples
 
 ## Tiny Shakespeare (Character Token Level)
 
+### Commit Hash
+
 The commit to check for this repo is `916aabd`.
 
 ### Experiments
@@ -911,7 +919,7 @@ nohup python omnivault/transformer/projects/tinyshakespeare_char/main.py \
     generator.top_k=10 > nohup.log 2>&1 &
 ```
 
-![history-gpu-amp-30-epochs](./projects/tinyshakespeare_char/assets/history_gpu_amp_30_epochs.png)
+![history-gpu-amp-5-epochs](./projects/tinyshakespeare_char/assets/history_gpu_amp_5_epochs.png)
 
 Some generated text towards the end of the 5th epoch, I cannot expect super
 coherence since it is a character level model, but it is still quite impressive:
@@ -948,12 +956,95 @@ HISTRENS OVERDONE:
 O capol! he is his head, and as he says he should.
 ```
 
-## SimpleBooks-92
+For a more detailed logs, you can check the
+[`nohup.log`](./projects/tinyshakespeare_char/assets/history_gpu_amp_5_epochs_nohup.log)
+file.
 
-This project is based upon
-[GPT text generation from scratch with KerasNLP](https://keras.io/examples/generative/text_generation_gpt/).
+## SimpleBooks-92 (Word Token Level)
 
-The dataset is a collection of 92 books from Project Gutenberg.
+### Commit Hash
 
-I am lazy so I am using vocabulary and tokenizer from `keras_nlp`'s
-`WordPieceTokenizer`.
+The commit to check for this repo is `b828879`.
+
+### KerasNLP Example
+
+This project is inspired by the
+[GPT text generation tutorial using KerasNLP](https://keras.io/examples/generative/text_generation_gpt/),
+focusing on generating text from scratch.
+
+We utilize a dataset comprising 92 books from Project Gutenberg for this
+project. To standardize the process, the
+[WordPiece vocabulary](https://keras.io/api/keras_nlp/tokenizers/compute_word_piece_vocabulary/)
+and
+[WordPiece tokenizer](https://keras.io/api/keras_nlp/tokenizers/word_piece_tokenizer/)
+provided by `keras_nlp` are used as is. I just need to convert the dataset from
+tensorflow to pytorch and use my framework for training later.
+
+Some notes from the original KerasNLP example:
+
+-   The `raw_train_ds` is shuffled after batch calls. Shuffling the dataset
+    after batching means that the order of batches will be shuffled, but the
+    data within each batch will remain in the same order. This is "less random"
+    than shuffling the entire dataset before batching, where both the order of
+    batches and the order of data within each batch would be randomized.
+-   They use the [simplebooks-92](https://arxiv.org/abs/1911.12391) corpus from
+    Project Gutenberg. The dataset is a collection of 92 books from Project
+    Gutenberg.
+-   In the tutorial, it was mentioned that this corpus is a good dataset for a
+    miniature GPT since it has a small vocabulary and high word frequency, which
+    is beneficial when training a model with few parameters. But why?
+
+    -   A **small vocabulary** means fewer unique words or tokens for the model
+        to learn. This simplification is especially advantageous when working
+        with models that have fewer parameters, as it reduces the complexity of
+        the model. Fewer parameters mean the model requires less data to learn
+        the relationships between different tokens effectively.
+    -   **High word frequency** implies that the most common words in the
+        dataset appear many times. This repetition allows the model to learn the
+        context and usage of these words more effectively because it encounters
+        them in various contexts and sentence structures throughout the training
+        process.
+
+        Datasets with high word frequency tend to be less sparse in terms of
+        token distribution. In other words, the model is less likely to
+        encounter rare words that it has little information about, which can
+        help improve its overall performance and generalization capability.
+
+-   Keras team limit the vocabulary size to 5000.
+-   They use a context window of 128 tokens.
+
+Conversion to PyTorch and adaptation to my training framework have been done,
+yielding results that align closely with those from the original KerasNLP
+example.
+
+| Epoch | Train Avg Loss     | Train Avg Perplexity | Valid Avg Loss     | Valid Avg Perplexity |
+| ----- | ------------------ | -------------------- | ------------------ | -------------------- |
+| 1     | 4.828623116686925  | 125.03870391845703   | 4.33138370513916   | 76.04944610595703    |
+| 2     | 4.396682687077841  | 81.18112182617188    | 4.156103134155273  | 63.822330474853516   |
+| 3     | 4.278761493791513  | 72.15101623535156    | 4.082364082336426  | 59.28546142578125    |
+| 4     | 4.215755564885091  | 67.74532318115234    | 4.042989730834961  | 56.99649429321289    |
+| 5     | 4.17392971352776   | 64.97026062011719    | 4.01589822769165   | 55.47309875488281    |
+| 6     | 4.142873145998024  | 62.9835319519043     | 3.9787371158599854 | 53.44948959350586    |
+| 7     | 4.119305330128435  | 61.516483306884766   | 3.9686098098754883 | 52.91092300415039    |
+| 8     | 4.1006666644264715 | 60.38051986694336    | 3.9432594776153564 | 51.58647155761719    |
+
+![history-gpu-amp-grad-accum-8-epochs](./projects/simplebooks92/assets/history_gpu_amp_grad_accum_8_epochs.png)
+
+A selected example of generated text (Epoch 7 in the
+[notebook](./projects/simplebooks92/gptdecoder-simplebooks-92.ipynb), crafted
+using `keras_nlp.samplers.TopKSampler(k=10, temperature=1.0)`, showcases the
+model's learning:
+
+```log
+the three girls were waiting to watch for the dance . the lads were waiting for
+the new school . a half - holiday party , one of the party were waiting for the
+girls . the following morning the boys entered the dining room . it was the
+scene , and when the two girls entered the room , they began to show themselves
+what they had made up their minds . the boys went to school , and to the little
+girl , and the girls in a very good way . the two girls were ready to start .
+they were not tired of the schoolroom . the chatterer , however , and the first
+mate had gone , but
+```
+
+This text exhibits some degree of coherence and a logical narrative structure,
+demonstrating the model's capacity to generate meaningful content.

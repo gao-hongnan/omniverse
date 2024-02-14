@@ -90,9 +90,10 @@ def load_and_prepare_dataset(
     """Prepare the dataset by loading, filtering and batching."""
     dataset = tf.data.TextLineDataset(file_path)
     dataset = dataset.filter(lambda x: tf.strings.length(x) > min_string_len)
+    dataset = dataset.batch(batch_size)
     if shuffle:
         dataset = dataset.shuffle(buffer_size=256)
-    return dataset.batch(batch_size)
+    return dataset
 
 
 def load_vocab(vocab_file: str) -> List[str]:
