@@ -25,6 +25,7 @@
 -   https://github.com/hkproj/pytorch-transformer-distributed
     -   Maybe start on this since has instructions and I have done before on my
         own.
+-   https://github.com/stas00/ml-engineering/tree/master
 
 ## CUDA Semantics and PyTorch Memory Management
 
