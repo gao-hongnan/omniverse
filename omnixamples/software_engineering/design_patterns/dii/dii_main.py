@@ -7,8 +7,12 @@ Injection.
 from typing import List, Union
 
 from rich.pretty import pprint
-from src.dii_high_level_business_logic import CustomDataset
-from src.dii_low_level_implementations import ImageClassificationTransforms, ImageSegmentationTransforms
+
+from omnixamples.software_engineering.design_patterns.dii.src.dii_high_level_business_logic import CustomDataset
+from omnixamples.software_engineering.design_patterns.dii.src.dii_low_level_implementations import (
+    ImageClassificationTransforms,
+    ImageSegmentationTransforms,
+)
 
 
 # This is the client "code". It is the composition of all the modules in the project.

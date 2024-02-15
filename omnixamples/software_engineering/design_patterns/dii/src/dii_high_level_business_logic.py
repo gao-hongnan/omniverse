@@ -31,7 +31,9 @@ compile time.
 """
 from typing import Any, List, Literal, Union
 
-from src.dii_base import Transforms  # from abstract interface import Transforms
+from omnixamples.software_engineering.design_patterns.dii.src.dii_base import (  # from abstract interface import Transforms
+    Transforms,
+)
 
 
 class CustomDataset:

@@ -32,14 +32,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run Pre-commit Checks
-      run: |
-        cd ${{ inputs.working-directory }} || exit 1
-        pre-commit run --all-files
-      shell: bash
-      if: always()
     - name: Run Security Check (Bandit)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/security_bandit.sh -o security_bandit.sh
         chmod +x security_bandit.sh
@@ -48,7 +43,9 @@ runs:
       if: always()
     - name: Run Linter Check (Ruff)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
+        export CUSTOM_PACKAGES="omnivault omnixamples tests"
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/lint_ruff.sh -o lint_ruff.sh
         chmod +x lint_ruff.sh
         bash lint_ruff.sh | tee ${{ inputs.ruff-output-filename }}
@@ -56,7 +53,9 @@ runs:
       if: always()
     - name: Run Formatter Check (Isort)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
+        export CUSTOM_PACKAGES="omnivault omnixamples tests"
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_isort.sh -o format_isort.sh
         chmod +x format_isort.sh
         bash format_isort.sh | tee ${{ inputs.isort-output-filename }}
@@ -64,7 +63,9 @@ runs:
       if: always()
     - name: Run Formatter Check (Black)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
+        export CUSTOM_PACKAGES="omnivault omnixamples tests"
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_black.sh -o format_black.sh
         chmod +x format_black.sh
         bash format_black.sh | tee ${{ inputs.black-output-filename }}
@@ -72,7 +73,9 @@ runs:
       if: always()
     - name: Run Static Type Check (MyPy)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
+        export CUSTOM_PACKAGES="omnivault omnixamples tests"
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/type_mypy.sh -o type_mypy.sh
         chmod +x type_mypy.sh
         bash type_mypy.sh | tee ${{ inputs.mypy-output-filename }}
@@ -80,6 +83,7 @@ runs:
       if: always()
     - name: Run Unit Tests (PyTest)
       run: |
+        set -e -o pipefail
         cd ${{ inputs.working-directory }} || exit 1
         curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/test_unit_pytest.sh -o test_unit_pytest.sh
         chmod +x test_unit_pytest.sh

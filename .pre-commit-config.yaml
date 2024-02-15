@@ -41,6 +41,7 @@ repos:
         name: Run Linter Check (Ruff)
         entry: >
             bash -c 'set -o pipefail;
+            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
             curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/lint_ruff.sh |
             bash'
         language: system
@@ -57,6 +58,7 @@ repos:
         name: Run Formatter Check (Isort)
         entry: >
             bash -c 'set -o pipefail;
+            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
             export CUSTOM_FLAGS=--filter-files &&
             curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_isort.sh |
             bash'
@@ -69,6 +71,7 @@ repos:
         name: Run Formatter Check (Black)
         entry: >
             bash -c 'set -o pipefail;
+            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
             curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_black.sh |
             bash'
         language: system
@@ -80,7 +83,7 @@ repos:
         name: Run Static Type Check (MyPy)
         entry: >
             bash -c 'set -o pipefail;
-            export CUSTOM_PACKAGES="omnivault tests" &&
+            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
             export CUSTOM_FLAGS="--python-version=3.9 --color-output --no-pretty" &&
             curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/type_mypy.sh |
             bash'

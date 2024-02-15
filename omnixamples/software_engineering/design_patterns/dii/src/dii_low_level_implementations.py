@@ -2,7 +2,10 @@
 This module is the low-level concrete implementations of the project. This
 module depend only on the abstract interface module.
 """
-from src.dii_base import TransformFunc, Transforms  # from abstract interface import Transforms
+from omnixamples.software_engineering.design_patterns.dii.src.dii_base import (  # from abstract interface import Transforms
+    TransformFunc,
+    Transforms,
+)
 
 
 class ImageClassificationTransforms(Transforms):
