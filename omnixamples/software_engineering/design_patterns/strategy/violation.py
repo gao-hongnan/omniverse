@@ -1,5 +1,6 @@
 """Shows a violation of the strategy pattern."""
-
+# mypy: ignore-errors
+# ruff: noqa
 from enum import Enum, auto
 
 
