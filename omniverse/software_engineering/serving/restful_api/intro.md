@@ -1,17 +1,31 @@
 # RESTful API
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+
+```{contents}
+:local:
+```
+
+## Table of Contents
+
+```{tableofcontents}
+
+```
+
 ## Introduction
 
 The proliferation of cloud computing and web technologies has heralded the
 advent of an era where software components can communicate seamlessly over the
 internet. Among the numerous concepts and methods facilitating this
-communication, Representational State Transfer, or RESTful API, stands out as a
-powerful and widely-used architectural style. Its simple design principles,
-flexibility, and scalability have led to its adoption in various fields,
-including web services, mobile applications, and Internet of Things (IoT)
-systems. This article provides a comprehensive overview of RESTful APIs,
-introducing their definition, intuition, examples, and an analogy for better
-understanding.
+communication,
+[Representational State Transfer](https://en.wikipedia.org/wiki/REST), or
+RESTful API, stands out as a powerful and widely-used architectural style. Its
+simple design principles, flexibility, and scalability have led to its adoption
+in various fields, including web services, mobile applications, and Internet of
+Things (IoT) systems. This article provides a comprehensive overview of RESTful
+APIs, introducing their definition, intuition, examples, and an analogy for
+better understanding.
 
 ## Definition
 
@@ -83,6 +97,3 @@ different software systems to interact with each other, ensuring consistency,
 simplicity, and scalability. By understanding the foundational principles of
 REST and how to implement them, developers can design robust and effective APIs
 to power the web applications of the future.
-
-For a deep dive, continue to the next section on
-[Designing a RESTful Banking API with FastAPI and SQLAlchemy](application_banking.md).

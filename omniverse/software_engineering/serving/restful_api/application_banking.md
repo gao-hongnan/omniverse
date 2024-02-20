@@ -1,5 +1,12 @@
 # Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+
+```{contents}
+:local:
+```
+
 ## Introduction
 
 In the rapidly evolving landscape of technology, the demand for efficient,
@@ -12,11 +19,13 @@ necessitated the development of robust and reliable banking systems that can
 handle a wide range of operations, from account management to complex
 transactions.
 
-One of the key components of a modern banking system is an Application
-Programming Interface (API), which serves as the backbone for enabling internal
-and external communication and integration. In this context, Python's FastAPI
-framework has emerged as a popular choice for creating RESTful APIs, thanks to
-its simplicity, speed, and scalability.
+One of the key components of a modern banking system is an
+[**Application Programming Interface (API)**](https://en.wikipedia.org/wiki/API),
+which serves as the backbone for enabling internal and external communication
+and integration. In this context, Python's
+[**FastAPI**](https://fastapi.tiangolo.com/) framework has emerged as a popular
+choice for creating RESTful APIs, thanks to its simplicity, speed, and
+scalability.
 
 ## Problem Statement
 
@@ -62,10 +71,6 @@ following operations:
    response should confirm the successful transfer and return the details of the
    transaction, or an error if the source account has insufficient funds or if
    either account does not exist.
-
-The challenge lies in designing and implementing these operations using the
-FastAPI and SQLAlchemy libraries in Python, ensuring the system accurately
-processes requests and responses for each operation.
 
 ## Models
 
