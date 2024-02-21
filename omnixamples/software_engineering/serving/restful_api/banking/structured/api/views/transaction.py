@@ -1,9 +1,13 @@
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import List, Literal, Union, cast
 
 from fastapi import APIRouter, Depends, HTTPException
-from rich.pretty import pprint
 from sqlalchemy.orm import Session
+
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.crud import (
+    transaction as crud_transaction,
+    account as crud_account,
+)
 
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.account import Account
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.transaction import (
@@ -13,6 +17,7 @@ from omnixamples.software_engineering.serving.restful_api.banking.structured.api
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.schemas.transaction import (
     TransactionCreateOrUpdateResponse,
     TransactionCreateRequest,
+    TransactionDeleteResponse,
     TransactionResponse,
     TransactionUpdateRequest,
 )
@@ -21,33 +26,27 @@ router = APIRouter()
 
 
 @router.get("/", response_model=List[TransactionResponse])
-async def get_transactions(db: Session = Depends(get_db)) -> List[TransactionResponse]:
-    """Return all transactions."""
-    transactions = db.query(Transaction).all()
+def read_transactions(db: Session = Depends(get_db)) -> List[TransactionResponse]:
+    """READ/GET: Return all transactions."""
+    transactions: List[Transaction] = crud_transaction.get_transactions(db)
     transaction_responses = []
     for transaction in transactions:
-        pprint(transaction.id)
-        print(transaction.account)
-        account: Account = transaction.account
-        email = account.email
-        transaction.email = email
+        transaction.email = crud_transaction.get_transaction_account_email(transaction)
         transaction_responses.append(transaction)
 
-    return transaction_responses
+    return transaction_responses  # type: ignore[return-value]
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)
-async def get_transaction(transaction_id: int, db: Session = Depends(get_db)) -> TransactionResponse:
-    """Return the transaction with the given id."""
+def read_transaction(transaction_id: int, db: Session = Depends(get_db)) -> TransactionResponse:
+    """READ/GET: Return the transaction with the given id."""
     # SELECT * FROM transactions WHERE id = transaction_id;
-    transaction: Union[Transaction, None] = db.query(Transaction).get(transaction_id)
+    transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
 
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
-    account: Account = transaction.account  # we can do this because of the relationship defined in the models
-    email = account.email
-    transaction.email = email
+    transaction.email = crud_transaction.get_transaction_account_email(transaction)
     return transaction
 
 
@@ -57,8 +56,17 @@ def create_transaction(
 ) -> TransactionCreateOrUpdateResponse:
     """Create a new transaction with the given details."""
     # Convert timestamp string to datetime
-    print(transaction_data.timestamp)
-    transaction = Transaction(**transaction_data.model_dump(mode="python"))
+    transaction: Transaction = Transaction(**transaction_data.model_dump(mode="python"))
+
+    # Get the account associated with the transaction
+
+    account: Union[Account, None] = db.query(Account).get(int(transaction.account_id))
+
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    # Set the account attribute of the transaction
+    transaction.account = account
     db.add(transaction)
     db.commit()
     db.refresh(transaction)
@@ -72,7 +80,7 @@ def update_transaction(
     db: Session = Depends(get_db),
 ) -> TransactionCreateOrUpdateResponse:
     """Update an existing transaction with the given details."""
-    transaction = db.query(Transaction).get(transaction_id)
+    transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
@@ -85,13 +93,19 @@ def update_transaction(
 
 
 @router.delete("/{transaction_id}")
-def delete_transaction(transaction_id: int, db: Session = Depends(get_db)) -> Dict[str, str]:
+def delete_transaction(transaction_id: int, db: Session = Depends(get_db)) -> TransactionDeleteResponse:
     """Delete the transaction with the given id."""
-    transaction = db.query(Transaction).get(transaction_id)
+    transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
     db.delete(transaction)
     db.commit()
 
-    return {"message": f"Transaction {transaction_id} deleted successfully"}
+    return TransactionDeleteResponse(
+        account_id=int(transaction.account_id),
+        amount=float(transaction.amount),
+        type=cast(Literal["deposit", "withdrawal"], transaction.type),
+        timestamp=cast(datetime, transaction.timestamp),
+        message=f"Transaction ID {transaction_id} deleted",
+    )

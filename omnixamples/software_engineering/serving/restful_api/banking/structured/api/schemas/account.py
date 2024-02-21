@@ -30,3 +30,10 @@ class AccountCreateOrUpdateResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AccountDeleteResponse(BaseModel):
+    message: str
+
+    class Config:
+        from_attributes = True
