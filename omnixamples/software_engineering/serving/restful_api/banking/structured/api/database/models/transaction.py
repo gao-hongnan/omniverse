@@ -1,9 +1,10 @@
-from api.database.base import Base
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.base import Base
 
-class Transaction(Base):
+
+class Transaction(Base):  # type: ignore[misc]
     """Transaction Model."""
 
     __tablename__ = "transactions"

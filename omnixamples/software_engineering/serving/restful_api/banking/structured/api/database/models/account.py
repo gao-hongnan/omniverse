@@ -1,9 +1,10 @@
-from api.database.base import Base
 from sqlalchemy import Column, Float, Integer, String
 from sqlalchemy.orm import relationship
 
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.base import Base
 
-class Account(Base):
+
+class Account(Base):  # type: ignore[misc]
     """Account Model."""
 
     __tablename__ = "accounts"

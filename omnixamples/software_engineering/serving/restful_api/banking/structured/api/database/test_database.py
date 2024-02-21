@@ -1,11 +1,10 @@
-from api.conf.base import SQLALCHEMY_DATABASE_URL
-from api.database.models.account import Account
-from api.database.models.transaction import Transaction
-from api.database.session import SessionLocal
-from faker import Faker
 from rich.pretty import pprint
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.account import Account
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.transaction import (
+    Transaction,
+)
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.session import SessionLocal
 
 session = SessionLocal()
 

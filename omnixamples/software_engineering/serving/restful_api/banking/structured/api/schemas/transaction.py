@@ -1,74 +1,37 @@
+from __future__ import annotations
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Literal
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field
 
-# pylint: disable=no-self-argument
 
+class TransactionBase(BaseModel):
+    account_id: int
+    amount: float = Field(..., ge=0, description="The amount of the transaction")
+    type: Literal["deposit", "withdrawal"] = Field(..., description="The type of the transaction, will throw an error if not 'deposit' or 'withdrawal'")
+    timestamp: datetime = Field(..., description="The timestamp of the transaction", examples=["2021-08-01T12:00:00"])
+
+    class Config:
+        from_attributes = True
 
 # Used for creating a new transaction
-class TransactionCreateRequest(BaseModel):
-    account_id: int
-    amount: float
-    type: str
-    timestamp: str
+class TransactionCreateRequest(TransactionBase):
+    ...
 
-    # convert timestamp
-    @validator("timestamp", pre=True)
-    def format_timestamp(cls, v):
-        if isinstance(v, datetime):
-            return v.isoformat()
-        return v
 
 
 # Used for updating an existing transaction
-class TransactionUpdateRequest(BaseModel):
-    account_id: Optional[int] = None
-    amount: Optional[float] = None
-    type: Optional[str] = None
-    timestamp: Optional[str] = None
+class TransactionUpdateRequest(TransactionBase):
+    ...
 
-    # convert timestamp
-    @validator("timestamp", pre=True)
-    def format_timestamp(cls, v):
-        if isinstance(v, datetime):
-            return v.isoformat()
-        return v
 
 
 # Used for response when a transaction is created or updated
-class TransactionCreateOrUpdateResponse(BaseModel):
+class TransactionCreateOrUpdateResponse(TransactionBase):
     id: int
-    account_id: int
-    amount: float
-    type: str
-    timestamp: str
-
-    class Config:
-        from_attributes = True
-
-    # convert timestamp
-    @validator("timestamp", pre=True)
-    def format_timestamp(cls, v):
-        if isinstance(v, datetime):
-            return v.isoformat()
-        return v
 
 
 # Used for response when a transaction is retrieved
-class TransactionResponse(BaseModel):
+class TransactionResponse(TransactionBase):
     id: int
-    account_id: int
-    amount: float
-    type: str
-    timestamp: str
-
-    class Config:
-        from_attributes = True
-
-    # convert timestamp
-    @validator("timestamp", pre=True)
-    def format_timestamp(cls, v):
-        if isinstance(v, datetime):
-            return v.isoformat()
-        return v
+    email: str

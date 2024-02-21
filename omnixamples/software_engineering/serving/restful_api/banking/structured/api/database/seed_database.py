@@ -16,15 +16,20 @@ initial set of data that you're using to populate the database.
 
 import random
 
-from api.conf.base import SEED
-from api.database.base import Base
-from api.database.models.account import Account
-from api.database.models.transaction import Transaction
-from api.database.session import SessionLocal, engine
 from faker import Faker
 from sqlalchemy.exc import SQLAlchemyError
 
 from omnivault.utils.reproducibility.seed import seed_all
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.conf.base import SEED
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.base import Base
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.account import Account
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.transaction import (
+    Transaction,
+)
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.session import (
+    SessionLocal,
+    engine,
+)
 
 seed_all(seed=SEED, seed_torch=False, set_torch_deterministic=False)
 
@@ -65,7 +70,7 @@ def seed_database(num_accounts: int = 50, min_transactions: int = 1, max_transac
 
                 # Create a few random transactions for the account
                 for _ in range(random.randint(min_transactions, max_transactions)):
-                    new_transaction = create_fake_transaction(new_account.id)
+                    new_transaction = create_fake_transaction(new_account.id)  # type: ignore[arg-type]
                     session.add(new_transaction)
 
                 session.commit()

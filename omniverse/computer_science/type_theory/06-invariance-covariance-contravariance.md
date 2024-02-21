@@ -287,6 +287,10 @@ substitute `List[T]` with `List[U]` or vice versa unless `T` and `U` are exactly
 the same type. In practical terms, a `List[int]` is only a `List[int]` and
 cannot be treated as a `List[float]`, and vice versa.
 
+## The Connection of Mutability and Variance
+
+...
+
 ## Covariant in the return type vs Contravariant in the argument type
 
 ...
@@ -299,3 +303,7 @@ cannot be treated as a `List[float]`, and vice versa.
 -   https://nus-cs2030s.github.io/2021-s2/18-variance.html
 -   https://mypy.readthedocs.io/en/stable/generics.html#variance-of-generics
 -   https://blog.daftcode.pl/covariance-contravariance-and-invariance-the-ultimate-python-guide-8fabc0c24278
+-   https://eli.thegreenplace.net/2018/covariance-and-contravariance-in-subtyping/
+-   https://stackoverflow.com/questions/61568462/python-typing-what-does-typevara-b-covariant-true-mean
+-   https://stackoverflow.com/questions/6684493/why-are-arrays-invariant-but-lists-covariant
+-   https://stackoverflow.com/questions/1163465/what-is-the-difference-between-covariance-and-contra-variance-in-programming-lan

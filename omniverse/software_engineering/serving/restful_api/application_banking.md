@@ -103,9 +103,6 @@ mapped to rows in a database table. This allows us to interact with our database
 in a more Pythonic and intuitive way, as we can work with objects and classes
 instead of writing raw SQL queries.
 
-Given our updated `Account` and `Transaction` models, here's a revised
-explanation:
-
 ### Account Model
 
 The `Account` model represents a bank account. It has four fields: `id`, `name`,
@@ -131,7 +128,8 @@ schema is represented in table format below:
 -   `transactions`: This is a relationship field which provides access to all
     related `Transaction` records. It doesn't map to a specific column in the
     database, but rather is a collection of `Transaction` instances associated
-    with an `Account`.
+    with an `Account`. For example, you can access the transactions for a
+    specific account using `account.transactions`.
 
 We define the corresponding `Account` model in Python using SQLAlchemy.
 
@@ -146,7 +144,7 @@ class Account(Base):
     transactions = relationship("Transaction", back_populates="account")
 ```
 
-#### The Primary Key
+### The Primary Key is Automatically Incremented
 
 The `id` field in our `Account` model is automatically managed by SQLAlchemy and
 our underlying database system.
@@ -215,10 +213,8 @@ class Transaction(Base):
     account = relationship("Account", back_populates="transactions")
 ```
 
-The `Account` and `Transaction` models define the schema for the `accounts` and
-`transactions` tables, respectively, in our relational database. They also
-establish the relationship between these tables, facilitating easy access and
-navigation between associated records.
+To this end, the `Account` and `Transaction` models define the schema for the
+`accounts` and `transactions` tables, respectively, in our relational database.
 
 ## Populate the Database
 

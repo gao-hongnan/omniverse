@@ -1,9 +1,10 @@
 from http import HTTPStatus
 from typing import Any, Dict
 
-from api.database.session import SessionLocal
-from api.views import account, transaction
 from fastapi import FastAPI, Request
+
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.session import SessionLocal
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.views import account, transaction
 
 app = FastAPI()
 
