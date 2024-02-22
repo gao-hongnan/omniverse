@@ -69,3 +69,30 @@ def seed_all(
             configure_deterministic_mode()
     # fmt: on
     return seed
+
+def seed_worker(worker_id: int) -> None: # noqa: ARG001
+    """Seeds the worker with a random seed based on the worker id.
+
+    Example
+    -------
+    ```python
+    import torch
+    from torch.utils.data import DataLoader
+
+    train_dataset = ...
+
+    g = torch.Generator()
+    g.manual_seed(0)
+
+    DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        worker_init_fn=seed_worker,
+        generator=g,
+    )
+    ```
+    """
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed) # noqa: NPY002
+    random.seed(worker_seed)
