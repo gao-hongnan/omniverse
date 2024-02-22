@@ -1,39 +1,29 @@
-from typing import Optional
+from pydantic import BaseModel, Field, PositiveFloat
 
-from pydantic import BaseModel
-
-
-class AccountCreateRequest(BaseModel):
-    name: str
-    email: str
-    balance: float
-
-
-class AccountUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    balance: Optional[float] = None
-
-
-class AccountResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    balance: float
-
-
-class AccountCreateOrUpdateResponse(BaseModel):
-    id: int
-    name: str
-    email: str
-    balance: float
+class AccountBase(BaseModel):
+    name: str = Field(..., description="The name of the account.")
+    email: str = Field(..., description="The email of the account, must be unique.")
+    balance: PositiveFloat = Field(..., ge=0, description="The balance of the account.")
 
     class Config:
         from_attributes = True
 
+class AccountCreateRequest(AccountBase):
+    ...
 
-class AccountDeleteResponse(BaseModel):
+
+class AccountUpdateRequest(AccountBase):
+    ...
+
+
+class AccountResponse(AccountBase):
+    id: int
+
+
+
+class AccountCreateOrUpdateResponse(AccountBase):
+    id: int
+
+class AccountDeleteResponse(AccountBase):
     message: str
 
-    class Config:
-        from_attributes = True

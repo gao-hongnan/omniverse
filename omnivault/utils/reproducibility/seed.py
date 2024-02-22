@@ -70,7 +70,8 @@ def seed_all(
     # fmt: on
     return seed
 
-def seed_worker(worker_id: int) -> None: # noqa: ARG001
+
+def seed_worker(worker_id: int) -> None:  # noqa: ARG001
     """Seeds the worker with a random seed based on the worker id.
 
     Example
@@ -94,5 +95,5 @@ def seed_worker(worker_id: int) -> None: # noqa: ARG001
     ```
     """
     worker_seed = torch.initial_seed() % 2**32
-    np.random.seed(worker_seed) # noqa: NPY002
+    np.random.seed(worker_seed)  # noqa: NPY002
     random.seed(worker_seed)

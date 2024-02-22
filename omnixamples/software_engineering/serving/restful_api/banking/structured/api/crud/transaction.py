@@ -3,8 +3,8 @@ By creating functions that are only dedicated to interacting with the database
 (get a user or an item) independent of your path operation function, you can
 more easily reuse them in multiple parts and also add unit tests for them.
 """
-from typing import List, Union, cast, Literal
 from datetime import datetime
+from typing import List, Literal, Union, cast
 
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,6 @@ from omnixamples.software_engineering.serving.restful_api.banking.structured.api
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.transaction import (
     Transaction,
 )
-from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.session import get_db
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.schemas.transaction import (
     TransactionCreateOrUpdateResponse,
     TransactionCreateRequest,
@@ -33,21 +32,25 @@ def get_transactions(db: Session) -> List[Transaction]:
     transactions: List[Transaction] = db.query(Transaction).all()
     return transactions
 
+
 def get_transaction_with_email(transaction: Transaction) -> TransactionResponse:
     # we do not need to do that since I believe transaction will be coerced/converted internally to TransactionResponse
     transaction_response = cast(TransactionResponse, transaction)
     transaction_response.email = get_transaction_account_email(transaction)
     return transaction_response
 
+
 def get_transactions_with_email(transactions: List[Transaction]) -> List[TransactionResponse]:
     """Return all transactions with the email of the account associated with the transaction."""
     return [get_transaction_with_email(transaction) for transaction in transactions]
+
 
 def get_transaction_account_email(transaction: Transaction) -> str:
     """Get the email of the account associated with the transaction."""
     account: Account = transaction.account
     email = account.email
     return str(email)
+
 
 def create_transaction(
     db: Session, transaction_data: TransactionCreateRequest
@@ -71,7 +74,10 @@ def create_transaction(
     db.refresh(transaction)
     return transaction
 
-def update_transaction(db: Session, transaction_id: int, transaction_data: TransactionUpdateRequest) -> Union[Transaction, None]:
+
+def update_transaction(
+    db: Session, transaction_id: int, transaction_data: TransactionUpdateRequest
+) -> Union[Transaction, None]:
     """Update an existing transaction with the given details."""
     transaction = get_transaction(db, transaction_id)
     if not transaction:

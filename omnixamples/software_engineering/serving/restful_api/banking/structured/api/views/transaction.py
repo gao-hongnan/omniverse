@@ -1,15 +1,11 @@
-from datetime import datetime
-from typing import List, Literal, Union, cast
+from typing import List, Union
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.crud import (
     transaction as crud_transaction,
-    account as crud_account,
 )
-
-from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.account import Account
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.transaction import (
     Transaction,
 )
@@ -21,6 +17,7 @@ from omnixamples.software_engineering.serving.restful_api.banking.structured.api
     TransactionResponse,
     TransactionUpdateRequest,
 )
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.conf.constants import StatusMessage
 
 router = APIRouter()
 
@@ -40,7 +37,7 @@ def read_transaction(transaction_id: int, db: Session = Depends(get_db)) -> Tran
     transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
 
     if not transaction:
-        raise HTTPException(status_code=404, detail="Transaction not found")
+        raise HTTPException(status_code=404, detail=StatusMessage.TRANSACTION_NOT_FOUND.value.format(str(transaction_id)))
 
     transaction_response: TransactionResponse = crud_transaction.get_transaction_with_email(transaction)
     return transaction_response
@@ -53,7 +50,8 @@ def create_transaction(
     """Create a new transaction with the given details."""
     transaction = crud_transaction.create_transaction(db, transaction_data)
     if not transaction:
-        raise HTTPException(status_code=404, detail="Account not found")
+        # even though it is account id, but since transaction's account_id is a foreign key to account's id, it is same.
+        raise HTTPException(status_code=404, detail=StatusMessage.ACCOUNT_NOT_FOUND.value.format(str(transaction_data.account_id)))
     return transaction
 
 
@@ -66,13 +64,14 @@ def update_transaction(
     """Update an existing transaction with the given details."""
     update_transaction = crud_transaction.update_transaction(db, transaction_id, transaction_data)
     if not update_transaction:
-        raise HTTPException(status_code=404, detail="Transaction not found")
+        raise HTTPException(status_code=404, detail=StatusMessage.TRANSACTION_NOT_FOUND.value.format(str(transaction_id)))
     return update_transaction
+
 
 @router.delete("/{transaction_id}")
 def delete_transaction(transaction_id: int, db: Session = Depends(get_db)) -> TransactionDeleteResponse:
     """Delete the transaction with the given id."""
     transaction_to_delete = crud_transaction.delete_transaction(db, transaction_id)
     if not transaction_to_delete:
-        raise HTTPException(status_code=404, detail="Transaction not found")
+        raise HTTPException(status_code=404, detail=StatusMessage.TRANSACTION_NOT_FOUND.value.format(str(transaction_id)))
     return transaction_to_delete
