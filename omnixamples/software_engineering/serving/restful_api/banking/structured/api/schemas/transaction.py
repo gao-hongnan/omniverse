@@ -4,6 +4,8 @@ from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.schemas.account import AccountResponse
+
 
 
 class TransactionBase(BaseModel):

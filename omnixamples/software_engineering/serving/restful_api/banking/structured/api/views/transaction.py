@@ -29,12 +29,8 @@ router = APIRouter()
 def read_transactions(db: Session = Depends(get_db)) -> List[TransactionResponse]:
     """READ/GET: Return all transactions."""
     transactions: List[Transaction] = crud_transaction.get_transactions(db)
-    transaction_responses = []
-    for transaction in transactions:
-        transaction.email = crud_transaction.get_transaction_account_email(transaction)
-        transaction_responses.append(transaction)
-
-    return transaction_responses  # type: ignore[return-value]
+    transaction_responses: List[TransactionResponse] = crud_transaction.get_transactions_with_email(transactions)
+    return transaction_responses
 
 
 @router.get("/{transaction_id}", response_model=TransactionResponse)
@@ -46,8 +42,8 @@ def read_transaction(transaction_id: int, db: Session = Depends(get_db)) -> Tran
     if not transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
 
-    transaction.email = crud_transaction.get_transaction_account_email(transaction)
-    return transaction
+    transaction_response: TransactionResponse = crud_transaction.get_transaction_with_email(transaction)
+    return transaction_response
 
 
 @router.post("/", response_model=TransactionCreateOrUpdateResponse)
@@ -55,21 +51,9 @@ def create_transaction(
     transaction_data: TransactionCreateRequest, db: Session = Depends(get_db)
 ) -> TransactionCreateOrUpdateResponse:
     """Create a new transaction with the given details."""
-    # Convert timestamp string to datetime
-    transaction: Transaction = Transaction(**transaction_data.model_dump(mode="python"))
-
-    # Get the account associated with the transaction
-
-    account: Union[Account, None] = db.query(Account).get(int(transaction.account_id))
-
-    if not account:
+    transaction = crud_transaction.create_transaction(db, transaction_data)
+    if not transaction:
         raise HTTPException(status_code=404, detail="Account not found")
-
-    # Set the account attribute of the transaction
-    transaction.account = account
-    db.add(transaction)
-    db.commit()
-    db.refresh(transaction)
     return transaction
 
 
@@ -80,32 +64,15 @@ def update_transaction(
     db: Session = Depends(get_db),
 ) -> TransactionCreateOrUpdateResponse:
     """Update an existing transaction with the given details."""
-    transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
-    if not transaction:
+    update_transaction = crud_transaction.update_transaction(db, transaction_id, transaction_data)
+    if not update_transaction:
         raise HTTPException(status_code=404, detail="Transaction not found")
-
-    for key, value in transaction_data.model_dump(mode="python").items():
-        setattr(transaction, key, value)
-
-    db.commit()
-    db.refresh(transaction)
-    return transaction
-
+    return update_transaction
 
 @router.delete("/{transaction_id}")
 def delete_transaction(transaction_id: int, db: Session = Depends(get_db)) -> TransactionDeleteResponse:
     """Delete the transaction with the given id."""
-    transaction: Union[Transaction, None] = crud_transaction.get_transaction(db, transaction_id)
-    if not transaction:
+    transaction_to_delete = crud_transaction.delete_transaction(db, transaction_id)
+    if not transaction_to_delete:
         raise HTTPException(status_code=404, detail="Transaction not found")
-
-    db.delete(transaction)
-    db.commit()
-
-    return TransactionDeleteResponse(
-        account_id=int(transaction.account_id),
-        amount=float(transaction.amount),
-        type=cast(Literal["deposit", "withdrawal"], transaction.type),
-        timestamp=cast(datetime, transaction.timestamp),
-        message=f"Transaction ID {transaction_id} deleted",
-    )
+    return transaction_to_delete
