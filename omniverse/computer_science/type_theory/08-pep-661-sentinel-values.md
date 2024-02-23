@@ -22,11 +22,45 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 ![Tag](https://img.shields.io/badge/Tag-MaybeWrong-red)
 
-[OpenAI's `NotGiven`](https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273)
+```{contents}
+:local:
+```
 
-https://peps.python.org/pep-0661/
+```{code-cell} ipython3
+:tags: [remove-cell]
+
+%config InlineBackend.figure_format = 'svg'
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from typing import Generator, List, Union, Any, Generic, Literal, TypeVar, Dict, Tuple, TYPE_CHECKING, Iterable, Iterator, Sequence, overload, Optional
+
+from rich.pretty import pprint
+```
+
+## Motivation
+
+Inspired by OpenAI's approaches in software development and type handling, this
+discussion explores the concept of sentinel types, a powerful technique in for
+representing unique default values or states. Sentinel types are particularly
+useful in scenarios where `None` might be a valid input value, necessitating a
+distinct marker for "no value given" cases. In fact, `None` is in itself a form
+of sentinel value, a singleton object that represents the absence of a value.
+
+While this exploration introduces the core idea as formalized in
+[PEP 661 – Sentinel Values](https://peps.python.org/pep-0661/), which advocates
+for a standardized approach to sentinel values in Python, we'll steer clear of
+the more formalized specifics. Readers interested in a deeper dive into the
+formal aspects of sentinel types are encouraged to consult the original
+[PEP 661 – Sentinel Values](https://peps.python.org/pep-0661/) for comprehensive
+insights and technical details.
 
 ## `NotGiven`
+
+OpenAI's own implementation of a sentinel type, `NotGiven`, exemplifies
+practical application of this concept and can be seen
+[here in OpenAI's GitHub repository](https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273).
 
 -   **Purpose**: Indicates that a parameter was not provided at all. It's used
     to distinguish between a parameter being explicitly set to `None` and not
@@ -57,85 +91,6 @@ https://peps.python.org/pep-0661/
     normal parameter values.
 -   **Difference**: `NotGiven` is about the absence of a value where a default
     may apply, while `Omit` is about actively overriding a default. """
-
-from **future** import annotations
-
-from typing import Any, Literal, Type, Union
-
-from typing_extensions import override, TypeAlias
-
-class \_NotGiven: """ A sentinel singleton class used to distinguish omitted
-keyword arguments from those passed in with the value None (which may have
-different behavior).
-
-    Quite similar with dataclass's MISSING.
-
-    This is used to differentiate between cases where a parameter is not
-    provided and where a parameter is provided with the value None. The class
-    provides a more descriptive representation than None or other placeholders.
-
-    NOTE: example usage is if you want to assign a default empty list or dict
-    but it is mutable, so you assign this type but not None since None don't make
-    sense.
-
-    It is a singleton because `None` is also a singleton so we mimic this
-    behaviour. No matter how many times you call `None` in any function or
-    methods, it will reference the same unique singleton `None` class.
-
-    More importantly, because `None` is a singleton, we can use the `is`
-    operator to check for object identity. This is why the idiomatic way
-    to check if a variable is `None` is to do `if var is None`.
-
-    So that is why we make `_NotGiven` a singleton, because referencing this
-    class across scripts will maintain its unique identity across imports.
-
-    We further make this class immutable to behave a bit like `None`.
-
-    Example
-    -------
-    ```python
-    def get(timeout: Union[int, _NotGiven, None] = _NotGiven()) -> Response:
-        if timeout is _NotGiven:
-            # Default timeout behavior
-        elif timeout is None:
-            # No timeout
-        else:
-            # Specific timeout given
-
-    get(timeout=1) # 1s timeout
-    get(timeout=None) # No timeout
-    get() # Default timeout behavior, which may not be statically known at
-          # the method definition.
-    ```
-    """
-
-    _instance: _NotGiven | None = None
-
-    def __new__(cls: Type[_NotGiven]) -> _NotGiven:  # noqa: PYI034
-        if cls._instance is None:
-            cls._instance = super(_NotGiven, cls).__new__(cls)  # noqa: UP008
-        return cls._instance
-
-    def __bool__(self) -> Literal[False]:
-        """
-        This method is used to define the boolean value of an instance of `_NotGiven`.
-        By returning `False`, it allows `_NotGiven` to be used in boolean contexts (like
-        `if` statements) to signify the absence of a value. This is especially useful
-        for checking if an argument was provided or not in a function.
-        """
-        return False
-
-    @override
-    def __repr__(self) -> Literal["_NOT_GIVEN"]:
-        return "_NOT_GIVEN"
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        raise AttributeError("_NotGiven instances are immutable")
-
-    def __delattr__(self, key: str) -> None:
-        raise AttributeError("_NotGiven instances are immutable")
-
-NOT_GIVEN = \_NotGiven() NotGiven: TypeAlias = \_NotGiven
 
 In Python, when using the `requests` library to make HTTP requests, the
 `timeout` parameter specifies the maximum number of seconds to wait for a
@@ -465,3 +420,7 @@ more appropriate than the other.
 The choice depends on what you're trying to communicate: `NOTGIVEN` emphasizes
 the behavior of function arguments, while `MISSING` emphasizes the state of data
 or configuration.
+
+## References and Further Readings
+
+-   [PEP 661 – Sentinel Values](https://peps.python.org/pep-0661/)
