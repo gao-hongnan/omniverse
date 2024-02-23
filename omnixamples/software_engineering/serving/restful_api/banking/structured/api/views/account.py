@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.conf.constants import StatusMessage
+from omnixamples.software_engineering.serving.restful_api.banking.structured.api.crud import account as crud_account
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.models.account import Account
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.database.session import get_db
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.schemas.account import (
@@ -13,11 +15,6 @@ from omnixamples.software_engineering.serving.restful_api.banking.structured.api
     AccountResponse,
     AccountUpdateRequest,
 )
-from omnixamples.software_engineering.serving.restful_api.banking.structured.api.crud import (
-    account as crud_account,
-)
-from omnixamples.software_engineering.serving.restful_api.banking.structured.api.conf.constants import StatusMessage
-
 
 router = APIRouter()
 
@@ -88,4 +85,3 @@ def delete_account(account_id: int, db: Session = Depends(get_db)) -> AccountDel
         balance=float(account.balance),
         message=f"Account with id {account_id} has been deleted",
     )
-
