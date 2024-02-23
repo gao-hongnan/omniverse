@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>The Loss Landscape &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'deep_learning/training_chronicles/loss';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/deep_learning/training_chronicles/loss.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Styling, Formatting, and Linting" href="../../software_engineering/devops/continuous-integration/styling.html" />
+    <link rel="prev" title="Training Chronicles" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Training Chronicles</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/deep_learning/training_chronicles/loss.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>The Loss Landscape</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-and-generalization">Convergence and Generalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-on-loss">Theoretical Bounds on Loss</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-based-on-loss-function">Theoretical Bounds Based on Loss Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-based-on-data-and-model-capacity">Theoretical Bounds Based on Data and Model Capacity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empirical-bounds">Empirical Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generalization-gap">Generalization Gap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-landscape">Loss Landscape</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-causes-on-poor-convergence">Some Causes on Poor Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="the-loss-landscape">
+<h1>The Loss Landscape<a class="headerlink" href="#the-loss-landscape" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#convergence-and-generalization" id="id1">Convergence and Generalization</a></p></li>
+<li><p><a class="reference internal" href="#theoretical-bounds-on-loss" id="id2">Theoretical Bounds on Loss</a></p>
+<ul>
+<li><p><a class="reference internal" href="#theoretical-bounds-based-on-loss-function" id="id3">Theoretical Bounds Based on Loss Function</a></p></li>
+<li><p><a class="reference internal" href="#theoretical-bounds-based-on-data-and-model-capacity" id="id4">Theoretical Bounds Based on Data and Model Capacity</a></p></li>
+<li><p><a class="reference internal" href="#empirical-bounds" id="id5">Empirical Bounds</a></p></li>
+<li><p><a class="reference internal" href="#generalization-gap" id="id6">Generalization Gap</a></p></li>
+<li><p><a class="reference internal" href="#loss-landscape" id="id7">Loss Landscape</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#some-causes-on-poor-convergence" id="id8">Some Causes on Poor Convergence</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id9">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="convergence-and-generalization">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Convergence and Generalization</a><a class="headerlink" href="#convergence-and-generalization" title="Permalink to this heading">#</a></h2>
+<p>I think it really depends on our loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> or equivalently the
+cost function <span class="math notranslate nohighlight">\(\mathcal{J}\)</span>.</p>
+<ul>
+<li><p><strong>Case 1</strong>: <span class="math notranslate nohighlight">\(\mathcal{L}(\boldsymbol{\theta})\)</span> is convex over <span class="math notranslate nohighlight">\(\Theta\)</span> (note
+the emphasis that the loss is a function of the parameters, not the data),
+where <span class="math notranslate nohighlight">\(\boldsymbol{\theta} \in \Theta \subseteq \mathbb{R}^D\)</span>.</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{L}\)</span> has a unique global minimum <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> in
+<span class="math notranslate nohighlight">\(\Theta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+        \exists \boldsymbol{\theta}^*\in \Theta, \forall \boldsymbol{\theta} \in \Theta, \mathcal{L}(\boldsymbol{\theta}^*) \leq \mathcal{L}(\boldsymbol{\theta})
+        \]</div>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is the dimension of the parameter space (we are being slighly
+less pedantic here as we are not specifying the topology of the
+parameter space, but let’s assume this parameter is a flattened vector
+of all the parameters of the model).</p>
+</li>
+<li><p>Optimization algorithms such as gradient descent can be employed to find
+the global minimum <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> in <span class="math notranslate nohighlight">\(\Theta\)</span> that minimizes
+<span class="math notranslate nohighlight">\(\mathcal{L}\)</span>.</p></li>
+<li><p>Any local minimum <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> in <span class="math notranslate nohighlight">\(\Theta\)</span> is also the global
+minimum <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> in <span class="math notranslate nohighlight">\(\Theta\)</span>.</p></li>
+<li><p>Given an appropriate learning rate <span class="math notranslate nohighlight">\(\eta\)</span>, the negative gradient of
+<span class="math notranslate nohighlight">\(\mathcal{L}\)</span> always points in the direction of the steepest descent in
+<span class="math notranslate nohighlight">\(\Theta\)</span>. Hence, gradient-based algorithms are guaranteed to converge to
+the global minimum <span class="math notranslate nohighlight">\(\boldsymbol{\theta}^*\)</span> when <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is convex
+over <span class="math notranslate nohighlight">\(\Theta\)</span>.</p></li>
+</ul>
+</li>
+<li><p><strong>Case 2</strong>: <span class="math notranslate nohighlight">\(\mathcal{L}(\boldsymbol{\theta})\)</span> for deep neural networks over
+<span class="math notranslate nohighlight">\(\Theta\)</span>, where <span class="math notranslate nohighlight">\(\boldsymbol{\theta} \in \Theta \subseteq \mathbb{R}^D\)</span>.</p>
+<ul class="simple">
+<li><p><strong>Non-convexity</strong>: Unlike simple models where the loss might be convex,
+the loss landscape of deep neural networks is typically non-convex. This
+non-convexity can lead to multiple minima (all eigenvalues of the loss
+function’s Hessian at zero gradient &gt; 0) and saddle points (where some
+eigenvalues of the Hessian are positive and some are negative).</p></li>
+<li><p><strong>Local Minima and Saddle Points</strong>: While there may be many local
+minima, recent research suggests that in high-dimensional spaces (like
+those of deep nets), saddle points are more prevalent. At a saddle
+point, the gradient is zero, but it’s neither a minimum nor a maximum.</p></li>
+<li><p><strong>Optimization Algorithms</strong>: Gradient-based methods, like gradient
+descent and its variants (e.g., SGD, Adam), are commonly used. While
+these methods are not guaranteed to find the global minimum due to the
+non-convex nature of the loss, they are often effective at finding “good
+enough” local minima.</p></li>
+</ul>
+</li>
+</ul>
+<p>So I think that is why researchers often empirically observe that deep neural
+networks “converge” when the loss curves start to flatten out. But one thing to
+distinguish is that convergence is not the same as generalization. The former
+refers to the process by which a model’s loss decreases to a stable value,
+indicating that the model has effectively learned from the training data.
+However, generalization refers to the model’s ability to apply what it has
+learned to new, unseen data. This distinction is crucial because a model can
+converge and still perform poorly on new data if it has overfit to the training
+data.</p>
+</section>
+<section id="theoretical-bounds-on-loss">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Theoretical Bounds on Loss</a><a class="headerlink" href="#theoretical-bounds-on-loss" title="Permalink to this heading">#</a></h2>
+<p>One critical consideration is the determination of theoretical bounds for the
+loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>. Understanding these bounds enables researchers and
+practitioners to gauge the lowest possible loss value that is unattainable in
+practice, thereby setting benchmarks for model performance. However, this topic
+is too theoretical and often not useful in practice. Nevertheless, I penned down
+some thoughts on this matter.</p>
+<section id="theoretical-bounds-based-on-loss-function">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Theoretical Bounds Based on Loss Function</a><a class="headerlink" href="#theoretical-bounds-based-on-loss-function" title="Permalink to this heading">#</a></h3>
+<p>The lower bound seems to be tied to the loss function being used. For example,
+both the mean squared error (MSE) and the cross-entropy loss can range from 0 to
+<span class="math notranslate nohighlight">\(\infty\)</span>. Does that mean the lower bound is 0? Is our problem answered?</p>
+<p>No. The loss function is a function of the model’s parameters with data as
+input. So the lower bound of a particular combination of model parameters and
+data is much more complex than just the lower bound of the loss function.</p>
+</section>
+<section id="theoretical-bounds-based-on-data-and-model-capacity">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Theoretical Bounds Based on Data and Model Capacity</a><a class="headerlink" href="#theoretical-bounds-based-on-data-and-model-capacity" title="Permalink to this heading">#</a></h3>
+<p>In an idealized setting, if your data were noise-free and the neural network had
+the capacity to represent the underlying function perfectly, then the training
+loss could, in theory, be zero. However, in real-world scenarios with noisy data
+or inherent ambiguities, the lower bound on the loss might be greater than zero.
+This is especially true for regression tasks where the noise in the data sets a
+floor on how low the loss can go.</p>
+</section>
+<section id="empirical-bounds">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Empirical Bounds</a><a class="headerlink" href="#empirical-bounds" title="Permalink to this heading">#</a></h3>
+<p>In practice, the best way to determine a realistic lower bound is empirically,
+by training various models on your data and observing the lowest loss achieved.
+Over time, as you experiment with different architectures, regularization
+methods, and training strategies, you can get a sense of what a good lower bound
+for your specific problem and dataset might be.</p>
+</section>
+<section id="generalization-gap">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Generalization Gap</a><a class="headerlink" href="#generalization-gap" title="Permalink to this heading">#</a></h3>
+<p>It’s worth noting that even if the training loss is very low, the validation or
+test loss might be higher due to overfitting. The difference between training
+and validation loss is referred to as the “generalization gap.” A model that has
+a very low training loss but a significantly higher validation loss may not be
+as useful as one with a slightly higher training loss but a smaller
+generalization gap.</p>
+</section>
+<section id="loss-landscape">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Loss Landscape</a><a class="headerlink" href="#loss-landscape" title="Permalink to this heading">#</a></h3>
+<p>Deep neural networks have a highly non-convex loss landscape. While there might
+be many local minima, recent research suggests that many of these minima are
+surrounded by flat regions (often referred to as “plateaus”) and that these
+different minima might have very similar loss values. This makes determining a
+strict lower bound challenging.</p>
+<p>In summary, while there isn’t a universal lower bound for the loss value in deep
+neural networks that applies across all scenarios, understanding the specifics
+of a given problem, dataset, and model can provide insights into what a
+reasonable lower bound might be.</p>
+</section>
+</section>
+<section id="some-causes-on-poor-convergence">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Some Causes on Poor Convergence</a><a class="headerlink" href="#some-causes-on-poor-convergence" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Learning Rate</strong>: The choice of learning rate is crucial. If it’s too
+large, gradient descent can oscillate around the minimum or even diverge. If
+it’s too small, convergence can be very slow. For convex problems, there are
+theoretical bounds on the learning rate to ensure convergence.</p></li>
+<li><p><strong>Convergence to Global Minimum</strong>: While gradient descent is guaranteed to
+converge to the global minimum for convex functions, the convergence might
+be slow, especially if the function is poorly conditioned or if the learning
+rate is not well-tuned.</p></li>
+<li><p><strong>Noise and Stochasticity</strong>: In the context of machine learning, we often
+use Stochastic Gradient Descent (SGD) or its variants, which estimate the
+gradient using a subset of the data (batch). This introduces noise into the
+gradient updates, which can cause oscillations. However, on average, the
+method still moves towards the global minimum for convex functions.</p></li>
+</ul>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://arxiv.org/abs/1702.05659">On Loss Functions for Deep Neural Networks in Classification</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2304.07288">Cross-Entropy Loss Functions: Theoretical Analysis and Applications</a></p></li>
+<li><p><a class="reference external" href="https://proceedings.neurips.cc/paper/2020/hash/6f5e4e86a87220e5d361ad82f1ebc335-Abstract.html">Generalization Bound of Gradient Descent for Non-Convex Metric Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2205.06571">Convergence Analysis of Deep Residual Networks</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1708.07120">Super-Convergence: Very Fast Training of Neural Networks Using Large Learning Rates</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./deep_learning/training_chronicles"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Training Chronicles</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../software_engineering/devops/continuous-integration/styling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Styling, Formatting, and Linting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-and-generalization">Convergence and Generalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-on-loss">Theoretical Bounds on Loss</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-based-on-loss-function">Theoretical Bounds Based on Loss Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-bounds-based-on-data-and-model-capacity">Theoretical Bounds Based on Data and Model Capacity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empirical-bounds">Empirical Bounds</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generalization-gap">Generalization Gap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-landscape">Loss Landscape</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-causes-on-poor-convergence">Some Causes on Poor Convergence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

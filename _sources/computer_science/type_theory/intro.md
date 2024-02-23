@@ -28,3 +28,7 @@ in software design and architecture.
 ```{tableofcontents}
 
 ```
+
+## References and Further Readings
+
+-   [What is Gradual Typing?](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)

@@ -1,0 +1,1453 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>A Rudimentary Introduction to Generator and Yield in Python &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'software_engineering/concurrency_parallelism_asynchronous/generator_yield';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/software_engineering/concurrency_parallelism_asynchronous/generator_yield.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="RESTful API" href="../serving/restful_api/intro.html" />
+    <link rel="prev" title="Concurrency, Parallelism and Asynchronous Programming" href="intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/software_engineering/concurrency_parallelism_asynchronous/generator_yield.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>A Rudimentary Introduction to Generator and Yield in Python</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-large-files-generator-vs-iterator">Reading Large Files, Generator vs Iterator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-big-file-into-a-list">Reading a Big File into a List</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-generator-function">Using a Generator Function</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-method">Next Method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generator-expression">Generator Expression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-generator-work">How does Generator Work?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profiling-generator-performance">Profiling Generator Performance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-efficiency">Memory Efficiency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-efficiency">Time Efficiency</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#yield">Yield</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-yield-statement">The <code class="docutils literal notranslate"><span class="pre">yield</span></code> Statement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example">An Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-return-statement">Adding a Return Statement</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-send">Adding <code class="docutils literal notranslate"><span class="pre">send</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-throw-and-close">Adding <code class="docutils literal notranslate"><span class="pre">throw</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataloaders-streaming-and-lazy-loading">DataLoaders, Streaming and Lazy Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generators-and-streaming-data">Generators and Streaming Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-naive-implementation-of-dataloader">A Naive Implementation of DataLoader</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="a-rudimentary-introduction-to-generator-and-yield-in-python">
+<h1>A Rudimentary Introduction to Generator and Yield in Python<a class="headerlink" href="#a-rudimentary-introduction-to-generator-and-yield-in-python" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Generator-orange" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Yield-orange" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#reading-large-files-generator-vs-iterator" id="id9">Reading Large Files, Generator vs Iterator</a></p>
+<ul>
+<li><p><a class="reference internal" href="#reading-a-big-file-into-a-list" id="id10">Reading a Big File into a List</a></p></li>
+<li><p><a class="reference internal" href="#using-a-generator-function" id="id11">Using a Generator Function</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#next-method" id="id12">Next Method</a></p></li>
+<li><p><a class="reference internal" href="#generator-expression" id="id13">Generator Expression</a></p>
+<ul>
+<li><p><a class="reference internal" href="#how-does-generator-work" id="id14">How does Generator Work?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#profiling-generator-performance" id="id15">Profiling Generator Performance</a></p>
+<ul>
+<li><p><a class="reference internal" href="#memory-efficiency" id="id16">Memory Efficiency</a></p></li>
+<li><p><a class="reference internal" href="#time-efficiency" id="id17">Time Efficiency</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#yield" id="id18">Yield</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-yield-statement" id="id19">The <code class="docutils literal notranslate"><span class="pre">yield</span></code> Statement</a></p></li>
+<li><p><a class="reference internal" href="#an-example" id="id20">An Example</a></p>
+<ul>
+<li><p><a class="reference internal" href="#adding-a-return-statement" id="id21">Adding a Return Statement</a></p></li>
+<li><p><a class="reference internal" href="#adding-send" id="id22">Adding <code class="docutils literal notranslate"><span class="pre">send</span></code></a></p></li>
+<li><p><a class="reference internal" href="#adding-throw-and-close" id="id23">Adding <code class="docutils literal notranslate"><span class="pre">throw</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#dataloaders-streaming-and-lazy-loading" id="id24">DataLoaders, Streaming and Lazy Loading</a></p>
+<ul>
+<li><p><a class="reference internal" href="#generators-and-streaming-data" id="id25">Generators and Streaming Data</a></p></li>
+<li><p><a class="reference internal" href="#a-naive-implementation-of-dataloader" id="id26">A Naive Implementation of DataLoader</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id27">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p><strong>Generator functions</strong>, which were introduced in
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0255">Python Enhancement Proposal (PEP) 255</a>,
+are a unique type of function that yield a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazy iterator</a>. This is an
+object that can be iterated over, similar to a list. The key difference,
+however, is that unlike lists, lazy iterators do not hold their contents in
+memory. Instead, they generate their contents on the fly, as they are iterated
+over.</p>
+<section id="reading-large-files-generator-vs-iterator">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Reading Large Files, Generator vs Iterator</a><a class="headerlink" href="#reading-large-files-generator-vs-iterator" title="Permalink to this heading">#</a></h2>
+<p>Let’s consider the following example from
+<a class="reference external" href="https://realpython.com/introduction-to-python-generators/">How to Use Generators and yield in Python - Real Python</a><a class="footnote-reference brackets" href="#id7" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
+Suppose we have a large text file that we want to read and iterate over, say, to
+obtain the total number of rows.</p>
+<section id="reading-a-big-file-into-a-list">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Reading a Big File into a List</a><a class="headerlink" href="#reading-a-big-file-into-a-list" title="Permalink to this heading">#</a></h3>
+<p>We can use the following code to read the file first into <em>memory</em> and then
+iterate over it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">file_reader_using_iterator</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="linenos"> 2</span>    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="linenos"> 3</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is file an generator? </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">isgenerator</span><span class="p">(</span><span class="n">file</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 4</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is file an iterator? </span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="w"> </span><span class="n">Iterator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 5</span>    <span class="n">result</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 6</span>    <span class="k">return</span> <span class="n">result</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">text</span> <span class="o">=</span> <span class="n">file_reader_using_iterator</span><span class="p">(</span><span class="s2">&quot;./assets/sample.txt&quot;</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text an generator? </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">isgenerator</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">10</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text an iterator? </span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">Iterator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">11</span><span class="n">pprint</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">14</span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
+<span class="linenos">15</span>    <span class="n">row_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Row count: </span><span class="si">{</span><span class="n">row_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Is file an generator? False
+Is file an iterator? True
+Is text an generator? False
+Is text an iterator? False
+</pre></div>
+</div>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'hydra-core==1.3.2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'matplotlib&gt;=3.8.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'numpy&gt;=1.26.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'openai&gt;=1.1.1'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'pandas&gt;=2.1.1'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'portalocker&gt;=2.8.2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'pydantic==2.5.2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'rich&gt;=13.6.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'seaborn&gt;=0.13.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'tiktoken==0.5.2'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'torch&gt;=2.1.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'torchinfo&gt;=1.8.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'torchmetrics&gt;=1.3.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'torchtext'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'torchvision&gt;=0.16.0'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">''</span>
+<span style="font-weight: bold">]</span>
+</pre>
+</div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Row count: 16
+</pre></div>
+</div>
+</div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">file_reader_using_iterator</span></code>, we read the entire file into memory and then
+split it and return it as a list of strings (list is an iterator). Then we
+<em>iterate</em> over the list to count the number of rows. This approach is
+straightforward and easy to understand, but it has a major drawback: it reads
+the entire file into memory. This is not a problem for small files, but for
+large files, it can be cause memory issues - the file itself being larger than
+your system’s available memory.</p>
+<p>When you read a big file into a list, you’re loading the entire content of the
+file into memory at once. This is because a list in Python is an in-memory data
+structure, and when you create a list containing every line of a file, each of
+those lines is stored in memory. This can be highly inefficient for large files,
+as it requires enough memory to hold the entire file content at once, which can
+lead to <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code> if the file size exceeds the available memory.</p>
+</section>
+<section id="using-a-generator-function">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Using a Generator Function</a><a class="headerlink" href="#using-a-generator-function" title="Permalink to this heading">#</a></h3>
+<p>To overcome this issue, we can use a generator function,
+<code class="docutils literal notranslate"><span class="pre">file_reader_using_generator</span></code>, which reads the file line by line, yielding each
+line as it goes. This approach is memory-efficient because it only needs to hold
+one line in memory at a time, not the entire file.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">file_reader_using_generator</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos"> 2</span>    <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="linenos"> 3</span>    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">file</span><span class="p">:</span>
+<span class="linenos"> 4</span>        <span class="k">yield</span> <span class="n">row</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">text_gen</span> <span class="o">=</span> <span class="n">file_reader_using_generator</span><span class="p">(</span><span class="s2">&quot;./assets/sample.txt&quot;</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text_gen a generator? </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">isgenerator</span><span class="p">(</span><span class="n">text_gen</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text_gen an iterator? </span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">text_gen</span><span class="p">,</span><span class="w"> </span><span class="n">Iterator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos">11</span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">text_gen</span><span class="p">:</span>
+<span class="linenos">12</span>    <span class="n">row_count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Row count: </span><span class="si">{</span><span class="n">row_count</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Is text_gen a generator? True
+Is text_gen an iterator? True
+Row count: 15
+</pre></div>
+</div>
+</div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">file_reader_using_generator</span></code>, we open the file and iterate over it line by
+line. For each line, we yield the line, which means we produce a value that can
+be iterated over, but we do not terminate the function. Instead, we pause it
+until the next value is requested. This allows us to read large files
+efficiently, even if they are larger than the available memory.</p>
+<p>How does this work? On a high level, when we call <code class="docutils literal notranslate"><span class="pre">file_reader_using_generator</span></code>,
+it returns a generator object. This object is an iterator, so we can iterate
+over it using a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop. When we do this, the function is executed until the
+first <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement, at which point the function is paused. The value of the
+<code class="docutils literal notranslate"><span class="pre">yield</span></code> statement is returned to the caller, and the function is paused. When
+the next value is requested, the function resumes from where it was paused,
+until the next <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement is encountered. This process continues until
+the function terminates.</p>
+<div class="proof remark admonition" id="software-engineering-concurrency-parallelism-asynchronous-generator-yield-remark">
+<p class="admonition-title"><span class="caption-number">Remark 1 </span> (All Generators are Iterators)</p>
+<section class="remark-content" id="proof-content">
+<p>Note that all generators are iterators, but not all iterators are generators.</p>
+</section>
+</div><p>To recap, the main reason why the generator function does not hold the entire
+file in memory is because it yields each line one by one, rather than returning
+a list of all lines at once.</p>
+<ol class="arabic simple">
+<li><p><strong>Lazy Evaluation</strong>: Generators are lazily evaluated. This means that they
+generate values on the fly as needed, rather than computing them all at once
+and storing them.</p></li>
+<li><p><strong>Single Item in Memory</strong>: At any point in time, only the current row being
+yielded by the generator is held in memory. Once the consumer of the
+generator moves to the next item, the previous item can be garbage collected
+if no longer referenced, keeping the memory footprint low.</p></li>
+<li><p><strong>Stateful Iteration</strong>: The generator function maintains its state between
+each yield. It knows where it left off (which line it yielded last) and
+resumes from that point the next time the next value is requested. This
+statefulness is managed without keeping the entire dataset in memory.</p></li>
+</ol>
+</section>
+</section>
+<section id="next-method">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Next Method</a><a class="headerlink" href="#next-method" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">__next__</span></code> method is a fundamental part of the iterator protocol in Python.
+It’s used to get the next value in an iteration.</p>
+<p>When you use a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop, or the <code class="docutils literal notranslate"><span class="pre">next()</span></code> function, Python internally calls the
+<code class="docutils literal notranslate"><span class="pre">__next__</span></code> method of the iterator object. This method should return the next
+value for the iterable. When there are no more items to return, it should raise
+<code class="docutils literal notranslate"><span class="pre">StopIteration</span></code>.</p>
+<p>In the context of generators, each call to the generator’s <code class="docutils literal notranslate"><span class="pre">__next__</span></code> method
+resumes the generator function from where it left off and runs until the next
+<code class="docutils literal notranslate"><span class="pre">yield</span></code> statement, at which point it returns the yielded value and pauses
+execution.</p>
+<p>Without the <code class="docutils literal notranslate"><span class="pre">__next__</span></code> method, we wouldn’t be able to use Python’s built-in
+iteration mechanisms with our custom iterator or generator objects.</p>
+<p>So let’s see how the <code class="docutils literal notranslate"><span class="pre">__next__</span></code> method works with our generator function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">2</span>    <span class="n">first_row</span> <span class="o">=</span> <span class="n">text_gen</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+<span class="linenos">3</span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First row: </span><span class="si">{</span><span class="n">first_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">4</span><span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<span class="linenos">5</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopIteration: No more rows&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>StopIteration: No more rows
+</pre></div>
+</div>
+</div>
+</div>
+<p>Oh what happened? We try to get the first row from the generator using the
+<code class="docutils literal notranslate"><span class="pre">__next__</span></code> method, but it raises a <code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> exception. This is because
+the generator has already been exhausted by the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop earlier when we
+counted the number of rows. Unlike a list, a generator can only be iterated over
+once. Once it’s been exhausted, it can’t be iterated over again and will raise a
+<code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> exception if you try to do so.</p>
+<p>Let’s create a new generator and see how the <code class="docutils literal notranslate"><span class="pre">__next__</span></code> method works.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">text_gen</span> <span class="o">=</span> <span class="n">file_reader_using_generator</span><span class="p">(</span><span class="s2">&quot;./assets/sample.txt&quot;</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">first_row</span> <span class="o">=</span> <span class="n">text_gen</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+<span class="linenos">3</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First row: </span><span class="si">{</span><span class="n">first_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="n">second_row</span> <span class="o">=</span> <span class="n">text_gen</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+<span class="linenos">6</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Second row: </span><span class="si">{</span><span class="n">second_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>First row: hydra-core==1.3.2
+Second row: matplotlib&gt;=3.8.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="generator-expression">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Generator Expression</a><a class="headerlink" href="#generator-expression" title="Permalink to this heading">#</a></h2>
+<p>Similar to
+<a class="reference external" href="https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions">list comprehensions</a>,
+you can also create a generator using a generator expression (generator
+comprehension) so that you can create a genereator without defining a function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">text_gen_comprehension</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;./assets/sample.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+<span class="linenos">2</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text_gen_comprehension a generator? </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">isgenerator</span><span class="p">(</span><span class="n">text_gen_comprehension</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">3</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is text_gen_comprehension an iterator? </span><span class="si">{</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">text_gen_comprehension</span><span class="p">,</span><span class="w"> </span><span class="n">Iterator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Is text_gen_comprehension a generator? True
+Is text_gen_comprehension an iterator? True
+</pre></div>
+</div>
+</div>
+</div>
+<section id="how-does-generator-work">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">How does Generator Work?</a><a class="headerlink" href="#how-does-generator-work" title="Permalink to this heading">#</a></h3>
+<p>Generator functions are nearly indistinguishable from standard functions in
+appearance and behavior, with one key distinction. They utilize the <code class="docutils literal notranslate"><span class="pre">yield</span></code>
+keyword in place of <code class="docutils literal notranslate"><span class="pre">return</span></code>. Consider the generator function that yields the
+next integer indefinitely:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">infinite_sequence</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">num</span>
+        <span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>This function might look familiar, but it’s the <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement that sets it
+apart. <code class="docutils literal notranslate"><span class="pre">yield</span></code> serves to return a value to the caller <strong>without exiting the
+function</strong>.</p>
+<p>What’s truly unique here is how the function’s <strong>state is preserved</strong>. Upon each
+subsequent call to <code class="docutils literal notranslate"><span class="pre">next()</span></code> on the generator object (whether done directly or
+through a loop), the function picks up right where it left off, incrementing and
+yielding <code class="docutils literal notranslate"><span class="pre">num</span></code> once more<a class="footnote-reference brackets" href="#id7" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+</section>
+<section id="profiling-generator-performance">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Profiling Generator Performance</a><a class="headerlink" href="#profiling-generator-performance" title="Permalink to this heading">#</a></h2>
+<p>Let’s compare the performance of the generator function and the list
+comprehension.</p>
+<section id="memory-efficiency">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Memory Efficiency</a><a class="headerlink" href="#memory-efficiency" title="Permalink to this heading">#</a></h3>
+<p>Let’s create a list of squared numbers using a list comprehension and a
+generator expression, and compare their memory usage.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">N</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="n">nums_squared_list_comprehension</span> <span class="o">=</span> <span class="p">[</span><span class="n">num</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)]</span>
+<span class="linenos">4</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size of nums_squared_list_comprehension: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">nums_squared_list_comprehension</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="n">nums_squared_generator</span> <span class="o">=</span> <span class="p">(</span><span class="n">num</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+<span class="linenos">7</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Size of nums_squared_generator: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">nums_squared_generator</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Size of nums_squared_list_comprehension: 800984 bytes
+Size of nums_squared_generator: 112 bytes
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>The size of <code class="docutils literal notranslate"><span class="pre">nums_squared_list_comprehension</span></code> is 800984 bytes.</p></li>
+<li><p>The size of <code class="docutils literal notranslate"><span class="pre">nums_squared_generator</span></code> is 112 bytes.</p></li>
+</ul>
+<p>The list comprehension (<code class="docutils literal notranslate"><span class="pre">nums_squared_list_comprehension</span></code>) creates a list of all
+squared numbers at once. This means it needs to allocate enough memory to hold
+all these numbers. This can be quite large for big sequences, as shown by the
+<code class="docutils literal notranslate"><span class="pre">sys.getsizeof(nums_squared_list_comprehension)</span></code> call.</p>
+<p>On the other hand, the generator expression (<code class="docutils literal notranslate"><span class="pre">nums_squared_generator</span></code>) doesn’t
+compute all the squared numbers at once. Instead, it computes them one at a
+time, on-the-fly, as you iterate over the generator. This means it doesn’t need
+to allocate memory for the whole sequence, only for the current number. This is
+why <code class="docutils literal notranslate"><span class="pre">sys.getsizeof(nums_squared_generator)</span></code> returns a much smaller number.</p>
+<p>This demonstrates the main advantage of generators when it comes to memory
+efficiency: they allow you to work with large sequences of data without needing
+to load the entire sequence into memory. This can be a significant advantage
+when working with large data sets, where loading the entire data set into memory
+might not be feasible.</p>
+</section>
+<section id="time-efficiency">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Time Efficiency</a><a class="headerlink" href="#time-efficiency" title="Permalink to this heading">#</a></h3>
+<p>We know that creating a very large list in memory can take time and potentially
+hang the system. However, if our list is much smaller than the system memory, it
+has been shown that it can much
+<a class="reference external" href="https://stackoverflow.com/questions/11964130/list-comprehension-vs-generator-expressions-weird-timeit-results/11964478#11964478">faster to evaluate</a>
+than a generator expression<a class="footnote-reference brackets" href="#id7" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">cProfile</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;sum([num ** 2 for num in range(N)])&quot;</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">cProfile</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;sum(num ** 2 for num in range(N))&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         5 function calls in 0.037 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.036    0.036    0.036    0.036 &lt;string&gt;:1(&lt;listcomp&gt;)
+        1    0.001    0.001    0.037    0.037 &lt;string&gt;:1(&lt;module&gt;)
+        1    0.000    0.000    0.037    0.037 {built-in method builtins.exec}
+        1    0.001    0.001    0.001    0.001 {built-in method builtins.sum}
+        1    0.000    0.000    0.000    0.000 {method &#39;disable&#39; of &#39;_lsprof.Profiler&#39; objects}
+
+
+         100005 function calls in 0.046 seconds
+
+   Ordered by: standard name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   100001    0.038    0.000    0.038    0.000 &lt;string&gt;:1(&lt;genexpr&gt;)
+        1    0.000    0.000    0.046    0.046 &lt;string&gt;:1(&lt;module&gt;)
+        1    0.000    0.000    0.046    0.046 {built-in method builtins.exec}
+        1    0.007    0.007    0.046    0.046 {built-in method builtins.sum}
+        1    0.000    0.000    0.000    0.000 {method &#39;disable&#39; of &#39;_lsprof.Profiler&#39; objects}
+</pre></div>
+</div>
+</div>
+</div>
+<p>This shows for a small list, the list comprehension is faster than the generator
+expression.</p>
+<p>Now, why are there 100005 function calls for N=100000?</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">100001</span></code> calls are from the generator expression <code class="docutils literal notranslate"><span class="pre">&lt;string&gt;:1(&lt;genexpr&gt;)</span></code>.
+For each number in the <code class="docutils literal notranslate"><span class="pre">range(N)</span></code>, the generator expression is called once,
+hence 100000 calls. The extra 1 call is to raise the <code class="docutils literal notranslate"><span class="pre">StopIteration</span></code>
+exception when the generator is exhausted.</p></li>
+<li><p>The remaining <code class="docutils literal notranslate"><span class="pre">4</span></code> calls are from the other functions:
+<code class="docutils literal notranslate"><span class="pre">&lt;string&gt;:1(&lt;module&gt;)</span></code>, <code class="docutils literal notranslate"><span class="pre">{built-in</span> <span class="pre">method</span> <span class="pre">builtins.exec}</span></code>,
+<code class="docutils literal notranslate"><span class="pre">{built-in</span> <span class="pre">method</span> <span class="pre">builtins.sum}</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">{method</span> <span class="pre">'disable'</span> <span class="pre">of</span> <span class="pre">'_lsprof.Profiler'</span> <span class="pre">objects}</span></code>. Each of these is called
+once, hence 4 calls.</p></li>
+</ul>
+<p>So, in total, there are 100001 (from the generator expression) + 4 (from the
+other functions) = 100005 function calls.</p>
+</section>
+</section>
+<section id="yield">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Yield</a><a class="headerlink" href="#yield" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement in Python is probably what defines the generator
+functions, let’s take a look.</p>
+<section id="the-yield-statement">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">The <code class="docutils literal notranslate"><span class="pre">yield</span></code> Statement</a><a class="headerlink" href="#the-yield-statement" title="Permalink to this heading">#</a></h3>
+<p>A <strong>generator function</strong> is a <strong>function</strong> that, when called, returns a
+<strong>generator iterator</strong>. This is achieved by including at least one <code class="docutils literal notranslate"><span class="pre">yield</span></code>
+statement in the function definition. <strong>Unlike a <code class="docutils literal notranslate"><span class="pre">return</span></code> statement, which
+terminates a function entirely and sends a value back to the caller, <code class="docutils literal notranslate"><span class="pre">yield</span></code>
+pauses the function, saving its state for continuation when next required.</strong></p>
+<p>When a generator function calls <code class="docutils literal notranslate"><span class="pre">yield</span></code>, the function execution is <strong>paused</strong>,
+and a value is sent to the caller. However, the function’s <strong>local variables and
+execution state are saved internally</strong>. The next time the generator is advanced
+(using the <code class="docutils literal notranslate"><span class="pre">next()</span></code> function or a for loop, for example), execution resumes from
+exactly where it was left off, immediately after the <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement.</p>
+<p>More concretely (and verbosely), upon encountering a <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement, the
+function’s current state is preserved or “frozen”. This means that local
+variables, the instruction pointer, and even the state of the evaluation stack
+are saved. Consequently, when <code class="docutils literal notranslate"><span class="pre">.next()</span></code> is called again, the function resumes
+precisely from where it left off, as if <code class="docutils literal notranslate"><span class="pre">yield</span></code> were a pause in execution rather
+than an interruption. This mechanism allows generator functions to produce a
+sequence of values over time, providing an efficient way to work with data
+streams or large datasets without requiring all data to be loaded into memory
+simultaneously<a class="footnote-reference brackets" href="#id8" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<p>Moreover, when a generator function is called, the actual arguments are bound to
+function-local formal argument names in the usual way, but no code in the body
+of the function is executed. Instead a generator-iterator object is returned;
+this conforms to the iterator protocol, so in particular can be used in
+for-loops in a natural way. Note that when the intent is clear from context, the
+unqualified name “generator” may be used to refer either to a generator-function
+or a generator-iterator<a class="footnote-reference brackets" href="#id8" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="an-example">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">An Example</a><a class="headerlink" href="#an-example" title="Permalink to this heading">#</a></h3>
+<p>Let’s see a function <code class="docutils literal notranslate"><span class="pre">count_up_to</span></code> that just yield count up to a max number.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span> <span class="nf">count_up_to</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos">2</span>    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">3</span>    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">:</span>
+<span class="linenos">4</span>        <span class="k">yield</span> <span class="n">count</span>
+<span class="linenos">5</span>        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="n">gen</span> <span class="o">=</span> <span class="n">count_up_to</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="linenos">8</span><span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+<span class="linenos">9</span>    <span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+2
+3
+</pre></div>
+</div>
+</div>
+</div>
+<p>First, let’s add type hints to the function. The return type of a generator
+function can be hinted using <code class="docutils literal notranslate"><span class="pre">Generator[YieldType,</span> <span class="pre">SendType,</span> <span class="pre">ReturnType]</span></code> from
+the <code class="docutils literal notranslate"><span class="pre">typing</span></code> module. Since this generator yields integers and does not
+explicitly return a value, we’ll use <code class="docutils literal notranslate"><span class="pre">None</span></code> for both the <code class="docutils literal notranslate"><span class="pre">SendType</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ReturnType</span></code>.</p>
+<p>Secondly, as we see it prints from <code class="docutils literal notranslate"><span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">3</span></code> incrementally.</p>
+<ul class="simple">
+<li><p>When <code class="docutils literal notranslate"><span class="pre">yield</span> <span class="pre">count</span></code> is executed, the generator pauses and returns control to
+the caller,</p></li>
+<li><p>The caller then resumes the generator, which continues execution from where
+it left off,</p></li>
+<li><p>So <code class="docutils literal notranslate"><span class="pre">count</span> <span class="pre">+=</span> <span class="pre">1</span></code> is executed, incrementing the counter,</p></li>
+<li><p>Then the loop condition <code class="docutils literal notranslate"><span class="pre">count</span> <span class="pre">&lt;=</span> <span class="pre">max</span></code> is checked before yielding again.</p></li>
+</ul>
+<p>So the key thing is - the generator resumes and continues execution from where
+it previously yielded each time <code class="docutils literal notranslate"><span class="pre">next()</span></code> or <code class="docutils literal notranslate"><span class="pre">send()</span></code> is called.</p>
+<section id="adding-a-return-statement">
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">Adding a Return Statement</a><a class="headerlink" href="#adding-a-return-statement" title="Permalink to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement allows the generator to produce a series of values, while
+the <code class="docutils literal notranslate"><span class="pre">return</span></code> statement can be used to terminate the generator and, optionally,
+to provide a value that is accessible through the <code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> exception
+raised when the generator is exhausted.</p>
+<p>Let’s modify the function to return a message when the count exceeds the
+maximum:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">count_up_to</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Completed&quot;</span><span class="p">]]:</span>
+<span class="linenos"> 2</span>    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos"> 3</span>    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">:</span>
+<span class="linenos"> 4</span>        <span class="k">yield</span> <span class="n">count</span>
+<span class="linenos"> 5</span>        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos"> 6</span>    <span class="k">return</span> <span class="s2">&quot;Completed!&quot;</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">gen</span> <span class="o">=</span> <span class="n">count_up_to</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">10</span>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="linenos">11</span>        <span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>
+<span class="linenos">12</span><span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="linenos">13</span>    <span class="n">completion_status</span> <span class="o">=</span> <span class="n">err</span><span class="o">.</span><span class="n">value</span>
+<span class="linenos">14</span>    <span class="nb">print</span><span class="p">(</span><span class="n">completion_status</span><span class="p">)</span>  <span class="c1"># Output: Completed!</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+2
+3
+Completed!
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="adding-send">
+<h4><a class="toc-backref" href="#id22" role="doc-backlink">Adding <code class="docutils literal notranslate"><span class="pre">send</span></code></a><a class="headerlink" href="#adding-send" title="Permalink to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">send()</span></code> method of a generator is used to send a value back into the
+generator function. The value sent in is returned by the <code class="docutils literal notranslate"><span class="pre">yield</span></code> expression.
+This can be used to modify the internal state of the generator. Let’s adapt the
+function to use <code class="docutils literal notranslate"><span class="pre">send()</span></code> to optionally reset the <code class="docutils literal notranslate"><span class="pre">count</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">count_up_to</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Completed&quot;</span><span class="p">]]:</span>
+<span class="linenos"> 2</span>    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos"> 3</span>    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">:</span>
+<span class="linenos"> 4</span>        <span class="n">received</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">count</span>
+<span class="linenos"> 5</span>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;count: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">, received: </span><span class="si">{</span><span class="n">received</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos"> 6</span>        <span class="k">if</span> <span class="n">received</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 7</span>            <span class="n">count</span> <span class="o">=</span> <span class="n">received</span>
+<span class="linenos"> 8</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos"> 9</span>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">10</span>    <span class="k">return</span> <span class="s2">&quot;Completed!&quot;</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="n">gen</span> <span class="o">=</span> <span class="n">count_up_to</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="fm">__next__</span><span class="p">())</span>  <span class="c1"># 1</span>
+<span class="linenos">14</span><span class="nb">print</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>  <span class="c1"># 6</span>
+<span class="linenos">15</span><span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
+<span class="linenos">16</span>    <span class="nb">print</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>  <span class="c1"># Continues from 7 to 10</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+count: 1, received: 5
+5
+count: 5, received: None
+6
+count: 6, received: None
+7
+count: 7, received: None
+8
+count: 8, received: None
+9
+count: 9, received: None
+10
+count: 10, received: None
+</pre></div>
+</div>
+</div>
+</div>
+<p>This example illustrates basic usage, including how to use <code class="docutils literal notranslate"><span class="pre">send()</span></code> to alter the
+internal state of the generator. After initializing the generator:</p>
+<ul class="simple">
+<li><p>printing the first value with <code class="docutils literal notranslate"><span class="pre">__next__()</span></code> which gives <code class="docutils literal notranslate"><span class="pre">1</span></code>,</p></li>
+<li><p>then <code class="docutils literal notranslate"><span class="pre">send(5)</span></code> is called, <code class="docutils literal notranslate"><span class="pre">received</span> <span class="pre">=</span> <span class="pre">yield</span> <span class="pre">count</span></code> is called, and now
+<code class="docutils literal notranslate"><span class="pre">received</span> <span class="pre">=</span> <span class="pre">5</span></code>. Then <code class="docutils literal notranslate"><span class="pre">count</span></code> is subsequently set to <code class="docutils literal notranslate"><span class="pre">5</span></code> as well.</p></li>
+<li><p>The generator is resumed and hits the <code class="docutils literal notranslate"><span class="pre">yield</span> <span class="pre">count</span></code> statement again,
+yielding the current value of <code class="docutils literal notranslate"><span class="pre">count</span></code> to be <code class="docutils literal notranslate"><span class="pre">5</span></code>. So it will print out <code class="docutils literal notranslate"><span class="pre">5</span></code> on
+the next yield</p></li>
+<li><p>The generator continues, yielding values from <code class="docutils literal notranslate"><span class="pre">6</span></code> to <code class="docutils literal notranslate"><span class="pre">10</span></code> as it iterates
+through the remaining loop cycles, with each value being printed in the for
+loop.</p></li>
+</ul>
+<div class="proof remark admonition" id="software-engineering-concurrency-parallelism-asynchronous-generator-yield-is-an-expression">
+<p class="admonition-title"><span class="caption-number">Remark 2 </span> (Yield is an expression and not a statement)</p>
+<section class="remark-content" id="proof-content">
+<p>How did the <code class="docutils literal notranslate"><span class="pre">received</span></code> become <code class="docutils literal notranslate"><span class="pre">None</span></code> after <code class="docutils literal notranslate"><span class="pre">send</span></code> is done?</p>
+<p>The key to understanding the behavior of your <code class="docutils literal notranslate"><span class="pre">count_up_to</span></code> generator,
+especially in relation to how <code class="docutils literal notranslate"><span class="pre">received</span></code> can be <code class="docutils literal notranslate"><span class="pre">None</span></code>, lies in how the
+generator is advanced and interacts with the <code class="docutils literal notranslate"><span class="pre">.send()</span></code> method versus the
+<code class="docutils literal notranslate"><span class="pre">.__next__()</span></code> method (or its equivalent, <code class="docutils literal notranslate"><span class="pre">next(gen)</span></code>).</p>
+<p>When you first call <code class="docutils literal notranslate"><span class="pre">gen.__next__()</span></code> or <code class="docutils literal notranslate"><span class="pre">next(gen)</span></code>, the generator starts
+executing up to the first <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement, yielding the value of <code class="docutils literal notranslate"><span class="pre">count</span></code>
+(which is <code class="docutils literal notranslate"><span class="pre">1</span></code>). At this point, since you’re not using <code class="docutils literal notranslate"><span class="pre">.send()</span></code> to advance the
+generator but <code class="docutils literal notranslate"><span class="pre">.__next__()</span></code> instead, the value received by the <code class="docutils literal notranslate"><span class="pre">yield</span></code>
+expression is <code class="docutils literal notranslate"><span class="pre">None</span></code>. This is the default behavior when the generator is
+advanced without explicitly sending a value. The generator then proceeds to the
+<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">received</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None:</span></code> check. Since <code class="docutils literal notranslate"><span class="pre">received</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>, the condition
+fails, and execution moves to the <code class="docutils literal notranslate"><span class="pre">else:</span></code> clause, incrementing <code class="docutils literal notranslate"><span class="pre">count</span></code>.</p>
+<p>However, when you call <code class="docutils literal notranslate"><span class="pre">gen.send(5)</span></code>, you’re explicitly sending a value (<code class="docutils literal notranslate"><span class="pre">5</span></code>)
+into the generator, which resumes execution right after the <code class="docutils literal notranslate"><span class="pre">yield</span></code> statement,
+with <code class="docutils literal notranslate"><span class="pre">received</span></code> now being <code class="docutils literal notranslate"><span class="pre">5</span></code>. This means the <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">received</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None:</span></code>
+condition succeeds, and the code inside that block executes, setting <code class="docutils literal notranslate"><span class="pre">count</span></code> to
+<code class="docutils literal notranslate"><span class="pre">5</span></code>.</p>
+<p>To clarify, here’s a step-by-step breakdown:</p>
+<ol class="arabic simple">
+<li><p><strong>Initial Call with <code class="docutils literal notranslate"><span class="pre">.__next__()</span></code></strong>:</p>
+<ul class="simple">
+<li><p>The generator yields <code class="docutils literal notranslate"><span class="pre">1</span></code>, and <code class="docutils literal notranslate"><span class="pre">received</span></code> is implicitly <code class="docutils literal notranslate"><span class="pre">None</span></code> because no
+value was sent into the generator. The <code class="docutils literal notranslate"><span class="pre">else:</span></code> clause is executed,
+incrementing <code class="docutils literal notranslate"><span class="pre">count</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Call with <code class="docutils literal notranslate"><span class="pre">.send(5)</span></code></strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">received</span></code> is set to <code class="docutils literal notranslate"><span class="pre">5</span></code>, so the <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">received</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None:</span></code> condition is
+true and <code class="docutils literal notranslate"><span class="pre">count</span></code> is set to <code class="docutils literal notranslate"><span class="pre">5</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Subsequent Iteration in the For Loop</strong>:</p>
+<ul class="simple">
+<li><p>The for loop implicitly calls <code class="docutils literal notranslate"><span class="pre">.__next__()</span></code> on each iteration, not
+<code class="docutils literal notranslate"><span class="pre">.send()</span></code>, so no new value is sent into the generator. Therefore,
+<code class="docutils literal notranslate"><span class="pre">received</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> again for each iteration within the loop, and the
+generator simply increments <code class="docutils literal notranslate"><span class="pre">count</span></code> until it exceeds <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
+</ul>
+</li>
+</ol>
+<p>This mechanism allows the generator to either accept new values from the outside
+via <code class="docutils literal notranslate"><span class="pre">.send(value)</span></code> or continue its own internal logic, incrementing <code class="docutils literal notranslate"><span class="pre">count</span></code>,
+when advanced with <code class="docutils literal notranslate"><span class="pre">.__next__()</span></code> or <code class="docutils literal notranslate"><span class="pre">next(gen)</span></code>, where no external value is
+provided, and thus <code class="docutils literal notranslate"><span class="pre">received</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</section>
+</div><p>What we see here is a coroutine, a generator function in which you can pass
+data<a class="footnote-reference brackets" href="#id7" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="adding-throw-and-close">
+<h4><a class="toc-backref" href="#id23" role="doc-backlink">Adding <code class="docutils literal notranslate"><span class="pre">throw</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code></a><a class="headerlink" href="#adding-throw-and-close" title="Permalink to this heading">#</a></h4>
+<p>Let’s extend our example to demonstrate how to use the <code class="docutils literal notranslate"><span class="pre">.throw()</span></code> and <code class="docutils literal notranslate"><span class="pre">.close()</span></code>
+methods with our generator function.</p>
+<p>We’ll continue with the modified <code class="docutils literal notranslate"><span class="pre">count_up_to</span></code> function that allows for
+resetting the count via the <code class="docutils literal notranslate"><span class="pre">send()</span></code> method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">count_up_to</span><span class="p">(</span><span class="nb">max</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;Completed&quot;</span><span class="p">]]:</span>
+<span class="linenos"> 2</span>    <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos"> 3</span>    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">:</span>
+<span class="linenos"> 4</span>        <span class="k">try</span><span class="p">:</span>
+<span class="linenos"> 5</span>            <span class="n">received</span> <span class="o">=</span> <span class="k">yield</span> <span class="n">count</span>
+<span class="linenos"> 6</span>            <span class="k">if</span> <span class="n">received</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 7</span>                <span class="n">count</span> <span class="o">=</span> <span class="n">received</span>
+<span class="linenos"> 8</span>            <span class="k">else</span><span class="p">:</span>
+<span class="linenos"> 9</span>                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="linenos">10</span>        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="linenos">11</span>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exception caught inside generator: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">12</span>            <span class="n">count</span> <span class="o">=</span> <span class="nb">max</span>  <span class="c1"># Force the loop to end.</span>
+<span class="linenos">13</span>            <span class="k">yield</span> <span class="s2">&quot;Exception processed&quot;</span>
+<span class="linenos">14</span>    <span class="k">return</span> <span class="s2">&quot;Completed!&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">.throw()</span></code> method is used to throw exceptions from the calling scope into
+the generator. When a generator encounters an exception thrown into it, it can
+either handle the exception or let it propagate, terminating the generator.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">gen</span> <span class="o">=</span> <span class="n">count_up_to</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span><span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>  <span class="c1"># Starts the generator, prints 1</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="c1"># Injecting an exception into the generator</span>
+<span class="linenos">6</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">7</span>    <span class="n">gen</span><span class="o">.</span><span class="n">throw</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="s2">&quot;Something went wrong&quot;</span><span class="p">)</span>
+<span class="linenos">8</span><span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="linenos">9</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generator returned:&quot;</span><span class="p">,</span> <span class="n">err</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+Exception caught inside generator: Something went wrong
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this example, after starting the generator and advancing it to yield <code class="docutils literal notranslate"><span class="pre">1</span></code> and
+<code class="docutils literal notranslate"><span class="pre">2</span></code>, we throw a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> into the generator using <code class="docutils literal notranslate"><span class="pre">.throw()</span></code>. The generator
+function can catch this exception and yield a response or allow it to propagate,
+leading to the generator’s termination. Our function does not explicitly catch
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, so it will terminate and raise <code class="docutils literal notranslate"><span class="pre">StopIteration</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">.close()</span></code> method is used to stop a generator. After calling <code class="docutils literal notranslate"><span class="pre">.close()</span></code>, if
+the generator function is executing a <code class="docutils literal notranslate"><span class="pre">yield</span></code> expression, it will raise a
+<code class="docutils literal notranslate"><span class="pre">GeneratorExit</span></code> inside the generator function. This can be used to perform any
+cleanup actions before the generator stops.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">gen</span> <span class="o">=</span> <span class="n">count_up_to</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>  <span class="c1"># Output: 1</span>
+<span class="linenos"> 4</span><span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>  <span class="c1"># Output: 2</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="c1"># Close the generator</span>
+<span class="linenos"> 7</span><span class="n">gen</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="c1"># Trying to advance the generator after closing it will raise StopIteration</span>
+<span class="linenos">10</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">11</span>    <span class="nb">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">gen</span><span class="p">))</span>
+<span class="linenos">12</span><span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<span class="linenos">13</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generator has been closed.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+2
+Generator has been closed.
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this scenario, we start the generator, yield a couple of values, and then
+close it using <code class="docutils literal notranslate"><span class="pre">.close()</span></code>. Any attempt to advance the generator after closing it
+results in a <code class="docutils literal notranslate"><span class="pre">StopIteration</span></code> exception, indicating that the generator is
+exhausted.</p>
+</section>
+</section>
+</section>
+<section id="dataloaders-streaming-and-lazy-loading">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">DataLoaders, Streaming and Lazy Loading</a><a class="headerlink" href="#dataloaders-streaming-and-lazy-loading" title="Permalink to this heading">#</a></h2>
+<p>Deep learning models, particularly those trained on large datasets, benefit
+significantly from efficient data loading mechanisms. PyTorch, a popular deep
+learning framework, provides a powerful abstraction for this purpose through its
+<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> class, which under the hood can be understood as leveraging
+Python’s generator functionality for streaming data.</p>
+<section id="generators-and-streaming-data">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Generators and Streaming Data</a><a class="headerlink" href="#generators-and-streaming-data" title="Permalink to this heading">#</a></h3>
+<p>Generators in Python are a way to iterate over data without loading the entire
+dataset into memory. This is especially useful in deep learning, where datasets
+can be enormous. A generator-based DataLoader:</p>
+<ul class="simple">
+<li><p><strong>Lazily Loads Data</strong>: It loads data as needed, rather than all at once.
+This means that at any point, only a portion of the dataset is in memory,
+making it possible to work with datasets larger than the available system
+memory.</p></li>
+<li><p><strong>Supports Parallel Data Processing</strong>: PyTorch’s <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> can prefetch
+batches of data using multiple worker processes. This is akin to a generator
+yielding batches of data in parallel, improving efficiency by overlapping
+data loading with model training computations.</p></li>
+<li><p><strong>Enables Real-time Data Augmentation</strong>: Data augmentation (e.g., random
+transformations of images) can be applied on-the-fly as each batch is
+loaded. This dynamic generation of training samples from a base dataset
+keeps memory use low and variation high.</p></li>
+</ul>
+<p>Here’s a simplified conceptual example of how a data loader might be implemented
+using a generator pattern in PyTorch:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T_co&#39;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="k">class</span> <span class="nc">MyDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">[</span><span class="n">T_co</span><span class="p">]):</span>
+<span class="linenos"> 4</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Sized</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 5</span>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 8</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="linenos">11</span>        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+<span class="linenos">12</span>        <span class="k">return</span> <span class="n">sample</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c1"># 128 samples, 3 features each</span>
+<span class="linenos">15</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos">16</span><span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="linenos">17</span><span class="n">dataloader</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">dataloader</span><span class="p">)</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">20</span>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="linenos">21</span>        <span class="n">_</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+<span class="linenos">22</span><span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<span class="linenos">23</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopIteration: No more data.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>StopIteration: No more data.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="a-naive-implementation-of-dataloader">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">A Naive Implementation of DataLoader</a><a class="headerlink" href="#a-naive-implementation-of-dataloader" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">simple_data_loader</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">[</span><span class="n">T_co</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos"> 2</span>    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos"> 3</span>    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)):</span>
+<span class="linenos"> 4</span>        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+<span class="linenos"> 5</span>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">:</span>
+<span class="linenos"> 6</span>            <span class="k">yield</span> <span class="n">batch</span>
+<span class="linenos"> 7</span>            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos"> 8</span>    <span class="c1"># Yield any remaining data as the last batch</span>
+<span class="linenos"> 9</span>    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+<span class="linenos">10</span>        <span class="k">yield</span> <span class="n">batch</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="k">def</span> <span class="nf">simple_data_loader</span><span class="p">(</span>
+<span class="linenos">13</span>    <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">[</span><span class="n">T_co</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="linenos">14</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">T_co</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="linenos">15</span>    <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">16</span>    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">)):</span>
+<span class="linenos">17</span>        <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+<span class="linenos">18</span>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="n">batch_size</span><span class="p">:</span>
+<span class="linenos">19</span>            <span class="k">yield</span> <span class="n">batch</span>
+<span class="linenos">20</span>            <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">21</span>    <span class="c1"># Yield any remaining data as the last batch</span>
+<span class="linenos">22</span>    <span class="k">if</span> <span class="n">batch</span><span class="p">:</span>
+<span class="linenos">23</span>        <span class="k">yield</span> <span class="n">batch</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">))</span>  <span class="c1"># Simulated dataset of 100 integers</span>
+<span class="linenos">27</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="c1"># Create and use the data loader</span>
+<span class="linenos">30</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="linenos">31</span><span class="n">dataloader</span> <span class="o">=</span> <span class="n">simple_data_loader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">34</span>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+<span class="linenos">35</span>        <span class="nb">print</span><span class="p">(</span><span class="n">dataloader</span><span class="o">.</span><span class="fm">__next__</span><span class="p">())</span>
+<span class="linenos">36</span><span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+<span class="linenos">37</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;StopIteration: No more data.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+[20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+[30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+[40, 41, 42, 43, 44, 45, 46, 47, 48, 49]
+[50, 51, 52, 53, 54, 55, 56, 57, 58, 59]
+[60, 61, 62, 63, 64, 65, 66, 67, 68, 69]
+[70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
+[80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+[90, 91, 92, 93, 94, 95, 96, 97, 98, 99]
+StopIteration: No more data.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.dabeaz.com/generators/index.html">Generator Tricks for Systems Programmers, v3.0</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0255/">PEP 255 – Simple Generators</a></p></li>
+<li><p><a class="reference external" href="https://realpython.com/introduction-to-python-generators/">How to Use Generators and yield in Python - Real Python</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/102535/what-can-you-use-generator-functions-for">What can you use generator functions for?</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote brackets" id="id7" role="note">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id6">4</a>)</span>
+<p><a class="reference external" href="https://realpython.com/introduction-to-python-generators/">How to Use Generators and yield in Python - Real Python</a></p>
+</aside>
+<aside class="footnote brackets" id="id8" role="note">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p><a class="reference external" href="https://peps.python.org/pep-0255/">PEP 255 – Simple Generators</a></p>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./software_engineering/concurrency_parallelism_asynchronous"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Concurrency, Parallelism and Asynchronous Programming</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../serving/restful_api/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">RESTful API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-large-files-generator-vs-iterator">Reading Large Files, Generator vs Iterator</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-a-big-file-into-a-list">Reading a Big File into a List</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-generator-function">Using a Generator Function</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-method">Next Method</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generator-expression">Generator Expression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-does-generator-work">How does Generator Work?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#profiling-generator-performance">Profiling Generator Performance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-efficiency">Memory Efficiency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-efficiency">Time Efficiency</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#yield">Yield</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-yield-statement">The <code class="docutils literal notranslate"><span class="pre">yield</span></code> Statement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example">An Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-a-return-statement">Adding a Return Statement</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-send">Adding <code class="docutils literal notranslate"><span class="pre">send</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-throw-and-close">Adding <code class="docutils literal notranslate"><span class="pre">throw</span></code> and <code class="docutils literal notranslate"><span class="pre">close</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataloaders-streaming-and-lazy-loading">DataLoaders, Streaming and Lazy Loading</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#generators-and-streaming-data">Generators and Streaming Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-naive-implementation-of-dataloader">A Naive Implementation of DataLoader</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
