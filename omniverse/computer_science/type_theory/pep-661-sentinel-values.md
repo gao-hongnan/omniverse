@@ -1,55 +1,72 @@
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
 # Sentinel Types
+
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
+![Tag](https://img.shields.io/badge/Tag-MaybeWrong-red)
 
 [OpenAI's `NotGiven`](https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273)
 
 https://peps.python.org/pep-0661/
 
-````
-"""
 ## `NotGiven`
 
-- **Purpose**: Indicates that a parameter was not provided at all. It's used to
-  distinguish between a parameter being explicitly set to `None` and not being
-  provided.
-- **Use Case**: Common in APIs where default behavior is triggered when a
-  parameter is not given, but `None` might be a valid, meaningful input. For
-  example, `None` might mean "disable timeout", while `NotGiven` means "use a
-  default timeout".
-- Other example usage is if you want to assign a default empty list or dict but
-  it is mutable, so you assign this type but not None since None don't make
-  sense.
-- **Behavior**: Functions can check for `NotGiven` to apply default behavior.
+-   **Purpose**: Indicates that a parameter was not provided at all. It's used
+    to distinguish between a parameter being explicitly set to `None` and not
+    being provided.
+-   **Use Case**: Common in APIs where default behavior is triggered when a
+    parameter is not given, but `None` might be a valid, meaningful input. For
+    example, `None` might mean "disable timeout", while `NotGiven` means "use a
+    default timeout".
+-   Other example usage is if you want to assign a default empty list or dict
+    but it is mutable, so you assign this type but not None since None don't
+    make sense.
+-   **Behavior**: Functions can check for `NotGiven` to apply default behavior.
 
 ## `Omit`
 
-- **Purpose**: Used to explicitly remove or omit a default value that would
-  otherwise be applied. It's not just about a value being absent, but rather
-  about actively removing a pre-existing default.
-- **Use Case**: Useful in situations where the default behavior or value needs
-  to be explicitly overridden or disabled, and where `None` is not a suitable
-  option. For example, removing a default HTTP header.
-- **Behavior**: Functions can check for `Omit` to actively remove or ignore a
-  default setting or value.
+-   **Purpose**: Used to explicitly remove or omit a default value that would
+    otherwise be applied. It's not just about a value being absent, but rather
+    about actively removing a pre-existing default.
+-   **Use Case**: Useful in situations where the default behavior or value needs
+    to be explicitly overridden or disabled, and where `None` is not a suitable
+    option. For example, removing a default HTTP header.
+-   **Behavior**: Functions can check for `Omit` to actively remove or ignore a
+    default setting or value.
 
 ### Comparison
 
-- **Similarity**: Both are used to signal special cases in the absence of normal
-  parameter values.
-- **Difference**: `NotGiven` is about the absence of a value where a default may
-  apply, while `Omit` is about actively overriding a default.
-"""
+-   **Similarity**: Both are used to signal special cases in the absence of
+    normal parameter values.
+-   **Difference**: `NotGiven` is about the absence of a value where a default
+    may apply, while `Omit` is about actively overriding a default. """
 
-from __future__ import annotations
+from **future** import annotations
 
 from typing import Any, Literal, Type, Union
 
 from typing_extensions import override, TypeAlias
 
-
-class _NotGiven:
-    """
-    A sentinel singleton class used to distinguish omitted keyword arguments
-    from those passed in with the value None (which may have different behavior).
+class \_NotGiven: """ A sentinel singleton class used to distinguish omitted
+keyword arguments from those passed in with the value None (which may have
+different behavior).
 
     Quite similar with dataclass's MISSING.
 
@@ -118,10 +135,7 @@ class _NotGiven:
     def __delattr__(self, key: str) -> None:
         raise AttributeError("_NotGiven instances are immutable")
 
-
-NOT_GIVEN = _NotGiven()
-NotGiven: TypeAlias = _NotGiven
-````
+NOT_GIVEN = \_NotGiven() NotGiven: TypeAlias = \_NotGiven
 
 In Python, when using the `requests` library to make HTTP requests, the
 `timeout` parameter specifies the maximum number of seconds to wait for a
