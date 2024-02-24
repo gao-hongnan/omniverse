@@ -276,3 +276,5 @@ if config["mode"] is MISSING:
 ## References and Further Readings
 
 -   [PEP 661 – Sentinel Values](https://peps.python.org/pep-0661/)
+-   [OpenAI's `NotGiven` Implementation](https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273)
+-   [Dataclasses `MISSING` Implementation](https://github.com/python/cpython/blob/b4dd31409cf6f23dcd8113d10f74a2e41b8cb1ed/Lib/dataclasses.py#L186)
