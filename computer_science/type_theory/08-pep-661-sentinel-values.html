@@ -1,0 +1,854 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Sentinel Types &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'computer_science/type_theory/08-pep-661-sentinel-values';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/computer_science/type_theory/08-pep-661-sentinel-values.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Complexity Analysis" href="../../dsa/complexity_analysis/intro.html" />
+    <link rel="prev" title="Function Overloading" href="07-pep-3124-overloading.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Transformers - Attention is All You Need</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/notations.html">Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/concept.html">Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformer/decoder/shakespeare.html">Shakespeare</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Type Theory, A Very Rudimentary Introduction</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/computer_science/type_theory/08-pep-661-sentinel-values.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Sentinel Types</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notgiven"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-behavior">Purpose and Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-1-timeouts-in-http-requests">Use Case 1. Timeouts in HTTP Requests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#missing">Missing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Purpose and Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notgiven-vs-missing"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> vs. <code class="docutils literal notranslate"><span class="pre">MISSING</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="sentinel-types">
+<h1>Sentinel Types<a class="headerlink" href="#sentinel-types" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-MaybeWrong-red" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#motivation" id="id2">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#notgiven" id="id3"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#purpose-and-behavior" id="id4">Purpose and Behavior</a></p></li>
+<li><p><a class="reference internal" href="#use-case-1-timeouts-in-http-requests" id="id5">Use Case 1. Timeouts in HTTP Requests</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#missing" id="id6">Missing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id7">Purpose and Behavior</a></p></li>
+<li><p><a class="reference internal" href="#notgiven-vs-missing" id="id8"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> vs. <code class="docutils literal notranslate"><span class="pre">MISSING</span></code></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id9">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="motivation">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h2>
+<p>Inspired by OpenAI’s approaches in software development and type handling, this
+discussion explores the concept of sentinel types, a powerful technique in for
+representing unique default values or states. Sentinel types are particularly
+useful in scenarios where <code class="docutils literal notranslate"><span class="pre">None</span></code> might be a valid input value, necessitating a
+distinct marker for “no value given” cases. In fact, <code class="docutils literal notranslate"><span class="pre">None</span></code> is in itself a form
+of sentinel value, a singleton object that represents the absence of a value.</p>
+<p>While this exploration introduces the core idea as formalized in
+<a class="reference external" href="https://peps.python.org/pep-0661/">PEP 661 – Sentinel Values</a>, which advocates
+for a standardized approach to sentinel values in Python, we’ll steer clear of
+the more formalized specifics. Readers interested in a deeper dive into the
+formal aspects of sentinel types are encouraged to consult the original
+<a class="reference external" href="https://peps.python.org/pep-0661/">PEP 661 – Sentinel Values</a> for comprehensive
+insights and technical details.</p>
+</section>
+<section id="notgiven">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code></a><a class="headerlink" href="#notgiven" title="Permalink to this heading">#</a></h2>
+<p>OpenAI’s own implementation of a sentinel type, <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code>, was introduced
+<a class="reference external" href="https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273">here in OpenAI’s GitHub repository</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">_NotGiven</span><span class="p">:</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>    <span class="n">_instance</span><span class="p">:</span> <span class="n">_NotGiven</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">_NotGiven</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_NotGiven</span><span class="p">:</span>  <span class="c1"># noqa: PYI034</span>
+<span class="linenos"> 6</span>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 7</span>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_NotGiven</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># noqa: UP008</span>
+<span class="linenos"> 8</span>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
+<span class="linenos">11</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">12</span><span class="sd">        This method is used to define the boolean value of an instance of `_NotGiven`.</span>
+<span class="linenos">13</span><span class="sd">        By returning `False`, it allows `_NotGiven` to be used in boolean contexts (like</span>
+<span class="linenos">14</span><span class="sd">        `if` statements) to signify the absence of a value. This is especially useful</span>
+<span class="linenos">15</span><span class="sd">        for checking if an argument was provided or not in a function.</span>
+<span class="linenos">16</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">17</span>        <span class="k">return</span> <span class="kc">False</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span>    <span class="nd">@override</span>
+<span class="linenos">20</span>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;NOT_GIVEN&quot;</span><span class="p">]:</span>
+<span class="linenos">21</span>        <span class="k">return</span> <span class="s2">&quot;NOT_GIVEN&quot;</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span>    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">24</span>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span>    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">27</span>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="n">NOT_GIVEN</span> <span class="o">=</span> <span class="n">_NotGiven</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="purpose-and-behavior">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Purpose and Behavior</a><a class="headerlink" href="#purpose-and-behavior" title="Permalink to this heading">#</a></h3>
+<p>The use of such sentinels indicates that a parameter was not provided at all.
+It’s used to distinguish between a parameter being explicitly set to <code class="docutils literal notranslate"><span class="pre">None</span></code> and
+not being provided. Structurally, both <code class="docutils literal notranslate"><span class="pre">None</span></code> and <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> are singleton
+instances and are considered “falsy” in boolean contexts. This allows them to be
+used in conditional statements to check if a value was provided or not. The
+singleton property ensures that all instances of <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> are equal to each
+other.</p>
+</section>
+<section id="use-case-1-timeouts-in-http-requests">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Use Case 1. Timeouts in HTTP Requests</a><a class="headerlink" href="#use-case-1-timeouts-in-http-requests" title="Permalink to this heading">#</a></h3>
+<p>The sentinel pattern like <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> is common in APIs where default behavior is
+triggered when a parameter is not given, but <code class="docutils literal notranslate"><span class="pre">None</span></code> might be a valid, meaningful
+input. For example, <code class="docutils literal notranslate"><span class="pre">None</span></code> might mean “disable timeout”, while <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> means
+“use a default timeout”.</p>
+<p>Consider you implemented a function <code class="docutils literal notranslate"><span class="pre">get</span></code> (not to be confused with the method
+<code class="docutils literal notranslate"><span class="pre">get</span></code> from the <code class="docutils literal notranslate"><span class="pre">requests</span></code> library) to make HTTP requests, the <code class="docutils literal notranslate"><span class="pre">timeout</span></code>
+parameter specifies the maximum number of seconds to wait for a response. If
+<code class="docutils literal notranslate"><span class="pre">timeout</span></code> is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>, it means that there is no timeout limit for the
+request. In other words, the request will wait indefinitely until the server
+responds or the connection is closed.</p>
+<p>Here, we will use a relatively simple example to illustrate. Consider the
+following function call <code class="docutils literal notranslate"><span class="pre">get</span></code> that takes in a argument <code class="docutils literal notranslate"><span class="pre">timeout</span></code> that defines
+how many seconds to wait before raising a <code class="docutils literal notranslate"><span class="pre">TimeoutError</span></code>. If user specifies
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, it means that this program should have no timeout, and therefore should
+run indefinitely until a server or something responds to halt.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">time</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+<span class="linenos"> 4</span>    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 5</span>        <span class="n">actual_timeout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+<span class="linenos"> 6</span>    <span class="k">else</span><span class="p">:</span>
+<span class="linenos"> 7</span>        <span class="n">actual_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+<span class="linenos"> 8</span>    <span class="k">return</span> <span class="n">actual_timeout</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use default timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">11</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use 2 seconds timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">12</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use 3 seconds timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use no timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Use default timeout: 2
+Use 2 seconds timeout: 2
+Use 3 seconds timeout: 3
+Use no timeout: inf
+</pre></div>
+</div>
+</div>
+</div>
+<p>What is the issue here? Not much. But one quirk is that the program has no
+elegant way to distinguish whether a user passed in a default value or not.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use default timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">2</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use 2 seconds timeout: </span><span class="si">{</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Use default timeout: 2
+Use 2 seconds timeout: 2
+</pre></div>
+</div>
+</div>
+</div>
+<p>The above two will yield the same result, because the <code class="docutils literal notranslate"><span class="pre">timeout</span></code> has a default
+value of <code class="docutils literal notranslate"><span class="pre">2</span></code>, so when the function is called without specifying <code class="docutils literal notranslate"><span class="pre">timeout</span></code>, it
+automatically takes the value of <code class="docutils literal notranslate"><span class="pre">2</span></code> - which is the standard behaviour for
+default values.</p>
+<p>This approach does not disinguish between an user not providing the argument at
+all and an user explicitly setting the argument to its default value.</p>
+<p>Why does it matter? Besides the reason of expressing user intent and
+explicitness, we can argue that we want more fine-grained behaviour control of
+our program. If user pass in their own values, we may want to check whether that
+value is within bounds, or in other words, legitimate.</p>
+<p>The key motivations for using a singleton sentinel class are primarily centered
+around distinguishing between different states of function arguments, especially
+in the context of <strong>default</strong> values and <strong>optional</strong> arguments.</p>
+<ol class="arabic simple">
+<li><p><strong>Differentiating Between ‘None’, ‘Default Values’ and ‘Not Provided’:</strong> In
+Python, <code class="docutils literal notranslate"><span class="pre">None</span></code> is often used as a default value for function arguments.
+However, there are situations where <code class="docutils literal notranslate"><span class="pre">None</span></code> is a meaningful value distinct
+from the absence of a value. The <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> singleton allows you to
+differentiate between a user explicitly passing <code class="docutils literal notranslate"><span class="pre">None</span></code> (which might have a
+specific intended behavior) and not passing any value at all.</p></li>
+<li><p><strong>Default Behavior Control:</strong> By using a sentinel like <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code>, we can
+implement a default behavior that is only triggered when an argument is
+<strong>not</strong> provided. This is different from setting a default value in the
+function definition, as it allows the function to check if the user has
+explicitly set the argument, even if it’s set to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>Semantic Clarity:</strong> In complex APIs or libraries, using a sentinel value
+can provide clearer semantics. It makes the intention of the code more
+explicit, both for the developer and for users of the API. It indicates that
+thought has been given to the different states an argument can be in, and
+different behaviors are intentionally designed for each state.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">get_with_not_given</span><span class="p">(</span><span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">_NotGiven</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+<span class="linenos"> 2</span>    <span class="n">actual_timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span>
+<span class="linenos"> 3</span>    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">:</span>
+<span class="linenos"> 4</span>        <span class="n">actual_timeout</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="linenos"> 5</span>    <span class="k">elif</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 6</span>        <span class="n">actual_timeout</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+<span class="linenos"> 7</span>    <span class="k">else</span><span class="p">:</span>
+<span class="linenos"> 8</span>        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="linenos"> 9</span>        <span class="n">actual_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+<span class="linenos">10</span>    <span class="k">return</span> <span class="n">actual_timeout</span>
+<span class="linenos">11</span>
+<span class="linenos">12</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use default timeout: </span><span class="si">{</span><span class="n">get_with_not_given</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use 2 seconds timeout: </span><span class="si">{</span><span class="n">get_with_not_given</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">14</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use 3 seconds timeout: </span><span class="si">{</span><span class="n">get_with_not_given</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">15</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Use no timeout: </span><span class="si">{</span><span class="n">get_with_not_given</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Use default timeout: 2
+Use 2 seconds timeout: 2
+Use 3 seconds timeout: 3
+Use no timeout: inf
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="missing">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Missing</a><a class="headerlink" href="#missing" title="Permalink to this heading">#</a></h2>
+<p>Another common sentinel type is <code class="docutils literal notranslate"><span class="pre">MISSING</span></code>, which is used to represent a missing
+value in data structures or configurations (for e.g. in
+<a class="reference external" href="https://github.com/python/cpython/blob/b4dd31409cf6f23dcd8113d10f74a2e41b8cb1ed/Lib/dataclasses.py#L186">Dataclasses</a>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">_Missing</span><span class="p">:</span>
+<span class="linenos"> 2</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 3</span><span class="sd">    -   **Primary Use:** `MISSING` is more common in data structures,</span>
+<span class="linenos"> 4</span><span class="sd">        configurations, or APIs where you need to signify that a value hasn&#39;t been</span>
+<span class="linenos"> 5</span><span class="sd">        set or provided, and it&#39;s expected to be present or filled in later.</span>
+<span class="linenos"> 6</span><span class="sd">    -   **Semantics:** It indicates the absence of a value in a more passive sense,</span>
+<span class="linenos"> 7</span><span class="sd">        as in &quot;not yet provided&quot; or &quot;awaiting assignment.&quot;</span>
+<span class="linenos"> 8</span><span class="sd">    -   **Example:** In a configuration object, `None` might be used to disable an</span>
+<span class="linenos"> 9</span><span class="sd">        option, whereas `MISSING` would indicate that the user has not yet made a</span>
+<span class="linenos">10</span><span class="sd">        decision about that option.</span>
+<span class="linenos">11</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span>    <span class="n">_instance</span><span class="p">:</span> <span class="n">_Missing</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span>    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">_Missing</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_Missing</span><span class="p">:</span>  <span class="c1"># noqa: PYI034</span>
+<span class="linenos">16</span>        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">17</span>            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_Missing</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># noqa: UP008</span>
+<span class="linenos">18</span>        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+<span class="linenos">19</span>
+<span class="linenos">20</span>    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
+<span class="linenos">21</span>        <span class="k">return</span> <span class="kc">False</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span>    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;MISSING&quot;</span><span class="p">]:</span>
+<span class="linenos">24</span>        <span class="k">return</span> <span class="s2">&quot;MISSING&quot;</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span>    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">27</span>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span>    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">30</span>        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="n">MISSING</span> <span class="o">=</span> <span class="n">_Missing</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id1">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Purpose and Behavior</a><a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>The typical use case of <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> is often used in data structures or
+configurations to indicate that a value is missing or has not been set. It’s
+particularly useful in contexts like dictionaries, APIs, or data processing
+where you need to differentiate between a value that is intentionally set to
+<code class="docutils literal notranslate"><span class="pre">None</span></code> and a value that is not provided at all.</p>
+<p>For example, in a configuration dictionary where each key is supposed to map to
+a specific value, <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> could be used to represent keys that have not been
+assigned a value yet. It signals that the value is expected but not available,
+which is different from being intentionally set to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+<span class="linenos">2</span>    <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+<span class="linenos">3</span>    <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="n">MISSING</span><span class="p">,</span>  <span class="c1"># Indicates that the mode setting is yet to be configured</span>
+<span class="linenos">4</span><span class="p">}</span>
+<span class="linenos">5</span><span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;mode&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="n">MISSING</span><span class="p">:</span>
+<span class="linenos">6</span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mode is not yet configured&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Mode is not yet configured
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="notgiven-vs-missing">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> vs. <code class="docutils literal notranslate"><span class="pre">MISSING</span></code></a><a class="headerlink" href="#notgiven-vs-missing" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">NOTGIVEN</span></code> to explicitly indicate that no value has been provided for a
+parameter, especially when <code class="docutils literal notranslate"><span class="pre">None</span></code> is a valid input with a specific meaning.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> to represent an absent or unassigned value in data structures
+or configurations, where you need to differentiate between an unassigned
+state and a value explicitly set to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</section>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://peps.python.org/pep-0661/">PEP 661 – Sentinel Values</a></p></li>
+<li><p><a class="reference external" href="https://github.com/openai/openai-python/blob/7367256070a975921ed4430f55d17dc0a9319f21/src/openai/_types.py#L273">OpenAI’s <code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> Implementation</a></p></li>
+<li><p><a class="reference external" href="https://github.com/python/cpython/blob/b4dd31409cf6f23dcd8113d10f74a2e41b8cb1ed/Lib/dataclasses.py#L186">Dataclasses <code class="docutils literal notranslate"><span class="pre">MISSING</span></code> Implementation</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./computer_science/type_theory"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07-pep-3124-overloading.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Function Overloading</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../dsa/complexity_analysis/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Complexity Analysis</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notgiven"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-behavior">Purpose and Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-case-1-timeouts-in-http-requests">Use Case 1. Timeouts in HTTP Requests</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#missing">Missing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Purpose and Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notgiven-vs-missing"><code class="docutils literal notranslate"><span class="pre">NotGiven</span></code> vs. <code class="docutils literal notranslate"><span class="pre">MISSING</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
