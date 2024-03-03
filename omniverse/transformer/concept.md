@@ -28,12 +28,17 @@ kernelspec:
 
 from __future__ import annotations
 
+import os
+import random
+import warnings
+from abc import ABC, abstractmethod
+from typing import Iterable, Optional, Tuple, TypeVar
+
+import numpy as np
 import torch
 from IPython.display import display
-from typing import Iterable, TypeVar, Optional
-import numpy as np
-import random
-import os
+from rich.pretty import pprint
+from torch import nn
 
 def configure_deterministic_mode() -> None:
     """
@@ -699,6 +704,40 @@ gradient-based methods, and it is also _monotonic_, which means that the
 **attention weights** are preserved exactly in the order as the raw **attention
 scores**.
 
+```{prf:definition} Attention Scoring Function with Scaling and Softmax
+:label: decoder-concept-attention-scoring-function-with-scaling-softmax
+
+To this end, our final attention scoring function is:
+
+$$
+\alpha(\mathbf{Q}, \mathbf{K}) = \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right) \in \mathbb{R}^{T \times T}
+$$
+```
+
+#### Context Vector/Matrix
+
+Consequently, we complete the walkthrough of the scaled dot-product attention
+mechanism by calculating the context vector, which is the weighted sum of the
+value vectors based on the attention weights obtained from the softmax
+normalization.
+
+```{prf:definition} Context Vector/Matrix
+:label: decoder-concept-context-vector-matrix
+
+Given the attention weights $\alpha(\mathbf{Q}, \mathbf{K})$ and the value
+matrix $\mathbf{V}$, the context vector $\mathbf{C}$ is defined as the output
+of the scaled dot-product attention mechanism:
+
+$$
+\mathbf{C} := \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V} \in \mathbb{R}^{T \times d_v}
+$$
+
+where each row $\mathbf{c}_t$ of the context matrix $\mathbf{C}$ is the
+new embedding of the token at position $t$ in the sequence, containing
+not only the semantic and positional information of the token itself, but also
+contextual information from the other tokens in the sequence.
+```
+
 #### Numerical Stability and Gradient Saturation
 
 We can now revisit on the underlying reason why we scale down the dot product
@@ -758,6 +797,29 @@ print("Softmax without scaling:", softmax_large)
 print("Softmax with scaling:", softmax_scaled)
 ```
 
+As we can see, a vector with large inputs can lead to a _sharpening_ effect on
+the output of the softmax function, essentially causing the output to be too
+peaky, converging to 1 for the largest input and 0 for the rest (one-hot).
+
+```{prf:remark} Numerical Stability
+:label: decoder-concept-numerical-stability
+
+We know the importance of weight initialization in deep learning models,
+this is because it dictates the variance of the activations and gradients
+throughout the network. Without going into the theory, it is intuitive
+to think that having similar variance across all layer activations is
+a desirable property for numerical stability.
+By doing so, the model helps to ensure that the gradients are stable
+during backpropagation, avoiding the vanishing or exploding gradients problem
+and enabling effective learning.
+
+In the specific context of the attention mechanism, the variance of the dot
+products used to calculate attention scores is scaled down by the factor
+$\frac{1}{\sqrt{d_k}}$ to prevent softmax saturation. This allows each element
+to have a chance to influence the model's learning, rather than having a single
+element dominate because of the variance scaling with $d_k$.
+```
+
 #### Visualizing Variance of Dot Product
 
 If we set $d_k = 512$, and mean $0$ with unit variance, we will see in action
@@ -798,190 +860,182 @@ softmax_unscaled = torch.nn.functional.softmax(unscaled_dot_products, dim=-1)
 softmax_scaled = torch.nn.functional.softmax(scaled_dot_products, dim=-1)
 ```
 
-### Analogy
+#### Projections Lead to Dynamic Context Vectors
 
-Let's use the sentence "cat walks by the bank" to walk through the
-self-attention mechanism with analogies and to clarify how it works step by
-step. The sentence is tokenized into `["cat", "walks", "by", "the", "bank"]` and
-can be represented as an input sequence $\mathbf{x}$ of $T=5$ tokens, where we
-consider each word as a token.
+From the start, we mentioned _the attention mechanism describes a **weighted
+average** of (sequence) elements with the weights **dynamically** computed based
+on an input query and elements’ keys_. We can easily see the **weighted
+average** part through self-attention. The **dynamic** part comes from the fact
+that the context vectors are computed based on the input query and its
+corresponding keys. There should be no confusion that all the learnable weights
+in this self-attention mechanism are the weight matrices
+$\mathbf{W}^{\mathbf{Q}}$, $\mathbf{W}^{\mathbf{K}}$ and
+$\mathbf{W}^{\mathbf{V}}$, but the dynamic is really because the scoring
+function uses a dot product $\mathbf{Q}\mathbf{K}^{\top}$, which is **dynamic**
+because it is solely decided by the full input sequence $\mathbf{x}$. Unlike
+static embeddings, where the word "cat" will always have the same embedding
+vector, the context vector for the word "cat" will be different in different
+sentences because it now depends on the full input sequence $\mathbf{x}$.
 
-For each token, we have a vector representation of it, which is called the
-embedding of the token. We can represent the embedding of the $t$-th token as
-$\mathbf{z}_t \in \mathbb{R}^{1 \times D}$, where $D$ is the dimension of the
-embedding space. For example, the embedding of the token "cat" is represented as
-$\mathbf{z}_1$, and the embedding of the token "walks" is represented as
-$\mathbf{z}_2$, and so on.
+Consequently, the projection of the token embeddings into the query and key
+space is needed.
 
-The self-attention mechanism aims to project each of our embedding
-$\mathbf{z}_t$ in the input sequence into a new embedding vector, which we call
-the **context vector** $\mathbf{c}_t \in \mathbb{R}^{1 \times D}$, which still
-lies in the same dimension $D$, albeit going through some projections to
-different subspaces during the process, which we will explain later.
+#### Implementation
 
-This context vector $\mathbf{c}_t$ is a representation of the $t$-th token in
-the input sequence, which is a weighted sum of all the embeddings of the tokens
-in the input sequence. The weights are calculated by the attention mechanism.
+```{code-cell} ipython3
+class Attention(ABC, nn.Module):
+    def __init__(self, dropout: float = 0.0) -> None:
+        super().__init__()
+        self.dropout = nn.Dropout(p=dropout, inplace=False)
 
-More concretely, the initial embedding $\mathbf{z}_1$ of the token "cat" is only
-holding semantic information about the token "cat" itself. However, after going
-through the self-attention mechanism, the context vector $\mathbf{c}_1$ of the
-token "cat" is a weighted sum of all the embeddings of the tokens in the input
-sequence, which means that the context vector $\mathbf{c}_1$ of the token "cat"
-is holding information about the token "cat" itself as well as the information
-about the other tokens in the input sequence. It allows the token "cat" to have
-a better understanding of itself in the context of the whole sentence (i.e.
-should I, the token "cat", pay more attention to the token "bank" as a financial
-institution or a river bank and pay less attention to the token "by"?).
+    @abstractmethod
+    def forward(
+        self,
+        query: torch.Tensor,
+        key: torch.Tensor,
+        value: torch.Tensor,
+        mask: Optional[torch.BoolTensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        raise NotImplementedError("The `forward` method must be implemented by the subclass.")
 
-Through the self-attention process, we also project each token embedding
-$\mathbf{z}_t$ into a new context vector in different **subspaces**. This is
-achieved by using three different **linear projections**, which are represented
-by three different weight matrices $\mathbf{W}^{Q} \in \mathbb{R}^{D \times D}$,
-$\mathbf{W}^{K} \in \mathbb{R}^{D \times D}$, and
-$\mathbf{W}^{V} \in \mathbb{R}^{D \times D}$, where $D$ is the dimension of the
-embedding space. More concretely, we project the token embedding $\mathbf{z}_t$
-into three different subspaces to obtain the query vector $\mathbf{q}_t$, key
-vector $\mathbf{k}_t$, and value vector $\mathbf{v}_t$ for the $t$-th token in
-the input sequence - all of them resides in the same dimension $D$, but in
-different subspaces.
+
+class ScaledDotProductAttention(Attention):
+    def forward(
+        self,
+        query: torch.Tensor,
+        key: torch.Tensor,
+        value: torch.Tensor,
+        mask: torch.BoolTensor | None = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        # fmt: off
+        d_q               = query.size(dim=-1)
+
+        attention_scores  = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())
+        attention_scores  = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores
+
+        attention_weights = attention_scores.softmax(dim=-1)
+        attention_weights = self.dropout(attention_weights)
+
+        context_vector    = torch.matmul(attention_weights, value)
+        # fmt: on
+        return context_vector, attention_weights
+
+torch.manual_seed(42)
+
+B, H, L, D = 4, 8, 32, 512  # batch size, head, context length, embedding dimension
+Q = torch.rand(B, H, L, D)  # query
+K = torch.rand(B, H, L, D)  # key
+V = torch.rand(B, H, L, D)  # value
+
+# Scaled Dot-Product Attention
+attention = ScaledDotProductAttention(dropout=0.0)
+context_vector, attention_weights = attention(Q, K, V)
+
+assert context_vector.shape == (B, H, L, D)
+assert attention_weights.shape == (B, H, L, L)
+pprint(context_vector.shape)
+pprint(attention_weights.shape)
+
+# assert each row of attention_weights sums to 1
+# assert each element of attention_weights is between 0 and 1
+attention_weights_summed_over_sequences = attention_weights.sum(dim=-1)
+assert torch.allclose(
+    attention_weights_summed_over_sequences, torch.ones(B, H, L)
+), "The attention weights distribution induced by softmax should sum to 1."
+assert torch.all(
+    (0 <= attention_weights) & (attention_weights <= 1)
+), "All attention weights should be between 0 and 1."
+```
+
+#### Heatmap
+
+...
+
+## Multi-Head Attention
+
+We will keep this section brief as many of the concepts have been covered in the
+previous section. Furthermore, there are many good illustrations out there with
+more detailed explanations.
+
+### Definition
+
+```{prf:definition} Multi-Head Attention
+:label: decoder-concept-multi-head-attention
+
+```
+
+The multi-head attention is a function that maps a query matrix
+$\mathbf{Q} \in \mathbb{R}^{T \times d_q}$, a key matrix
+$\mathbf{K} \in \mathbb{R}^{T \times d_k}$, and a value matrix
+$\mathbf{V} \in \mathbb{R}^{T \times d_v}$ to an output matrix defined as
+$\text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) \in \mathbb{R}^{T \times d_v}$.
+The function is defined as:
 
 $$
-\mathbf{q}_t = \mathbf{z}_t \mathbf{W}^{Q} \in \mathbb{R}^{1 \times D}, \quad
-\mathbf{k}_t = \mathbf{z}_t \mathbf{W}^{K} \in \mathbb{R}^{1 \times D}, \quad
-\mathbf{v}_t = \mathbf{z}_t \mathbf{W}^{V} \in \mathbb{R}^{1 \times D}
+\begin{aligned}
+    \text{MultiHead}: \mathbb{R}^{T \times d_q} \times \mathbb{R}^{T \times d_k}
+    \times \mathbb{R}^{T \times d_v}       & \rightarrow \mathbb{R}^{T \times d_v}                          \\
+    (\mathbf{Q}, \mathbf{K}, \mathbf{V}) & \mapsto \text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V})
+\end{aligned}
 $$
 
-And since there are $T$ such tokens in the input sequence $\mathbf{x}$, we can
-stack all the query vectors $\mathbf{q}_t$, key vectors $\mathbf{k}_t$, and
-value vectors $\mathbf{v}_t$ into matrices
-$\mathbf{Q} \in \mathbb{R}^{T \times D}$,
-$\mathbf{K} \in \mathbb{R}^{T \times D}$, and
-$\mathbf{V} \in \mathbb{R}^{T
-\times D}$, where each row of the matrices
-represents the query, key, and value vectors for each token in the input
-sequence.
+where the explicit expression for the multi-head attention mechanism is:
 
 $$
-\mathbf{Q} = \begin{bmatrix} \mathbf{q}\_1 \\ \mathbf{q}\_2 \\ \vdots \\
-\mathbf{q}\_T \end{bmatrix} \in \mathbb{R}^{T \times D}, \quad \mathbf{K} =
-\begin{bmatrix} \mathbf{k}\_1 \\ \mathbf{k}\_2 \\ \vdots \\ \mathbf{k}\_T
-\end{bmatrix} \in \mathbb{R}^{T \times D}, \quad \mathbf{V} = \begin{bmatrix}
-\mathbf{v}\_1 \\ \mathbf{v}\_2 \\ \vdots \\ \mathbf{v}\_T \end{bmatrix} \in
-\mathbb{R}^{T \times D}
+\text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{Concat}(\mathbf{C}_1, \mathbf{C}_2, \ldots, \mathbf{C}_H)\mathbf{W}^O
 $$
 
-The reason is a few folds, without these $3$ different linear projections, we
-would not be able to calculate the attention scores between the query and key
-vectors, and we would not be able to calculate the weighted sum of the value
-vectors. Also, by projecting the token embeddings into different subspaces, we
-are able to capture different aspects of the token embeddings, which allows the
-self-attention mechanism to capture more complex relationships between the
-tokens in the input sequence.
+where:
 
-### Analogy 1. A Generic Example
+-   $H$ is the number of attention heads, which is a hyperparameter of the
+    multi-head attention mechanism.
+-   $\mathbf{W}_{h}^{\mathbf{Q}} \in \mathbb{R}^{D \times d_q}$: The learnable
+    query weight matrix for the $h$-th head.
+    -   Note that $d_q = \frac{D}{H}$, where $D$ is the hidden dimension of the
+        token embeddings.
+-   $\mathbf{W}_{h}^{\mathbf{K}} \in \mathbb{R}^{D \times d_k}$: The key weight
+    matrix for the $h$-th head.
+    -   Note that $d_k = \frac{D}{H}$, where $D$ is the hidden dimension of the
+        token embeddings.
+-   $\mathbf{W}_{h}^{\mathbf{V}} \in \mathbb{R}^{D \times d_v}$: The value
+    weight matrix for the $h$-th head.
+    -   Note that $d_v = \frac{D}{H}$, where $D$ is the hidden dimension of the
+        token embeddings.
+-   $\mathbf{C}_h = \text{Attention}(\mathbf{Q}\mathbf{W}^Q_h, \mathbf{K}\mathbf{W}^K_h, \mathbf{V}\mathbf{W}^V_h) \in \mathbb{R}^{T \times d_v}$
+    for $h = 1, 2, \ldots, H$ is the context matrix obtained from the $h$-th
+    head of the multi-head attention mechanism.
+    -   We also often denote $\mathbf{C}_h$ as $\text{head}_h$.
+-   $\text{Concat}(\cdot)$ is the concatenation operation that concatenates the
+    context matrices $\mathbf{C}_1, \mathbf{C}_2, \ldots, \mathbf{C}_H$ along
+    the feature dimension, resulting in a matrix of context vectors of shape
+    $\mathbb{R}^{T \times H \cdot d_v} = \mathbb{R}^{T \times D}$.
+-   $\mathbf{W}^O \in \mathbb{R}^{d_v \times H \cdot d_v}$ is a learnable weight
+    matrix that projects the concatenated context vectors back to the original
+    dimensionality $D$.
 
-**Setting the Scene (Embedding the Sentence):** Imagine each word in the
-sentence is a person at a party (our tokens). They start by telling a basic fact
-about themselves (their initial embedding with semantic meaning).
+### ???
 
-**The Roles:**
+```
+H = num_heads = 1
+d_q = d_k = d_v = D // H
+pprint(d_q)
 
--   $\mathbf{Q}$ **(Seekers)**: Each person (word) is curious about the stories
-    (contexts) of others at the party. They have their own perspective or
-    question ($\mathbf{Q}$ vector).
--   $\mathbf{K}$ **(Holders)**: At the same time, each person has a name tag
-    with keywords that describe their story ($\mathbf{K}$ vector).
--   $\mathbf{V}$ **(Retrievers)**: They also hold a bag of their experiences
-    ($\mathbf{V}$ vector), ready to share.
+# W_q = nn.Linear(D, d_q)
+W_q = torch.randn(D, d_q, requires_grad=True)
+pprint(W_q)
 
-**Transformations (Applying W Matrices):** We give each person a set of glasses
-(the matrices $W_Q, W_K, W_V$) that changes how they see the world (the space
-they project to).
+Q = Z @ W_q
 
--   With $W_Q$ glasses, they focus on what they want to know from others.
--   With $W_K$ glasses, they highlight their name tag details, making some
-    features stand out more.
--   With $W_V$ glasses, they prepare to share the contents of their bag
-    effectively.
+W_k = torch.randn(D, d_k, requires_grad=True)
+K = Z @ W_k
 
-**Attention (Calculating $Q @ K^T$):** Now, each person looks around the room
-(sequence) with their $W_Q$ glasses and sees the highlighted name tags (after
-$W_K$ transformation) of everyone else. They measure how similar their question
-is to the others' name tags—this is the dot product $Q @ K^T$.
+W_v = torch.randn(D, d_v, requires_grad=True)
+V = Z @ W_v
 
-For "cat," let’s say it’s curious about the notion of "walks" and "bank." It
-will measure the similarity (attention scores) between its curiosity and the
-name tags of "walks," "by," "the," "bank."
-
-**Normalization (Softmax):** After measuring, "cat" decides how much to focus on
-each story—this is softmax. Some stories are very relevant ("walks"), some
-moderately ("by," "the"), and some might be highly relevant depending on context
-("bank" — is it a river bank or a financial institution?).
-
-**Retrieval (Applying Attention to V):** Now "cat" decides to listen to the
-stories in proportion to its focus. It takes pieces (weighted by attention
-scores) from each person's experience bag (V vectors) and combines them into a
-richer, contextual understanding of itself in the sentence. This combination
-gives us the new representation of "cat," informed by the entire context of the
-sentence.
-
-In essence:
-
--   **Q (Query):** What does "cat" want to know?
--   **K (Key):** Who has relevant information to "cat"’s curiosity?
--   **V (Value):** What stories does "cat" gather from others, and how much does
-    it take from each to understand its role in the sentence?
-
-The output of self-attention for "cat" now encapsulates not just "cat" but its
-relationship and relevance to "walks," "by," "the," "bank" in a way that no
-single word could convey alone. This output then becomes the input to the next
-layer, where the process can repeat, enabling the model to develop an even more
-nuanced understanding.
-
-### Analogy 2. A More Concrete Example
-
-1. **Attention Scores**: Once you have your $ Q, K, V $ matrices (which are all
-   $ T \times D $ in this simplified example), you calculate the dot product
-   between queries $ Q $ and keys $ K
-   $. This is essentially
-   measuring how each word in the sentence relates to every other word.
-   Mathematically, you'll get a matrix of shape $ T \times T $, where each
-   element $ (i, j) $ represents the "affinity" between the $ i^{th} $ and
-   $j^{th}$
-   words.
-
-    **Intuition**: Imagine you're trying to understand the role of the word
-    "cat" in the sentence. You calculate its dot product with every other word
-    to get a set of scores. These scores tell you how much each word in the
-    sentence should be "attended to" when you're focusing on "cat."
-
-2. **Scaling and Softmax**: The attention scores are scaled down by $ \sqrt{D} $
-   and then a softmax is applied. This turns the scores into probabilities
-   (attention weights) and ensures that they sum to 1 for each word you're
-   focusing on.
-
-    **Intuition**: After scaling and softmax, you get a set of weights that tell
-    you how to create a weighted sum of all the words in the sentence when
-    you're focusing on a particular word like "cat."
-
-3. **Context Vector**: Finally, these attention weights are used to create a
-   weighted sum of the value vectors $ V $. This weighted sum is your context
-   vector.
-
-    **Intuition**: When focusing on the word "cat," you look at the attention
-    weights to decide how much of each other word you should include in your
-    understanding of "cat." You then sum up these weighted words to get a new
-    vector, or "context," for the word "cat."
-
-4. **Output**: The output will be another $ T \times D $ matrix, where each row
-   is the new "contextualized" representation of each word in your sentence.
-
-In your mind, you can picture it as a series of transformations: starting from
-the initial $T \times D$ matrix, through an $ T \times T $ attention score
-matrix and attention weights, and back to a new $ T \times D $ context matrix.
-Each step refines the information content of your sentence, focusing on
-different relationships between the words.
+pprint(Q)
+pprint(K)
+pprint(V)
+```
 
 ## Casual Attention/Masked Self-Attention
 
@@ -1033,74 +1087,5 @@ sequence.
 -   https://keras.io/api/keras_nlp/metrics/perplexity/
 -   https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html
 -   https://huggingface.co/docs/transformers/perplexity
-
-## All the Whys?
-
-### Can you explain the Subspaces projection in Attention Mechanism?
-
-### Why Softmax in Attention Mechanism?
-
-See <https://www.youtube.com/watch?v=UPtG_38Oq8o> around 16 min.
-
-### Why Scale in Attention Mechanism?
-
--   <https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html>
-
-Let's look at the notes:
-
--   <https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html>
-
-1. **Scaling Factor Introduction**: The author introduces the concept of a
-   scaling factor $\frac{1}{\sqrt{d_k}}$, which is applied during the attention
-   mechanism in transformers. This scaling factor is used to maintain an
-   appropriate variance of the attention scores after initialization.
-
-2. **Initialization Goal**: The goal of initialization is to have each layer of
-   the neural network maintain equal variance throughout. This is to ensure that
-   the gradients are neither vanishing nor exploding as they propagate through
-   the layers, which is crucial for effective learning.
-
-3. **Variance in Dot Products**: The author then explains that when taking a dot
-   product of two vectors, both sampled from normal distributions with variance
-   $\sigma^2$, the resulting scalar will have a variance that is $d_k$ times
-   higher, specifically $\sigma^4 \cdot d_k$. Here, $d_k$ represents the
-   dimension of the key/query vectors in the attention mechanism, and $q_i$ and
-   $k_i$ are the components of the query and key vectors respectively.
-
-4. **Scaling Down the Variance**: Without scaling down the variance of the dot
-   product (which is $\sigma^4 \cdot d_k$), the softmax function, which is
-   applied to the attention scores to obtain the probabilities, would become
-   saturated. This means that one logit (the vector of raw (non-normalized)
-   predictions that a classification model generates, which is then passed to a
-   normalization function) would have a very high score close to 1, while the
-   rest would have scores close to 0. This saturation makes it difficult for the
-   network to learn because the gradients would be close to zero for all
-   elements except the one with the highest score.
-
-5. **Maintaining Variance Close to 1**: The author notes that despite the
-   multiplication by $\sigma^4$, the practice of keeping the original variance
-   $\sigma^2$ close to 1 means that the scaling factor does not introduce a
-   significant issue. By multiplying the dot product by $\frac{1}{\sqrt{d_k}}$,
-   the variance of the product is effectively scaled back to the original level
-   of $\sigma^2$, preventing the softmax function from saturating and allowing
-   the model to learn effectively.
-
-The gist is:
-
-It is important to maintain equal variance across all layers in a neural
-network, particularly in the context of the transformer model's attention
-mechanism. By doing so, the model helps to ensure that the gradients are stable
-during backpropagation, avoiding the vanishing or exploding gradients problem
-and enabling effective learning.
-
-In the specific context of the attention mechanism, the variance of the dot
-products used to calculate attention scores is scaled down by the factor
-$\frac{1}{\sqrt{d_k}}$ to prevent softmax saturation. This allows each element
-to have a chance to influence the model's learning, rather than having a single
-element dominate because of the variance scaling with $d_k$. This practice is
-crucial for the learning process because it ensures the gradients are meaningful
-and not diminished to the point where the model cannot learn from the data.
-
-### Why do need Positional Encoding? What happens if we don't use it?
 
 ## References and Further Readings
