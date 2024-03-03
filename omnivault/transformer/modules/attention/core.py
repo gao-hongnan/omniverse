@@ -239,7 +239,7 @@ class ScaledDotProductAttention(Attention):
             of the `value` vectors, representing the information to be attended to.
             The attention weights represent the attention probabilities.
 
-            - Context Vectors shape:   `(B, T, d_k)` or `(B, H, T, d_k)` or `(B, H, L, d_k)` if in pure self-attention (GPT)
+            - Context Vectors shape:   `(B, T, d_v)`
             - Attention Weights shape: `(B, T, S)` or `(B, H, T, S)` or `(B, H, L, L)` if in pure self-attention (GPT)
         """
         # fmt: off
