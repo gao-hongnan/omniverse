@@ -151,7 +151,7 @@ In what follows, we take a look how the authors formalized the framework. We
 start by defining certain definitions and notations that will be used throughout
 this article.
 
-## Framework
+## Autoregressive Self-Supervised Learning Paradigm
 
 Let $\mathcal{D}$ be the true but unknown distribution of the natural language
 space. In the context of unsupervised learning with self-supervision, such as
@@ -191,10 +191,10 @@ $$
 
 We can do this because natural language are _inherently ordered_. Such
 decomposition allows for _tractable sampling_ from and _estimation_ of the
-distribution {cite}`radford2019language`
-$\mathbb{P}(\mathbf{x} ; \boldsymbol{\Theta})$ as well as any conditionals in
-the form of
-$\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-1} ; \boldsymbol{\Theta})$.
+distribution $\mathbb{P}(\mathbf{x} ; \boldsymbol{\Theta})$ as well as any
+conditionals in the form of
+$\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-1} ; \boldsymbol{\Theta})$
+{cite}`radford2019language`.
 
 To this end, consider a corpus $\mathcal{S}$ with $N$ sequences
 $\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}$ that are
@@ -202,7 +202,9 @@ sampled $\text{i.i.d.}$ from the distribution $\mathcal{D}$ and let GPT model
 $\mathcal{G}$ be an _autoregressive_ and _self-supervised learning_ model that
 is trained to maximize the likelihood of the sequences in the corpus
 $\mathcal{S}$, which is defined as the objective function
-$\mathcal{L}\left(\mathcal{S} ; \boldsymbol{\Theta}\right)$.
+$\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$ where
+$\hat{\boldsymbol{\Theta}}$ is the estimated parameter space that approximates
+the true parameter space $\boldsymbol{\Theta}$.
 
 ### Autoregressive Self-Supervised Learning
 
@@ -355,7 +357,7 @@ $\hat{\boldsymbol{\Theta}}$ up to a certain order (usually the first for SGD
 variants and second order for Newton).
 
 What this implies is that the derivative of the function with respect to the
-parameter space $\hat{\boldsymbol{\Theta}}$
+parameter space $\hat{\boldsymbol{\Theta}}$, denoted as
 $\nabla_{\hat{\boldsymbol{\Theta}}} f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is
 continuous. Loosely, you can think of that a small perturbation in the parameter
 space $\hat{\boldsymbol{\Theta}}$ will result in a small change in the output of
@@ -475,6 +477,11 @@ $$
 \end{aligned}
 $$
 
+To read more about perplexity, one can find more details in the following:
+
+-   [Perplexity - Wikipedia](https://en.wikipedia.org/wiki/Perplexity)
+-   [Perplexity of fixed-length models](https://huggingface.co/docs/transformers/en/perplexity)
+
 #### Loss Function
 
 Given the definitions of the conditional entropy and perplexity, we can define
@@ -520,7 +527,7 @@ on perplexity. This cap on perplexity offers a valuable benchmark for evaluating
 and comparing different models, establishing a theoretical maximum for model
 performance based on the size of the vocabulary {cite}`math11112451`.
 
-### GPT Autoregressive Self-Supervised Learning Model
+### GPT is a Autoregressive Self-Supervised Learning Model
 
 Finally, we can piece together the autoregressive self-supervised learning
 framework to define the GPT model $\mathcal{G}$ as a model that is trained to
@@ -531,6 +538,52 @@ $\hat{\boldsymbol{\Theta}}$ is the estimated parameter space that approximates
 the true parameter space $\boldsymbol{\Theta}$, and $\mathcal{S}$ is the corpus
 of sequences that are sampled $\text{i.i.d.}$ from the distribution
 $\mathcal{D}$.
+
+In pseudo-code, the GPT model $\mathcal{G}$ consists of decoder blocks, each
+block consisting of a multi-head self-attention mechanism and a position-wise
+feed-forward neural network, with a head layer to produce a probability
+distribution over the vocabulary $\mathcal{V}$ of tokens.
+
+$$
+\begin{aligned}
+h_0 &= \mathcal{S} \cdot \mathbf{W}_{e}+ \mathbf{W}_{p} \\
+h_{\ell} &= \text{DecoderBlock}(h_{\ell-1}) \quad \text{for} \quad \ell = 1, 2, \ldots, L \\
+\mathbb{P}(x_t \mid C_{\tau}(\mathbf{x}, t) ; \boldsymbol{\Theta}) &= \text{softmax}(h_{L} \cdot \mathbf{W}_{e}^{\top})
+\end{aligned}
+$$
+
+where:
+
+-   $\mathbf{W}_{e}$ is the embedding matrix that maps the token to a vector
+    representation in a continuous vector space,
+-   $\mathbf{W}_{p}$ is the positional encoding matrix that encodes the position
+    of the token in the sequence,
+-   $\text{DecoderBlock}$ is a function that applies a multi-head self-attention
+    mechanism and a position-wise feed-forward neural network to the input
+    sequence,
+-   $\mathbf{W}_{e}^{\top}$ is the transpose of the embedding matrix that maps
+    the vector representation of the token back to the vocabulary space.
+
+Note that it is only a pseudo-code because notations like $\mathbf{W}_{e}$ are
+used to denote both the token embedding matrix in $h_0$ and the transformed
+contextual embedding matrix in the head/linear/last layer. The actual
+implementation of the GPT model is more complex, and we will take a look at it
+in later sections.
+
+### Supervised Fine-Tuning
+
+Though GPT-2 has demonstrated that it can be used directly on a wide range of
+NLU without the need for supervised fine-tuning, it is worth taking a detour
+back to how GPT-1 was fine-tuned immediately after the pretraining phase.
+
+In the paper _Improving Language Understanding by Generative Pre-Training_,
+after the pretrained (foundational) model was trained with the objective
+function
+$\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$, we
+would then fine-tune the model on a specific task by replacing the final layer
+of the model with a task-specific layer, and then train the model on the
+specific task with the task-specific layer. The authors showed that this
+approach yielded state-of-the-art results on a wide range of NLU tasks.
 
 ## Self-Attention
 
@@ -561,11 +614,8 @@ the sequence, we use a generic embedding function $h_{\text{emb}}$ to map each
 token to a vector representation in a continuous vector space:
 
 $$
-
-\begin{aligned} h\_{\text{emb}} : \mathcal{V} &\rightarrow \mathbb{R}^{D} \\ x_t
-&\mapsto \mathbf{z}\_t \end{aligned}
-
-
+\begin{aligned} h_{\text{emb}} : \mathcal{V} &\rightarrow \mathbb{R}^{D} \\ x_t
+&\mapsto \mathbf{z}_t \end{aligned}
 $$
 
 where $\mathcal{V}$ is the vocabulary of tokens (discrete space $\mathbb{Z}$),
@@ -603,12 +653,9 @@ a database of $m$ tuples of _keys_ and _values_, as well as a query
 $\mathbf{q}$. Then we can define the attention over $\mathcal{D}$ as
 
 $$
-
 \operatorname{Attention}(\mathbf{q}, \mathcal{D})
-\stackrel{\operatorname{def}}{=} \sum\_{t=1}^T \alpha\left(\mathbf{q},
+\stackrel{\operatorname{def}}{=} \sum_{t=1}^T \alpha\left(\mathbf{q},
 \mathbf{k}\_t\right) \mathbf{v}\_t
-
-
 $$
 
 where
@@ -669,12 +716,10 @@ Using the attention formula:
 
 
 $$
-
 \begin{aligned} \operatorname{Attention}(\mathbf{q}, \mathcal{D}) &=
-\sum\_{t=1}^3 \alpha(\mathbf{q}, \mathbf{k}\_t) \mathbf{v}\_t \\ &= (1 \cdot
+\sum_{t=1}^3 \alpha(\mathbf{q}, \mathbf{k}\_t) \mathbf{v}\_t \\ &= (1 \cdot
 [0.1, 0.9]) + (0 \cdot [0.4, 0.6]) + (0 \cdot [0.7, 0.3]) \\ &= [0.1, 0.9]
 \end{aligned}
-
 $$
 
 This calculation shows that because the attention weights for $\mathbf{k}_2$ and
@@ -704,11 +749,8 @@ the attention pooling will form a linear combination of the query vector
 $\mathbf{q}_1$ with every other key vector $\mathbf{k}_t$ in the sequence,
 
 $$
-
 \alpha(\mathbf{q}\_1, \mathbf{k}\_t) \in \mathbb{R} = \mathbf{q}\_1 \cdot
 \mathbf{k}\_t \quad \text{for } t \in \{1, 2, \ldots, T\}
-
-
 $$
 
 and each $\alpha(\mathbf{q}_1, \mathbf{k}_t)$ will indicate how much attention
@@ -721,11 +763,8 @@ create a weighted sum of the value vectors $\mathbf{v}_t$ to form the new
 representation of the token "cat".
 
 $$
-
 \operatorname{Attention}(\mathbf{q}_1, \mathbf{k}\_t, \mathbf{v}\_t) =
 \sum_{t=1}^T \alpha(\mathbf{q}\_1, \mathbf{k}\_t) \mathbf{v}\_t
-
-
 $$
 
 Consequently, the first token must also emit a value vector $\mathbf{v}_1$. You
@@ -908,11 +947,9 @@ the output matrix as follows:
 
 
 $$
-
 \text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) =
 \text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
 \in \mathbb{R}^{T \times d_v}
-
 $$
 
 where:
@@ -1098,10 +1135,8 @@ can be calculated as follows for a single pair of components:
 
 
 $$
-
 \mathbb{V}[q_i k_{ti}] = \mathbb{E}[(q_i k_{ti})^2] - (\mathbb{E}[q_i
 k_{ti}])^2.
-
 $$
 
 Given that $q_i$ and $k_{ti}$ are independent and both have mean 0:
@@ -1112,10 +1147,8 @@ The expectation of the square of the product is:
 
 
 $$
-
 \mathbb{E}[(q_i k_{ti})^2] = \mathbb{E}[q_i^2] \cdot \mathbb{E}[k_{ti}^2] =
 \sigma^2 \cdot \sigma^2 = \sigma^4.
-
 $$
 
 Since $\mathbb{E}[q_i k_{ti}] = 0$, the variance of the product $q_i k_{ti}$ is
@@ -1126,10 +1159,8 @@ of the sum of independent random variables is the sum of their variances:
 
 
 $$
-
 \mathbb{V}[\mathbf{q} \cdot \mathbf{k}_t] = \sum*{i=1}^{d_k} \mathbb{V}[q_i
 k*{ti}] = d_k \cdot \sigma^4.
-
 $$
 ```
 
@@ -1153,10 +1184,8 @@ To this end, the updated scoring function is:
 
 
 $$
-
 \alpha(\mathbf{Q}, \mathbf{K}) = \frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}
 \in \mathbb{R}^{T \times T}
-
 $$
 ```
 
@@ -1189,7 +1218,7 @@ normalization function, which is defined as:
 $$
 
 \text{softmax}(\alpha(\mathbf{Q}, \mathbf{K})) = \frac{\exp(\alpha(\mathbf{Q},
-\mathbf{K}))}{\sum\_{t=1}^T \exp(\alpha(\mathbf{Q}, \mathbf{k}\_t))} \in
+\mathbf{K}))}{\sum_{t=1}^T \exp(\alpha(\mathbf{Q}, \mathbf{k}\_t))} \in
 \mathbb{R}^{T \times T}
 
 $$
@@ -1479,6 +1508,7 @@ more detailed explanations.
 ```{prf:definition} Multi-Head Attention
 :label: decoder-concept-multi-head-attention
 
+abc
 ```
 
 The multi-head attention is a function that maps a query matrix
@@ -1489,23 +1519,17 @@ $\text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) \in \mathbb{R}^{T \times d
 The function is defined as:
 
 $$
-
 \begin{aligned} \text{MultiHead}: \mathbb{R}^{T \times d_q} \times \mathbb{R}^{T
 \times d_k} \times \mathbb{R}^{T \times d_v} & \rightarrow \mathbb{R}^{T \times
 d_v} \\ (\mathbf{Q}, \mathbf{K}, \mathbf{V}) & \mapsto
 \text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) \end{aligned}
-
-
 $$
 
 where the explicit expression for the multi-head attention mechanism is:
 
 $$
-
 \text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) =
 \text{Concat}(\mathbf{C}\_1, \mathbf{C}\_2, \ldots, \mathbf{C}\_H)\mathbf{W}^O
-
-
 $$
 
 where:
