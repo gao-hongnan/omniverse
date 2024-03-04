@@ -7,6 +7,7 @@
 
 -   [Omniverse](#omniverse)
     -   [Blogs](#blogs)
+    -   [Implementation of Decoder](#implementation-of-decoder)
     -   [Building and Running the Jupyter Book Docker Image](#building-and-running-the-jupyter-book-docker-image)
         -   [Building the Docker Image](#building-the-docker-image)
         -   [Running the Docker Container](#running-the-docker-container)
@@ -30,6 +31,10 @@ knowledge! 🚀
 
 -   https://gao-hongnan.github.io/gaohn-galaxy
 -   https://www.gaohongnan.com (migrating from the previous blog)
+
+## Implementation of Decoder
+
+-   https://github.com/gao-hongnan/omniverse/tree/main/omnivault/transformer
 
 ## Building and Running the Jupyter Book Docker Image
 
