@@ -24,5 +24,6 @@ class AddNorm(nn.Module):
     def forward(self, x: torch.Tensor, sublayer: Callable[[torch.Tensor], torch.Tensor]) -> torch.Tensor:
         """G(F(x) + x) where G = layer norm and F = sublayer"""
         # TODO: to check if this is correct and use my own custom layer.
+        # FIXME: GPT-2 should be x + self.dropout(sublayer(self.layer_norm(x)))
         output: torch.Tensor = self.layer_norm(x + sublayer(self.dropout(x)))
         return output
