@@ -725,11 +725,20 @@ sequence.
 
 ## References and Further Readings
 
+-   https://developers.google.com/machine-learning/gan/generative
+-   https://probmlcourse.github.io/csc412/lectures/week_2/
+-   speech and recognition chapter 3 important
+-   https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning
+-   https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto
+-   https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models
+-   https://d2l.ai/chapter_recurrent-neural-networks/language-model.html
+-   https://stanford-cs324.github.io/winter2022/lectures/introduction/
+-   https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php
+-   https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di
+
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
     statistical learning framework, but the general idea is there.
 
-[^2]: https://d2l.ai/chapter_recurrent-neural-networks/sequence.html
-
-    $$
-    $$
+[^2]:
+    [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
