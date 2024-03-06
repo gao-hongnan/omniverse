@@ -6,6 +6,8 @@
 [![Continuous Integration Checks on Omnivault.](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml/badge.svg)](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml)
 
 -   [Omniverse](#omniverse)
+    -   [Blogs](#blogs)
+    -   [Implementation of Decoder](#implementation-of-decoder)
     -   [Building and Running the Jupyter Book Docker Image](#building-and-running-the-jupyter-book-docker-image)
         -   [Building the Docker Image](#building-the-docker-image)
         -   [Running the Docker Container](#running-the-docker-container)
@@ -23,12 +25,16 @@
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
 science, math, and software engineering explorations. Dive into the universe of
-knowledge! 🚀 To create a detailed Markdown section in the `README.md` file for
-instructing users on how to build and run the Dockerfile
-`jupyterbook.Dockerfile`, you should include steps that cover prerequisites,
-building the Docker image, tagging it with the Git commit ID, and running the
-container. Additionally, to avoid hardcoding variables in the Docker build/run
-commands, you can use shell variables and command substitutions.
+knowledge! 🚀
+
+## Blogs
+
+-   https://gao-hongnan.github.io/gaohn-galaxy
+-   https://www.gaohongnan.com (migrating from the previous blog)
+
+## Implementation of Decoder
+
+-   https://github.com/gao-hongnan/omniverse/tree/main/omnivault/transformer
 
 ## Building and Running the Jupyter Book Docker Image
 
