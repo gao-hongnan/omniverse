@@ -415,40 +415,16 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-of-attention-mechanism">Intuition of Attention Mechanism</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding-and-vector-representation-process">Token Embedding and Vector Representation Process</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#queries-keys-and-values">Queries, Keys, and Values</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#database-analogy">Database Analogy</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#queries-keys-and-values-in-attention-mechanism">Queries, Keys, and Values in Attention Mechanism</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#context-vector-matrix">Context Vector/Matrix</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Definition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">???</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">???</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#casual-attention-masked-self-attention">Casual Attention/Masked Self-Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">Perplexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Perplexity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -465,76 +441,49 @@ document.write(`
 <h1>Concept<a class="headerlink" href="#concept" title="Permalink to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#introduction" id="id22">Introduction</a></p></li>
-<li><p><a class="reference internal" href="#gpt-1-and-gpt-2" id="id23">GPT-1 and GPT-2</a></p></li>
-<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning-paradigm" id="id24">Autoregressive Self-Supervised Learning Paradigm</a></p>
+<li><p><a class="reference internal" href="#introduction" id="id14">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#gpt-1-and-gpt-2" id="id15">GPT-1 and GPT-2</a></p></li>
+<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning-paradigm" id="id16">Autoregressive Self-Supervised Learning Paradigm</a></p>
 <ul>
-<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning" id="id25">Autoregressive Self-Supervised Learning</a></p></li>
-<li><p><a class="reference internal" href="#estimation-of-the-conditional-probability-distribution" id="id26">Estimation of the Conditional Probability Distribution</a></p></li>
-<li><p><a class="reference internal" href="#initial-condition-of-conditional-probability-distribution" id="id27">Initial Condition of Conditional Probability Distribution</a></p></li>
-<li><p><a class="reference internal" href="#markov-assumption" id="id28">Markov Assumption</a></p></li>
-<li><p><a class="reference internal" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" id="id29">The Estimator Function is Smooth with Respect to the Parameters</a></p></li>
-<li><p><a class="reference internal" href="#context-length-and-token-context-window" id="id30">Context Length and Token Context Window</a></p></li>
-<li><p><a class="reference internal" href="#conditional-entropy-and-perplexity-as-loss-function" id="id31">Conditional Entropy and Perplexity as Loss Function</a></p>
+<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning" id="id17">Autoregressive Self-Supervised Learning</a></p></li>
+<li><p><a class="reference internal" href="#estimation-of-the-conditional-probability-distribution" id="id18">Estimation of the Conditional Probability Distribution</a></p></li>
+<li><p><a class="reference internal" href="#initial-condition-of-conditional-probability-distribution" id="id19">Initial Condition of Conditional Probability Distribution</a></p></li>
+<li><p><a class="reference internal" href="#markov-assumption" id="id20">Markov Assumption</a></p></li>
+<li><p><a class="reference internal" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" id="id21">The Estimator Function is Smooth with Respect to the Parameters</a></p></li>
+<li><p><a class="reference internal" href="#context-length-and-token-context-window" id="id22">Context Length and Token Context Window</a></p></li>
+<li><p><a class="reference internal" href="#conditional-entropy-and-perplexity-as-loss-function" id="id23">Conditional Entropy and Perplexity as Loss Function</a></p>
 <ul>
-<li><p><a class="reference internal" href="#conditional-entropy" id="id32">Conditional Entropy</a></p></li>
-<li><p><a class="reference internal" href="#perplexity" id="id33">Perplexity</a></p></li>
-<li><p><a class="reference internal" href="#loss-function" id="id34">Loss Function</a></p></li>
-<li><p><a class="reference internal" href="#convergence" id="id35">Convergence</a></p></li>
+<li><p><a class="reference internal" href="#conditional-entropy" id="id24">Conditional Entropy</a></p></li>
+<li><p><a class="reference internal" href="#perplexity" id="id25">Perplexity</a></p></li>
+<li><p><a class="reference internal" href="#loss-function" id="id26">Loss Function</a></p></li>
+<li><p><a class="reference internal" href="#convergence" id="id27">Convergence</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#gpt-is-a-autoregressive-self-supervised-learning-model" id="id36">GPT is a Autoregressive Self-Supervised Learning Model</a></p></li>
-<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id37">Supervised Fine-Tuning</a></p></li>
+<li><p><a class="reference internal" href="#gpt-is-a-autoregressive-self-supervised-learning-model" id="id28">GPT is a Autoregressive Self-Supervised Learning Model</a></p></li>
+<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id29">Supervised Fine-Tuning</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#self-attention" id="id38">Self-Attention</a></p>
+<li><p><a class="reference internal" href="#multi-head-attention" id="id30">Multi-Head Attention</a></p>
 <ul>
-<li><p><a class="reference internal" href="#intuition-of-attention-mechanism" id="id39">Intuition of Attention Mechanism</a></p></li>
-<li><p><a class="reference internal" href="#token-embedding-and-vector-representation-process" id="id40">Token Embedding and Vector Representation Process</a></p></li>
-<li><p><a class="reference internal" href="#queries-keys-and-values" id="id41">Queries, Keys, and Values</a></p>
+<li><p><a class="reference internal" href="#definition" id="id31">Definition</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id32">???</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#casual-attention-masked-self-attention" id="id33">Casual Attention/Masked Self-Attention</a></p>
 <ul>
-<li><p><a class="reference internal" href="#database-analogy" id="id42">Database Analogy</a></p></li>
-<li><p><a class="reference internal" href="#queries-keys-and-values-in-attention-mechanism" id="id43">Queries, Keys, and Values in Attention Mechanism</a></p></li>
+<li><p><a class="reference internal" href="#intuition" id="id34">Intuition</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#linear-projections" id="id44">Linear Projections</a></p></li>
-<li><p><a class="reference internal" href="#scaled-dot-product-attention" id="id45">Scaled Dot-Product Attention</a></p>
-<ul>
-<li><p><a class="reference internal" href="#definition" id="id46">Definition</a></p></li>
-<li><p><a class="reference internal" href="#attention-scoring-function" id="id47">Attention Scoring Function</a></p></li>
-<li><p><a class="reference internal" href="#scaling-down-the-dot-product-of-query-and-key-vectors" id="id48">Scaling Down the Dot Product of Query and Key Vectors</a></p></li>
-<li><p><a class="reference internal" href="#softmax" id="id49">Softmax</a></p></li>
-<li><p><a class="reference internal" href="#context-vector-matrix" id="id50">Context Vector/Matrix</a></p></li>
-<li><p><a class="reference internal" href="#numerical-stability-and-gradient-saturation" id="id51">Numerical Stability and Gradient Saturation</a></p></li>
-<li><p><a class="reference internal" href="#visualizing-variance-of-dot-product" id="id52">Visualizing Variance of Dot Product</a></p></li>
-<li><p><a class="reference internal" href="#projections-lead-to-dynamic-context-vectors" id="id53">Projections Lead to Dynamic Context Vectors</a></p></li>
-<li><p><a class="reference internal" href="#implementation" id="id54">Implementation</a></p></li>
-<li><p><a class="reference internal" href="#heatmap" id="id55">Heatmap</a></p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#multi-head-attention" id="id56">Multi-Head Attention</a></p>
-<ul>
-<li><p><a class="reference internal" href="#id18" id="id57">Definition</a></p></li>
-<li><p><a class="reference internal" href="#id19" id="id58">???</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#casual-attention-masked-self-attention" id="id59">Casual Attention/Masked Self-Attention</a></p>
-<ul>
-<li><p><a class="reference internal" href="#intuition" id="id60">Intuition</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#id20" id="id61">Perplexity</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id62">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id35">Perplexity</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id36">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="introduction">
-<h2><a class="toc-backref" href="#id22" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
 <p>…</p>
 </section>
 <section id="gpt-1-and-gpt-2">
-<h2><a class="toc-backref" href="#id23" role="doc-backlink">GPT-1 and GPT-2</a><a class="headerlink" href="#gpt-1-and-gpt-2" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">GPT-1 and GPT-2</a><a class="headerlink" href="#gpt-1-and-gpt-2" title="Permalink to this heading">#</a></h2>
 <p>In Natural Language Understanding (NLU), there are a wide range of tasks, such
 as textual entailment, question answering, semantic similarity assessment, and
 document classification. These tasks are inherently labeled, but given the
@@ -579,7 +528,7 @@ start by defining certain definitions and notations that will be used throughout
 this article.</p>
 </section>
 <section id="autoregressive-self-supervised-learning-paradigm">
-<h2><a class="toc-backref" href="#id24" role="doc-backlink">Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#autoregressive-self-supervised-learning-paradigm" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#autoregressive-self-supervised-learning-paradigm" title="Permalink to this heading">#</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> be the true but unknown distribution of the natural language
 space. In the context of unsupervised learning with self-supervision, such as
 language modeling, we consider both the inputs and the implicit labels derived
@@ -628,7 +577,7 @@ is trained to maximize the likelihood of the sequences in the corpus
 <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> is the estimated parameter space that approximates
 the true parameter space <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span>.</p>
 <section id="autoregressive-self-supervised-learning">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink">Autoregressive Self-Supervised Learning</a><a class="headerlink" href="#autoregressive-self-supervised-learning" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Autoregressive Self-Supervised Learning</a><a class="headerlink" href="#autoregressive-self-supervised-learning" title="Permalink to this heading">#</a></h3>
 <p>The learning paradigm of an autoregressive self-supervised learning framework
 can be formalized as a learning algorithm <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> that is trained to
 predict the next token <span class="math notranslate nohighlight">\(x_t\)</span> in a sequence given the previous tokens
@@ -655,10 +604,10 @@ probabilities of the form <span class="math notranslate nohighlight">\(\mathbb{P
 which implicitly defines the joint probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(\mathbf{x}
 ; \boldsymbol{\Theta})\)</span> over the natural language space
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span><a class="footnote-reference brackets" href="#id21" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span><a class="footnote-reference brackets" href="#id13" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="estimation-of-the-conditional-probability-distribution">
-<h3><a class="toc-backref" href="#id26" role="doc-backlink">Estimation of the Conditional Probability Distribution</a><a class="headerlink" href="#estimation-of-the-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Estimation of the Conditional Probability Distribution</a><a class="headerlink" href="#estimation-of-the-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
 <p>In practice, we can only <em><strong>estimate</strong></em> the conditional probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \boldsymbol{\Theta})\)</span> from the corpus
 <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, and we can write the process of estimating as:</p>
@@ -688,7 +637,7 @@ which is to generate the next token in a sequence given the previous tokens in
 the sequence.</p>
 </section>
 <section id="initial-condition-of-conditional-probability-distribution">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink">Initial Condition of Conditional Probability Distribution</a><a class="headerlink" href="#initial-condition-of-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Initial Condition of Conditional Probability Distribution</a><a class="headerlink" href="#initial-condition-of-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
 <p>While the earlier conditional distribution seems correct by definition of the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Chain_rule_(probability)">chain rule of probability</a>,
 it is worth noting that we are being a bit loose when <span class="math notranslate nohighlight">\(t=1\)</span>. Firstly, when
@@ -710,7 +659,7 @@ prompt” or “initial condition” of the sequence <span class="math notransla
 </ul>
 </section>
 <section id="markov-assumption">
-<h3><a class="toc-backref" href="#id28" role="doc-backlink">Markov Assumption</a><a class="headerlink" href="#markov-assumption" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Markov Assumption</a><a class="headerlink" href="#markov-assumption" title="Permalink to this heading">#</a></h3>
 <p>Now suppose that we wish to employ the strategy mentioned above, where we
 condition only on the <span class="math notranslate nohighlight">\(\tau\)</span> previous time steps, i.e.,
 <span class="math notranslate nohighlight">\(x_{t-1}, \ldots, x_{t-\tau}\)</span>, rather than the entire sequence history
@@ -755,7 +704,7 @@ distribution of the token sequences.</p>
 </ul>
 </section>
 <section id="the-estimator-function-is-smooth-with-respect-to-the-parameters">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink">The Estimator Function is Smooth with Respect to the Parameters</a><a class="headerlink" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">The Estimator Function is Smooth with Respect to the Parameters</a><a class="headerlink" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" title="Permalink to this heading">#</a></h3>
 <p>This assumption is a common one in the context of deep learning, because for
 when we say that the estimator function <span class="math notranslate nohighlight">\(f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span>
 is <em>smooth</em> with respect to the parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, we
@@ -781,7 +730,7 @@ activation functions are not smooth because the derivative is not continuous at
 <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>.</p>
 </section>
 <section id="context-length-and-token-context-window">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">Context Length and Token Context Window</a><a class="headerlink" href="#context-length-and-token-context-window" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Context Length and Token Context Window</a><a class="headerlink" href="#context-length-and-token-context-window" title="Permalink to this heading">#</a></h3>
 <p>Given a coherent sequence of tokens <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, say, <em>the tabby cat walks by
 the river bank</em>, we may not always pass the full sequence to the model. Based on
 a <em>context length</em> <span class="math notranslate nohighlight">\(\tau\)</span>, we can pass a <em>token context window</em> of length <span class="math notranslate nohighlight">\(\tau\)</span>
@@ -809,7 +758,7 @@ C_{\tau} : \mathcal{X} \times \mathbb{N} &amp;\rightarrow \mathcal{X}^{\tau} \\
 \end{split}\]</div>
 </section>
 <section id="conditional-entropy-and-perplexity-as-loss-function">
-<h3><a class="toc-backref" href="#id31" role="doc-backlink">Conditional Entropy and Perplexity as Loss Function</a><a class="headerlink" href="#conditional-entropy-and-perplexity-as-loss-function" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Conditional Entropy and Perplexity as Loss Function</a><a class="headerlink" href="#conditional-entropy-and-perplexity-as-loss-function" title="Permalink to this heading">#</a></h3>
 <p>Having defined the basis of the autoregressive self-supervised learning
 framework, we can now define the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> that is used to
 train the model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> to maximize the likelihood of the sequences in the
@@ -817,7 +766,7 @@ corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>. In ord
 function, we would need to define the notion of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Conditional_entropy"><em><strong>conditional entropy</strong></em></a>.</p>
 <section id="conditional-entropy">
-<h4><a class="toc-backref" href="#id32" role="doc-backlink">Conditional Entropy</a><a class="headerlink" href="#conditional-entropy" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id24" role="doc-backlink">Conditional Entropy</a><a class="headerlink" href="#conditional-entropy" title="Permalink to this heading">#</a></h4>
 <p>Define <span class="math notranslate nohighlight">\(X_t\)</span> as a random variable representing the token at position <span class="math notranslate nohighlight">\(t\)</span> in the
 sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(X_{&lt;t} = \left(X_1, X_2, \ldots, X_{t-1}\right)\)</span> as
 random variables representing the tokens at positions <span class="math notranslate nohighlight">\(1, 2, \ldots, t-1\)</span> in the
@@ -864,7 +813,7 @@ H\left(X_t \mid X_{&lt;t}\right) = -\mathbb{E}_{\mathcal{D}}\left[\log \mathbb{P
 </ul>
 </section>
 <section id="perplexity">
-<h4><a class="toc-backref" href="#id33" role="doc-backlink">Perplexity</a><a class="headerlink" href="#perplexity" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id25" role="doc-backlink">Perplexity</a><a class="headerlink" href="#perplexity" title="Permalink to this heading">#</a></h4>
 <p>Language model has a standing history of using
 <a class="reference external" href="https://en.wikipedia.org/wiki/Perplexity"><strong>Perplexity</strong></a> as a measure of the
 quality of a language model. It is a measure of how well a probability
@@ -885,7 +834,7 @@ conditional entropy of the distribution, and we can write it as:</p>
 </ul>
 </section>
 <section id="loss-function">
-<h4><a class="toc-backref" href="#id34" role="doc-backlink">Loss Function</a><a class="headerlink" href="#loss-function" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">Loss Function</a><a class="headerlink" href="#loss-function" title="Permalink to this heading">#</a></h4>
 <p>Given the definitions of the conditional entropy and perplexity, we can define
 the loss and objective function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -903,7 +852,7 @@ can write the process of estimating as:</p>
 \]</div>
 </section>
 <section id="convergence">
-<h4><a class="toc-backref" href="#id35" role="doc-backlink">Convergence</a><a class="headerlink" href="#convergence" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id27" role="doc-backlink">Convergence</a><a class="headerlink" href="#convergence" title="Permalink to this heading">#</a></h4>
 <p>It can be shown that the given the Markov assumption and a token context window
 size of <span class="math notranslate nohighlight">\(\tau\)</span>, the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is a
 <a class="reference external" href="https://en.wikipedia.org/wiki/Consistent_estimator">consistent estimator</a> of
@@ -928,7 +877,7 @@ performance based on the size of the vocabulary <span id="id10">[<a class="refer
 </section>
 </section>
 <section id="gpt-is-a-autoregressive-self-supervised-learning-model">
-<h3><a class="toc-backref" href="#id36" role="doc-backlink">GPT is a Autoregressive Self-Supervised Learning Model</a><a class="headerlink" href="#gpt-is-a-autoregressive-self-supervised-learning-model" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">GPT is a Autoregressive Self-Supervised Learning Model</a><a class="headerlink" href="#gpt-is-a-autoregressive-self-supervised-learning-model" title="Permalink to this heading">#</a></h3>
 <p>Finally, we can piece together the autoregressive self-supervised learning
 framework to define the GPT model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> as a model that is trained to
 maximize the likelihood of the sequences in the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> via the
@@ -969,7 +918,7 @@ implementation of the GPT model is more complex, and we will take a look at it
 in later sections.</p>
 </section>
 <section id="supervised-fine-tuning">
-<h3><a class="toc-backref" href="#id37" role="doc-backlink">Supervised Fine-Tuning</a><a class="headerlink" href="#supervised-fine-tuning" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Supervised Fine-Tuning</a><a class="headerlink" href="#supervised-fine-tuning" title="Permalink to this heading">#</a></h3>
 <p>Though GPT-2 has demonstrated that it can be used directly on a wide range of
 NLU without the need for supervised fine-tuning, it is worth taking a detour
 back to how GPT-1 was fine-tuned immediately after the pretraining phase.</p>
@@ -983,830 +932,15 @@ specific task with the task-specific layer. The authors showed that this
 approach yielded state-of-the-art results on a wide range of NLU tasks.</p>
 </section>
 </section>
-<section id="self-attention">
-<h2><a class="toc-backref" href="#id38" role="doc-backlink">Self-Attention</a><a class="headerlink" href="#self-attention" title="Permalink to this heading">#</a></h2>
-<section id="intuition-of-attention-mechanism">
-<h3><a class="toc-backref" href="#id39" role="doc-backlink">Intuition of Attention Mechanism</a><a class="headerlink" href="#intuition-of-attention-mechanism" title="Permalink to this heading">#</a></h3>
-<p>Attention is not a new concept, and one of the most influencial papers came from
-<em>Neural Machine Translation by Jointly Learning to Align and Translate</em>
-<span id="id11">[<a class="reference internal" href="../bibliography.html#id13" title="Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. Neural machine translation by jointly learning to align and translate. 2014. arXiv:1409.0473.">Bahdanau <em>et al.</em>, 2014</a>]</span>, a paper published during 2014. In the context of our
-post, we would stick to one intuitive interpretation, that <em>the attention
-mechanism describes a <strong>weighted average</strong> of (sequence) elements with the
-weights <strong>dynamically</strong> computed based on an input query and elements’ keys</em>
-<span id="id12">[<a class="reference internal" href="../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. In other words, we want contextually relevant
-information to be weighted more heavily than less relevant information. For
-example, the sentence <em>the cat walks by the river bank</em> would require the word
-<em>bank</em> to be weighted more heavily than the word <em>the</em> when the word <em>cat</em> is
-being processed. The dynamic portion is also important because this allows the
-model to adjust the weights based on an input sequence (note that the learned
-weights are static but the interaction with the input sequence is dynamic). When
-attending to the first token <em>cat</em> in the sequence, we would want the token
-<em>cat</em> to be a <strong>weighted average</strong> of all the tokens in the sequence, including
-itself. This is the essence of the self-attention mechanism.</p>
-</section>
-<section id="token-embedding-and-vector-representation-process">
-<h3><a class="toc-backref" href="#id40" role="doc-backlink">Token Embedding and Vector Representation Process</a><a class="headerlink" href="#token-embedding-and-vector-representation-process" title="Permalink to this heading">#</a></h3>
-<p>Given an input sequence <span class="math notranslate nohighlight">\(\mathbf{x} = \left(x_1, x_2, \ldots, x_T\right)\)</span>, where
-<span class="math notranslate nohighlight">\(T\)</span> is the length of the sequence, and each <span class="math notranslate nohighlight">\(x_t \in \mathcal{V}\)</span> is a token in
-the sequence, we use a generic embedding function <span class="math notranslate nohighlight">\(h_{\text{emb}}\)</span> to map each
-token to a vector representation in a continuous vector space:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned} h_{\text{emb}} : \mathcal{V} &amp;\rightarrow \mathbb{R}^{D} \\ x_t
-&amp;\mapsto \mathbf{z}_t \end{aligned}
-\end{split}\]</div>
-<p>where <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> is the vocabulary of tokens (discrete space <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>),
-and <span class="math notranslate nohighlight">\(D\)</span> is the dimension of the embedding space (continuous space). The output
-of the embedding function <span class="math notranslate nohighlight">\(h_{\text{emb}}\)</span> is a sequence of vectors
-<span class="math notranslate nohighlight">\(\mathbf{Z} = \left(\mathbf{z}_1, \mathbf{z}_2, \ldots, \mathbf{z}_T\right)\)</span>,
-where each <span class="math notranslate nohighlight">\(\mathbf{z}_t \in \mathbb{R}^{D}\)</span> is the vector representation of the
-token <span class="math notranslate nohighlight">\(x_t\)</span> in the sequence. As seen earlier, we represent the sequence of
-vectors <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span> as a matrix <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span>, where
-each row of the matrix represents the vector representation of each token in the
-sequence.</p>
-</section>
-<section id="queries-keys-and-values">
-<h3><a class="toc-backref" href="#id41" role="doc-backlink">Queries, Keys, and Values</a><a class="headerlink" href="#queries-keys-and-values" title="Permalink to this heading">#</a></h3>
-<section id="database-analogy">
-<h4><a class="toc-backref" href="#id42" role="doc-backlink">Database Analogy</a><a class="headerlink" href="#database-analogy" title="Permalink to this heading">#</a></h4>
-<p>Let’s draw an analogy to understand the concept of queries, keys, and values in
-the context of the attention mechanism. Consider a database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>
-consisting of tuples of keys and values. For instance, the database
-<span class="math notranslate nohighlight">\(\mathcal{D}\)</span> might consist of tuples
-<code class="docutils literal notranslate"><span class="pre">{(&quot;Zhang&quot;,</span> <span class="pre">&quot;Aston&quot;),</span> <span class="pre">(&quot;Lipton&quot;,</span> <span class="pre">&quot;Zachary&quot;),</span> <span class="pre">(&quot;Li&quot;,</span> <span class="pre">&quot;Mu&quot;),</span> <span class="pre">(&quot;Smola&quot;,</span> <span class="pre">&quot;Alex&quot;),</span> <span class="pre">(&quot;Hu&quot;,</span> <span class="pre">&quot;Rachel&quot;),</span> <span class="pre">(&quot;Werness&quot;,</span> <span class="pre">&quot;Brent&quot;)}</span></code>
-with the last name being the key and the first name being the value
-<span id="id13">[<a class="reference internal" href="../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. Operations on the database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> can be performed
-using queries <span class="math notranslate nohighlight">\(q\)</span> that operate on the keys and values in the database. More
-concretely, if our query is “Li”, or more verbosely, “What is the first name
-associated with the last name Li?”, the answer would be “Mu” - the <strong>key</strong>
-associated with the <strong>query</strong> “What is the first name associated with the last
-name Li?” is “Li”, and the <strong>value</strong> associated with the key “Li” is “Mu”.
-Furthermore, if we also allowed for approximate matches, we would retrieve
-(“Lipton”, “Zachary”) instead.</p>
-<p>More rigorously, we denote
-<span class="math notranslate nohighlight">\(\mathcal{D} \stackrel{\text { def }}{=}\left\{\left(\mathbf{k}_1, \mathbf{v}_1\right), \ldots\left(\mathbf{k}_m, \mathbf{v}_m\right)\right\}\)</span>
-a database of <span class="math notranslate nohighlight">\(m\)</span> tuples of <em>keys</em> and <em>values</em>, as well as a query
-<span class="math notranslate nohighlight">\(\mathbf{q}\)</span>. Then we can define the attention over <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> as</p>
-<div class="math notranslate nohighlight">
-\[
-\operatorname{Attention}(\mathbf{q}, \mathcal{D})
-\stackrel{\operatorname{def}}{=} \sum_{t=1}^T \alpha\left(\mathbf{q},
-\mathbf{k}\_t\right) \mathbf{v}\_t
-\]</div>
-<p>where
-<span class="math notranslate nohighlight">\(\alpha\left(\mathbf{q}, \mathbf{k}_t\right) \in \mathbb{R}(t=1, \ldots, T)\)</span> are
-scalar attention weights <span id="id14">[<a class="reference internal" href="../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. The operation itself is
-typically referred to as
-<a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-pooling.html"><em>attention pooling</em></a>.
-The term “attention” is used because this operation focuses specifically on
-those terms that have a substantial weight, denoted as <span class="math notranslate nohighlight">\(\alpha\)</span>, meaning it
-gives more importance to these terms. Consequently, the attention over
-<span class="math notranslate nohighlight">\(\mathcal{D}\)</span> generates a linear combination of values contained in the
-database. In fact, this contains the above example as a special case where all
-but one weight is zero. Why so? Because the query is an exact match for one of
-the keys.</p>
-<p>To illustrate why in the case of an exact match within a database the attention
-weights (<span class="math notranslate nohighlight">\(\alpha\)</span>) are all zero except for one, let’s use the attention formula
-provided and consider a simplified example with vectors.</p>
-<div class="proof example admonition" id="decoder-concept-attention-exact-match-scenario">
-<p class="admonition-title"><span class="caption-number">Example 1 </span> (Exact Match Scenario)</p>
-<section class="example-content" id="proof-content">
-<p>Imagine a simplified database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> consisting of 3 key-value pairs,
-where each key <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> and the query <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> are represented as
-vectors in some high-dimensional space, and the values <span class="math notranslate nohighlight">\(\mathbf{v}_t\)</span> are also
-vectors (or can be scalar for simplicity in this example). For simplicity, let’s
-assume our vectors are in a 2-dimensional space and represent them as follows:</p>
-<ul class="simple">
-<li><p>Keys (representing <span class="math notranslate nohighlight">\(3\)</span> keys in the database):</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{k}_1 = [1, 0]\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{k}_2 = [0, 1]\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{k}_3 = [1, 1]\)</span></p></li>
-</ul>
-</li>
-<li><p>Values (corresponding to the keys):</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_1 = [0.1, 0.9]\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_2 = [0.2, 0.8]\)</span>,</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{v}_3 = [0.3, 0.7]\)</span></p></li>
-</ul>
-</li>
-<li><p>Query (looking for an item/concept similar to <span class="math notranslate nohighlight">\(\mathbf{k}_1\)</span>):</p>
-<ul>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{q} = [1, 0]\)</span></p></li>
-</ul>
-</li>
-</ul>
-<p>The attention weights <span class="math notranslate nohighlight">\(\alpha(\mathbf{q}, \mathbf{k}_t)\)</span> indicate how similar or
-relevant each key is to the query. In an exact match scenario, the similarity
-calculation will result in a high value (e.g., <span class="math notranslate nohighlight">\(1\)</span>) when the query matches a key
-exactly, and low values (e.g., <span class="math notranslate nohighlight">\(0\)</span>) otherwise. For simplicity, let’s use a
-simple matching criterion where the weight is <span class="math notranslate nohighlight">\(1\)</span> for an exact match and <span class="math notranslate nohighlight">\(0\)</span>
-otherwise:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\alpha(\mathbf{q}, \mathbf{k}_1) = 1\)</span> (since
-<span class="math notranslate nohighlight">\(\mathbf{q} =
-\mathbf{k}_1\)</span>, exact match)</p></li>
-<li><p><span class="math notranslate nohighlight">\(\alpha(\mathbf{q}, \mathbf{k}_2) = 0\)</span> (since
-<span class="math notranslate nohighlight">\(\mathbf{q} \neq
-\mathbf{k}_2\)</span>, no match)</p></li>
-<li><p><span class="math notranslate nohighlight">\(\alpha(\mathbf{q}, \mathbf{k}_3) = 0\)</span> (since
-<span class="math notranslate nohighlight">\(\mathbf{q} \neq
-\mathbf{k}_3\)</span>, no match)</p></li>
-</ul>
-<p>Using the attention formula:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\begin{aligned} \operatorname{Attention}(\mathbf{q}, \mathcal{D}) &amp;=
-\sum_{t=1}^3 \alpha(\mathbf{q}, \mathbf{k}\_t) \mathbf{v}\_t \\ &amp;= (1 \cdot
-[0.1, 0.9]) + (0 \cdot [0.4, 0.6]) + (0 \cdot [0.7, 0.3]) \\ &amp;= [0.1, 0.9]
-\end{aligned}
-\end{split}\]</div>
-<p>This calculation shows that because the attention weights for <span class="math notranslate nohighlight">\(\mathbf{k}_2\)</span> and
-<span class="math notranslate nohighlight">\(\mathbf{k}_3\)</span> are zero (due to no exact match), they don’t contribute to the
-final attention output. Only <span class="math notranslate nohighlight">\(\mathbf{k}_1\)</span>, which exactly matches the query,
-has a non-zero weight (1), making it the sole contributor to the attention
-result. This is a direct consequence of the query being an exact match for one
-of the keys, leading to a scenario where “all but one weight is zero.”</p>
-</section>
-</div></section>
-<section id="queries-keys-and-values-in-attention-mechanism">
-<h4><a class="toc-backref" href="#id43" role="doc-backlink">Queries, Keys, and Values in Attention Mechanism</a><a class="headerlink" href="#queries-keys-and-values-in-attention-mechanism" title="Permalink to this heading">#</a></h4>
-<p>The database example is a neat analogy to understand the concept of queries,
-keys, and values in the context of the attention mechanism. To put things into
-perspective, each token <span class="math notranslate nohighlight">\(x_t\)</span> in the input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> emits three
-vectors through projecting its corresponding token and positional embedding
-output <span class="math notranslate nohighlight">\(\mathbf{z}_t\)</span>, a query vector <span class="math notranslate nohighlight">\(\mathbf{q}_t\)</span>, a key vector
-<span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span>, and a value vector <span class="math notranslate nohighlight">\(\mathbf{v}_t\)</span>. Consider the earlier example
-<em>cat walks by the river bank</em>, where each word is a token in the sequence. When
-we start to process the first token <span class="math notranslate nohighlight">\(\mathbf{z}_1\)</span>, <em>cat</em>, we would consider a
-query vector <span class="math notranslate nohighlight">\(\mathbf{q}_1\)</span>, projected from <span class="math notranslate nohighlight">\(\mathbf{z}_1\)</span>, to be used to
-interact with the key vectors <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> for <span class="math notranslate nohighlight">\(t \in \{1, 2, \ldots, T\}\)</span>, in
-the sequence - determining how much <em>attention</em> “cat” should pay to every other
-token in the sequence (including itself). Consequently, it will also emit a key
-vector <span class="math notranslate nohighlight">\(\mathbf{k}_1\)</span> so that other tokens can interact with it. Subsequently,
-the attention pooling will form a linear combination of the query vector
-<span class="math notranslate nohighlight">\(\mathbf{q}_1\)</span> with every other key vector <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> in the sequence,</p>
-<div class="math notranslate nohighlight">
-\[
-\alpha(\mathbf{q}\_1, \mathbf{k}\_t) \in \mathbb{R} = \mathbf{q}\_1 \cdot
-\mathbf{k}\_t \quad \text{for } t \in \{1, 2, \ldots, T\}
-\]</div>
-<p>and each <span class="math notranslate nohighlight">\(\alpha(\mathbf{q}_1, \mathbf{k}_t)\)</span> will indicate how much attention
-the token “cat” should pay to the token at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence. We
-would later see that we would add a softmax normalization to the attention
-scores to obtain the final attention weights.</p>
-<p>We would then use the attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{q}_1, \mathbf{k}_t)\)</span> to
-create a weighted sum of the value vectors <span class="math notranslate nohighlight">\(\mathbf{v}_t\)</span> to form the new
-representation of the token “cat”.</p>
-<div class="math notranslate nohighlight">
-\[
-\operatorname{Attention}(\mathbf{q}_1, \mathbf{k}\_t, \mathbf{v}\_t) =
-\sum_{t=1}^T \alpha(\mathbf{q}\_1, \mathbf{k}\_t) \mathbf{v}\_t
-\]</div>
-<p>Consequently, the first token must also emit a value vector <span class="math notranslate nohighlight">\(\mathbf{v}_1\)</span>. You
-can think of the value vector as carrying the actual information or content that
-will be aggregated based on the attention scores.</p>
-<p>To reiterate, the output
-<span class="math notranslate nohighlight">\(\operatorname{Attention}(\mathbf{q}_1, \mathbf{k}_t, \mathbf{v}_t)\)</span> will be the
-new representation of the token “cat” in the sequence, which is a weighted sum
-of the value vectors <span class="math notranslate nohighlight">\(\mathbf{v}_t\)</span> based on the attention scores
-<span class="math notranslate nohighlight">\(\alpha(\mathbf{q}_1, \mathbf{k}_t)\)</span> and now not only holds semantic and
-positional information about the token “cat” itself but also contextual
-information about the other tokens in the sequence. This allows the token “cat”
-to have a better understanding of itself in the context of the whole sentence.
-In this whole input sequence, the most ambiguous token is the token “bank” as it
-can refer to a financial institution or a river bank. The attention mechanism
-will help the token “bank” to understand its context in the sentence - likely
-focusing more on the token “river” than the token “cat” or “walks” to understand
-its context.</p>
-<p>The same process will be repeated for each token in the sequence, where each
-token will emit a query vector, a key vector, and a value vector. The attention
-scores will be calculated for each token in the sequence, and the weighted sum
-of the value vectors will be used to form the new representation of each token
-in the sequence.</p>
-<p>To end this off, we can intuitively think of the query, key and value as
-follows:</p>
-<ul class="simple">
-<li><p><strong>Query</strong>: What does the token want to know? Maybe to the token <em>bank</em>, it
-is trying to figure out if it is a financial institution or a river bank.
-But obviously, when considering the token “bank” within such an input
-sequence, the query vector generated for “bank” would not actually ask “Am I
-a financial institution or a river bank?” but rather would be an abstract
-feature vector in a <span class="math notranslate nohighlight">\(D\)</span> dimensional subspace that somehow captures the
-potential and context meanings of the token “bank” and once it is used to
-interact with the key vectors, it will help to determine later on how much
-attention the token “bank” should pay to the other tokens in the sequence.</p></li>
-<li><p><strong>Key</strong>: Carrying on from the previous point, if the query vector for the
-token “bank” is being matched with the key vectors of the other tokens in
-the sequence, the key “river” will be a good match for the query “bank” as
-it will help the token “bank” to understand its context in the sentence. In
-this subspace, the key vector for “river” will be a good match for the query
-because it is more of an “offering” service to the query vector, and it will
-know when it is deemed to be important to the query vector. As such, the
-vectors in this subspace are able to identify itself as important or not
-based on the query vector.</p></li>
-<li><p><strong>Value</strong>: The value vector is the actual information or content that will
-be aggregated based on the attention scores. If the attention mechanism
-determines that “river” is highly relevant to understanding the context of
-“bank” within the sentence, the value vector associated with “river” will be
-given more weight in the aggregation process. This means that the
-characteristics or features encoded in the “river” value vector
-significantly influence the representation of the sentence or the specific
-context being analyzed.</p></li>
-</ul>
-</section>
-</section>
-<section id="linear-projections">
-<h3><a class="toc-backref" href="#id44" role="doc-backlink">Linear Projections</a><a class="headerlink" href="#linear-projections" title="Permalink to this heading">#</a></h3>
-<p>We have discussed the concept of queries, keys, and values but have not yet
-discussed how these vectors are obtained. As we have continuously emphasized,
-the query, key, and value vectors lie in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional subspace, and they
-encode various abstract information about the tokens in the sequence.
-Consequently, it is no surprise that these vectors are obtained through linear
-transformations/projections of the token embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span> using learned
-weight matrices <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{Q}}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{K}}\)</span> and
-<span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{V}}\)</span>.</p>
-<div class="proof definition admonition" id="decoder-concept-linear-projections-queries-keys-values">
-<p class="admonition-title"><span class="caption-number">Definition 1 </span> (Linear Projections for Queries, Keys, and Values)</p>
-<section class="definition-content" id="proof-content">
-<p>In the self-attention mechanism, each token embedding
-<span class="math notranslate nohighlight">\(\mathbf{z}_t \in \mathbb{R}^{D}\)</span> is projected into a new context vector across
-different <strong>subspaces</strong>. This projection is accomplished through three distinct
-<strong>linear transformations</strong>, each defined by a unique weight matrix:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{W}^{\mathbf{Q}} \in \mathbb{R}^{D \times d_q}, \quad
-\mathbf{W}^{\mathbf{K}} \in \mathbb{R}^{D \times d_k}, \quad
-\mathbf{W}^{\mathbf{V}} \in \mathbb{R}^{D \times d_v}\]</div>
-<p>where <span class="math notranslate nohighlight">\(d_q, d_k, d_v \in \mathbb{Z}^+\)</span> are the hidden dimensions of the
-subspaces for the query, key, and value vectors, respectively.</p>
-<div class="proof remark admonition" id="decoder-concept-linear-projections-queries-keys-values-remark">
-<p class="admonition-title"><span class="caption-number">Remark 1 </span> (Dimensionality of the Subspaces)</p>
-<section class="remark-content" id="proof-content">
-<p>It is worth noting that this post is written in the context of understand
-GPT models, and the dimensionality of the query, key, and value vectors are
-the same and usually equal to the dimensionality of the token embeddings.
-Thus, we may use <span class="math notranslate nohighlight">\(D\)</span> interchangeably to indicate <span class="math notranslate nohighlight">\(d_k, d_v\)</span> and <span class="math notranslate nohighlight">\(d_q\)</span>. This
-is not always the case, as encoder-decoder models might have different
-dimensionalities for the query, key, and value vectors. However, query and key
-must have the same dimensionality for the dot product to work.</p>
-</section>
-</div><p>Each token embedding <span class="math notranslate nohighlight">\(\mathbf{z}_t\)</span> is transformed into three vectors:</p>
-<ul class="simple">
-<li><p>The <strong>query vector</strong> <span class="math notranslate nohighlight">\(\mathbf{q}_t\)</span>, representing what the token is looking
-for in other parts of the input,</p></li>
-<li><p>The <strong>key vector</strong> <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span>, representing how other tokens can be
-found or matched,</p></li>
-<li><p>The <strong>value vector</strong> <span class="math notranslate nohighlight">\(\mathbf{v}_t\)</span>, containing the actual information to be
-used in the output.</p></li>
-</ul>
-<p>These transformations are formally defined as:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{q}\_t = \mathbf{z}\_t \mathbf{W}^{Q}, \quad \mathbf{k}\_t =
-\mathbf{z}\_t \mathbf{W}^{K}, \quad \mathbf{v}\_t = \mathbf{z}\_t \mathbf{W}^{V}\]</div>
-<p>with each residing in <span class="math notranslate nohighlight">\(d_q, d_k, d_v\)</span>-dimensional subspaces, respectively.</p>
-<p>Given an input sequence of <span class="math notranslate nohighlight">\(T\)</span> tokens, the individual vectors for each token can
-be stacked into matrices:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{Q} = \begin{bmatrix} \mathbf{q}\_1 \\ \mathbf{q}\_2 \\ \vdots \\
-\mathbf{q}\_T \end{bmatrix} \in \mathbb{R}^{T \times d_q}, \quad \mathbf{K} =
-\begin{bmatrix} \mathbf{k}\_1 \\ \mathbf{k}\_2 \\ \vdots \\ \mathbf{k}\_T
-\end{bmatrix} \in \mathbb{R}^{T \times d_k}, \quad \mathbf{V} = \begin{bmatrix}
-\mathbf{v}\_1 \\ \mathbf{v}\_2 \\ \vdots \\ \mathbf{v}\_T \end{bmatrix} \in
-\mathbb{R}^{T \times d_v}\end{split}\]</div>
-<p>where each row of these matrices corresponds to the query, key, and value
-vectors for each token, respectively.</p>
-<p>These matrices are generated through simple matrix multiplication of the token
-embedding matrix <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span> with the weight
-matrices
-<span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{Q}}, \mathbf{W}^{\mathbf{K}}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{V}}\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{Q} = \mathbf{Z} \mathbf{W}^{\mathbf{Q}}, \quad \mathbf{K} = \mathbf{Z}
-\mathbf{W}^{\mathbf{K}}, \quad \mathbf{V} = \mathbf{Z} \mathbf{W}^{\mathbf{V}}\]</div>
-</section>
-</div></section>
-<section id="scaled-dot-product-attention">
-<h3><a class="toc-backref" href="#id45" role="doc-backlink">Scaled Dot-Product Attention</a><a class="headerlink" href="#scaled-dot-product-attention" title="Permalink to this heading">#</a></h3>
-<section id="definition">
-<h4><a class="toc-backref" href="#id46" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h4>
-<div class="proof definition admonition" id="decoder-concept-scaled-dot-product-attention">
-<p class="admonition-title"><span class="caption-number">Definition 2 </span> (Scaled Dot-Product Attention)</p>
-<section class="definition-content" id="proof-content">
-<p>The attention mechanism is a function that maps a set of queries, keys, and
-values to an output, all of which are represented as matrices in a
-<span class="math notranslate nohighlight">\(D\)</span>-dimensional space. Specifically, the function is defined as:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{aligned} \text{Attention}: \mathbb{R}^{T \times d_q} \times \mathbb{R}^{T
-\times d_k} \times \mathbb{R}^{T \times d_v} &amp; \rightarrow \mathbb{R}^{T \times
-d_v} \\ (\mathbf{Q}, \mathbf{K}, \mathbf{V}) &amp; \mapsto
-\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) \end{aligned}\end{split}\]</div>
-<p>where given a query matrix <span class="math notranslate nohighlight">\(\mathbf{Q} \in \mathbb{R}^{T \times d_q}\)</span>, a key
-matrix <span class="math notranslate nohighlight">\(\mathbf{K} \in \mathbb{R}^{T \times d_k}\)</span>, and a value matrix
-<span class="math notranslate nohighlight">\(\mathbf{V} \in \mathbb{R}^{T \times d_v}\)</span>, the attention mechanism computes the
-the output matrix as follows:</p>
-<div class="math notranslate nohighlight">
-\[
-\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) =
-\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
-\in \mathbb{R}^{T \times d_v}
-\]</div>
-<p>where:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span> represents the dot product between the query
-and key matrices, resulting in a matrix of scores that indicate the degree
-of alignment or relevance between each query and all keys.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span> is a scaling factor used to normalize the scores, preventing them
-from becoming too large and ensuring a stable gradient during training. This
-scaling factor is particularly important as it helps maintain the softmax
-output in a numerically stable range <span id="id15">[<a class="reference internal" href="../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\text{softmax}(\cdot)\)</span> is applied row-wise to convert scores into attention
-weights, ensuring that for each query, the weights across all keys sum up
-to 1. This normalization step allows the mechanism to effectively distribute
-focus across the keys according to their relevance to each query.</p></li>
-<li><p>The resulting matrix of attention weights is then used to compute a weighted
-sum of the values in <span class="math notranslate nohighlight">\(\mathbf{V}\)</span>, producing the output matrix. This output
-represents a series of context vectors, each corresponding to a query and
-containing aggregated information from the most relevant parts of the input
-sequence as determined by the attention weights.</p></li>
-</ul>
-</section>
-</div><p>In what follows, we will break down the components of the attention mechanism
-and explain how it works in detail:</p>
-<ul class="simple">
-<li><p>What is Attention Scoring Function?</p></li>
-<li><p>Why Softmax?</p></li>
-<li><p>Why Scale by <span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span>?</p></li>
-<li><p>What is Context Vector?</p></li>
-</ul>
-</section>
-<section id="attention-scoring-function">
-<h4><a class="toc-backref" href="#id47" role="doc-backlink">Attention Scoring Function</a><a class="headerlink" href="#attention-scoring-function" title="Permalink to this heading">#</a></h4>
-<p>In order to know which tokens in the sequence are most relevant to the current
-token, we need to calculate the attention scores between the query and key
-vectors. Consequently, we would need a scoring function that measures the
-influence or contribution of the <span class="math notranslate nohighlight">\(j\)</span>-th position on the <span class="math notranslate nohighlight">\(i\)</span>-th position in the
-sequence. This is achieved through the dot product between the query and key
-vectors, the reasoning through a
-<a class="reference external" href="https://en.wikipedia.org/wiki/Gaussian_filter">Gaussian kernel</a> is rigorous and
-provides a good
-<a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-scoring-functions.html">intuition</a>
-why we chose the dot product as the scoring function (other than the fact that
-it is a measure of similarity).</p>
-<div class="proof definition admonition" id="decoder-concept-attention-scoring-function">
-<p class="admonition-title"><span class="caption-number">Definition 3 </span> (Attention Scoring Function)</p>
-<section class="definition-content" id="proof-content">
-<p>Define the attention scoring function <span class="math notranslate nohighlight">\(\alpha(\cdot)\)</span> as a function
-that calculates the relevance or influence of each position <span class="math notranslate nohighlight">\(t\)</span> in the sequence
-on position <span class="math notranslate nohighlight">\(i\)</span>, known as the attention scores. The attention scoring function
-<span class="math notranslate nohighlight">\(\alpha(\cdot)\)</span> is defined using the dot product between query and key
-vectors, leveraging its property as a similarity measure.</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{aligned} \alpha: \mathbb{R}^{d_q} \times \mathbb{R}^{d_k} &amp; \rightarrow
-\mathbb{R} \\ (\mathbf{q}, \mathbf{k}\_t) &amp; \mapsto \alpha(\mathbf{q},
-\mathbf{k}\_t) \end{aligned}\end{split}\]</div>
-<p>Specifically, the function is expressed as:</p>
-<div class="math notranslate nohighlight">
-\[\alpha(\mathbf{q}, \mathbf{k}\_t) = \langle \mathbf{q}, \mathbf{k}\_t \rangle =
-\mathbf{q} \cdot \mathbf{k}\_t \in \mathbb{R}\]</div>
-<p>where:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathbf{q}\)</span> is a query vector representing in the sequence, seeking
-information or context.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> is the key vector representing the <span class="math notranslate nohighlight">\(t\)</span>-th position in the
-sequence, offering context or information.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\langle \mathbf{q}, \mathbf{k}_t \rangle\)</span> denotes the dot product between
-the query vector <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> and the key vector <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span>, which
-quantifies the level of similarity or alignment between the current position
-that <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> is at (say <span class="math notranslate nohighlight">\(i\)</span>-th) and <span class="math notranslate nohighlight">\(t\)</span>-th positions in the sequence.</p></li>
-</ul>
-<p>The expression <span class="math notranslate nohighlight">\(\mathbf{q} \cdot \mathbf{k}_t\)</span> is a scalar value that indicates
-the degree of alignment or relevance between the query at <span class="math notranslate nohighlight">\(i\)</span>-th position and
-the key at <span class="math notranslate nohighlight">\(t\)</span>-th position in the sequence. We would need to calculate the
-attention scores for each token in the sequence with respect to the query vector
-<span class="math notranslate nohighlight">\(\mathbf{q}\)</span>, and the key vectors <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> for
-<span class="math notranslate nohighlight">\(t \in \{1, 2, \ldots, T\}\)</span>.</p>
-<p>So this leads us to:</p>
-<div class="math notranslate nohighlight">
-\[\alpha(\mathbf{q}, \mathbf{K}) = \mathbf{q}\mathbf{K}^{\top} \in \mathbb{R}^{1
-\times T}\]</div>
-<p>where</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}\mathbf{K} = \begin{bmatrix} \mathbf{k}\_1 \\ \mathbf{k}\_2 \\ \vdots \\
-\mathbf{k}\_T \end{bmatrix} \in \mathbb{R}^{T \times d_k}\end{split}\]</div>
-<p>is the matrix of key vectors for each token in the sequence, and the output
-<span class="math notranslate nohighlight">\(\alpha(\mathbf{q}, \mathbf{K}) \in \mathbb{R}^{1 \times T}\)</span> is a row
-vector of attention scores for the query vector <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> with respect to
-each key vector <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> for <span class="math notranslate nohighlight">\(t \in \{1, 2, \ldots, T\}\)</span>.</p>
-<p>Lastly, there are <span class="math notranslate nohighlight">\(T\)</span> such queries in the input sequence <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span>, and we
-can stack all the query vectors <span class="math notranslate nohighlight">\(\mathbf{q}_t\)</span> into a matrix
-<span class="math notranslate nohighlight">\(\mathbf{Q} \in \mathbb{R}^{T \times d_q}\)</span> to calculate the attention scores for
-all the queries in the sequence with respect to all the key vectors in the
-sequence.</p>
-<div class="math notranslate nohighlight">
-\[\alpha(\mathbf{Q}, \mathbf{K}) = \mathbf{Q}\mathbf{K}^{\top} \in \mathbb{R}^{T
-\times T}\]</div>
-<p>To this end, each row of the matrix <span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span> represents the
-attention scores for each query vector at position <span class="math notranslate nohighlight">\(i\)</span> in the sequence with
-respect to all the key vectors in the sequence.</p>
-</section>
-</div></section>
-<section id="scaling-down-the-dot-product-of-query-and-key-vectors">
-<h4><a class="toc-backref" href="#id48" role="doc-backlink">Scaling Down the Dot Product of Query and Key Vectors</a><a class="headerlink" href="#scaling-down-the-dot-product-of-query-and-key-vectors" title="Permalink to this heading">#</a></h4>
-<div class="proof definition admonition" id="decoder-concept-query-key-iid">
-<p class="admonition-title"><span class="caption-number">Definition 4 </span> (Query and Key are Independent and Identically Distributed (i.i.d.))</p>
-<section class="definition-content" id="proof-content">
-<p>Under the assumption of the query <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> and key <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> are
-<em><strong>independent and identically distributed</strong></em> (i.i.d.) random variables with a
-gaussian distribution of mean <span class="math notranslate nohighlight">\(0\)</span> and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{q} \overset{\mathrm{iid}}{\sim} \mathcal{N}(0, \sigma^2), \quad
-\mathbf{k}\_t \overset{\mathrm{iid}}{\sim} \mathcal{N}(0, \sigma^2)\]</div>
-</section>
-</div><div class="proof definition admonition" id="decoder-concept-variance-dot-product">
-<p class="admonition-title"><span class="caption-number">Definition 5 </span> (Variance of Dot Product)</p>
-<section class="definition-content" id="proof-content">
-<p>Given that <span class="math notranslate nohighlight">\(\mathbf{q} \overset{\mathrm{iid}}{\sim} \mathcal{N}(0, \sigma^2), \quad \mathbf{k}_t \overset{\mathrm{iid}}{\sim} \mathcal{N}(0, \sigma^2)\)</span>,
-the variance of the dot product between the query vector <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> and the key
-vector <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> is:</p>
-<div class="math notranslate nohighlight">
-\[\mathbb{V}[\mathbf{q} \cdot \mathbf{k}_t] = \sum*{i=1}^{d_k} \mathbb{V}[q_i
-k*{ti}] = d_k \cdot \sigma^4.\]</div>
-</section>
-</div><div class="proof admonition" id="proof">
-<p>Proof. The dot product between <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span> can be expressed as the
-sum of the products of their components:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{q} \cdot \mathbf{k}_t = \sum_{i=1}^{d_k} q_i k_{ti},\]</div>
-<p>where <span class="math notranslate nohighlight">\(q_i\)</span> and <span class="math notranslate nohighlight">\(k_{ti}\)</span> are the <span class="math notranslate nohighlight">\(i\)</span>-th components of <span class="math notranslate nohighlight">\(\mathbf{q}\)</span> and
-<span class="math notranslate nohighlight">\(\mathbf{k}_t\)</span>, respectively.</p>
-<p>The variance of the sum of random variables (when these variables are
-independent, which is our case since components are iid) is the sum of their
-variances. The product <span class="math notranslate nohighlight">\(q_i k_{ti}\)</span> is a new random variable, and its variance
-can be calculated as follows for a single pair of components:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbb{V}[q_i k_{ti}] = \mathbb{E}[(q_i k_{ti})^2] - (\mathbb{E}[q_i
-k_{ti}])^2.
-\]</div>
-<p>Given that <span class="math notranslate nohighlight">\(q_i\)</span> and <span class="math notranslate nohighlight">\(k_{ti}\)</span> are independent and both have mean 0:</p>
-<div class="math notranslate nohighlight">
-\[\mathbb{E}[q_i k_{ti}] = \mathbb{E}[q_i] \cdot \mathbb{E}[k_{ti}] = 0.\]</div>
-<p>The expectation of the square of the product is:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbb{E}[(q_i k_{ti})^2] = \mathbb{E}[q_i^2] \cdot \mathbb{E}[k_{ti}^2] =
-\sigma^2 \cdot \sigma^2 = \sigma^4.
-\]</div>
-<p>Since <span class="math notranslate nohighlight">\(\mathbb{E}[q_i k_{ti}] = 0\)</span>, the variance of the product <span class="math notranslate nohighlight">\(q_i k_{ti}\)</span> is
-simply <span class="math notranslate nohighlight">\(\sigma^4\)</span>.</p>
-<p>For the dot product, we sum across all <span class="math notranslate nohighlight">\(d_k\)</span> components, and since the variance
-of the sum of independent random variables is the sum of their variances:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbb{V}[\mathbf{q} \cdot \mathbf{k}_t] = \sum*{i=1}^{d_k} \mathbb{V}[q_i
-k*{ti}] = d_k \cdot \sigma^4.
-\]</div>
-</div>
-<p>We want to ensure that the variance of the dot product still remains the same as
-the variance of the query and key vectors at <span class="math notranslate nohighlight">\(\sigma^2\)</span> regardless of the vector
-dimensions. To do so, we scale down the dot product by <span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span>, which is
-the square root of the dimensionality of the key vectors, this operation would
-scale the variance of the dot product down by <span class="math notranslate nohighlight">\(\sqrt{d_k}^2 = d_k\)</span> (since
-variance of a scaled random variable is the square of the scale factor times the
-original variance).</p>
-<p>Now our variance would be <span class="math notranslate nohighlight">\(\sigma^4\)</span> - but it is still not the same as the
-variance of the query and key vectors. This is okay because the original paper
-assume the variance <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span> <span id="id16">[<a class="reference internal" href="../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, and therefore
-it does not matter since <span class="math notranslate nohighlight">\(\sigma^2 = \sigma^4\)</span> when <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span>.</p>
-<div class="proof definition admonition" id="decoder-concept-attention-scoring-function-with-scaling">
-<p class="admonition-title"><span class="caption-number">Definition 6 </span> (Attention Scoring Function with Scaling)</p>
-<section class="definition-content" id="proof-content">
-<p>To this end, the updated scoring function is:</p>
-<div class="math notranslate nohighlight">
-\[
-\alpha(\mathbf{Q}, \mathbf{K}) = \frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}
-\in \mathbb{R}^{T \times T}
-\]</div>
-</section>
-</div><p>Before we look into the reason why we scale down the dot product, let’s first
-complete the final block of the attention mechanism, which is the softmax
-normalization.</p>
-</section>
-<section id="softmax">
-<h4><a class="toc-backref" href="#id49" role="doc-backlink">Softmax</a><a class="headerlink" href="#softmax" title="Permalink to this heading">#</a></h4>
-<div class="proof definition admonition" id="decoder-concept-attention-scores">
-<p class="admonition-title"><span class="caption-number">Definition 7 </span> (Attention Scores)</p>
-<section class="definition-content" id="proof-content">
-<p>Currently the attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span> are raw scores
-that indicate the degree of alignment or relevance between each query and all
-keys. They can be negative or positive, and they can be large or small. We
-denote them as the raw <strong>attention scores</strong> <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K}) \in
-\mathbb{R}^{T \times T}\)</span>.</p>
-</section>
-</div><div class="proof definition admonition" id="decoder-concept-softmax-normalization-attention-weights">
-<p class="admonition-title"><span class="caption-number">Definition 8 </span> (Softmax Normalization and Attention Weights)</p>
-<section class="definition-content" id="proof-content">
-<p>It is common in deep learning to form a convex combination <span id="id17">[<a class="reference internal" href="../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>
-of the attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span> to obtain the
-<strong>attention weights</strong>, denoted as <span class="math notranslate nohighlight">\(\text{softmax}(\alpha(\mathbf{Q}, \mathbf{K}))\)</span>, which
-are non-negative and sum to <span class="math notranslate nohighlight">\(1\)</span>. This is achieved through the softmax
-normalization function, which is defined as:</p>
-<div class="math notranslate nohighlight">
-\[\text{softmax}(\alpha(\mathbf{Q}, \mathbf{K})) = \frac{\exp(\alpha(\mathbf{Q},
-\mathbf{K}))}{\sum_{t=1}^T \exp(\alpha(\mathbf{Q}, \mathbf{k}\_t))} \in
-\mathbb{R}^{T \times T}\]</div>
-<p>where:</p>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\exp(\cdot)\)</span> is the exponential function, which is applied element-wise to
-the raw attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span>.</p></li>
-<li><p>The denominator is the sum of the exponentials of the raw attention scores
-across the <span class="math notranslate nohighlight">\(T\)</span> keys, ensuring that the attention weights sum to <span class="math notranslate nohighlight">\(1\)</span> for
-each query, allowing the mechanism to effectively distribute focus across
-the keys according to their relevance to each query.</p></li>
-</ul>
-</section>
-</div><p>The choice of softmax is a convenient choice, but not the only choice. However,
-it is convenient because it is both <em>differentiable</em>, which is often a desirable
-property for training deep learning models that are optimized using
-gradient-based methods, and it is also <em>monotonic</em>, which means that the
-<strong>attention weights</strong> are preserved exactly in the order as the raw <strong>attention
-scores</strong>.</p>
-<div class="proof definition admonition" id="decoder-concept-attention-scoring-function-with-scaling-softmax">
-<p class="admonition-title"><span class="caption-number">Definition 9 </span> (Attention Scoring Function with Scaling and Softmax)</p>
-<section class="definition-content" id="proof-content">
-<p>To this end, our final attention scoring function is:</p>
-<div class="math notranslate nohighlight">
-\[\alpha(\mathbf{Q}, \mathbf{K}) =
-\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right) \in
-\mathbb{R}^{T \times T}\]</div>
-</section>
-</div></section>
-<section id="context-vector-matrix">
-<h4><a class="toc-backref" href="#id50" role="doc-backlink">Context Vector/Matrix</a><a class="headerlink" href="#context-vector-matrix" title="Permalink to this heading">#</a></h4>
-<p>Consequently, we complete the walkthrough of the scaled dot-product attention
-mechanism by calculating the context vector, which is the weighted sum of the
-value vectors based on the attention weights obtained from the softmax
-normalization.</p>
-<div class="proof definition admonition" id="decoder-concept-context-vector-matrix">
-<p class="admonition-title"><span class="caption-number">Definition 10 </span> (Context Vector/Matrix)</p>
-<section class="definition-content" id="proof-content">
-<p>Given the attention weights <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span> and the value
-matrix <span class="math notranslate nohighlight">\(\mathbf{V}\)</span>, the context vector <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> is defined as the output
-of the scaled dot-product attention mechanism:</p>
-<div class="math notranslate nohighlight">
-\[\mathbf{C} :=
-\text{softmax}\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
-\in \mathbb{R}^{T \times d_v}\]</div>
-<p>where each row <span class="math notranslate nohighlight">\(\mathbf{c}_t\)</span> of the context matrix <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> is the
-new embedding of the token at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence, containing
-not only the semantic and positional information of the token itself, but also
-contextual information from the other tokens in the sequence.</p>
-</section>
-</div></section>
-<section id="numerical-stability-and-gradient-saturation">
-<h4><a class="toc-backref" href="#id51" role="doc-backlink">Numerical Stability and Gradient Saturation</a><a class="headerlink" href="#numerical-stability-and-gradient-saturation" title="Permalink to this heading">#</a></h4>
-<p>We can now revisit on the underlying reason why we scale down the dot product
-<span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span> by <span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span>.</p>
-<p>First, the softmax function has all the desirable properties we want,
-<em>smoothness</em>, <em>monotonicity</em>, and <em>differentiability</em>, but it is <em>sensitive</em> to
-large input values.</p>
-<p>The softmax function is defined as follows for a given logit <span class="math notranslate nohighlight">\(z_i\)</span> among a set
-of logits <span class="math notranslate nohighlight">\(Z\)</span>:</p>
-<div class="math notranslate nohighlight">
-\[\text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j} e^{z_j}}\]</div>
-<p>If the variance of the logits before applying softmax is too large (not scaled
-down to a more manageable range), the exponential function <span class="math notranslate nohighlight">\(e^{z_i}\)</span> can lead to
-extremely large output values for any <span class="math notranslate nohighlight">\(z_i\)</span> that is even slightly larger than
-others in the set. This is due to the exponential function’s rapid growth with
-respect to its input value.</p>
-<div class="proof remark admonition" id="decoder-concept-gradient-saturation">
-<p class="admonition-title"><span class="caption-number">Remark 2 </span> (Gradient Saturation)</p>
-<section class="remark-content" id="proof-content">
-<ul class="simple">
-<li><p><strong>For one random element:</strong> If one of the logits <span class="math notranslate nohighlight">\(z_i\)</span> is significantly
-larger than the others (which is more likely when the variance of the logits
-is high), <span class="math notranslate nohighlight">\(e^{z_i}\)</span> will dominate the numerator and denominator of the
-softmax function for this logit. This will cause the softmax output for this
-logit to approach 1, as it essentially overshadows all other <span class="math notranslate nohighlight">\(e^{z_j}\)</span> terms
-in the denominator.</p></li>
-<li><p><strong>For all others:</strong> Simultaneously, the softmax outputs for all other logits
-<span class="math notranslate nohighlight">\(z_j\)</span> (where <span class="math notranslate nohighlight">\(j \neq i\)</span>) will approach 0, because their <span class="math notranslate nohighlight">\(e^{z_j}\)</span>
-contributions to the numerator will be negligible compared to <span class="math notranslate nohighlight">\(e^{z_i}\)</span> in
-the denominator. Thus, the attention mechanism would almost exclusively
-focus on the token corresponding to the dominant logit, ignoring valuable
-information from other parts of the input sequence.</p></li>
-<li><p>Furthermore, the gradients through the softmax function will be very small
-(close to zero) for all logits except the dominant one, which can lead to
-<em>gradient saturation</em> and even <em>vanishing gradients</em> during training.</p></li>
-</ul>
-</section>
-</div><div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-<span class="linenos"> 2</span>    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="linenos"> 3</span>
-<span class="linenos"> 4</span><span class="c1"># Without scaling: large inputs</span>
-<span class="linenos"> 5</span><span class="n">logits_large</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-<span class="linenos"> 6</span><span class="n">softmax_large</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">logits_large</span><span class="p">)</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="n">d_k</span> <span class="o">=</span> <span class="mi">512</span>
-<span class="linenos"> 9</span><span class="n">scaling_factor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_k</span><span class="p">))</span>
-<span class="linenos">10</span><span class="n">scaled_logits</span> <span class="o">=</span> <span class="n">logits_large</span> <span class="o">/</span> <span class="n">scaling_factor</span>
-<span class="linenos">11</span><span class="n">softmax_scaled</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scaled_logits</span><span class="p">)</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Softmax without scaling:&quot;</span><span class="p">,</span> <span class="n">softmax_large</span><span class="p">)</span>
-<span class="linenos">14</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Softmax with scaling:&quot;</span><span class="p">,</span> <span class="n">softmax_scaled</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Softmax without scaling: tensor([2.0611e-09, 4.5398e-05, 9.9995e-01])
-Softmax with scaling: tensor([0.2010, 0.3126, 0.4864])
-</pre></div>
-</div>
-</div>
-</div>
-<p>As we can see, a vector with large inputs can lead to a <em>sharpening</em> effect on
-the output of the softmax function, essentially causing the output to be too
-peaky, converging to 1 for the largest input and 0 for the rest (one-hot).</p>
-<div class="proof remark admonition" id="decoder-concept-numerical-stability">
-<p class="admonition-title"><span class="caption-number">Remark 3 </span> (Numerical Stability)</p>
-<section class="remark-content" id="proof-content">
-<p>We know the importance of weight initialization in deep learning models,
-this is because it dictates the variance of the activations and gradients
-throughout the network. Without going into the theory, it is intuitive
-to think that having similar variance across all layer activations is
-a desirable property for numerical stability.
-By doing so, the model helps to ensure that the gradients are stable
-during backpropagation, avoiding the vanishing or exploding gradients problem
-and enabling effective learning.</p>
-<p>In the specific context of the attention mechanism, the variance of the dot
-products used to calculate attention scores is scaled down by the factor
-<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{d_k}}\)</span> to prevent softmax saturation. This allows each element
-to have a chance to influence the model’s learning, rather than having a single
-element dominate because of the variance scaling with <span class="math notranslate nohighlight">\(d_k\)</span>.</p>
-</section>
-</div></section>
-<section id="visualizing-variance-of-dot-product">
-<h4><a class="toc-backref" href="#id52" role="doc-backlink">Visualizing Variance of Dot Product</a><a class="headerlink" href="#visualizing-variance-of-dot-product" title="Permalink to this heading">#</a></h4>
-<p>If we set <span class="math notranslate nohighlight">\(d_k = 512\)</span>, and mean <span class="math notranslate nohighlight">\(0\)</span> with unit variance, we will see in action
-that indeed the scaled dot product has a variance of <span class="math notranslate nohighlight">\(1\)</span> while the unscaled dot
-product has a variance of <span class="math notranslate nohighlight">\(512\)</span>, which coincides with our theoretical analysis.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">seed_all</span><span class="p">(</span><span class="mi">92</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="c1"># Set the dimensionality of the keys and queries</span>
-<span class="linenos"> 4</span><span class="n">d_k</span> <span class="o">=</span> <span class="mi">512</span>
-<span class="linenos"> 5</span><span class="c1"># Set the batch size, number of heads, and sequence length</span>
-<span class="linenos"> 6</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">32</span>
-<span class="linenos"> 7</span><span class="c1"># Standard deviation for initialization</span>
-<span class="linenos"> 8</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="c1"># Initialize Q and K with variance sigma^2</span>
-<span class="linenos">11</span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span>
-<span class="linenos">12</span><span class="n">K</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span><span class="c1"># Calculate dot products without scaling</span>
-<span class="linenos">15</span><span class="n">unscaled_dot_products</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="c1"># Calculate the variance of the unscaled dot products</span>
-<span class="linenos">18</span><span class="n">unscaled_variance</span> <span class="o">=</span> <span class="n">unscaled_dot_products</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">19</span>
-<span class="linenos">20</span><span class="c1"># Apply the scaling factor 1 / sqrt(d_k)</span>
-<span class="linenos">21</span><span class="n">scaled_dot_products</span> <span class="o">=</span> <span class="n">unscaled_dot_products</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
-<span class="linenos">22</span>
-<span class="linenos">23</span><span class="c1"># Calculate the variance of the scaled dot products</span>
-<span class="linenos">24</span><span class="n">scaled_variance</span> <span class="o">=</span> <span class="n">scaled_dot_products</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unscaled Variance: </span><span class="si">{</span><span class="n">unscaled_variance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="linenos">27</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scaled Variance: </span><span class="si">{</span><span class="n">scaled_variance</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="linenos">28</span>
-<span class="linenos">29</span><span class="c1"># Apply softmax to the scaled and unscaled dot products</span>
-<span class="linenos">30</span><span class="n">softmax_unscaled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">unscaled_dot_products</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos">31</span><span class="n">softmax_scaled</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaled_dot_products</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Unscaled Variance: 512.0117797851562
-Scaled Variance: 1.0000230073928833
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="projections-lead-to-dynamic-context-vectors">
-<h4><a class="toc-backref" href="#id53" role="doc-backlink">Projections Lead to Dynamic Context Vectors</a><a class="headerlink" href="#projections-lead-to-dynamic-context-vectors" title="Permalink to this heading">#</a></h4>
-<p>From the start, we mentioned <em>the attention mechanism describes a <strong>weighted
-average</strong> of (sequence) elements with the weights <strong>dynamically</strong> computed based
-on an input query and elements’ keys</em>. We can easily see the <strong>weighted
-average</strong> part through self-attention. The <strong>dynamic</strong> part comes from the fact
-that the context vectors are computed based on the input query and its
-corresponding keys. There should be no confusion that all the learnable weights
-in this self-attention mechanism are the weight matrices
-<span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{Q}}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{K}}\)</span> and
-<span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{V}}\)</span>, but the dynamic is really because the scoring
-function uses a dot product <span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span>, which is <strong>dynamic</strong>
-because it is solely decided by the full input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>. Unlike
-static embeddings, where the word “cat” will always have the same embedding
-vector, the context vector for the word “cat” will be different in different
-sentences because it now depends on the full input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
-<p>Consequently, the projection of the token embeddings into the query and key
-space is needed.</p>
-</section>
-<section id="implementation">
-<h4><a class="toc-backref" href="#id54" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Permalink to this heading">#</a></h4>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">Attention</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="linenos"> 2</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 3</span>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-<span class="linenos"> 4</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span>    <span class="nd">@abstractmethod</span>
-<span class="linenos"> 7</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-<span class="linenos"> 8</span>        <span class="bp">self</span><span class="p">,</span>
-<span class="linenos"> 9</span>        <span class="n">query</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">10</span>        <span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">11</span>        <span class="n">value</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">12</span>        <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="linenos">13</span>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="linenos">14</span>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;The `forward` method must be implemented by the subclass.&quot;</span><span class="p">)</span>
-<span class="linenos">15</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="k">class</span> <span class="nc">ScaledDotProductAttention</span><span class="p">(</span><span class="n">Attention</span><span class="p">):</span>
-<span class="linenos">18</span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-<span class="linenos">19</span>        <span class="bp">self</span><span class="p">,</span>
-<span class="linenos">20</span>        <span class="n">query</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">21</span>        <span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">22</span>        <span class="n">value</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-<span class="linenos">23</span>        <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="linenos">24</span>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="linenos">25</span>        <span class="c1"># fmt: off</span>
-<span class="linenos">26</span>        <span class="n">d_q</span>               <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos">27</span>
-<span class="linenos">28</span>        <span class="n">attention_scores</span>  <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_q</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
-<span class="linenos">29</span>        <span class="n">attention_scores</span>  <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">attention_scores</span>
-<span class="linenos">30</span>
-<span class="linenos">31</span>        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos">32</span>        <span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>
-<span class="linenos">33</span>
-<span class="linenos">34</span>        <span class="n">context_vector</span>    <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-<span class="linenos">35</span>        <span class="c1"># fmt: on</span>
-<span class="linenos">36</span>        <span class="k">return</span> <span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span>
-<span class="linenos">37</span>
-<span class="linenos">38</span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="linenos">39</span>
-<span class="linenos">40</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">512</span>  <span class="c1"># batch size, head, context length, embedding dimension</span>
-<span class="linenos">41</span><span class="n">Q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>  <span class="c1"># query</span>
-<span class="linenos">42</span><span class="n">K</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>  <span class="c1"># key</span>
-<span class="linenos">43</span><span class="n">V</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>  <span class="c1"># value</span>
-<span class="linenos">44</span>
-<span class="linenos">45</span><span class="c1"># Scaled Dot-Product Attention</span>
-<span class="linenos">46</span><span class="n">attention</span> <span class="o">=</span> <span class="n">ScaledDotProductAttention</span><span class="p">(</span><span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-<span class="linenos">47</span><span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-<span class="linenos">48</span>
-<span class="linenos">49</span><span class="k">assert</span> <span class="n">context_vector</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
-<span class="linenos">50</span><span class="k">assert</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
-<span class="linenos">51</span><span class="n">pprint</span><span class="p">(</span><span class="n">context_vector</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="linenos">52</span><span class="n">pprint</span><span class="p">(</span><span class="n">attention_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="linenos">53</span>
-<span class="linenos">54</span><span class="c1"># assert each row of attention_weights sums to 1</span>
-<span class="linenos">55</span><span class="c1"># assert each element of attention_weights is between 0 and 1</span>
-<span class="linenos">56</span><span class="n">attention_weights_summed_over_sequences</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos">57</span><span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
-<span class="linenos">58</span>    <span class="n">attention_weights_summed_over_sequences</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
-<span class="linenos">59</span><span class="p">),</span> <span class="s2">&quot;The attention weights distribution induced by softmax should sum to 1.&quot;</span>
-<span class="linenos">60</span><span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-<span class="linenos">61</span>    <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">attention_weights</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">attention_weights</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
-<span class="linenos">62</span><span class="p">),</span> <span class="s2">&quot;All attention weights should be between 0 and 1.&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">torch.Size</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">32</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">512</span><span style="font-weight: bold">])</span>
-</pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">torch.Size</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">32</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">32</span><span style="font-weight: bold">])</span>
-</pre>
-</div></div>
-</div>
-</section>
-<section id="heatmap">
-<h4><a class="toc-backref" href="#id55" role="doc-backlink">Heatmap</a><a class="headerlink" href="#heatmap" title="Permalink to this heading">#</a></h4>
-<p>…</p>
-</section>
-</section>
-</section>
 <section id="multi-head-attention">
-<h2><a class="toc-backref" href="#id56" role="doc-backlink">Multi-Head Attention</a><a class="headerlink" href="#multi-head-attention" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Multi-Head Attention</a><a class="headerlink" href="#multi-head-attention" title="Permalink to this heading">#</a></h2>
 <p>We will keep this section brief as many of the concepts have been covered in the
 previous section. Furthermore, there are many good illustrations out there with
 more detailed explanations.</p>
-<section id="id18">
-<h3><a class="toc-backref" href="#id57" role="doc-backlink">Definition</a><a class="headerlink" href="#id18" title="Permalink to this heading">#</a></h3>
+<section id="definition">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h3>
 <div class="proof definition admonition" id="decoder-concept-multi-head-attention">
-<p class="admonition-title"><span class="caption-number">Definition 11 </span> (Multi-Head Attention)</p>
+<p class="admonition-title"><span class="caption-number">Definition 1 </span> (Multi-Head Attention)</p>
 <section class="definition-content" id="proof-content">
 <p>abc</p>
 </section>
@@ -1870,8 +1004,8 @@ matrix that projects the concatenated context vectors back to the original
 dimensionality <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
 </ul>
 </section>
-<section id="id19">
-<h3><a class="toc-backref" href="#id58" role="doc-backlink">???</a><a class="headerlink" href="#id19" title="Permalink to this heading">#</a></h3>
+<section id="id11">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">???</a><a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">H</span> <span class="o">=</span> <span class="n">num_heads</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">d_q</span> <span class="o">=</span> <span class="n">d_k</span> <span class="o">=</span> <span class="n">d_v</span> <span class="o">=</span> <span class="n">D</span> <span class="o">//</span> <span class="n">H</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">d_q</span><span class="p">)</span>
@@ -1896,7 +1030,7 @@ dimensionality <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
 </section>
 </section>
 <section id="casual-attention-masked-self-attention">
-<h2><a class="toc-backref" href="#id59" role="doc-backlink">Casual Attention/Masked Self-Attention</a><a class="headerlink" href="#casual-attention-masked-self-attention" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">Casual Attention/Masked Self-Attention</a><a class="headerlink" href="#casual-attention-masked-self-attention" title="Permalink to this heading">#</a></h2>
 <p>In the context of GPT models, which is a decoder-only architecture, the
 self-attention mechanism is often referred to as <strong>masked self-attention</strong> or
 <strong>causal attention</strong>. The reason is that the attention mechanism is masked to
@@ -1909,7 +1043,7 @@ allow each token to attend to itself and all preceding tokens in the sequence,
 but not to future tokens. We would need to change the earlier explanation of the
 self-attention mechanism to reflect this constraint.</p>
 <section id="intuition">
-<h3><a class="toc-backref" href="#id60" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Permalink to this heading">#</a></h3>
 <p>One sentence to summarize the understanding.</p>
 <p><strong>Casual attention (masked self attention) in decoder reduces to self attention
 for the last token in the input sequence.</strong></p>
@@ -1936,8 +1070,8 @@ attending to all tokens up to itself.</p></li>
 </ol>
 </section>
 </section>
-<section id="id20">
-<h2><a class="toc-backref" href="#id61" role="doc-backlink">Perplexity</a><a class="headerlink" href="#id20" title="Permalink to this heading">#</a></h2>
+<section id="id12">
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">Perplexity</a><a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://keras.io/api/keras_nlp/metrics/perplexity/">https://keras.io/api/keras_nlp/metrics/perplexity/</a></p></li>
 <li><p><a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html">https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html</a></p></li>
@@ -1945,9 +1079,9 @@ attending to all tokens up to itself.</p></li>
 </ul>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id62" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id36" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <hr class="footnotes docutils" />
-<aside class="footnote brackets" id="id21" role="note">
+<aside class="footnote brackets" id="id13" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">1</a><span class="fn-bracket">]</span></span>
 <p>This part is not concrete as the formalization is not rigorous in the
 statistical learning framework, but the general idea is there.</p>
@@ -2039,40 +1173,16 @@ statistical learning framework, but the general idea is there.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-of-attention-mechanism">Intuition of Attention Mechanism</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding-and-vector-representation-process">Token Embedding and Vector Representation Process</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#queries-keys-and-values">Queries, Keys, and Values</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#database-analogy">Database Analogy</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#queries-keys-and-values-in-attention-mechanism">Queries, Keys, and Values in Attention Mechanism</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#context-vector-matrix">Context Vector/Matrix</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Definition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">???</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">???</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#casual-attention-masked-self-attention">Casual Attention/Masked Self-Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">Perplexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Perplexity</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
