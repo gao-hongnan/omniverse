@@ -446,6 +446,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-norm-stabilises-activation-distributions">Layer Norm Stabilises Activation Distributions</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layernorm-and-residual-connection">LayerNorm and Residual Connection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Implementation</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-of-attention-mechanism">Intuition of Attention Mechanism</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding-and-vector-representation-process">Token Embedding and Vector Representation Process</a></li>
@@ -456,7 +461,7 @@ document.write(`
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">Definition</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
@@ -464,14 +469,13 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">Implementation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more-intuition-in-andrej-karpathy-s-video">More Intuition in Andrej Karpathy’s Video</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-probability">Conditional Probability</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-probability">Joint Probability</a></li>
 </ul>
             </nav>
         </div>
@@ -487,93 +491,98 @@ document.write(`
 <h1>Shakespeare<a class="headerlink" href="#shakespeare" title="Permalink to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#composing-the-configurations" id="id27">Composing the Configurations</a></p></li>
-<li><p><a class="reference internal" href="#reproducibility" id="id28">Reproducibility</a></p></li>
-<li><p><a class="reference internal" href="#tokenization-and-vocabulary" id="id29">Tokenization and Vocabulary</a></p>
+<li><p><a class="reference internal" href="#composing-the-configurations" id="id29">Composing the Configurations</a></p></li>
+<li><p><a class="reference internal" href="#reproducibility" id="id30">Reproducibility</a></p></li>
+<li><p><a class="reference internal" href="#tokenization-and-vocabulary" id="id31">Tokenization and Vocabulary</a></p>
 <ul>
-<li><p><a class="reference internal" href="#stoi-todo" id="id30">STOI (TODO)</a></p></li>
+<li><p><a class="reference internal" href="#stoi-todo" id="id32">STOI (TODO)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#dataset-and-dataloading-poor-man-s-dataloader" id="id31">Dataset and Dataloading (Poor Man’s Dataloader)</a></p>
+<li><p><a class="reference internal" href="#dataset-and-dataloading-poor-man-s-dataloader" id="id33">Dataset and Dataloading (Poor Man’s Dataloader)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#memory-mapping" id="id32">Memory Mapping</a></p></li>
-<li><p><a class="reference internal" href="#notation-context-length-shuffling-and-batching" id="id33">Notation, Context Length, Shuffling and Batching</a></p>
+<li><p><a class="reference internal" href="#memory-mapping" id="id34">Memory Mapping</a></p></li>
+<li><p><a class="reference internal" href="#notation-context-length-shuffling-and-batching" id="id35">Notation, Context Length, Shuffling and Batching</a></p>
 <ul>
-<li><p><a class="reference internal" href="#notation" id="id34">Notation</a></p></li>
-<li><p><a class="reference internal" href="#context-length-block-size" id="id35">Context Length / Block Size</a></p></li>
-<li><p><a class="reference internal" href="#shuffling-and-discrete-uniform-sampling" id="id36">Shuffling and Discrete Uniform Sampling</a></p></li>
-<li><p><a class="reference internal" href="#batching" id="id37">Batching</a></p></li>
+<li><p><a class="reference internal" href="#notation" id="id36">Notation</a></p></li>
+<li><p><a class="reference internal" href="#context-length-block-size" id="id37">Context Length / Block Size</a></p></li>
+<li><p><a class="reference internal" href="#shuffling-and-discrete-uniform-sampling" id="id38">Shuffling and Discrete Uniform Sampling</a></p></li>
+<li><p><a class="reference internal" href="#batching" id="id39">Batching</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#construction-of-input-and-target-sequences" id="id38">Construction of Input and Target Sequences</a></p></li>
-<li><p><a class="reference internal" href="#asynchronous-data-loading-and-prefetching" id="id39">Asynchronous Data Loading and Prefetching</a></p></li>
-<li><p><a class="reference internal" href="#collating-everything-together" id="id40">Collating Everything Together</a></p></li>
-<li><p><a class="reference internal" href="#using-pytorch-s-dataset-and-dataloader" id="id41">Using PyTorch’s Dataset and Dataloader</a></p></li>
+<li><p><a class="reference internal" href="#construction-of-input-and-target-sequences" id="id40">Construction of Input and Target Sequences</a></p></li>
+<li><p><a class="reference internal" href="#asynchronous-data-loading-and-prefetching" id="id41">Asynchronous Data Loading and Prefetching</a></p></li>
+<li><p><a class="reference internal" href="#collating-everything-together" id="id42">Collating Everything Together</a></p></li>
+<li><p><a class="reference internal" href="#using-pytorch-s-dataset-and-dataloader" id="id43">Using PyTorch’s Dataset and Dataloader</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#generative-pre-trained-transformer-gpt" id="id42">Generative Pre-trained Transformer (GPT)</a></p></li>
-<li><p><a class="reference internal" href="#token-embeddings" id="id43">Token Embeddings</a></p>
+<li><p><a class="reference internal" href="#generative-pre-trained-transformer-gpt" id="id44">Generative Pre-trained Transformer (GPT)</a></p></li>
+<li><p><a class="reference internal" href="#token-embeddings" id="id45">Token Embeddings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#lookup-operation" id="id44">Lookup Operation</a></p></li>
-<li><p><a class="reference internal" href="#token-embedding-matrix" id="id45">Token Embedding Matrix</a></p></li>
-<li><p><a class="reference internal" href="#representation-mapping" id="id46">Representation Mapping</a></p></li>
-<li><p><a class="reference internal" href="#one-hot-encoding-and-embedding-matrix" id="id47">One-Hot Encoding and Embedding Matrix</a></p></li>
-<li><p><a class="reference internal" href="#implementation" id="id48">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#lookup-operation" id="id46">Lookup Operation</a></p></li>
+<li><p><a class="reference internal" href="#token-embedding-matrix" id="id47">Token Embedding Matrix</a></p></li>
+<li><p><a class="reference internal" href="#representation-mapping" id="id48">Representation Mapping</a></p></li>
+<li><p><a class="reference internal" href="#one-hot-encoding-and-embedding-matrix" id="id49">One-Hot Encoding and Embedding Matrix</a></p></li>
+<li><p><a class="reference internal" href="#implementation" id="id50">Implementation</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#positional-embeddings" id="id49">Positional Embeddings</a></p>
+<li><p><a class="reference internal" href="#positional-embeddings" id="id51">Positional Embeddings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#definition" id="id50">Definition</a></p></li>
-<li><p><a class="reference internal" href="#more-intuition-on-positional-encodings-pretty-bad-analogy-to-revise" id="id51">More Intuition on Positional Encodings (Pretty bad analogy, to revise)</a></p></li>
-<li><p><a class="reference internal" href="#an-example-of-positional-encoding" id="id52">An Example of Positional Encoding</a></p>
+<li><p><a class="reference internal" href="#definition" id="id52">Definition</a></p></li>
+<li><p><a class="reference internal" href="#more-intuition-on-positional-encodings-pretty-bad-analogy-to-revise" id="id53">More Intuition on Positional Encodings (Pretty bad analogy, to revise)</a></p></li>
+<li><p><a class="reference internal" href="#an-example-of-positional-encoding" id="id54">An Example of Positional Encoding</a></p>
 <ul>
-<li><p><a class="reference internal" href="#positional-encoding-for-p-1-priest" id="id53">Positional Encoding for <span class="math notranslate nohighlight">\(p = 1\)</span> (‘priest’)</a></p></li>
-<li><p><a class="reference internal" href="#positional-encoding-for-p-2-and" id="id54">Positional Encoding for <span class="math notranslate nohighlight">\(p = 2\)</span> (‘and’)</a></p></li>
-<li><p><a class="reference internal" href="#positional-encoding-for-p-3-clerk" id="id55">Positional Encoding for <span class="math notranslate nohighlight">\(p = 3\)</span> (‘clerk?’)</a></p></li>
+<li><p><a class="reference internal" href="#positional-encoding-for-p-1-priest" id="id55">Positional Encoding for <span class="math notranslate nohighlight">\(p = 1\)</span> (‘priest’)</a></p></li>
+<li><p><a class="reference internal" href="#positional-encoding-for-p-2-and" id="id56">Positional Encoding for <span class="math notranslate nohighlight">\(p = 2\)</span> (‘and’)</a></p></li>
+<li><p><a class="reference internal" href="#positional-encoding-for-p-3-clerk" id="id57">Positional Encoding for <span class="math notranslate nohighlight">\(p = 3\)</span> (‘clerk?’)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#id8" id="id56">Implementation</a></p></li>
-<li><p><a class="reference internal" href="#visualising-positional-encodings" id="id57">Visualising Positional Encodings</a></p></li>
-<li><p><a class="reference internal" href="#positional-encodings-via-embeddings" id="id58">Positional Encodings via Embeddings</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id58">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#visualising-positional-encodings" id="id59">Visualising Positional Encodings</a></p></li>
+<li><p><a class="reference internal" href="#positional-encodings-via-embeddings" id="id60">Positional Encodings via Embeddings</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#layer-normalization" id="id59">Layer Normalization</a></p>
+<li><p><a class="reference internal" href="#layer-normalization" id="id61">Layer Normalization</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id12" id="id60">Definition</a></p></li>
-<li><p><a class="reference internal" href="#learnable-affine-transformation" id="id61">Learnable Affine Transformation</a></p></li>
-<li><p><a class="reference internal" href="#id13" id="id62">Implementation</a></p></li>
-<li><p><a class="reference internal" href="#layer-norm-stabilises-activation-distributions" id="id63">Layer Norm Stabilises Activation Distributions</a></p></li>
+<li><p><a class="reference internal" href="#id12" id="id62">Definition</a></p></li>
+<li><p><a class="reference internal" href="#learnable-affine-transformation" id="id63">Learnable Affine Transformation</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id64">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#layer-norm-stabilises-activation-distributions" id="id65">Layer Norm Stabilises Activation Distributions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#self-attention" id="id64">Self-Attention</a></p>
+<li><p><a class="reference internal" href="#residual-connection" id="id66">Residual Connection</a></p>
 <ul>
-<li><p><a class="reference internal" href="#intuition-of-attention-mechanism" id="id65">Intuition of Attention Mechanism</a></p></li>
-<li><p><a class="reference internal" href="#token-embedding-and-vector-representation-process" id="id66">Token Embedding and Vector Representation Process</a></p></li>
-<li><p><a class="reference internal" href="#queries-keys-and-values" id="id67">Queries, Keys, and Values</a></p>
+<li><p><a class="reference internal" href="#layernorm-and-residual-connection" id="id67">LayerNorm and Residual Connection</a></p></li>
+<li><p><a class="reference internal" href="#id17" id="id68">Implementation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#self-attention" id="id69">Self-Attention</a></p>
 <ul>
-<li><p><a class="reference internal" href="#database-analogy" id="id68">Database Analogy</a></p></li>
-<li><p><a class="reference internal" href="#queries-keys-and-values-in-attention-mechanism" id="id69">Queries, Keys, and Values in Attention Mechanism</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#linear-projections" id="id70">Linear Projections</a></p></li>
-<li><p><a class="reference internal" href="#scaled-dot-product-attention" id="id71">Scaled Dot-Product Attention</a></p>
+<li><p><a class="reference internal" href="#intuition-of-attention-mechanism" id="id70">Intuition of Attention Mechanism</a></p></li>
+<li><p><a class="reference internal" href="#token-embedding-and-vector-representation-process" id="id71">Token Embedding and Vector Representation Process</a></p></li>
+<li><p><a class="reference internal" href="#queries-keys-and-values" id="id72">Queries, Keys, and Values</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id20" id="id72">Definition</a></p></li>
-<li><p><a class="reference internal" href="#attention-scoring-function" id="id73">Attention Scoring Function</a></p></li>
-<li><p><a class="reference internal" href="#scaling-down-the-dot-product-of-query-and-key-vectors" id="id74">Scaling Down the Dot Product of Query and Key Vectors</a></p></li>
-<li><p><a class="reference internal" href="#softmax" id="id75">Softmax</a></p></li>
-<li><p><a class="reference internal" href="#context-vector-matrix" id="id76">Context Vector/Matrix</a></p></li>
-<li><p><a class="reference internal" href="#numerical-stability-and-gradient-saturation" id="id77">Numerical Stability and Gradient Saturation</a></p></li>
-<li><p><a class="reference internal" href="#visualizing-variance-of-dot-product" id="id78">Visualizing Variance of Dot Product</a></p></li>
-<li><p><a class="reference internal" href="#projections-lead-to-dynamic-context-vectors" id="id79">Projections Lead to Dynamic Context Vectors</a></p></li>
-<li><p><a class="reference internal" href="#id24" id="id80">Implementation</a></p></li>
-<li><p><a class="reference internal" href="#heatmap" id="id81">Heatmap</a></p></li>
+<li><p><a class="reference internal" href="#database-analogy" id="id73">Database Analogy</a></p></li>
+<li><p><a class="reference internal" href="#queries-keys-and-values-in-attention-mechanism" id="id74">Queries, Keys, and Values in Attention Mechanism</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#linear-projections" id="id75">Linear Projections</a></p></li>
+<li><p><a class="reference internal" href="#scaled-dot-product-attention" id="id76">Scaled Dot-Product Attention</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id22" id="id77">Definition</a></p></li>
+<li><p><a class="reference internal" href="#attention-scoring-function" id="id78">Attention Scoring Function</a></p></li>
+<li><p><a class="reference internal" href="#scaling-down-the-dot-product-of-query-and-key-vectors" id="id79">Scaling Down the Dot Product of Query and Key Vectors</a></p></li>
+<li><p><a class="reference internal" href="#softmax" id="id80">Softmax</a></p></li>
+<li><p><a class="reference internal" href="#context-vector-matrix" id="id81">Context Vector/Matrix</a></p></li>
+<li><p><a class="reference internal" href="#numerical-stability-and-gradient-saturation" id="id82">Numerical Stability and Gradient Saturation</a></p></li>
+<li><p><a class="reference internal" href="#visualizing-variance-of-dot-product" id="id83">Visualizing Variance of Dot Product</a></p></li>
+<li><p><a class="reference internal" href="#projections-lead-to-dynamic-context-vectors" id="id84">Projections Lead to Dynamic Context Vectors</a></p></li>
+<li><p><a class="reference internal" href="#id26" id="id85">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#heatmap" id="id86">Heatmap</a></p></li>
+<li><p><a class="reference internal" href="#more-intuition-in-andrej-karpathy-s-video" id="id87">More Intuition in Andrej Karpathy’s Video</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#conditional-probability" id="id82">Conditional Probability</a></p></li>
-<li><p><a class="reference internal" href="#joint-probability" id="id83">Joint Probability</a></p></li>
 </ul>
 </nav>
 <div class="cell docutils container">
@@ -611,7 +620,7 @@ document.write(`
 </div>
 </div>
 <section id="composing-the-configurations">
-<h2><a class="toc-backref" href="#id27" role="doc-backlink">Composing the Configurations</a><a class="headerlink" href="#composing-the-configurations" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Composing the Configurations</a><a class="headerlink" href="#composing-the-configurations" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Composer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
@@ -693,7 +702,7 @@ document.write(`
 </div>
 </section>
 <section id="reproducibility">
-<h2><a class="toc-backref" href="#id28" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">configure_deterministic_mode</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -783,13 +792,13 @@ document.write(`
 </div>
 </section>
 <section id="tokenization-and-vocabulary">
-<h2><a class="toc-backref" href="#id29" role="doc-backlink">Tokenization and Vocabulary</a><a class="headerlink" href="#tokenization-and-vocabulary" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">Tokenization and Vocabulary</a><a class="headerlink" href="#tokenization-and-vocabulary" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://huggingface.co/learn/nlp-course/chapter2/4?fw=pt">https://huggingface.co/learn/nlp-course/chapter2/4?fw=pt</a></p></li>
 <li><p><a class="github reference external" href="https://github.com/openai/tiktoken">openai/tiktoken</a></p></li>
 <li><p><a class="github reference external" href="https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb">openai/openai-cookbook</a></p></li>
 </ul>
-<p>Language models don’t see text like you and I, instead they see a sequence of numbers (known as tokens). Byte pair encoding (BPE) is a way of converting text into tokens. It has a couple desirable properties<a class="footnote-reference brackets" href="#id25" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<p>Language models don’t see text like you and I, instead they see a sequence of numbers (known as tokens). Byte pair encoding (BPE) is a way of converting text into tokens. It has a couple desirable properties<a class="footnote-reference brackets" href="#id27" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <ul class="simple">
 <li><p>It’s reversible and lossless, so you can convert tokens back into the original text</p></li>
 <li><p>It works on arbitrary text, even text that is not in the tokeniser’s training data</p></li>
@@ -942,7 +951,7 @@ Let us kill him, and we
 </div>
 </div>
 <section id="stoi-todo">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">STOI (TODO)</a><a class="headerlink" href="#stoi-todo" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">STOI (TODO)</a><a class="headerlink" href="#stoi-todo" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>The first <code class="docutils literal notranslate"><span class="pre">input</span></code> is the sentence <code class="docutils literal notranslate"><span class="pre">hello</span> <span class="pre">bot</span></code>.</p></li>
 <li><p>The tokenization is <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">1]</span></code> which correctly maps to the tokens <code class="docutils literal notranslate"><span class="pre">[&lt;SOS&gt;,</span> <span class="pre">hello,</span> <span class="pre">bot,</span> <span class="pre">&lt;EOS&gt;]</span></code> as per the <code class="docutils literal notranslate"><span class="pre">stoi</span></code> mapping.</p></li>
@@ -986,7 +995,7 @@ Let us kill him, and we
 </section>
 </section>
 <section id="dataset-and-dataloading-poor-man-s-dataloader">
-<h2><a class="toc-backref" href="#id31" role="doc-backlink">Dataset and Dataloading (Poor Man’s Dataloader)</a><a class="headerlink" href="#dataset-and-dataloading-poor-man-s-dataloader" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">Dataset and Dataloading (Poor Man’s Dataloader)</a><a class="headerlink" href="#dataset-and-dataloading-poor-man-s-dataloader" title="Permalink to this heading">#</a></h2>
 <p><strong>TODO: to bridge the gap between the previous section and this one, we need to
 explain why we need to construct a dataset.</strong></p>
 <hr class="docutils" />
@@ -995,7 +1004,7 @@ explain why we need to construct a dataset.</strong></p>
 We will start by dissecting the code and understanding how it works and finally,
 show that everything can be done with PyTorch’s <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> and <code class="docutils literal notranslate"><span class="pre">Dataloader</span></code>.</p>
 <section id="memory-mapping">
-<h3><a class="toc-backref" href="#id32" role="doc-backlink">Memory Mapping</a><a class="headerlink" href="#memory-mapping" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">Memory Mapping</a><a class="headerlink" href="#memory-mapping" title="Permalink to this heading">#</a></h3>
 <p>Firstly, Karpathy uses <code class="docutils literal notranslate"><span class="pre">numpy</span></code>’s
 <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.memmap.html">memory mapping</a>
 (<code class="docutils literal notranslate"><span class="pre">numpy.memmap</span></code>) to load the data. Memory mapping is used to create a
@@ -1030,12 +1039,12 @@ with <span class="math notranslate nohighlight">\(301966\)</span> elements - thi
 tokens.</p>
 </section>
 <section id="notation-context-length-shuffling-and-batching">
-<h3><a class="toc-backref" href="#id33" role="doc-backlink">Notation, Context Length, Shuffling and Batching</a><a class="headerlink" href="#notation-context-length-shuffling-and-batching" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Notation, Context Length, Shuffling and Batching</a><a class="headerlink" href="#notation-context-length-shuffling-and-batching" title="Permalink to this heading">#</a></h3>
 <p>However, we are not going to pass the entire training corpus as is to the model.
 Instead, we are going to pass a <strong>batch</strong> of sequences (each sequence of length
 <code class="docutils literal notranslate"><span class="pre">context_length</span></code>) to the model at a time.</p>
 <section id="notation">
-<h4><a class="toc-backref" href="#id34" role="doc-backlink">Notation</a><a class="headerlink" href="#notation" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id36" role="doc-backlink">Notation</a><a class="headerlink" href="#notation" title="Permalink to this heading">#</a></h4>
 <p>Let’s consider a sequence <span class="math notranslate nohighlight">\(\mathbf{x} = (x_1, x_2, \ldots, x_T)\)</span>, where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(x_t\)</span> represents the <span class="math notranslate nohighlight">\(t\)</span>-th token in the sequence,</p></li>
@@ -1063,7 +1072,7 @@ practice, each <span class="math notranslate nohighlight">\(x_{i,j}\)</span> cor
 <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> so using <span class="math notranslate nohighlight">\(\mathbb{Z}^{+}\)</span> would be more appropriate.</p>
 </section>
 <section id="context-length-block-size">
-<h4><a class="toc-backref" href="#id35" role="doc-backlink">Context Length / Block Size</a><a class="headerlink" href="#context-length-block-size" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id37" role="doc-backlink">Context Length / Block Size</a><a class="headerlink" href="#context-length-block-size" title="Permalink to this heading">#</a></h4>
 <p><span class="math notranslate nohighlight">\(T\)</span> is often referred to as the sequence length, or in the context of GPT, it is
 the <code class="docutils literal notranslate"><span class="pre">block_size</span></code> or <code class="docutils literal notranslate"><span class="pre">context_length</span></code> or <code class="docutils literal notranslate"><span class="pre">max_seq_len</span></code>.</p>
 <p>It is the length of the sequence that the model will be trained on and is also
@@ -1116,7 +1125,7 @@ overfit to an ordered sequence of tokens in the training corpus.</p>
 sequences.</p>
 </section>
 <section id="shuffling-and-discrete-uniform-sampling">
-<h4><a class="toc-backref" href="#id36" role="doc-backlink">Shuffling and Discrete Uniform Sampling</a><a class="headerlink" href="#shuffling-and-discrete-uniform-sampling" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id38" role="doc-backlink">Shuffling and Discrete Uniform Sampling</a><a class="headerlink" href="#shuffling-and-discrete-uniform-sampling" title="Permalink to this heading">#</a></h4>
 <p>To enable shuffling, Karpathy generates a tensor of random integers (essentially a list of
 random integers), which serve as indices. These indices are used to select
 random sequences from the training (and validation) data.</p>
@@ -1191,7 +1200,7 @@ sequence of length <code class="docutils literal notranslate"><span class="pre">
 index <code class="docutils literal notranslate"><span class="pre">index</span></code> and end at <code class="docutils literal notranslate"><span class="pre">index</span> <span class="pre">+</span> <span class="pre">block_size</span></code>.</p>
 </section>
 <section id="batching">
-<h4><a class="toc-backref" href="#id37" role="doc-backlink">Batching</a><a class="headerlink" href="#batching" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id39" role="doc-backlink">Batching</a><a class="headerlink" href="#batching" title="Permalink to this heading">#</a></h4>
 <p>Now that we understand how to sample a single sequence from the training data,
 let’s look at how we can sample a batch of sequences.
 PyTorch made it easy for you, as we can just simply change the <code class="docutils literal notranslate"><span class="pre">size</span></code> parameter
@@ -1247,7 +1256,7 @@ end up with an index that is the last index of the training data, and when we ad
 </section>
 </section>
 <section id="construction-of-input-and-target-sequences">
-<h3><a class="toc-backref" href="#id38" role="doc-backlink">Construction of Input and Target Sequences</a><a class="headerlink" href="#construction-of-input-and-target-sequences" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id40" role="doc-backlink">Construction of Input and Target Sequences</a><a class="headerlink" href="#construction-of-input-and-target-sequences" title="Permalink to this heading">#</a></h3>
 <p>As we will define more formally later, GPT model is an autoregressive
 self-supervised learning model<span id="id3">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span> that directly learns a
 conditional probability distribution <span class="math notranslate nohighlight">\(\mathbb{P}(x_t | x_{&lt;t} ; \Theta)\)</span> over
@@ -1308,7 +1317,7 @@ in the <code class="docutils literal notranslate"><span class="pre">train_data</
 </div>
 </section>
 <section id="asynchronous-data-loading-and-prefetching">
-<h3><a class="toc-backref" href="#id39" role="doc-backlink">Asynchronous Data Loading and Prefetching</a><a class="headerlink" href="#asynchronous-data-loading-and-prefetching" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id41" role="doc-backlink">Asynchronous Data Loading and Prefetching</a><a class="headerlink" href="#asynchronous-data-loading-and-prefetching" title="Permalink to this heading">#</a></h3>
 <p>As we approach the last part of the code, Karpathy moves <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> to the
 device and returns them.</p>
 <div class="cell docutils container">
@@ -1331,7 +1340,7 @@ tensor data from CPU to GPU. The <code class="docutils literal notranslate"><spa
 to be more <a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">performant</a>
 as it avoids some implicit CPU-to-CPU copies. Tensors which are pinned in memory
 also allow the transfer from CPU to GPU to be done asynchronously via <code class="docutils literal notranslate"><span class="pre">non_blocking</span></code> with respect to
-the host<a class="footnote-reference brackets" href="#id26" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+the host<a class="footnote-reference brackets" href="#id28" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p>It can be useful because we can do some other work in CPU while the data is being
 transferred to GPU. Consider the below scenario:</p>
 <ul class="simple">
@@ -1348,7 +1357,7 @@ programming is complex and is out of the scope of this post. Interested readers
 can see the reference section.</p>
 </section>
 <section id="collating-everything-together">
-<h3><a class="toc-backref" href="#id40" role="doc-backlink">Collating Everything Together</a><a class="headerlink" href="#collating-everything-together" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">Collating Everything Together</a><a class="headerlink" href="#collating-everything-together" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_batch</span><span class="p">(</span>
@@ -1409,14 +1418,14 @@ can see the reference section.</p>
 </div>
 </section>
 <section id="using-pytorch-s-dataset-and-dataloader">
-<h3><a class="toc-backref" href="#id41" role="doc-backlink">Using PyTorch’s Dataset and Dataloader</a><a class="headerlink" href="#using-pytorch-s-dataset-and-dataloader" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">Using PyTorch’s Dataset and Dataloader</a><a class="headerlink" href="#using-pytorch-s-dataset-and-dataloader" title="Permalink to this heading">#</a></h3>
 <p>It is relatively simple to understand - and since there is not a need to
 <a class="reference external" href="https://pytorch.org/docs/stable/data.html#dataloader-collate-fn">collate</a> the
 data, which makes things a bit easier.</p>
 </section>
 </section>
 <section id="generative-pre-trained-transformer-gpt">
-<h2><a class="toc-backref" href="#id42" role="doc-backlink">Generative Pre-trained Transformer (GPT)</a><a class="headerlink" href="#generative-pre-trained-transformer-gpt" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id44" role="doc-backlink">Generative Pre-trained Transformer (GPT)</a><a class="headerlink" href="#generative-pre-trained-transformer-gpt" title="Permalink to this heading">#</a></h2>
 <figure class="align-default" id="sebastian-decoder">
 <img alt="../../_images/sebastian-decoder.jpeg" src="../../_images/sebastian-decoder.jpeg" />
 <figcaption>
@@ -1425,7 +1434,7 @@ data, which makes things a bit easier.</p>
 </figure>
 </section>
 <section id="token-embeddings">
-<h2><a class="toc-backref" href="#id43" role="doc-backlink">Token Embeddings</a><a class="headerlink" href="#token-embeddings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id45" role="doc-backlink">Token Embeddings</a><a class="headerlink" href="#token-embeddings" title="Permalink to this heading">#</a></h2>
 <p>First, we will look at the first sequence, given by <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">priest</span> <span class="pre">and</span> <span class="pre">clerk?</span> <span class="pre">well</span> <span class="pre">then,</span> <span class="pre">amen'</span></code>,
 which we have already mapped to its corresponding token IDs.</p>
 <div class="math notranslate nohighlight">
@@ -1511,7 +1520,7 @@ allows the model to capture relationships between tokens better.</p>
 </div></div>
 </div>
 <section id="lookup-operation">
-<h3><a class="toc-backref" href="#id44" role="doc-backlink">Lookup Operation</a><a class="headerlink" href="#lookup-operation" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">Lookup Operation</a><a class="headerlink" href="#lookup-operation" title="Permalink to this heading">#</a></h3>
 <p>So this operation above is essentially a lookup operation, where we look up the
 embedding vector for each token in the sequence. This is done by
 <code class="docutils literal notranslate"><span class="pre">self.token_embeddings(x)</span></code>. We run it against the first sequence for simplicity,
@@ -1538,7 +1547,7 @@ refer to people, and <code class="docutils literal notranslate"><span class="pre
 religious contexts.</p>
 </section>
 <section id="token-embedding-matrix">
-<h3><a class="toc-backref" href="#id45" role="doc-backlink">Token Embedding Matrix</a><a class="headerlink" href="#token-embedding-matrix" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id47" role="doc-backlink">Token Embedding Matrix</a><a class="headerlink" href="#token-embedding-matrix" title="Permalink to this heading">#</a></h3>
 <p><span class="math notranslate nohighlight">\(\mathbf{W}^{e}\)</span>: is the embedding matrix defined as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1554,7 +1563,7 @@ the embedding vector for that word.</p></li>
 </ul>
 </section>
 <section id="representation-mapping">
-<h3><a class="toc-backref" href="#id46" role="doc-backlink">Representation Mapping</a><a class="headerlink" href="#representation-mapping" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id48" role="doc-backlink">Representation Mapping</a><a class="headerlink" href="#representation-mapping" title="Permalink to this heading">#</a></h3>
 <p>Define a function <span class="math notranslate nohighlight">\(h_{\text{tok_embed}}: \mathcal{V} \to \mathbb{R}^{D}\)</span> such
 that for each token <span class="math notranslate nohighlight">\(x_t \in \mathcal{V}\)</span>, the function
 <span class="math notranslate nohighlight">\(h_{\text{tok_embed}}(x_t) = \mathbf{W}^{e}_{\text{index}(x_t)}\)</span> returns the
@@ -1563,7 +1572,7 @@ of <span class="math notranslate nohighlight">\(x_t\)</span> in the vocabulary <
 integer index).</p>
 </section>
 <section id="one-hot-encoding-and-embedding-matrix">
-<h3><a class="toc-backref" href="#id47" role="doc-backlink">One-Hot Encoding and Embedding Matrix</a><a class="headerlink" href="#one-hot-encoding-and-embedding-matrix" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id49" role="doc-backlink">One-Hot Encoding and Embedding Matrix</a><a class="headerlink" href="#one-hot-encoding-and-embedding-matrix" title="Permalink to this heading">#</a></h3>
 <p>It is worth noting that the underlying mechanism of calling <code class="docutils literal notranslate"><span class="pre">tok_embed(x)</span></code> is
 the same as performing a matrix multiplication between a one-hot encoded vector
 and the embedding matrix. This is because the one-hot encoded vector is a sparse
@@ -1673,7 +1682,7 @@ embedding space, the more semantically similar they are.</p>
 </ul>
 </section>
 <section id="implementation">
-<h3><a class="toc-backref" href="#id48" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id50" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TokenEmbedding</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -1717,7 +1726,7 @@ embedding space, the more semantically similar they are.</p>
 </section>
 </section>
 <section id="positional-embeddings">
-<h2><a class="toc-backref" href="#id49" role="doc-backlink">Positional Embeddings</a><a class="headerlink" href="#positional-embeddings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id51" role="doc-backlink">Positional Embeddings</a><a class="headerlink" href="#positional-embeddings" title="Permalink to this heading">#</a></h2>
 <p>For the lack of a better phrase, we say that self-attention, the core function
 of GPTs, is permutation invariant. While it is obvious that the input sequence
 <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is ordered in the sense that <span class="math notranslate nohighlight">\(x_1\)</span> comes before <span class="math notranslate nohighlight">\(x_2\)</span>, and <span class="math notranslate nohighlight">\(x_2\)</span>
@@ -1735,7 +1744,7 @@ completeness, we will discuss briefly the scheme where the positional encodings
 are fixed <em>a priori</em> based on sinusoidal functions - which is also the scheme
 described in the paper “Attention is All You Need” <span id="id6">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p>
 <section id="definition">
-<h3><a class="toc-backref" href="#id50" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id52" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Permalink to this heading">#</a></h3>
 <div class="proof definition admonition" id="decoder-positional-encoding">
 <p class="admonition-title"><span class="caption-number">Definition 2 </span> (Positional Encoding)</p>
 <section class="definition-content" id="proof-content">
@@ -1766,7 +1775,7 @@ based on the positional encoding formula used in transformers, which uses
 sinusoidal functions of different frequencies.</p>
 </section>
 <section id="more-intuition-on-positional-encodings-pretty-bad-analogy-to-revise">
-<h3><a class="toc-backref" href="#id51" role="doc-backlink">More Intuition on Positional Encodings (Pretty bad analogy, to revise)</a><a class="headerlink" href="#more-intuition-on-positional-encodings-pretty-bad-analogy-to-revise" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id53" role="doc-backlink">More Intuition on Positional Encodings (Pretty bad analogy, to revise)</a><a class="headerlink" href="#more-intuition-on-positional-encodings-pretty-bad-analogy-to-revise" title="Permalink to this heading">#</a></h3>
 <p>Consider a sentence “Mary visited the museum in Paris.”</p>
 <p>The original word embeddings (<span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>) can be thought of as guests at a
 party, where each guest represents a word: ‘Mary,’ ‘visited,’ ‘the,’ ‘museum,’
@@ -1790,7 +1799,7 @@ the sentence. This is crucial because, in many languages, changing the order of
 words can drastically alter the meaning of a sentence.</p>
 </section>
 <section id="an-example-of-positional-encoding">
-<h3><a class="toc-backref" href="#id52" role="doc-backlink">An Example of Positional Encoding</a><a class="headerlink" href="#an-example-of-positional-encoding" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id54" role="doc-backlink">An Example of Positional Encoding</a><a class="headerlink" href="#an-example-of-positional-encoding" title="Permalink to this heading">#</a></h3>
 <p>To demonstrate how positional encodings are calculated for an input sequence
 using the given formula, let’s take the first three tokens from the example
 sequence <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">priest</span> <span class="pre">and</span> <span class="pre">clerk?</span> <span class="pre">well</span> <span class="pre">then,</span> <span class="pre">amen'</span></code>. We’ll assume these tokens are
@@ -1801,7 +1810,7 @@ respectively.</p>
 Let’s calculate the positional encodings for <span class="math notranslate nohighlight">\(p = 1, 2, 3\)</span> (corresponding to
 ‘priest’, ‘and’, ‘clerk?’) and for each dimension <span class="math notranslate nohighlight">\(d = 0, 1, 2, 3\)</span>:</p>
 <section id="positional-encoding-for-p-1-priest">
-<h4><a class="toc-backref" href="#id53" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 1\)</span> (‘priest’)</a><a class="headerlink" href="#positional-encoding-for-p-1-priest" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id55" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 1\)</span> (‘priest’)</a><a class="headerlink" href="#positional-encoding-for-p-1-priest" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(d = 0\)</span> (even): <span class="math notranslate nohighlight">\(\sin\left(\frac{1}{10000^{0/4}}\right) = \sin(1)\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(d = 1\)</span> (odd):
@@ -1816,7 +1825,7 @@ Let’s calculate the positional encodings for <span class="math notranslate noh
 </ul>
 </section>
 <section id="positional-encoding-for-p-2-and">
-<h4><a class="toc-backref" href="#id54" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 2\)</span> (‘and’)</a><a class="headerlink" href="#positional-encoding-for-p-2-and" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id56" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 2\)</span> (‘and’)</a><a class="headerlink" href="#positional-encoding-for-p-2-and" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(d = 0\)</span> (even): <span class="math notranslate nohighlight">\(\sin\left(\frac{2}{10000^{0/4}}\right) = \sin(2)\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(d = 1\)</span> (odd):
@@ -1831,7 +1840,7 @@ Let’s calculate the positional encodings for <span class="math notranslate noh
 </ul>
 </section>
 <section id="positional-encoding-for-p-3-clerk">
-<h4><a class="toc-backref" href="#id55" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 3\)</span> (‘clerk?’)</a><a class="headerlink" href="#positional-encoding-for-p-3-clerk" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id57" role="doc-backlink">Positional Encoding for <span class="math notranslate nohighlight">\(p = 3\)</span> (‘clerk?’)</a><a class="headerlink" href="#positional-encoding-for-p-3-clerk" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(d = 0\)</span> (even): <span class="math notranslate nohighlight">\(\sin\left(\frac{3}{10000^{0/4}}\right) = \sin(3)\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(d = 1\)</span> (odd):
@@ -1852,7 +1861,7 @@ facilitating the model’s learning of complex positional relationships.</p>
 </section>
 </section>
 <section id="id8">
-<h3><a class="toc-backref" href="#id56" role="doc-backlink">Implementation</a><a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id58" role="doc-backlink">Implementation</a><a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
@@ -2020,7 +2029,7 @@ words mean, but also where they are in a sentence. Positional encoding is a
 technique to achieve this goal.</p>
 </section>
 <section id="visualising-positional-encodings">
-<h3><a class="toc-backref" href="#id57" role="doc-backlink">Visualising Positional Encodings</a><a class="headerlink" href="#visualising-positional-encodings" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id59" role="doc-backlink">Visualising Positional Encodings</a><a class="headerlink" href="#visualising-positional-encodings" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pos_embed_visual</span> <span class="o">=</span> <span class="n">Sinusoid</span><span class="p">(</span><span class="n">d_model</span><span class="o">=</span><span class="mi">48</span><span class="p">,</span> <span class="n">context_length</span><span class="o">=</span><span class="mi">96</span><span class="p">)</span>
@@ -2100,7 +2109,7 @@ the starting angle. The wavelength is <span class="math notranslate nohighlight"
 position 6 . The hidden dimensions 2 and 3 have about twice the wavelength <span id="id10">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>.</p>
 </section>
 <section id="positional-encodings-via-embeddings">
-<h3><a class="toc-backref" href="#id58" role="doc-backlink">Positional Encodings via Embeddings</a><a class="headerlink" href="#positional-encodings-via-embeddings" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id60" role="doc-backlink">Positional Encodings via Embeddings</a><a class="headerlink" href="#positional-encodings-via-embeddings" title="Permalink to this heading">#</a></h3>
 <p>In practice, the positional encodings are learned as part of the GPT-2 <span id="id11">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.
 So we can replicate the same by using a <code class="docutils literal notranslate"><span class="pre">nn.Embedding</span></code> layer in PyTorch as in the token embeddings.</p>
 <p><span class="math notranslate nohighlight">\(\mathbf{W}_{p}\)</span> is the positional embedding matrix. Each row of this matrix
@@ -2168,9 +2177,9 @@ sequences in a batch.</p>
 </section>
 </section>
 <section id="layer-normalization">
-<h2><a class="toc-backref" href="#id59" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id61" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Permalink to this heading">#</a></h2>
 <section id="id12">
-<h3><a class="toc-backref" href="#id60" role="doc-backlink">Definition</a><a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id62" role="doc-backlink">Definition</a><a class="headerlink" href="#id12" title="Permalink to this heading">#</a></h3>
 <div class="proof definition admonition" id="decoder-layer-normalization">
 <p class="admonition-title"><span class="caption-number">Definition 3 </span> (Layer Normalization)</p>
 <section class="definition-content" id="proof-content">
@@ -2282,7 +2291,7 @@ Standard deviation: tensor([1.1547, 1.1547, 1.1547], grad_fn=&lt;SelectBackward0
 </div>
 </section>
 <section id="learnable-affine-transformation">
-<h3><a class="toc-backref" href="#id61" role="doc-backlink">Learnable Affine Transformation</a><a class="headerlink" href="#learnable-affine-transformation" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id63" role="doc-backlink">Learnable Affine Transformation</a><a class="headerlink" href="#learnable-affine-transformation" title="Permalink to this heading">#</a></h3>
 <p>After normalization, it is common to apply a <em>learnable</em> affine transformation (which is
 scaling and shifting) to the normalized output to allow the model to adjust the
 normalized output as needed.</p>
@@ -2298,7 +2307,7 @@ from each element in the row, divide by the standard deviation, and then scale
 and shift the result using <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 </section>
 <section id="id13">
-<h3><a class="toc-backref" href="#id62" role="doc-backlink">Implementation</a><a class="headerlink" href="#id13" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id64" role="doc-backlink">Implementation</a><a class="headerlink" href="#id13" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
@@ -2401,7 +2410,7 @@ and shift the result using <span class="math notranslate nohighlight">\(\gamma\)
 </div>
 </section>
 <section id="layer-norm-stabilises-activation-distributions">
-<h3><a class="toc-backref" href="#id63" role="doc-backlink">Layer Norm Stabilises Activation Distributions</a><a class="headerlink" href="#layer-norm-stabilises-activation-distributions" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id65" role="doc-backlink">Layer Norm Stabilises Activation Distributions</a><a class="headerlink" href="#layer-norm-stabilises-activation-distributions" title="Permalink to this heading">#</a></h3>
 <p>Besides the known fact that layer normalization enables convergence and provdies regularization <span id="id14">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>,
 it also stabilizes the distributions of activations <span id="id15">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.
 Training deep neural networks are challenging, loss can easily be exploded or vanished, and the gradients can be unstable.
@@ -2410,17 +2419,151 @@ that if each layer’s activation has a similar distribution, then the gradients
 will stabilize the training process. Layer normalization is one of the techniques that can help to achieve this.</p>
 </section>
 </section>
+<section id="residual-connection">
+<h2><a class="toc-backref" href="#id66" role="doc-backlink">Residual Connection</a><a class="headerlink" href="#residual-connection" title="Permalink to this heading">#</a></h2>
+<p>I have written a more detailed post on the intuition of
+<a class="reference external" href="https://gao-hongnan.github.io/gaohn-galaxy/deep_learning/computer_vision/modern_convolutional_neural_networks/resnets/concept.html">ResNet</a>
+which is heavily adapted from the chapter
+<a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/resnet.html">Residual Networks (ResNet) and ResNeXt</a>
+from the Dive into Deep Learning book.</p>
+<p>For the sake of intuition, we can think of the residual connection as a way to
+ensure that the original input to a layer is not lost as it passes through the
+model layers.</p>
+<ul class="simple">
+<li><p>Deep neural networks are known to suffer from the vanishing gradient
+problem, where gradients become increasingly small as they are
+backpropagated through the layers during training. Since we are
+backpropagating backwards, the earlier layers are therefore more susceptible
+to this problem. The weak gradient signal could often be close to <span class="math notranslate nohighlight">\(0\)</span>, and
+this could lead to the model not learning well. Consequently, we mitigate
+this problem by adding the original input to the output of the layer, so
+that the gradient signal has a direct path to flow through the network.</p>
+<ul>
+<li><p>Furthermore, Eugene Yan’s blog post
+<a class="reference external" href="https://eugeneyan.com/writing/attention/">Some Intuition on Attention and the Transformer</a>
+also highlighted that attention acting as a filtering mechanism may
+block information from passing through, directly resulting flat
+gradients as a small change to the inputs of the attention layer may not
+change the outputs that much. Skip (residual) connections help resolve
+this.</p></li>
+</ul>
+</li>
+<li><p>We will see later that Multi-Head Attention mechanism operates on a set of
+tokens, instead of over a sequence. We encode positional information into
+the tokens, but there is a risk that the positional information is lost in
+the multi-head attention layers. The residual connection helps to ensure
+that the positional information is not lost <span id="id16">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>.</p></li>
+<li><p>The other well known property of the residual connection is that it helps to
+learn the identity function. Perhaps the scenario is that the best thing a
+layer or a series of layer can learn is itself - and we don’t actually want
+an update.</p></li>
+</ul>
+<p>We quote the following from the Dive into Deep Learning book:</p>
+<p>Consider <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>, the class of functions that a specific network
+architecture (together with learning rates and other hyperparameter settings)
+can reach. That is, for all <span class="math notranslate nohighlight">\(f \in \mathcal{F}\)</span> there exists some set of
+parameters (e.g., weights and biases) that can be obtained through training on a
+suitable dataset. Let us assume that <span class="math notranslate nohighlight">\(f^*\)</span> is th “truth” function that we really
+would like to find. If it is in <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>, we are in good shape but
+typically we will not b quite so lucky. Instead, we will try to find some
+<span class="math notranslate nohighlight">\(f_{\mathcal{F}}^*\)</span> which is our best bet within <span class="math notranslate nohighlight">\(\mathcal{F}\)</span>. For instance,
+given a dataset with features <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> and labels <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>, we might try
+finding it by solving the following optimization problem:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{\mathcal{F}}^* \stackrel{\text { def }}{=} \underset{f}{\operatorname{argmin}} L(\mathbf{X}, \mathbf{y}, f) \text { subject to } f \in \mathcal{F} .
+\]</div>
+<p>It is only reasonable to assume that if we design a different and more powerful
+architecture <span class="math notranslate nohighlight">\(\mathcal{F}^{\prime}\)</span> we should arrive at a better outcome. In
+other words, we would expect that <span class="math notranslate nohighlight">\(f_{\mathcal{F}}^*\)</span> is “better” than
+<span class="math notranslate nohighlight">\(f_{\mathcal{F}}^*\)</span>. However, if <span class="math notranslate nohighlight">\(\mathcal{F} \nsubseteq \mathcal{F}^{\prime}\)</span>
+there is no guarantee that this should even happen. In fact,
+<span class="math notranslate nohighlight">\(f_{\mathcal{F}^{\prime}}^*\)</span> might well be worse.</p>
+<p>As illustrated by :numref: fig_functionclasses, for non-nested function classes,
+a larger function class does not always move closer to the “truth” function
+<span class="math notranslate nohighlight">\(f^*\)</span>. For instance, on the left of :numref: fig_functionclasses, though
+<span class="math notranslate nohighlight">\(\mathcal{F}_3\)</span> is closer to <span class="math notranslate nohighlight">\(f^*\)</span> than <span class="math notranslate nohighlight">\(\mathcal{F}_1, \mathcal{F}_6\)</span> moves
+away and there is no guarantee that further increasing the complexity can reduce
+the distance from <span class="math notranslate nohighlight">\(f^*\)</span>. With nested function classes where
+<span class="math notranslate nohighlight">\(\mathcal{F}_1 \subseteq \ldots \subseteq \mathcal{F}_6\)</span> on the right of
+:numref: fig_functionclasses, we can avoid the aforementioned issue from the
+non-nested function classes.</p>
+<figure class="align-default" id="d2l-resnet-functionclasses">
+<img alt="../../_images/d2l-resnet-functionclasses.svg" src="../../_images/d2l-resnet-functionclasses.svg" /><figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">For non-nested function classes, a larger (indicated by area) function class
+does not guarantee we will get closer to the “truth” function <span class="math notranslate nohighlight">\(f^*\)</span>. This
+does not happen for nested function classes.</span><a class="headerlink" href="#d2l-resnet-functionclasses" title="Permalink to this image">#</a></p>
+<div class="legend">
+<p><strong>Image Credit:</strong>
+<a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/resnet.html">8.6. Residual Networks (ResNet) and ResNeXt - Dive Into Deep Learing</a></p>
+</div>
+</figcaption>
+</figure>
+<section id="layernorm-and-residual-connection">
+<h3><a class="toc-backref" href="#id67" role="doc-backlink">LayerNorm and Residual Connection</a><a class="headerlink" href="#layernorm-and-residual-connection" title="Permalink to this heading">#</a></h3>
+<p>In our context, we would have the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{AddNorm}(\mathbf{x}) &amp;= \operatorname{LayerNorm}(\mathbf{x} + \operatorname{Sublayer}(\mathbf{x})) \\
+\end{aligned}
+\end{split}\]</div>
+</section>
+<section id="id17">
+<h3><a class="toc-backref" href="#id68" role="doc-backlink">Implementation</a><a class="headerlink" href="#id17" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+
+<span class="k">class</span> <span class="nc">ResidualBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">sublayer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sublayer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">AddNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;AddNorm is apt since the diagram uses Add + Norm.</span>
+<span class="sd">    Some call it SubLayer connection (Harvard) some call it</span>
+<span class="sd">    residual connection: x + dropout(sublayer(layernorm(x)))</span>
+
+<span class="sd">    If stay true, then we apply residual then layer norm. So</span>
+<span class="sd">    we adopt the d2l method.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># fmt: off</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span>    <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span> <span class="o">=</span> <span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="n">feature_dim</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">elementwise_affine</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># fmt: on</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">sublayer</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;G(F(x) + x) where G = layer norm and F = sublayer&quot;&quot;&quot;</span>
+        <span class="c1"># FIXME: GPT-2 should be x + self.dropout(sublayer(self.layer_norm(x)))</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">sublayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
 <section id="self-attention">
-<h2><a class="toc-backref" href="#id64" role="doc-backlink">Self-Attention</a><a class="headerlink" href="#self-attention" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id69" role="doc-backlink">Self-Attention</a><a class="headerlink" href="#self-attention" title="Permalink to this heading">#</a></h2>
 <section id="intuition-of-attention-mechanism">
-<h3><a class="toc-backref" href="#id65" role="doc-backlink">Intuition of Attention Mechanism</a><a class="headerlink" href="#intuition-of-attention-mechanism" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id70" role="doc-backlink">Intuition of Attention Mechanism</a><a class="headerlink" href="#intuition-of-attention-mechanism" title="Permalink to this heading">#</a></h3>
 <p>Attention is not a new concept, and one of the most influencial papers came from
 <em>Neural Machine Translation by Jointly Learning to Align and Translate</em>
-<span id="id16">[<a class="reference internal" href="../../bibliography.html#id13" title="Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. Neural machine translation by jointly learning to align and translate. 2014. arXiv:1409.0473.">Bahdanau <em>et al.</em>, 2014</a>]</span>, a paper published during 2014. In the context of our
+<span id="id18">[<a class="reference internal" href="../../bibliography.html#id13" title="Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. Neural machine translation by jointly learning to align and translate. 2014. arXiv:1409.0473.">Bahdanau <em>et al.</em>, 2014</a>]</span>, a paper published during 2014. In the context of our
 post, we would stick to one intuitive interpretation, that <em>the attention
 mechanism describes a <strong>weighted average</strong> of (sequence) elements with the
 weights <strong>dynamically</strong> computed based on an input query and elements’ keys</em>
-<span id="id17">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. In other words, we want contextually relevant
+<span id="id19">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. In other words, we want contextually relevant
 information to be weighted more heavily than less relevant information. For
 example, the sentence <em>the cat walks by the river bank</em> would require the word
 <em>bank</em> to be weighted more heavily than the word <em>the</em> when the word <em>cat</em> is
@@ -2432,7 +2575,7 @@ attending to the first token <em>cat</em> in the sequence, we would want the tok
 itself. This is the essence of the self-attention mechanism.</p>
 </section>
 <section id="token-embedding-and-vector-representation-process">
-<h3><a class="toc-backref" href="#id66" role="doc-backlink">Token Embedding and Vector Representation Process</a><a class="headerlink" href="#token-embedding-and-vector-representation-process" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id71" role="doc-backlink">Token Embedding and Vector Representation Process</a><a class="headerlink" href="#token-embedding-and-vector-representation-process" title="Permalink to this heading">#</a></h3>
 <p>Given an input sequence <span class="math notranslate nohighlight">\(\mathbf{x} = \left(x_1, x_2, \ldots, x_T\right)\)</span>, where
 <span class="math notranslate nohighlight">\(T\)</span> is the length of the sequence, and each <span class="math notranslate nohighlight">\(x_t \in \mathcal{V}\)</span> is a token in
 the sequence, we use a generic embedding function <span class="math notranslate nohighlight">\(h_{\text{emb}}\)</span> to map each
@@ -2453,16 +2596,16 @@ each row of the matrix represents the vector representation of each token in the
 sequence.</p>
 </section>
 <section id="queries-keys-and-values">
-<h3><a class="toc-backref" href="#id67" role="doc-backlink">Queries, Keys, and Values</a><a class="headerlink" href="#queries-keys-and-values" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id72" role="doc-backlink">Queries, Keys, and Values</a><a class="headerlink" href="#queries-keys-and-values" title="Permalink to this heading">#</a></h3>
 <section id="database-analogy">
-<h4><a class="toc-backref" href="#id68" role="doc-backlink">Database Analogy</a><a class="headerlink" href="#database-analogy" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id73" role="doc-backlink">Database Analogy</a><a class="headerlink" href="#database-analogy" title="Permalink to this heading">#</a></h4>
 <p>Let’s draw an analogy to understand the concept of queries, keys, and values in
 the context of the attention mechanism. Consider a database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>
 consisting of tuples of keys and values. For instance, the database
 <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> might consist of tuples
 <code class="docutils literal notranslate"><span class="pre">{(&quot;Zhang&quot;,</span> <span class="pre">&quot;Aston&quot;),</span> <span class="pre">(&quot;Lipton&quot;,</span> <span class="pre">&quot;Zachary&quot;),</span> <span class="pre">(&quot;Li&quot;,</span> <span class="pre">&quot;Mu&quot;),</span> <span class="pre">(&quot;Smola&quot;,</span> <span class="pre">&quot;Alex&quot;),</span> <span class="pre">(&quot;Hu&quot;,</span> <span class="pre">&quot;Rachel&quot;),</span> <span class="pre">(&quot;Werness&quot;,</span> <span class="pre">&quot;Brent&quot;)}</span></code>
 with the last name being the key and the first name being the value
-<span id="id18">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. Operations on the database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> can be performed
+<span id="id20">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. Operations on the database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> can be performed
 using queries <span class="math notranslate nohighlight">\(q\)</span> that operate on the keys and values in the database. More
 concretely, if our query is “Li”, or more verbosely, “What is the first name
 associated with the last name Li?”, the answer would be “Mu” - the <strong>key</strong>
@@ -2482,7 +2625,7 @@ a database of <span class="math notranslate nohighlight">\(m\)</span> tuples of 
 \]</div>
 <p>where
 <span class="math notranslate nohighlight">\(\alpha\left(\mathbf{q}, \mathbf{k}_t\right) \in \mathbb{R}(t=1, \ldots, T)\)</span> are
-scalar attention weights <span id="id19">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. The operation itself is
+scalar attention weights <span id="id21">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. The operation itself is
 typically referred to as
 <a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-pooling.html"><em>attention pooling</em></a>.
 The term “attention” is used because this operation focuses specifically on
@@ -2558,7 +2701,7 @@ of the keys, leading to a scenario where “all but one weight is zero.”</p>
 </section>
 </div></section>
 <section id="queries-keys-and-values-in-attention-mechanism">
-<h4><a class="toc-backref" href="#id69" role="doc-backlink">Queries, Keys, and Values in Attention Mechanism</a><a class="headerlink" href="#queries-keys-and-values-in-attention-mechanism" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id74" role="doc-backlink">Queries, Keys, and Values in Attention Mechanism</a><a class="headerlink" href="#queries-keys-and-values-in-attention-mechanism" title="Permalink to this heading">#</a></h4>
 <p>The database example is a neat analogy to understand the concept of queries,
 keys, and values in the context of the attention mechanism. To put things into
 perspective, each token <span class="math notranslate nohighlight">\(x_t\)</span> in the input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> emits three
@@ -2645,7 +2788,7 @@ context being analyzed.</p></li>
 </section>
 </section>
 <section id="linear-projections">
-<h3><a class="toc-backref" href="#id70" role="doc-backlink">Linear Projections</a><a class="headerlink" href="#linear-projections" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id75" role="doc-backlink">Linear Projections</a><a class="headerlink" href="#linear-projections" title="Permalink to this heading">#</a></h3>
 <p>We have discussed the concept of queries, keys, and values but have not yet
 discussed how these vectors are obtained. As we have continuously emphasized,
 the query, key, and value vectors lie in a <span class="math notranslate nohighlight">\(D\)</span>-dimensional subspace, and they
@@ -2721,9 +2864,9 @@ matrices
 </section>
 </div></section>
 <section id="scaled-dot-product-attention">
-<h3><a class="toc-backref" href="#id71" role="doc-backlink">Scaled Dot-Product Attention</a><a class="headerlink" href="#scaled-dot-product-attention" title="Permalink to this heading">#</a></h3>
-<section id="id20">
-<h4><a class="toc-backref" href="#id72" role="doc-backlink">Definition</a><a class="headerlink" href="#id20" title="Permalink to this heading">#</a></h4>
+<h3><a class="toc-backref" href="#id76" role="doc-backlink">Scaled Dot-Product Attention</a><a class="headerlink" href="#scaled-dot-product-attention" title="Permalink to this heading">#</a></h3>
+<section id="id22">
+<h4><a class="toc-backref" href="#id77" role="doc-backlink">Definition</a><a class="headerlink" href="#id22" title="Permalink to this heading">#</a></h4>
 <div class="proof definition admonition" id="decoder-concept-scaled-dot-product-attention">
 <p class="admonition-title"><span class="caption-number">Definition 5 </span> (Scaled Dot-Product Attention)</p>
 <section class="definition-content" id="proof-content">
@@ -2755,7 +2898,7 @@ of alignment or relevance between each query and all keys.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span> is a scaling factor used to normalize the scores, preventing them
 from becoming too large and ensuring a stable gradient during training. This
 scaling factor is particularly important as it helps maintain the softmax
-output in a numerically stable range <span id="id21">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p></li>
+output in a numerically stable range <span id="id23">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\text{softmax}(\cdot)\)</span> is applied row-wise to convert scores into attention
 weights, ensuring that for each query, the weights across all keys sum up
 to 1. This normalization step allows the mechanism to effectively distribute
@@ -2777,7 +2920,7 @@ and explain how it works in detail:</p>
 </ul>
 </section>
 <section id="attention-scoring-function">
-<h4><a class="toc-backref" href="#id73" role="doc-backlink">Attention Scoring Function</a><a class="headerlink" href="#attention-scoring-function" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id78" role="doc-backlink">Attention Scoring Function</a><a class="headerlink" href="#attention-scoring-function" title="Permalink to this heading">#</a></h4>
 <p>In order to know which tokens in the sequence are most relevant to the current
 token, we need to calculate the attention scores between the query and key
 vectors. Consequently, we would need a scoring function that measures the
@@ -2858,7 +3001,7 @@ respect to all the key vectors in the sequence.</p>
 </section>
 </div></section>
 <section id="scaling-down-the-dot-product-of-query-and-key-vectors">
-<h4><a class="toc-backref" href="#id74" role="doc-backlink">Scaling Down the Dot Product of Query and Key Vectors</a><a class="headerlink" href="#scaling-down-the-dot-product-of-query-and-key-vectors" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id79" role="doc-backlink">Scaling Down the Dot Product of Query and Key Vectors</a><a class="headerlink" href="#scaling-down-the-dot-product-of-query-and-key-vectors" title="Permalink to this heading">#</a></h4>
 <div class="proof definition admonition" id="decoder-concept-query-key-iid">
 <p class="admonition-title"><span class="caption-number">Definition 7 </span> (Query and Key are Independent and Identically Distributed (i.i.d.))</p>
 <section class="definition-content" id="proof-content">
@@ -2927,7 +3070,7 @@ variance of a scaled random variable is the square of the scale factor times the
 original variance).</p>
 <p>Now our variance would be <span class="math notranslate nohighlight">\(\sigma^4\)</span> - but it is still not the same as the
 variance of the query and key vectors. This is okay because the original paper
-assume the variance <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span> <span id="id22">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, and therefore
+assume the variance <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span> <span id="id24">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, and therefore
 it does not matter since <span class="math notranslate nohighlight">\(\sigma^2 = \sigma^4\)</span> when <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span>.</p>
 <div class="proof definition admonition" id="decoder-concept-attention-scoring-function-with-scaling">
 <p class="admonition-title"><span class="caption-number">Definition 9 </span> (Attention Scoring Function with Scaling)</p>
@@ -2944,7 +3087,7 @@ complete the final block of the attention mechanism, which is the softmax
 normalization.</p>
 </section>
 <section id="softmax">
-<h4><a class="toc-backref" href="#id75" role="doc-backlink">Softmax</a><a class="headerlink" href="#softmax" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id80" role="doc-backlink">Softmax</a><a class="headerlink" href="#softmax" title="Permalink to this heading">#</a></h4>
 <div class="proof definition admonition" id="decoder-concept-attention-scores">
 <p class="admonition-title"><span class="caption-number">Definition 10 </span> (Attention Scores)</p>
 <section class="definition-content" id="proof-content">
@@ -2957,7 +3100,7 @@ denote them as the raw <strong>attention scores</strong> <span class="math notra
 </div><div class="proof definition admonition" id="decoder-concept-softmax-normalization-attention-weights">
 <p class="admonition-title"><span class="caption-number">Definition 11 </span> (Softmax Normalization and Attention Weights)</p>
 <section class="definition-content" id="proof-content">
-<p>It is common in deep learning to form a convex combination <span id="id23">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>
+<p>It is common in deep learning to form a convex combination <span id="id25">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>
 of the attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span> to obtain the
 <strong>attention weights</strong>, denoted as <span class="math notranslate nohighlight">\(\text{softmax}(\alpha(\mathbf{Q}, \mathbf{K}))\)</span>, which
 are non-negative and sum to <span class="math notranslate nohighlight">\(1\)</span>. This is achieved through the softmax
@@ -2997,7 +3140,7 @@ scores</strong>.</p>
 </section>
 </div></section>
 <section id="context-vector-matrix">
-<h4><a class="toc-backref" href="#id76" role="doc-backlink">Context Vector/Matrix</a><a class="headerlink" href="#context-vector-matrix" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id81" role="doc-backlink">Context Vector/Matrix</a><a class="headerlink" href="#context-vector-matrix" title="Permalink to this heading">#</a></h4>
 <p>Consequently, we complete the walkthrough of the scaled dot-product attention
 mechanism by calculating the context vector, which is the weighted sum of the
 value vectors based on the attention weights obtained from the softmax
@@ -3021,7 +3164,7 @@ contextual information from the other tokens in the sequence.</p>
 </section>
 </div></section>
 <section id="numerical-stability-and-gradient-saturation">
-<h4><a class="toc-backref" href="#id77" role="doc-backlink">Numerical Stability and Gradient Saturation</a><a class="headerlink" href="#numerical-stability-and-gradient-saturation" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id82" role="doc-backlink">Numerical Stability and Gradient Saturation</a><a class="headerlink" href="#numerical-stability-and-gradient-saturation" title="Permalink to this heading">#</a></h4>
 <p>We can now revisit on the underlying reason why we scale down the dot product
 <span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span> by <span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span>.</p>
 <p>First, the softmax function has all the desirable properties we want,
@@ -3107,7 +3250,7 @@ element dominate because of the variance scaling with <span class="math notransl
 </section>
 </div></section>
 <section id="visualizing-variance-of-dot-product">
-<h4><a class="toc-backref" href="#id78" role="doc-backlink">Visualizing Variance of Dot Product</a><a class="headerlink" href="#visualizing-variance-of-dot-product" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id83" role="doc-backlink">Visualizing Variance of Dot Product</a><a class="headerlink" href="#visualizing-variance-of-dot-product" title="Permalink to this heading">#</a></h4>
 <p>If we set <span class="math notranslate nohighlight">\(d_k = 512\)</span>, and mean <span class="math notranslate nohighlight">\(0\)</span> with unit variance, we will see in action
 that indeed the scaled dot product has a variance of <span class="math notranslate nohighlight">\(1\)</span> while the unscaled dot
 product has a variance of <span class="math notranslate nohighlight">\(512\)</span>, which coincides with our theoretical analysis.</p>
@@ -3156,7 +3299,7 @@ Scaled Variance: 1.0000230073928833
 </div>
 </section>
 <section id="projections-lead-to-dynamic-context-vectors">
-<h4><a class="toc-backref" href="#id79" role="doc-backlink">Projections Lead to Dynamic Context Vectors</a><a class="headerlink" href="#projections-lead-to-dynamic-context-vectors" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id84" role="doc-backlink">Projections Lead to Dynamic Context Vectors</a><a class="headerlink" href="#projections-lead-to-dynamic-context-vectors" title="Permalink to this heading">#</a></h4>
 <p>From the start, we mentioned <em>the attention mechanism describes a <strong>weighted
 average</strong> of (sequence) elements with the weights <strong>dynamically</strong> computed based
 on an input query and elements’ keys</em>. We can easily see the <strong>weighted
@@ -3174,8 +3317,8 @@ sentences because it now depends on the full input sequence <span class="math no
 <p>Consequently, the projection of the token embeddings into the query and key
 space is needed.</p>
 </section>
-<section id="id24">
-<h4><a class="toc-backref" href="#id80" role="doc-backlink">Implementation</a><a class="headerlink" href="#id24" title="Permalink to this heading">#</a></h4>
+<section id="id26">
+<h4><a class="toc-backref" href="#id85" role="doc-backlink">Implementation</a><a class="headerlink" href="#id26" title="Permalink to this heading">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Attention</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -3257,46 +3400,70 @@ space is needed.</p>
 </div>
 </section>
 <section id="heatmap">
-<h4><a class="toc-backref" href="#id81" role="doc-backlink">Heatmap</a><a class="headerlink" href="#heatmap" title="Permalink to this heading">#</a></h4>
-<p>…</p>
+<h4><a class="toc-backref" href="#id86" role="doc-backlink">Heatmap</a><a class="headerlink" href="#heatmap" title="Permalink to this heading">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># toy example illustrating how matrix multiplication can be used for a &quot;weighted aggregation&quot;</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">b</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">@</span> <span class="n">b</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;a=&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;b=&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;c=&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_attention_heatmaps</span><span class="p">(</span>
+    <span class="n">attention_weights</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Keys&quot;</span><span class="p">,</span>
+    <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Queries&quot;</span><span class="p">,</span>
+    <span class="n">show_title</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">figure_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">plot_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">figure_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;figsize&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="s2">&quot;sharex&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;sharey&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;squeeze&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span> <span class="ow">or</span> <span class="n">figure_kwargs</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="o">**</span><span class="n">figure_kwargs</span><span class="p">)</span>
+
+    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;Reds&quot;</span><span class="p">}</span> <span class="ow">or</span> <span class="n">plot_kwargs</span>
+
+    <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">row_axes</span><span class="p">,</span> <span class="n">attention_weight</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">attention_weights</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">head_attention</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">row_axes</span><span class="p">,</span> <span class="n">attention_weight</span><span class="p">)):</span>
+            <span class="n">pcm</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">head_attention</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="n">B</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>  <span class="c1"># Only the last batch will have the xlabel</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>  <span class="c1"># Only the first head will have the ylabel</span>
+
+            <span class="k">if</span> <span class="n">show_title</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">, Head </span><span class="si">{</span><span class="n">h</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">pcm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Connecting back to our earlier database query, the following identity matrix
+would represent when the <em>query</em> and the <em>key</em> to be an exact match, indicated here
+naively as if query is 0, then key is also 0, and so on. And thus
+the weight matrix would have a diagonal of 1s and 0s elsewhere.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">attention_weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">show_attention_heatmaps</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Keys&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Queries&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=
-tensor([[1.0000, 0.0000, 0.0000],
-        [0.5000, 0.5000, 0.0000],
-        [0.3333, 0.3333, 0.3333]])
---
-b=
-tensor([[2., 7.],
-        [6., 4.],
-        [6., 5.]])
---
-c=
-tensor([[2.0000, 7.0000],
-        [4.0000, 5.5000],
-        [4.6667, 5.3333]])
-</pre></div>
+<img alt="../../_images/ee3d30cb49b5e5765d4ae50a679624a82f48be048c2385ce78f5911231374501.png" src="../../_images/ee3d30cb49b5e5765d4ae50a679624a82f48be048c2385ce78f5911231374501.png" />
 </div>
 </div>
-</div>
+</section>
+<section id="more-intuition-in-andrej-karpathy-s-video">
+<h4><a class="toc-backref" href="#id87" role="doc-backlink">More Intuition in Andrej Karpathy’s Video</a><a class="headerlink" href="#more-intuition-in-andrej-karpathy-s-video" title="Permalink to this heading">#</a></h4>
+<p>There’s much more intuition in Andrej Karpathy’s video on the <a class="reference external" href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Let’s Build GPT: from scratch, in code, spelled out</a>.
+He mentions things like:</p>
+<ul class="simple">
+<li><p>Averaging past context with for loops, the weakest for of aggregation.</p></li>
+<li><p>Matrix multiply as weighted aggregation.</p></li>
+<li><p>Adding softmax to make it a weighted average.</p></li>
+<li><p>Attention as communication.</p></li>
+<li><p>Attention has no notion of space and operates over sets.</p></li>
+<li><p>There is no communication across batch dimension.</p></li>
+</ul>
+<p>This <a class="reference external" href="https://blog.matdmiller.com/posts/2023-06-10_transformers/notebook.html#previous-token-averages---building-intuition-for-self-attention">blog post</a>
+implements what Andrej mentioned in the video.</p>
 <ol class="arabic simple">
 <li><p>Tidy up positional encodings.</p></li>
 </ol>
@@ -3318,36 +3485,6 @@ tensor([[2.0000, 7.0000],
 </li>
 <li><p>Time and Space Complexity</p></li>
 </ol>
-</section>
-</section>
-</section>
-<section id="conditional-probability">
-<h2><a class="toc-backref" href="#id82" role="doc-backlink">Conditional Probability</a><a class="headerlink" href="#conditional-probability" title="Permalink to this heading">#</a></h2>
-<p>The GPT model, being autoregressive, directly models the <strong>conditional
-probability</strong> of each token given all previous tokens in a sequence. This is the
-core operational mechanism of the model, allowing it to predict the next token
-based on the preceding context. The conditional probability for each token <span class="math notranslate nohighlight">\(x_t\)</span>
-given its predecessors <span class="math notranslate nohighlight">\(x_{&lt;t}\)</span> is expressed as <span class="math notranslate nohighlight">\(P(x_t | x_{&lt;t};
-\Theta)\)</span>, where
-<span class="math notranslate nohighlight">\(\Theta\)</span> represents the model’s parameters.</p>
-</section>
-<section id="joint-probability">
-<h2><a class="toc-backref" href="#id83" role="doc-backlink">Joint Probability</a><a class="headerlink" href="#joint-probability" title="Permalink to this heading">#</a></h2>
-<p>The <strong>joint probability</strong> of a sequence <span class="math notranslate nohighlight">\(\mathbf{x} = (x_1, x_2, ..., x_T)\)</span>
-under the model is derived from the product of these conditional probabilities.
-By assuming that the probability of each token can be modeled based on its
-predecessors, the model implicitly defines a joint probability distribution over
-sequences. This joint probability is represented by the product:</p>
-<div class="math notranslate nohighlight">
-\[
-P(\mathbf{x}; \Theta) = \prod_{t=1}^{T} P(x_t | x_{&lt;t}; \Theta)
-\]</div>
-<p>This formulation shows that while the GPT model operates through conditional
-probabilities, the product of these conditional probabilities across a sequence
-results in the <strong>joint probability</strong> of the entire sequence. Thus, the GPT model
-effectively learns the joint probability distribution over sequences in the
-dataset by learning to predict the next token given its context, leveraging the
-chain rule of probability.</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/</a></p></li>
 <li><p><a class="reference external" href="https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/">https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/</a></p></li>
@@ -3378,14 +3515,16 @@ chain rule of probability.</p>
 <li><p><a class="github reference external" href="https://github.com/rasbt/LLMs-from-scratch">rasbt/LLMs-from-scratch</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
-<aside class="footnote brackets" id="id25" role="note">
+<aside class="footnote brackets" id="id27" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://github.com/openai/tiktoken">OpenAI tiktoken</a></p>
 </aside>
-<aside class="footnote brackets" id="id26" role="note">
+<aside class="footnote brackets" id="id28" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">How to Optimize Data Transfers in CUDA C/C++</a></p>
 </aside>
+</section>
+</section>
 </section>
 </section>
 
@@ -3504,6 +3643,11 @@ chain rule of probability.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-norm-stabilises-activation-distributions">Layer Norm Stabilises Activation Distributions</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layernorm-and-residual-connection">LayerNorm and Residual Connection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Implementation</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-of-attention-mechanism">Intuition of Attention Mechanism</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token-embedding-and-vector-representation-process">Token Embedding and Vector Representation Process</a></li>
@@ -3514,7 +3658,7 @@ chain rule of probability.</p>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">Definition</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
@@ -3522,14 +3666,13 @@ chain rule of probability.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">Implementation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more-intuition-in-andrej-karpathy-s-video">More Intuition in Andrej Karpathy’s Video</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-probability">Conditional Probability</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#joint-probability">Joint Probability</a></li>
 </ul>
   </nav></div>
 
