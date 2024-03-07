@@ -568,14 +568,72 @@ conditionals in the form of
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-1} ; \boldsymbol{\Theta})\)</span>
 <span id="id3">[<a class="reference internal" href="../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 <p>To this end, consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> sequences
-<span class="math notranslate nohighlight">\(\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}\)</span> that are
-sampled <span class="math notranslate nohighlight">\(\text{i.i.d.}\)</span> from the distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> and let GPT model
-<span class="math notranslate nohighlight">\(\mathcal{G}\)</span> be an <em>autoregressive</em> and <em>self-supervised learning</em> model that
-is trained to maximize the likelihood of the sequences in the corpus
-<span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, which is defined as the objective function
-<span class="math notranslate nohighlight">\(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\)</span> where
-<span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> is the estimated parameter space that approximates
-the true parameter space <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span>.</p>
+<span class="math notranslate nohighlight">\(\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{S} = \left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\} \underset{\text{i.i.d.}}{\sim} \mathcal{D}
+\]</div>
+<p>where each sequence <span class="math notranslate nohighlight">\(\mathbf{x}_{n}\)</span> is a sequence of tokens that are sampled
+<span class="math notranslate nohighlight">\(\text{i.i.d.}\)</span> from the distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p>
+<p>Then, we can frame the
+<a class="reference external" href="https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">likelihood function</a>
+<span class="math notranslate nohighlight">\(\hat{\mathcal{L}}(\cdot)\)</span> as the likelihood of observing the sequences in the
+corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) = \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}})
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> is the estimated parameter space that
+approximates the true parameter space <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span>.</p>
+<p>Subsequently, the objective function is now well-defined, to be the maximization
+of the likelihood of the sequences in the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) \\
+                              &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}}) \\
+                              &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \prod_{t=1}^{T_n} \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(T_n\)</span> is the length of the sequence <span class="math notranslate nohighlight">\(\mathbf{x}_{n}\)</span>.</p>
+<p>Owing to the fact that multiplying many probabilities together can lead to
+<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/maximum-likelihood.html#numerical-optimization-and-the-negative-log-likelihood">numerical instability</a>
+because the product of many probabilities can be very small, it is common and
+necessary to use the log-likelihood as the objective function, because it can be
+proven that maximizing the log-likelihood is equivalent to maximizing the
+likelihood itself.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
+&amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+\end{split}\]</div>
+<p>Furthermore, since we are treating the the loss function as a form of
+minimization, we can simply negate the log-likelihood to obtain the negative
+log-likelihood as the objective function to be minimized,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right)\right) \\
+&amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}})\right) \\
+\end{aligned}
+\end{split}\]</div>
+<p>It is worth noting that the objective function is a function of the parameter
+space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, and not the data <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, so all
+analysis such as convergence and consistency will be with respect to the
+parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>.</p>
+<p>To this end, we denote the GPT model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> to be an <em>autoregressive</em> and
+<em>self-supervised learning</em> model that is trained to maximize the likelihood of
+observing all data points <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{S}\)</span> via the objective
+function <span class="math notranslate nohighlight">\(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\)</span>
+by learning the conditional probability distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \hat{\boldsymbol{\Theta}})\)</span> over the vocabulary
+<span class="math notranslate nohighlight">\(\mathcal{V}\)</span> of tokens, conditioned on the contextual preciding tokens
+<span class="math notranslate nohighlight">\(x_{&lt;t} = \left(x_1, x_2, \ldots, x_{t-1}\right)\)</span>. We are clear that although
+the goal is to model the joint probability distribution of the token sequences,
+we can do so by estimating the joint probability distribution via the
+conditional probability distributions.</p>
 <section id="autoregressive-self-supervised-learning">
 <h3><a class="toc-backref" href="#id17" role="doc-backlink">Autoregressive Self-Supervised Learning</a><a class="headerlink" href="#autoregressive-self-supervised-learning" title="Permalink to this heading">#</a></h3>
 <p>The learning paradigm of an autoregressive self-supervised learning framework
@@ -1080,6 +1138,18 @@ attending to all tokens up to itself.</p></li>
 </section>
 <section id="references-and-further-readings">
 <h2><a class="toc-backref" href="#id36" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://developers.google.com/machine-learning/gan/generative">https://developers.google.com/machine-learning/gan/generative</a></p></li>
+<li><p><a class="reference external" href="https://probmlcourse.github.io/csc412/lectures/week_2/">https://probmlcourse.github.io/csc412/lectures/week_2/</a></p></li>
+<li><p>speech and recognition chapter 3 important</p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning">https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning</a></p></li>
+<li><p><a class="reference external" href="https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto">https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto</a></p></li>
+<li><p><a class="reference external" href="https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models">https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_recurrent-neural-networks/language-model.html">https://d2l.ai/chapter_recurrent-neural-networks/language-model.html</a></p></li>
+<li><p><a class="reference external" href="https://stanford-cs324.github.io/winter2022/lectures/introduction/">https://stanford-cs324.github.io/winter2022/lectures/introduction/</a></p></li>
+<li><p><a class="reference external" href="https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php">https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php</a></p></li>
+<li><p><a class="reference external" href="https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di">https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di</a></p></li>
+</ul>
 <hr class="footnotes docutils" />
 <aside class="footnote brackets" id="id13" role="note">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">1</a><span class="fn-bracket">]</span></span>
