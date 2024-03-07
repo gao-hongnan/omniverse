@@ -273,6 +273,18 @@ the goal is to model the joint probability distribution of the token sequences,
 we can do so by estimating the joint probability distribution via the
 conditional probability distributions.
 
+```{prf:remark} Simplification of the Objective Function
+:label: decoder-simplified-objective-function
+
+In what follows, we will mostly focus on the inner summand of the objective
+function, namely, we will look at the loss function for a single sequence
+$\mathbf{x}$. And in particular the conditional probability distribution
+$\mathbb{P}(x_t \mid x_{<t} ; \hat{\boldsymbol{\Theta}})$. It should be clear
+that the objective function is over all $N$ sequences in the corpus $\mathcal{S}$,
+where each sequence $\mathbf{x}_n$ can be decomposed into the product of the
+conditional probabilities of each token in the sequence.
+```
+
 ### Autoregressive Self-Supervised Learning
 
 The learning paradigm of an autoregressive self-supervised learning framework
@@ -398,8 +410,8 @@ to gain information as we include more and more leftwards context. But these
 gains diminish rapidly. Thus, sometimes we compromise, obviating computational
 and statistical difficulties by training models whose validity depends on a
 $k^{\text {th }}$-order Markov condition. Even today's massive RNN- and
-Transformerbased language models seldom incorporate more than thousands of words
-of context {cite}`zhang2023dive`. In short, the Markov assumption is a
+Transformer based language models seldom incorporate more than thousands of
+words of context {cite}`zhang2023dive`. In short, the Markov assumption is a
 convenient assumption to simplify the modeling of the joint probability
 distribution of the token sequences.
 
@@ -551,8 +563,8 @@ To read more about perplexity, one can find more details in the following:
 
 #### Loss Function
 
-Given the definitions of the conditional entropy and perplexity, we can define
-the loss and objective function $\mathcal{L}$:
+Given the definitions of the conditional entropy and perplexity, we can
+formalize the loss function $\mathcal{L}$ as:
 
 $$
 \begin{aligned}
@@ -560,12 +572,35 @@ $$
 \end{aligned}
 $$
 
-However, we do not know the true distribution $\mathcal{D}$, and so we can only
-estimate the loss function $\mathcal{L}$ from the corpus $\mathcal{S}$, and we
-can write the process of estimating as:
+and the objective function is to minimize the loss function $\mathcal{L}$,
 
 $$
-\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) = -\sum_{\mathbf{x} \in \mathcal{S}} \sum_{t=1}^T \log \mathbb{P}\left(x_t \mid C_{\tau}(\mathbf{x}, t) ; \hat{\boldsymbol{\Theta}}\right)
+\begin{aligned}
+\boldsymbol{\theta}^{*} &= \underset{\boldsymbol{\theta} \in \boldsymbol{\Theta}}{\text{argmin}} \mathcal{L}\left(\mathcal{D} ; \boldsymbol{\Theta}\right) \\
+                        &= \underset{\boldsymbol{\theta} \in \boldsymbol{\Theta}}{\text{argmin}} -\sum_{\mathbf{x} \in \mathcal{D}} \sum_{t=1}^T \log \mathbb{P}\left(x_t \mid C_{\tau}(\mathbf{x}, t) ; \boldsymbol{\Theta}\right) \\
+\end{aligned}
+$$
+
+However, we do not know the true distribution $\mathcal{D}$, and so we can only
+estimate the loss function $\mathcal{L}$ from the corpus $\mathcal{S}$, and we
+can write the process of estimating via the negative log-likelihood as:
+
+$$
+\begin{aligned}
+\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) &= -\sum_{\mathbf{x} \in \mathcal{S}} \sum_{t=1}^T \log \mathbb{P}\left(x_t \mid C_{\tau}(\mathbf{x}, t) ; \hat{\boldsymbol{\Theta}}\right) \\
+    &= -\sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}\left(x_{n, t} \mid C_{\tau}(\mathbf{x}_{n}, t) ; \hat{\boldsymbol{\Theta}}\right) \\
+\end{aligned}
+$$
+
+and consequently, the objective function is to minimize the estimated loss
+function
+$\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$,
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) \\
+                              &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} -\sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}\left(x_{n, t} \mid C_{\tau}(\mathbf{x}_{n}, t) ; \hat{\boldsymbol{\Theta}}\right) \\
+\end{aligned}
 $$
 
 #### Convergence
@@ -636,6 +671,25 @@ used to denote both the token embedding matrix in $h_0$ and the transformed
 contextual embedding matrix in the head/linear/last layer. The actual
 implementation of the GPT model is more complex, and we will take a look at it
 in later sections.
+
+### Conditional on Task
+
+In the GPT-2 paper, _Language Models are Unsupervised Multitask Learners_, the
+authors introduced the concept of _conditional on task_ where the GPT model
+$\mathcal{G}$ theoretically should not only learn the conditional probability
+distribution $\mathbb{P}(x_t \mid x_{<t} ; \boldsymbol{\Theta})$ but also learn
+the conditional probability distribution
+$\mathbb{P}(x_t \mid x_{<t} ; \boldsymbol{\Theta}, \mathcal{T})$ where
+$\mathcal{T}$ is the task that the model should implicitly learn
+{cite}`radford2019language`. This is a powerful concept because if such a
+hypothesis is correct, then the GPT model $\mathcal{G}$ can indeed be a
+multi-task learner, and can be used directly on a wide range of NLU tasks
+without the need for supervised fine-tuning for downstream domain-specific
+tasks.
+
+In practice, the authors mentioned that task conditioning is often implemented
+at an architectural level, where the model is trained to predict the next token
+in a sequence given the previous tokens in the sequence and a task-specific
 
 ### Supervised Fine-Tuning
 
