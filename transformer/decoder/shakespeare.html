@@ -448,7 +448,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layernorm-and-residual-connection">LayerNorm and Residual Connection</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-residual-block-and-addnorm">Implementation of Residual Block and AddNorm</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
@@ -461,7 +461,7 @@ document.write(`
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">Definition</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
@@ -469,7 +469,7 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-self-attention">Masked/Causal Self-Attention</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#last-token-has-full-context">Last Token has Full Context</a></li>
@@ -481,10 +481,14 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">Definition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">Implementation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-invariance">Permutation Invariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#some-misconceptions">Some Misconceptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-layernorm-and-residual-connections-to-multi-head-attention-output">Applying LayerNorm and Residual Connections to Multi-Head Attention Output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positionwise-feed-forward-networks">Positionwise Feed-Forward Networks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id32">Implementation</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a></li>
@@ -564,7 +568,7 @@ document.write(`
 <li><p><a class="reference internal" href="#residual-connection" id="id72">Residual Connection</a></p>
 <ul>
 <li><p><a class="reference internal" href="#layernorm-and-residual-connection" id="id73">LayerNorm and Residual Connection</a></p></li>
-<li><p><a class="reference internal" href="#id17" id="id74">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#implementation-of-residual-block-and-addnorm" id="id74">Implementation of Residual Block and AddNorm</a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#self-attention" id="id75">Self-Attention</a></p>
@@ -580,7 +584,7 @@ document.write(`
 <li><p><a class="reference internal" href="#linear-projections" id="id81">Linear Projections</a></p></li>
 <li><p><a class="reference internal" href="#scaled-dot-product-attention" id="id82">Scaled Dot-Product Attention</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id22" id="id83">Definition</a></p></li>
+<li><p><a class="reference internal" href="#id21" id="id83">Definition</a></p></li>
 <li><p><a class="reference internal" href="#attention-scoring-function" id="id84">Attention Scoring Function</a></p></li>
 <li><p><a class="reference internal" href="#scaling-down-the-dot-product-of-query-and-key-vectors" id="id85">Scaling Down the Dot Product of Query and Key Vectors</a></p></li>
 <li><p><a class="reference internal" href="#softmax" id="id86">Softmax</a></p></li>
@@ -588,7 +592,7 @@ document.write(`
 <li><p><a class="reference internal" href="#numerical-stability-and-gradient-saturation" id="id88">Numerical Stability and Gradient Saturation</a></p></li>
 <li><p><a class="reference internal" href="#visualizing-variance-of-dot-product" id="id89">Visualizing Variance of Dot Product</a></p></li>
 <li><p><a class="reference internal" href="#projections-lead-to-dynamic-context-vectors" id="id90">Projections Lead to Dynamic Context Vectors</a></p></li>
-<li><p><a class="reference internal" href="#id26" id="id91">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#id25" id="id91">Implementation</a></p></li>
 <li><p><a class="reference internal" href="#heatmap" id="id92">Heatmap</a></p></li>
 <li><p><a class="reference internal" href="#masked-causal-self-attention" id="id93">Masked/Causal Self-Attention</a></p></li>
 <li><p><a class="reference internal" href="#last-token-has-full-context" id="id94">Last Token has Full Context</a></p></li>
@@ -601,13 +605,18 @@ document.write(`
 <li><p><a class="reference internal" href="#multi-head-attention" id="id97">Multi-Head Attention</a></p>
 <ul>
 <li><p><a class="reference internal" href="#intuition" id="id98">Intuition</a></p></li>
-<li><p><a class="reference internal" href="#id30" id="id99">Definition</a></p></li>
-<li><p><a class="reference internal" href="#id31" id="id100">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#id29" id="id99">Definition</a></p></li>
+<li><p><a class="reference internal" href="#id30" id="id100">Implementation</a></p></li>
 <li><p><a class="reference internal" href="#permutation-invariance" id="id101">Permutation Invariance</a></p></li>
-<li><p><a class="reference internal" href="#some-misconceptions" id="id102">Some Misconceptions</a></p></li>
+<li><p><a class="reference internal" href="#applying-layernorm-and-residual-connections-to-multi-head-attention-output" id="id102">Applying LayerNorm and Residual Connections to Multi-Head Attention Output</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#putting-it-all-together-to-form-the-gpt" id="id103">Putting it all Together to form the GPT</a></p></li>
+<li><p><a class="reference internal" href="#positionwise-feed-forward-networks" id="id103">Positionwise Feed-Forward Networks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id32" id="id104">Implementation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#putting-it-all-together-to-form-the-gpt" id="id105">Putting it all Together to form the GPT</a></p></li>
 </ul>
 </nav>
 <div class="cell docutils container">
@@ -668,7 +677,7 @@ document.write(`
 
     <span class="c1"># model parameters</span>
     <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dimension of the model&quot;</span><span class="p">)</span>
-    <span class="n">d_ff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dimension of the feed forward layer&quot;</span><span class="p">)</span>
+    <span class="n">d_ff</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Dimension of the feed forward layer&quot;</span><span class="p">)</span>
     <span class="n">H</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of heads&quot;</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s2">&quot;num_heads&quot;</span><span class="p">)</span>
     <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">50257</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Vocabulary size&quot;</span><span class="p">)</span>
     <span class="n">num_decoder_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Number of decoder blocks&quot;</span><span class="p">)</span>
@@ -692,6 +701,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">block_size</span> <span class="o">=</span> <span class="mi">8</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="mi">4</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d_ff</span> <span class="o">=</span> <span class="mi">4</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -718,7 +728,7 @@ document.write(`
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">device_type</span>=<span style="color: #008000; text-decoration-color: #008000">'cpu'</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">device</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">device</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">type</span>=<span style="color: #008000; text-decoration-color: #008000">'cpu'</span><span style="font-weight: bold">)</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">d_model</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">d_ff</span>=<span style="color: #800080; text-decoration-color: #800080; font-style: italic">None</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">d_ff</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">H</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">vocab_size</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">50257</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">num_decoder_blocks</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span>
@@ -2535,8 +2545,8 @@ does not happen for nested function classes.</span><a class="headerlink" href="#
 \end{aligned}
 \end{split}\]</div>
 </section>
-<section id="id17">
-<h3><a class="toc-backref" href="#id74" role="doc-backlink">Implementation</a><a class="headerlink" href="#id17" title="Permalink to this heading">#</a></h3>
+<section id="implementation-of-residual-block-and-addnorm">
+<h3><a class="toc-backref" href="#id74" role="doc-backlink">Implementation of Residual Block and AddNorm</a><a class="headerlink" href="#implementation-of-residual-block-and-addnorm" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
@@ -2554,13 +2564,6 @@ does not happen for nested function classes.</span><a class="headerlink" href="#
         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sublayer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">AddNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;AddNorm is apt since the diagram uses Add + Norm.</span>
-<span class="sd">    Some call it SubLayer connection (Harvard) some call it</span>
-<span class="sd">    residual connection: x + dropout(sublayer(layernorm(x)))</span>
-
-<span class="sd">    If stay true, then we apply residual then layer norm. So</span>
-<span class="sd">    we adopt the d2l method.&quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="c1"># fmt: off</span>
@@ -2585,11 +2588,11 @@ does not happen for nested function classes.</span><a class="headerlink" href="#
 <h3><a class="toc-backref" href="#id76" role="doc-backlink">Intuition of Attention Mechanism</a><a class="headerlink" href="#intuition-of-attention-mechanism" title="Permalink to this heading">#</a></h3>
 <p>Attention is not a new concept, and one of the most influencial papers came from
 <em>Neural Machine Translation by Jointly Learning to Align and Translate</em>
-<span id="id18">[<a class="reference internal" href="../../bibliography.html#id13" title="Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. Neural machine translation by jointly learning to align and translate. 2014. arXiv:1409.0473.">Bahdanau <em>et al.</em>, 2014</a>]</span>, a paper published during 2014. In the context of our
+<span id="id17">[<a class="reference internal" href="../../bibliography.html#id13" title="Dzmitry Bahdanau, Kyunghyun Cho, and Yoshua Bengio. Neural machine translation by jointly learning to align and translate. 2014. arXiv:1409.0473.">Bahdanau <em>et al.</em>, 2014</a>]</span>, a paper published during 2014. In the context of our
 post, we would stick to one intuitive interpretation, that <em>the attention
 mechanism describes a <strong>weighted average</strong> of (sequence) elements with the
 weights <strong>dynamically</strong> computed based on an input query and elements’ keys</em>
-<span id="id19">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. In other words, we want contextually relevant
+<span id="id18">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. In other words, we want contextually relevant
 information to be weighted more heavily than less relevant information. For
 example, the sentence <em>the cat walks by the river bank</em> would require the word
 <em>bank</em> to be weighted more heavily than the word <em>the</em> when the word <em>cat</em> is
@@ -2631,7 +2634,7 @@ consisting of tuples of keys and values. For instance, the database
 <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> might consist of tuples
 <code class="docutils literal notranslate"><span class="pre">{(&quot;Zhang&quot;,</span> <span class="pre">&quot;Aston&quot;),</span> <span class="pre">(&quot;Lipton&quot;,</span> <span class="pre">&quot;Zachary&quot;),</span> <span class="pre">(&quot;Li&quot;,</span> <span class="pre">&quot;Mu&quot;),</span> <span class="pre">(&quot;Smola&quot;,</span> <span class="pre">&quot;Alex&quot;),</span> <span class="pre">(&quot;Hu&quot;,</span> <span class="pre">&quot;Rachel&quot;),</span> <span class="pre">(&quot;Werness&quot;,</span> <span class="pre">&quot;Brent&quot;)}</span></code>
 with the last name being the key and the first name being the value
-<span id="id20">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. Operations on the database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> can be performed
+<span id="id19">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. Operations on the database <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> can be performed
 using queries <span class="math notranslate nohighlight">\(q\)</span> that operate on the keys and values in the database. More
 concretely, if our query is “Li”, or more verbosely, “What is the first name
 associated with the last name Li?”, the answer would be “Mu” - the <strong>key</strong>
@@ -2651,7 +2654,7 @@ a database of <span class="math notranslate nohighlight">\(m\)</span> tuples of 
 \]</div>
 <p>where
 <span class="math notranslate nohighlight">\(\alpha\left(\mathbf{q}, \mathbf{k}_t\right) \in \mathbb{R}(t=1, \ldots, T)\)</span> are
-scalar attention weights <span id="id21">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. The operation itself is
+scalar attention weights <span id="id20">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. The operation itself is
 typically referred to as
 <a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/attention-pooling.html"><em>attention pooling</em></a>.
 The term “attention” is used because this operation focuses specifically on
@@ -2891,8 +2894,8 @@ matrices
 </div></section>
 <section id="scaled-dot-product-attention">
 <h3><a class="toc-backref" href="#id82" role="doc-backlink">Scaled Dot-Product Attention</a><a class="headerlink" href="#scaled-dot-product-attention" title="Permalink to this heading">#</a></h3>
-<section id="id22">
-<h4><a class="toc-backref" href="#id83" role="doc-backlink">Definition</a><a class="headerlink" href="#id22" title="Permalink to this heading">#</a></h4>
+<section id="id21">
+<h4><a class="toc-backref" href="#id83" role="doc-backlink">Definition</a><a class="headerlink" href="#id21" title="Permalink to this heading">#</a></h4>
 <div class="proof definition admonition" id="decoder-concept-scaled-dot-product-attention">
 <p class="admonition-title"><span class="caption-number">Definition 4 </span> (Scaled Dot-Product Attention)</p>
 <section class="definition-content" id="proof-content">
@@ -2924,7 +2927,7 @@ of alignment or relevance between each query and all keys.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span> is a scaling factor used to normalize the scores, preventing them
 from becoming too large and ensuring a stable gradient during training. This
 scaling factor is particularly important as it helps maintain the softmax
-output in a numerically stable range <span id="id23">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p></li>
+output in a numerically stable range <span id="id22">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>.</p></li>
 <li><p><span class="math notranslate nohighlight">\(\text{softmax}(\cdot)\)</span> is applied row-wise to convert scores into attention
 weights, ensuring that for each query, the weights across all keys sum up
 to 1. This normalization step allows the mechanism to effectively distribute
@@ -3096,7 +3099,7 @@ variance of a scaled random variable is the square of the scale factor times the
 original variance).</p>
 <p>Now our variance would be <span class="math notranslate nohighlight">\(\sigma^4\)</span> - but it is still not the same as the
 variance of the query and key vectors. This is okay because the original paper
-assume the variance <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span> <span id="id24">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, and therefore
+assume the variance <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span> <span id="id23">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, and therefore
 it does not matter since <span class="math notranslate nohighlight">\(\sigma^2 = \sigma^4\)</span> when <span class="math notranslate nohighlight">\(\sigma^2 = 1\)</span>.</p>
 <div class="proof definition admonition" id="decoder-concept-attention-scoring-function-with-scaling">
 <p class="admonition-title"><span class="caption-number">Definition 8 </span> (Attention Scoring Function with Scaling)</p>
@@ -3126,7 +3129,7 @@ denote them as the raw <strong>attention scores</strong> <span class="math notra
 </div><div class="proof definition admonition" id="decoder-concept-softmax-normalization-attention-weights">
 <p class="admonition-title"><span class="caption-number">Definition 10 </span> (Softmax Normalization and Attention Weights)</p>
 <section class="definition-content" id="proof-content">
-<p>It is common in deep learning to form a convex combination <span id="id25">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>
+<p>It is common in deep learning to form a convex combination <span id="id24">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>
 of the attention scores <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span> to obtain the
 <strong>attention weights</strong>, denoted as <span class="math notranslate nohighlight">\(\text{softmax}(\alpha(\mathbf{Q}, \mathbf{K}))\)</span>, which
 are non-negative and sum to <span class="math notranslate nohighlight">\(1\)</span>. This is achieved through the softmax
@@ -3343,8 +3346,8 @@ sentences because it now depends on the full input sequence <span class="math no
 <p>Consequently, the projection of the token embeddings into the query and key
 space is needed.</p>
 </section>
-<section id="id26">
-<h4><a class="toc-backref" href="#id91" role="doc-backlink">Implementation</a><a class="headerlink" href="#id26" title="Permalink to this heading">#</a></h4>
+<section id="id25">
+<h4><a class="toc-backref" href="#id91" role="doc-backlink">Implementation</a><a class="headerlink" href="#id25" title="Permalink to this heading">#</a></h4>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Attention</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -3699,13 +3702,13 @@ over its sequence length <span class="math notranslate nohighlight">\(T\)</span>
 <span class="math notranslate nohighlight">\(\mathcal{O}(T^2 \cdot D)\)</span> time to compute the self-attention on a sequence of
 length <span class="math notranslate nohighlight">\(T\)</span> and <span class="math notranslate nohighlight">\(D\)</span>-dimensional representations. We see a table listed below,
 referenced from the paper <em>Attention is All You Need</em>
-<span id="id27">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, with complexity per layer, the number of
+<span id="id26">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>, with complexity per layer, the number of
 sequential operations, and maximum path length. The complexity is measured by
 the upper bound of the number of operations to perform, while the maximum path
 length represents the maximum number of steps a forward or backward signal has
 to traverse to reach any other position. The lower this length, the better
 gradient signals can backpropagate for long-range dependencies
-<span id="id28">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>.</p>
+<span id="id27">[<a class="reference internal" href="../../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>.</p>
 <table class="table" id="self-attention-complexity">
 <caption><span class="caption-number">Table 1 </span><span class="caption-text">Master Theorem Cases</span><a class="headerlink" href="#self-attention-complexity" title="Permalink to this table">#</a></caption>
 <thead>
@@ -3780,7 +3783,7 @@ model to combine knowledge from different behaviors of the same attention
 mechanism, such as capturing dependencies of various ranges (e.g., shorter-range
 vs. longer-range) within a sequence. Thus, it may be beneficial to allow our
 attention mechanism to jointly use different representation subspaces of
-queries, keys, and values <span id="id29">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
+queries, keys, and values <span id="id28">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
 <p>What this implies is that the natural language is a complex space, and as
 highlighted in the book <em>Speech and Language Processing</em> by Jurafsky and Martin,
 there are distinct semantic, syntactic and discourse relationships that can hold
@@ -3806,8 +3809,8 @@ provides good intuition on multi-head attention. We use his sample sequence
 connecting “crossed” with “carelessly.”</p></li>
 </ul>
 </section>
-<section id="id30">
-<h3><a class="toc-backref" href="#id99" role="doc-backlink">Definition</a><a class="headerlink" href="#id30" title="Permalink to this heading">#</a></h3>
+<section id="id29">
+<h3><a class="toc-backref" href="#id99" role="doc-backlink">Definition</a><a class="headerlink" href="#id29" title="Permalink to this heading">#</a></h3>
 <p>The multi-head attention is a function that maps a query matrix
 <span class="math notranslate nohighlight">\(\mathbf{Q} \in \mathbb{R}^{T \times d_q}\)</span>, a key matrix
 <span class="math notranslate nohighlight">\(\mathbf{K} \in \mathbb{R}^{T \times d_k}\)</span>, and a value matrix
@@ -3869,9 +3872,15 @@ shape <span class="math notranslate nohighlight">\(\mathbb{R}^{T \times H \cdot 
 matrix that projects the concatenated context vectors back to the original
 dimensionality <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
 </ul>
+<p>Without the batch dimension <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, the output matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> is
+of shape <span class="math notranslate nohighlight">\(\mathbb{R}^{T \times D}\)</span>, where each row <span class="math notranslate nohighlight">\(\mathbf{a}_t\)</span> of the output
+matrix <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> is the new embedding of the token at position <span class="math notranslate nohighlight">\(t\)</span> in the
+sequence, containing not only the semantic and positional information of the
+token itself, but also contextual information from the other tokens in the
+sequence.</p>
 </section>
-<section id="id31">
-<h3><a class="toc-backref" href="#id100" role="doc-backlink">Implementation</a><a class="headerlink" href="#id31" title="Permalink to this heading">#</a></h3>
+<section id="id30">
+<h3><a class="toc-backref" href="#id100" role="doc-backlink">Implementation</a><a class="headerlink" href="#id30" title="Permalink to this heading">#</a></h3>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MultiHeadedAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -4095,7 +4104,7 @@ dimensionality <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
 <span class="n">causal_mha</span> <span class="o">=</span> <span class="n">MultiHeadedAttention</span><span class="p">(</span><span class="n">attention</span><span class="o">=</span><span class="n">causal_attention</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 <span class="n">tril_mask</span> <span class="o">=</span> <span class="n">construct_dummy_batch_future_masks</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 
-<span class="n">concatenated_output</span> <span class="o">=</span> <span class="n">causal_mha</span><span class="p">(</span><span class="n">q0</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">tril_mask</span><span class="p">)</span>
+<span class="n">A_BHL</span> <span class="o">=</span> <span class="n">causal_mha</span><span class="p">(</span><span class="n">q0</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">tril_mask</span><span class="p">)</span>
 
 <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">causal_mha</span><span class="o">.</span><span class="n">attention_weights</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">attention_weights</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -4124,14 +4133,149 @@ multi-head attention mechanism would be the same up to a permutation of the rows
 permutation invariance.</p>
 <p>Some extended ideas can be found in the chapter on
 <a class="reference external" href="https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html#breaking-the-symmetry">Numerical Stability and Initialization</a>,
-from the book Dive into Deep Learning <span id="id32">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
+from the book Dive into Deep Learning <span id="id31">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
 </section>
-<section id="some-misconceptions">
-<h3><a class="toc-backref" href="#id102" role="doc-backlink">Some Misconceptions</a><a class="headerlink" href="#some-misconceptions" title="Permalink to this heading">#</a></h3>
+<section id="applying-layernorm-and-residual-connections-to-multi-head-attention-output">
+<h3><a class="toc-backref" href="#id102" role="doc-backlink">Applying LayerNorm and Residual Connections to Multi-Head Attention Output</a><a class="headerlink" href="#applying-layernorm-and-residual-connections-to-multi-head-attention-output" title="Permalink to this heading">#</a></h3>
+<p>Recall earlier on the discussion of using Layer Normalization (LayerNorm) on the
+output of the Multi-Head Attention mechanism with residual connections.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\operatorname{AddNorm}(\mathbf{x}) &amp;= \operatorname{LayerNorm}(\mathbf{x} + \operatorname{Sublayer}(\mathbf{x})) \\
+\end{aligned}
+\end{split}\]</div>
+<ul class="simple">
+<li><p>The Multi-Head Attention layer is the <span class="math notranslate nohighlight">\(\operatorname{Sublayer}(\cdot)\)</span>
+function. So <span class="math notranslate nohighlight">\(\text{MultiHead}(\cdot) := \operatorname{Sublayer}(\cdot)\)</span>.</p></li>
+<li><p>The output from the Multi-Head Attention to be
+<span class="math notranslate nohighlight">\(\mathbf{A} \in \mathbb{R}^{T \times D}\)</span>, we would pass it to
+<span class="math notranslate nohighlight">\(\operatorname{LayerNorm}(\mathbf{A} + \text{MultiHead}(\mathbf{A}))\)</span>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+<span class="n">seed_all</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">d_model</span>  <span class="c1"># batch size, head, context length, embedding dimension</span>
+<span class="n">W_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">q0</span> <span class="o">=</span> <span class="n">W_q</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">k0</span> <span class="o">=</span> <span class="n">W_k</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">v0</span> <span class="o">=</span> <span class="n">W_v</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">q0</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">causal_attention</span> <span class="o">=</span> <span class="n">ScaledDotProductAttention</span><span class="p">()</span>
+<span class="n">causal_mha</span> <span class="o">=</span> <span class="n">MultiHeadedAttention</span><span class="p">(</span><span class="n">attention</span><span class="o">=</span><span class="n">causal_attention</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">tril_mask</span> <span class="o">=</span> <span class="n">construct_dummy_batch_future_masks</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+<span class="c1">### AddNorm</span>
+<span class="n">add_norm_1</span> <span class="o">=</span> <span class="n">AddNorm</span><span class="p">(</span><span class="n">feature_dim</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">z0_tok_embed_with_pos_embed_with_mha_and_addnorm1</span> <span class="o">=</span> <span class="n">add_norm_1</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="n">causal_mha</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">tril_mask</span><span class="p">))</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed_with_mha_and_addnorm1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">torch.Size</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span><span style="font-weight: bold">])</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.1743</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.7140</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.2315</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.7712</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.1786</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9606</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0212</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.8033</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.4720</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5150</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.7233</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.7363</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6594</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.4229</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.4141</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.1776</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5698</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.3424</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.8061</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.1061</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5331</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0998</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.5823</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0506</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.8590</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1289</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6803</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.6681</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1490</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.4571</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.5181</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.2100</span><span style="font-weight: bold">]]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">AddBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div></div>
+</div>
+</section>
+</section>
+<section id="positionwise-feed-forward-networks">
+<h2><a class="toc-backref" href="#id103" role="doc-backlink">Positionwise Feed-Forward Networks</a><a class="headerlink" href="#positionwise-feed-forward-networks" title="Permalink to this heading">#</a></h2>
+<section id="id32">
+<h3><a class="toc-backref" href="#id104" role="doc-backlink">Implementation</a><a class="headerlink" href="#id32" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+
+<span class="k">class</span> <span class="nc">PositionwiseFeedForward</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements a Position-wise FeedForward Network (FFN) used in Transformer models.</span>
+
+<span class="sd">    This module applies two linear transformations with a non-linear activation</span>
+<span class="sd">    in between. It is often used after the multi-head self-attention layer</span>
+<span class="sd">    in Transformer models.</span>
+
+<span class="sd">    The naming convention for the linear layers (&#39;context_fc&#39; and &#39;context_projection&#39;) is inspired by</span>
+<span class="sd">    the functionality within the Transformer architecture:</span>
+
+<span class="sd">    - &#39;context_fc&#39; (context fully connected): This layer expands the dimensionality</span>
+<span class="sd">    of the input features, creating a richer representation. The expansion factor</span>
+<span class="sd">    is often 4 in Transformer models, meaning the intermediate size is 4 times the</span>
+<span class="sd">    size of the input/output dimensions.</span>
+
+<span class="sd">    - &#39;context_projection&#39; (context projection): This layer projects the expanded</span>
+<span class="sd">    features back down to the original dimension, synthesizing the information</span>
+<span class="sd">    processed by the &#39;context_fc&#39; layer.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">d_ff</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># fmt: off</span>
+        <span class="k">if</span> <span class="n">d_ff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">d_ff</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">d_model</span> <span class="c1"># typical value for d_ff in Transformer models</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">({</span>
+            <span class="s1">&#39;context_fc&#39;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">),</span>
+            <span class="s1">&#39;activation&#39;</span><span class="p">:</span> <span class="n">activation</span><span class="p">,</span>
+            <span class="s1">&#39;context_projection&#39;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_ff</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">),</span>
+            <span class="s1">&#39;dropout&#39;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+
+        <span class="p">})</span>
+
+        <span class="c1"># self._init_weights()</span>
+
+    <span class="k">def</span> <span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize parameters of the linear layers.&quot;&quot;&quot;</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_fc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_fc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_fc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_projection&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_projection&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">constant_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_projection&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_fc&quot;</span><span class="p">](</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;activation&quot;</span><span class="p">](</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;dropout&quot;</span><span class="p">](</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">[</span><span class="s2">&quot;context_projection&quot;</span><span class="p">](</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="putting-it-all-together-to-form-the-gpt">
-<h2><a class="toc-backref" href="#id103" role="doc-backlink">Putting it all Together to form the GPT</a><a class="headerlink" href="#putting-it-all-together-to-form-the-gpt" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id105" role="doc-backlink">Putting it all Together to form the GPT</a><a class="headerlink" href="#putting-it-all-together-to-form-the-gpt" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Tidy up positional encodings.</p></li>
 </ol>
@@ -4312,7 +4456,7 @@ from the book Dive into Deep Learning <span id="id32">[<a class="reference inter
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-connection">Residual Connection</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layernorm-and-residual-connection">LayerNorm and Residual Connection</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-residual-block-and-addnorm">Implementation of Residual Block and AddNorm</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-attention">Self-Attention</a><ul class="nav section-nav flex-column">
@@ -4325,7 +4469,7 @@ from the book Dive into Deep Learning <span id="id32">[<a class="reference inter
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-projections">Linear Projections</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#scaled-dot-product-attention">Scaled Dot-Product Attention</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">Definition</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-scoring-function">Attention Scoring Function</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#scaling-down-the-dot-product-of-query-and-key-vectors">Scaling Down the Dot Product of Query and Key Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
@@ -4333,7 +4477,7 @@ from the book Dive into Deep Learning <span id="id32">[<a class="reference inter
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-gradient-saturation">Numerical Stability and Gradient Saturation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-variance-of-dot-product">Visualizing Variance of Dot Product</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-self-attention">Masked/Causal Self-Attention</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#last-token-has-full-context">Last Token has Full Context</a></li>
@@ -4345,10 +4489,14 @@ from the book Dive into Deep Learning <span id="id32">[<a class="reference inter
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-head-attention">Multi-Head Attention</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">Definition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">Implementation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id30">Implementation</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-invariance">Permutation Invariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#some-misconceptions">Some Misconceptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-layernorm-and-residual-connections-to-multi-head-attention-output">Applying LayerNorm and Residual Connections to Multi-Head Attention Output</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#positionwise-feed-forward-networks">Positionwise Feed-Forward Networks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id32">Implementation</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a></li>
