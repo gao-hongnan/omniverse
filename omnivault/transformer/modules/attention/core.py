@@ -359,11 +359,11 @@ class MultiHeadedAttention(nn.Module):
             assert mask.shape[2] == mask.shape[3] == query.shape[1], ("Mask should have shape (batch_size, 1, seq_len, seq_len).")
 
 
-        Q = self.W_Q(query).contiguous() # Z @ W_Q -> LxD @ DxD = LxD
+        Q = self.W_Q(query).contiguous() # Z @ W_Q -> LxD @ DxD = LxD -> [B, L, D]
         K = self.W_K(key).contiguous()   # Z @ W_K
         V = self.W_V(value).contiguous() # Z @ W_V
 
-        Q = self.transpose_qkv(Q)        # [B, H, L, D]
+        Q = self.transpose_qkv(Q)        # splitting happens -> [B, H, L, D]
         K = self.transpose_qkv(K)
         V = self.transpose_qkv(V)
 
