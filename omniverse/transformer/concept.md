@@ -98,7 +98,257 @@ def seed_all(
     return seed
 ```
 
+## Motivation
+
+...
+
+## Abstract
+
+-   All previous pretrained language models require a second stage supervised
+    fine-tuning to adapt to a specific task.
+-   The authors demonstrated that language models, given enough capacity, and
+    enough data, can be adapted to a wide range of tasks without the need for
+    task-specific architectures.
+-   When conditioned on a document and questions using the
+    [CoQA dataset](https://huggingface.co/datasets/stanfordnlp/coqa) of 127,700+
+    training samples, essentially a question-answering task, the model is able
+    to match or exceed the performance of the 3 baselines.
+-   The author emphasized that the capacity of the model is crucial for the
+    success of the zero-shot transfer and that the model's performance scales
+    log-linearly with the number of parameters. This means that as the model
+    capacity increases logarithmically, the performance of the model increases
+    linearly.
+
 ## Introduction
+
+### Key 1. Competent Generalists over Narrow Experts (1)
+
+-   The mention of works by Krizhevsky et al. (2012), Sutskever et al. (2014),
+    and Amodei et al. (2016) points to machine learning systems with enough
+    capacity and trained on large datasets, and supervised fine-tuning, is very
+    successful in task specific domains such as image recognition, nlp tasks
+    etc.
+-   However, such systems, termed as "narrow experts", are fragile [Recht et al.
+    (2018)], as they are highly dependent on the specific training regime and
+    task. A slight pertubation to the input distribution can cause the model to
+    perform poorly.
+-   The authors then expressed the desire for "competent generalists" that can
+    perform well across a wide range of tasks without the need for task-specific
+    architectures or supervised fine-tuning.
+
+### Key 2. IID Assumption Fails in Real World (2, 3)
+
+-   It goes without saying that the main machine learning goal is to generalize
+    on the unseen data points. However, to simplify machine learning objective
+    modeling, we often assume that the training and test data are drawn from the
+    same distribution, otherwise termed as the Independent and Identically
+    Distributed (i.i.d.) assumption.
+    -   As an aside, the i.i.d. assumption has deep roots in statistical
+        modeling because it allows simplification of modeling, notably, we can
+        express
+        [joint probability distributions as the product of marginal distributions](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables).
+    -   And techniques like resampling and cross validation with a holdout set
+        to evaluate performance are also based on the assumption that the
+        training and test data are drawn from the same distribution.
+-   However, as the authors highlighted, the i.i.d. assumption fails in the real
+    world. The distribution of the test data is often different from the
+    training data, and the model's performance degrades significantly when the
+    test data distribution is different from the training data distribution.
+-   They attribute this to the prevalence of **single** task training on
+    **single** domain datasets.
+
+More readings:
+
+-   https://stats.stackexchange.com/questions/213464/on-the-importance-of-the-i-i-d-assumption-in-statistical-learning
+-   https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables
+
+### Key 3. Multi-Task Learning is Nacent (4)
+
+-   The author then highlighted that multi-task learning is a promising
+    framework where by training a single model on multiple tasks simultaneously,
+    the model can then leverage generalizable latent space embeddings and
+    representations to perform well on multiple tasks.
+-   It was then highlighted that recent work uses, for example, 10 (dataset,
+    objective) pairs to train a single model (this is
+    [meta-learning](<https://en.wikipedia.org/wiki/Meta-learning_(computer_science)>)).
+    -   What this means is that each dataset and objective is distinct.
+    -   For example, 1 dataset could be on sentiment data, with the objective of
+        predicting the sentiment of a sentence, while another dataset could be
+        on named entity recognition, with the objective of predicting the named
+        entities in a sentence.
+-   The challenge is then still rooted in the compilation, curation and
+    annotation of the datasets and objectives for the model to be generalizable.
+    So it still reduces to the original problem of single task training on
+    single domain datasets as we may need just as much curated data to train a
+    multi-task model as we would need to train multiple single task model. And
+    it may not scale since we are only looking at 10 (dataset, objective) pairs.
+
+### Key 4. From Word Embeddings to Contextual Embeddings (5,6)
+
+-   Initially, word embeddings (Word2Vec, GloVe) were used to represent words as
+    dense fixed-dimensional vectors in a continuous $D$ dimensional space,
+    hinging on the fact that words occuring in similar contexts/documents are
+    similar semantically. These vectors were then used as input to a model to
+    perform a specific task.
+-   The next advancement is capturing more contextual information by using
+    contextual embeddings, where the word embeddings are conditioned on the
+    entire context of the sentence. Recurrent Neural Networks (RNNs) is one
+    example and the context embeddings can be "transferred" to other downstream
+    tasks.
+
+    From what I understand, unidirectional RNNs can only capture the context
+    information from the past, while bidirectional RNNs can capture the context
+    information from both the past and the future. However, both methods have
+    its limitations in capturing long-range dependencies.
+
+    Furthermore, RNN has a
+    [well known problem in gradient vanishing](https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen)
+    which means that the model is biased by the most recent tokens in the
+    sequence, and the model's performance degrades as the sequence length
+    increases.
+
+-   Full contextual capture via self-attention, allow each token in the sequence
+    to simultaneously attend to all other tokens in the sequence, and the
+    attention weights are learned during training. This allows the model to
+    capture long-range dependencies and is the basis for the Transformer
+    architecture. Consequently, self-attention is non-sequential by design and
+    operates over a _set_ of tokens, and not a _sequence_ of tokens. This calls
+    for the need to introduce positional encodings to the input embeddings to
+    capture the sequential nature of the tokens.
+
+    This offers a significant leap over word embedding era where the embeddings
+    are static. Now, given two sentences, _I went to the river bank_ versus _i
+    went to the bank to withdraw money_, the word "bank" in the first sentence
+    is semantically different from the word "bank" in the second sentence. The
+    contextual embeddings can capture this difference.
+
+-   The authors then went on to mention that the above methods would still
+    require supervised fine-tuning to adapt to a specific task.
+
+    If there are minimal or no supervised data is available, there are other
+    lines of work using language model to handle it - commonsense reasoning
+    (Schwartz et al., 2017) and sentiment analysis (Radford et al., 2017).
+
+Further readings:
+
+-   https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen
+-   https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning
+
+### Key 5. Zero Shot Learning and Zero Shot Transfer (7)
+
+-   The authors then went on to mention that continuing from the two lines of
+    work above, they continue the trend of using general methods of transfer to
+    demonstrate that language models can perform down-stream tasks in a
+    zero-shot manner, without any parameter or architecture modification.
+
+-   Zero-shot learning (ZSL) refers to the ability of a model to correctly
+    perform tasks or recognize categories it has never encountered during its
+    training phase. The essence of ZSL is to generalize from seen to unseen
+    classes or tasks by leveraging side information or semantic relationships.
+    For example, a model trained to recognize on a set of animals (including
+    horses) but not on zebra, should be able to recognize a zebra as something
+    close to horse, given the semantic relationship between the two animals.
+
+    TODO: may need further clarification: Furthermore, we can actually pass an
+    unseen label and a zebra image. How? Con
+
+-   Zero-shot transfer, often discussed within the context of transfer learning,
+    involves applying a model trained on one set of tasks or domains to a
+    completely new task or domain without any additional training. Here, the
+    focus is on the transferability of learned features or knowledge across
+    different but related tasks or domains. Zero-shot transfer extends the
+    concept of transfer learning by not requiring any examples from the target
+    domain during training, relying instead on the model's ability to generalize
+    across different contexts based on its pre-existing knowledge.
+
+Further readings:
+
+-   [Zero shot learning - Wikipedia](https://en.wikipedia.org/wiki/Zero-shot_learning)
+-   https://ai.stackexchange.com/questions/21719/what-is-the-difference-between-one-shot-learning-transfer-learning-and-fine-tun
+-   https://joeddav.github.io/blog/2020/05/29/ZSL.html
+-   https://arxiv.org/abs/1301.3666
+-   https://ai.stackexchange.com/questions/23527/zero-shot-learning-available-labels-in-testing-set
+-   https://www.theaidream.com/post/zero-shot-learning-can-you-classify-an-object-without-seeing-it-before
+-   https://dl.acm.org/doi/10.1145/3293318
+
+## Approach
+
+### Key 1. Modeling Language Models over Joint Probability Distributions (1)
+
+### Key 2. Conditional Distributions (2)
+
+### Key 3. Conditional on Task (3)
+
+...
+
+### Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)
+
+### Key 5.
+
+## 2.1. Training Dataset
+
+### Key 1. Rejection of CommonCrawl (1,2)
+
+-   Prior work usually involves training language model on single domain
+    datasets (link back to narrow experts).
+-   But in order to achieve competent generalists, the authors argue that the
+    model should be trained on a diverse range of tasks and domains.
+-   CommonCrawl, hosts a huge amount of webscrapes (basically the entire
+    internet) and is considered a diverse dataset.
+-   However, the authors rejected CommonCrawl because it has severe data quality
+    issues.
+
+### Key 2. Construction of WebText Dataset
+
+-   The authors aimed to create a web scrape that emphasizes document quality
+    over quantity.
+-   To ensure a level of document quality without incurring the prohibitive
+    costs of manual filtering, the authors leveraged human curation indirectly
+    by scraping all outbound links from Reddit that received at least 3 karma.
+    Karma in this context serves as a heuristic for content that is interesting,
+    educational, or entertaining as judged by Reddit users.
+    -   What this outbound link mean is if a reddit post has an outbound link to
+        another website, the authors scraped the content of the website if the
+        post received at least 3 karma.
+-   The resulting dataset, named WebText, contains of text from about 45 million
+    links curated by Reddit users.
+-   Further preprocessing such as de-duplication, heuristic based cleaning, as
+    well as filtering out Wikipedia links resulted in about 40gb of text (8
+    million documents).
+-   The snapshot of the dataset is December 2017.
+-   The exclusion of Wikipedia is made because the authors believe it is a
+    common source of training data for other works, and in order to
+    evaluate/test their model on other datasets with little leakage, they
+    excluded Wikipedia.
+
+## 2.2. Input Representation
+
+### Key 1. Byte Pair Encoding (BPE) (1,2,3)
+
+-   The authors highlighted traditional ways of tokenization, includes
+    lower-casing, punctuation stripping, and splitting on white spaces, as well
+    as encode unknown vocabulary with a special token so that the model can
+    learn to handle unseen words in eval/test time.
+    -   An example is LM are bad at analyzing emojis.
+-   However, the authors mentioned this way restricts the natural language input
+    space $\mathcal{X}$ and therefore limit the model space $\mathcal{H}$, as
+    the latter is a function of the former.
+-   To resolve this, the idea of byte-level encoding can be used - since you
+    theoretically can encode any character in the world in UTF-8.
+-   However, the limitation is current byte-level LMs tend to perform poorly on
+    word level tasks.
+-   The authors then introduced the BPE algorithm (is "byte-level" because it
+    operates on UTF-8 encoded strings) where they striked a balance between
+    character-level and word-level tokenization.
+-   So in summary, BPE is the tokenizer used to encode the input text into a
+    sequence of tokens - which form the input representation to the model.
+
+More readings (honestly not well-versed with BPE):
+
+-   https://github.com/karpathy/minbpe
+-   https://huggingface.co/learn/nlp-course/en/chapter6/5
+
+## 2.3. Model
 
 ...
 
