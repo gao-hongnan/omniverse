@@ -688,8 +688,24 @@ without the need for supervised fine-tuning for downstream domain-specific
 tasks.
 
 In practice, the authors mentioned that task conditioning is often implemented
-at an architectural level, where the model is trained to predict the next token
-in a sequence given the previous tokens in the sequence and a task-specific
+at an architectural level, via task specific encoder and decoder in the paper
+[_One Model To Learn Them All_](https://arxiv.org/abs/1706.05137)
+{cite}`kaiser2017model`, for instance, or at an algorithmic level, such as the
+inner and outer loop optimization framework, as seen in the paper
+[_Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks_](https://arxiv.org/abs/1703.03400)
+{cite}`finn2017modelagnostic`.
+
+However, the authors further mentioned that without task-specific architectural
+changes, one can leverage the sequential nature of the natural language space
+where we can construct a tasks, inputs and outputs all as a sequence of symbols
+{cite}`radford2019language`. For example, a translation task can be formulated
+as a sequence of symbols via
+`(translate to french, english sequence, french sequence)`, where the model can
+now learn to also condition on the task `(translate to french)` in addition to
+the sequence of tokens. The paper _The Natural Language Decathlon: Multitask
+Learning as Question Answering_ exemplifies this concept with their model
+**Multitask Question Answering Network (MQAN)**, where a single model is trained
+to perform many diverse natural language processing tasks simultaneously.
 
 ### Supervised Fine-Tuning
 
@@ -856,6 +872,8 @@ sequence.
 -   https://stanford-cs324.github.io/winter2022/lectures/introduction/
 -   https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php
 -   https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di
+-   https://eugeneyan.com/writing/attention/
+-   https://d2l.ai/chapter_convolutional-modern/resnet.html
 
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
