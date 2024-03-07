@@ -197,14 +197,81 @@ $\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-
 {cite}`radford2019language`.
 
 To this end, consider a corpus $\mathcal{S}$ with $N$ sequences
-$\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}$ that are
-sampled $\text{i.i.d.}$ from the distribution $\mathcal{D}$ and let GPT model
-$\mathcal{G}$ be an _autoregressive_ and _self-supervised learning_ model that
-is trained to maximize the likelihood of the sequences in the corpus
-$\mathcal{S}$, which is defined as the objective function
-$\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$ where
-$\hat{\boldsymbol{\Theta}}$ is the estimated parameter space that approximates
-the true parameter space $\boldsymbol{\Theta}$.
+$\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}$,
+
+$$
+\mathcal{S} = \left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\} \underset{\text{i.i.d.}}{\sim} \mathcal{D}
+$$
+
+where each sequence $\mathbf{x}_{n}$ is a sequence of tokens that are sampled
+$\text{i.i.d.}$ from the distribution $\mathcal{D}$.
+
+Then, we can frame the
+[likelihood function](https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html)
+$\hat{\mathcal{L}}(\cdot)$ as the likelihood of observing the sequences in the
+corpus $\mathcal{S}$,
+
+$$
+\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) = \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}})
+$$
+
+where $\hat{\boldsymbol{\Theta}}$ is the estimated parameter space that
+approximates the true parameter space $\boldsymbol{\Theta}$.
+
+Subsequently, the objective function is now well-defined, to be the maximization
+of the likelihood of the sequences in the corpus $\mathcal{S}$,
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) \\
+                              &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}}) \\
+                              &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \prod_{t=1}^{T_n} \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+$$
+
+where $T_n$ is the length of the sequence $\mathbf{x}_{n}$.
+
+Owing to the fact that multiplying many probabilities together can lead to
+[numerical instability](https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/maximum-likelihood.html#numerical-optimization-and-the-negative-log-likelihood)
+because the product of many probabilities can be very small, it is common and
+necessary to use the log-likelihood as the objective function, because it can be
+proven that maximizing the log-likelihood is equivalent to maximizing the
+likelihood itself.
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
+&= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+$$
+
+Furthermore, since we are treating the the loss function as a form of
+minimization, we can simply negate the log-likelihood to obtain the negative
+log-likelihood as the objective function to be minimized,
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right)\right) \\
+&= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}})\right) \\
+\end{aligned}
+$$
+
+It is worth noting that the objective function is a function of the parameter
+space $\hat{\boldsymbol{\Theta}}$, and not the data $\mathcal{S}$, so all
+analysis such as convergence and consistency will be with respect to the
+parameter space $\hat{\boldsymbol{\Theta}}$.
+
+To this end, we denote the GPT model $\mathcal{G}$ to be an _autoregressive_ and
+_self-supervised learning_ model that is trained to maximize the likelihood of
+observing all data points $\mathbf{x} \in \mathcal{S}$ via the objective
+function $\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$
+by learning the conditional probability distribution
+$\mathbb{P}(x_t \mid x_{<t} ; \hat{\boldsymbol{\Theta}})$ over the vocabulary
+$\mathcal{V}$ of tokens, conditioned on the contextual preciding tokens
+$x_{<t} = \left(x_1, x_2, \ldots, x_{t-1}\right)$. We are clear that although
+the goal is to model the joint probability distribution of the token sequences,
+we can do so by estimating the joint probability distribution via the
+conditional probability distributions.
 
 ### Autoregressive Self-Supervised Learning
 
