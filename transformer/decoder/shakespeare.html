@@ -471,6 +471,8 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-self-attention">Masked/Causal Self-Attention</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#last-token-has-full-context">Last Token has Full Context</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more-intuition-in-andrej-karpathy-s-video">More Intuition in Andrej Karpathy’s Video</a></li>
 </ul>
 </li>
@@ -578,7 +580,9 @@ document.write(`
 <li><p><a class="reference internal" href="#projections-lead-to-dynamic-context-vectors" id="id84">Projections Lead to Dynamic Context Vectors</a></p></li>
 <li><p><a class="reference internal" href="#id26" id="id85">Implementation</a></p></li>
 <li><p><a class="reference internal" href="#heatmap" id="id86">Heatmap</a></p></li>
-<li><p><a class="reference internal" href="#more-intuition-in-andrej-karpathy-s-video" id="id87">More Intuition in Andrej Karpathy’s Video</a></p></li>
+<li><p><a class="reference internal" href="#masked-causal-self-attention" id="id87">Masked/Causal Self-Attention</a></p></li>
+<li><p><a class="reference internal" href="#last-token-has-full-context" id="id88">Last Token has Full Context</a></p></li>
+<li><p><a class="reference internal" href="#more-intuition-in-andrej-karpathy-s-video" id="id89">More Intuition in Andrej Karpathy’s Video</a></p></li>
 </ul>
 </li>
 </ul>
@@ -3344,6 +3348,7 @@ space is needed.</p>
         <span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">value</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="c1"># fmt: off</span>
         <span class="n">d_q</span>               <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -3356,6 +3361,8 @@ space is needed.</p>
 
         <span class="n">context_vector</span>    <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="c1"># fmt: on</span>
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span><span class="p">,</span> <span class="n">attention_scores</span>
         <span class="k">return</span> <span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span>
 </pre></div>
 </div>
@@ -3413,10 +3420,13 @@ space is needed.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">shape</span>
 
-    <span class="n">figure_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;figsize&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="s2">&quot;sharex&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;sharey&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;squeeze&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span> <span class="ow">or</span> <span class="n">figure_kwargs</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="n">figure_kwargs</span> <span class="o">=</span> <span class="n">figure_kwargs</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;figsize&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="s2">&quot;sharex&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;sharey&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;squeeze&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="o">**</span><span class="n">figure_kwargs</span><span class="p">)</span>
 
-    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;Reds&quot;</span><span class="p">}</span> <span class="ow">or</span> <span class="n">plot_kwargs</span>
+    <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="n">plot_kwargs</span> <span class="ow">or</span> <span class="p">{</span><span class="s2">&quot;cmap&quot;</span><span class="p">:</span> <span class="s2">&quot;viridis&quot;</span><span class="p">}</span>
 
     <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">row_axes</span><span class="p">,</span> <span class="n">attention_weight</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">attention_weights</span><span class="p">)):</span>
         <span class="k">for</span> <span class="n">h</span><span class="p">,</span> <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">head_attention</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">row_axes</span><span class="p">,</span> <span class="n">attention_weight</span><span class="p">)):</span>
@@ -3446,12 +3456,213 @@ the weight matrix would have a diagonal of 1s and 0s elsewhere.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/ee3d30cb49b5e5765d4ae50a679624a82f48be048c2385ce78f5911231374501.png" src="../../_images/ee3d30cb49b5e5765d4ae50a679624a82f48be048c2385ce78f5911231374501.png" />
+<img alt="../../_images/7bc1dd59daccadd824a544777b4780a61e680ecba5ac8b67199ca64cb1a91f09.png" src="../../_images/7bc1dd59daccadd824a544777b4780a61e680ecba5ac8b67199ca64cb1a91f09.png" />
 </div>
 </div>
 </section>
+<section id="masked-causal-self-attention">
+<h4><a class="toc-backref" href="#id87" role="doc-backlink">Masked/Causal Self-Attention</a><a class="headerlink" href="#masked-causal-self-attention" title="Permalink to this heading">#</a></h4>
+<p>Let’s connect to our earlier example of <code class="docutils literal notranslate"><span class="pre">z_0_tok_embed_with_pos_embed</span></code>.
+We would create weights <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{Q}}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{K}}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{W}^{\mathbf{V}}\)</span> and project the token embeddings into the query, key
+and value space. We then pass the query, key and value matrices into the scaled
+dot-product attention mechanism to obtain the context matrix <span class="math notranslate nohighlight">\(\mathbf{C}\)</span>
+as well as the attention weights <span class="math notranslate nohighlight">\(\alpha(\mathbf{Q}, \mathbf{K})\)</span>.
+Note since it is for only one sample, we would use lower case
+letters instead.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">seed_all</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">d_model</span>  <span class="c1"># batch size, head, context length, embedding dimension</span>
+<span class="n">W_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">q0</span> <span class="o">=</span> <span class="n">W_q</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">k0</span> <span class="o">=</span> <span class="n">W_k</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">v0</span> <span class="o">=</span> <span class="n">W_v</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+
+<span class="c1"># Scaled Dot-Product Attention</span>
+<span class="n">attention</span> <span class="o">=</span> <span class="n">ScaledDotProductAttention</span><span class="p">(</span><span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention</span><span class="p">(</span><span class="n">q0</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">v0</span><span class="p">)</span>
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+<span class="n">show_attention_heatmaps</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Keys&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Queries&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/ba3ec6c0bb45912dffba9ec29d053f50613444d5e53ef4180634beec90087b50.png" src="../../_images/ba3ec6c0bb45912dffba9ec29d053f50613444d5e53ef4180634beec90087b50.png" />
+</div>
+</div>
+<p>However, there is just one problem. We are allowing the self-attention to attend
+each token to all other tokens in the sequence, including itself. Since we have <span class="math notranslate nohighlight">\(T\)</span>
+tokens in the sequence, each sub-sequence <span class="math notranslate nohighlight">\(x_{1:t}\)</span> would look into the future
+sub-sequence <span class="math notranslate nohighlight">\(x_{t+1:T}\)</span>, which is trivial now for the model to learn.</p>
+<p>To fix this, we introduce the <em>mask</em>, where the mask effectively zeros out the
+attention scores for the future tokens in the sequence. This would result in the usage
+of an upper-triangular matrix for the attention scores, and the softmax would
+then zero out the future tokens in the sequence.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">seed_all</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">d_model</span>  <span class="c1"># batch size, head, context length, embedding dimension</span>
+<span class="n">W_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">D</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">q0</span> <span class="o">=</span> <span class="n">W_q</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">k0</span> <span class="o">=</span> <span class="n">W_k</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+<span class="n">v0</span> <span class="o">=</span> <span class="n">W_v</span><span class="p">(</span><span class="n">z0_tok_embed_with_pos_embed</span><span class="p">)</span>
+
+<span class="n">tril_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">tril_mask</span><span class="p">)</span>
+
+<span class="c1"># Scaled Dot-Product Attention</span>
+<span class="n">attention</span> <span class="o">=</span> <span class="n">ScaledDotProductAttention</span><span class="p">(</span><span class="n">dropout</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span><span class="p">,</span> <span class="n">attention_scores</span> <span class="o">=</span> <span class="n">attention</span><span class="p">(</span><span class="n">q0</span><span class="p">,</span> <span class="n">k0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">tril_mask</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">attention_scores</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>
+
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_weights</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+<span class="n">show_attention_heatmaps</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Keys&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Queries&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>, <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,  <span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">]])</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4721</span>,    -inf,    -inf,    -inf,    -inf,    -inf,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9305</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5463</span>,    -inf,    -inf,    -inf,    -inf,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6937</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6022</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.1826</span>,    -inf,    -inf,    -inf,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.7824</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5645</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.1218</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1659</span>,    -inf,    -inf,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2023</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2518</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0057</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1813</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.3737</span>,    -inf,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1110</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1470</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2887</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2175</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0896</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0917</span>,    -inf,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6619</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5281</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9173</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1447</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9101</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.7911</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.2993</span>,    -inf<span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.8410</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6451</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.3262</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0369</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9972</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.0329</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.3433</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5124</span><span style="font-weight: bold">]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│      </span><span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SqueezeBackward1</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5949</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4051</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2822</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2576</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4602</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2080</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2586</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1481</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3853</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1987</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1891</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2419</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2029</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1674</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1507</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1453</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1261</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2092</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1841</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1845</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1846</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1614</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2383</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1100</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2366</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0432</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0260</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0000</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1790</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1471</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2907</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0801</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2092</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0275</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0201</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0462</span><span style="font-weight: bold">]]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│      </span><span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div><img alt="../../_images/8456e6bb71e12ac512b34ee3a91de96dd9127a6fd19db68c531509c9567803b2.png" src="../../_images/8456e6bb71e12ac512b34ee3a91de96dd9127a6fd19db68c531509c9567803b2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x0_decoded</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">x0</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">x0_decoded</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008000; text-decoration-color: #008000">' priest and clerk? well then, amen'</span>
+</pre>
+</div></div>
+</div>
+<p>From the print logs and plots above, it is pretty clear how for one sequence,
+the future mask is working. Consider our decoded first sample
+<code class="docutils literal notranslate"><span class="pre">priest</span> <span class="pre">and</span> <span class="pre">clerk?</span> <span class="pre">well</span> <span class="pre">then,</span> <span class="pre">amen</span></code>. The result of <span class="math notranslate nohighlight">\(\mathbf{Q}\mathbf{K}^{\top}\)</span>
+would be a matrix of attention weights of size <span class="math notranslate nohighlight">\(T \times T\)</span>. As we mentioned
+earlier, if we do not mask, then for instance, the second row being the token
+<code class="docutils literal notranslate"><span class="pre">and</span></code> would have information on every token, including <code class="docutils literal notranslate"><span class="pre">clerk</span></code>, <code class="docutils literal notranslate"><span class="pre">amen</span></code> etc. This
+is considered <em>leakage</em> of information.</p>
+<p>So when we provide such a triangular mask:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\text{mask} = \begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; \dots &amp; 0 \\
+1 &amp; 1 &amp; 0 &amp; \dots &amp; 0 \\
+1 &amp; 1 &amp; 1 &amp; \dots &amp; 0 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; 1 &amp; 1 &amp; \dots &amp; 1 \\
+\end{bmatrix}
+\end{split}\]</div>
+<p>and apply it to the attention scores, we would see that the attention scores
+would have <span class="math notranslate nohighlight">\(-\infty\)</span> for the future tokens,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\text{masked_attention_scores} &amp;= \text{attention_scores} \odot \text{mask} + (1 - \text{mask}) \cdot (-\infty) \\
+&amp;= \begin{bmatrix}
+q_1 \cdot k_1 &amp; -\infty &amp; -\infty &amp; \dots &amp; -\infty \\
+q_2 \cdot k_1  &amp; q_2 \cdot k_2 &amp; -\infty &amp; \dots &amp; -\infty \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+q_T \cdot k_1 &amp; q_T \cdot k_2 &amp; q_T \cdot k_3 &amp; \dots &amp; q_T \cdot k_T \\
+\end{bmatrix}
+\end{aligned}
+\end{split}\]</div>
+<p>and lastly applying the softmax function, we would see that the future tokens
+would have a softmax output of <span class="math notranslate nohighlight">\(0\)</span>, a neat trick to ask the loss function to not
+consider the future tokens in the sequence. We can even use <code class="docutils literal notranslate"><span class="pre">ignore_index</span></code> in
+PyTorch’s loss function like <code class="docutils literal notranslate"><span class="pre">nn.CrossEntropyLoss</span></code> to ignore the future tokens
+via a given mask index.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\text{masked_attention_weights} &amp;= \text{softmax}(\text{masked_attention_scores}) \\
+&amp;= \begin{bmatrix}
+\text{softmax}(q_1 \cdot k_1) &amp; 0 &amp; 0 &amp; \dots &amp; 0 \\
+\text{softmax}(q_2 \cdot k_1) &amp; \text{softmax}(q_2 \cdot k_2) &amp; 0 &amp; \dots &amp; 0 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\text{softmax}(q_T \cdot k_1) &amp; \text{softmax}(q_T \cdot k_2) &amp; \text{softmax}(q_T \cdot k_3) &amp; \dots &amp; \text{softmax}(q_T \cdot k_T) \\
+\end{bmatrix}
+\end{aligned}
+\end{split}\]</div>
+</section>
+<section id="last-token-has-full-context">
+<h4><a class="toc-backref" href="#id88" role="doc-backlink">Last Token has Full Context</a><a class="headerlink" href="#last-token-has-full-context" title="Permalink to this heading">#</a></h4>
+<p>And finally, the <code class="docutils literal notranslate"><span class="pre">context_vector</span></code> is a matrix of size <span class="math notranslate nohighlight">\(T \times d_v\)</span> where each
+row is the context vector for each token in the sequence, containing not only
+the semantic and positional information of the token itself, but also contextual
+information from the preceding tokens in the sequence.</p>
+<p>For example:</p>
+<ul class="simple">
+<li><p>The first token <code class="docutils literal notranslate"><span class="pre">priest</span></code> would have a context vector that contains information
+from the token <code class="docutils literal notranslate"><span class="pre">priest</span></code> itself.</p></li>
+<li><p>The second token <code class="docutils literal notranslate"><span class="pre">and</span></code> would have a context vector that contains information
+from the token <code class="docutils literal notranslate"><span class="pre">priest</span></code> and <code class="docutils literal notranslate"><span class="pre">and</span></code>.</p></li>
+<li><p>The third token <code class="docutils literal notranslate"><span class="pre">clerk</span></code> would have a context vector that contains information
+from the token <code class="docutils literal notranslate"><span class="pre">priest</span></code>, <code class="docutils literal notranslate"><span class="pre">and</span></code> and <code class="docutils literal notranslate"><span class="pre">clerk</span></code>.</p></li>
+<li><p>…</p></li>
+<li><p>The last token <code class="docutils literal notranslate"><span class="pre">amen</span></code> would have a context vector that contains information
+from the token <code class="docutils literal notranslate"><span class="pre">priest</span></code>, <code class="docutils literal notranslate"><span class="pre">and</span></code>, <code class="docutils literal notranslate"><span class="pre">clerk</span></code>, …, <code class="docutils literal notranslate"><span class="pre">amen</span></code>.</p></li>
+</ul>
+<p>As a consequence, the last token would be the only token that has the full
+context of the sequence, and this is why while generating text, we would only
+need to use the context vector of the last token to generate the next token.</p>
+<p>To this end, each sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is transformed to a <span class="math notranslate nohighlight">\(T \times d_v\)</span></p>
+<p>It is worth noting that one can connect back to the theory earlier on how one sequence
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is decomposed to a <span class="math notranslate nohighlight">\(T \times d_v\)</span> matrix where <span class="math notranslate nohighlight">\(d_v = D\)</span> when only one head is involved.
+The difference is huge because each row of the embedding <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> before passing through attention
+would only hold that single token <span class="math notranslate nohighlight">\(x_t\)</span>’s semantic and positional info without notion
+of any other tokens in the sequence. Now, each row of the context vector <span class="math notranslate nohighlight">\(\mathbf{c}_t\)</span>
+would hold the semantic and positional info of the token <span class="math notranslate nohighlight">\(x_t\)</span> as well as the context
+information from the preceding tokens in the sequence.</p>
+<p>Lastly, each sequence can be thought of having <span class="math notranslate nohighlight">\(T\)</span> sub-samples, this is in line with our objective
+to model the joint distribution of one sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> - which is decomposed into <span class="math notranslate nohighlight">\(T\)</span> conditional
+probability.</p>
+</section>
 <section id="more-intuition-in-andrej-karpathy-s-video">
-<h4><a class="toc-backref" href="#id87" role="doc-backlink">More Intuition in Andrej Karpathy’s Video</a><a class="headerlink" href="#more-intuition-in-andrej-karpathy-s-video" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id89" role="doc-backlink">More Intuition in Andrej Karpathy’s Video</a><a class="headerlink" href="#more-intuition-in-andrej-karpathy-s-video" title="Permalink to this heading">#</a></h4>
 <p>There’s much more intuition in Andrej Karpathy’s video on the <a class="reference external" href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Let’s Build GPT: from scratch, in code, spelled out</a>.
 He mentions things like:</p>
 <ul class="simple">
@@ -3668,6 +3879,8 @@ implements what Andrej mentioned in the video.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#projections-lead-to-dynamic-context-vectors">Projections Lead to Dynamic Context Vectors</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id26">Implementation</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#heatmap">Heatmap</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#masked-causal-self-attention">Masked/Causal Self-Attention</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#last-token-has-full-context">Last Token has Full Context</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#more-intuition-in-andrej-karpathy-s-video">More Intuition in Andrej Karpathy’s Video</a></li>
 </ul>
 </li>
