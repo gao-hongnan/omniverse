@@ -1,4 +1,4 @@
-# Introduction
+# Generative Pre-trained Transformers
 
 The realm of **natural language processing** (NLP) has been transformed by the
 advent of **decoder-based transformers**, a cornerstone in the latest
