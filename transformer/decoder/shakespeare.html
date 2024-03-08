@@ -500,6 +500,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patch-composer-configuration-with-model-config">Patch Composer Configuration with Model Config</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-blocks">Decoder Blocks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2-specifics">GPT-2 Specifics</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-todo">Training (TODO)</a><ul class="nav section-nav flex-column">
@@ -644,16 +645,17 @@ document.write(`
 <li><p><a class="reference internal" href="#patch-composer-configuration-with-model-config" id="id113">Patch Composer Configuration with Model Config</a></p></li>
 <li><p><a class="reference internal" href="#decoder-blocks" id="id114">Decoder Blocks</a></p></li>
 <li><p><a class="reference internal" href="#decoder" id="id115">Decoder</a></p></li>
+<li><p><a class="reference internal" href="#gpt-2-specifics" id="id116">GPT-2 Specifics</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#training-todo" id="id116">Training (TODO)</a></p>
+<li><p><a class="reference internal" href="#training-todo" id="id117">Training (TODO)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#talk-about-ce-loss" id="id117">Talk about CE Loss</a></p></li>
+<li><p><a class="reference internal" href="#talk-about-ce-loss" id="id118">Talk about CE Loss</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#generation-todo" id="id118">Generation (TODO)</a></p></li>
-<li><p><a class="reference internal" href="#notations-to-update" id="id119">Notations (TO UPDATE)</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id120">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#generation-todo" id="id119">Generation (TODO)</a></p></li>
+<li><p><a class="reference internal" href="#notations-to-update" id="id120">Notations (TO UPDATE)</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id121">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <div class="cell docutils container">
@@ -1302,8 +1304,11 @@ indices.</p>
 </div>
 <p>We then construct a batch of
 input sequences <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> by selecting the tokens at the
-indices <span class="math notranslate nohighlight">\(136,016\)</span> and <span class="math notranslate nohighlight">\(197,976\)</span> and the next <span class="math notranslate nohighlight">\(T\)</span> tokens via a for loop - and using <code class="docutils literal notranslate"><span class="pre">torch.stack</span></code>
+indices <span class="math notranslate nohighlight">\(122,484\)</span> and <span class="math notranslate nohighlight">\(196,406\)</span> and the next <span class="math notranslate nohighlight">\(T\)</span> tokens via a for loop - and using <code class="docutils literal notranslate"><span class="pre">torch.stack</span></code>
 to stack the sequences into a tensor of shape <span class="math notranslate nohighlight">\(\mathbb{Z}^{\mathcal{B} \times L}\)</span>.</p>
+<p>So the first row of the batch would be the sequence starting at index <span class="math notranslate nohighlight">\(122,484\)</span>
+and the second row would be the sequence starting at index <span class="math notranslate nohighlight">\(196,406\)</span>, with each
+sequence having a length of <span class="math notranslate nohighlight">\(T=8\)</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">((</span><span class="n">train_data</span><span class="p">[</span><span class="n">index</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span> <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
@@ -1340,17 +1345,18 @@ training data. To put things into perspective, we consider again the first
 sequence that we constructed from the training data:</p>
 <div class="math notranslate nohighlight">
 \[
-\mathbf{x} = \begin{bmatrix} 3194 &amp; 612 &amp; 11 &amp; 290 &amp; 284 &amp; 606 &amp; 910 &amp; 11 \end{bmatrix}
+\mathbf{x} = \begin{bmatrix} 11503 &amp; 290 &amp; 21120 &amp; 30 &amp; 880 &amp; 788 &amp; 11 &amp; 29448 \end{bmatrix}
 \]</div>
-<p>representing the sentence <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">written</span> <span class="pre">there,</span> <span class="pre">and</span> <span class="pre">to</span> <span class="pre">them</span> <span class="pre">say,'</span></code>.</p>
+<p>representing the sentence <code class="docutils literal notranslate"><span class="pre">'priest</span> <span class="pre">and</span> <span class="pre">clerk?</span> <span class="pre">well</span> <span class="pre">then,</span> <span class="pre">amen'</span></code>.</p>
 <p>Given the autoregressive and self-supervised nature, in order to construct the
 target sequence <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>, we simply shift the input sequence by one token to
 the left. This means that the target sequence <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is:</p>
 <div class="math notranslate nohighlight">
 \[
-\mathbf{y} = \begin{bmatrix} 612 &amp; 11 &amp; 290 &amp; 284 &amp; 606 &amp; 910 &amp; 11 &amp; 198 \end{bmatrix}
+\mathbf{y} = \begin{bmatrix} 290 &amp; 21120 &amp; 30 &amp; 880 &amp; 788 &amp; 11 &amp; 29448 &amp; 13 \end{bmatrix}
 \]</div>
-<p>representing the sentence <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">there,</span> <span class="pre">and</span> <span class="pre">to</span> <span class="pre">them</span> <span class="pre">say,\n'</span></code>.</p>
+<p>representing the sentence <code class="docutils literal notranslate"><span class="pre">'and</span> <span class="pre">clerk?</span> <span class="pre">well</span> <span class="pre">then,</span> <span class="pre">amen.'</span></code>. Note here <span class="math notranslate nohighlight">\(13\)</span>
+is the index of the next token after the last token in the input sequence.</p>
 <p>This behaviour is autoregressive because we are using the context tokens
 <span class="math notranslate nohighlight">\(x_{&lt;t}\)</span> to predict the next token <span class="math notranslate nohighlight">\(x_t\)</span>, and self-supervised because we are
 using the input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> to construct the target sequence
@@ -4961,26 +4967,38 @@ Both works, but the former is the one mentioned in the GPT-2 paper.</p>
 </div></div>
 </div>
 </section>
+<section id="gpt-2-specifics">
+<h3><a class="toc-backref" href="#id116" role="doc-backlink">GPT-2 Specifics</a><a class="headerlink" href="#gpt-2-specifics" title="Permalink to this heading">#</a></h3>
+<figure class="align-default" id="wikipedia-gpt-1-arch">
+<img alt="transformer/decoder/assets/gpt-1-arch-wikipedia.png" src="transformer/decoder/assets/gpt-1-arch-wikipedia.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">GPT-1 Architecture. Image Credit: <a class="reference external" href="https://en.wikipedia.org/wiki/GPT-1#/media/File:Full_GPT_architecture.png">GPT-1 Wikipedia</a></span><a class="headerlink" href="#wikipedia-gpt-1-arch" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<ul class="simple">
+<li><p>Largely follows GPT-1 architecture</p></li>
+</ul>
+</section>
 </section>
 <section id="training-todo">
-<h2><a class="toc-backref" href="#id116" role="doc-backlink">Training (TODO)</a><a class="headerlink" href="#training-todo" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id117" role="doc-backlink">Training (TODO)</a><a class="headerlink" href="#training-todo" title="Permalink to this heading">#</a></h2>
 <p>See my training logs.</p>
 <section id="talk-about-ce-loss">
-<h3><a class="toc-backref" href="#id117" role="doc-backlink">Talk about CE Loss</a><a class="headerlink" href="#talk-about-ce-loss" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id118" role="doc-backlink">Talk about CE Loss</a><a class="headerlink" href="#talk-about-ce-loss" title="Permalink to this heading">#</a></h3>
 </section>
 </section>
 <section id="generation-todo">
-<h2><a class="toc-backref" href="#id118" role="doc-backlink">Generation (TODO)</a><a class="headerlink" href="#generation-todo" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id119" role="doc-backlink">Generation (TODO)</a><a class="headerlink" href="#generation-todo" title="Permalink to this heading">#</a></h2>
 </section>
 <section id="notations-to-update">
-<h2><a class="toc-backref" href="#id119" role="doc-backlink">Notations (TO UPDATE)</a><a class="headerlink" href="#notations-to-update" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id120" role="doc-backlink">Notations (TO UPDATE)</a><a class="headerlink" href="#notations-to-update" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>For example, note to self that <span class="math notranslate nohighlight">\(L\)</span> is sequence length instead of <span class="math notranslate nohighlight">\(T\)</span> and indexing sequence length <span class="math notranslate nohighlight">\(L\)</span> to <span class="math notranslate nohighlight">\(i\)</span> instead of <span class="math notranslate nohighlight">\(t\)</span>
 is because for future proof when talking about encoders.</p></li>
 </ul>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id120" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id121" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/</a></p></li>
 <li><p><a class="reference external" href="https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/">https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/</a></p></li>
@@ -5193,6 +5211,7 @@ is because for future proof when talking about encoders.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patch-composer-configuration-with-model-config">Patch Composer Configuration with Model Config</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-blocks">Decoder Blocks</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2-specifics">GPT-2 Specifics</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-todo">Training (TODO)</a><ul class="nav section-nav flex-column">
