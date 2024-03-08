@@ -70,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="canonical" href="https://www.gaohongnan.com/transformer/concept.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Shakespeare" href="decoder/shakespeare.html" />
+    <link rel="next" title="Shakespeare" href="decoder/implementation.html" />
     <link rel="prev" title="Notations" href="notations.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -172,7 +172,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notations.html">Notations</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Concept</a></li>
-<li class="toctree-l1"><a class="reference internal" href="decoder/shakespeare.html">Shakespeare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decoder/implementation.html">Shakespeare</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
@@ -439,10 +439,13 @@ document.write(`
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-is-a-autoregressive-self-supervised-learning-model">GPT is a Autoregressive Self-Supervised Learning Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-on-task">Conditional on Task</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#objective-function-for-fine-tuning">Objective Function for Fine-Tuning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#auxiliary-loss-function">Auxiliary Loss Function</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Perplexity</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -510,11 +513,15 @@ document.write(`
 </li>
 <li><p><a class="reference internal" href="#gpt-is-a-autoregressive-self-supervised-learning-model" id="id50">GPT is a Autoregressive Self-Supervised Learning Model</a></p></li>
 <li><p><a class="reference internal" href="#conditional-on-task" id="id51">Conditional on Task</a></p></li>
-<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id52">Supervised Fine-Tuning</a></p></li>
+<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id52">Supervised Fine-Tuning</a></p>
+<ul>
+<li><p><a class="reference internal" href="#objective-function-for-fine-tuning" id="id53">Objective Function for Fine-Tuning</a></p></li>
+<li><p><a class="reference internal" href="#auxiliary-loss-function" id="id54">Auxiliary Loss Function</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#id15" id="id53">Perplexity</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id54">References and Further Readings</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id55">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="motivation">
@@ -1374,18 +1381,88 @@ would then fine-tune the model on a specific task by replacing the final layer
 of the model with a task-specific layer, and then train the model on the
 specific task with the task-specific layer. The authors showed that this
 approach yielded state-of-the-art results on a wide range of NLU tasks.</p>
+<section id="objective-function-for-fine-tuning">
+<h4><a class="toc-backref" href="#id53" role="doc-backlink">Objective Function for Fine-Tuning</a><a class="headerlink" href="#objective-function-for-fine-tuning" title="Permalink to this heading">#</a></h4>
+<p>More concretely, now our dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is a dataset of labeled examples
+<span class="math notranslate nohighlight">\(\mathcal{S} = \left\{\left(\mathbf{x}_n, y_n\right)\right\}_{n=1}^N\)</span>, where it
+may be sampled together from a new underlying distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>,
+usually a cartesian product <span class="math notranslate nohighlight">\(\mathcal{X} \times \mathcal{Y}\)</span> where <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>
+is the label space. Each input sequence <span class="math notranslate nohighlight">\(\mathbf{x}_n\)</span> is a sequence of tokens,
+and each output label <span class="math notranslate nohighlight">\(y_n\)</span> is a label from the set of labels <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>.</p>
+<p>A task specific layer is often used to replace the original head layer, for
+instance, if we are training the model on a text classification task with
+<span class="math notranslate nohighlight">\(\mathcal{C}\)</span> number of classes, then the task specific layer would be a linear
+layer with <span class="math notranslate nohighlight">\(\mathcal{C}\)</span> number of output units. Of course, the output of this
+layer, being the logits, will usually pass into appropriate loss functions such
+as the cross-entropy loss with a softmax layer on top of the logits to induce a
+<em>not so well-calibrated</em> probability distribution over the classes
+<span class="math notranslate nohighlight">\(\mathcal{C}\)</span>.</p>
+<p>If we denote the loss function (or the negative log-likelihood) of the
+pre-training phase as
+<span class="math notranslate nohighlight">\(\hat{\mathcal{L}}_{1}\left(\mathcal{S}_{1} ; \hat{\boldsymbol{\Theta}}_{1}\right)\)</span>,
+then the objective in this second phase is simply to maximize the likelihood of
+the labeled examples <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> via the objective function
+<span class="math notranslate nohighlight">\(\hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right)\)</span>
+where <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}_{1}\)</span> is the estimated parameter space for the
+pre-training phase, and <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}_{2}\)</span> is the estimated
+parameter space for the fine-tuning phase. Note that the
+<span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}_{2}\)</span> is initialized with partial weights from the
+pre-trained model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span>, so it naturally should overlap with the
+<span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}_{1}\)</span> up to the number of <em>frozen</em> layers.</p>
+<p>We denote the maximization as a minimization of the negative log-likelihood:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}_{2}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} \hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+                                    &amp;= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} -\sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+\end{aligned}
+\end{split}\]</div>
+<p>It is also customary to find the expected loss over the dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}_{2}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} \mathbb{E}_{\mathcal{S}}\left[\hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right)\right] \\
+                                    &amp;= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} -\mathbb{E}_{\mathcal{S}}\left[\sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right)\right] \\
+                                    &amp;= -\frac{1}{N} \sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of samples in the dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.</p>
+</section>
+<section id="auxiliary-loss-function">
+<h4><a class="toc-backref" href="#id54" role="doc-backlink">Auxiliary Loss Function</a><a class="headerlink" href="#auxiliary-loss-function" title="Permalink to this heading">#</a></h4>
+<p>In the context of fine-tuning GPT-1 or similar models for specific tasks, the
+term “auxiliary (supplementary) loss” refers to additional objectives or loss
+functions that are incorporated into the fine-tuning process alongside the
+primary loss function. This approach is based on the idea that including
+auxiliary tasks or losses can help improve the model’s performance on the main
+task by leveraging the knowledge gained during pre-training. The author also
+mentioned that this method (a) improving generalization of the supervised model,
+and (b) accelerating convergence <span id="id15">[<a class="reference internal" href="../bibliography.html#id15" title="Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever. Improving language understanding by generative pre-training. 2018.">Radford <em>et al.</em>, 2018</a>]</span>.</p>
+<p>During pre-training, models like GPT-1 learn to predict the next token in a
+sequence, which is a form of auxiliary task. When fine-tuning these models on
+downstream tasks, the authors of the GPT-1 paper found it beneficial to include
+the pre-training loss (the auxiliary loss) in the fine-tuning loss function.
+This is done by calculating the primary loss for the specific task (e.g.,
+classification, named-entity recognition) and then combining it with the
+auxiliary loss, often with a weighting factor to balance their contributions.
+The weighting factor, denoted as <span class="math notranslate nohighlight">\(\alpha\)</span> in the fine-tuning loss function,
+allows for adjusting the relative importance of the primary and auxiliary losses
+during the fine-tuning process.</p>
+<p>To this end, the final loss function for fine-tuning the GPT-1 model on a
+specific task is a combination of the primary loss and the auxiliary loss, and
+we can write it as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\mathcal{L}}_{3}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{3}\right) &amp;= \alpha \hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right) + (1 - \alpha) \hat{\mathcal{L}}_{1}\left(\mathcal{S}_{1} ; \hat{\boldsymbol{\Theta}}_{1}\right) \\
+\end{aligned}
+\end{split}\]</div>
+<p>and we can minimize the new auxiliary loss function in the same way.</p>
 </section>
 </section>
-<section id="id15">
-<h2><a class="toc-backref" href="#id53" role="doc-backlink">Perplexity</a><a class="headerlink" href="#id15" title="Permalink to this heading">#</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://keras.io/api/keras_nlp/metrics/perplexity/">https://keras.io/api/keras_nlp/metrics/perplexity/</a></p></li>
-<li><p><a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html">https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html</a></p></li>
-<li><p><a class="reference external" href="https://huggingface.co/docs/transformers/perplexity">https://huggingface.co/docs/transformers/perplexity</a></p></li>
-</ul>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id54" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id55" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://developers.google.com/machine-learning/gan/generative">https://developers.google.com/machine-learning/gan/generative</a></p></li>
 <li><p><a class="reference external" href="https://probmlcourse.github.io/csc412/lectures/week_2/">https://probmlcourse.github.io/csc412/lectures/week_2/</a></p></li>
@@ -1399,6 +1476,10 @@ approach yielded state-of-the-art results on a wide range of NLU tasks.</p>
 <li><p><a class="reference external" href="https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di">https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di</a></p></li>
 <li><p><a class="reference external" href="https://eugeneyan.com/writing/attention/">https://eugeneyan.com/writing/attention/</a></p></li>
 <li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/resnet.html">https://d2l.ai/chapter_convolutional-modern/resnet.html</a></p></li>
+<li><p><a class="reference external" href="https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/">https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/</a></p></li>
+<li><p><a class="reference external" href="https://keras.io/api/keras_nlp/metrics/perplexity/">https://keras.io/api/keras_nlp/metrics/perplexity/</a></p></li>
+<li><p><a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html">https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html</a></p></li>
+<li><p><a class="reference external" href="https://huggingface.co/docs/transformers/perplexity">https://huggingface.co/docs/transformers/perplexity</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote brackets" id="id16" role="note">
@@ -1449,7 +1530,7 @@ statistical learning framework, but the general idea is there.</p>
       </div>
     </a>
     <a class="right-next"
-       href="decoder/shakespeare.html"
+       href="decoder/implementation.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
@@ -1518,10 +1599,13 @@ statistical learning framework, but the general idea is there.</p>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-is-a-autoregressive-self-supervised-learning-model">GPT is a Autoregressive Self-Supervised Learning Model</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-on-task">Conditional on Task</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#supervised-fine-tuning">Supervised Fine-Tuning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#objective-function-for-fine-tuning">Objective Function for Fine-Tuning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#auxiliary-loss-function">Auxiliary Loss Function</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Perplexity</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>

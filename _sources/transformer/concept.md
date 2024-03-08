@@ -970,11 +970,91 @@ of the model with a task-specific layer, and then train the model on the
 specific task with the task-specific layer. The authors showed that this
 approach yielded state-of-the-art results on a wide range of NLU tasks.
 
-## Perplexity
+#### Objective Function for Fine-Tuning
 
--   https://keras.io/api/keras_nlp/metrics/perplexity/
--   https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html
--   https://huggingface.co/docs/transformers/perplexity
+More concretely, now our dataset $\mathcal{S}$ is a dataset of labeled examples
+$\mathcal{S} = \left\{\left(\mathbf{x}_n, y_n\right)\right\}_{n=1}^N$, where it
+may be sampled together from a new underlying distribution $\mathcal{D}$,
+usually a cartesian product $\mathcal{X} \times \mathcal{Y}$ where $\mathcal{Y}$
+is the label space. Each input sequence $\mathbf{x}_n$ is a sequence of tokens,
+and each output label $y_n$ is a label from the set of labels $\mathcal{Y}$.
+
+A task specific layer is often used to replace the original head layer, for
+instance, if we are training the model on a text classification task with
+$\mathcal{C}$ number of classes, then the task specific layer would be a linear
+layer with $\mathcal{C}$ number of output units. Of course, the output of this
+layer, being the logits, will usually pass into appropriate loss functions such
+as the cross-entropy loss with a softmax layer on top of the logits to induce a
+_not so well-calibrated_ probability distribution over the classes
+$\mathcal{C}$.
+
+If we denote the loss function (or the negative log-likelihood) of the
+pre-training phase as
+$\hat{\mathcal{L}}_{1}\left(\mathcal{S}_{1} ; \hat{\boldsymbol{\Theta}}_{1}\right)$,
+then the objective in this second phase is simply to maximize the likelihood of
+the labeled examples $\mathcal{S}$ via the objective function
+$\hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right)$
+where $\hat{\boldsymbol{\Theta}}_{1}$ is the estimated parameter space for the
+pre-training phase, and $\hat{\boldsymbol{\Theta}}_{2}$ is the estimated
+parameter space for the fine-tuning phase. Note that the
+$\hat{\boldsymbol{\Theta}}_{2}$ is initialized with partial weights from the
+pre-trained model $\mathcal{G}$, so it naturally should overlap with the
+$\hat{\boldsymbol{\Theta}}_{1}$ up to the number of _frozen_ layers.
+
+We denote the maximization as a minimization of the negative log-likelihood:
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}_{2}^{*} &= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} \hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+                                    &= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} -\sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+\end{aligned}
+$$
+
+It is also customary to find the expected loss over the dataset $\mathcal{S}$,
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}_{2}^{*} &= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} \mathbb{E}_{\mathcal{S}}\left[\hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right)\right] \\
+                                    &= \underset{\hat{\boldsymbol{\theta}}_{2} \in \boldsymbol{\Theta}_{2}}{\text{argmin}} -\mathbb{E}_{\mathcal{S}}\left[\sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right)\right] \\
+                                    &= -\frac{1}{N} \sum_{n=1}^N \log \mathbb{P}\left(y_n \mid \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}_{2}\right) \\
+\end{aligned}
+$$
+
+where $N$ is the number of samples in the dataset $\mathcal{S}$.
+
+#### Auxiliary Loss Function
+
+In the context of fine-tuning GPT-1 or similar models for specific tasks, the
+term "auxiliary (supplementary) loss" refers to additional objectives or loss
+functions that are incorporated into the fine-tuning process alongside the
+primary loss function. This approach is based on the idea that including
+auxiliary tasks or losses can help improve the model's performance on the main
+task by leveraging the knowledge gained during pre-training. The author also
+mentioned that this method (a) improving generalization of the supervised model,
+and (b) accelerating convergence {cite}`radford2018improving`.
+
+During pre-training, models like GPT-1 learn to predict the next token in a
+sequence, which is a form of auxiliary task. When fine-tuning these models on
+downstream tasks, the authors of the GPT-1 paper found it beneficial to include
+the pre-training loss (the auxiliary loss) in the fine-tuning loss function.
+This is done by calculating the primary loss for the specific task (e.g.,
+classification, named-entity recognition) and then combining it with the
+auxiliary loss, often with a weighting factor to balance their contributions.
+The weighting factor, denoted as $\alpha$ in the fine-tuning loss function,
+allows for adjusting the relative importance of the primary and auxiliary losses
+during the fine-tuning process.
+
+To this end, the final loss function for fine-tuning the GPT-1 model on a
+specific task is a combination of the primary loss and the auxiliary loss, and
+we can write it as:
+
+$$
+\begin{aligned}
+\hat{\mathcal{L}}_{3}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{3}\right) &= \alpha \hat{\mathcal{L}}_{2}\left(\mathcal{S}_{2} ; \hat{\boldsymbol{\Theta}}_{2}\right) + (1 - \alpha) \hat{\mathcal{L}}_{1}\left(\mathcal{S}_{1} ; \hat{\boldsymbol{\Theta}}_{1}\right) \\
+\end{aligned}
+$$
+
+and we can minimize the new auxiliary loss function in the same way.
 
 ## References and Further Readings
 
@@ -990,6 +1070,10 @@ approach yielded state-of-the-art results on a wide range of NLU tasks.
 -   https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di
 -   https://eugeneyan.com/writing/attention/
 -   https://d2l.ai/chapter_convolutional-modern/resnet.html
+-   https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/
+-   https://keras.io/api/keras_nlp/metrics/perplexity/
+-   https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html
+-   https://huggingface.co/docs/transformers/perplexity
 
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
@@ -997,3 +1081,6 @@ approach yielded state-of-the-art results on a wide range of NLU tasks.
 
 [^2]:
     [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
+
+    $$
+    $$
