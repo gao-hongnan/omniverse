@@ -100,9 +100,28 @@ def seed_all(
 
 ## Motivation
 
-...
+The problem that GPT-2 aims to solve is to demonstrate that language models,
+given **_large_** enough capacity in terms of parameters, and **_large_** enough
+**_unlabeled and high-quality_** text data, can solve specialized natural
+language processing tasks such as question answering, translation, and
+summarization, in a **_zero-shot_** manner - without the need for task-specific
+architectures or supervised fine-tuning.
 
-## Abstract
+The emphasis on the _large and high-quality_ text data cannot be understated as
+the authors are hinging on the fact that the dataset is so diverse, and
+therefore bound to have examples of the specialized tasks that the model can
+learn from.
+
+For example, if we are looking at translation tasks, then the data is bound to
+have somewhat sequential and natural occuring translation text such as
+`The translation of the french sentence 'As-tu aller au cine ́ma?' to english is 'Did you go to the cinema?'`.
+The model can learn from such examples and generalize to perform well on the
+translation task via the autoregressive self-supervised learning paradigm
+without the need for supervised fine-tuning.
+
+## GPT-2 Paper Overview
+
+### Abstract
 
 -   All previous pretrained language models require a second stage supervised
     fine-tuning to adapt to a specific task.
@@ -119,9 +138,9 @@ def seed_all(
     capacity increases logarithmically, the performance of the model increases
     linearly.
 
-## Introduction
+### Introduction
 
-### Key 1. Competent Generalists over Narrow Experts (1)
+#### Key 1. Competent Generalists over Narrow Experts (1)
 
 -   The mention of works by Krizhevsky et al. (2012), Sutskever et al. (2014),
     and Amodei et al. (2016) points to machine learning systems with enough
@@ -136,7 +155,7 @@ def seed_all(
     perform well across a wide range of tasks without the need for task-specific
     architectures or supervised fine-tuning.
 
-### Key 2. IID Assumption Fails in Real World (2, 3)
+#### Key 2. IID Assumption Fails in Real World (2, 3)
 
 -   It goes without saying that the main machine learning goal is to generalize
     on the unseen data points. However, to simplify machine learning objective
@@ -163,7 +182,7 @@ More readings:
 -   https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables
 -   https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html#independence-and-identically-distributed-iid
 
-### Key 3. Multi-Task Learning is Nacent (4)
+#### Key 3. Multi-Task Learning is Nacent (4)
 
 -   The author then highlighted that multi-task learning is a promising
     framework where by training a single model on multiple tasks simultaneously,
@@ -184,7 +203,7 @@ More readings:
     multi-task model as we would need to train multiple single task model. And
     it may not scale since we are only looking at 10 (dataset, objective) pairs.
 
-### Key 4. From Word Embeddings to Contextual Embeddings (5,6)
+#### Key 4. From Word Embeddings to Contextual Embeddings (5,6)
 
 -   Initially, word embeddings (Word2Vec, GloVe) were used to represent words as
     dense fixed-dimensional vectors in a continuous $D$ dimensional space,
@@ -235,7 +254,7 @@ Further readings:
 -   https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen
 -   https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning
 
-### Key 5. Zero Shot Learning and Zero Shot Transfer (7)
+#### Key 5. Zero Shot Learning and Zero Shot Transfer (7)
 
 -   The authors then went on to mention that continuing from the two lines of
     work above, they continue the trend of using general methods of transfer to
@@ -269,21 +288,21 @@ Further readings:
 -   https://www.theaidream.com/post/zero-shot-learning-can-you-classify-an-object-without-seeing-it-before
 -   https://dl.acm.org/doi/10.1145/3293318
 
-## Approach
+### Section 2. Approach
 
-### Key 1. Modeling Language Models over Joint Probability Distributions (1)
+#### Key 1. Modeling Language Models over Joint Probability Distributions (1)
 
-### Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)
+#### Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)
 
-### Key 3. Conditional on Task (3)
+#### Key 3. Conditional on Task (3)
 
-### Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)
+#### Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)
 
-### Key 5. Large Language Models has Capacity to Infer and Generalize (5)
+#### Key 5. Large Language Models has Capacity to Infer and Generalize (5)
 
-## 2.1. Training Dataset
+### 2.1. Training Dataset
 
-### Key 1. Rejection of CommonCrawl (1,2)
+#### Key 1. Rejection of CommonCrawl (1,2)
 
 -   Prior work usually involves training language model on single domain
     datasets (link back to narrow experts).
@@ -294,7 +313,7 @@ Further readings:
 -   However, the authors rejected CommonCrawl because it has severe data quality
     issues.
 
-### Key 2. Construction of WebText Dataset
+#### Key 2. Construction of WebText Dataset
 
 -   The authors aimed to create a web scrape that emphasizes document quality
     over quantity.
@@ -317,9 +336,9 @@ Further readings:
     evaluate/test their model on other datasets with little leakage, they
     excluded Wikipedia.
 
-## 2.2. Input Representation
+### 2.2. Input Representation
 
-### Key 1. Byte Pair Encoding (BPE) (1,2,3)
+#### Key 1. Byte Pair Encoding (BPE) (1,2,3)
 
 -   The authors highlighted traditional ways of tokenization, includes
     lower-casing, punctuation stripping, and splitting on white spaces, as well
@@ -344,9 +363,10 @@ More readings (honestly not well-versed with BPE):
 -   https://github.com/karpathy/minbpe
 -   https://huggingface.co/learn/nlp-course/en/chapter6/5
 
-## 2.3. Model
+### 2.3. Model
 
-...
+See
+[The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html).
 
 ## GPT-1 and GPT-2
 
@@ -1081,14 +1101,42 @@ summarization), the objective is often to predict a target sequence
 $\mathbf{y} = (y_1, y_2, \ldots, y_{T^{\prime}})$ given an input sequence
 $\mathbf{x} = (x_1, x_2, \ldots, x_T)$, and we can write the objective as the
 argmax of the log-likelihood of the target sequence over the dataset
-$\mathcal{S}$:
+$\mathcal{S}$. And if we define the sequence $\mathbf{x}$ in the unsupervised
+objective as a union of the input sequence $\mathbf{x}$ and the target sequence
+$\mathbf{y}$, then the supervised objective is the same as the unsupervised
+objective:
 
 $$
 \begin{aligned}
 \hat{\boldsymbol{\theta}}^{*}_{\text{supervised}} &= \underset{\hat{\boldsymbol{\theta}}_{\text{supervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
-&= \underset{\hat{\boldsymbol{\theta}}_{\text{supervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T^{\prime}_n} \log \mathbb{P}(y_{n, t} \mid y_{n, 1}, y_{n, 2}, \ldots, y_{n, t-1}, \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}) \\
+&= \underset{\hat{\boldsymbol{\theta}}_{\text{supervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T + T^{\prime}} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
 \end{aligned}
 $$
+
+where
+$\mathbf{x} = (x_1, x_2, \ldots, x_T) \cup (y_1, y_2, \ldots, y_{T^{\prime}})$.
+
+The key insight here is that if we can construct the input sequence $\mathbf{x}$
+such that the task-specific labels, are somehow encoded into the input sequence
+as well, then the supervised task is indeed a subset of the unsupervised task.
+For example, in the case of a translation task, the input sequence $\mathbf{x}$
+can be something like
+`The translation of the french sentence 'As-tu aller au cine ́ma?' to english is`,
+and the target sequence $\mathbf{y}$ can be the english translation
+`Did you go to the movies?`.
+
+However, the authors mention that such learning is much slower than the case
+where the model is directly trained on the supervised task
+{cite}`radford2019language`.
+
+In what follows, the author added that the internet contains a vast amount of
+information that is passively available without the need for interactive
+communication. The example that I provided on the french-to-english translation
+would bound to exist naturally in the internet. They speculate that if the
+language model is _large_ enough in terms of capacity, then it should be able to
+learn to perform the tasks demonstrated in natural language sequences in order
+to better predict them, regardless of their method of procurement
+{cite}`radford2019language`.
 
 ## References and Further Readings
 
