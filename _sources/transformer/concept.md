@@ -279,8 +279,6 @@ Further readings:
 
 ### Key 3. Conditional on Task (3)
 
-...
-
 ### Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)
 
 ### Key 5.
