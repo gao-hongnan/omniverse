@@ -497,7 +497,12 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-head">Softmax Head</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patch-composer-configuration-with-model-config">Patch Composer Configuration with Model Config</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-blocks">Decoder Blocks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -628,7 +633,13 @@ document.write(`
 </ul>
 </li>
 <li><p><a class="reference internal" href="#softmax-head" id="id111">Softmax Head</a></p></li>
-<li><p><a class="reference internal" href="#putting-it-all-together-to-form-the-gpt" id="id112">Putting it all Together to form the GPT</a></p></li>
+<li><p><a class="reference internal" href="#putting-it-all-together-to-form-the-gpt" id="id112">Putting it all Together to form the GPT</a></p>
+<ul>
+<li><p><a class="reference internal" href="#patch-composer-configuration-with-model-config" id="id113">Patch Composer Configuration with Model Config</a></p></li>
+<li><p><a class="reference internal" href="#decoder-blocks" id="id114">Decoder Blocks</a></p></li>
+<li><p><a class="reference internal" href="#decoder" id="id115">Decoder</a></p></li>
+</ul>
+</li>
 </ul>
 </nav>
 <div class="cell docutils container">
@@ -717,7 +728,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">extra</span> <span class="o">=</span> <span class="s2">&quot;forbid&quot;</span>
+        <span class="n">extra</span> <span class="o">=</span> <span class="s2">&quot;allow&quot;</span>
         <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="n">composer</span> <span class="o">=</span> <span class="n">Composer</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -4415,28 +4426,526 @@ a probability distribution over the output vocabulary <span class="math notransl
 </section>
 <section id="putting-it-all-together-to-form-the-gpt">
 <h2><a class="toc-backref" href="#id112" role="doc-backlink">Putting it all Together to form the GPT</a><a class="headerlink" href="#putting-it-all-together-to-form-the-gpt" title="Permalink to this heading">#</a></h2>
-<p>FULL Dimensions used here.</p>
-<ol class="arabic simple">
-<li><p>Tidy up positional encodings.</p></li>
-</ol>
-<ol class="arabic simple">
-<li><p>Insert arch diagram</p></li>
-<li><p>change example since i changed seed.</p></li>
-<li><p>Add cosine similarity from transformers notebook to show that embeddings in a subspace.</p></li>
-<li><p>Add def/theorem/notation prf</p></li>
-<li><p>Conditional and Joint probability</p></li>
-<li><p>Model definition in page 5/</p></li>
-<li><p>Loss see page 5/6</p></li>
-<li><p>autoregressive self supervised def page 6</p></li>
-<li><p>Insert intuition of using average of preceding tokens for self attention section:</p>
-<ol class="arabic simple">
-<li><p>version 1: averaging past context with for loops, the weakest form of aggregation</p></li>
-<li><p>min 42 to min 58</p></li>
-<li><p>on intuition of softmax and weight distribution</p></li>
-</ol>
-</li>
-<li><p>Time and Space Complexity</p></li>
-</ol>
+<section id="patch-composer-configuration-with-model-config">
+<h3><a class="toc-backref" href="#id113" role="doc-backlink">Patch Composer Configuration with Model Config</a><a class="headerlink" href="#patch-composer-configuration-with-model-config" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;We use dataclass here for easy instantiating with hydra&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+<span class="k">class</span> <span class="nc">MultiHeadedAttentionConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">attention</span><span class="p">:</span> <span class="n">Attention</span>
+    <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">H</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pydantic config.&quot;&quot;&quot;</span>
+
+        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="c1"># TODO: add `field_validator` such that if `d_ff` is `None`, then `d_ff` is set to `4 * d_model`.</span>
+<span class="k">class</span> <span class="nc">PositionwiseFeedForwardConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">d_ff</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(</span><span class="n">approximate</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">))</span>
+    <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pydantic config.&quot;&quot;&quot;</span>
+
+        <span class="n">arbitrary_types_allowed</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span> <span class="nc">AddNormConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">feature_dim</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span>
+
+
+<span class="k">class</span> <span class="nc">DecoderBlockConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">masked_self_attention_mha</span><span class="p">:</span> <span class="n">MultiHeadedAttentionConfig</span>
+    <span class="n">feed_forward</span><span class="p">:</span> <span class="n">PositionwiseFeedForwardConfig</span>
+    <span class="n">add_norm_1</span><span class="p">:</span> <span class="n">AddNormConfig</span>
+    <span class="n">add_norm_2</span><span class="p">:</span> <span class="n">AddNormConfig</span>
+
+
+<span class="k">class</span> <span class="nc">DecoderConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">d_model</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># NOTE: alias=max_seq_len,block_size</span>
+    <span class="n">num_decoder_blocks</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">decoder_block</span><span class="p">:</span> <span class="n">DecoderBlockConfig</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">masked_self_attention_mha_config</span> <span class="o">=</span> <span class="n">MultiHeadedAttentionConfig</span><span class="p">(</span><span class="n">attention</span><span class="o">=</span><span class="n">ScaledDotProductAttention</span><span class="p">(),</span> <span class="n">d_model</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">H</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">feed_forward_config</span> <span class="o">=</span> <span class="n">PositionwiseFeedForwardConfig</span><span class="p">(</span><span class="n">d_model</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_ff</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(</span><span class="n">approximate</span><span class="o">=</span><span class="s2">&quot;tanh&quot;</span><span class="p">),</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">add_norm_config_1</span> <span class="o">=</span> <span class="n">AddNormConfig</span><span class="p">(</span><span class="n">feature_dim</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">add_norm_config_2</span> <span class="o">=</span> <span class="n">AddNormConfig</span><span class="p">(</span><span class="n">feature_dim</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="c1"># Create DecoderBlockConfig</span>
+<span class="n">decoder_block_config</span> <span class="o">=</span> <span class="n">DecoderBlockConfig</span><span class="p">(</span>
+    <span class="n">masked_self_attention_mha</span><span class="o">=</span><span class="n">masked_self_attention_mha_config</span><span class="p">,</span>
+    <span class="n">feed_forward</span><span class="o">=</span><span class="n">feed_forward_config</span><span class="p">,</span>
+    <span class="n">add_norm_1</span><span class="o">=</span><span class="n">add_norm_config_1</span><span class="p">,</span>
+    <span class="n">add_norm_2</span><span class="o">=</span><span class="n">add_norm_config_2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Create the overall DecoderConfig</span>
+<span class="n">model_config</span> <span class="o">=</span> <span class="n">DecoderConfig</span><span class="p">(</span>
+    <span class="n">d_model</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span>
+    <span class="n">vocab_size</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span>
+    <span class="n">context_length</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span>
+    <span class="n">num_decoder_blocks</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">decoder_block</span><span class="o">=</span><span class="n">decoder_block_config</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># patch Composer</span>
+
+<span class="n">composer</span><span class="o">.</span><span class="n">model_config</span> <span class="o">=</span> <span class="n">model_config</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">model_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">DecoderConfig</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">d_model</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">vocab_size</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">50257</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">context_length</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">num_decoder_blocks</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">decoder_block</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">DecoderBlockConfig</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">masked_self_attention_mha</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">MultiHeadedAttentionConfig</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">attention</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ScaledDotProductAttention</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">d_model</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">H</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">feed_forward</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">PositionwiseFeedForwardConfig</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">d_model</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">d_ff</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">activation</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">GELU</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">approximate</span>=<span style="color: #008000; text-decoration-color: #008000">'tanh'</span><span style="font-weight: bold">)</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">add_norm_1</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">AddNormConfig</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">feature_dim</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span><span style="font-weight: bold">)</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">add_norm_2</span>=<span style="color: #800080; text-decoration-color: #800080; font-weight: bold">AddNormConfig</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">feature_dim</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+</section>
+<section id="decoder-blocks">
+<h3><a class="toc-backref" href="#id114" role="doc-backlink">Decoder Blocks</a><a class="headerlink" href="#decoder-blocks" title="Permalink to this heading">#</a></h3>
+<p>The decoder block consists of the following transformations in pseudo-code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_1</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_2</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Essentially, we take the embeddings output from the token and positional
+layers, and go through the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">-&gt;</span> <span class="n">LayerNorm</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>then we pass the output through the positionwise FFN, abbreivate <code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">+</span> <span class="pre">MultiHeadAttention(LayerNorm(z))</span></code> as <code class="docutils literal notranslate"><span class="pre">z_mha</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z_mha</span> <span class="o">-&gt;</span> <span class="n">LayerNorm</span><span class="p">(</span><span class="n">z_mha</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PositionwiseFFN</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">z_mha</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">z_mha</span> <span class="o">+</span> <span class="n">PositionwiseFFN</span><span class="p">(</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">z_mha</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>It is worth noting that my implementation of <code class="docutils literal notranslate"><span class="pre">AddNorm</span></code> is different from the GPT-2 paper, with
+<code class="docutils literal notranslate"><span class="pre">self.layer_norm(x</span> <span class="pre">+</span> <span class="pre">sublayer(self.dropout(x)))</span></code> instead of <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">sublayer(self.layer_norm(x))</span></code>.
+Both works, but the former is the one mentioned in the GPT-2 paper.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">GPTDecoderBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;GPTDecoderBlock focuses on masked self-attention and feed-forward layers.</span>
+
+<span class="sd">    The architecture follows the GPT-style decoder, which only has masked</span>
+<span class="sd">    self-attention and position-wise feed-forward layers, omitting the</span>
+<span class="sd">    encoder-decoder cross-attention.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DecoderConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># fmt: off</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">masked_self_attention_mha</span> <span class="o">=</span> <span class="n">MultiHeadedAttention</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">decoder_block</span><span class="o">.</span><span class="n">masked_self_attention_mha</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feed_forward</span>              <span class="o">=</span> <span class="n">PositionwiseFeedForward</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">decoder_block</span><span class="o">.</span><span class="n">feed_forward</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_norm_1</span>                <span class="o">=</span> <span class="n">AddNorm</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">decoder_block</span><span class="o">.</span><span class="n">add_norm_1</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_norm_2</span>                <span class="o">=</span> <span class="n">AddNorm</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">decoder_block</span><span class="o">.</span><span class="n">add_norm_2</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">))</span>
+        <span class="c1"># fmt: on</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>  <span class="c1"># that&#39;s tgt in torch code base</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">target_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span>  <span class="c1"># that&#39;s tgt_mask in torch code base</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_norm_1</span><span class="p">(</span>
+            <span class="n">z</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">masked_self_attention_mha</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">target_masks</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_norm_2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feed_forward</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">z</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="decoder">
+<h3><a class="toc-backref" href="#id115" role="doc-backlink">Decoder</a><a class="headerlink" href="#decoder" title="Permalink to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">override</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="k">class</span> <span class="nc">_NotGiven</span><span class="p">:</span>
+
+    <span class="n">_instance</span><span class="p">:</span> <span class="n">_NotGiven</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">_NotGiven</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_NotGiven</span><span class="p">:</span>  <span class="c1"># noqa: PYI034</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_NotGiven</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>  <span class="c1"># noqa: UP008</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method is used to define the boolean value of an instance of `_NotGiven`.</span>
+<span class="sd">        By returning `False`, it allows `_NotGiven` to be used in boolean contexts (like</span>
+<span class="sd">        `if` statements) to signify the absence of a value. This is especially useful</span>
+<span class="sd">        for checking if an argument was provided or not in a function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;NOT_GIVEN&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="s2">&quot;NOT_GIVEN&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instances are immutable&quot;</span><span class="p">)</span>
+
+
+<span class="n">NOT_GIVEN</span> <span class="o">=</span> <span class="n">_NotGiven</span><span class="p">()</span>
+<span class="n">NotGiven</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">_NotGiven</span>
+
+
+<span class="k">def</span> <span class="nf">construct_dummy_batch_target_padding_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a dummy batch of target padding masks of shape (B, 1, L, L) which</span>
+<span class="sd">    assumes there is no padding token involved.&quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">BaseDecoder</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for a decoder in a transformer-like architecture.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">DecoderConfig</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_tokens</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>  <span class="c1"># force keyword only arguments to prevent errors</span>
+        <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="n">future_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="n">encoder_hidden_states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>  <span class="c1"># that&#39;s memory in torch code base</span>
+        <span class="n">encoder_hidden_states_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>  <span class="c1"># that&#39;s memory_mask in torch code base</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes weights of the given module using Xavier uniform initialization.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+<span class="c1"># NOTE: seq_len &lt;= context_length == max_seq_len</span>
+<span class="k">class</span> <span class="nc">GPTDecoder</span><span class="p">(</span><span class="n">BaseDecoder</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DecoderConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="c1"># fmt: off</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span>       <span class="p">:</span> <span class="nb">int</span>           <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tok_embed</span>     <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span>     <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">context_length</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_blocks</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">GPTDecoderBlock</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">num_decoder_blocks</span><span class="p">)])</span> <span class="c1"># PyTorch did not make ModuleList a proper container, maybe open a PR to make it inherit Generic[T]???</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span>       <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span>    <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span>    <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span>          <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span>     <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>  <span class="c1"># last layer</span>
+        <span class="c1"># fmt: on</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_weights</span><span class="p">)</span>
+
+        <span class="c1"># apply special scaled init to the residual projections, per GPT-2 paper</span>
+        <span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">parameter_name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;context_projection.weight&quot;</span><span class="p">):</span>
+                <span class="n">mean</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">std_dev</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">num_decoder_blocks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std_dev</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_trainable_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of trainable parameters in the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the total number of parameters in the model, including non-trainable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+    <span class="nd">@override</span>
+    <span class="k">def</span> <span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">normal_init_modules</span> <span class="o">=</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">normal_init_modules</span><span class="p">):</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">zeros_</span><span class="p">(</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">create_target_masks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">future_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">create_target_masks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">future_masks</span><span class="p">:</span> <span class="n">NotGiven</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">create_target_masks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">NotGiven</span><span class="p">,</span> <span class="n">future_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">create_target_masks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">NotGiven</span><span class="p">,</span> <span class="n">future_masks</span><span class="p">:</span> <span class="n">NotGiven</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">create_target_masks</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="n">future_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">:</span>
+        <span class="n">target_masks_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">target_padding_masks</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span> <span class="ow">and</span> <span class="n">future_masks</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">:</span>
+            <span class="n">target_padding_masks</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">construct_dummy_batch_target_padding_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">future_masks</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">construct_dummy_batch_future_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">))</span>
+
+        <span class="c1"># FIXME: CAN SOMEONE PLEASE HELP ME WITH TYPING HERE?? I AM SO STUCK IN CASTING HELL.</span>
+        <span class="k">if</span> <span class="n">target_padding_masks</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">:</span>
+            <span class="n">target_padding_masks</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">construct_dummy_batch_target_padding_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">future_masks</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">:</span>
+            <span class="n">future_masks</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span> <span class="n">construct_dummy_batch_future_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">))</span>
+
+        <span class="k">assert</span> <span class="n">target_padding_masks</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">future_masks</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">target_masks_shape</span>  <span class="c1"># type: ignore[union-attr]</span>
+
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="p">),</span> <span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">future_masks</span><span class="p">))</span><span class="o">.</span><span class="n">bool</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_tokens</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>  <span class="c1"># force keyword only arguments to prevent errors</span>
+        <span class="n">target_padding_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="n">future_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="c1"># fmt: off</span>
+        <span class="n">encoder_hidden_states</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>  <span class="c1"># that&#39;s memory in torch code base and is ensured not used here</span>
+        <span class="n">encoder_hidden_states_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">|</span> <span class="n">NotGiven</span> <span class="o">=</span> <span class="n">NOT_GIVEN</span><span class="p">,</span>
+        <span class="c1"># that&#39;s memory_mask in torch code base and is ensured not used here</span>
+        <span class="c1"># fmt: on</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">encoder_hidden_states</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">,</span> <span class="s2">&quot;GPTDecoderBlock does not have encoder-decoder cross-attention&quot;</span>
+        <span class="k">assert</span> <span class="n">encoder_hidden_states_masks</span> <span class="ow">is</span> <span class="n">NOT_GIVEN</span><span class="p">,</span> <span class="s2">&quot;GPTDecoderBlock does not have encoder-decoder cross-attention&quot;</span>
+
+        <span class="c1"># fmt: off</span>
+        <span class="n">batch_size</span>  <span class="p">:</span> <span class="nb">int</span>              <span class="o">=</span> <span class="n">input_tokens</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">seq_len</span>     <span class="p">:</span> <span class="nb">int</span>              <span class="o">=</span> <span class="n">input_tokens</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># note seq_len &lt;= context_length in decoder</span>
+        <span class="n">target_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_target_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="o">=</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">target_padding_masks</span><span class="o">=</span><span class="n">target_padding_masks</span><span class="p">,</span> <span class="n">future_masks</span><span class="o">=</span><span class="n">future_masks</span><span class="p">)</span>
+
+        <span class="n">target_masks</span> <span class="o">=</span> <span class="n">target_masks</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">input_tokens</span><span class="o">.</span><span class="n">device</span><span class="p">)</span> <span class="c1"># type: ignore[assignment]</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tok_embed</span><span class="p">(</span><span class="n">input_tokens</span><span class="p">)</span> <span class="c1"># * math.sqrt(self.d_model) for better optimization landscape</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span><span class="p">[:,</span> <span class="p">:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">decoder_block</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder_blocks</span><span class="p">:</span>
+            <span class="n">z</span>  <span class="o">=</span> <span class="n">decoder_block</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">target_masks</span><span class="o">=</span><span class="n">target_masks</span><span class="p">)</span>
+
+        <span class="n">z</span>      <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="c1"># fmt: on</span>
+        <span class="k">return</span> <span class="n">logits</span>
+
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">generate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">starting_tokens</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>  <span class="c1"># alias is starting_tokens</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">max_tokens</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>  <span class="c1"># max tokens to generate</span>
+        <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># temperature for sampling</span>
+        <span class="n">greedy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># if True, sample greedily</span>
+        <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># if not None, sample from top k tokens</span>
+        <span class="n">top_p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># neclueus sampling</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">:</span>
+            <span class="c1"># a safety check to make sure we are not in training mode</span>
+            <span class="c1"># this generate could be called outside after training, or during</span>
+            <span class="c1"># training as a form of validation/evaluation.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+        <span class="c1"># NOTE: `starting_tokens` is a list of integers, or a torch.LongTensor of shape (S or T).</span>
+        <span class="c1"># the distinction between this `starting_tokens` versus the one in `forward` is this is</span>
+        <span class="c1"># not batched! It is a single sequence of tokens so in order for it to be compatible</span>
+        <span class="c1"># with the model, we need to expand the first dimension to 1 - making it a batch.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">starting_tokens</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">starting_tokens</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">starting_tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">starting_tokens</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">starting_tokens</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">starting_tokens</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>  <span class="c1"># type: ignore[no-redef]</span>
+        <span class="k">assert</span> <span class="n">starting_tokens</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;starting_tokens must be a 1D or 2D tensor&quot;</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_tokens</span><span class="p">):</span>
+            <span class="c1"># if the sequence context is growing too long we must crop it at context_length</span>
+            <span class="n">starting_tokens_cropped</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">starting_tokens</span><span class="p">[:,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">context_length</span> <span class="p">:]</span>
+                <span class="k">if</span> <span class="n">starting_tokens</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">context_length</span>
+                <span class="k">else</span> <span class="n">starting_tokens</span>
+            <span class="p">)</span>
+
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">starting_tokens_cropped</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">seq_len</span> <span class="o">=</span> <span class="n">starting_tokens_cropped</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># this must be less than or equal to self.config.context_length</span>
+
+            <span class="n">target_padding_masks</span> <span class="o">=</span> <span class="n">construct_dummy_batch_target_padding_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+            <span class="n">future_masks</span> <span class="o">=</span> <span class="n">construct_dummy_batch_future_masks</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">)</span>
+
+            <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span>
+                <span class="n">starting_tokens_cropped</span><span class="p">,</span>
+                <span class="n">target_padding_masks</span><span class="o">=</span><span class="n">target_padding_masks</span><span class="p">,</span>
+                <span class="n">future_masks</span><span class="o">=</span><span class="n">future_masks</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>
+
+            <span class="c1"># NOTE: we are only interested in the last token&#39;s logits because in</span>
+            <span class="c1"># autoregressive models, the last token&#39;s logits holds the contextual</span>
+            <span class="c1"># information of all previous tokens (because it is the only token</span>
+            <span class="c1"># not masked). But in any case, we need this last token&#39;s logits to</span>
+            <span class="c1"># sample the next token.</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># shape: (batch_size, vocab_size)</span>
+            <span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>
+
+            <span class="c1"># now scale by temperature</span>
+            <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">/</span> <span class="p">(</span><span class="n">temperature</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>  <span class="c1"># add epsilon to prevent division by zero</span>
+
+            <span class="c1"># optional cropping of logits to top k</span>
+            <span class="k">if</span> <span class="n">top_k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">top_k_values</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">top_k</span><span class="p">)</span>
+                <span class="c1"># The masking out to -inf is to prevent the sampling from</span>
+                <span class="c1"># non-top k values, effectively making the sampling pool</span>
+                <span class="c1"># to be only the top k values. We are zeroing out the</span>
+                <span class="c1"># probabilities of non-top k values.</span>
+                <span class="n">logits</span><span class="p">[</span><span class="n">logits</span> <span class="o">&lt;</span> <span class="n">top_k_values</span><span class="p">[:,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">top_p</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="k">def</span> <span class="nf">top_p_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+                    <span class="n">sorted_logits</span><span class="p">,</span> <span class="n">sorted_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">cumulative_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">sorted_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1"># Remove tokens with cumulative probability above the threshold</span>
+                    <span class="n">sorted_indices_to_remove</span> <span class="o">=</span> <span class="n">cumulative_probs</span> <span class="o">&gt;</span> <span class="n">p</span>
+                    <span class="c1"># Shift the indices to the right to keep also the first token above the threshold</span>
+                    <span class="n">sorted_indices_to_remove</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">sorted_indices_to_remove</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+                    <span class="n">sorted_indices_to_remove</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="c1"># Scatter sorted tensors to original indexing</span>
+                    <span class="n">indices_to_remove</span> <span class="o">=</span> <span class="n">sorted_indices</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+                        <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">sorted_indices</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">sorted_indices_to_remove</span>
+                    <span class="p">)</span>
+                    <span class="n">logits</span><span class="p">[</span><span class="n">indices_to_remove</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">logits</span>
+
+                <span class="n">logits</span> <span class="o">=</span> <span class="n">top_p_logits</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">top_p</span><span class="p">)</span>
+
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">next_token</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">greedy</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span>
+            <span class="p">)</span>
+
+            <span class="c1"># append the next token to the input tokens, aka append sampled index</span>
+            <span class="c1"># to the running sequence context and continue the generation</span>
+            <span class="n">starting_tokens</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">starting_tokens</span><span class="p">,</span> <span class="n">next_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment]</span>
+        <span class="k">return</span> <span class="n">starting_tokens</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<span class="n">generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+<span class="n">seed_all</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">train_batch</span> <span class="o">=</span> <span class="n">get_batch</span><span class="p">(</span><span class="n">composer</span><span class="p">,</span> <span class="n">split</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">train_batch</span>
+<span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">GPTDecoder</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">total_trainable_parameters</span><span class="p">)</span>
+
+<span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">composer</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">block_size</span><span class="p">,</span> <span class="n">composer</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">452473</span>
+</pre>
+</div></div>
+</div>
 <ul class="simple">
 <li><p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/</a></p></li>
 <li><p><a class="reference external" href="https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/">https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/</a></p></li>
@@ -4476,6 +4985,7 @@ a probability distribution over the output vocabulary <span class="math notransl
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">How to Optimize Data Transfers in CUDA C/C++</a></p>
 </aside>
+</section>
 </section>
 </section>
 
@@ -4645,7 +5155,12 @@ a probability distribution over the output vocabulary <span class="math notransl
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-head">Softmax Head</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-it-all-together-to-form-the-gpt">Putting it all Together to form the GPT</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#patch-composer-configuration-with-model-config">Patch Composer Configuration with Model Config</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder-blocks">Decoder Blocks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
