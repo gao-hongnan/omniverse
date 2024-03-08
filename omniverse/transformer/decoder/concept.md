@@ -119,6 +119,55 @@ The model can learn from such examples and generalize to perform well on the
 translation task via the autoregressive self-supervised learning paradigm
 without the need for supervised fine-tuning.
 
+## GPT-1 and GPT-2
+
+In Natural Language Understanding (NLU), there are a wide range of tasks, such
+as textual entailment, question answering, semantic similarity assessment, and
+document classification. These tasks are inherently labeled, but given the
+scarcity of such data, it makes
+[discriminative](https://en.wikipedia.org/wiki/Discriminative_model) models such
+as Bidirectional Long Short-Term Memory (Bi-LSTM) underperform
+{cite}`radford2018improving`, likely leading to poor performance on these tasks.
+
+In the paper
+[_Improving Language Understanding by Generative Pre-Training_](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf),
+the authors demonstrated that _generative pre-training_ of a language model on a
+diverse corpus of unlabeled text, followed by _discriminative fine-tuning_ on
+each specific task, can overcome the constraints of the small amount of
+annotated data for these specific tasks. The process is collectively termed as
+[semi-supervised learning](https://en.wikipedia.org/wiki/Semi-supervised_learning)
+and the goal is to learn an **_universal representation_** of the natural
+language space that can be used across a wide range of tasks.
+
+The pretraining objective is to predict the next token in a sequence, in an
+**_autoregressive_** manner, given the previous tokens. The pretrained model,
+often known as the **_foundational model_** (or _backbone_), serves as a base
+from which specialized capabilities can be added through _fine-tuning_ on
+specific tasks. In the fine-tuning phase, task-specific adaptations are
+necessary: the input format must be adjusted to align with the particular
+requirements of the task at hand, and the model's final layer—or "head"—needs to
+be replaced to accommodate the task's specific class structure. The author
+showed that this approach yielded state-of-the-art results on a wide range of
+NLU tasks.
+
+Notwithstanding the success of this approach, the same set of authors came up
+with a new paper in the following year, titled
+[_Language Models are Unsupervised Multitask Learners_](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf),
+where they introduced a new model, _GPT-2_, that was larger in model capacity,
+and trained on a much larger unlabeled corpus, **WebText**. However, the key
+innovation was to void the supervised fine-tuning step, and instead, they
+demonstrated that GPT-2 could be used directly on a wide range of NLU tasks
+directly, with what they termed as the _zero-shot transfer_. The motivation is
+that the authors think that foundational language models should be competent
+generalists, rather than narrowly experts {cite}`radford2019language`. They call
+for the need to shift the language model paradigm to one that is generic enough
+to handle NLU tasks without the need to curate specific training data for each
+specific task.
+
+In what follows, we take a look how the authors formalized the framework. We
+start by defining certain definitions and notations that will be used throughout
+this article.
+
 ## GPT-2 Paper Overview
 
 ### Abstract
@@ -367,55 +416,6 @@ More readings (honestly not well-versed with BPE):
 
 See
 [The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html).
-
-## GPT-1 and GPT-2
-
-In Natural Language Understanding (NLU), there are a wide range of tasks, such
-as textual entailment, question answering, semantic similarity assessment, and
-document classification. These tasks are inherently labeled, but given the
-scarcity of such data, it makes
-[discriminative](https://en.wikipedia.org/wiki/Discriminative_model) models such
-as Bidirectional Long Short-Term Memory (Bi-LSTM) underperform
-{cite}`radford2018improving`, likely leading to poor performance on these tasks.
-
-In the paper
-[_Improving Language Understanding by Generative Pre-Training_](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf),
-the authors demonstrated that _generative pre-training_ of a language model on a
-diverse corpus of unlabeled text, followed by _discriminative fine-tuning_ on
-each specific task, can overcome the constraints of the small amount of
-annotated data for these specific tasks. The process is collectively termed as
-[semi-supervised learning](https://en.wikipedia.org/wiki/Semi-supervised_learning)
-and the goal is to learn an **_universal representation_** of the natural
-language space that can be used across a wide range of tasks.
-
-The pretraining objective is to predict the next token in a sequence, in an
-**_autoregressive_** manner, given the previous tokens. The pretrained model,
-often known as the **_foundational model_** (or _backbone_), serves as a base
-from which specialized capabilities can be added through _fine-tuning_ on
-specific tasks. In the fine-tuning phase, task-specific adaptations are
-necessary: the input format must be adjusted to align with the particular
-requirements of the task at hand, and the model's final layer—or "head"—needs to
-be replaced to accommodate the task's specific class structure. The author
-showed that this approach yielded state-of-the-art results on a wide range of
-NLU tasks.
-
-Notwithstanding the success of this approach, the same set of authors came up
-with a new paper in the following year, titled
-[_Language Models are Unsupervised Multitask Learners_](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf),
-where they introduced a new model, _GPT-2_, that was larger in model capacity,
-and trained on a much larger unlabeled corpus, **WebText**. However, the key
-innovation was to void the supervised fine-tuning step, and instead, they
-demonstrated that GPT-2 could be used directly on a wide range of NLU tasks
-directly, with what they termed as the _zero-shot transfer_. The motivation is
-that the authors think that foundational language models should be competent
-generalists, rather than narrowly experts {cite}`radford2019language`. They call
-for the need to shift the language model paradigm to one that is generic enough
-to handle NLU tasks without the need to curate specific training data for each
-specific task.
-
-In what follows, we take a look how the authors formalized the framework. We
-start by defining certain definitions and notations that will be used throughout
-this article.
 
 ## Autoregressive Self-Supervised Learning Paradigm
 
