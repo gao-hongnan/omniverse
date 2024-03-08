@@ -106,12 +106,12 @@ where
         at the $i$-th position in the sequence $\mathbf{X}$. This row form is
         more important than column form.
 
-### $\mathbf{E}$: Embedding Matrix
+### $\mathbf{W}_{e}$: Embedding Matrix
 
--   $\mathbf{E}$: is the embedding matrix defined as:
+-   $\mathbf{W}_{e}$: is the embedding matrix defined as:
 
     $$
-    \mathbf{E} = \begin{bmatrix} e_{1,1} & e_{1,2} & \cdots & e_{1,D} \\ e_{2,1} & e_{2,2} & \cdots & e_{2,D} \\ \vdots & \vdots & \ddots & \vdots \\ e_{V,1} & e_{V,2} & \cdots & e_{V,D} \end{bmatrix} \in \mathbb{R}^{V \times D}
+    \mathbf{W}_{e} = \begin{bmatrix} e_{1,1} & e_{1,2} & \cdots & e_{1,D} \\ e_{2,1} & e_{2,2} & \cdots & e_{2,D} \\ \vdots & \vdots & \ddots & \vdots \\ e_{V,1} & e_{V,2} & \cdots & e_{V,D} \end{bmatrix} \in \mathbb{R}^{V \times D}
     $$
 
     where
@@ -120,20 +120,20 @@ where
     -   $D$: is the embedding dimension.
     -   $e_{j, d}$: is the embedding element at position $j, d$. For a word
         $v_j$ in the vocabulary $\mathcal{V}$, the corresponding row in
-        $\mathbf{E}$ is the embedding vector for that word.
+        $\mathbf{W}_{e}$ is the embedding vector for that word.
 
 ### $\mathbf{Z}$: Output of the Embedding Layer
 
 -   $\mathbf{Z}$: is the output tensor of the embedding layer, obtained by
-    matrix multiplying $\mathbf{O}$ with $\mathbf{E}$, and it is defined as:
+    matrix multiplying $\mathbf{O}$ with $\mathbf{W}_{e}$, and it is defined as:
 
     $$
-    \mathbf{Z} = \mathbf{O} \cdot \mathbf{E}
+    \mathbf{Z} = \mathbf{O} \cdot \mathbf{W}_{e}
     $$
 
     $$
     \begin{aligned}
-    \mathbf{Z} &= \mathbf{O} \cdot \mathbf{E} \\
+    \mathbf{Z} &= \mathbf{O} \cdot \mathbf{W}_{e} \\
     &= \begin{bmatrix} z_{1,1} & z_{1,2} & \cdots & z_{1,D} \\ z_{2,1} & z_{2,2} & \cdots & z_{2,D} \\ \vdots & \vdots & \ddots & \vdots \\ z_{L,1} & z_{L,2} & \cdots & z_{L,D} \end{bmatrix} \in \mathbb{R}^{L \times D} \\
     &= \begin{bmatrix} \text{---} & \mathbf{z}_{1,:} & \text{---} \\ \text{---} & \mathbf{z}_{2,:} & \text{---} \\ & \vdots & \\ \text{---} & \mathbf{z}_{L,:} & \text{---} \end{bmatrix} \in \mathbb{R}^{L \times D}
     \end{aligned}
@@ -153,7 +153,7 @@ where
         dimensional vector. So, the output tensor $\mathbf{Z}$ captures the
         dense representation of the sequence. Each token in the sequence is
         replaced by its corresponding embedding vector from the embedding matrix
-        $\mathbf{E}$.
+        $\mathbf{W}_{e}$.
 
         As before, the output tensor $\mathbf{Z}$ carries semantic information
         about the tokens in the sequence. The closer two vectors are in this
@@ -223,30 +223,30 @@ where
     and $H$ is the number of attention heads.
 -   $d_q = D/H$: Dimension of the queries. Also usually set equal to $d_k$.
 -   $d_v = D/H$: Dimension of the values. Usually set equal to $d_k$.
--   $\mathbf{W}^q \in \mathbb{R}^{D \times H \cdot d_q = D \times D}$: The query
-    weight matrix for all heads. It is used to transform the embeddings
+-   $\mathbf{W}^{Q} \in \mathbb{R}^{D \times H \cdot d_q = D \times D}$: The
+    query weight matrix for all heads. It is used to transform the embeddings
     $\mathbf{Z}$ into query representations.
 
--   $\mathbf{W}^k \in \mathbb{R}^{D \times H \cdot d_k = D \times D}$: The key
+-   $\mathbf{W}^{K} \in \mathbb{R}^{D \times H \cdot d_k = D \times D}$: The key
     weight matrix for all heads. It is used to transform the embeddings
     $\mathbf{Z}$ into key representations.
 
--   $\mathbf{W}^v \in \mathbb{R}^{D \times H \cdot d_v = D \times D}$: The value
-    weight matrix for all heads. It is used to transform the embeddings
+-   $\mathbf{W}^{V} \in \mathbb{R}^{D \times H \cdot d_v = D \times D}$: The
+    value weight matrix for all heads. It is used to transform the embeddings
     $\mathbf{Z}$ into value representations.
--   $\mathbf{W}_{h}^{q} \in \mathbb{R}^{D \times d_q}$: The query weight matrix
+-   $\mathbf{W}_{h}^{Q} \in \mathbb{R}^{D \times d_q}$: The query weight matrix
     for the $h$-th head. It is used to transform the embeddings $\mathbf{Z}$
     into query representations for the $h$-th head.
     -   Important that this matrix collapses to $\mathbf{W}_{1}^q$ when $H=1$
         and has shape $\mathbb{R}^{D \times D}$.
     -   Note that this weight matrix is derived from $W^q$.
--   $\mathbf{W}_{h}^{k} \in \mathbb{R}^{D \times d_k}$: The key weight matrix
+-   $\mathbf{W}_{h}^{K} \in \mathbb{R}^{D \times d_k}$: The key weight matrix
     for the $h$-th head. It is used to transform the embeddings $\mathbf{Z}$
     into key representations for the $h$-th head.
     -   Important that this matrix collapses to $\mathbf{W}_{1}^k$ when $H=1$
         and has shape $\mathbb{R}^{D \times D}$ since $d_k = D/H = D/1 = D$.
     -   Note that this weight matrix is derived from $W^k$.
--   $\mathbf{W}_{h}^{v} \in \mathbb{R}^{D \times d_v}$: The value weight matrix
+-   $\mathbf{W}_{h}^{V} \in \mathbb{R}^{D \times d_v}$: The value weight matrix
     for the $h$-th head. It is used to transform the embeddings $\mathbf{Z}$
     into value representations for the $h$-th head.
 
@@ -254,7 +254,7 @@ where
         and has shape $\mathbb{R}^{D \times D}$.
     -   Note that this weight matrix is derived from $W^v$.
 
--   $\mathbf{Q} = \mathbf{Z} \mathbf{W}^q \in \mathbb{R}^{L \times D}$: The
+-   $\mathbf{Q} = \mathbf{Z} \mathbf{W}^{Q} \in \mathbb{R}^{L \times D}$: The
     query matrix. It contains the query representations for all the tokens in
     the sequence. This is the matrix that is used to compute the attention
     scores.
@@ -265,8 +265,8 @@ where
     for all the tokens in the sequence. This is the matrix that is used to
     compute the attention scores for the $h$-th head.
 
--   $\mathbf{K} = \mathbf{Z} \mathbf{W}^k \in \mathbb{R}^{L \times D}$: The key
-    matrix. It contains the key representations for all the tokens in the
+-   $\mathbf{K} = \mathbf{Z} \mathbf{W}^{K} \in \mathbb{R}^{L \times D}$: The
+    key matrix. It contains the key representations for all the tokens in the
     sequence. This is the matrix that is used to compute the attention scores.
 
 -   $\mathbf{K}_h = \mathbf{Z} \mathbf{W}_h^k \in \mathbb{R}^{L \times d_k}$:
@@ -274,7 +274,7 @@ where
     all the tokens in the sequence. This is the matrix that is used to compute
     the attention scores for the $h$-th head.
 
--   $\mathbf{V} = \mathbf{Z} \mathbf{W}^v \in \mathbb{R}^{L \times D}$: The
+-   $\mathbf{V} = \mathbf{Z} \mathbf{W}^{V} \in \mathbb{R}^{L \times D}$: The
     value matrix. It contains the value representations for all the tokens in
     the sequence. This is the matrix where we apply the attention scores to
     compute the weighted average of the values.
@@ -362,7 +362,7 @@ where
         $\text{softmax}(\cdot)$ is applied row-wise. The division by
         $\sqrt{d_k}$ is a scaling factor that helps in training stability.
 
--   $\mathbf{W}^{o} \in \mathbb{R}^{D \times D}$: This is the output weight
+-   $\mathbf{W}^{O} \in \mathbb{R}^{D \times D}$: This is the output weight
     matrix that linearly transforms the concatenation of the outputs from all
     attention heads to produce the final output of the multi-head attention
     mechanism.
@@ -372,9 +372,9 @@ where
     use symbols here.
 
 -   MHA outputs:
-    $\text{context_vector_concat} \in \mathbb{R}^{L \times D} @ \mathbf{W}^{o} \in \mathbb{R}^{D \times D} = \mathbf{O} \in \mathbb{R}^{L \times D}$
+    $\text{context_vector_concat} \in \mathbb{R}^{L \times D} @ \mathbf{W}^{O} \in \mathbb{R}^{D \times D} = \mathbf{O} \in \mathbb{R}^{L \times D}$
     represents the final output of the multi-head attention layer. It's the
-    result of applying the linear transformation defined by $\mathbf{W}_o$ to
+    result of applying the linear transformation defined by $\mathbf{W}^{O}$ to
     the concatenated outputs of all attention heads.
 
     Abuse of notation again with $\mathbf{O}$.
