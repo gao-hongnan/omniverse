@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Concept
+# The Concept of Generative Pre-trained Transformers (GPT)
 
 ```{contents}
 :local:
@@ -161,6 +161,7 @@ More readings:
 
 -   https://stats.stackexchange.com/questions/213464/on-the-importance-of-the-i-i-d-assumption-in-statistical-learning
 -   https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables
+-   https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html#independence-and-identically-distributed-iid
 
 ### Key 3. Multi-Task Learning is Nacent (4)
 
@@ -249,9 +250,6 @@ Further readings:
     horses) but not on zebra, should be able to recognize a zebra as something
     close to horse, given the semantic relationship between the two animals.
 
-    TODO: may need further clarification: Furthermore, we can actually pass an
-    unseen label and a zebra image. How? Con
-
 -   Zero-shot transfer, often discussed within the context of transfer learning,
     involves applying a model trained on one set of tasks or domains to a
     completely new task or domain without any additional training. Here, the
@@ -275,7 +273,7 @@ Further readings:
 
 ### Key 1. Modeling Language Models over Joint Probability Distributions (1)
 
-### Key 2. Conditional Distributions (2)
+### Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)
 
 ### Key 3. Conditional on Task (3)
 
@@ -967,8 +965,7 @@ function
 $\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$, we
 would then fine-tune the model on a specific task by replacing the final layer
 of the model with a task-specific layer, and then train the model on the
-specific task with the task-specific layer. The authors showed that this
-approach yielded state-of-the-art results on a wide range of NLU tasks.
+specific task with the task-specific layer {cite}`radford2018improving`.
 
 #### Objective Function for Fine-Tuning
 
@@ -1056,6 +1053,43 @@ $$
 
 and we can minimize the new auxiliary loss function in the same way.
 
+### Optimizing Unsupervised is the same as Optimizing Supervised
+
+The GPT-2 paper _Language Models are Unsupervised Multitask Learners_
+demonstrated that they want to do away with the supervised fine-tuning phase via
+an interesting hypothesis, that **optimizing the unsupervised objective is the
+same as optimizing the supervised objective** because the _global minimum_ of
+the unsupervised objective is the same as the _global minimum_ of the supervised
+objective {cite}`radford2019language`.
+
+Indeed, the unsupervised objective in language modeling is to maximize the
+likelihood of observing the entire sequence of tokens over the dataset
+$\mathcal{S}$. This is an unsupervised task because it does not rely on labeled
+input-output pairs but rather on the sequence itself. For simplicity, we state
+the unsupervised objective as simply the argmax of the log-likelihood of the
+sequence of tokens over the dataset $\mathcal{S}$:
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*}_{\text{unsupervised}} &= \underset{\hat{\boldsymbol{\theta}}_{\text{unsupervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
+&= \underset{\hat{\boldsymbol{\theta}}_{\text{unsupervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+$$
+
+In a supervised setting, such as sequence-to-sequence tasks (e.g., translation,
+summarization), the objective is often to predict a target sequence
+$\mathbf{y} = (y_1, y_2, \ldots, y_{T^{\prime}})$ given an input sequence
+$\mathbf{x} = (x_1, x_2, \ldots, x_T)$, and we can write the objective as the
+argmax of the log-likelihood of the target sequence over the dataset
+$\mathcal{S}$:
+
+$$
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*}_{\text{supervised}} &= \underset{\hat{\boldsymbol{\theta}}_{\text{supervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
+&= \underset{\hat{\boldsymbol{\theta}}_{\text{supervised}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T^{\prime}_n} \log \mathbb{P}(y_{n, t} \mid y_{n, 1}, y_{n, 2}, \ldots, y_{n, t-1}, \mathbf{x}_n ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+$$
+
 ## References and Further Readings
 
 -   https://developers.google.com/machine-learning/gan/generative
@@ -1081,6 +1115,3 @@ and we can minimize the new auxiliary loss function in the same way.
 
 [^2]:
     [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
-
-    $$
-    $$
