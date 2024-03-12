@@ -1,0 +1,1541 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Continuous Integration (CI) Workflow &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'software_engineering/devops/continuous-integration/concept';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/software_engineering/devops/continuous-integration/concept.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Styling, Formatting, and Linting" href="styling.html" />
+    <link rel="prev" title="The Loss Landscape" href="../../../deep_learning/training_chronicles/loss.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Generative Pre-trained Transformer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Continuous Integration (CI) Workflow</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/software_engineering/devops/continuous-integration/concept.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Continuous Integration (CI) Workflow</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1-planning">Phase 1. Planning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-development">Phase 2. Development</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-main-directory-in-integrated-development-environment-ide">Set Up Main Directory in Integrated Development Environment (IDE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#readme-license-and-contributing">README, LICENSE and CONTRIBUTING</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#readme">1. README</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#license">2. LICENSE</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">3. CONTRIBUTING</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#version-control">Version Control</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-configuration">Initial Configuration</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-new-repository">Setting Up a New Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-a-remote-repository">Connecting to a Remote Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cloning-an-existing-repository">Cloning an Existing Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#git-workflow">Git Workflow</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-environment">Virtual Environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-virtual-environment">Create Virtual Environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#activate-virtual-environment">Activate Virtual Environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-pip-setuptools-and-wheel">Upgrade pip, setuptools and wheel</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-project-dependencies">Managing Project Dependencies</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-dependencies-with-requirements-txt">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-dependencies-with-pyproject-toml">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-3-build">Phase 3. Build</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#styling-and-formatting">Styling and Formatting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-commit">Pre-commit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#folder-structure">Folder Structure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jupyter-book-setup">Jupyter Book Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mkdocs-setup">Mkdocs Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mkdocstrings">Mkdocstrings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-cd-github-actions">CI/CD (GitHub Actions)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-merge-checks">Pre-Merge Checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-website">Deploy to Website</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-5-continuous-deployment">Phase 5. Continuous Deployment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#release">Release</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring">Phase 6. Continuous Monitoring</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-and-observability">Monitoring and Observability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="continuous-integration-ci-workflow">
+<h1>Continuous Integration (CI) Workflow<a class="headerlink" href="#continuous-integration-ci-workflow" title="Permalink to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#phase-1-planning" id="id2">Phase 1. Planning</a></p></li>
+<li><p><a class="reference internal" href="#phase-2-development" id="id3">Phase 2. Development</a></p>
+<ul>
+<li><p><a class="reference internal" href="#set-up-main-directory-in-integrated-development-environment-ide" id="id4">Set Up Main Directory in Integrated Development Environment (IDE)</a></p></li>
+<li><p><a class="reference internal" href="#readme-license-and-contributing" id="id5">README, LICENSE and CONTRIBUTING</a></p>
+<ul>
+<li><p><a class="reference internal" href="#readme" id="id6">1. README</a></p></li>
+<li><p><a class="reference internal" href="#license" id="id7">2. LICENSE</a></p></li>
+<li><p><a class="reference internal" href="#contributing" id="id8">3. CONTRIBUTING</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#version-control" id="id9">Version Control</a></p>
+<ul>
+<li><p><a class="reference internal" href="#initial-configuration" id="id10">Initial Configuration</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-a-new-repository" id="id11">Setting Up a New Repository</a></p></li>
+<li><p><a class="reference internal" href="#connecting-to-a-remote-repository" id="id12">Connecting to a Remote Repository</a></p></li>
+<li><p><a class="reference internal" href="#cloning-an-existing-repository" id="id13">Cloning an Existing Repository</a></p></li>
+<li><p><a class="reference internal" href="#git-workflow" id="id14">Git Workflow</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#virtual-environment" id="id15">Virtual Environment</a></p>
+<ul>
+<li><p><a class="reference internal" href="#create-virtual-environment" id="id16">Create Virtual Environment</a></p></li>
+<li><p><a class="reference internal" href="#activate-virtual-environment" id="id17">Activate Virtual Environment</a></p></li>
+<li><p><a class="reference internal" href="#upgrade-pip-setuptools-and-wheel" id="id18">Upgrade pip, setuptools and wheel</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#managing-project-dependencies" id="id19">Managing Project Dependencies</a></p>
+<ul>
+<li><p><a class="reference internal" href="#managing-dependencies-with-requirements-txt" id="id20">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></a></p></li>
+<li><p><a class="reference internal" href="#managing-dependencies-with-pyproject-toml" id="id21">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#phase-3-build" id="id22">Phase 3. Build</a></p></li>
+<li><p><a class="reference internal" href="#styling-and-formatting" id="id23">Styling and Formatting</a></p></li>
+<li><p><a class="reference internal" href="#pre-commit" id="id24">Pre-commit</a></p>
+<ul>
+<li><p><a class="reference internal" href="#folder-structure" id="id25">Folder Structure</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#documentation" id="id26">Documentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#jupyter-book-setup" id="id27">Jupyter Book Setup</a></p></li>
+<li><p><a class="reference internal" href="#mkdocs-setup" id="id28">Mkdocs Setup</a></p></li>
+<li><p><a class="reference internal" href="#mkdocstrings" id="id29">Mkdocstrings</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#tests" id="id30">Tests</a></p></li>
+<li><p><a class="reference internal" href="#ci-cd-github-actions" id="id31">CI/CD (GitHub Actions)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pre-merge-checks" id="id32">Pre-Merge Checks</a></p></li>
+<li><p><a class="reference internal" href="#deploy-to-website" id="id33">Deploy to Website</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#phase-5-continuous-deployment" id="id34">Phase 5. Continuous Deployment</a></p>
+<ul>
+<li><p><a class="reference internal" href="#release" id="id35">Release</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#phase-6-continuous-monitoring" id="id36">Phase 6. Continuous Monitoring</a></p>
+<ul>
+<li><p><a class="reference internal" href="#monitoring-and-observability" id="id37">Monitoring and Observability</a></p></li>
+<li><p><a class="reference internal" href="#motivation" id="id38">Motivation</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>Continuous Integration (CI) is a software development practice that focuses on
+frequently integrating code changes from multiple developers into a shared
+repository. CI aims to detect integration issues early and ensure that the
+software remains in a releasable state at all times.</p>
+<p>A CI workflow refers to the series of steps and automated processes involved in
+the continuous integration of code changes. It typically involves building and
+testing the software, often in an automated and reproducible manner.</p>
+<p>The primary goal of a CI workflow is to identify any issues or conflicts that
+may arise when integrating code changes. By continuously integrating code,
+developers can catch and fix problems early, reducing the chances of introducing
+bugs or breaking existing functionality.</p>
+<p>CI workflows usually include steps such as code compilation, running tests,
+generating documentation, and deploying the application to test environments.
+These steps are often automated, triggered by events such as code pushes or pull
+requests.</p>
+<p>Popular CI tools like Jenkins, Travis CI, and GitHub Actions provide mechanisms
+to define and execute CI workflows. These tools integrate with version control
+systems and offer a range of features, including customizable build and test
+environments, notifications, and integration with other development tools.</p>
+<section id="phase-1-planning">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Phase 1. Planning</a><a class="headerlink" href="#phase-1-planning" title="Permalink to this heading">#</a></h2>
+<p>The Planning stage involves defining what needs to be built or developed. It’s a
+crucial phase where project managers, developers, and stakeholders come together
+to identify requirements, set goals, establish timelines, and plan the resources
+needed for the project. This stage often involves using project tracking tools
+and Agile methodologies like scrum or kanban to organize tasks, sprints, and
+priorities.</p>
+<p>Common tech stack includes:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.atlassian.com/software/jira">Jira</a>: A popular project
+management tool that helps teams plan, track, and manage agile software
+development projects.</p></li>
+<li><p><a class="reference external" href="https://www.atlassian.com/software/confluence">Confluence</a>: A team
+collaboration tool that helps teams create, share, and collaborate on
+projects.</p></li>
+</ul>
+</section>
+<section id="phase-2-development">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Phase 2. Development</a><a class="headerlink" href="#phase-2-development" title="Permalink to this heading">#</a></h2>
+<p>Coding or development is where the actual software creation takes place.
+Developers write code to implement the planned features and functionalities,
+adhering to coding standards and practices. <strong>Version control systems</strong>, such as
+Git, play an important role in this stage, enabling developers to collaborate on
+code, manage changes, and maintain a history of the project’s development.</p>
+<section id="set-up-main-directory-in-integrated-development-environment-ide">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Set Up Main Directory in Integrated Development Environment (IDE)</a><a class="headerlink" href="#set-up-main-directory-in-integrated-development-environment-ide" title="Permalink to this heading">#</a></h3>
+<p>Let us assume that we are residing in our root folder <code class="docutils literal notranslate"><span class="pre">~/</span></code> and we want to create
+a new project called <strong>yolo</strong> in Microsoft Visual Studio Code, we can do as
+follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/<span class="w">      </span>$<span class="w"> </span>mkdir<span class="w"> </span>yolo<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>yolo
+~/yolo<span class="w">  </span>$<span class="w"> </span>code<span class="w"> </span>.<span class="w">                 </span><span class="c1"># (1)</span>
+</pre></div>
+</div>
+<p>If you are cloning a repository to your local folder <strong>yolo</strong>, you can also do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:&lt;username&gt;/&lt;repo-name&gt;.git<span class="w"> </span>.
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">.</span></code> means cloning to the current directory.</p>
+</section>
+<section id="readme-license-and-contributing">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">README, LICENSE and CONTRIBUTING</a><a class="headerlink" href="#readme-license-and-contributing" title="Permalink to this heading">#</a></h3>
+<section id="readme">
+<h4><a class="toc-backref" href="#id6" role="doc-backlink">1. README</a><a class="headerlink" href="#readme" title="Permalink to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file serves as the front page of your repository. It should
+provide all the necessary information about the project, including:</p>
+<ul class="simple">
+<li><p><strong>Project Name and Description</strong>: Clearly state what your project does and
+why it exists.</p></li>
+<li><p><strong>Installation Instructions</strong>: Provide a step-by-step guide on how to get
+your project running on a user’s local environment.</p></li>
+<li><p><strong>Usage Guide</strong>: Explain how to use your project, including examples of
+common use cases.</p></li>
+<li><p><strong>Contributing</strong>: Link to your <code class="docutils literal notranslate"><span class="pre">CONTRIBUTING.md</span></code> file and invite others to
+contribute to the project.</p></li>
+<li><p><strong>License</strong>: Mention the type of license the project is under, with a link
+to the full <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code> file.</p></li>
+<li><p><strong>Contact Information</strong>: Offer a way for users to ask questions or get in
+touch.</p></li>
+</ul>
+<p>We can create a <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file to describe the project using the following
+command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>README.md
+</pre></div>
+</div>
+</section>
+<section id="license">
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">2. LICENSE</a><a class="headerlink" href="#license" title="Permalink to this heading">#</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">LICENSE</span></code> file is critical as it defines how others can legally use, modify,
+and distribute your project. If you’re unsure which license to use,
+<a class="reference external" href="https://choosealicense.com/">choosealicense.com</a> can help you decide.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>LICENSE
+</pre></div>
+</div>
+<p>After creating the file, you should fill it with the text of the license you’ve
+chosen. This could be the MIT License, GNU General Public License (GPL), Apache
+License 2.0, etc.</p>
+</section>
+<section id="contributing">
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">3. CONTRIBUTING</a><a class="headerlink" href="#contributing" title="Permalink to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">CONTRIBUTING.md</span></code> outlines guidelines for contributing to your project. This
+might include:</p>
+<ul class="simple">
+<li><p><strong>How to File an Issue</strong>: Instructions for reporting bugs or suggesting
+enhancements.</p></li>
+<li><p><strong>How to Submit a Pull Request (PR)</strong>: Guidelines on the process for
+submitting a PR, including coding standards, test instructions, etc.</p></li>
+<li><p><strong>Community and Behavioral Expectations</strong>: Information on the code of
+conduct and the expectations for community interactions.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>CONTRIBUTING.md
+</pre></div>
+</div>
+</section>
+</section>
+<section id="version-control">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Version Control</a><a class="headerlink" href="#version-control" title="Permalink to this heading">#</a></h3>
+<p>Ve</p>
+<section id="initial-configuration">
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Initial Configuration</a><a class="headerlink" href="#initial-configuration" title="Permalink to this heading">#</a></h4>
+<p>Before you start using Git, you should configure your global username and email
+associated with your commits. This information identifies the author of the
+changes and is important for collaboration.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.name<span class="w"> </span>&lt;your-name&gt;
+git<span class="w"> </span>config<span class="w"> </span>--global<span class="w"> </span>user.email<span class="w"> </span>&lt;your-email&gt;
+</pre></div>
+</div>
+<p>You should necessarily replace <code class="docutils literal notranslate"><span class="pre">&lt;your-name&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;your-email&gt;</span></code> with your actual
+name and email address. In particular, having the correct email address is
+important as it is used to link your commits to your GitHub account.</p>
+</section>
+<section id="setting-up-a-new-repository">
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">Setting Up a New Repository</a><a class="headerlink" href="#setting-up-a-new-repository" title="Permalink to this heading">#</a></h4>
+<p>If you’re starting a new project in a local directory (e.g., <code class="docutils literal notranslate"><span class="pre">~/yolo</span></code>), you’ll
+follow these steps to initialize it as a Git repository, stage your files, and
+make your first commit.</p>
+<ol class="arabic">
+<li><p><strong>Create a <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> File</strong>: This file tells Git which files or
+directories to ignore in your project, like build directories or system
+files.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>.gitignore
+</pre></div>
+</div>
+<p>Populate <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> with patterns to ignore. For example:</p>
+<div class="highlight-plaintext notranslate"><div class="highlight"><pre><span></span>.DS_Store
+__pycache__/
+env/
+</pre></div>
+</div>
+<p>which can be done using the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>cat<span class="w"> </span>&gt;<span class="w"> </span>.abc<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">.DS_Store</span>
+<span class="s">__pycache__/</span>
+<span class="s">env/</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Initialize the Repository</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>init
+</pre></div>
+</div>
+<p>This command creates a new Git repository locally.</p>
+</li>
+<li><p><strong>Add Files to the Repository</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>add<span class="w"> </span>.
+</pre></div>
+</div>
+<p>This adds all files in the directory (except those listed in <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code>)
+to the staging area, preparing them for commit.</p>
+</li>
+<li><p><strong>Commit the Changes</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Initial commit&quot;</span>
+</pre></div>
+</div>
+<p>This captures a snapshot of the project’s currently staged changes.</p>
+</li>
+</ol>
+</section>
+<section id="connecting-to-a-remote-repository">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Connecting to a Remote Repository</a><a class="headerlink" href="#connecting-to-a-remote-repository" title="Permalink to this heading">#</a></h4>
+<p>After initializing your local repository, the next step is to link it with a
+remote repository. This allows you to push your changes to a server, making
+collaboration and backup easier.</p>
+<ol class="arabic" start="5">
+<li><p><strong>Add a Remote Repository</strong> (If you’ve just initialized a local repo or if
+it’s not yet connected to a remote):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>origin<span class="w"> </span>&lt;repo-url&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;repo-url&gt;</span></code> with your repository’s URL, which you can obtain from
+GitHub or another Git service such as GitLab or Bitbucket.</p>
+</li>
+<li><p><strong>Securely Push to the Remote Using a Token</strong> (Optional but recommended for
+enhanced security):</p>
+<p>Before pushing changes, especially when 2FA (Two Factor Authentication) is
+enabled, you might need to use a token instead of a password.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>remote<span class="w"> </span>set-url<span class="w"> </span>origin<span class="w"> </span>https://&lt;token&gt;@github.com/&lt;username&gt;/&lt;repository&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal notranslate"><span class="pre">&lt;token&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;username&gt;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&lt;repository&gt;</span></code> with your personal
+access token, your GitHub username, and your repository name, respectively.</p>
+</li>
+<li><p><strong>Push Your Changes</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>main
+</pre></div>
+</div>
+<p>This command pushes your commits to the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch of the remote
+repository. The <code class="docutils literal notranslate"><span class="pre">-u</span></code> flag sets the upstream, making <code class="docutils literal notranslate"><span class="pre">origin</span> <span class="pre">main</span></code> the
+default target for future pushes.</p>
+</li>
+</ol>
+</section>
+<section id="cloning-an-existing-repository">
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">Cloning an Existing Repository</a><a class="headerlink" href="#cloning-an-existing-repository" title="Permalink to this heading">#</a></h4>
+<p>If you’ve already cloned an existing repository, many of these steps
+(specifically from initializing the repo to the first commit) are unnecessary
+since the repository comes pre-initialized and connected to its remote
+counterpart. You’d typically start by pulling the latest changes with <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">pull</span></code>
+and then proceed with your work.</p>
+</section>
+<section id="git-workflow">
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Git Workflow</a><a class="headerlink" href="#git-workflow" title="Permalink to this heading">#</a></h4>
+<p>It is important to establish a consistent Git workflow to ensure that changes
+are managed effectively and that the project’s history is kept clean.</p>
+<p>You can read more about git workflows here:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow">Feature Branch Workflow</a></p></li>
+<li><p><a class="reference external" href="https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow">Gitflow workflow</a></p></li>
+<li><p><a class="reference external" href="https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow">Forking Workflow</a></p></li>
+</ul>
+</section>
+</section>
+<section id="virtual-environment">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Virtual Environment</a><a class="headerlink" href="#virtual-environment" title="Permalink to this heading">#</a></h3>
+<p>We can follow python’s official documentation on
+<a class="reference external" href="https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/">installing packages in a virtual environment using pip and venv</a>.
+In what follows, we would give a brief overview of the steps to set up a virtual
+environment for your project.</p>
+<section id="create-virtual-environment">
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">Create Virtual Environment</a><a class="headerlink" href="#create-virtual-environment" title="Permalink to this heading">#</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>&lt;venv-name&gt;
+</pre></div>
+</div>
+</section>
+<section id="activate-virtual-environment">
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">Activate Virtual Environment</a><a class="headerlink" href="#activate-virtual-environment" title="Permalink to this heading">#</a></h4>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1">Unix/macOS</label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>&lt;venv-name&gt;/bin/activate
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--0-input--2" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--2">Windows</label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span>$<span class="w"> </span>&lt;venv-name&gt;<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="upgrade-pip-setuptools-and-wheel">
+<h4><a class="toc-backref" href="#id18" role="doc-backlink">Upgrade pip, setuptools and wheel</a><a class="headerlink" href="#upgrade-pip-setuptools-and-wheel" title="Permalink to this heading">#</a></h4>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>~/yolo<span class="w"> </span>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span>setuptools<span class="w"> </span>wheel
+</pre></div>
+</div>
+</section>
+</section>
+<section id="managing-project-dependencies">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Managing Project Dependencies</a><a class="headerlink" href="#managing-project-dependencies" title="Permalink to this heading">#</a></h3>
+<p>Once you’ve established a virtual environment for your project, the next step is
+to install the necessary libraries and packages. This process ensures that your
+project has all the tools required for development and execution.</p>
+<section id="managing-dependencies-with-requirements-txt">
+<h4><a class="toc-backref" href="#id20" role="doc-backlink">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></a><a class="headerlink" href="#managing-dependencies-with-requirements-txt" title="Permalink to this heading">#</a></h4>
+<p>For project dependency management, the use of a <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file is a
+common and straightforward approach. This file lists all the packages your
+project needs, allowing for easy installation with a single command.</p>
+<p>For simpler or moderately complex projects, a <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file is often
+sufficient. Create this file and list each dependency on a separate line,
+specifying exact versions to ensure consistency across different environments.</p>
+<ol class="arabic">
+<li><p><strong>Create a <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>touch<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</li>
+<li><p><strong>Populate <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> with your project’s dependencies</strong>. For
+example:</p>
+<div class="highlight-plaintext notranslate"><div class="highlight"><pre><span></span>torch==1.10.0+cu113
+torchaudio==0.10.0+cu113
+torchvision==0.11.1+cu113
+albumentations==1.1.0
+matplotlib==3.2.2
+pandas==1.3.1
+torchinfo==1.7.1
+tqdm==4.64.1
+wandb==0.12.6
+</pre></div>
+</div>
+<p>You can directly edit <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> in your favorite text editor to
+include the above dependencies.</p>
+</li>
+<li><p><strong>Install the dependencies</strong> from your <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Certain libraries, like PyTorch with CUDA support, may require downloading
+binaries from a specific URL due to additional dependencies. In such cases, you
+can use the <code class="docutils literal notranslate"><span class="pre">-f</span></code> option with <code class="docutils literal notranslate"><span class="pre">pip</span></code> to specify a custom repository for dependency
+links:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>-f<span class="w"> </span>https://download.pytorch.org/whl/torch_stable.html
+</pre></div>
+</div>
+<p>This command tells <code class="docutils literal notranslate"><span class="pre">pip</span></code> to also look at the given URL for any packages listed
+in your <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code>, which is particularly useful for installing versions
+of libraries that require CUDA for GPU acceleration.</p>
+<p>You can also have a <code class="docutils literal notranslate"><span class="pre">requirements-dev.txt</span></code> file for development dependencies.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>touch<span class="w"> </span>requirements-dev.txt
+</pre></div>
+</div>
+<p>These dependencies are often used for testing, documentation, and other
+development-related tasks.</p>
+</section>
+<section id="managing-dependencies-with-pyproject-toml">
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></a><a class="headerlink" href="#managing-dependencies-with-pyproject-toml" title="Permalink to this heading">#</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> is a configuration file introduced in
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0518/">PEP 518</a> as a standardized way for
+Python projects to manage project settings and dependencies. It aims to replace
+the traditional <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> and <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> files with a single, unified
+file that can handle a project’s build system requirements, dependencies, and
+other configurations in a standardized format.</p>
+<ul class="simple">
+<li><p><strong>Unified Configuration</strong>: <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> consolidates various tool
+configurations into one file, making project setups more straightforward and
+reducing the number of files at the project root.</p></li>
+<li><p><strong>Dependency Management</strong>: It can specify both direct project dependencies
+and development dependencies, similar to <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> and
+<code class="docutils literal notranslate"><span class="pre">requirements-dev.txt</span></code>. Tools like <code class="docutils literal notranslate"><span class="pre">pip</span></code> can read <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> to
+install the necessary packages.</p></li>
+<li><p><strong>Build System Requirements</strong>: It explicitly declares the build system
+requirements, ensuring the correct tools are present before the build
+process begins. This is particularly important for projects that need to
+compile native extensions.</p></li>
+<li><p><strong>Tool Configuration</strong>: Many Python tools (e.g., <code class="docutils literal notranslate"><span class="pre">black</span></code>, <code class="docutils literal notranslate"><span class="pre">flake8</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pytest</span></code>) now support reading configuration options from <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code>,
+allowing developers to centralize their configurations.</p></li>
+</ul>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span>[build-system]
+requires = [&quot;setuptools&quot;, &quot;wheel&quot;]
+build-backend = &quot;setuptools.build_meta&quot;
+
+[project]
+name = &quot;example_project&quot;
+version = &quot;0.1.0&quot;
+description = &quot;An example project&quot;
+authors = [{name = &quot;Your Name&quot;, email = &quot;you@example.com&quot;}]
+dependencies = [
+    &quot;requests&gt;=2.24&quot;,
+    &quot;numpy&gt;=1.19&quot;
+]
+optional-dependencies = {
+    &quot;dev&quot; = [&quot;pytest&gt;=6.0&quot;, &quot;black&quot;, &quot;flake8&quot;]
+}
+
+[tool.black]
+line-length = 88
+target-version = [&#39;py38&#39;]
+
+[tool.pytest]
+minversion = &quot;6.0&quot;
+addopts = &quot;-ra -q&quot;
+</pre></div>
+</div>
+<p>Now if you want to install the dependencies, you can do so with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.
+</pre></div>
+</div>
+<p>and for development dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
+</pre></div>
+</div>
+<p>To this end, you should see the following directory structure:</p>
+<div class="highlight-tree notranslate"><div class="highlight"><pre><span></span>.
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── pyproject.toml
+├── requirements.txt
+├── requirements-dev.txt
+└── venv
+    ├── bin
+    ├── include
+    ├── lib
+    ├── pyvenv.cfg
+    └── share
+</pre></div>
+</div>
+<p>You can find more information on writing your
+<a class="reference external" href="https://packaging.python.org/en/latest/guides/writing-pyproject-toml/"><code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file here</a>.</p>
+</section>
+</section>
+</section>
+<section id="phase-3-build">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Phase 3. Build</a><a class="headerlink" href="#phase-3-build" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Dockerize the application. Production identical environment.</p></li>
+<li><p>Infrastructure as Code (IaC) for cloud deployment.</p></li>
+<li><p>Container orchestration for scaling and managing containers.</p></li>
+</ol>
+</section>
+<section id="styling-and-formatting">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Styling and Formatting</a><a class="headerlink" href="#styling-and-formatting" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="pre-commit">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Pre-commit</a><a class="headerlink" href="#pre-commit" title="Permalink to this heading">#</a></h2>
+<p>This is on branch <code class="docutils literal notranslate"><span class="pre">pre-commit</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
+~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>pre-commit<span class="w"> </span>install
+
+pre-commit<span class="w"> </span>installed<span class="w"> </span>at<span class="w"> </span>.git<span class="se">\h</span>ooks<span class="se">\p</span>re-commit
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>.pre-commit-config.yaml
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">~/yolo (venv) $ cat .pre-commit-config.yaml</span>
+
+<span class="l l-Scalar l-Scalar-Plain">repos</span><span class="p p-Indicator">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+<span class="w">  </span><span class="nt">hooks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">linter</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run linter</span>
+<span class="w">      </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bash</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;./scripts/linter.sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+<span class="w">      </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">check_format</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run black code formatter</span>
+<span class="w">      </span><span class="nt">entry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bash</span>
+<span class="w">      </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;./scripts/formatter.sh&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+<span class="w">      </span><span class="nt">pass_filenames</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<p>means we will run <code class="docutils literal notranslate"><span class="pre">linter.sh</span></code> and <code class="docutils literal notranslate"><span class="pre">formatter.sh</span></code> before every commit.</p>
+<section id="folder-structure">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Folder Structure</a><a class="headerlink" href="#folder-structure" title="Permalink to this heading">#</a></h3>
+<p>A very barebone structure as of now would be as follows:</p>
+<div class="highlight-tree notranslate"><div class="highlight"><pre><span></span>.
+├── LICENSE
+├── README.md
+├── mlops_pipeline_feature_v1
+│   ├── __init__.py
+│   └── pipeline.py
+├── pyproject.toml
+├── requirements.txt
+└── requirements_dev.txt
+</pre></div>
+</div>
+</section>
+</section>
+<section id="documentation">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Documentation</a><a class="headerlink" href="#documentation" title="Permalink to this heading">#</a></h2>
+<section id="jupyter-book-setup">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Jupyter Book Setup</a><a class="headerlink" href="#jupyter-book-setup" title="Permalink to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="o">==</span><span class="m">0</span>.13.1
+sphinx-inline-tabs<span class="o">==</span><span class="m">2021</span>.3.28b7
+sphinx-proof<span class="o">==</span><span class="m">0</span>.1.3
+myst-nb<span class="o">==</span><span class="m">0</span>.16.0<span class="w"> </span><span class="c1"># remember to download manually</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>mkdir<span class="w"> </span>content
+</pre></div>
+</div>
+<p>You populate the <code class="docutils literal notranslate"><span class="pre">content</span></code> folder with your notebooks and markdown files.</p>
+<p>To build the book, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>jupyter-book<span class="w"> </span>build<span class="w"> </span>content
+</pre></div>
+</div>
+<p>Then the book will be built in the <code class="docutils literal notranslate"><span class="pre">_build</span></code> folder.</p>
+<p>Lastly, to serve and deploy the book, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>mkdir<span class="w"> </span>.github/workflows
+~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>touch<span class="w"> </span>.github/workflows/deploy.yml
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>~/yolo<span class="w"> </span><span class="o">(</span>venv<span class="o">)</span><span class="w"> </span>$<span class="w"> </span>cat<span class="w"> </span>.github/workflows/deploy.yml
+
+name:<span class="w"> </span>deploy
+
+on:
+<span class="w">  </span><span class="c1"># Trigger the workflow on push to main branch</span>
+<span class="w">  </span>push:
+<span class="w">    </span>branches:
+<span class="w">      </span>-<span class="w"> </span>main
+<span class="w">      </span>-<span class="w"> </span>master
+
+<span class="c1"># This job installs dependencies, build the book, and pushes it to `gh-pages`</span>
+jobs:
+<span class="w">  </span>build-and-deploy-book:
+<span class="w">    </span>runs-on:<span class="w"> </span><span class="si">${</span><span class="p">{ matrix.os </span><span class="si">}</span><span class="o">}</span>
+<span class="w">    </span>strategy:
+<span class="w">      </span>matrix:
+<span class="w">        </span>os:<span class="w"> </span><span class="o">[</span>ubuntu-latest<span class="o">]</span>
+<span class="w">        </span>python-version:<span class="w"> </span><span class="o">[</span><span class="m">3</span>.8<span class="o">]</span>
+<span class="w">    </span>steps:
+<span class="w">    </span>-<span class="w"> </span>uses:<span class="w"> </span>actions/checkout@v2
+
+<span class="w">    </span><span class="c1"># Install dependencies</span>
+<span class="w">    </span>-<span class="w"> </span>name:<span class="w"> </span>Set<span class="w"> </span>up<span class="w"> </span>Python<span class="w"> </span><span class="si">${</span><span class="p">{ matrix.python-version </span><span class="si">}</span><span class="o">}</span>
+<span class="w">      </span>uses:<span class="w"> </span>actions/setup-python@v1
+<span class="w">      </span>with:
+<span class="w">        </span>python-version:<span class="w"> </span><span class="si">${</span><span class="p">{ matrix.python-version </span><span class="si">}</span><span class="o">}</span>
+<span class="w">    </span>-<span class="w"> </span>name:<span class="w"> </span>Install<span class="w"> </span>dependencies
+<span class="w">      </span>run:<span class="w"> </span><span class="p">|</span>
+<span class="w">        </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="w">    </span><span class="c1"># Build the book</span>
+<span class="w">    </span>-<span class="w"> </span>name:<span class="w"> </span>Build<span class="w"> </span>the<span class="w"> </span>book
+<span class="w">      </span>run:<span class="w"> </span><span class="p">|</span>
+<span class="w">        </span>jupyter-book<span class="w"> </span>build<span class="w"> </span>content
+
+<span class="w">    </span><span class="c1"># Deploy the book&#39;s HTML to gh-pages branch</span>
+<span class="w">    </span>-<span class="w"> </span>name:<span class="w"> </span>GitHub<span class="w"> </span>Pages<span class="w"> </span>action
+<span class="w">      </span>uses:<span class="w"> </span>peaceiris/actions-gh-pages@v3.6.1
+<span class="w">      </span>with:
+<span class="w">        </span>github_token:<span class="w"> </span><span class="si">${</span><span class="p">{ secrets.GITHUB_TOKEN </span><span class="si">}</span><span class="o">}</span>
+<span class="w">        </span>publish_dir:<span class="w"> </span>content/_build/html
+</pre></div>
+</div>
+<p>This will deploy the book to the <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code> branch. Remember to enable GitHub
+Pages in the repository settings.</p>
+</section>
+<section id="mkdocs-setup">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Mkdocs Setup</a><a class="headerlink" href="#mkdocs-setup" title="Permalink to this heading">#</a></h3>
+<p>We will be using <a class="reference external" href="https://www.mkdocs.org/">Mkdocs</a> to generate our markdown
+documentation into a static website.</p>
+<ol class="arabic">
+<li><p>The following requirements are necessary to run <code class="docutils literal notranslate"><span class="pre">mkdocs</span></code>:</p>
+<div class="highlight-txt notranslate"><div class="highlight"><pre><span></span>mkdocs                            1.3.0
+mkdocs-material                   8.2.13
+mkdocs-material-extensions        1.0.3
+mkdocstrings                      0.18.1
+</pre></div>
+</div>
+</li>
+<li><p>Initialize default template by calling <code class="docutils literal notranslate"><span class="pre">mkdocs</span> <span class="pre">new</span> <span class="pre">.</span></code> where <code class="docutils literal notranslate"><span class="pre">.</span></code> refers to the
+current directory. The <code class="docutils literal notranslate"><span class="pre">.</span></code> can be replaced with a path to your directory as
+well. Subsequently, a folder <code class="docutils literal notranslate"><span class="pre">docs</span></code> alongside with <code class="docutils literal notranslate"><span class="pre">mkdocs.yml</span></code> file will be
+created.</p>
+<div class="highlight-tree notranslate"><div class="highlight"><pre><span></span>pkd_exercise_counter/
+├── venv_pkd_exercise_counter/
+├── docs/
+│   └── index.md
+├── mkdocs.yml
+├── requirements.txt
+└── setup.py
+</pre></div>
+</div>
+</li>
+<li><p>We can specify the following configurations in <code class="docutils literal notranslate"><span class="pre">mkdocs.yml</span></code>:</p>
+<p>???+ example “Show/Hide mkdocs.yml”
+<code class="docutils literal notranslate"><span class="pre">yml</span> <span class="pre">title=&quot;mkdocs.yml&quot;</span> <span class="pre">linenums=&quot;1&quot;</span> <span class="pre">site_name:</span> <span class="pre">Hongnan</span> <span class="pre">G.</span> <span class="pre">PeekingDuck</span> <span class="pre">Exercise</span> <span class="pre">Counter</span> <span class="pre">site_url:</span> <span class="pre">&quot;&quot;</span> <span class="pre">nav:</span> <span class="pre">-</span> <span class="pre">Home:</span> <span class="pre">index.md</span> <span class="pre">-</span> <span class="pre">PeekingDuck:</span> <span class="pre">-</span> <span class="pre">Setup:</span> <span class="pre">workflows.md</span> <span class="pre">-</span> <span class="pre">Push-up</span> <span class="pre">Counter:</span> <span class="pre">pushup.md</span> <span class="pre">theme:</span> <span class="pre">name:</span> <span class="pre">material</span> <span class="pre">features:</span> <span class="pre">-</span> <span class="pre">content.code.annotate</span> <span class="pre">markdown_extensions:</span> <span class="pre">-</span> <span class="pre">attr_list</span> <span class="pre">-</span> <span class="pre">md_in_html</span> <span class="pre">-</span> <span class="pre">admonition</span> <span class="pre">-</span> <span class="pre">footnotes</span> <span class="pre">-</span> <span class="pre">pymdownx.highlight</span> <span class="pre">-</span> <span class="pre">pymdownx.inlinehilite</span> <span class="pre">-</span> <span class="pre">pymdownx.superfences</span> <span class="pre">-</span> <span class="pre">pymdownx.snippets</span> <span class="pre">-</span> <span class="pre">pymdownx.details</span> <span class="pre">-</span> <span class="pre">pymdownx.arithmatex:</span> <span class="pre">generic:</span> <span class="pre">true</span> <span class="pre">extra_javascript:</span> <span class="pre">-</span> <span class="pre">javascript/mathjax.js</span> <span class="pre">-</span> <span class="pre">https://polyfill.io/v3/polyfill.min.js?features=es6</span> <span class="pre">-</span> <span class="pre">https://cdn.jsdelivr.net/npm/mathjax&#64;3/es5/tex-mml-chtml.js</span> <span class="pre">extra_css:</span> <span class="pre">-</span> <span class="pre">css/extra.css</span> <span class="pre">plugins:</span> <span class="pre">-</span> <span class="pre">search</span> <span class="pre">-</span> <span class="pre">mkdocstrings</span> <span class="pre">#</span> <span class="pre">plugins</span> <span class="pre">for</span> <span class="pre">mkdocstrings</span> </code></p>
+<p>Some of the key features include:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://squidfunk.github.io/mkdocs-material/reference/code-blocks/">Code block Line Numbering</a>;</p></li>
+<li><p><a class="reference external" href="https://squidfunk.github.io/mkdocs-material/reference/code-blocks/">Code block Annotations</a>;</p></li>
+<li><p><a class="reference external" href="https://squidfunk.github.io/mkdocs-material/reference/mathjax/">MathJax</a>.</p></li>
+</ul>
+<p>One missing feature is the ability to <strong>toggle</strong> code blocks. Two
+workarounds are provided:</p>
+<p>??? “Toggle Using Admonition”
+<code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">title=&quot;Setting</span> <span class="pre">Up&quot;</span> <span class="pre">mkdir</span> <span class="pre">custom_hn_push_up_counter</span> </code></p>
+ <details>
+ <summary>Toggle Using HTML</summary>
+ ```bash title="Setting Up"
+ mkdir custom_hn_push_up_counter
+ ```
+ </details>
+</li>
+<li><p>We added some custom CSS and JavaScript files. In particular, we added
+<code class="docutils literal notranslate"><span class="pre">mathjax.js</span></code> for easier latex integration.</p></li>
+<li><p>You can now call <code class="docutils literal notranslate"><span class="pre">mkdocs</span> <span class="pre">serve</span></code> to start the server at a local host to view
+your document.</p></li>
+</ol>
+<p>!!! tip To link to a section or header, you can do this: [link to Styling and
+Formatting by
+<span class="xref myst">workflow.md#styling-and-formatting</span>.</p>
+</section>
+<section id="mkdocstrings">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Mkdocstrings</a><a class="headerlink" href="#mkdocstrings" title="Permalink to this heading">#</a></h3>
+<p>We also can create docstrings as API reference using
+<a class="reference external" href="https://mkdocstrings.github.io/usage/">Mkdocstrings</a>:</p>
+<ul>
+<li><p>Install mkdocstrings: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">mkdocstrings</span></code></p></li>
+<li><p>Place plugings to <code class="docutils literal notranslate"><span class="pre">mkdocs.yml</span></code>:</p>
+<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>plugins:
+    - search
+    - mkdocstrings
+</pre></div>
+</div>
+</li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">mkdocs.yml</span></code>’s navigation tree:</p>
+<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>- API Documentation:
+      - Exercise Counter: api/exercise_counter_api.md
+</pre></div>
+</div>
+<p>For example you have a python file called <code class="docutils literal notranslate"><span class="pre">exercise_counter.py</span></code> and want to
+render it, create a file named <code class="docutils literal notranslate"><span class="pre">api/exercise_counter_api.md</span></code> and in this
+markdown file:</p>
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span>::: custom_hn_exercise_counter.src.custom_nodes.dabble.exercise_counter #
+package path.
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="tests">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Tests</a><a class="headerlink" href="#tests" title="Permalink to this heading">#</a></h2>
+<p>Set up <code class="docutils literal notranslate"><span class="pre">pytest</span></code> for testing codes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">pytest</span><span class="o">==</span><span class="m">6</span>.0.2
+pytest-cov<span class="o">==</span><span class="m">2</span>.10.1
+</pre></div>
+</div>
+<p>In general, <strong>Pytest</strong> expects our testing codes to be grouped under a folder
+called <code class="docutils literal notranslate"><span class="pre">tests</span></code>. We can configure in our <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file to override this
+if we wish to ask <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to check from a different directory. After specifying
+the folder holding the test codes, <code class="docutils literal notranslate"><span class="pre">pytest</span></code> will then look for python scripts
+starting with <code class="docutils literal notranslate"><span class="pre">tests_*.py</span></code>; we can also change the extensions accordingly if you
+want <code class="docutils literal notranslate"><span class="pre">pytest</span></code> to look for other kinds of files
+(extensions)<a class="footnote-reference brackets" href="#testing-made-with-ml" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pytest</span>
+<span class="o">[</span>tool.pytest.ini_options<span class="o">]</span>
+<span class="nv">testpaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="s2">&quot;tests&quot;</span><span class="o">]</span>
+<span class="nv">python_files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;test_*.py&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="ci-cd-github-actions">
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">CI/CD (GitHub Actions)</a><a class="headerlink" href="#ci-cd-github-actions" title="Permalink to this heading">#</a></h2>
+<p>The following content is with reference to:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.ravirajag.dev/blog/mlops-github-actions">MLOps Basics [Week 6]: CI/CD - GitHub Actions</a></p></li>
+<li><p><a class="reference external" href="https://madewithml.com/courses/mlops/cicd/">CI/CD for Machine Learning</a></p></li>
+</ul>
+<p>We will be using <a class="reference external" href="https://github.com/features/actions">GitHub Actions</a> to setup
+our mini CI/CD.</p>
+<section id="pre-merge-checks">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Pre-Merge Checks</a><a class="headerlink" href="#pre-merge-checks" title="Permalink to this heading">#</a></h3>
+<p>Commit checks is to ensure the following:</p>
+<ul class="simple">
+<li><p>The requirements can be installed on various OS and python versions.</p></li>
+<li><p>Ensure code quality and adherence to PEP8 (or other coding standards).</p></li>
+<li><p>Ensure tests are passed.</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Commit Checks</span><span class="w"> </span><span class="c1"># (1)</span>
+<span class="nt">on</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">push</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">pull_request</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># (2)</span>
+
+<span class="nt">jobs</span><span class="p">:</span><span class="w"> </span><span class="c1"># (3)</span>
+<span class="w">    </span><span class="nt">check_code</span><span class="p">:</span><span class="w"> </span><span class="c1"># (4)</span>
+<span class="w">        </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.os }}</span><span class="w"> </span><span class="c1"># (5)</span>
+<span class="w">        </span><span class="nt">strategy</span><span class="p">:</span><span class="w"> </span><span class="c1"># (6)</span>
+<span class="w">            </span><span class="nt">fail-fast</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># (7)</span>
+<span class="w">            </span><span class="nt">matrix</span><span class="p">:</span><span class="w"> </span><span class="c1"># (8)</span>
+<span class="w">                </span><span class="nt">os</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">ubuntu-latest</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">windows-latest</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># (9)</span>
+<span class="w">                </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">3.8</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">3.9</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># (10)</span>
+<span class="w">        </span><span class="nt">steps</span><span class="p">:</span><span class="w"> </span><span class="c1"># (11)</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout code</span><span class="w"> </span><span class="c1"># (12)</span>
+<span class="w">              </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span><span class="w"> </span><span class="c1"># (13)</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup Python</span><span class="w"> </span><span class="c1"># (14)</span>
+<span class="w">              </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v2</span><span class="w"> </span><span class="c1"># (15)</span>
+<span class="w">              </span><span class="nt">with</span><span class="p">:</span><span class="w"> </span><span class="c1"># (16)</span>
+<span class="w">                  </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ matrix.python-version }}</span><span class="w"> </span><span class="c1"># (17)</span>
+<span class="w">                  </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;pip&quot;</span><span class="w"> </span><span class="c1"># (18)</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dependencies</span><span class="w"> </span><span class="c1"># (19)</span>
+<span class="w">              </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"> </span><span class="c1"># (20)</span>
+<span class="w">                  </span><span class="no">python -m pip install --upgrade pip setuptools wheel</span>
+<span class="w">                  </span><span class="no">pip install -e .</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Black Formatter</span><span class="w"> </span><span class="c1"># (21)</span>
+<span class="w">              </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black --check .</span><span class="w"> </span><span class="c1"># (22)</span>
+<span class="w">            </span><span class="c1"># - name: Run flake8 Linter</span>
+<span class="w">            </span><span class="c1">#   run: flake8 . # look at my pyproject.toml file and see if there is a flake8 section, if so, run flake8 on the files in the flake8 section</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Pytest</span><span class="w"> </span><span class="c1"># (23)</span>
+<span class="w">              </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python -m coverage run --source=custom_hn_exercise_counter -m</span>
+<span class="w">                  </span><span class="l l-Scalar l-Scalar-Plain">pytest &amp;&amp; python -m coverage report</span><span class="w"> </span><span class="c1"># (24)</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>This is the name that will show up under the <strong>Actions</strong> tab in GitHub.
+Typically, we should name it appropriately like how we indicate the subject
+of an email.</p></li>
+<li><p>The list here indicates the
+<a class="reference external" href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request">workflow will be triggered</a>
+whenever someone directly pushes or submits a PR to the main branch.</p></li>
+<li><p>Once an event is triggered, a set of <strong>jobs</strong> will run on a
+<a class="reference external" href="https://github.com/actions/runner">runner</a>. In our example, we will run a
+job called <code class="docutils literal notranslate"><span class="pre">check_code</span></code> on a runner to check for formatting and linting
+errors as well as run the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> tests.</p></li>
+<li><p>This is the name of the job that will run on the runner.</p></li>
+<li><p>We specify which OS system we want the code to be run on. We can simply say
+<code class="docutils literal notranslate"><span class="pre">ubuntu-latest</span></code> or <code class="docutils literal notranslate"><span class="pre">windows-latest</span></code> if we just want the code to be tested on
+a single OS. However, here we want to check if it works on both Ubuntu and
+Windows, and hence we define <code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">matrix.os</span> <span class="pre">}}</span></code> where <code class="docutils literal notranslate"><span class="pre">matrix.os</span></code> is
+<code class="docutils literal notranslate"><span class="pre">[ubuntu-latest,</span> <span class="pre">windows-latest]</span></code>. A cartesian product is created for us and
+the job will run on both OSs.</p></li>
+<li><p>Strategy is a way to control how the jobs are run. In our example, we want
+the job to run as fast as possible, so we set <code class="docutils literal notranslate"><span class="pre">strategy.fail-fast</span></code> to
+<code class="docutils literal notranslate"><span class="pre">false</span></code>.</p></li>
+<li><p>If one job fails, then the whole workflow will fail, this is not ideal if we
+want to test multiple jobs, we can set <code class="docutils literal notranslate"><span class="pre">fail-fast</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code> to allow the
+workflow to continue running on the remaining jobs.</p></li>
+<li><p>Matrix is a way to control how the jobs are run. In our example, we want to
+run the job on both Python 3.8 and 3.9, so we set <code class="docutils literal notranslate"><span class="pre">matrix.python-version</span></code> to
+<code class="docutils literal notranslate"><span class="pre">[3.8,</span> <span class="pre">3.9]</span></code>.</p></li>
+<li><p>This list consists of the OS that the job will run on in cartesian product.</p></li>
+<li><p>This is the python version that the job will run on in cartesian product. We
+can simply say <code class="docutils literal notranslate"><span class="pre">3.8</span></code> or <code class="docutils literal notranslate"><span class="pre">3.9</span></code> if we just want the code to be tested on a
+single python version. However, here we want to check if it works on both
+python 3.8 and python 3.9, and hence we define
+<code class="docutils literal notranslate"><span class="pre">${{</span> <span class="pre">matrix.python-version</span> <span class="pre">}}</span></code> where <code class="docutils literal notranslate"><span class="pre">matrix.python-version</span></code> is
+<code class="docutils literal notranslate"><span class="pre">[3.8,</span> <span class="pre">3.9]</span></code>. A cartesian product is created for us and the job will run on
+both python versions.</p></li>
+<li><p>This is a list of dictionaries that defines the steps that will be run.</p></li>
+<li><p>Name is the name of the step that will be run.</p></li>
+<li><p>It is important to specify <code class="docutils literal notranslate"><span class="pre">&#64;v2</span></code> as if unspecified, then the workflow will
+use the latest version from actions/checkout template, potentially causing
+libraries to break. The idea here is like your <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> idea, if
+different versions then will break.</p></li>
+<li><p>Setup Python is a step that will be run before the job.</p></li>
+<li><p>Same as above, we specify <code class="docutils literal notranslate"><span class="pre">&#64;v2</span></code> as if unspecified, then the workflow will
+use the latest version from actions/setup-python template, potentially
+causing libraries to break.</p></li>
+<li><p>With is a way to pass parameters to the step.</p></li>
+<li><p>This is the python version that the job will run on in cartesian product and
+if run 1 python version then can define as just say 3.7</p></li>
+<li><p>Cache is a way to control how the libraries are installed.</p></li>
+<li><p>Install dependencies is a step that will be run before the job.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">|</span></code> is multi-line string that runs the below code, which sets up the
+libraries from <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> file.</p></li>
+<li><p>Run Black Formatter is a step that will be run before the job.</p></li>
+<li><p>Runs <code class="docutils literal notranslate"><span class="pre">black</span></code> with configurations from <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file.</p></li>
+<li><p>Run Pytest is a step that will be run before the job.</p></li>
+<li><p>Runs pytest, note that I specified <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span></code> to resolve PATH issues.</p></li>
+</ol>
+</section>
+<section id="deploy-to-website">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Deploy to Website</a><a class="headerlink" href="#deploy-to-website" title="Permalink to this heading">#</a></h3>
+<p>The other workflow for this project is to deploy the website built from Mkdocsto
+gh-pages branch.</p>
+<p>??? example “Show/Hide content for deploy_website.yml” ```yaml
+title=”deploy_website.yml” linenums=”1” name: Deploy Website to GitHub Pages</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>on:
+  push:
+    branches: [master]
+    paths:
+      - &quot;docs/**&quot;
+      - &quot;mkdocs.yml&quot;
+      - &quot;.github/workflows/deploy_website.yml&quot;
+
+permissions: write-all
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy Website
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          architecture: x64
+      - name: Install dependencies
+        run: | # this symbol is called a multiline string
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -e .
+
+      - name: Build Website
+        run: |
+          mkdocs build
+      - name: Push Built Website to gh-pages Branch
+        run: |
+          git config --global user.name &#39;Hongnan G.&#39;
+          git config --global user.email &#39;reighns92@users.noreply.github.com&#39;
+          ghp-import \
+          --no-jekyll \
+          --force \
+          --no-history \
+          --push \
+          --message &quot;Deploying ${{ github.sha }}&quot; \
+          site
+```
+</pre></div>
+</div>
+</section>
+</section>
+<section id="phase-5-continuous-deployment">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Phase 5. Continuous Deployment</a><a class="headerlink" href="#phase-5-continuous-deployment" title="Permalink to this heading">#</a></h2>
+<section id="release">
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Release</a><a class="headerlink" href="#release" title="Permalink to this heading">#</a></h3>
+</section>
+</section>
+<section id="phase-6-continuous-monitoring">
+<h2><a class="toc-backref" href="#id36" role="doc-backlink">Phase 6. Continuous Monitoring</a><a class="headerlink" href="#phase-6-continuous-monitoring" title="Permalink to this heading">#</a></h2>
+<section id="monitoring-and-observability">
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Monitoring and Observability</a><a class="headerlink" href="#monitoring-and-observability" title="Permalink to this heading">#</a></h3>
+</section>
+<section id="motivation">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>We may not be able to catch all the bugs and errors in the code.</p></li>
+<li><p>Failure with trace.</p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote brackets" id="testing-made-with-ml" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>This part is extracted from
+<a class="reference external" href="https://madewithml.com/courses/mlops/testing/#pytest">madewithml</a>.</p>
+</aside>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./software_engineering/devops/continuous-integration"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../deep_learning/training_chronicles/loss.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The Loss Landscape</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="styling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Styling, Formatting, and Linting</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1-planning">Phase 1. Planning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-development">Phase 2. Development</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-main-directory-in-integrated-development-environment-ide">Set Up Main Directory in Integrated Development Environment (IDE)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#readme-license-and-contributing">README, LICENSE and CONTRIBUTING</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#readme">1. README</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#license">2. LICENSE</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">3. CONTRIBUTING</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#version-control">Version Control</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-configuration">Initial Configuration</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-new-repository">Setting Up a New Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#connecting-to-a-remote-repository">Connecting to a Remote Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cloning-an-existing-repository">Cloning an Existing Repository</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#git-workflow">Git Workflow</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-environment">Virtual Environment</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#create-virtual-environment">Create Virtual Environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#activate-virtual-environment">Activate Virtual Environment</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#upgrade-pip-setuptools-and-wheel">Upgrade pip, setuptools and wheel</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-project-dependencies">Managing Project Dependencies</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-dependencies-with-requirements-txt">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#managing-dependencies-with-pyproject-toml">Managing Dependencies with <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-3-build">Phase 3. Build</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#styling-and-formatting">Styling and Formatting</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-commit">Pre-commit</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#folder-structure">Folder Structure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#jupyter-book-setup">Jupyter Book Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mkdocs-setup">Mkdocs Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mkdocstrings">Mkdocstrings</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tests">Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-cd-github-actions">CI/CD (GitHub Actions)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pre-merge-checks">Pre-Merge Checks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deploy-to-website">Deploy to Website</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-5-continuous-deployment">Phase 5. Continuous Deployment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#release">Release</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring">Phase 6. Continuous Monitoring</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-and-observability">Monitoring and Observability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
