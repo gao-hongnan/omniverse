@@ -33,7 +33,6 @@
             -   [Role of Static Type Checking](#role-of-static-type-checking)
             -   [Reducing Runtime Errors](#reducing-runtime-errors)
             -   [Conclusion: Building a Resilient Codebase](#conclusion-building-a-resilient-codebase)
-    -   [Version Control](#version-control)
     -   [Dependency Management](#dependency-management)
     -   [Continuous Integration (CI)](#continuous-integration-ci)
     -   [Continuous Deployment/Delivery (CD)](#continuous-deploymentdelivery-cd)
@@ -334,7 +333,6 @@ intent.
             -   [Role of Static Type Checking](#role-of-static-type-checking)
             -   [Reducing Runtime Errors](#reducing-runtime-errors)
             -   [Conclusion: Building a Resilient Codebase](#conclusion-building-a-resilient-codebase)
-    -   [Version Control](#version-control)
     -   [Dependency Management](#dependency-management)
     -   [Continuous Integration (CI)](#continuous-integration-ci)
     -   [Continuous Deployment/Delivery (CD)](#continuous-deploymentdelivery-cd)
@@ -383,7 +381,7 @@ intent.
     have been easily prevented with proper checks in place.
 
 He will also need to decide with the team if it is worth refactoring potentially
-tens of thousands of code!!!
+tens of thousands of code!
 
 ### Long-Term Consequences
 
@@ -399,8 +397,6 @@ tens of thousands of code!!!
 
 ### Advocating for a Solution
 
-![](cicd-sample.PNG)
-
 -   **Need for Stringent Checks**: Advocate for stringent linting, testing, and
     static type checking as part of your CI/CD pipeline. This ensures that all
     code, regardless of its origin, meets a certain quality standard before it's
@@ -408,13 +404,6 @@ tens of thousands of code!!!
 -   **Preventing Future Issues**: Argue that by enforcing these checks, future
     teams will inherit healthier, more robust codebases, reducing the time and
     effort needed to get up to speed and start contributing effectively.
-
-Certainly! The section you're looking to write focuses on the benefits of
-linting, testing, and static type checking in enhancing resilience and reducing
-bugs in production. These tools are crucial in a robust development process
-because they help identify potential issues early in the development cycle, thus
-preventing them from becoming more significant problems in production. Here's a
-structured way to articulate this:
 
 ### Enhancing Resilience and Reducing Bugs with Linting, Testing, and Static Type Checking
 
@@ -481,12 +470,6 @@ structured way to articulate this:
     in the code's reliability and performance.
 
 ---
-
-## Version Control
-
--   **Git** with a platform like GitHub, GitLab, or Bitbucket.
--   **Branching Strategy**: Implement a strategy like Git Flow or Trunk Based
-    Development.
 
 ## Dependency Management
 
@@ -566,8 +549,3 @@ structured way to articulate this:
     practices and tools.
 -   **Feedback Loops**: Implement mechanisms for continuous feedback from all
     stakeholders.
-
-Remember, the exact tools and practices may vary depending on the specific
-requirements, team size, and existing infrastructure of your organization. The
-key is to maintain a balance between rigorous quality controls and efficient
-development workflows.

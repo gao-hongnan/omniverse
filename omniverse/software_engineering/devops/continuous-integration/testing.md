@@ -27,12 +27,6 @@ but writing **_good tests_** is an art, and difficult to master. I want to set
 the stage for you to understand the importance of testing, and what types of
 testing are there, along with some intuition.
 
-In the fast-paced world of large language models (LLMs) and the applications
-built on them, making sure these systems are reliable and sturdy is essential. A
-solid testing strategy is key, and that's where the testing pyramid comes in.
-This framework isn't just for traditional software; it's crucial for LLMs too,
-helping ensure they work right across different scenarios.
-
 ## The Testing Pyramid
 
 The testing pyramid is a visual metaphor that illustrates the ideal distribution
@@ -48,9 +42,16 @@ top.
 -   System Tests
 -   End-to-End Tests
 
--   https://martinfowler.com/articles/practical-test-pyramid.html
+```{figure} ./assets/pyramid-progression.jpg
+---
+name: devops-continuous-integration-testing-pyramid
+---
 
--   https://microsoft.github.io/code-with-engineering-playbook/automated-testing/e2e-testing/testing-comparison/
+The Testing Pyramid
+
+**Image Credit:**
+[Testing Pyramid](https://semaphoreci.com/blog/testing-pyramid)
+```
 
 ## Unit Testing
 
@@ -383,9 +384,143 @@ example is using the word "mock" to refer to the user, not the data or
 connections. The user is a mock because it is not a real user, but a simulated
 user for the purpose of testing.
 
+### Techniques for Integration Testing
+
+#### Big Bang Testing
+
+Big Bang Testing is a straightforward but high-risk approach to integration
+testing where all the components or modules of a software application are
+integrated simultaneously, and then tested as a whole. This method waits until
+all parts of the system are developed and then combines them to perform the
+integration test. The primary advantage of this approach is its simplicity, as
+it does not require complex planning or integration stages. However, it has
+significant drawbacks:
+
+-   Identifying the root cause of a failure can be challenging because all
+    components are integrated at once, making it difficult to isolate issues.
+-   It can lead to delays in testing until all components are ready.
+-   There's a higher risk of encountering multiple bugs or integration issues
+    simultaneously, which can be overwhelming to debug and fix.
+
+For example, if you want to test whether your `Trainer` class works correctly to
+train a large language model, you might need to integrate the `Trainer` class
+with the `LanguageModel` class, the `DatasetLoader` class, and the `Optimizer`
+class. So here you would integrate all these classes at once and test the
+`Trainer` class as a whole.
+
+#### Incremental Testing
+
+Incremental Testing is a more systematic and less risky approach compared to Big
+Bang Testing. It involves integrating and testing components or modules one at a
+time or in small groups. This method allows for early detection of defects
+related to interfaces and interactions between integrated components.
+Incremental Testing can be further divided into two main types: Top-Down Testing
+and Bottom-Up Testing.
+
+##### Top-Down Testing
+
+Top-Down Testing involves integrating and testing from the top levels of the
+software's control flow downwards. It starts with the highest-level modules and
+progressively integrates and tests lower-level modules using stubs (simplified
+implementations or placeholders) for modules that are not yet developed or
+integrated. This approach allows for early validation of high-level
+functionality and the overall system's architecture. However, it might delay
+testing of lower-level components and their interactions.
+
+Advantages include:
+
+-   Early testing of major functionalities and user interfaces.
+-   Facilitates early discovery of major defects.
+
+Disadvantages include:
+
+-   Lower-level modules are tested late in the cycle, which may delay the
+    discovery of some bugs.
+-   Requires the creation and maintenance of stubs, which can be
+    resource-intensive.
+
+##### Bottom-Up Testing
+
+Bottom-Up Testing, in contrast, starts with the lowest level modules and
+progressively moves up to higher-level modules, using drivers (temporary code
+that calls a module and provides it with the necessary input for testing) until
+the entire system is integrated and tested. This method is beneficial for
+testing the fundamental components of a system early in the development cycle.
+
+Advantages include:
+
+-   Early testing of the fundamental operations provided by lower-level modules.
+-   No need for stubs since testing begins with actual lower-level units.
+
+Disadvantages include:
+
+-   Higher-level functionalities and user interfaces are tested later in the
+    development cycle.
+-   Requires the development and maintenance of drivers, which can also be
+    resource-intensive.
+
+Both incremental approaches—Top-Down and Bottom-Up—offer more control and easier
+isolation of defects compared to Big Bang Testing. They also allow for parallel
+development and testing activities, potentially leading to more efficient use of
+project time and resources.
+
+### Integration Test vs Acceptance Test
+
+As we understand the importance of integration testing, which focuses on testing
+the interactions between components, it is essential to distinguish integration
+testing from acceptance testing. While both are critical for ensuring the
+quality of a software system, they serve different purposes and operate at
+different levels of the testing pyramid.
+
+-   **Integration Testing**: Focuses on verifying the interactions between
+    components to identify any issues in the way they integrate and operate
+    together. It ensures that different parts of the system work together as
+    intended from a technical perspective.
+-   **Acceptance Testing**: Focuses on confirming a group of components work
+    together as intended from a business scenario. It is performed by end-users
+    or clients to validate the end-to-end business flow.
+
 ### Further Readings
 
 -   [Integration Testing - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/integration-testing/)
+
+## System Testing
+
+### Intuition
+
+System testing can be likened to the inspection of a completed building before
+it's opened for occupancy. After ensuring that all individual components
+(bricks, electrical systems, plumbing) are working correctly and are properly
+integrated, system testing examines the building as a whole to ensure it meets
+all the specified requirements. This involves checking not only the internal
+workings but also how the building interacts with external systems (such as
+electrical grids, water supply systems) and complies with all applicable codes
+and regulations. In software terms, system testing checks the complete and fully
+integrated software product to ensure it aligns with the specified requirements.
+It's about verifying that the entire system functions correctly in its intended
+environment and meets all user expectations.
+
+## End-to-End Testing
+
+### Intuition
+
+End-to-end testing takes the building analogy a step further, comparing it to
+not only inspecting the building as a whole but also observing how it serves its
+occupants during actual use. Imagine a scenario where we follow residents as
+they move in, live in, and use the building's various facilities. This would
+include checking if the elevator efficiently transports people between floors,
+if the heating system provides adequate warmth during winter, and if the
+security systems ensure the residents' safety. In the context of software, E2E
+testing involves testing the application's workflow from beginning to end. This
+aims to replicate real user scenarios to ensure the system behaves as intended
+in real-world use. It's the ultimate test to see if the software can handle what
+users will throw at it, including interacting with other systems, databases, and
+networks, to fulfill end-user requirements comprehensively.
+
+Thus, while integration testing focuses on the connections and interactions
+between components, system testing evaluates the complete, integrated system
+against specified requirements, and end-to-end testing examines the system's
+functionality in real-world scenarios, from the user's perspective.
 
 ## Unit vs Integration vs System vs E2E Testing
 
@@ -495,8 +630,18 @@ methodology in a project.
     - Usually quick and verifies whether a particular function of the
       application is still working after a minor change.
 
+## References and Further Readings
+
+-   [Practical Test Pyramid - Martin Fowler](https://martinfowler.com/articles/practical-test-pyramid.html)
+-   [Unit Testing - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/unit-testing/)
+-   [Integration Testing - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/integration-testing/)
+-   [Unit vs Integration vs System vs E2E Testing](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/e2e-testing/testing-comparison/)
+
 [^1]:
     [Why Unit Tests - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/unit-testing/why-unit-tests/)
 
 [^2]:
     [Why Integration Testing - Microsoft](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/integration-testing/#why-integration-testing)
+
+[^3]:
+    [Unit vs Integration vs System vs E2E Testing](https://microsoft.github.io/code-with-engineering-playbook/automated-testing/e2e-testing/testing-comparison/)

@@ -616,8 +616,6 @@ $$(\mathbf{u}\mathbf{v}^\top)^\top = \mathbf{v}\mathbf{u}^\top$$
 
 ## References and Further Readings
 
-Certainly! Here are the provided links formatted as proper Markdown links:
-
 -   [Dot Product - Wikipedia](https://en.wikipedia.org/wiki/Dot_product)
 -   [Scalar Projection - Wikipedia](https://en.wikipedia.org/wiki/Scalar_projection)
 -   [Scalar and Vector Projections - CK-12 College Precalculus](https://flexbooks.ck12.org/cbook/ck-12-college-precalculus/section/9.6/primary/lesson/scalar-and-vector-projections-c-precalc/)
