@@ -556,11 +556,58 @@ Further Readings:
 
 -   [minBPE GitHub repository by Andrej Karpathy](https://github.com/karpathy/minbpe)
 -   [Byte Pair Encoding on Hugging Face's NLP Course](https://huggingface.co/learn/nlp-course/en/chapter6/5)
+-   [https://github.com/openai/tiktoken](https://github.com/openai/tiktoken)
 
 ### 2.3. Model
 
 See
 [The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html).
+
+```{list-table} GPT-2 Family
+:header-rows: 1
+:name: decoder-concept-gpt-2-family
+
+* - Parameters
+  - Layers
+  - d_model
+  - H
+  - d_ff
+  - Activation
+  - Vocabulary Size
+  - Context Window
+* - 117M
+  - 12
+  - 768
+  - 12
+  - 3072
+  - GELU
+  - 50,257
+  - 1024
+* - 345M
+  - 24
+  - 1024
+  - 16
+  - 4096
+  - GELU
+  - 50,257
+  - 1024
+* - 762M
+  - 36
+  - 1280
+  - 20
+  - 5120
+  - GELU
+  - 50,257
+  - 1024
+* - 1542M
+  - 48
+  - 1600
+  - 25
+  - 6400
+  - GELU
+  - 50,257
+  - 1024
+```
 
 ## Autoregressive Self-Supervised Learning Paradigm
 
@@ -1306,6 +1353,13 @@ to better predict them, regardless of their method of procurement
 -   [minBPE GitHub repository by Andrej Karpathy](https://github.com/karpathy/minbpe)
 -   [Byte Pair Encoding on Hugging Face's NLP Course](https://huggingface.co/learn/nlp-course/en/chapter6/5)
 
+### Perplexity
+
+-   [Perplexity - Wikipedia](https://en.wikipedia.org/wiki/Perplexity)
+-   [Perplexity of fixed-length models](https://huggingface.co/docs/transformers/en/perplexity)
+-   [9.3.2. Perplexity - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/language-model.html#perplexity)
+-   [3.3 Evaluating Language Models: Perplexity - Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3/3.pdf)
+
 ### Others
 
 -   [Why does the transformer do better than RNN and LSTM in long-range context dependencies?](https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen)
@@ -1327,6 +1381,15 @@ to better predict them, regardless of their method of procurement
 -   https://keras.io/api/keras_nlp/metrics/perplexity/
 -   https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html
 -   https://huggingface.co/docs/transformers/perplexity
+
+### Citations
+
+-   A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+    ["Chapter 9: Recurrent Neural Networks"](https://d2l.ai/chapter_recurrent-neural-networks/index.html)
+    in Dive into Deep Learning, Cambridge University Press, 2023.
+-   D. Jurafsky and J. H. Martin,
+    ["Chapter 3. N-gram Language Models"](https://web.stanford.edu/~jurafsky/slp3/3.pdf)
+    in Speech and Language Processing, 3rd ed., Pearson, 2023. pp. 32-59.
 
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
