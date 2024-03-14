@@ -1,5 +1,9 @@
 # Generative Pre-trained Transformers
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+
 The realm of **natural language processing** (NLP) has been transformed by the
 advent of **decoder-based transformers**, a cornerstone in the latest
 breakthroughs in AI language models. These architectures, which diverge from the

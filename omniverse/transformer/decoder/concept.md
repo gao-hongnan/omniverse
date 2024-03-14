@@ -17,6 +17,10 @@ kernelspec:
 
 # The Concept of Generative Pre-trained Transformers (GPT)
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+
 ```{contents}
 :local:
 ```
@@ -1402,7 +1406,7 @@ to better predict them, regardless of their method of procurement
 -   [Independent and identically distributed random variables - Wikipedia](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables)
 -   [Independence and Identically Distributed (IID) - GAO Hongnan](https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html#independence-and-identically-distributed-iid)
 
-### Zero Shot Learning
+### Zero/Few Shot(s) Learning
 
 -   [Zero-shot learning - Wikipedia](https://en.wikipedia.org/wiki/Zero-shot_learning)
 -   [What is the difference between one-shot learning, transfer learning, and fine-tuning? - AI Stack Exchange](https://ai.stackexchange.com/questions/21719/what-is-the-difference-between-one-shot-learning-transfer-learning-and-fine-tun)
@@ -1411,6 +1415,7 @@ to better predict them, regardless of their method of procurement
 -   [Zero shot learning available labels in testing set - AI Stack Exchange](https://ai.stackexchange.com/questions/23527/zero-shot-learning-available-labels-in-testing-set)
 -   [Zero-Shot Learning: Can You Classify an Object Without Seeing It Before?](https://www.theaidream.com/post/zero-shot-learning-can-you-classify-an-object-without-seeing-it-before)
 -   [A Survey of Zero-Shot Learning: Settings, Methods, and Applications](https://dl.acm.org/doi/10.1145/3293318)
+-   [Changes in GPT-2/GPT-3 Model During Few-Shot Learning - Stack Overflow](https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning)
 
 ### Byte Pair Encoding (BPE)
 
@@ -1455,18 +1460,16 @@ to better predict them, regardless of their method of procurement
 -   [Neural Machine Translation by Jointly Learning to Align and Translate - arXiv](https://arxiv.org/abs/1409.0473)
 -   [Building Language Models from Scratch - Sebastian Raschka](https://github.com/rasbt/LLMs-from-scratch)
 -   [Numerical Stability and Initialization - Dive into Deep Learning](https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html#breaking-the-symmetry)
-
--   https://developers.google.com/machine-learning/gan/generative
--   https://probmlcourse.github.io/csc412/lectures/week_2/
--   https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning
--   https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto
--   https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models
--   https://d2l.ai/chapter_recurrent-neural-networks/language-model.html
--   https://stanford-cs324.github.io/winter2022/lectures/introduction/
--   https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php
--   https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di
--   https://d2l.ai/chapter_convolutional-modern/resnet.html
--   https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/
+-   [Background: What is a Generative Model? - Google Developers](https://developers.google.com/machine-learning/gan/generative) -
+    Google Developers
+-   [Why can we approximate the joint probability distribution using the output vector of the GPT model?](https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto)
+-   [Why Joint Probability in Generative Models? - Data Science Stack Exchange](https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models)
+-   [CSC412 Winter 2020: Probabilsitic Machine Learning - University of Toronto](https://probmlcourse.github.io/csc412/lectures/week_2/)
+-   [CS324 - Large Language Models - Stanford University](https://stanford-cs324.github.io/winter2022/lectures/introduction/)
+-   [Joint Probability Mass Function (PMF)](https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php)
+-   [Difference Between Joint Probability Distribution and Conditional Probability Distribution - Math Stack Exchange](https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di)
+-   [Residual Networks (ResNets) - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/resnet.html)
+-   [GPT-1, GPT-2, GPT-3, InstructGPT, ChatGPT, and GPT-4 Summary](https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/)
 
 ### Citations
 
