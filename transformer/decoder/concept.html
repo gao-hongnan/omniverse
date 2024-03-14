@@ -430,7 +430,12 @@ document.write(`
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-1-byte-pair-encoding-bpe-1-2-3">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model">2.3. Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model">2.3. Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-1-gpt-2-is-a-continuation-of-gpt-1-with-self-attention-mechanisms-1">Key 1. GPT-2 is a Continuation of GPT-1 with Self-Attention Mechanisms (1)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-2-modifications-from-gpt-1-and-model-stability-1">Key 2. Modifications from GPT-1 and Model Stability (1)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2-variants">GPT-2 Variants</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autoregressive-self-supervised-learning-paradigm">Autoregressive Self-Supervised Learning Paradigm</a><ul class="nav section-nav flex-column">
@@ -461,7 +466,11 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-and-identically-distributed-i-i-d">Independent and Identically Distributed (i.i.d.)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-shot-learning">Zero Shot Learning</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#byte-pair-encoding-bpe">Byte Pair Encoding (BPE)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">Perplexity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">Perplexity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformers-encoders-decoders-encoder-decoder-models">Transformers, Encoders, Decoders, Encoder-Decoder Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-mechanism">Attention Mechanism</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#others">Others</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
@@ -481,84 +490,94 @@ document.write(`
 <h1>The Concept of Generative Pre-trained Transformers (GPT)<a class="headerlink" href="#the-concept-of-generative-pre-trained-transformers-gpt" title="Permalink to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#motivation" id="id31">Motivation</a></p></li>
-<li><p><a class="reference internal" href="#from-gpt-1-to-gpt-2" id="id32">From GPT-1 to GPT-2</a></p></li>
-<li><p><a class="reference internal" href="#gpt-2-paper-key-ideas" id="id33">GPT-2 Paper Key Ideas</a></p>
+<li><p><a class="reference internal" href="#motivation" id="id33">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#from-gpt-1-to-gpt-2" id="id34">From GPT-1 to GPT-2</a></p></li>
+<li><p><a class="reference internal" href="#gpt-2-paper-key-ideas" id="id35">GPT-2 Paper Key Ideas</a></p>
 <ul>
-<li><p><a class="reference internal" href="#abstract-overview" id="id34">Abstract Overview</a></p></li>
-<li><p><a class="reference internal" href="#introduction" id="id35">Introduction</a></p>
+<li><p><a class="reference internal" href="#abstract-overview" id="id36">Abstract Overview</a></p></li>
+<li><p><a class="reference internal" href="#introduction" id="id37">Introduction</a></p>
 <ul>
-<li><p><a class="reference internal" href="#key-1-competent-generalists-over-narrow-experts-1" id="id36">Key 1. Competent Generalists over Narrow Experts (1)</a></p></li>
-<li><p><a class="reference internal" href="#key-2-iid-assumption-fails-in-real-world-2-3" id="id37">Key 2. IID Assumption Fails in Real World (2, 3)</a></p></li>
-<li><p><a class="reference internal" href="#key-3-multi-task-learning-is-nacent-4" id="id38">Key 3. Multi-Task Learning is Nacent (4)</a></p></li>
-<li><p><a class="reference internal" href="#key-4-from-word-embeddings-to-contextual-embeddings-5-6" id="id39">Key 4. From Word Embeddings to Contextual Embeddings (5,6)</a></p></li>
-<li><p><a class="reference internal" href="#key-5-zero-shot-learning-and-zero-shot-transfer-7" id="id40">Key 5. Zero Shot Learning and Zero Shot Transfer (7)</a></p></li>
+<li><p><a class="reference internal" href="#key-1-competent-generalists-over-narrow-experts-1" id="id38">Key 1. Competent Generalists over Narrow Experts (1)</a></p></li>
+<li><p><a class="reference internal" href="#key-2-iid-assumption-fails-in-real-world-2-3" id="id39">Key 2. IID Assumption Fails in Real World (2, 3)</a></p></li>
+<li><p><a class="reference internal" href="#key-3-multi-task-learning-is-nacent-4" id="id40">Key 3. Multi-Task Learning is Nacent (4)</a></p></li>
+<li><p><a class="reference internal" href="#key-4-from-word-embeddings-to-contextual-embeddings-5-6" id="id41">Key 4. From Word Embeddings to Contextual Embeddings (5,6)</a></p></li>
+<li><p><a class="reference internal" href="#key-5-zero-shot-learning-and-zero-shot-transfer-7" id="id42">Key 5. Zero Shot Learning and Zero Shot Transfer (7)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#section-2-approach" id="id41">Section 2. Approach</a></p>
+<li><p><a class="reference internal" href="#section-2-approach" id="id43">Section 2. Approach</a></p>
 <ul>
-<li><p><a class="reference internal" href="#key-1-modeling-language-models-over-joint-probability-distributions-1" id="id42">Key 1. Modeling Language Models over Joint Probability Distributions (1)</a></p></li>
-<li><p><a class="reference internal" href="#key-2-decompose-joint-distributions-as-conditional-distributions-via-chain-rule-2" id="id43">Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)</a></p></li>
-<li><p><a class="reference internal" href="#key-3-conditional-on-task-3" id="id44">Key 3. Conditional on Task (3)</a></p></li>
-<li><p><a class="reference internal" href="#key-4-optimizing-unsupervised-is-the-same-as-optimizing-supervised-4" id="id45">Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)</a></p></li>
-<li><p><a class="reference internal" href="#key-5-large-language-models-has-capacity-to-infer-and-generalize-5" id="id46">Key 5. Large Language Models has Capacity to Infer and Generalize (5)</a></p></li>
+<li><p><a class="reference internal" href="#key-1-modeling-language-models-over-joint-probability-distributions-1" id="id44">Key 1. Modeling Language Models over Joint Probability Distributions (1)</a></p></li>
+<li><p><a class="reference internal" href="#key-2-decompose-joint-distributions-as-conditional-distributions-via-chain-rule-2" id="id45">Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)</a></p></li>
+<li><p><a class="reference internal" href="#key-3-conditional-on-task-3" id="id46">Key 3. Conditional on Task (3)</a></p></li>
+<li><p><a class="reference internal" href="#key-4-optimizing-unsupervised-is-the-same-as-optimizing-supervised-4" id="id47">Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)</a></p></li>
+<li><p><a class="reference internal" href="#key-5-large-language-models-has-capacity-to-infer-and-generalize-5" id="id48">Key 5. Large Language Models has Capacity to Infer and Generalize (5)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#training-dataset" id="id47">2.1. Training Dataset</a></p>
+<li><p><a class="reference internal" href="#training-dataset" id="id49">2.1. Training Dataset</a></p>
 <ul>
-<li><p><a class="reference internal" href="#key-1-rejection-of-commoncrawl-1-2" id="id48">Key 1. Rejection of CommonCrawl (1,2)</a></p></li>
-<li><p><a class="reference internal" href="#key-2-construction-of-webtext-dataset" id="id49">Key 2. Construction of WebText Dataset</a></p></li>
+<li><p><a class="reference internal" href="#key-1-rejection-of-commoncrawl-1-2" id="id50">Key 1. Rejection of CommonCrawl (1,2)</a></p></li>
+<li><p><a class="reference internal" href="#key-2-construction-of-webtext-dataset" id="id51">Key 2. Construction of WebText Dataset</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#input-representation" id="id50">2.2. Input Representation</a></p>
+<li><p><a class="reference internal" href="#input-representation" id="id52">2.2. Input Representation</a></p>
 <ul>
-<li><p><a class="reference internal" href="#key-1-byte-pair-encoding-bpe-1-2-3" id="id51">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a></p></li>
+<li><p><a class="reference internal" href="#key-1-byte-pair-encoding-bpe-1-2-3" id="id53">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#model" id="id52">2.3. Model</a></p></li>
+<li><p><a class="reference internal" href="#model" id="id54">2.3. Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#key-1-gpt-2-is-a-continuation-of-gpt-1-with-self-attention-mechanisms-1" id="id55">Key 1. GPT-2 is a Continuation of GPT-1 with Self-Attention Mechanisms (1)</a></p></li>
+<li><p><a class="reference internal" href="#key-2-modifications-from-gpt-1-and-model-stability-1" id="id56">Key 2. Modifications from GPT-1 and Model Stability (1)</a></p></li>
+<li><p><a class="reference internal" href="#gpt-2-variants" id="id57">GPT-2 Variants</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning-paradigm" id="id53">Autoregressive Self-Supervised Learning Paradigm</a></p>
-<ul>
-<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning" id="id54">Autoregressive Self-Supervised Learning</a></p></li>
-<li><p><a class="reference internal" href="#estimation-of-the-conditional-probability-distribution" id="id55">Estimation of the Conditional Probability Distribution</a></p></li>
-<li><p><a class="reference internal" href="#initial-condition-of-conditional-probability-distribution" id="id56">Initial Condition of Conditional Probability Distribution</a></p></li>
-<li><p><a class="reference internal" href="#markov-assumption" id="id57">Markov Assumption</a></p></li>
-<li><p><a class="reference internal" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" id="id58">The Estimator Function is Smooth with Respect to the Parameters</a></p></li>
-<li><p><a class="reference internal" href="#context-length-and-token-context-window" id="id59">Context Length and Token Context Window</a></p></li>
-<li><p><a class="reference internal" href="#conditional-entropy-and-perplexity-as-loss-function" id="id60">Conditional Entropy and Perplexity as Loss Function</a></p>
-<ul>
-<li><p><a class="reference internal" href="#conditional-entropy" id="id61">Conditional Entropy</a></p></li>
-<li><p><a class="reference internal" href="#perplexity" id="id62">Perplexity</a></p></li>
-<li><p><a class="reference internal" href="#loss-function" id="id63">Loss Function</a></p></li>
-<li><p><a class="reference internal" href="#convergence" id="id64">Convergence</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#gpt-is-a-autoregressive-self-supervised-learning-model" id="id65">GPT is a Autoregressive Self-Supervised Learning Model</a></p></li>
-<li><p><a class="reference internal" href="#conditional-on-task" id="id66">Conditional on Task</a></p></li>
-<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id67">Supervised Fine-Tuning</a></p>
+<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning-paradigm" id="id58">Autoregressive Self-Supervised Learning Paradigm</a></p>
 <ul>
-<li><p><a class="reference internal" href="#objective-function-for-fine-tuning" id="id68">Objective Function for Fine-Tuning</a></p></li>
-<li><p><a class="reference internal" href="#auxiliary-loss-function" id="id69">Auxiliary Loss Function</a></p></li>
+<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning" id="id59">Autoregressive Self-Supervised Learning</a></p></li>
+<li><p><a class="reference internal" href="#estimation-of-the-conditional-probability-distribution" id="id60">Estimation of the Conditional Probability Distribution</a></p></li>
+<li><p><a class="reference internal" href="#initial-condition-of-conditional-probability-distribution" id="id61">Initial Condition of Conditional Probability Distribution</a></p></li>
+<li><p><a class="reference internal" href="#markov-assumption" id="id62">Markov Assumption</a></p></li>
+<li><p><a class="reference internal" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" id="id63">The Estimator Function is Smooth with Respect to the Parameters</a></p></li>
+<li><p><a class="reference internal" href="#context-length-and-token-context-window" id="id64">Context Length and Token Context Window</a></p></li>
+<li><p><a class="reference internal" href="#conditional-entropy-and-perplexity-as-loss-function" id="id65">Conditional Entropy and Perplexity as Loss Function</a></p>
+<ul>
+<li><p><a class="reference internal" href="#conditional-entropy" id="id66">Conditional Entropy</a></p></li>
+<li><p><a class="reference internal" href="#perplexity" id="id67">Perplexity</a></p></li>
+<li><p><a class="reference internal" href="#loss-function" id="id68">Loss Function</a></p></li>
+<li><p><a class="reference internal" href="#convergence" id="id69">Convergence</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#optimizing-unsupervised-is-the-same-as-optimizing-supervised" id="id70">Optimizing Unsupervised is the same as Optimizing Supervised</a></p></li>
+<li><p><a class="reference internal" href="#gpt-is-a-autoregressive-self-supervised-learning-model" id="id70">GPT is a Autoregressive Self-Supervised Learning Model</a></p></li>
+<li><p><a class="reference internal" href="#conditional-on-task" id="id71">Conditional on Task</a></p></li>
+<li><p><a class="reference internal" href="#supervised-fine-tuning" id="id72">Supervised Fine-Tuning</a></p>
+<ul>
+<li><p><a class="reference internal" href="#objective-function-for-fine-tuning" id="id73">Objective Function for Fine-Tuning</a></p></li>
+<li><p><a class="reference internal" href="#auxiliary-loss-function" id="id74">Auxiliary Loss Function</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id71">References and Further Readings</a></p>
+<li><p><a class="reference internal" href="#optimizing-unsupervised-is-the-same-as-optimizing-supervised" id="id75">Optimizing Unsupervised is the same as Optimizing Supervised</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id76">References and Further Readings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#independent-and-identically-distributed-i-i-d" id="id72">Independent and Identically Distributed (i.i.d.)</a></p></li>
-<li><p><a class="reference internal" href="#zero-shot-learning" id="id73">Zero Shot Learning</a></p></li>
-<li><p><a class="reference internal" href="#byte-pair-encoding-bpe" id="id74">Byte Pair Encoding (BPE)</a></p></li>
-<li><p><a class="reference internal" href="#id29" id="id75">Perplexity</a></p></li>
-<li><p><a class="reference internal" href="#others" id="id76">Others</a></p></li>
-<li><p><a class="reference internal" href="#citations" id="id77">Citations</a></p></li>
+<li><p><a class="reference internal" href="#independent-and-identically-distributed-i-i-d" id="id77">Independent and Identically Distributed (i.i.d.)</a></p></li>
+<li><p><a class="reference internal" href="#zero-shot-learning" id="id78">Zero Shot Learning</a></p></li>
+<li><p><a class="reference internal" href="#byte-pair-encoding-bpe" id="id79">Byte Pair Encoding (BPE)</a></p></li>
+<li><p><a class="reference internal" href="#id31" id="id80">Perplexity</a></p></li>
+<li><p><a class="reference internal" href="#transformers-encoders-decoders-encoder-decoder-models" id="id81">Transformers, Encoders, Decoders, Encoder-Decoder Models</a></p></li>
+<li><p><a class="reference internal" href="#positional-encoding" id="id82">Positional Encoding</a></p></li>
+<li><p><a class="reference internal" href="#attention-mechanism" id="id83">Attention Mechanism</a></p></li>
+<li><p><a class="reference internal" href="#layer-normalization" id="id84">Layer Normalization</a></p></li>
+<li><p><a class="reference internal" href="#others" id="id85">Others</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id86">Citations</a></p></li>
 </ul>
 </li>
 </ul>
 </nav>
 <section id="motivation">
-<h2><a class="toc-backref" href="#id31" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h2>
 <p>The problem that GPT-2 aims to solve is to demonstrate that language models,
 given <strong><em>large</em></strong> enough capacity in terms of parameters, and <strong><em>large</em></strong> enough
 <strong><em>unlabeled and high-quality</em></strong> text data, can solve specialized natural
@@ -582,7 +601,7 @@ translation task via the
 learning paradigm without the need for supervised fine-tuning.</p>
 </section>
 <section id="from-gpt-1-to-gpt-2">
-<h2><a class="toc-backref" href="#id32" role="doc-backlink">From GPT-1 to GPT-2</a><a class="headerlink" href="#from-gpt-1-to-gpt-2" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">From GPT-1 to GPT-2</a><a class="headerlink" href="#from-gpt-1-to-gpt-2" title="Permalink to this heading">#</a></h2>
 <p>In
 <a class="reference external" href="https://en.wikipedia.org/wiki/Natural-language_understanding"><strong>Natural Language Understanding</strong></a>
 (NLU), there are a wide range of tasks, such as textual entailment, question
@@ -628,10 +647,10 @@ paper, formalize the autoregressive self-supervised learning paradigm, and then
 take a look at the implementation of the GPT-2 model.</p>
 </section>
 <section id="gpt-2-paper-key-ideas">
-<h2><a class="toc-backref" href="#id33" role="doc-backlink">GPT-2 Paper Key Ideas</a><a class="headerlink" href="#gpt-2-paper-key-ideas" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">GPT-2 Paper Key Ideas</a><a class="headerlink" href="#gpt-2-paper-key-ideas" title="Permalink to this heading">#</a></h2>
 <p>In this section, we would review the key ideas from the GPT-2 paper.</p>
 <section id="abstract-overview">
-<h3><a class="toc-backref" href="#id34" role="doc-backlink">Abstract Overview</a><a class="headerlink" href="#abstract-overview" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Abstract Overview</a><a class="headerlink" href="#abstract-overview" title="Permalink to this heading">#</a></h3>
 <p>Below are the key ideas from the abstract of the GPT-2 paper:</p>
 <ul class="simple">
 <li><p>All <strong>previous pretrained language models</strong> necessitated a secondary stage
@@ -652,11 +671,11 @@ of parameters, signifying that as the model’s capacity increases
 </ul>
 </section>
 <section id="introduction">
-<h3><a class="toc-backref" href="#id35" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h3>
 <p>In this section, we would discuss the key ideas from the introduction of the
 GPT-2 paper.</p>
 <section id="key-1-competent-generalists-over-narrow-experts-1">
-<h4><a class="toc-backref" href="#id36" role="doc-backlink">Key 1. Competent Generalists over Narrow Experts (1)</a><a class="headerlink" href="#key-1-competent-generalists-over-narrow-experts-1" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id38" role="doc-backlink">Key 1. Competent Generalists over Narrow Experts (1)</a><a class="headerlink" href="#key-1-competent-generalists-over-narrow-experts-1" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>The authors cited other works that have demonstrated significant success of
 machine learning systems through a <strong><em>combination</em></strong> of <strong><em>large-scale
@@ -671,7 +690,7 @@ task-specific architectures or supervised fine-tuning.</p></li>
 </ul>
 </section>
 <section id="key-2-iid-assumption-fails-in-real-world-2-3">
-<h4><a class="toc-backref" href="#id37" role="doc-backlink">Key 2. IID Assumption Fails in Real World (2, 3)</a><a class="headerlink" href="#key-2-iid-assumption-fails-in-real-world-2-3" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id39" role="doc-backlink">Key 2. IID Assumption Fails in Real World (2, 3)</a><a class="headerlink" href="#key-2-iid-assumption-fails-in-real-world-2-3" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>The overarching goal in machine learning is to <strong><em>generalize to unseen data
 points</em></strong>. To streamline the modeling of machine learning objectives, it’s
@@ -706,7 +725,7 @@ across diverse conditions and tasks.</p></li>
 </ul>
 </section>
 <section id="key-3-multi-task-learning-is-nacent-4">
-<h4><a class="toc-backref" href="#id38" role="doc-backlink">Key 3. Multi-Task Learning is Nacent (4)</a><a class="headerlink" href="#key-3-multi-task-learning-is-nacent-4" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id40" role="doc-backlink">Key 3. Multi-Task Learning is Nacent (4)</a><a class="headerlink" href="#key-3-multi-task-learning-is-nacent-4" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>The author then underscored that <strong><em>multi-task learning</em></strong> represents a
 <strong><em>promising framework</em></strong>. By training a single model on <strong><em>multiple tasks
@@ -736,7 +755,7 @@ scalability becomes a concern when the focus is limited to merely <strong><em>10
 </ul>
 </section>
 <section id="key-4-from-word-embeddings-to-contextual-embeddings-5-6">
-<h4><a class="toc-backref" href="#id39" role="doc-backlink">Key 4. From Word Embeddings to Contextual Embeddings (5,6)</a><a class="headerlink" href="#key-4-from-word-embeddings-to-contextual-embeddings-5-6" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id41" role="doc-backlink">Key 4. From Word Embeddings to Contextual Embeddings (5,6)</a><a class="headerlink" href="#key-4-from-word-embeddings-to-contextual-embeddings-5-6" title="Permalink to this heading">#</a></h4>
 <ul>
 <li><p>Initially, <strong><em>word embeddings</em></strong> such as <strong>Word2Vec</strong> and <strong>GloVe</strong>
 revolutionized the representation of words by mapping them into dense,
@@ -791,7 +810,7 @@ lines of work using language model to handle it - commonsense reasoning
 </ul>
 </section>
 <section id="key-5-zero-shot-learning-and-zero-shot-transfer-7">
-<h4><a class="toc-backref" href="#id40" role="doc-backlink">Key 5. Zero Shot Learning and Zero Shot Transfer (7)</a><a class="headerlink" href="#key-5-zero-shot-learning-and-zero-shot-transfer-7" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id42" role="doc-backlink">Key 5. Zero Shot Learning and Zero Shot Transfer (7)</a><a class="headerlink" href="#key-5-zero-shot-learning-and-zero-shot-transfer-7" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Building upon the foundational concepts introduced previously, the authors
 explore the utilization of <strong><em>general methods of transfer</em></strong> to illustrate
@@ -832,11 +851,11 @@ across different contexts based on its pre-existing knowledge.</p></li>
 </section>
 </section>
 <section id="section-2-approach">
-<h3><a class="toc-backref" href="#id41" role="doc-backlink">Section 2. Approach</a><a class="headerlink" href="#section-2-approach" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">Section 2. Approach</a><a class="headerlink" href="#section-2-approach" title="Permalink to this heading">#</a></h3>
 <p>In this section, we would discuss the key ideas from the approach section of the
 GPT-2 paper.</p>
 <section id="key-1-modeling-language-models-over-joint-probability-distributions-1">
-<h4><a class="toc-backref" href="#id42" role="doc-backlink">Key 1. Modeling Language Models over Joint Probability Distributions (1)</a><a class="headerlink" href="#key-1-modeling-language-models-over-joint-probability-distributions-1" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id44" role="doc-backlink">Key 1. Modeling Language Models over Joint Probability Distributions (1)</a><a class="headerlink" href="#key-1-modeling-language-models-over-joint-probability-distributions-1" title="Permalink to this heading">#</a></h4>
 <p>Language models strive to approximate the complex and inherently unknown
 distribution of the natural language space, denoted as <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. In
 contrast to supervised learning, which explicitly separates inputs
@@ -857,7 +876,7 @@ denoted as <span class="math notranslate nohighlight">\(\hat{\mathcal{L}}(\mathc
 approximates the true parameter space <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span>.</p>
 </section>
 <section id="key-2-decompose-joint-distributions-as-conditional-distributions-via-chain-rule-2">
-<h4><a class="toc-backref" href="#id43" role="doc-backlink">Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)</a><a class="headerlink" href="#key-2-decompose-joint-distributions-as-conditional-distributions-via-chain-rule-2" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id45" role="doc-backlink">Key 2. Decompose Joint Distributions as Conditional Distributions via Chain Rule (2)</a><a class="headerlink" href="#key-2-decompose-joint-distributions-as-conditional-distributions-via-chain-rule-2" title="Permalink to this heading">#</a></h4>
 <p>The joint probability of a sequence in natural language, <strong>inherently ordered</strong>
 <span id="id4">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>, can be factorized into the product of conditional
 probabilities of each token in the sequence using the
@@ -875,7 +894,7 @@ this likelihood, effectively <em>approximating</em> the joint probability distri
 through conditional probability distributions.</p>
 </section>
 <section id="key-3-conditional-on-task-3">
-<h4><a class="toc-backref" href="#id44" role="doc-backlink">Key 3. Conditional on Task (3)</a><a class="headerlink" href="#key-3-conditional-on-task-3" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id46" role="doc-backlink">Key 3. Conditional on Task (3)</a><a class="headerlink" href="#key-3-conditional-on-task-3" title="Permalink to this heading">#</a></h4>
 <p>In the GPT-2 paper, <em>Language Models are Unsupervised Multitask Learners</em>, the
 authors introduced the concept of <em>conditional on task</em> where the GPT model
 <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> theoretically should not only learn the conditional probability
@@ -908,7 +927,7 @@ Learning as Question Answering</em> exemplifies this concept with their model
 to perform many diverse natural language processing tasks simultaneously.</p>
 </section>
 <section id="key-4-optimizing-unsupervised-is-the-same-as-optimizing-supervised-4">
-<h4><a class="toc-backref" href="#id45" role="doc-backlink">Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)</a><a class="headerlink" href="#key-4-optimizing-unsupervised-is-the-same-as-optimizing-supervised-4" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id47" role="doc-backlink">Key 4. Optimizing Unsupervised is the same as Optimizing Supervised (4)</a><a class="headerlink" href="#key-4-optimizing-unsupervised-is-the-same-as-optimizing-supervised-4" title="Permalink to this heading">#</a></h4>
 <p>The GPT-2 paper <em>Language Models are Unsupervised Multitask Learners</em>
 demonstrated that they want to do away with the supervised fine-tuning phase via
 an interesting hypothesis, that <strong>optimizing the unsupervised objective is the
@@ -917,7 +936,7 @@ the unsupervised objective is the same as the <em>global minimum</em> of the sup
 objective <span id="id10">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 </section>
 <section id="key-5-large-language-models-has-capacity-to-infer-and-generalize-5">
-<h4><a class="toc-backref" href="#id46" role="doc-backlink">Key 5. Large Language Models has Capacity to Infer and Generalize (5)</a><a class="headerlink" href="#key-5-large-language-models-has-capacity-to-infer-and-generalize-5" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id48" role="doc-backlink">Key 5. Large Language Models has Capacity to Infer and Generalize (5)</a><a class="headerlink" href="#key-5-large-language-models-has-capacity-to-infer-and-generalize-5" title="Permalink to this heading">#</a></h4>
 <p>In what follows, the author added that the internet contains a vast amount of
 information that is passively available without the need for interactive
 communication. The example that I provided on the french-to-english translation
@@ -943,9 +962,9 @@ to English translation found throughout the WebText training set.</span><a class
 </section>
 </section>
 <section id="training-dataset">
-<h3><a class="toc-backref" href="#id47" role="doc-backlink">2.1. Training Dataset</a><a class="headerlink" href="#training-dataset" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id49" role="doc-backlink">2.1. Training Dataset</a><a class="headerlink" href="#training-dataset" title="Permalink to this heading">#</a></h3>
 <section id="key-1-rejection-of-commoncrawl-1-2">
-<h4><a class="toc-backref" href="#id48" role="doc-backlink">Key 1. Rejection of CommonCrawl (1,2)</a><a class="headerlink" href="#key-1-rejection-of-commoncrawl-1-2" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id50" role="doc-backlink">Key 1. Rejection of CommonCrawl (1,2)</a><a class="headerlink" href="#key-1-rejection-of-commoncrawl-1-2" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Prior research often focused on training language models on <strong><em>single-domain
 datasets</em></strong>, which relates to the concept of models becoming <strong><em>narrow
@@ -960,7 +979,7 @@ to <strong><em>significant data quality issues</em></strong>.</p></li>
 </ul>
 </section>
 <section id="key-2-construction-of-webtext-dataset">
-<h4><a class="toc-backref" href="#id49" role="doc-backlink">Key 2. Construction of WebText Dataset</a><a class="headerlink" href="#key-2-construction-of-webtext-dataset" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id51" role="doc-backlink">Key 2. Construction of WebText Dataset</a><a class="headerlink" href="#key-2-construction-of-webtext-dataset" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>The authors sought to compile a web scrape prioritizing <strong><em>document quality
 over quantity</em></strong>.</p></li>
@@ -992,9 +1011,9 @@ scenarios for their model by reducing data leakage.</p></li>
 </section>
 </section>
 <section id="input-representation">
-<h3><a class="toc-backref" href="#id50" role="doc-backlink">2.2. Input Representation</a><a class="headerlink" href="#input-representation" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id52" role="doc-backlink">2.2. Input Representation</a><a class="headerlink" href="#input-representation" title="Permalink to this heading">#</a></h3>
 <section id="key-1-byte-pair-encoding-bpe-1-2-3">
-<h4><a class="toc-backref" href="#id51" role="doc-backlink">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a><a class="headerlink" href="#key-1-byte-pair-encoding-bpe-1-2-3" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id53" role="doc-backlink">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a><a class="headerlink" href="#key-1-byte-pair-encoding-bpe-1-2-3" title="Permalink to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Traditional tokenization methods often involve steps such as
 <strong><em>lower-casing</em></strong>, <strong><em>punctuation stripping</em></strong>, and <strong><em>splitting on
@@ -1030,9 +1049,72 @@ sequence of tokens - which form the input representation to the model.</p></li>
 </section>
 </section>
 <section id="model">
-<h3><a class="toc-backref" href="#id52" role="doc-backlink">2.3. Model</a><a class="headerlink" href="#model" title="Permalink to this heading">#</a></h3>
-<p>See
-<a class="reference external" href="https://www.gaohongnan.com/transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a>.</p>
+<h3><a class="toc-backref" href="#id54" role="doc-backlink">2.3. Model</a><a class="headerlink" href="#model" title="Permalink to this heading">#</a></h3>
+<p>The GPT-2 architecture is a <strong><em>transformer</em></strong>-based model, and as the name
+suggests, it is a continuation of the GPT-1 model with some minor modifications.</p>
+<section id="key-1-gpt-2-is-a-continuation-of-gpt-1-with-self-attention-mechanisms-1">
+<h4><a class="toc-backref" href="#id55" role="doc-backlink">Key 1. GPT-2 is a Continuation of GPT-1 with Self-Attention Mechanisms (1)</a><a class="headerlink" href="#key-1-gpt-2-is-a-continuation-of-gpt-1-with-self-attention-mechanisms-1" title="Permalink to this heading">#</a></h4>
+<ul class="simple">
+<li><p>GPT-2 utilizes a <strong>Transformer</strong> architecture <span id="id12">[<a class="reference internal" href="../../bibliography.html#id12" title="Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Lukasz Kaiser, and Illia Polosukhin. Attention is all you need. 2017. arXiv:1706.03762.">Vaswani <em>et al.</em>, 2017</a>]</span>
+as its backbone, which is distinguished by <strong><em>self-attention mechanisms</em></strong>.
+This architecture empowers the model to capture complex dependencies and
+relationships within the data.</p></li>
+</ul>
+</section>
+<section id="key-2-modifications-from-gpt-1-and-model-stability-1">
+<h4><a class="toc-backref" href="#id56" role="doc-backlink">Key 2. Modifications from GPT-1 and Model Stability (1)</a><a class="headerlink" href="#key-2-modifications-from-gpt-1-and-model-stability-1" title="Permalink to this heading">#</a></h4>
+<ul>
+<li><p>Modifications from GPT-1 include:</p>
+<ul>
+<li><p><strong>Layer normalization</strong> is repositioned to the <strong><em>input</em></strong> of each
+sub-block, mirroring a <strong><em>pre-activation residual network</em></strong>. This
+modification is believed to offer training stability and model
+performance. By normalizing the inputs to each sub-block, it is
+conjectured to alleviate issues tied to <strong><em>internal covariate shift</em></strong>,
+thus aiding in smoother and potentially faster training.</p></li>
+<li><p>GPT-2 introduces an <strong><em>additional layer normalization step</em></strong> that is
+executed <strong><em>after the final self-attention block</em></strong> within the model.
+This additional normalization step can help ensure that the outputs of
+the transformer layers are normalized before being passed to subsequent
+layers or used in further processing, further contributing to model
+stability.</p></li>
+<li><p>The GPT-2 paper introduces a modification to the standard weight
+initialization for the model’s residual layers. Specifically, the
+weights are scaled by a factor of
+<span class="math notranslate nohighlight">\(\frac{1}{\sqrt{N_{\text{decoder_blocks}}}}\)</span>, where
+<span class="math notranslate nohighlight">\(N_{\text{decoder_blocks}}\)</span> represents the number of blocks (or layers)
+in the Transformer’s decoder.</p>
+<p>The rationale, as quoted from the paper: <em>“A modified initialization
+which accounts for the accumulation on the residual path with model
+depth is used”</em> <span id="id13">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>, is to ensure that the
+variance of the input to the block is the same as the variance of the
+block’s output. This is to ensure that the signal is neither amplified
+nor diminished as it passes through the block. As the model depth
+increases, the activations get added/acculumated, and hence the scaling
+factor is <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{N_{\text{decoder_blocks}}}}\)</span>, to scale it
+down.</p>
+</li>
+<li><p>Clearly, we can see the empahsis on model stability. In training large
+language models, <strong>numerical stability</strong> is paramount; the cost of
+training is significantly high, with every loss and gradient spike that
+fails to recover necessitating a return to a previous checkpoint,
+resulting in substantial GPU hours and potentially tens of thousands of
+dollars wasted.</p></li>
+<li><p>The model’s <strong>vocabulary</strong> is expanded to 50,257 tokens.</p></li>
+<li><p>The context window size is increased from 512 to 1024 tokens, enhancing
+the model’s ability to maintain coherence over longer text spans.</p></li>
+<li><p>A larger batch size of 512, GPT-2 benefits from more stable and
+effective gradient estimates during training, contributing to improved
+learning outcomes.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="gpt-2-variants">
+<h4><a class="toc-backref" href="#id57" role="doc-backlink">GPT-2 Variants</a><a class="headerlink" href="#gpt-2-variants" title="Permalink to this heading">#</a></h4>
+<p>To this end, we encapsulate some key parameters in
+<a class="reference internal" href="#decoder-concept-gpt-2-family"><span class="std std-numref">Table 1</span></a> below, which provides specifications for
+several GPT-2 variants, distinguished by their scale.</p>
 <table class="table" id="decoder-concept-gpt-2-family">
 <caption><span class="caption-number">Table 1 </span><span class="caption-text">GPT-2 Family</span><a class="headerlink" href="#decoder-concept-gpt-2-family" title="Permalink to this table">#</a></caption>
 <thead>
@@ -1085,10 +1167,15 @@ sequence of tokens - which form the input representation to the model.</p></li>
 </tr>
 </tbody>
 </table>
+<p>See
+<a class="reference external" href="https://www.gaohongnan.com/transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a>
+for a more comprehensive walkthrough of the GPT-2 model architecture, annotated
+with code.</p>
+</section>
 </section>
 </section>
 <section id="autoregressive-self-supervised-learning-paradigm">
-<h2><a class="toc-backref" href="#id53" role="doc-backlink">Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#autoregressive-self-supervised-learning-paradigm" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id58" role="doc-backlink">Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#autoregressive-self-supervised-learning-paradigm" title="Permalink to this heading">#</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> be the true but unknown distribution of the natural language
 space. In the context of unsupervised learning with self-supervision, such as
 language modeling, we consider both the inputs and the implicit labels derived
@@ -1126,7 +1213,7 @@ decomposition allows for <em>tractable sampling</em> from and <em>estimation</em
 distribution <span class="math notranslate nohighlight">\(\mathbb{P}(\mathbf{x} ; \boldsymbol{\Theta})\)</span> as well as any
 conditionals in the form of
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-1} ; \boldsymbol{\Theta})\)</span>
-<span id="id12">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
+<span id="id14">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 <p>To this end, consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> sequences
 <span class="math notranslate nohighlight">\(\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}\)</span>,</p>
 <div class="math notranslate nohighlight">
@@ -1206,7 +1293,7 @@ where each sequence <span class="math notranslate nohighlight">\(\mathbf{x}_n\)<
 conditional probabilities of each token in the sequence.</p>
 </section>
 </div><section id="autoregressive-self-supervised-learning">
-<h3><a class="toc-backref" href="#id54" role="doc-backlink">Autoregressive Self-Supervised Learning</a><a class="headerlink" href="#autoregressive-self-supervised-learning" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id59" role="doc-backlink">Autoregressive Self-Supervised Learning</a><a class="headerlink" href="#autoregressive-self-supervised-learning" title="Permalink to this heading">#</a></h3>
 <p>The learning paradigm of an autoregressive self-supervised learning framework
 can be formalized as a learning algorithm <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> that is trained to
 predict the next token <span class="math notranslate nohighlight">\(x_t\)</span> in a sequence given the previous tokens
@@ -1233,10 +1320,10 @@ probabilities of the form <span class="math notranslate nohighlight">\(\mathbb{P
 which implicitly defines the joint probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(\mathbf{x}
 ; \boldsymbol{\Theta})\)</span> over the natural language space
-<span class="math notranslate nohighlight">\(\mathcal{X}\)</span><a class="footnote-reference brackets" href="#id30" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span><a class="footnote-reference brackets" href="#id32" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="estimation-of-the-conditional-probability-distribution">
-<h3><a class="toc-backref" href="#id55" role="doc-backlink">Estimation of the Conditional Probability Distribution</a><a class="headerlink" href="#estimation-of-the-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id60" role="doc-backlink">Estimation of the Conditional Probability Distribution</a><a class="headerlink" href="#estimation-of-the-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
 <p>In practice, we can only <em><strong>estimate</strong></em> the conditional probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \boldsymbol{\Theta})\)</span> from the corpus
 <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, and we can write the process of estimating as:</p>
@@ -1266,7 +1353,7 @@ which is to generate the next token in a sequence given the previous tokens in
 the sequence.</p>
 </section>
 <section id="initial-condition-of-conditional-probability-distribution">
-<h3><a class="toc-backref" href="#id56" role="doc-backlink">Initial Condition of Conditional Probability Distribution</a><a class="headerlink" href="#initial-condition-of-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id61" role="doc-backlink">Initial Condition of Conditional Probability Distribution</a><a class="headerlink" href="#initial-condition-of-conditional-probability-distribution" title="Permalink to this heading">#</a></h3>
 <p>While the earlier conditional distribution seems correct by definition of the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Chain_rule_(probability)">chain rule of probability</a>,
 it is worth noting that we are being a bit loose when <span class="math notranslate nohighlight">\(t=1\)</span>. Firstly, when
@@ -1288,7 +1375,7 @@ prompt” or “initial condition” of the sequence <span class="math notransla
 </ul>
 </section>
 <section id="markov-assumption">
-<h3><a class="toc-backref" href="#id57" role="doc-backlink">Markov Assumption</a><a class="headerlink" href="#markov-assumption" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id62" role="doc-backlink">Markov Assumption</a><a class="headerlink" href="#markov-assumption" title="Permalink to this heading">#</a></h3>
 <p>Now suppose that we wish to employ the strategy mentioned above, where we
 condition only on the <span class="math notranslate nohighlight">\(\tau\)</span> previous time steps, i.e.,
 <span class="math notranslate nohighlight">\(x_{t-1}, \ldots, x_{t-\tau}\)</span>, rather than the entire sequence history
@@ -1298,7 +1385,7 @@ sequence satisfies a Markov condition, i.e., that the future is conditionally
 independent of the past, given the recent history. When <span class="math notranslate nohighlight">\(\tau=1\)</span>, we say that
 the data is characterized by a first-order Markov model, and when <span class="math notranslate nohighlight">\(\tau=k\)</span>, we
 say that the data is characterized by a <span class="math notranslate nohighlight">\(k^{\text {th }}\)</span>-order Markov model
-<span id="id14">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
+<span id="id16">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>.</p>
 <p>More formally, a discrete-time Markov chain is a sequence of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Random_variable">random variables</a>
 <span class="math notranslate nohighlight">\(X_1, X_2, X_3, \ldots\)</span> with the
@@ -1321,7 +1408,7 @@ gains diminish rapidly. Thus, sometimes we compromise, obviating computational
 and statistical difficulties by training models whose validity depends on a
 <span class="math notranslate nohighlight">\(k^{\text {th }}\)</span>-order Markov condition. Even today’s massive RNN- and
 Transformer based language models seldom incorporate more than thousands of
-words of context <span id="id15">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. In short, the Markov assumption is a
+words of context <span id="id17">[<a class="reference internal" href="../../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. In short, the Markov assumption is a
 convenient assumption to simplify the modeling of the joint probability
 distribution of the token sequences.</p>
 <p>Further readings on the Markov assumption can be found in the following:</p>
@@ -1333,7 +1420,7 @@ distribution of the token sequences.</p>
 </ul>
 </section>
 <section id="the-estimator-function-is-smooth-with-respect-to-the-parameters">
-<h3><a class="toc-backref" href="#id58" role="doc-backlink">The Estimator Function is Smooth with Respect to the Parameters</a><a class="headerlink" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id63" role="doc-backlink">The Estimator Function is Smooth with Respect to the Parameters</a><a class="headerlink" href="#the-estimator-function-is-smooth-with-respect-to-the-parameters" title="Permalink to this heading">#</a></h3>
 <p>This assumption is a common one in the context of deep learning, because for
 when we say that the estimator function <span class="math notranslate nohighlight">\(f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span>
 is <em>smooth</em> with respect to the parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, we
@@ -1359,7 +1446,7 @@ activation functions are not smooth because the derivative is not continuous at
 <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>.</p>
 </section>
 <section id="context-length-and-token-context-window">
-<h3><a class="toc-backref" href="#id59" role="doc-backlink">Context Length and Token Context Window</a><a class="headerlink" href="#context-length-and-token-context-window" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id64" role="doc-backlink">Context Length and Token Context Window</a><a class="headerlink" href="#context-length-and-token-context-window" title="Permalink to this heading">#</a></h3>
 <p>Given a coherent sequence of tokens <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, say, <em>the tabby cat walks by
 the river bank</em>, we may not always pass the full sequence to the model. Based on
 a <em>context length</em> <span class="math notranslate nohighlight">\(\tau\)</span>, we can pass a <em>token context window</em> of length <span class="math notranslate nohighlight">\(\tau\)</span>
@@ -1374,7 +1461,7 @@ windows:</p>
 </ul>
 <p>And the longer the context length, the model would be able to capture
 longer-range dependenciees in the sequence, but also may increase the
-computational complexity of the model <span id="id16">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
+computational complexity of the model <span id="id18">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
 <p>More formally, we can define the token context window as a function
 <span class="math notranslate nohighlight">\(C_{\tau}(\mathbf{x}, t)\)</span> that maps a sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and a position <span class="math notranslate nohighlight">\(t\)</span>
 to a token context window of length <span class="math notranslate nohighlight">\(\tau\)</span>:</p>
@@ -1387,7 +1474,7 @@ C_{\tau} : \mathcal{X} \times \mathbb{N} &amp;\rightarrow \mathcal{X}^{\tau} \\
 \end{split}\]</div>
 </section>
 <section id="conditional-entropy-and-perplexity-as-loss-function">
-<h3><a class="toc-backref" href="#id60" role="doc-backlink">Conditional Entropy and Perplexity as Loss Function</a><a class="headerlink" href="#conditional-entropy-and-perplexity-as-loss-function" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id65" role="doc-backlink">Conditional Entropy and Perplexity as Loss Function</a><a class="headerlink" href="#conditional-entropy-and-perplexity-as-loss-function" title="Permalink to this heading">#</a></h3>
 <p>Having defined the basis of the autoregressive self-supervised learning
 framework, we can now define the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> that is used to
 train the model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> to maximize the likelihood of the sequences in the
@@ -1395,7 +1482,7 @@ corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>. In ord
 function, we would need to define the notion of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Conditional_entropy"><em><strong>conditional entropy</strong></em></a>.</p>
 <section id="conditional-entropy">
-<h4><a class="toc-backref" href="#id61" role="doc-backlink">Conditional Entropy</a><a class="headerlink" href="#conditional-entropy" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id66" role="doc-backlink">Conditional Entropy</a><a class="headerlink" href="#conditional-entropy" title="Permalink to this heading">#</a></h4>
 <p>Define <span class="math notranslate nohighlight">\(X_t\)</span> as a random variable representing the token at position <span class="math notranslate nohighlight">\(t\)</span> in the
 sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(X_{&lt;t} = \left(X_1, X_2, \ldots, X_{t-1}\right)\)</span> as
 random variables representing the tokens at positions <span class="math notranslate nohighlight">\(1, 2, \ldots, t-1\)</span> in the
@@ -1442,7 +1529,7 @@ H\left(X_t \mid X_{&lt;t}\right) = -\mathbb{E}_{\mathcal{D}}\left[\log \mathbb{P
 </ul>
 </section>
 <section id="perplexity">
-<h4><a class="toc-backref" href="#id62" role="doc-backlink">Perplexity</a><a class="headerlink" href="#perplexity" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id67" role="doc-backlink">Perplexity</a><a class="headerlink" href="#perplexity" title="Permalink to this heading">#</a></h4>
 <p>Language model has a standing history of using
 <a class="reference external" href="https://en.wikipedia.org/wiki/Perplexity"><strong>Perplexity</strong></a> as a measure of the
 quality of a language model. It is a measure of how well a probability
@@ -1463,7 +1550,7 @@ conditional entropy of the distribution, and we can write it as:</p>
 </ul>
 </section>
 <section id="loss-function">
-<h4><a class="toc-backref" href="#id63" role="doc-backlink">Loss Function</a><a class="headerlink" href="#loss-function" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id68" role="doc-backlink">Loss Function</a><a class="headerlink" href="#loss-function" title="Permalink to this heading">#</a></h4>
 <p>Given the definitions of the conditional entropy and perplexity, we can
 formalize the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> as:</p>
 <div class="math notranslate nohighlight">
@@ -1502,7 +1589,7 @@ function
 \end{split}\]</div>
 </section>
 <section id="convergence">
-<h4><a class="toc-backref" href="#id64" role="doc-backlink">Convergence</a><a class="headerlink" href="#convergence" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id69" role="doc-backlink">Convergence</a><a class="headerlink" href="#convergence" title="Permalink to this heading">#</a></h4>
 <p>It can be shown that the given the Markov assumption and a token context window
 size of <span class="math notranslate nohighlight">\(\tau\)</span>, the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is a
 <a class="reference external" href="https://en.wikipedia.org/wiki/Consistent_estimator">consistent estimator</a> of
@@ -1511,23 +1598,23 @@ the true distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)
 converges to the true conditional probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \boldsymbol{\Theta})\)</span> over <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> as the
 size of the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> goes to infinity, if the model has sufficient
-capacity and the optimization algorithm is appropriate <span id="id17">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
+capacity and the optimization algorithm is appropriate <span id="id19">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
 <p>Furthermore, the proposition that the conditional entropy
 <span class="math notranslate nohighlight">\(H\left(X_t \mid X_{&lt;t}\right)\)</span> of the true data-generating process is upper
 bounded by the by the logarithm of the size of the vocabulary <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>,
 i.e., <span class="math notranslate nohighlight">\(H\left(X_t \mid X_{&lt;t}\right) \leq \log |\mathcal{V}|\)</span>
-<span id="id18">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
+<span id="id20">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
 <p>The proposition that the conditional entropy has an upper limit, carries
 significant implications for optimizing autoregressive self-supervised learning
 models. Specifically, because the conditional entropy cannot exceed the
 logarithm of the vocabulary size <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, we infer a similar upper limit
 on perplexity. This cap on perplexity offers a valuable benchmark for evaluating
 and comparing different models, establishing a theoretical maximum for model
-performance based on the size of the vocabulary <span id="id19">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
+performance based on the size of the vocabulary <span id="id21">[<a class="reference internal" href="../../bibliography.html#id11" title="Minhyeok Lee. A mathematical interpretation of autoregressive generative pre-trained transformer and self-supervised learning. Mathematics, 2023. URL: https://www.mdpi.com/2227-7390/11/11/2451, doi:10.3390/math11112451.">Lee, 2023</a>]</span>.</p>
 </section>
 </section>
 <section id="gpt-is-a-autoregressive-self-supervised-learning-model">
-<h3><a class="toc-backref" href="#id65" role="doc-backlink">GPT is a Autoregressive Self-Supervised Learning Model</a><a class="headerlink" href="#gpt-is-a-autoregressive-self-supervised-learning-model" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id70" role="doc-backlink">GPT is a Autoregressive Self-Supervised Learning Model</a><a class="headerlink" href="#gpt-is-a-autoregressive-self-supervised-learning-model" title="Permalink to this heading">#</a></h3>
 <p>Finally, we can piece together the autoregressive self-supervised learning
 framework to define the GPT model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> as a model that is trained to
 maximize the likelihood of the sequences in the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> via the
@@ -1568,7 +1655,7 @@ implementation of the GPT model is more complex, and we will take a look at it
 in later sections.</p>
 </section>
 <section id="conditional-on-task">
-<h3><a class="toc-backref" href="#id66" role="doc-backlink">Conditional on Task</a><a class="headerlink" href="#conditional-on-task" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id71" role="doc-backlink">Conditional on Task</a><a class="headerlink" href="#conditional-on-task" title="Permalink to this heading">#</a></h3>
 <p>In the GPT-2 paper, <em>Language Models are Unsupervised Multitask Learners</em>, the
 authors introduced the concept of <em>conditional on task</em> where the GPT model
 <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> theoretically should not only learn the conditional probability
@@ -1576,7 +1663,7 @@ distribution <span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_
 the conditional probability distribution
 <span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \boldsymbol{\Theta}, \mathcal{T})\)</span> where
 <span class="math notranslate nohighlight">\(\mathcal{T}\)</span> is the task that the model should implicitly learn
-<span id="id20">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>. This is a powerful concept because if such a
+<span id="id22">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>. This is a powerful concept because if such a
 hypothesis is correct, then the GPT model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> can indeed be a
 multi-task learner, and can be used directly on a wide range of NLU tasks
 without the need for supervised fine-tuning for downstream domain-specific
@@ -1584,14 +1671,14 @@ tasks.</p>
 <p>In practice, the authors mentioned that task conditioning is often implemented
 at an architectural level, via task specific encoder and decoder in the paper
 <a class="reference external" href="https://arxiv.org/abs/1706.05137"><em>One Model To Learn Them All</em></a>
-<span id="id21">[<a class="reference internal" href="../../bibliography.html#id17" title="Lukasz Kaiser, Aidan N. Gomez, Noam Shazeer, Ashish Vaswani, Niki Parmar, Llion Jones, and Jakob Uszkoreit. One model to learn them all. 2017. arXiv:1706.05137.">Kaiser <em>et al.</em>, 2017</a>]</span>, for instance, or at an algorithmic level, such as the
+<span id="id23">[<a class="reference internal" href="../../bibliography.html#id17" title="Lukasz Kaiser, Aidan N. Gomez, Noam Shazeer, Ashish Vaswani, Niki Parmar, Llion Jones, and Jakob Uszkoreit. One model to learn them all. 2017. arXiv:1706.05137.">Kaiser <em>et al.</em>, 2017</a>]</span>, for instance, or at an algorithmic level, such as the
 inner and outer loop optimization framework, as seen in the paper
 <a class="reference external" href="https://arxiv.org/abs/1703.03400"><em>Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks</em></a>
-<span id="id22">[<a class="reference internal" href="../../bibliography.html#id16" title="Chelsea Finn, Pieter Abbeel, and Sergey Levine. Model-agnostic meta-learning for fast adaptation of deep networks. 2017. arXiv:1703.03400.">Finn <em>et al.</em>, 2017</a>]</span>.</p>
+<span id="id24">[<a class="reference internal" href="../../bibliography.html#id16" title="Chelsea Finn, Pieter Abbeel, and Sergey Levine. Model-agnostic meta-learning for fast adaptation of deep networks. 2017. arXiv:1703.03400.">Finn <em>et al.</em>, 2017</a>]</span>.</p>
 <p>However, the authors further mentioned that without task-specific architectural
 changes, one can leverage the sequential nature of the natural language space
 where we can construct a tasks, inputs and outputs all as a sequence of symbols
-<span id="id23">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>. For example, a translation task can be formulated
+<span id="id25">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>. For example, a translation task can be formulated
 as a sequence of symbols via
 <code class="docutils literal notranslate"><span class="pre">(translate</span> <span class="pre">to</span> <span class="pre">french,</span> <span class="pre">english</span> <span class="pre">sequence,</span> <span class="pre">french</span> <span class="pre">sequence)</span></code>, where the model can
 now learn to also condition on the task <code class="docutils literal notranslate"><span class="pre">(translate</span> <span class="pre">to</span> <span class="pre">french)</span></code> in addition to
@@ -1601,7 +1688,7 @@ Learning as Question Answering</em> exemplifies this concept with their model
 to perform many diverse natural language processing tasks simultaneously.</p>
 </section>
 <section id="supervised-fine-tuning">
-<h3><a class="toc-backref" href="#id67" role="doc-backlink">Supervised Fine-Tuning</a><a class="headerlink" href="#supervised-fine-tuning" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id72" role="doc-backlink">Supervised Fine-Tuning</a><a class="headerlink" href="#supervised-fine-tuning" title="Permalink to this heading">#</a></h3>
 <p>Though GPT-2 has demonstrated that it can be used directly on a wide range of
 NLU without the need for supervised fine-tuning, it is worth taking a detour
 back to how GPT-1 was fine-tuned immediately after the pretraining phase.</p>
@@ -1611,9 +1698,9 @@ function
 <span class="math notranslate nohighlight">\(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\)</span>, we
 would then fine-tune the model on a specific task by replacing the final layer
 of the model with a task-specific layer, and then train the model on the
-specific task with the task-specific layer <span id="id24">[<a class="reference internal" href="../../bibliography.html#id15" title="Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever. Improving language understanding by generative pre-training. 2018.">Radford <em>et al.</em>, 2018</a>]</span>.</p>
+specific task with the task-specific layer <span id="id26">[<a class="reference internal" href="../../bibliography.html#id15" title="Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever. Improving language understanding by generative pre-training. 2018.">Radford <em>et al.</em>, 2018</a>]</span>.</p>
 <section id="objective-function-for-fine-tuning">
-<h4><a class="toc-backref" href="#id68" role="doc-backlink">Objective Function for Fine-Tuning</a><a class="headerlink" href="#objective-function-for-fine-tuning" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id73" role="doc-backlink">Objective Function for Fine-Tuning</a><a class="headerlink" href="#objective-function-for-fine-tuning" title="Permalink to this heading">#</a></h4>
 <p>More concretely, now our dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is a dataset of labeled examples
 <span class="math notranslate nohighlight">\(\mathcal{S} = \left\{\left(\mathbf{x}_n, y_n\right)\right\}_{n=1}^N\)</span>, where it
 may be sampled together from a new underlying distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>,
@@ -1660,7 +1747,7 @@ pre-trained model <span class="math notranslate nohighlight">\(\mathcal{G}\)</sp
 <p>where <span class="math notranslate nohighlight">\(N\)</span> is the number of samples in the dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.</p>
 </section>
 <section id="auxiliary-loss-function">
-<h4><a class="toc-backref" href="#id69" role="doc-backlink">Auxiliary Loss Function</a><a class="headerlink" href="#auxiliary-loss-function" title="Permalink to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id74" role="doc-backlink">Auxiliary Loss Function</a><a class="headerlink" href="#auxiliary-loss-function" title="Permalink to this heading">#</a></h4>
 <p>In the context of fine-tuning GPT-1 or similar models for specific tasks, the
 term “auxiliary (supplementary) loss” refers to additional objectives or loss
 functions that are incorporated into the fine-tuning process alongside the
@@ -1668,7 +1755,7 @@ primary loss function. This approach is based on the idea that including
 auxiliary tasks or losses can help improve the model’s performance on the main
 task by leveraging the knowledge gained during pre-training. The author also
 mentioned that this method (a) improving generalization of the supervised model,
-and (b) accelerating convergence <span id="id25">[<a class="reference internal" href="../../bibliography.html#id15" title="Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever. Improving language understanding by generative pre-training. 2018.">Radford <em>et al.</em>, 2018</a>]</span>.</p>
+and (b) accelerating convergence <span id="id27">[<a class="reference internal" href="../../bibliography.html#id15" title="Alec Radford, Karthik Narasimhan, Tim Salimans, and Ilya Sutskever. Improving language understanding by generative pre-training. 2018.">Radford <em>et al.</em>, 2018</a>]</span>.</p>
 <p>During pre-training, models like GPT-1 learn to predict the next token in a
 sequence, which is a form of auxiliary task. When fine-tuning these models on
 downstream tasks, the authors of the GPT-1 paper found it beneficial to include
@@ -1692,13 +1779,13 @@ we can write it as:</p>
 </section>
 </section>
 <section id="optimizing-unsupervised-is-the-same-as-optimizing-supervised">
-<h3><a class="toc-backref" href="#id70" role="doc-backlink">Optimizing Unsupervised is the same as Optimizing Supervised</a><a class="headerlink" href="#optimizing-unsupervised-is-the-same-as-optimizing-supervised" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id75" role="doc-backlink">Optimizing Unsupervised is the same as Optimizing Supervised</a><a class="headerlink" href="#optimizing-unsupervised-is-the-same-as-optimizing-supervised" title="Permalink to this heading">#</a></h3>
 <p>The GPT-2 paper <em>Language Models are Unsupervised Multitask Learners</em>
 demonstrated that they want to do away with the supervised fine-tuning phase via
 an interesting hypothesis, that <strong>optimizing the unsupervised objective is the
 same as optimizing the supervised objective</strong> because the <em>global minimum</em> of
 the unsupervised objective is the same as the <em>global minimum</em> of the supervised
-objective <span id="id26">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
+objective <span id="id28">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 <p>Indeed, the unsupervised objective in language modeling is to maximize the
 likelihood of observing the entire sequence of tokens over the dataset
 <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>. This is an unsupervised task because it does not rely on labeled
@@ -1740,7 +1827,7 @@ and the target sequence <span class="math notranslate nohighlight">\(\mathbf{y}\
 <code class="docutils literal notranslate"><span class="pre">Did</span> <span class="pre">you</span> <span class="pre">go</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">movies?</span></code>.</p>
 <p>However, the authors mention that such learning is much slower than the case
 where the model is directly trained on the supervised task
-<span id="id27">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
+<span id="id29">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 <p>In what follows, the author added that the internet contains a vast amount of
 information that is passively available without the need for interactive
 communication. The example that I provided on the french-to-english translation
@@ -1748,13 +1835,13 @@ would bound to exist naturally in the internet. They speculate that if the
 language model is <em>large</em> enough in terms of capacity, then it should be able to
 learn to perform the tasks demonstrated in natural language sequences in order
 to better predict them, regardless of their method of procurement
-<span id="id28">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
+<span id="id30">[<a class="reference internal" href="../../bibliography.html#id10" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
 </section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id71" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id76" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <section id="independent-and-identically-distributed-i-i-d">
-<h3><a class="toc-backref" href="#id72" role="doc-backlink">Independent and Identically Distributed (i.i.d.)</a><a class="headerlink" href="#independent-and-identically-distributed-i-i-d" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id77" role="doc-backlink">Independent and Identically Distributed (i.i.d.)</a><a class="headerlink" href="#independent-and-identically-distributed-i-i-d" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://stats.stackexchange.com/questions/213464/on-the-importance-of-the-i-i-d-assumption-in-statistical-learning">On the importance of the i.i.d. assumption in statistical learning</a></p></li>
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables">Independent and identically distributed random variables - Wikipedia</a></p></li>
@@ -1762,7 +1849,7 @@ to better predict them, regardless of their method of procurement
 </ul>
 </section>
 <section id="zero-shot-learning">
-<h3><a class="toc-backref" href="#id73" role="doc-backlink">Zero Shot Learning</a><a class="headerlink" href="#zero-shot-learning" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id78" role="doc-backlink">Zero Shot Learning</a><a class="headerlink" href="#zero-shot-learning" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Zero-shot_learning">Zero-shot learning - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://ai.stackexchange.com/questions/21719/what-is-the-difference-between-one-shot-learning-transfer-learning-and-fine-tun">What is the difference between one-shot learning, transfer learning, and fine-tuning? - AI Stack Exchange</a></p></li>
@@ -1774,14 +1861,14 @@ to better predict them, regardless of their method of procurement
 </ul>
 </section>
 <section id="byte-pair-encoding-bpe">
-<h3><a class="toc-backref" href="#id74" role="doc-backlink">Byte Pair Encoding (BPE)</a><a class="headerlink" href="#byte-pair-encoding-bpe" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id79" role="doc-backlink">Byte Pair Encoding (BPE)</a><a class="headerlink" href="#byte-pair-encoding-bpe" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/karpathy/minbpe">minBPE GitHub repository by Andrej Karpathy</a></p></li>
 <li><p><a class="reference external" href="https://huggingface.co/learn/nlp-course/en/chapter6/5">Byte Pair Encoding on Hugging Face’s NLP Course</a></p></li>
 </ul>
 </section>
-<section id="id29">
-<h3><a class="toc-backref" href="#id75" role="doc-backlink">Perplexity</a><a class="headerlink" href="#id29" title="Permalink to this heading">#</a></h3>
+<section id="id31">
+<h3><a class="toc-backref" href="#id80" role="doc-backlink">Perplexity</a><a class="headerlink" href="#id31" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Perplexity">Perplexity - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://huggingface.co/docs/transformers/en/perplexity">Perplexity of fixed-length models</a></p></li>
@@ -1789,14 +1876,48 @@ to better predict them, regardless of their method of procurement
 <li><p><a class="reference external" href="https://web.stanford.edu/~jurafsky/slp3/3.pdf">3.3 Evaluating Language Models: Perplexity - Speech and Language Processing</a></p></li>
 </ul>
 </section>
+<section id="transformers-encoders-decoders-encoder-decoder-models">
+<h3><a class="toc-backref" href="#id81" role="doc-backlink">Transformers, Encoders, Decoders, Encoder-Decoder Models</a><a class="headerlink" href="#transformers-encoders-decoders-encoder-decoder-models" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://e2eml.school/transformers.html">Transformers from Scratch - Brandon Rohrer</a></p></li>
+<li><p><a class="reference external" href="https://aman.ai/primers/ai/transformers/#positional-encoding">Primers • Transformers - Aman Chadha</a></p></li>
+</ul>
+</section>
+<section id="positional-encoding">
+<h3><a class="toc-backref" href="#id82" role="doc-backlink">Positional Encoding</a><a class="headerlink" href="#positional-encoding" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://aman.ai/primers/ai/transformers/#positional-encoding">Positional Encodings - Aman Chadha</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html">Self-Attention and Positional Encoding - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://kazemnejad.com/blog/transformer_architecture_positional_encoding/">Transformer Architecture: The Positional Encoding</a></p></li>
+<li><p><a class="reference external" href="https://e2eml.school/transformers.html#positional_encoding">Positional Encoding - Brandon Rohrer</a> -</p></li>
+</ul>
+</section>
+<section id="attention-mechanism">
+<h3><a class="toc-backref" href="#id83" role="doc-backlink">Attention Mechanism</a><a class="headerlink" href="#attention-mechanism" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://eugeneyan.com/writing/attention/">Some Intuition on Attention and the Transformer - Eugene Yan</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Let’s build GPT: from scratch, in code, spelled out - Andrej Karpathy</a></p></li>
+</ul>
+</section>
+<section id="layer-normalization">
+<h3><a class="toc-backref" href="#id84" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/batch-norm.html#layer-normalization">Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html#residual-connection-and-layer-normalization">Residual Connection and Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1607.06450">Layer Normalization - arXiv</a></p></li>
+<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html">PyTorch Documentation: torch.nn.LayerNorm</a></p></li>
+</ul>
+</section>
 <section id="others">
-<h3><a class="toc-backref" href="#id76" role="doc-backlink">Others</a><a class="headerlink" href="#others" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id85" role="doc-backlink">Others</a><a class="headerlink" href="#others" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p><a class="reference external" href="https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen">Why does the transformer do better than RNN and LSTM in long-range context dependencies?</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning">How Transformer is Bidirectional - Machine Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1409.0473">Neural Machine Translation by Jointly Learning to Align and Translate - arXiv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/rasbt/LLMs-from-scratch">Building Language Models from Scratch - Sebastian Raschka</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html#breaking-the-symmetry">Numerical Stability and Initialization - Dive into Deep Learning</a></p></li>
 <li><p><a class="reference external" href="https://developers.google.com/machine-learning/gan/generative">https://developers.google.com/machine-learning/gan/generative</a></p></li>
 <li><p><a class="reference external" href="https://probmlcourse.github.io/csc412/lectures/week_2/">https://probmlcourse.github.io/csc412/lectures/week_2/</a></p></li>
-<li><p>speech and recognition chapter 3 important</p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning">https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning</a></p></li>
 <li><p><a class="reference external" href="https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto">https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto</a></p></li>
 <li><p><a class="reference external" href="https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models">https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models</a></p></li>
@@ -1804,16 +1925,12 @@ to better predict them, regardless of their method of procurement
 <li><p><a class="reference external" href="https://stanford-cs324.github.io/winter2022/lectures/introduction/">https://stanford-cs324.github.io/winter2022/lectures/introduction/</a></p></li>
 <li><p><a class="reference external" href="https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php">https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php</a></p></li>
 <li><p><a class="reference external" href="https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di">https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di</a></p></li>
-<li><p><a class="reference external" href="https://eugeneyan.com/writing/attention/">https://eugeneyan.com/writing/attention/</a></p></li>
 <li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/resnet.html">https://d2l.ai/chapter_convolutional-modern/resnet.html</a></p></li>
 <li><p><a class="reference external" href="https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/">https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/</a></p></li>
-<li><p><a class="reference external" href="https://keras.io/api/keras_nlp/metrics/perplexity/">https://keras.io/api/keras_nlp/metrics/perplexity/</a></p></li>
-<li><p><a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html">https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html</a></p></li>
-<li><p><a class="reference external" href="https://huggingface.co/docs/transformers/perplexity">https://huggingface.co/docs/transformers/perplexity</a></p></li>
 </ul>
 </section>
 <section id="citations">
-<h3><a class="toc-backref" href="#id77" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Permalink to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id86" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
 <a class="reference external" href="https://d2l.ai/chapter_recurrent-neural-networks/index.html">“Chapter 9: Recurrent Neural Networks”</a>
@@ -1823,8 +1940,8 @@ in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
 in Speech and Language Processing, 3rd ed., Pearson, 2023. pp. 32-59.</p></li>
 </ul>
 <hr class="footnotes docutils" />
-<aside class="footnote brackets" id="id30" role="note">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id32" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">1</a><span class="fn-bracket">]</span></span>
 <p>This part is not concrete as the formalization is not rigorous in the
 statistical learning framework, but the general idea is there.</p>
 </aside>
@@ -1925,7 +2042,12 @@ statistical learning framework, but the general idea is there.</p>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-1-byte-pair-encoding-bpe-1-2-3">Key 1. Byte Pair Encoding (BPE) (1,2,3)</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model">2.3. Model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model">2.3. Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-1-gpt-2-is-a-continuation-of-gpt-1-with-self-attention-mechanisms-1">Key 1. GPT-2 is a Continuation of GPT-1 with Self-Attention Mechanisms (1)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#key-2-modifications-from-gpt-1-and-model-stability-1">Key 2. Modifications from GPT-1 and Model Stability (1)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt-2-variants">GPT-2 Variants</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autoregressive-self-supervised-learning-paradigm">Autoregressive Self-Supervised Learning Paradigm</a><ul class="nav section-nav flex-column">
@@ -1956,7 +2078,11 @@ statistical learning framework, but the general idea is there.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-and-identically-distributed-i-i-d">Independent and Identically Distributed (i.i.d.)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-shot-learning">Zero Shot Learning</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#byte-pair-encoding-bpe">Byte Pair Encoding (BPE)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id29">Perplexity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id31">Perplexity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformers-encoders-decoders-encoder-decoder-models">Transformers, Encoders, Decoders, Encoder-Decoder Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#positional-encoding">Positional Encoding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-mechanism">Attention Mechanism</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#layer-normalization">Layer Normalization</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#others">Others</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>

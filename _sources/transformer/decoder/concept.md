@@ -560,8 +560,67 @@ Further Readings:
 
 ### 2.3. Model
 
-See
-[The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html).
+The GPT-2 architecture is a **_transformer_**-based model, and as the name
+suggests, it is a continuation of the GPT-1 model with some minor modifications.
+
+#### Key 1. GPT-2 is a Continuation of GPT-1 with Self-Attention Mechanisms (1)
+
+-   GPT-2 utilizes a **Transformer** architecture {cite}`vaswani2017attention`
+    as its backbone, which is distinguished by **_self-attention mechanisms_**.
+    This architecture empowers the model to capture complex dependencies and
+    relationships within the data.
+
+#### Key 2. Modifications from GPT-1 and Model Stability (1)
+
+-   Modifications from GPT-1 include:
+
+    -   **Layer normalization** is repositioned to the **_input_** of each
+        sub-block, mirroring a **_pre-activation residual network_**. This
+        modification is believed to offer training stability and model
+        performance. By normalizing the inputs to each sub-block, it is
+        conjectured to alleviate issues tied to **_internal covariate shift_**,
+        thus aiding in smoother and potentially faster training.
+    -   GPT-2 introduces an **_additional layer normalization step_** that is
+        executed **_after the final self-attention block_** within the model.
+        This additional normalization step can help ensure that the outputs of
+        the transformer layers are normalized before being passed to subsequent
+        layers or used in further processing, further contributing to model
+        stability.
+    -   The GPT-2 paper introduces a modification to the standard weight
+        initialization for the model's residual layers. Specifically, the
+        weights are scaled by a factor of
+        $\frac{1}{\sqrt{N_{\text{decoder_blocks}}}}$, where
+        $N_{\text{decoder_blocks}}$ represents the number of blocks (or layers)
+        in the Transformer's decoder.
+
+        The rationale, as quoted from the paper: _"A modified initialization
+        which accounts for the accumulation on the residual path with model
+        depth is used"_ {cite}`radford2019language`, is to ensure that the
+        variance of the input to the block is the same as the variance of the
+        block's output. This is to ensure that the signal is neither amplified
+        nor diminished as it passes through the block. As the model depth
+        increases, the activations get added/acculumated, and hence the scaling
+        factor is $\frac{1}{\sqrt{N_{\text{decoder_blocks}}}}$, to scale it
+        down.
+
+    -   Clearly, we can see the empahsis on model stability. In training large
+        language models, **numerical stability** is paramount; the cost of
+        training is significantly high, with every loss and gradient spike that
+        fails to recover necessitating a return to a previous checkpoint,
+        resulting in substantial GPU hours and potentially tens of thousands of
+        dollars wasted.
+    -   The model's **vocabulary** is expanded to 50,257 tokens.
+    -   The context window size is increased from 512 to 1024 tokens, enhancing
+        the model's ability to maintain coherence over longer text spans.
+    -   A larger batch size of 512, GPT-2 benefits from more stable and
+        effective gradient estimates during training, contributing to improved
+        learning outcomes.
+
+#### GPT-2 Variants
+
+To this end, we encapsulate some key parameters in
+{numref}`decoder-concept-gpt-2-family` below, which provides specifications for
+several GPT-2 variants, distinguished by their scale.
 
 ```{list-table} GPT-2 Family
 :header-rows: 1
@@ -608,6 +667,11 @@ See
   - 50,257
   - 1024
 ```
+
+See
+[The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html)
+for a more comprehensive walkthrough of the GPT-2 model architecture, annotated
+with code.
 
 ## Autoregressive Self-Supervised Learning Paradigm
 
@@ -1360,14 +1424,40 @@ to better predict them, regardless of their method of procurement
 -   [9.3.2. Perplexity - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/language-model.html#perplexity)
 -   [3.3 Evaluating Language Models: Perplexity - Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3/3.pdf)
 
+### Transformers, Encoders, Decoders, Encoder-Decoder Models
+
+-   [Transformers from Scratch - Brandon Rohrer](https://e2eml.school/transformers.html)
+-   [Primers • Transformers - Aman Chadha](https://aman.ai/primers/ai/transformers/#positional-encoding)
+
+### Positional Encoding
+
+-   [Positional Encodings - Aman Chadha](https://aman.ai/primers/ai/transformers/#positional-encoding)
+-   [Self-Attention and Positional Encoding - Dive into Deep Learning](https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html)
+-   [Transformer Architecture: The Positional Encoding](https://kazemnejad.com/blog/transformer_architecture_positional_encoding/)
+-   [Positional Encoding - Brandon Rohrer](https://e2eml.school/transformers.html#positional_encoding) -
+
+### Attention Mechanism
+
+-   [Some Intuition on Attention and the Transformer - Eugene Yan](https://eugeneyan.com/writing/attention/)
+-   [Let's build GPT: from scratch, in code, spelled out - Andrej Karpathy](https://www.youtube.com/watch?v=kCc8FmEb1nY)
+
+### Layer Normalization
+
+-   [Layer Normalization - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/batch-norm.html#layer-normalization)
+-   [Residual Connection and Layer Normalization - Dive into Deep Learning](https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html#residual-connection-and-layer-normalization)
+-   [Layer Normalization - arXiv](https://arxiv.org/abs/1607.06450)
+-   [PyTorch Documentation: torch.nn.LayerNorm](https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html)
+
 ### Others
 
 -   [Why does the transformer do better than RNN and LSTM in long-range context dependencies?](https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen)
 -   [How Transformer is Bidirectional - Machine Learning](https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning)
+-   [Neural Machine Translation by Jointly Learning to Align and Translate - arXiv](https://arxiv.org/abs/1409.0473)
+-   [Building Language Models from Scratch - Sebastian Raschka](https://github.com/rasbt/LLMs-from-scratch)
+-   [Numerical Stability and Initialization - Dive into Deep Learning](https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html#breaking-the-symmetry)
 
 -   https://developers.google.com/machine-learning/gan/generative
 -   https://probmlcourse.github.io/csc412/lectures/week_2/
--   speech and recognition chapter 3 important
 -   https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning
 -   https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto
 -   https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models
@@ -1375,12 +1465,8 @@ to better predict them, regardless of their method of procurement
 -   https://stanford-cs324.github.io/winter2022/lectures/introduction/
 -   https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php
 -   https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di
--   https://eugeneyan.com/writing/attention/
 -   https://d2l.ai/chapter_convolutional-modern/resnet.html
 -   https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/
--   https://keras.io/api/keras_nlp/metrics/perplexity/
--   https://lightning.ai/docs/torchmetrics/stable/text/perplexity.html
--   https://huggingface.co/docs/transformers/perplexity
 
 ### Citations
 
