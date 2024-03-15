@@ -87,6 +87,35 @@ No. The loss function is a function of the model's parameters with data as
 input. So the lower bound of a particular combination of model parameters and
 data is much more complex than just the lower bound of the loss function.
 
+### Convergence of Generative Pre-trained Transformer
+
+It can be shown that the given the Markov assumption and a token context window
+size of $\tau$, the loss function $\mathcal{L}$ is a
+[consistent estimator](https://en.wikipedia.org/wiki/Consistent_estimator) of
+the true distribution $\mathcal{D}$, and the the objective
+$\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)$
+converges to the true conditional probability distribution
+$\mathbb{P}(x_t \mid x_{<t} ; \boldsymbol{\Theta})$ over $\mathcal{D}$ as the
+size of the corpus $\mathcal{S}$ goes to infinity, if the model has sufficient
+capacity and the optimization algorithm is appropriate {cite}`math11112451`.
+
+Furthermore, the proposition that the conditional entropy
+$H\left(X_t \mid X_{<t}\right)$ of the true data-generating process is upper
+bounded by the by the logarithm of the size of the vocabulary $\mathcal{V}$,
+i.e., $H\left(X_t \mid X_{<t}\right) \leq \log |\mathcal{V}|$
+{cite}`math11112451`.
+
+The proposition that the conditional entropy has an upper limit, carries
+significant implications for optimizing autoregressive self-supervised learning
+models. Specifically, because the conditional entropy cannot exceed the
+logarithm of the vocabulary size $\mathcal{V}$, we infer a similar upper limit
+on perplexity. This cap on perplexity offers a valuable benchmark for evaluating
+and comparing different models, establishing a theoretical maximum for model
+performance based on the size of the vocabulary {cite}`math11112451`.
+
+You can find more details
+[here](https://www.gaohongnan.com/transformer/decoder/concept.html#convergence).
+
 ### Theoretical Bounds Based on Data and Model Capacity
 
 In an idealized setting, if your data were noise-free and the neural network had
