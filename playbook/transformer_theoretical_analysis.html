@@ -1,0 +1,1213 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Transformer Theoretical Analysis on Estimation of FLOPs, Parameters, Peak Memory Footprint, and Checkpoint Size &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../_static/tabs.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/transformer_theoretical_analysis';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/playbook/transformer_theoretical_analysis.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
+    <link rel="prev" title="The Implementation of Generative Pre-trained Transformers (GPT)" href="../transformer/decoder/implementation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Generative Pre-trained Transformer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/decoder/intro.html">Generative Pre-trained Transformers</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Transformer Theoretical Analysis on Estimation of FLOPs, Parameters, Peak Memory Footprint, and Checkpoint Size</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/devops/continuous-integration/concept.html">Continuous Integration (CI) Workflow</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/testing.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/playbook/transformer_theoretical_analysis.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Transformer Theoretical Analysis on Estimation of FLOPs, Parameters, Peak Memory Footprint, and Checkpoint Size</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configurations-constants-and-enums">Configurations, Constants and Enums</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#total-trainable-parameters">Total Trainable Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-checkpoint-size-and-fluff-ratio">Calculating Checkpoint Size and Fluff Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-memory-footprint-of-loading-model-and-optimizer">GPU Memory Footprint of Loading Model and Optimizer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-flops-for-a-single-forward-pass">Estimating FLOPs for a Single Forward Pass</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basics-of-floating-point-numbers">Basics of Floating Point Numbers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floating-point-operations-flops">Floating Point Operations (FLOPs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#counting-flops-of-matrix-multiplications">Counting FLOPs of Matrix Multiplications</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="transformer-theoretical-analysis-on-estimation-of-flops-parameters-peak-memory-footprint-and-checkpoint-size">
+<h1>Transformer Theoretical Analysis on Estimation of FLOPs, Parameters, Peak Memory Footprint, and Checkpoint Size<a class="headerlink" href="#transformer-theoretical-analysis-on-estimation-of-flops-parameters-peak-memory-footprint-and-checkpoint-size" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#configurations-constants-and-enums" id="id1">Configurations, Constants and Enums</a></p></li>
+<li><p><a class="reference internal" href="#total-trainable-parameters" id="id2">Total Trainable Parameters</a></p></li>
+<li><p><a class="reference internal" href="#calculating-checkpoint-size-and-fluff-ratio" id="id3">Calculating Checkpoint Size and Fluff Ratio</a></p></li>
+<li><p><a class="reference internal" href="#gpu-memory-footprint-of-loading-model-and-optimizer" id="id4">GPU Memory Footprint of Loading Model and Optimizer</a></p></li>
+<li><p><a class="reference internal" href="#estimating-flops-for-a-single-forward-pass" id="id5">Estimating FLOPs for a Single Forward Pass</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basics-of-floating-point-numbers" id="id6">Basics of Floating Point Numbers</a></p></li>
+<li><p><a class="reference internal" href="#floating-point-operations-flops" id="id7">Floating Point Operations (FLOPs)</a></p></li>
+<li><p><a class="reference internal" href="#counting-flops-of-matrix-multiplications" id="id8">Counting FLOPs of Matrix Multiplications</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<p>This notebook references from
+<a class="reference external" href="https://github.com/karpathy/nanoGPT/blob/master/transformer_sizing.ipynb">Andrej Karpathy’s NanoGPT</a>,
+which originally stores a bunch of analysis about a Transformer, e.g. estimates
+the number of FLOPs, parameters, peak memory footprint, checkpoint size, etc.</p>
+<section id="configurations-constants-and-enums">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Configurations, Constants and Enums</a><a class="headerlink" href="#configurations-constants-and-enums" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">GPTConfig</span><span class="p">:</span>
+    <span class="n">num_decoder_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span>
+    <span class="n">n_embd</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">768</span>
+    <span class="n">ffw_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3072</span>  <span class="c1"># note, this is 4 * n_embd</span>
+    <span class="n">n_head</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50257</span>
+    <span class="n">bias</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffw_size</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="s2">&quot;ffw_size must be 4 * n_embd&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;bias must be False in this experiment.&quot;</span>
+
+<span class="k">class</span> <span class="nc">GPT2ModelType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">GPT2</span> <span class="o">=</span> <span class="s2">&quot;gpt2&quot;</span>
+    <span class="n">GPT2_MEDIUM</span> <span class="o">=</span> <span class="s2">&quot;gpt2-medium&quot;</span>
+    <span class="n">GPT2_LARGE</span> <span class="o">=</span> <span class="s2">&quot;gpt2-large&quot;</span>
+    <span class="n">GPT2_XL</span> <span class="o">=</span> <span class="s2">&quot;gpt2-xl&quot;</span>
+
+<span class="k">class</span> <span class="nc">ByteUnits</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="mi">1</span>           <span class="c1"># Byte = 1 byte</span>
+    <span class="n">KB</span> <span class="o">=</span> <span class="mi">1000</span>       <span class="c1"># Kilobyte = 10^3 bytes</span>
+    <span class="n">MB</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">2</span>    <span class="c1"># Megabyte = 10^6 bytes</span>
+    <span class="n">GB</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">**</span><span class="mi">3</span>    <span class="c1"># Gigabyte = 10^9 bytes</span>
+
+
+<span class="k">class</span> <span class="nc">FloatingPointPrecision</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+    <span class="n">FP32</span> <span class="o">=</span> <span class="mi">4</span>        <span class="c1"># 32-bit floating-point, 4 bytes</span>
+    <span class="n">FP16</span> <span class="o">=</span> <span class="mi">2</span>        <span class="c1"># 16-bit floating-point, 2 bytes</span>
+    <span class="n">BFLOAT16</span> <span class="o">=</span> <span class="mi">2</span>    <span class="c1"># bfloat16, 16-bit, 2 bytes</span>
+
+<span class="k">class</span> <span class="nc">GPUMemory</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">A100_40GB</span> <span class="o">=</span> <span class="mf">40e9</span>  <span class="c1"># 40 GB for NVIDIA A100</span>
+    <span class="n">V100_16GB</span> <span class="o">=</span> <span class="mf">16e9</span>  <span class="c1"># 16 GB for NVIDIA V100</span>
+    <span class="n">V100_32GB</span> <span class="o">=</span> <span class="mf">32e9</span>  <span class="c1"># 32 GB for NVIDIA V100</span>
+    <span class="n">T4_16GB</span> <span class="o">=</span> <span class="mf">16e9</span>    <span class="c1"># 16 GB for NVIDIA T4</span>
+    <span class="n">P100_16GB</span> <span class="o">=</span> <span class="mf">16e9</span>  <span class="c1"># 16 GB for NVIDIA P100</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="total-trainable-parameters">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Total Trainable Parameters</a><a class="headerlink" href="#total-trainable-parameters" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">total_trainable_parameters</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">include_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of trainable parameters in the model.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">include_bias</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span> <span class="ow">and</span> <span class="s1">&#39;bias&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gpt2</span> <span class="o">=</span> <span class="n">GPT2LMHeadModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">GPT2ModelType</span><span class="o">.</span><span class="n">GPT2</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "e140263b5a1e4992aaf8b8ce5fb769d2"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "47290e909b6840c78056643f3b58974f"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ca4cb6ddb9724754b8ef9e5f704a9f82"}</script></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gpt2_params_no_bias</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">gpt2</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">gpt2_params_with_bias</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">gpt2</span><span class="p">,</span> <span class="n">include_bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of trainable parameters in GPT2 model: </span><span class="si">{</span><span class="n">gpt2_params_no_bias</span><span class="si">}</span><span class="s2"> (excluding bias) and </span><span class="si">{</span><span class="n">gpt2_params_with_bias</span><span class="si">}</span><span class="s2"> (including bias).&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Number of trainable parameters in GPT2 model: 124337664 (excluding bias) and 124439808 (including bias).
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since Karpathy’s blog post assumed that there is no bias for simplicity, we will
+also assume that there is no bias in the linear layers. We confirmed that the
+number of params (<code class="docutils literal notranslate"><span class="pre">124337664</span></code>) for the smallest GPT-2 model indeed matches the
+number of params given by Karpathy.</p>
+<p>In what follows, we would assume the smallest GPT-2 model and work out the
+theoretical model for the Transformer.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># config_args = {</span>
+<span class="c1">#     &#39;gpt2&#39;:         dict(n_layer=12, n_head=12, n_embd=768),  # 124M params</span>
+<span class="c1">#     &#39;gpt2-medium&#39;:  dict(n_layer=24, n_head=16, n_embd=1024), # 350M params</span>
+<span class="c1">#     &#39;gpt2-large&#39;:   dict(n_layer=36, n_head=20, n_embd=1280), # 774M params</span>
+<span class="c1">#     &#39;gpt2-xl&#39;:      dict(n_layer=48, n_head=25, n_embd=1600), # 1558M params</span>
+<span class="c1"># }[model_type]</span>
+
+<span class="k">def</span> <span class="nf">params</span><span class="p">(</span>
+    <span class="n">num_decoder_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="n">n_embd</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">768</span><span class="p">,</span>
+    <span class="n">ffw_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3072</span><span class="p">,</span>
+    <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50257</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;estimates the number of parameters in the model&quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="c1"># token and position embeddings</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding/position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span> <span class="o">*</span> <span class="n">context_length</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding/token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span> <span class="o">*</span> <span class="n">vocab_size</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding/position&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding/token&quot;</span><span class="p">]</span>
+
+    <span class="c1"># attention blocks</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/ln&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span>  <span class="c1"># note, bias=False in our LN</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/kqv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">n_embd</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/proj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/ln&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/kqv&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/proj&quot;</span><span class="p">]</span>
+
+    <span class="c1"># MLP blocks</span>
+    <span class="k">assert</span> <span class="n">ffw_size</span> <span class="o">==</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">n_embd</span><span class="p">,</span> <span class="s2">&quot;ffw_size must be 4 * n_embd&quot;</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ln&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span> <span class="o">*</span> <span class="n">ffw_size</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/proj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ffw_size</span> <span class="o">*</span> <span class="n">n_embd</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ln&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/proj&quot;</span><span class="p">]</span>
+
+    <span class="c1"># the transformer and the rest of it</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp&quot;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;transformer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_decoder_blocks</span> <span class="o">*</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;ln_f&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_embd</span>  <span class="c1"># final layernorm</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;dense&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 0 because of parameter sharing. This layer uses the weights from the embedding layer</span>
+
+    <span class="c1"># total</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;embedding&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;transformer&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;ln_f&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;dense&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">out</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">params_dict</span> <span class="o">=</span> <span class="n">params</span><span class="p">()</span>
+<span class="n">gpt2_params_no_bias_manual</span> <span class="o">=</span> <span class="n">params_dict</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span>
+
+<span class="c1"># Compare to expected PyTorch model parameter count</span>
+<span class="n">expected_params</span> <span class="o">=</span> <span class="n">gpt2_params_no_bias</span>
+<span class="n">comparison_result</span> <span class="o">=</span> <span class="n">gpt2_params_no_bias_manual</span> <span class="o">==</span> <span class="n">expected_params</span>
+<span class="n">comparison_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;We see: </span><span class="si">{</span><span class="n">gpt2_params_no_bias_manual</span><span class="si">}</span><span class="s2">, Expected: </span><span class="si">{</span><span class="n">expected_params</span><span class="si">}</span><span class="s2">, Match: </span><span class="si">{</span><span class="n">comparison_result</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Name&quot;</span><span class="p">:</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
+    <span class="s2">&quot;Parameters&quot;</span><span class="p">:</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+    <span class="s2">&quot;Ratio (%)&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">value</span> <span class="o">/</span> <span class="n">gpt2_params_no_bias_manual</span> <span class="o">*</span> <span class="mi">100</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span>
+<span class="p">}</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+<span class="c1"># Printing comparison result and parameter distribution table</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">comparison_msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">,</span> <span class="n">showindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">floatfmt</span><span class="o">=</span><span class="s2">&quot;.4f&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We see: 124337664, Expected: 124337664, Match: True
+
++--------------------+------------+-----------------------+
+|        Name        | Parameters |       Ratio (%)       |
++--------------------+------------+-----------------------+
+| embedding/position |   786432   |  0.6324970042866496   |
+|  embedding/token   |  38597376  |  31.042384711361475   |
+|     embedding      |  39383808  |  31.674881715648123   |
+|    attention/ln    |    768     | 0.0006176728557486812 |
+|   attention/kqv    |  1769472   |  1.4231182596449616   |
+|   attention/proj   |   589824   |  0.47437275321498723  |
+|     attention      |  2360064   |  1.8981086857156975   |
+|       mlp/ln       |    768     | 0.0006176728557486812 |
+|      mlp/ffw       |  2359296   |   1.897491012859949   |
+|      mlp/proj      |  2359296   |   1.897491012859949   |
+|        mlp         |  4719360   |   3.795599698575646   |
+|       block        |  7079424   |   5.693708384291344   |
+|    transformer     |  84953088  |   68.32450061149613   |
+|        ln_f        |    768     | 0.0006176728557486812 |
+|       dense        |     0      |          0.0          |
+|       total        | 124337664  |         100.0         |
++--------------------+------------+-----------------------+
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="calculating-checkpoint-size-and-fluff-ratio">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Calculating Checkpoint Size and Fluff Ratio</a><a class="headerlink" href="#calculating-checkpoint-size-and-fluff-ratio" title="Permalink to this heading">#</a></h2>
+<p>The functions below perform a series of calculations related to the size
+of a GPT-2 model checkpoint, both measured and estimated, and computes the
+“fluff ratio” to compare these sizes. The purpose of these calculations is to
+evaluate how closely the estimated size of a GPT-2 model checkpoint matches the
+actual measured size, and to quantify any overhead or additional data in the
+checkpoint file as a percentage of the estimated size.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_checkpoint_size</span><span class="p">(</span><span class="n">params_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">precision</span><span class="p">:</span> <span class="n">FloatingPointPrecision</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="n">ByteUnits</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the estimated checkpoint size in specified units.</span>
+
+<span class="sd">    This function estimates the checkpoint size for a model given the number</span>
+<span class="sd">    of parameters, the precision of these parameters, and</span>
+<span class="sd">    the desired units for the result. It accounts for the AdamW optimizer&#39;s</span>
+<span class="sd">    storage requirements by adding two times the parameter bytes to account</span>
+<span class="sd">    for the optimizer&#39;s moment and velocity vectors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params_count : int</span>
+<span class="sd">        The number of parameters excluding biases.</span>
+<span class="sd">    precision : FloatingPointPrecision</span>
+<span class="sd">        The floating point precision of the parameters.</span>
+<span class="sd">    units : ByteUnits</span>
+<span class="sd">        The units for the resulting checkpoint size.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The estimated checkpoint size in the specified units.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The AdamW optimizer requires additional storage for each parameter</span>
+<span class="sd">    for maintaining momentum and variance vectors, hence the calculation</span>
+<span class="sd">    includes 2 * params_bytes to accommodate these.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params_bytes</span> <span class="o">=</span> <span class="n">params_count</span> <span class="o">*</span> <span class="n">precision</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">params_and_buffers_bytes</span> <span class="o">=</span> <span class="n">params_bytes</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">params_bytes</span>  <span class="c1"># AdamW optimizer buffers</span>
+    <span class="k">return</span> <span class="n">params_and_buffers_bytes</span> <span class="o">/</span> <span class="n">units</span><span class="o">.</span><span class="n">value</span>
+
+
+<span class="k">def</span> <span class="nf">calculate_fluff_ratio</span><span class="p">(</span><span class="n">measured_bytes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">estimated_bytes</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">units</span><span class="p">:</span> <span class="n">ByteUnits</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the fluff ratio between measured and estimated checkpoint sizes.</span>
+
+<span class="sd">    The fluff ratio is a measure of the overhead or additional data in the</span>
+<span class="sd">    checkpoint file, expressed as a percentage of the estimated size. This</span>
+<span class="sd">    function converts the estimated size from gigabytes (or specified units)</span>
+<span class="sd">    to bytes before calculating the ratio to ensure consistency in units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    measured_bytes : int</span>
+<span class="sd">        The actual size of the checkpoint file, in bytes.</span>
+<span class="sd">    estimated_bytes : float</span>
+<span class="sd">        The estimated size of the checkpoint file, in the specified units.</span>
+<span class="sd">    units : ByteUnits</span>
+<span class="sd">        The units in which the estimated bytes are provided.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The fluff ratio, expressed as a percentage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">estimated_bytes_in_bytes</span> <span class="o">=</span> <span class="n">estimated_bytes</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">measured_bytes</span> <span class="o">/</span> <span class="n">estimated_bytes_in_bytes</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple">
+<li><p><strong>Measured Checkpoint Size in Bytes</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gpt2_checkpoint_size_measured_in_bytes</span></code> is assigned a numerical value
+that represents the actual size of a GPT-2 model checkpoint file in bytes.
+This value is obtained from the output of the Unix command
+<code class="docutils literal notranslate"><span class="pre">wc</span> <span class="pre">-c</span> <span class="pre">ckpt.pt</span></code>, which counts the number of bytes in the file <code class="docutils literal notranslate"><span class="pre">ckpt.pt</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Estimated Checkpoint Size in Bytes</strong>:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">calculate_checkpoint_size</span></code> function is called with the number of
+parameters excluding biases (<code class="docutils literal notranslate"><span class="pre">gpt2_params_no_bias</span></code>), the precision of the
+model’s parameters (<code class="docutils literal notranslate"><span class="pre">FloatingPointPrecision.FP32</span></code>), and the unit of
+measurement (<code class="docutils literal notranslate"><span class="pre">ByteUnits.B</span></code> for bytes). This function calculates the
+estimated total size of the checkpoint in bytes, taking into account the
+parameters and the additional storage required for the AdamW optimizer’s
+buffers.</p></li>
+<li><p>It is worth noting we are assuming floating-point precision of 32 bits (4
+bytes) for the model’s parameters, and hence we are multiplying the number
+of parameters by 4 to obtain the size in bytes.</p></li>
+<li><p>The AdamW optimizer, which is commonly used in training deep learning
+models for tasks like those involving GPT-2, maintains two additional
+values (buffers) for each parameter: the first for the moment vector (<code class="docutils literal notranslate"><span class="pre">m</span></code>)
+and the second for the squared moment vector (<code class="docutils literal notranslate"><span class="pre">v</span></code>). These buffers are used
+to adapt the learning rates for each parameter during training. This is
+why the storage requirement triples (<code class="docutils literal notranslate"><span class="pre">params_bytes</span> <span class="pre">+</span> <span class="pre">2*params_bytes</span></code>),
+accounting for the original parameters plus the two buffers.</p></li>
+</ul>
+</li>
+<li><p><strong>Fluff Ratio Calculation</strong>:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">calculate_fluff_ratio</span></code> function is called with the measured size in
+bytes, the estimated size in bytes, and the unit of measurement for the
+estimated size (bytes). This function calculates the fluff ratio, which
+indicates the percentage of overhead or additional data in the measured
+checkpoint file compared to the estimated size.</p></li>
+</ul>
+</li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gpt2_checkpoint_size_measured_in_bytes</span> <span class="o">=</span> <span class="mi">1542470366</span>  <span class="c1"># from &#39;wc -c ckpt.pt&#39;</span>
+<span class="n">gpt2_checkpoint_size_measured_in_gb</span> <span class="o">=</span> <span class="n">gpt2_checkpoint_size_measured_in_bytes</span> <span class="o">/</span> <span class="n">ByteUnits</span><span class="o">.</span><span class="n">GB</span>
+
+<span class="n">gpt2_checkpoint_size_estimated_in_bytes</span> <span class="o">=</span> <span class="n">calculate_checkpoint_size</span><span class="p">(</span>
+    <span class="n">params_count</span><span class="o">=</span><span class="n">gpt2_params_no_bias</span><span class="p">,</span>
+    <span class="n">precision</span><span class="o">=</span><span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">FP32</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">ByteUnits</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">gpt2_checkpoint_size_estimated_in_gb</span> <span class="o">=</span> <span class="n">gpt2_checkpoint_size_estimated_in_bytes</span> <span class="o">/</span> <span class="n">ByteUnits</span><span class="o">.</span><span class="n">GB</span>
+
+
+<span class="n">fluff_ratio</span> <span class="o">=</span> <span class="n">calculate_fluff_ratio</span><span class="p">(</span>
+    <span class="n">measured_bytes</span><span class="o">=</span><span class="n">gpt2_checkpoint_size_measured_in_bytes</span><span class="p">,</span>
+    <span class="n">estimated_bytes</span><span class="o">=</span><span class="n">gpt2_checkpoint_size_estimated_in_bytes</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">ByteUnits</span><span class="o">.</span><span class="n">B</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s2">&quot;Measured Checkpoint Size (bytes)&quot;</span><span class="p">,</span> <span class="n">gpt2_checkpoint_size_measured_in_bytes</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Measured Checkpoint Size (GB)&quot;</span><span class="p">,</span> <span class="n">gpt2_checkpoint_size_measured_in_gb</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Estimated Checkpoint Size (bytes)&quot;</span><span class="p">,</span> <span class="n">gpt2_checkpoint_size_estimated_in_bytes</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Estimated Checkpoint Size (GB)&quot;</span><span class="p">,</span> <span class="n">gpt2_checkpoint_size_estimated_in_gb</span><span class="p">],</span>
+    <span class="p">[</span><span class="s2">&quot;Fluff Ratio&quot;</span><span class="p">,</span> <span class="n">fluff_ratio</span><span class="p">]</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------------------+-------------------+
+|              Metric               |       Value       |
++-----------------------------------+-------------------+
+| Measured Checkpoint Size (bytes)  |    1542470366     |
+|   Measured Checkpoint Size (GB)   |    1.542470366    |
+| Estimated Checkpoint Size (bytes) |   1492051968.0    |
+|  Estimated Checkpoint Size (GB)   |    1.492051968    |
+|            Fluff Ratio            | 103.3791314968461 |
++-----------------------------------+-------------------+
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="gpu-memory-footprint-of-loading-model-and-optimizer">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">GPU Memory Footprint of Loading Model and Optimizer</a><a class="headerlink" href="#gpu-memory-footprint-of-loading-model-and-optimizer" title="Permalink to this heading">#</a></h2>
+<p>We can roughly understand that a checkpoint represents the amount of memory
+needed to store not just the model itself (its weights) but also additional
+information related to the optimizer state when you’re using GPUs for deep
+learning tasks.</p>
+<p>When loading a model from a checkpoint for further training or inference, the
+GPU memory must accommodate the model weights and the optimizer state (if
+continuing training).</p>
+<p>Below, we estimate the ratio of our GPU memory that will be taken up by
+the model and optimizer state when loading a GPT-2 model from a checkpoint.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_memory_ratio</span><span class="p">(</span><span class="n">checkpoint_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">gpu_memory</span><span class="p">:</span> <span class="n">GPUMemory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">memory_ratio</span> <span class="o">=</span> <span class="n">checkpoint_size</span> <span class="o">/</span> <span class="n">gpu_memory</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Memory ratio taken up just for parameters: </span><span class="si">{</span><span class="n">memory_ratio</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">calculate_memory_ratio</span><span class="p">(</span><span class="n">checkpoint_size</span><span class="o">=</span><span class="n">gpt2_checkpoint_size_estimated_in_bytes</span><span class="p">,</span> <span class="n">gpu_memory</span><span class="o">=</span><span class="n">GPUMemory</span><span class="o">.</span><span class="n">A100_40GB</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Memory ratio taken up just for parameters: 3.73%
+</pre></div>
+</div>
+</div>
+</div>
+<p>Assuming an A100 GPU with roughly 40GB memory, then the code calculates the
+percentage of the GPU memory that the estimated checkpoint size (in bytes)
+occupies. This calculation gives an insight into how much of the GPU’s memory is
+dedicated to storing the model’s weights and the optimizer’s buffers, without
+considering other memory usages such as activations during forward and backward
+passes.</p>
+<p>This percentage is relatively small, implying that most of the GPU memory is
+actually used for activations. Activations are the intermediate outputs of
+layers during the forward pass and their gradients during the backward pass,
+which can consume significant amounts of memory, especially in deep models and
+with large batch sizes.</p>
+</section>
+<section id="estimating-flops-for-a-single-forward-pass">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Estimating FLOPs for a Single Forward Pass</a><a class="headerlink" href="#estimating-flops-for-a-single-forward-pass" title="Permalink to this heading">#</a></h2>
+<p>In order to estimate FLOPs for a single forward pass, we would first need to
+define what is a FLOPS.</p>
+<section id="basics-of-floating-point-numbers">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Basics of Floating Point Numbers</a><a class="headerlink" href="#basics-of-floating-point-numbers" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Floating Point Representation</strong>: In computers, numbers can be represented
+in various formats, and one common format is floating point. This format is
+used to represent real numbers (numbers with fractions) using a fixed amount
+of memory, allowing for a wide range of values. A floating point number is
+composed of a sign, an exponent, and a mantissa (or significand). This
+representation can handle very large numbers, very small numbers, and
+fractions.</p></li>
+<li><p><strong>Operations on Floating Point Numbers</strong>: Operations on floating point
+numbers include addition, subtraction, multiplication, and division. Each of
+these operations takes one or more floating point numbers as input and
+produces a floating point number as output.</p></li>
+</ul>
+</section>
+<section id="floating-point-operations-flops">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Floating Point Operations (FLOPs)</a><a class="headerlink" href="#floating-point-operations-flops" title="Permalink to this heading">#</a></h3>
+<p>Floating Point Operations, or FLOPs, refer to individual mathematical operations
+(additions, subtractions, multiplications, divisions) performed on
+<a class="reference external" href="https://en.wikipedia.org/wiki/Floating-point_arithmetic">floating point numbers</a>.
+Each operation counts as one FLOP.</p>
+</section>
+<section id="counting-flops-of-matrix-multiplications">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Counting FLOPs of Matrix Multiplications</a><a class="headerlink" href="#counting-flops-of-matrix-multiplications" title="Permalink to this heading">#</a></h3>
+<p>In the context of deep learning, many operations are done via matrix
+multiplications, we will take a look at how to count FLOPs for matrix
+multiplications next.</p>
+<p>Deep learning, particularly in neural networks, relies heavily on matrix
+multiplications. A single matrix multiplication operation involves multiple
+floating point multiplications and additions.</p>
+<p>Consider two matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> of size <span class="math notranslate nohighlight">\(m \times n\)</span> and
+<span class="math notranslate nohighlight">\(n \times p\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{A} = \begin{bmatrix}
+a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\
+a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn}
+\end{bmatrix}_{m \times n} \quad \mathbf{B} = \begin{bmatrix}
+b_{11} &amp; b_{12} &amp; \cdots &amp; b_{1p} \\
+b_{21} &amp; b_{22} &amp; \cdots &amp; b_{2p} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+b_{n1} &amp; b_{n2} &amp; \cdots &amp; b_{np}
+\end{bmatrix}_{n \times p}
+\end{split}\]</div>
+<p>It is easy to see that if we want to compute the product
+<span class="math notranslate nohighlight">\(\mathbf{C} = \mathbf{A} \mathbf{B}\)</span>, the element <span class="math notranslate nohighlight">\(c_{ij}\)</span> of <span class="math notranslate nohighlight">\(\mathbf{C}\)</span> is
+given by:</p>
+<div class="math notranslate nohighlight">
+\[
+c_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}
+\]</div>
+<p>and therefore there are a total of <span class="math notranslate nohighlight">\(m \times n \times p\)</span> multiplications and
+<span class="math notranslate nohighlight">\(m \times (n-1) \times p\)</span> additions. This amounts to roughly:</p>
+<div class="math notranslate nohighlight">
+\[
+m \times n \times p + m \times (n-1) \times p \approx 2 \times m \times n \times p
+\]</div>
+<p>FLOPs. Note this is basically because matrix multiplication is a series of dot
+products, and each dot product involves <span class="math notranslate nohighlight">\(n\)</span> multiplications and <span class="math notranslate nohighlight">\(n-1\)</span> additions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">flops</span><span class="p">(</span>
+    <span class="n">num_decoder_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1024</span><span class="p">,</span>
+    <span class="n">n_embd</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">768</span><span class="p">,</span>
+    <span class="n">n_head</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+    <span class="n">ffw_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3072</span><span class="p">,</span>
+    <span class="n">vocab_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50257</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="c1"># we only count Weight FLOPs, all other layers (LayerNorm, Softmax, etc) are effectively irrelevant</span>
+    <span class="c1"># we count actual FLOPs, not MACs. Hence 2* all over the place</span>
+    <span class="c1"># basically for any matrix multiply A (BxC) @ B (CxD) -&gt; (BxD) flops are 2*B*C*D</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">head_size</span> <span class="o">=</span> <span class="n">n_embd</span> <span class="o">//</span> <span class="n">n_head</span>
+
+    <span class="c1"># attention blocks</span>
+    <span class="c1"># 1) the projection to key, query, values</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/kqv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_embd</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">n_embd</span><span class="p">)</span>
+    <span class="c1"># 2) calculating the attention scores</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/scores&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="n">n_embd</span>
+    <span class="c1"># 3) the reduction of the values (B, nh, T, T) x (B, nh, T, hs) -&gt; (B, nh, T, hs)</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/reduce&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">n_head</span> <span class="o">*</span> <span class="p">(</span><span class="n">context_length</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="n">head_size</span><span class="p">)</span>
+    <span class="c1"># 4) the final linear projection</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/proj&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_embd</span> <span class="o">*</span> <span class="n">n_embd</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention/&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;kqv&quot;</span><span class="p">,</span> <span class="s2">&quot;scores&quot;</span><span class="p">,</span> <span class="s2">&quot;reduce&quot;</span><span class="p">,</span> <span class="s2">&quot;proj&quot;</span><span class="p">])</span>
+
+    <span class="c1"># MLP blocks</span>
+    <span class="n">ffw_size</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">n_embd</span>  <span class="c1"># feed forward size</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_embd</span> <span class="o">*</span> <span class="n">ffw_size</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">ffw_size</span> <span class="o">*</span> <span class="n">n_embd</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw1&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp/ffw2&quot;</span><span class="p">]</span>
+
+    <span class="c1"># the transformer and the rest of it</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;attention&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;mlp&quot;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;transformer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_decoder_blocks</span> <span class="o">*</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;block&quot;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;dense&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">context_length</span> <span class="o">*</span> <span class="p">(</span><span class="n">n_embd</span> <span class="o">*</span> <span class="n">vocab_size</span><span class="p">)</span>
+
+    <span class="c1"># forward,backward,total</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;forward_total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;transformer&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;dense&quot;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;backward_total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;forward_total&quot;</span><span class="p">]</span>  <span class="c1"># use common estimate of bwd = 2*fwd</span>
+    <span class="n">out</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;forward_total&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">out</span><span class="p">[</span><span class="s2">&quot;backward_total&quot;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">flops</span><span class="p">()</span>
+<span class="n">flops_total</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;forward_total&quot;</span><span class="p">]</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;flops&quot;</span><span class="p">,</span> <span class="s2">&quot;ratio (%)&quot;</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">v</span> <span class="o">/</span> <span class="n">flops_total</span> <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tabulate</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="s2">&quot;firstrow&quot;</span><span class="p">,</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">,</span> <span class="n">numalign</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+------------------+--------------+---------------------+
+|       name       |    flops     |      ratio (%)      |
++------------------+--------------+---------------------+
+|  attention/kqv   |  3623878656  | 1.2425508965889174  |
+| attention/scores |  1610612736  | 0.5522448429284077  |
+| attention/reduce |  1610612736  | 0.5522448429284077  |
+|  attention/proj  |  1207959552  | 0.41418363219630583 |
+|    attention     |  8053063680  | 2.7612242146420387  |
+|     mlp/ffw1     |  4831838208  | 1.6567345287852233  |
+|     mlp/ffw2     |  4831838208  | 1.6567345287852233  |
+|       mlp        |  9663676416  | 3.3134690575704466  |
+|      block       | 17716740096  |  6.074693272212485  |
+|   transformer    | 212600881152 |  72.89631926654981  |
+|      dense       | 79047426048  |  27.10368073345018  |
+|  forward_total   | 291648307200 |        100.0        |
+|  backward_total  | 583296614400 |        200.0        |
+|      total       | 874944921600 |        300.0        |
++------------------+--------------+---------------------+
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># now here is an estimate copy pasted from the PaLM paper</span>
+<span class="c1"># this formula is often used to calculate MFU (model flops utilization)</span>
+<span class="k">def</span> <span class="nf">palm_flops</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;estimate of the model flops following PaLM paper formula&quot;&quot;&quot;</span>
+    <span class="c1"># non-embedding model parameters. note that we do not subtract the</span>
+    <span class="c1"># embedding/token params because those are tied and get used in the last layer.</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">params</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">params</span><span class="p">()[</span><span class="s1">&#39;emebedding/position&#39;</span><span class="p">]</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">n_layer</span><span class="p">,</span> <span class="n">n_head</span><span class="p">,</span> <span class="n">n_embd</span><span class="o">//</span><span class="n">n_head</span><span class="p">,</span> <span class="n">block_size</span>
+    <span class="n">mf_per_token</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="mi">12</span><span class="o">*</span><span class="n">L</span><span class="o">*</span><span class="n">H</span><span class="o">*</span><span class="n">Q</span><span class="o">*</span><span class="n">T</span>
+    <span class="n">mf</span> <span class="o">=</span> <span class="n">mf_per_token</span> <span class="o">*</span> <span class="n">block_size</span>
+    <span class="k">return</span> <span class="n">mf</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;palm_flops: </span><span class="si">{</span><span class="n">palm_flops</span><span class="p">()</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">, flops: </span><span class="si">{</span><span class="n">flops</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">, ratio: </span><span class="si">{</span><span class="n">palm_flops</span><span class="p">()</span><span class="o">/</span><span class="n">flops</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">KeyError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">12</span><span class="p">],</span> <span class="n">line</span> <span class="mi">13</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>     <span class="n">mf</span> <span class="o">=</span> <span class="n">mf_per_token</span> <span class="o">*</span> <span class="n">block_size</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>     <span class="k">return</span> <span class="n">mf</span>
+<span class="ne">---&gt; </span><span class="mi">13</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;palm_flops: </span><span class="si">{</span><span class="n">palm_flops</span><span class="p">()</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">, flops: </span><span class="si">{</span><span class="n">flops</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">, ratio: </span><span class="si">{</span><span class="n">palm_flops</span><span class="p">()</span><span class="o">/</span><span class="n">flops</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nn">Cell In[12], line 7,</span> in <span class="ni">palm_flops</span><span class="nt">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;estimate of the model flops following PaLM paper formula&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="c1"># non-embedding model parameters. note that we do not subtract the</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># embedding/token params because those are tied and get used in the last layer.</span>
+<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">N</span> <span class="o">=</span> <span class="n">params</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">params</span><span class="p">()[</span><span class="s1">&#39;emebedding/position&#39;</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="n">L</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">T</span> <span class="o">=</span> <span class="n">n_layer</span><span class="p">,</span> <span class="n">n_head</span><span class="p">,</span> <span class="n">n_embd</span><span class="o">//</span><span class="n">n_head</span><span class="p">,</span> <span class="n">block_size</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="n">mf_per_token</span> <span class="o">=</span> <span class="mi">6</span><span class="o">*</span><span class="n">N</span> <span class="o">+</span> <span class="mi">12</span><span class="o">*</span><span class="n">L</span><span class="o">*</span><span class="n">H</span><span class="o">*</span><span class="n">Q</span><span class="o">*</span><span class="n">T</span>
+
+<span class="ne">KeyError</span>: &#39;emebedding/position&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>Ok they are quite similar, giving some confidence that my math in flops() function was ~ok. Now, A100 is cited at 312TFLOPS bfloat16 on tensor cores. So what is our model flops utilization (MFU)? I trained the model above with a batch_size of 20 and grad_accum of 5, which runs in about 755ms on a single A100 GPU. We get:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># here is what we currently roughly measure</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="mi">5</span> <span class="c1"># 5 is grad_accum, so total batch size is 100</span>
+<span class="n">measured_time</span> <span class="o">=</span> <span class="mf">0.755</span> <span class="c1"># in seconds per iteration</span>
+<span class="n">measured_throughput</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="n">measured_time</span>
+<span class="n">flops_achieved</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">measured_throughput</span>
+
+<span class="c1"># A100 is cited to be 312 TFLOPS of bloat16 running on tensor cores</span>
+<span class="n">a100_flops_promised</span> <span class="o">=</span> <span class="mf">312e12</span>
+
+<span class="c1"># the fraction of the A100 that we are using:</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;fraction of A100 used: </span><span class="si">{</span><span class="n">flops_achieved</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">a100_flops_promised</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>fraction of A100 used: 37.14%
+</pre></div>
+</div>
+</div>
+</div>
+<p>For reference, we’d prefer to be somewhere around 50%+, and not just for a single GPU but for an entire DDP run. So we still have some work to do, but at least we’re within a factor of ~2X of what is achievable with this GPU.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Finally let&#39;s check out the 6ND approximation as total cost of training in FLOPs</span>
+<span class="n">model_size</span> <span class="o">=</span> <span class="n">params</span><span class="p">()[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="c1"># this is number of parameters, N</span>
+<span class="n">tokens_num</span> <span class="o">=</span> <span class="mf">300e9</span> <span class="c1"># 300B tokens, this is dataset size in tokens, D</span>
+<span class="n">a100_flops</span> <span class="o">=</span> <span class="mf">312e12</span> <span class="c1"># 312 TFLOPS</span>
+<span class="n">assumed_mfu</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="c1"># assume this model flops utilization (take the current 37% from above and add some DDP overhead)</span>
+<span class="n">flops_throughput</span> <span class="o">=</span> <span class="n">a100_flops</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">assumed_mfu</span> <span class="c1"># assume an 8XA100 node at 30% utilization</span>
+<span class="n">flops_needed</span> <span class="o">=</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">model_size</span> <span class="o">*</span> <span class="n">tokens_num</span> <span class="c1"># 6ND</span>
+<span class="n">time_needed_s</span> <span class="o">=</span> <span class="n">flops_needed</span> <span class="o">/</span> <span class="n">flops_throughput</span> <span class="c1"># in seconds</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;time needed to train the model: </span><span class="si">{</span><span class="n">time_needed_s</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> days&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>time needed to train the model: 3.46 days
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is not a bad estimate at all. I trained this model and it converged in roughly 4 days. Btw as a good reference for where 6ND comes from and some intuition around it I recommend <a class="reference external" href="https://medium.com/&#64;dzmitrybahdanau/the-flops-calculus-of-language-model-training-3b19c1f025e4">Dzmitry’s post</a>.</p>
+<p>Now, FLOPs are just one constraint, the other that we have to keep a close track of is the memory bandwidth. TODO estimate LOAD/STORE costs of our model later.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./playbook"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../transformer/decoder/implementation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The Implementation of Generative Pre-trained Transformers (GPT)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../deep_learning/training_chronicles/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training Chronicles</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configurations-constants-and-enums">Configurations, Constants and Enums</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#total-trainable-parameters">Total Trainable Parameters</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-checkpoint-size-and-fluff-ratio">Calculating Checkpoint Size and Fluff Ratio</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu-memory-footprint-of-loading-model-and-optimizer">GPU Memory Footprint of Loading Model and Optimizer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimating-flops-for-a-single-forward-pass">Estimating FLOPs for a Single Forward Pass</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#basics-of-floating-point-numbers">Basics of Floating Point Numbers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#floating-point-operations-flops">Floating Point Operations (FLOPs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#counting-flops-of-matrix-multiplications">Counting FLOPs of Matrix Multiplications</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
