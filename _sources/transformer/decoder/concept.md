@@ -1433,6 +1433,15 @@ to better predict them, regardless of their method of procurement
 
 -   [Transformers from Scratch - Brandon Rohrer](https://e2eml.school/transformers.html)
 -   [Primers • Transformers - Aman Chadha](https://aman.ai/primers/ai/transformers/#positional-encoding)
+-   [The Illustrated GPT-2 (Visualizing Transformer Language Models) - Jay Alammar](https://jalammar.github.io/illustrated-gpt2/)
+-   [The Transformer Family Version 2.0 - Lilian Weng](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2)
+-   [The Random Transformer - hackerllama](https://osanseviero.github.io/hackerllama/blog/posts/random_transformer)
+-   [Transformers From Scratch - Mat Miller](https://blog.matdmiller.com/posts/2023-06-10_transformers/notebook.html)
+-   [Andrej Karpathy GPT Implementation Google Colab](https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing#scrollTo=JB82yzt44REI)
+-   [Transformers: a Primer - Justin Seonyong Lee](http://www.columbia.edu/~jsl2239/transformers.html)
+-   [OpenAI GPT Models - Lei Mao](https://leimao.github.io/article/OpenAI-GPT-Models/)
+-   [Transformer Explained in One Single Page - Lei Mao](https://leimao.github.io/blog/Transformer-Explained/)
+-   [Autoregressive models](https://deepgenerativemodels.github.io/notes/autoregressive/)
 
 ### Positional Encoding
 
@@ -1479,6 +1488,9 @@ to better predict them, regardless of their method of procurement
 -   D. Jurafsky and J. H. Martin,
     ["Chapter 3. N-gram Language Models"](https://web.stanford.edu/~jurafsky/slp3/3.pdf)
     in Speech and Language Processing, 3rd ed., Pearson, 2023. pp. 32-59.
+-   D. Jurafsky and J. H. Martin,
+    ["Chapter 10. Transformers and Large Language Models"](https://web.stanford.edu/~jurafsky/slp3/10.pdf)
+    in Speech and Language Processing, 3rd ed., Pearson, 2023. pp. 213-241.
 
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
