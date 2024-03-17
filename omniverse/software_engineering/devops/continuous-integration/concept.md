@@ -1,5 +1,11 @@
 # Continuous Integration (CI) Workflow
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/utils/torch_utils/speed_monitor.py)
+![Tag](https://img.shields.io/badge/Tag-Maybe_Chaotic-blue)
+
 ```{contents}
 :local:
 ```
@@ -27,6 +33,10 @@ Popular CI tools like Jenkins, Travis CI, and GitHub Actions provide mechanisms
 to define and execute CI workflows. These tools integrate with version control
 systems and offer a range of features, including customizable build and test
 environments, notifications, and integration with other development tools.
+
+## Lifecycle
+
+Insert [image]?
 
 ## Phase 1. Planning
 
@@ -75,7 +85,7 @@ where `.` means cloning to the current directory.
 
 ### README, LICENSE and CONTRIBUTING
 
-#### 1. README
+#### README
 
 The `README.md` file serves as the front page of your repository. It should
 provide all the necessary information about the project, including:
@@ -100,7 +110,7 @@ command:
 ~/yolo $ touch README.md
 ```
 
-#### 2. LICENSE
+#### LICENSE
 
 The `LICENSE` file is critical as it defines how others can legally use, modify,
 and distribute your project. If you’re unsure which license to use,
@@ -114,7 +124,7 @@ After creating the file, you should fill it with the text of the license you've
 chosen. This could be the MIT License, GNU General Public License (GPL), Apache
 License 2.0, etc.
 
-#### 3. CONTRIBUTING
+#### CONTRIBUTING
 
 `CONTRIBUTING.md` outlines guidelines for contributing to your project. This
 might include:
@@ -132,7 +142,12 @@ might include:
 
 ### Version Control
 
-Ve
+[**Version control**](https://en.wikipedia.org/wiki/Version_control), such as
+[**Git**](https://git-scm.com/), are foundational to modern software development
+practices, including Continuous Integration and Continuous Deployment/Delivery
+(CI/CD). The premise to CI/CD is to enable developers to work on the same code
+base simultaneously, track every change, and automate the CI/CD processes such
+as triggering builds, tests, and deployments based on code commits and merges.
 
 #### Initial Configuration
 
@@ -165,7 +180,7 @@ make your first commit.
 
     Populate `.gitignore` with patterns to ignore. For example:
 
-    ```plaintext
+    ```text
     .DS_Store
     __pycache__/
     env/
@@ -322,7 +337,7 @@ specifying exact versions to ensure consistency across different environments.
 2. **Populate `requirements.txt` with your project's dependencies**. For
    example:
 
-    ```plaintext
+    ```text
     torch==1.10.0+cu113
     torchaudio==0.10.0+cu113
     torchvision==0.11.1+cu113
@@ -430,7 +445,7 @@ pip install .[dev]
 
 To this end, you should see the following directory structure:
 
-```tree title="main directory tree" linenums="1" hl_lines="10 11 12 13 14 15"
+```text title="main directory tree" linenums="1" hl_lines="10 11 12 13 14 15"
 .
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -449,238 +464,174 @@ To this end, you should see the following directory structure:
 You can find more information on writing your
 [`pyproject.toml` file here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/).
 
-## Phase 3. Build
+### Local Pre-Commit Checks (Local Continuous Integration)
 
-1. Dockerize the application. Production identical environment.
-2. Infrastructure as Code (IaC) for cloud deployment.
-3. Container orchestration for scaling and managing containers.
+Consider continuous integration (CI) as a practice of merging all developers'
+working copies to a shared mainline several times a day. Each integration is
+verified by an automated build (including linting, code smell, type checks, unit
+tests etc) to detect integration errors as quickly as possible. This build can
+be triggered easily by modern version control systems like Git through a simple
+push to the repository. Tools like GitHub Actions, a CI/CD feature within
+GitHub, play the role in facilitating these practices.
 
-## Styling and Formatting
+As we will continuously emphasize, to maximize the effectiveness of tools like
+Jenkins and GitHub Actions, it's crucial to maintain **consistency** and
+**uniformity** between the local development environment and the CI/CD pipeline.
+This alignment ensures that the software builds, tests, and deploys in an
+identical manner, both locally and in the CI/CD environment. Achieving this
+uniformity often involves the use of containerization tools like Docker, which
+can encapsulate the application and its dependencies in a container that runs
+consistently across different computing environments. By doing so, developers
+can minimize the 'it works on my machine' syndrome, a common challenge in
+software development, and foster a more collaborative and productive development
+culture. Moreover, it is also common to see developers get a "shock" when their
+build failed in the remote CI/CD pipeline, which could have been easily detected
+locally _**if and only if**_ they had run the **same** checks locally. There are
+some commercial tools that may not be able to same checks locally, but for
+open-source tools, it is a good practice to run the same checks locally.
 
-## Pre-commit
+Some developers will "forget" to run the same checks locally, and this is where
+[**pre-commit hooks**](https://pre-commit.com/) come into play. Pre-commit hooks
+are scripts that run before a commit is made to the version control system.
 
-This is on branch `pre-commit`.
+#### Guard Rails
 
-```bash title="install pre-commit" linenums="1"
-~/yolo (venv) $ pip install pre-commit
-~/yolo (venv) $ pre-commit install
+As the name suggests, guard rails are a set of rules and guidelines that help
+developers stay on track and avoid common security, performance, and
+maintainability pitfalls. These guard rails can be implemented as pre-commit
+hooks, which are scripts that run before a commit is made to the version control
+system.
 
-pre-commit installed at .git\hooks\pre-commit
-```
+-   [Bandit](https://bandit.readthedocs.io/en/latest/config.html) is a tool
+    designed to find common security issues in Python code. To install Bandit,
+    run:
 
-```bash title="create pre-commit-config.yaml" linenums="1"
-~/yolo (venv) $ touch .pre-commit-config.yaml
-```
+    ```bash
+    pip install -U bandit
+    ```
 
-```yaml title=".pre-commit-config.yaml" linenums="1"
-~/yolo (venv) $ cat .pre-commit-config.yaml
+    and you can place configurations of Bandit in a `.bandit` file. But more
+    commonly, we put in `pyproject.toml` file for unification.
 
+    ```toml
+    # FILE: pyproject.toml
+    [tool.bandit]
+    exclude_dirs = ["tests", "path/to/file"]
+    tests = ["B201", "B301"]
+    skips = ["B101", "B601"]
+    ```
+
+-   [`detect-secrets`](https://github.com/Yelp/detect-secrets/tree/master) is a
+    tool that can be used to prevent secrets from being committed to your
+    repository. It can be installed using pip:
+
+    ```bash
+    pip install -U detect-secrets
+    ```
+
+    You can find more information in the
+    [usage section](https://github.com/Yelp/detect-secrets/tree/master). People
+    commonly place this as a hook in the
+    [`.pre-commit-config.yaml`](https://github.com/Yelp/detect-secrets/blob/master/.pre-commit-hooks.yaml)
+    file.
+
+There are many more guard rails that can be implemented as pre-commit hooks, we
+cite
+[Welcome to pre-commit heaven - Marvelous MLOps Substack](https://marvelousmlops.substack.com/i/130911126/guard-rails)
+as a good reference below:
+
+```yaml
 repos:
-- repo: local
-  hooks:
-    - id: linter
-      name: Run linter
-      entry: bash
-      args: ["./scripts/linter.sh"]
-      language: system
-      pass_filenames: false
-    - id: check_format
-      name: Run black code formatter
-      entry: bash
-      args: ["./scripts/formatter.sh"]
-      language: system
-      pass_filenames: false
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.3.0
+      hooks:
+          - id: check-ast
+          - id: check-added-large-files
+          - id: check-json
+          - id: check-toml
+          - id: check-yaml
+          - id: check-shebang-scripts-are-executable
+          - id: detect-secrets
+    - repo: https://github.com/PyCQA/bandit
+      rev: 1.7.4
+      hooks:
+          - id: bandit
 ```
 
-means we will run `linter.sh` and `formatter.sh` before every commit.
+#### Styling, Formatting, and Linting
 
-### Folder Structure
+Guido Van Rossum, the author of Python, aptly stated, "Code is read more often
+than it is written." This principle underscores the necessity of both clear
+documentation and easy readability in coding. Adherence to style and formatting
+conventions, particularly those based on
+[PEP8](https://peps.python.org/pep-0008/), plays a vital role in achieving this
+goal. Different teams may adopt various conventions, but the key lies in
+consistent application and the use of automated pipelines to maintain this
+consistency. For instance, standardizing line lengths simplifies code review
+processes, making discussions about specific sections more straightforward. In
+this context, **linting** and **formating** emerge as critical tools for
+maintaining high code quality. Linting, the process of analyzing code for
+potential errors, and formatting, which ensures a uniform appearance,
+collectively boost **readability** and **maintainability**. A well-styled
+codebase not only looks professional but also reduces bugs and eases
+**integration** and **code reviews**. These practices, when ingrained as an
+**intuition** among developers, lead to more robust and efficient software
+development.
 
-A very barebone structure as of now would be as follows:
+This part is probably what most people are familiar with, we list some common
+tools for styling, formatting, and linting below (cited from
+[Welcome to pre-commit heaven - Marvelous MLOps Substack](https://marvelousmlops.substack.com/i/130911126)):
 
-```tree title="pipeline-feature" linenums="1"
-.
-├── LICENSE
-├── README.md
-├── mlops_pipeline_feature_v1
-│   ├── __init__.py
-│   └── pipeline.py
-├── pyproject.toml
-├── requirements.txt
-└── requirements_dev.txt
+```yaml
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.3.0
+      hooks:
+          - id: end-of-file-fixer
+          - id: mixed-line-ending
+          - id: trailing-whitespace
+    - repo: https://github.com/psf/black
+      rev: 22.10.0
+      hooks:
+          - id: black
+            language_version: python3.11
+            args:
+                - --line-length=128
+          - id: black-jupyter
+            language_version: python3.11
+    - repo: https://github.com/pycqa/isort
+      rev: 5.11.5
+      hooks:
+          - id: isort
+            args: ["--profile", "black"]
+    - repo: https://github.com/pycqa/flake8
+      rev: 5.0.4
+      hooks:
+          - id: flake8
+            args:
+                - "--max-line-length=128"
+            additional_dependencies:
+                - flake8-bugbear
+                - flake8-comprehensions
+                - flake8-simplify
+    - repo: https://github.com/pre-commit/mirrors-mypy
+      rev: v0.991
+      hooks:
+          - id: mypy
 ```
 
-## Documentation
+#### Tests
 
-### Jupyter Book Setup
+Testing is a critical part of the software development process. It helps ensure
+that the code behaves as expected and that changes don't introduce new bugs or
+break existing functionality. Unit tests, in particular, focus on testing
+individual components or units of code in isolation. They help catch bugs early
+and provide a safety net for refactoring and making changes with confidence.
 
-```bash title="packages required for jupyter-book" linenums="1"
-jupyter-book==0.13.1
-sphinx-inline-tabs==2021.3.28b7
-sphinx-proof==0.1.3
-myst-nb==0.16.0 # remember to download manually
-```
-
-```bash title="create jupyter-book" linenums="1"
-~/yolo (venv) $ mkdir content
-```
-
-You populate the `content` folder with your notebooks and markdown files.
-
-To build the book, run:
-
-```bash title="build jupyter-book" linenums="1"
-~/yolo (venv) $ jupyter-book build content
-```
-
-Then the book will be built in the `_build` folder.
-
-Lastly, to serve and deploy the book, run:
-
-```bash title="serve and deploy jupyter-book" linenums="1"
-~/yolo (venv) $ mkdir .github/workflows
-~/yolo (venv) $ touch .github/workflows/deploy.yml
-```
-
-```bash title="deploy.yml" linenums="1"
-~/yolo (venv) $ cat .github/workflows/deploy.yml
-
-name: deploy
-
-on:
-  # Trigger the workflow on push to main branch
-  push:
-    branches:
-      - main
-      - master
-
-# This job installs dependencies, build the book, and pushes it to `gh-pages`
-jobs:
-  build-and-deploy-book:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
-    steps:
-    - uses: actions/checkout@v2
-
-    # Install dependencies
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
-
-    # Build the book
-    - name: Build the book
-      run: |
-        jupyter-book build content
-
-    # Deploy the book's HTML to gh-pages branch
-    - name: GitHub Pages action
-      uses: peaceiris/actions-gh-pages@v3.6.1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: content/_build/html
-```
-
-This will deploy the book to the `gh-pages` branch. Remember to enable GitHub
-Pages in the repository settings.
-
-### Mkdocs Setup
-
-We will be using [Mkdocs](https://www.mkdocs.org/) to generate our markdown
-documentation into a static website.
-
-1. The following requirements are necessary to run `mkdocs`:
-
-    ```txt title="requirements.txt" linenums="1"
-    mkdocs                            1.3.0
-    mkdocs-material                   8.2.13
-    mkdocs-material-extensions        1.0.3
-    mkdocstrings                      0.18.1
-    ```
-
-2. Initialize default template by calling `mkdocs new .` where `.` refers to the
-   current directory. The `.` can be replaced with a path to your directory as
-   well. Subsequently, a folder `docs` alongside with `mkdocs.yml` file will be
-   created.
-
-    ```tree title="mkdocs folder structure" linenums="1" hl_lines="3 4 5"
-    pkd_exercise_counter/
-    ├── venv_pkd_exercise_counter/
-    ├── docs/
-    │   └── index.md
-    ├── mkdocs.yml
-    ├── requirements.txt
-    └── setup.py
-    ```
-
-3. We can specify the following configurations in `mkdocs.yml`:
-
-    ???+ example "Show/Hide mkdocs.yml"
-    `yml title="mkdocs.yml" linenums="1" site_name: Hongnan G. PeekingDuck Exercise Counter site_url: "" nav: - Home: index.md - PeekingDuck: - Setup: workflows.md - Push-up Counter: pushup.md theme: name: material features: - content.code.annotate markdown_extensions: - attr_list - md_in_html - admonition - footnotes - pymdownx.highlight - pymdownx.inlinehilite - pymdownx.superfences - pymdownx.snippets - pymdownx.details - pymdownx.arithmatex: generic: true extra_javascript: - javascript/mathjax.js - https://polyfill.io/v3/polyfill.min.js?features=es6 - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js extra_css: - css/extra.css plugins: - search - mkdocstrings # plugins for mkdocstrings `
-
-    Some of the key features include:
-
-    - [Code block Line Numbering](https://squidfunk.github.io/mkdocs-material/reference/code-blocks/);
-    - [Code block Annotations](https://squidfunk.github.io/mkdocs-material/reference/code-blocks/);
-    - [MathJax](https://squidfunk.github.io/mkdocs-material/reference/mathjax/).
-
-    One missing feature is the ability to **toggle** code blocks. Two
-    workarounds are provided:
-
-    ??? "Toggle Using Admonition"
-    `bash title="Setting Up" mkdir custom_hn_push_up_counter `
-
-    <details>
-    <summary>Toggle Using HTML</summary>
-    ```bash title="Setting Up"
-    mkdir custom_hn_push_up_counter
-    ```
-    </details>
-
-4. We added some custom CSS and JavaScript files. In particular, we added
-   `mathjax.js` for easier latex integration.
-5. You can now call `mkdocs serve` to start the server at a local host to view
-   your document.
-
-!!! tip To link to a section or header, you can do this: [link to Styling and
-Formatting by
-[workflow.md#styling-and-formatting](workflow.md#styling-and-formatting).
-
-### Mkdocstrings
-
-We also can create docstrings as API reference using
-[Mkdocstrings](https://mkdocstrings.github.io/usage/):
-
--   Install mkdocstrings: `pip install mkdocstrings`
--   Place plugings to `mkdocs.yml`:
-    ```yml title="mkdocs.yml" linenums="1"
-    plugins:
-        - search
-        - mkdocstrings
-    ```
--   In `mkdocs.yml`'s navigation tree:
-
-    ```yml title="mkdocs.yml" linenums="1"
-    - API Documentation:
-          - Exercise Counter: api/exercise_counter_api.md
-    ```
-
-    For example you have a python file called `exercise_counter.py` and want to
-    render it, create a file named `api/exercise_counter_api.md` and in this
-    markdown file:
-
-    ```md title="api/exercise_counter_api.md" linenums="1"
-    ::: custom_hn_exercise_counter.src.custom_nodes.dabble.exercise_counter #
-    package path.
-    ```
-
-## Tests
+Usually, unit tests are run as part of _pre-merge checks_ to ensure that the
+changes being merged don't break existing functionality where as _post-merge
+checks_ can entail more comprehensive tests such as integration tests,
+end-to-end tests etc.
 
 Set up `pytest` for testing codes.
 
@@ -704,11 +655,178 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 ```
 
-[^testing_made_with_ml]:
-    This part is extracted from
-    [madewithml](https://madewithml.com/courses/mlops/testing/#pytest).
+#### Git Sanity Checks
 
-## CI/CD (GitHub Actions)
+Git sanity checks are a set of rules and guidelines that help developers avoid
+common mistakes and pitfalls when working with Git. More specifically, we have
+the below:
+
+-   **commitizen**: This hook encourages developers to use the Commitizen tool
+    for formatting commit messages. Commitizen standardizes commit messages
+    based on predefined conventions, making the project's commit history more
+    readable and navigable. Standardized messages facilitate understanding the
+    purpose of each change, aiding in debugging and project management (though I
+    rarely need to sieve through commit messages) but this is good practice
+    (imagine all your commit message is "111" or "fix bug" or "update").
+
+-   **commitizen-branch**: A specific use of the Commitizen validation that can
+    be configured to work at different stages, such as during branch pushes.
+    This ensures that commits pushed to branches also follow the standardized
+    format, maintaining consistency not just locally but across the repository.
+
+-   **check-merge-conflict**: This hook checks for merge conflict markers (e.g.,
+    `<<<<<<<`, `=======`, `>>>>>>>`). These markers indicate unresolved merge
+    conflicts, which should not be committed to the repository as they can break
+    the codebase. Preventing such commits helps maintain the integrity and
+    operability of the project.
+
+-   **no-commit-to-branch**: It prevents direct commits to specific branches
+    (commonly the main or master branch). This practice encourages the use of
+    feature branches and pull requests, fostering code reviews and discussions
+    before changes are merged into the main codebase. It's a way to ensure that
+    changes are vetted and tested, reducing the risk of disruptions in the main
+    development line.
+
+Again, citing from
+[Welcome to pre-commit heaven - Marvelous MLOps Substack](https://marvelousmlops.substack.com/i/130911126):
+
+```yaml
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+      rev: v2.35.0
+      hooks:
+        - id: commitizen
+        - id: commitizen-branch
+          stages: [push]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v4.3.0
+      hooks:
+        - id: check-merge-conflict
+        - id: no-commit-to-branch
+```
+
+#### Code Correctors
+
+This is entering "riskier" territory, as code correctors can automatically
+correct your code.
+
+-   `pyupgrade` is a tool that automatically upgrades Python syntax to the
+    latest version that's supported by the Python interpreter specified. It
+    takes existing Python code and refactors it where possible to use newer
+    syntax features that are more efficient, readable, or otherwise preferred.
+    For instance, when targeting Python 3.9 and above, it might convert
+    old-style string formatting to f-strings, use newer Python 3.9 dictionary
+    merge operators, and more.
+
+-   `yesqa` automatically removes unnecessary `# noqa` comments from the code.
+    `# noqa` is used to tell linters to ignore specific lines of code that would
+    otherwise raise warnings or errors. However, over time, as the code evolves,
+    some of these `# noqa` comments might no longer be necessary because the
+    issues have been resolved or the code has changed.
+
+#### Setting Up Pre-Commit
+
+1.  **Install Pre-Commit**:
+
+    ```bash title="install pre-commit" linenums="1"
+    ~/yolo (venv) $ pip install -U pre-commit
+    ~/yolo (venv) $ pre-commit install
+    ```
+
+2.  **Create a `.pre-commit-config.yaml` File**:
+
+    ```bash title="create pre-commit-config.yaml" linenums="1"
+    ~/yolo (venv) $ touch .pre-commit-config.yaml
+    ```
+
+3.  **Populate `.pre-commit-config.yaml` with the desired hooks**:
+
+    Sample `.pre-commit-config.yaml` file:
+
+    ```yaml title=".pre-commit-config.yaml" linenums="1"
+    repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.5.0
+        hooks:
+        - id: check-added-large-files
+        - id: check-ast
+        - id: check-builtin-literals
+        - id: check-case-conflict
+        - id: check-docstring-first
+        - id: check-executables-have-shebangs
+        - id: check-json
+        - id: check-shebang-scripts-are-executable
+        - id: check-symlinks
+        - id: check-toml
+        - id: check-vcs-permalinks
+        - id: check-xml
+        - id: check-yaml
+        - id: debug-statements
+        - id: destroyed-symlinks
+        - id: mixed-line-ending
+        - id: trailing-whitespace
+    ```
+
+4.  **Run Pre-Commit**:
+
+    Sample command to run pre-commit on all files:
+
+    ```bash title="run pre-commit" linenums="1"
+    ~/yolo (venv) $ pre-commit run --all-files
+    ```
+
+    This command runs all the hooks specified in the `.pre-commit-config.yaml`
+    file on all files in the repository.
+
+### Documentation
+
+Documentation is severely underlooked in many organizations. However,
+documentation is a fundamental part of the development process as it provides
+guidance for users and developers through carefully crafted explanations,
+cookbooks, tutorials and API references.
+
+The documentation should necessarily be part of the CI/CD pipeline, and
+everytime you update the documentation, it should be automatically built and
+deployed to the documentation hosting platform.
+
+-   [Sphinx](https://www.sphinx-doc.org/en/master/): A tool that makes it easy
+    to create intelligent and beautiful documentation for Python projects. It is
+    commonly used to document Python libraries and applications, but it can also
+    be used to document other types of projects.
+-   [MkDocs](https://www.mkdocs.org/): A fast, simple, and downright gorgeous
+    static site generator that's geared towards building project documentation.
+-   [Sphinx API Documentation](https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html):
+    A tool that automatically generates API documentation from your source code.
+    It's commonly used in conjunction with Sphinx to create API references for
+    Python projects.
+
+## Phase 3. Build
+
+1. Dockerize the application. Production identical environment.
+2. Infrastructure as Code (IaC) for cloud deployment.
+3. Container orchestration for scaling and managing containers.
+
+### CI
+
+1. deploy and build documentation refer to my code.
+
+### Folder Structure
+
+A very barebone structure as of now would be as follows:
+
+```text title="pipeline-feature" linenums="1"
+.
+├── LICENSE
+├── README.md
+├── mlops_pipeline_feature_v1
+│   ├── __init__.py
+│   └── pipeline.py
+├── pyproject.toml
+├── requirements.txt
+└── requirements_dev.txt
+```
+
+### CI/CD (GitHub Actions)
 
 The following content is with reference to:
 
@@ -726,7 +844,7 @@ Commit checks is to ensure the following:
 -   Ensure code quality and adherence to PEP8 (or other coding standards).
 -   Ensure tests are passed.
 
-```yaml title="lint_test.yml" linenums="1"
+```yaml title="lint_test.yaml" linenums="1"
 name: Commit Checks # (1)
 on: [push, pull_request] # (2)
 
@@ -820,16 +938,16 @@ jobs: # (3)
 The other workflow for this project is to deploy the website built from Mkdocsto
 gh-pages branch.
 
-??? example "Show/Hide content for deploy_website.yml" ```yaml
-title="deploy_website.yml" linenums="1" name: Deploy Website to GitHub Pages
+??? example "Show/Hide content for deploy_website.yaml" ```yaml
+title="deploy_website.yaml" linenums="1" name: Deploy Website to GitHub Pages
 
     on:
       push:
         branches: [master]
         paths:
           - "docs/**"
-          - "mkdocs.yml"
-          - ".github/workflows/deploy_website.yml"
+          - "mkdocs.yaml"
+          - ".github/workflows/deploy_website.yaml"
 
     permissions: write-all
 
@@ -865,6 +983,10 @@ title="deploy_website.yml" linenums="1" name: Deploy Website to GitHub Pages
               site
     ```
 
+## Phase 4. Scan and Test
+
+...
+
 ## Phase 5. Continuous Deployment
 
 ### Release
@@ -877,3 +999,9 @@ title="deploy_website.yml" linenums="1" name: Deploy Website to GitHub Pages
 
 -   We may not be able to catch all the bugs and errors in the code.
 -   Failure with trace.
+
+## Walkthrough (TBD if move to playbook or readme or both).
+
+## References and Further Readings
+
+-   [Welcome to pre-commit heaven - Marvelous MLOps Substack](https://marvelousmlops.substack.com/i/130911126)
