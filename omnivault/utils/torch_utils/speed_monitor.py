@@ -2,6 +2,7 @@
 https://github.com/mosaicml/composer/blob/dev/composer/callbacks/speed_monitor.py
 """
 
+
 def estimate_mfu(
     num_decoder_blocks: int,
     num_heads: int,
@@ -10,7 +11,7 @@ def estimate_mfu(
     model_total_parameters: int,
     effective_batch_size_per_iter: int,
     time_taken_per_step: float,
-    gpu_promised_flops: float = 312e12, # A100 GPU bfloat16/float16 peak flops is 312 TFLOPS
+    gpu_promised_flops: float = 312e12,  # A100 GPU bfloat16/float16 peak flops is 312 TFLOPS
 ) -> float:
     """
     Estimate Model FLOPs Utilization (MFU) as a ratio of achieved FLOPs to
