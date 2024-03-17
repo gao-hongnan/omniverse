@@ -1442,6 +1442,8 @@ to better predict them, regardless of their method of procurement
 -   [OpenAI GPT Models - Lei Mao](https://leimao.github.io/article/OpenAI-GPT-Models/)
 -   [Transformer Explained in One Single Page - Lei Mao](https://leimao.github.io/blog/Transformer-Explained/)
 -   [Autoregressive models](https://deepgenerativemodels.github.io/notes/autoregressive/)
+-   [The Annotated Transformer - Harvard NLP](https://nlp.seas.harvard.edu/annotated-transformer/)
+-   [Tutorial 6: Transformers and Multi-Head Attention - UvA](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html)
 
 ### Positional Encoding
 
@@ -1484,6 +1486,9 @@ to better predict them, regardless of their method of procurement
 
 -   A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
     ["Chapter 9: Recurrent Neural Networks"](https://d2l.ai/chapter_recurrent-neural-networks/index.html)
+    in Dive into Deep Learning, Cambridge University Press, 2023.
+-   A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+    ["Chapter 11. Attention Mechanisms and Transformers"](https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html)
     in Dive into Deep Learning, Cambridge University Press, 2023.
 -   D. Jurafsky and J. H. Martin,
     ["Chapter 3. N-gram Language Models"](https://web.stanford.edu/~jurafsky/slp3/3.pdf)

@@ -1,0 +1,67 @@
+from __future__ import annotations
+
+import inspect
+from inspect import Parameter, Signature
+from typing import Any, Callable, Dict, List, Set, Tuple, Type, get_type_hints, overload
+
+
+@overload
+def get_members_of_function_or_method(
+    func_or_class: Type[object], predicate: Callable[[Any], bool] | None = None
+) -> List[Tuple[str, Any]]:
+    ...
+
+
+@overload
+def get_members_of_function_or_method(
+    func_or_class: Callable[..., Any], predicate: Callable[[Any], bool] | None = None
+) -> List[Tuple[str, Any]]:
+    ...
+
+
+def get_members_of_function_or_method(
+    func_or_class: Type[object] | Callable[..., Any], predicate: Callable[[Any], bool] | None = None
+) -> List[Tuple[str, Any]]:
+    return inspect.getmembers(func_or_class, predicate)
+
+
+def get_base_classes(cls: Type[Any], include_self: bool = False) -> Set[Type[Any]]:
+    """
+    Get the base classes of a class and all its base classes.
+    """
+    return set(cls.__mro__[0:-1] if include_self else cls.__mro__[1:-1])
+
+
+def get_default(param: Parameter) -> Any:
+    """Return the parameter's default value or None if not specified."""
+    return param.default if param.default is not param.empty else None
+
+
+# TODO: Tuple[str, Any, Any] should be Tuple[str, Any, ellipsis]
+def get_init_arg_signatures(
+    cls: Type[Any], include_bases: bool = True
+) -> Tuple[List[Tuple[str, Any, Any]], Dict[str, Any]]:
+    required_fields = []
+    optional_fields = []
+    annotations = {}
+
+    classes_to_inspect = [cls] + list(get_base_classes(cls, include_self=False)) if include_bases else [cls]
+
+    for c in reversed(classes_to_inspect):  # Reverse to respect MRO
+        if hasattr(c, "__init__"):
+            sig: Signature = inspect.signature(c.__init__)
+            type_hints: Dict[str, Any] = get_type_hints(c.__init__)
+            for name, param in sig.parameters.items():
+                if name == "self":
+                    continue
+
+                type_hint = type_hints.get(name, Any)
+                annotations[name] = type_hint
+                if param.default is param.empty:
+                    required_fields.append((name, type_hint, Ellipsis))
+                else:
+                    default_value = param.default
+                    optional_fields.append((name, type_hint, default_value))
+
+    fields = required_fields + optional_fields
+    return fields, annotations
