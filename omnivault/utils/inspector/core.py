@@ -37,31 +37,53 @@ def get_default(param: Parameter) -> Any:
     return param.default if param.default is not param.empty else None
 
 
-# TODO: Tuple[str, Any, Any] should be Tuple[str, Any, ellipsis]
-def get_init_arg_signatures(
-    cls: Type[Any], include_bases: bool = True
-) -> Tuple[List[Tuple[str, Any, Any]], Dict[str, Any]]:
+def get_field_annotations(func_or_method: Callable[..., Any]) -> Tuple[List[Tuple[str, Any, Any]], Dict[str, Any]]:
+    if not inspect.isroutine(func_or_method):
+        raise ValueError("Expected a function or method")
+
     required_fields = []
     optional_fields = []
+    annotations = {}
+
+    try:
+        sig: Signature = inspect.signature(func_or_method)
+        type_hints: Dict[str, Any] = get_type_hints(func_or_method)
+    except ValueError:
+        raise ValueError("Object does not support signature or type hints extraction.") from None
+
+    for name, param in sig.parameters.items():
+        if name == "self":
+            continue
+
+        type_hint = type_hints.get(name, Any)
+        annotations[name] = type_hint
+        if param.default is param.empty:
+            required_fields.append((name, type_hint, Ellipsis))
+        else:
+            default_value = param.default
+            optional_fields.append((name, type_hint, default_value))
+
+    fields = required_fields + optional_fields
+    return fields, annotations
+
+
+# TODO: Tuple[str, Any, Any] should be Tuple[str, Any, ellipsis]
+def get_constructor_field_annotations(
+    cls: Type[Any], include_bases: bool = True
+) -> Tuple[List[Tuple[str, Any, Any]], Dict[str, Any]]:
+    fields = []
     annotations = {}
 
     classes_to_inspect = [cls] + list(get_base_classes(cls, include_self=False)) if include_bases else [cls]
 
     for c in reversed(classes_to_inspect):  # Reverse to respect MRO
         if hasattr(c, "__init__"):
-            sig: Signature = inspect.signature(c.__init__)
-            type_hints: Dict[str, Any] = get_type_hints(c.__init__)
-            for name, param in sig.parameters.items():
-                if name == "self":
-                    continue
+            class_fields, class_annotations = get_field_annotations(c.__init__)
+            # Update fields and annotations with those from the current class,
+            # avoiding duplicates.
+            for field in class_fields:
+                if field[0] not in annotations:
+                    fields.append(field)  # noqa: PERF401
+            annotations.update(class_annotations)
 
-                type_hint = type_hints.get(name, Any)
-                annotations[name] = type_hint
-                if param.default is param.empty:
-                    required_fields.append((name, type_hint, Ellipsis))
-                else:
-                    default_value = param.default
-                    optional_fields.append((name, type_hint, default_value))
-
-    fields = required_fields + optional_fields
     return fields, annotations
