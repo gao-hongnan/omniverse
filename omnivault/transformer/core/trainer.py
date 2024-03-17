@@ -101,31 +101,6 @@ def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
         return tuple(batch_on_device)
 
 
-def estimate_mfu(
-    num_decoder_blocks: int,
-    num_heads: int,
-    d_model: int,
-    context_length: int,
-    model_total_parameters: int,
-    forward_backward_per_step: int,
-    time_taken_per_step: float,
-) -> float:
-    """Reference from nanogpt to estimate model flops utilization (MFU)
-    in units of A100 bfloat16 peak FLOPS. Likely used as a callback to log
-    the MFU during training."""
-    # first estimate the number of flops we do per iteration.
-    # see PaLM paper Appendix B as ref: https://arxiv.org/abs/2204.02311
-    L, H, Q, T = num_decoder_blocks, num_heads, d_model // num_heads, context_length
-    flops_per_token = 6 * model_total_parameters + 12 * L * H * Q * T
-    flops_per_fwdbwd = flops_per_token * T
-    flops_per_iter = flops_per_fwdbwd * forward_backward_per_step
-    # express our flops throughput as ratio of A100 bfloat16 peak flops
-    flops_achieved = flops_per_iter * (1.0 / time_taken_per_step)  # per second
-    flops_promised = 312e12  # A100 GPU bfloat16 peak flops is 312 TFLOPS
-    mfu = flops_achieved / flops_promised
-    return mfu
-
-
 class Trainer:
     def __init__(
         self,
