@@ -4,7 +4,7 @@
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/utils/torch_utils/speed_monitor.py)
-![Tag](https://img.shields.io/badge/Tag-Maybe_Chaotic-blue)
+![Tag](https://img.shields.io/badge/Tag-Maybe_Chaotic-orange)
 
 ```{contents}
 :local:
@@ -33,6 +33,52 @@ Popular CI tools like Jenkins, Travis CI, and GitHub Actions provide mechanisms
 to define and execute CI workflows. These tools integrate with version control
 systems and offer a range of features, including customizable build and test
 environments, notifications, and integration with other development tools.
+
+## Technical Debt is Beyond Bad Code
+
+First of all, one should move away from the **_prior_** that _technical debt_ is
+_equivalent_ to _bad code_[^stop_saying_technical_debt]. While this may be often
+true, **equating** technical debt to bad code is a _simplification_ that, if not
+addressed, can lead to _misunderstanding_ and _miscommunication_. If one shows
+up and spurs out the contrapositive of the above statement, to derive to the
+conclusion that _if one writes good code, then there is no technical debt_, and
+in turn, there's no need to **revisit**, **document**, **lint**, and **test**
+the code[^stop_saying_technical_debt], and even though logically valid, he will
+be in for a _rude awakening_.
+
+Notwithstanding the slightly _philosophical_ introduction, the _practical
+situations_ are in fact, no one writes perfect code, and even just having a
+small amount of "bad code" will accumulate, some may not be even _immediately
+obvious_. If we do not have an _assurance policy_ (read: **Continuous
+Integration/Continuous Deployment**) in place, then what we end up is a
+_codebase_ full of _technical debt_, and trust me, no developer wants to inherit
+such a _codebase_.
+
+On a more _serious_ note, the **broader implication** of _technical debt_ is
+that the application sitting on top of it is _unreliable_, _unstable_, and
+_insecure_, leading to _bugs_, _security vulnerabilities_, and _performance
+issues_. What's worse is if one ships this code to _production_, then the _cost_
+of _fixing_ the _bugs_ is _exponentially higher_ than if it was _fixed_ in the
+_development_ phase. Fortunately, any _competent tech organization_ will have a
+_CI/CD_ pipeline in place, and will go through various stages of _testing_ and
+_validation_ before shipping to _production_.
+
+Before we move on, we need to be **_crystal clear_** that **CI/CD** is not a
+**silver bullet** that will **_eradicate_** all _bugs_ and _technical debt_.
+After all, we often see code breaking in _production_, and the _reason_ for this
+is two folds:
+
+-   How you implement your CI/CD pipeline matters. Skipping certain stages such
+    as _type safety checks_ will inevitably lead to _bugs_ in dynamic languages
+    like _Python_.
+-   How you write your code matters - consider the case where your unit tests
+    are **_not robust_**, then it obviously will not catch the bugs that it is
+    supposed to catch.
+
+Even if you think you fulfill the above two, we quote the well known saying
+**_To err is human_**, to play at the fact that _bugs_ are _inevitable_, and
+that means there is no such thing as a 100% bug free codebase. The argument here
+is not to **_eradicate_** bugs, but to **_reduce_** them - _a numbers game_.
 
 ## Lifecycle
 
@@ -464,6 +510,50 @@ To this end, you should see the following directory structure:
 You can find more information on writing your
 [`pyproject.toml` file here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/).
 
+#### Pinning DevOps Tool Versions
+
+In DevOps, particularly in continuous integration (CI) environments, pinning
+exact versions of tools like `pytest`, `mypy`, and other linting tools is
+important. Here are the key reasons:
+
+1. **Reproducibility**: Pinning specific versions ensures that the development,
+   testing, and production environments are consistent. This means that code
+   will be tested against the same set of dependencies it was developed with,
+   reducing the "it works on my machine" problem.
+
+2. **Stability**: Updates in these tools can introduce changes in their behavior
+   or new rules that might break the build process. By pinning versions, you
+   control when to upgrade and prepare for any necessary changes in your
+   codebase, rather than being forced to deal with unexpected issues from
+   automatic updates.
+
+Tools like `black`, `isort`, `mypy`, and `pylint` are particularly important to
+pin because they directly affect code quality and consistency. Changes in their
+behavior due to updates can lead to new linting errors or formatting changes
+that could disrupt development workflows.
+
+```{prf:example} Pinning Pylint Version
+:label: cicd-concept-pinning-pylint
+
+Consider the Python linting tool`pylint`. It's known for its thoroughness in
+checking code quality and conformity to coding standards. However, `pylint` is
+also frequently updated, with new releases potentially introducing new checks or
+modifying existing ones.
+
+Suppose your project is using `pylint` version 2.6.0. In this version, your
+codebase passes all linting checks, ensuring a certain level of code quality and
+consistency. Now, imagine `pylint` releases a new version, 2.7.0, which includes
+a new check for a particular coding pattern (e.g., enforcing more stringent
+rules on string formatting or variable naming).
+
+Consequently, if you _don't_ pin the `pylint` version, the next time you run
+an installation (e.g., `pip install -r requirements.txt` in local or remote),
+`pylint` has a good chance of being updated to version 2.7.0. This update could
+trigger new linting errors in your codebase, even though the code itself hasn't
+changed. This situation can be particularly disruptive in a CI/CD environment,
+where a previously passing build now fails due to new linting errors.
+```
+
 ### Local Pre-Commit Checks (Local Continuous Integration)
 
 Consider continuous integration (CI) as a practice of merging all developers'
@@ -534,6 +624,10 @@ system.
     commonly place this as a hook in the
     [`.pre-commit-config.yaml`](https://github.com/Yelp/detect-secrets/blob/master/.pre-commit-hooks.yaml)
     file.
+
+-   [Safety](https://github.com/pyupio/safety) is a tool that checks your
+    dependencies for known security vulnerabilities. You can draw parallels to
+    Nexus IQ, which is a commercial tool that does the same thing.
 
 There are many more guard rails that can be implemented as pre-commit hooks, we
 cite
@@ -653,6 +747,12 @@ want `pytest` to look for other kinds of files
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+```
+
+```{admonition} References
+:class: seealso
+
+- [Chapter 5. Testing - Py-Pkgs](https://py-pkgs.org/05-testing)
 ```
 
 #### Git Sanity Checks
@@ -800,41 +900,127 @@ deployed to the documentation hosting platform.
     It's commonly used in conjunction with Sphinx to create API references for
     Python projects.
 
+```{admonition} References
+:class: seealso
+
+-   [Chapter 6. Documentation - Py-Pkgs](https://py-pkgs.org/06-documentation)
+-   [Hypermodern Python Chapter 5: Documentation - Claudio Jolowicz](https://cjolowicz.github.io/posts/hypermodern-python-05-documentation/)
+```
+
+### A Word on Type Safety Checks in Python
+
+#### Python is Strongly and Dynamically Typed
+
+First of all, one should be clear that Python is considered a _strongly_ and
+_dynamically_ typed language[^python_strongly_and_dynamic_typing].
+
+_Dynamic_ because runtime objects have a type, as opposed to the variable having
+a type in statically typed languages. For example, consider a variable
+`str_or_int` in python:
+
+```python
+str_or_int: str | int = "hello"
+```
+
+and later in the code, we can reassign it to an integer:
+
+```python
+str_or_int: str | int = 42
+```
+
+This is not possible in statically typed languages, where the type of a variable
+is fixed at compile time.
+
+_Strongly_ because Python does not allow unreasonable arbitrary type
+conversions/coercions. You are not allowed to concatenate a string with an
+integer, for example:
+
+```python
+"hello" + 42
+```
+
+will raise a `TypeError` exception.
+
+#### MyPy: Static Type Checking
+
+Static type checking is the process of verifying the type safety of a program
+based on analysis of some source code. `mypy` is probably the most recognized
+static type checker, in which it analyzes your code without executing it,
+identifying type mismatches based on the type hints you've provided. mypy is
+most valuable during the development phase, helping catch type-related errors
+before runtime.
+
+Consider the following very simply example:
+
+```python
+def concatenate(a: str, b: str) -> str:
+    return a + b
+```
+
+Here, we've used type hints to specify that `a` and `b` are strings, and that
+the function returns a string. A subtle bug can be introduced just for the sake
+of illustration:
+
+```python
+concatenate("hello", 42) # mypy will catch this
+```
+
+This will raise a `TypeError` exception at runtime, but mypy will catch this
+before the code is executed. One would argue that this is a trivial example,
+since runtime will catch this error. However, in a larger codebase, you may not
+have the luxury of running the entire codebase to catch such errors.
+Furthermore, there are even more _silent_ errors that runtime may not catch due
+to a certain combination that does not immediately raise an exception.
+
+#### TypeGuard: Runtime Type Checking
+
+Unlike `mypy`, `typeguard` operates at runtime. In other words, `mypy` just tell
+you "this is wrong" but `typeguard` will actually raise an error at runtime.
+Consequently, we can view `typeguard` as a runtime type checker and
+complementary to `mypy`.
+
+`typeguard` is particularly useful in testing scenarios or in development
+environments where you want to ensure that type annotations are being respected
+at runtime. It can catch type errors that static analysis might not catch due to
+the dynamic nature of Python or when dealing with external systems that might
+not adhere to the expected types.
+
+To use TypeGuard, you typically employ it through decorators or with type
+checking in unit tests.
+
+```python
+from typeguard import typechecked
+
+@typechecked
+def greet(name: str) -> str:
+    return 'Hello ' + name
+
+try:
+    greet(42)
+except TypeError as e:
+    print(e)
+```
+
+### Release and Versioning
+
+```{admonition} References
+:class: seealso
+
+-   [Chapter 7. Releasing and versioning - Py-Pkgs](https://py-pkgs.org/07-releasing-versioning)
+```
+
 ## Phase 3. Build
+
+Considering we have came so far in the development phase, where we have set up
+our main directory, version control, virtual environment, project dependencies,
+local pre-commit checks, documentation, and release and versioning, we can now
+touch on the build phase - where _**automation**_ is the key. We need a way to
+automate whatever we have done in the development phase, and feedback whether
+the local build is actually "really" successful or not to every team member.
 
 1. Dockerize the application. Production identical environment.
 2. Infrastructure as Code (IaC) for cloud deployment.
 3. Container orchestration for scaling and managing containers.
-
-### CI
-
-1. deploy and build documentation refer to my code.
-
-### Folder Structure
-
-A very barebone structure as of now would be as follows:
-
-```text title="pipeline-feature" linenums="1"
-.
-├── LICENSE
-├── README.md
-├── mlops_pipeline_feature_v1
-│   ├── __init__.py
-│   └── pipeline.py
-├── pyproject.toml
-├── requirements.txt
-└── requirements_dev.txt
-```
-
-### CI/CD (GitHub Actions)
-
-The following content is with reference to:
-
--   [MLOps Basics [Week 6]: CI/CD - GitHub Actions](https://www.ravirajag.dev/blog/mlops-github-actions)
--   [CI/CD for Machine Learning](https://madewithml.com/courses/mlops/cicd/)
-
-We will be using [GitHub Actions](https://github.com/features/actions) to setup
-our mini CI/CD.
 
 ### Pre-Merge Checks
 
@@ -933,56 +1119,6 @@ jobs: # (3)
 23. Run Pytest is a step that will be run before the job.
 24. Runs pytest, note that I specified `python -m` to resolve PATH issues.
 
-### Deploy to Website
-
-The other workflow for this project is to deploy the website built from Mkdocsto
-gh-pages branch.
-
-??? example "Show/Hide content for deploy_website.yaml" ```yaml
-title="deploy_website.yaml" linenums="1" name: Deploy Website to GitHub Pages
-
-    on:
-      push:
-        branches: [master]
-        paths:
-          - "docs/**"
-          - "mkdocs.yaml"
-          - ".github/workflows/deploy_website.yaml"
-
-    permissions: write-all
-
-    jobs:
-      deploy:
-        runs-on: ubuntu-latest
-        name: Deploy Website
-        steps:
-          - uses: actions/checkout@v2
-          - name: Set Up Python
-            uses: actions/setup-python@v2
-            with:
-              python-version: 3.8
-              architecture: x64
-          - name: Install dependencies
-            run: | # this symbol is called a multiline string
-              python -m pip install --upgrade pip setuptools wheel
-              pip install -e .
-
-          - name: Build Website
-            run: |
-              mkdocs build
-          - name: Push Built Website to gh-pages Branch
-            run: |
-              git config --global user.name 'Hongnan G.'
-              git config --global user.email 'reighns92@users.noreply.github.com'
-              ghp-import \
-              --no-jekyll \
-              --force \
-              --no-history \
-              --push \
-              --message "Deploying ${{ github.sha }}" \
-              site
-    ```
-
 ## Phase 4. Scan and Test
 
 ...
@@ -1005,3 +1141,13 @@ title="deploy_website.yaml" linenums="1" name: Deploy Website to GitHub Pages
 ## References and Further Readings
 
 -   [Welcome to pre-commit heaven - Marvelous MLOps Substack](https://marvelousmlops.substack.com/i/130911126)
+-   [MLOps Basics [Week 6]: CI/CD - GitHub Actions](https://www.ravirajag.dev/blog/mlops-github-actions)
+-   [CI/CD for Machine Learning](https://madewithml.com/courses/mlops/cicd/)
+-   [Stop saying "technical debt" - Stack Overflow](https://stackoverflow.blog/2023/12/27/stop-saying-technical-debt/)
+-   [Is Python strongly typed? - Stack Overflow](https://stackoverflow.com/questions/11328920/is-python-strongly-typed)
+
+[^stop_saying_technical_debt]:
+    [Stop saying "technical debt" - Stack Overflow](https://stackoverflow.blog/2023/12/27/stop-saying-technical-debt/)
+
+[^python_strongly_and_dynamic_typing]:
+    [Is Python strongly typed? - Stack Overflow](https://stackoverflow.com/questions/11328920/is-python-strongly-typed)
