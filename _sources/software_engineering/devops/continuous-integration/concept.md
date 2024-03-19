@@ -3,7 +3,6 @@
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
-[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/utils/torch_utils/speed_monitor.py)
 ![Tag](https://img.shields.io/badge/Tag-Maybe_Chaotic-orange)
 
 ```{contents}
@@ -1127,16 +1126,153 @@ jobs: # (3)
 
 ### Release
 
-## Phase 6. Continuous Monitoring
-
-### Monitoring and Observability
+## Phase 6. Continuous Monitoring and Observability
 
 ### Motivation
 
--   We may not be able to catch all the bugs and errors in the code.
--   Failure with trace.
+Consider a financial institution that has a web-based banking application that
+allows customers to transfer money, pay bills, and manage their accounts. The
+motivation for implementing robust observing and monitoring practices is driven
+by the critical need for **security**, **reliability**, **performance**, and
+**regulatory compliance**.
 
-## Walkthrough (TBD if move to playbook or readme or both).
+-   Financial transactions are prime targets for **fraudulent activities** and
+    **security breaches**. By **monitoring** system logs, network traffic, and
+    user activities, the bank can identify and respond to potential security
+    incidents in real time.
+-   Customers expect banking services to be available 24/7, without
+    interruptions. **Guaranteeing System Reliability and Availability** is
+    therefore paramount to establish trust and confidence in your services.
+    **Real-time health checks** and **performance metrics** can identify a
+    failing server or an overloaded network segment, allowing IT teams to
+    quickly reroute traffic or scale resources to prevent service disruption.
+
+    In other words, Murphy's law is always at play, and things will fail at a
+    certain point in time, and **you don't want to be oblivious to it**. If a
+    system fails, we need to know it immediately and take action (logging and
+    tracing are important to enable easy debugging).
+
+### The What and Why.
+
+We won't focus on the **how** to set up monitoring and observability, as there
+are many ways to do it. For example,
+[Grafana](https://grafana.com/blog/2023/11/20/ci-cd-observability-via-opentelemetry-at-grafana-labs/)
+is one of the most popular open-source observability platforms, and it is
+commonly used with
+[Prometheus](https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/),
+a monitoring and alerting toolkit.
+
+Instead, we need to give intuition on the **what** and **why** of monitoring and
+observability.
+
+```{list-table} Symptom and Cause
+:header-rows: 1
+:name: devops-ci-concept-monitoring-observability
+
+*  - Symptom
+   - Cause
+*  - I’m serving HTTP 500s or 404s
+   - Database servers are refusing connections
+*  - My responses are slow
+   - CPUs are overloaded by a bogosort, or an Ethernet cable is crimped under a rack, visible as partial packet loss
+*  - Users in Antarctica aren’t receiving animated cat GIFs
+   - Your Content Distribution Network hates scientists and felines, and thus blacklisted some client IPs
+*  - Private content is world-readable
+   - A new software push caused ACLs to be forgotten and allowed all requests
+```
+
+### The Four Golden Signals
+
+The four golden signals of monitoring are latency, traffic, errors, and
+saturation. If you can only measure four metrics of your user-facing system,
+focus on these four.
+
+#### Latency
+
+The time it takes to service a request. It’s important to distinguish between
+the latency of successful requests and the latency of failed requests. For
+example, an HTTP 500 error triggered due to loss of connection to a database or
+other critical backend might be served very quickly; however, as an HTTP 500
+error indicates a failed request, factoring 500s into your overall latency might
+result in misleading calculations. On the other hand, a slow error is even worse
+than a fast error! Therefore, it’s important to track error latency, as opposed
+to just filtering out errors.
+
+#### Traffic
+
+A measure of how much demand is being placed on your system, measured in a
+high-level system-specific metric. For a web service, this measurement is
+usually HTTP requests per second, perhaps broken out by the nature of the
+requests (e.g., static versus dynamic content). For an audio streaming system,
+this measurement might focus on network I/O rate or concurrent sessions. For a
+key-value storage system, this measurement might be transactions and retrievals
+per second.
+
+#### Errors
+
+The rate of requests that fail, either explicitly (e.g., HTTP 500s), implicitly
+(for example, an HTTP 200 success response, but coupled with the wrong content),
+or by policy (for example, "If you committed to one-second response times, any
+request over one second is an error"). Where protocol response codes are
+insufficient to express all failure conditions, secondary (internal) protocols
+may be necessary to track partial failure modes. Monitoring these cases can be
+drastically different: catching HTTP 500s at your load balancer can do a decent
+job of catching all completely failed requests, while only end-to-end system
+tests can detect that you’re serving the wrong content.
+
+#### Saturation
+
+How "full" your service is. A measure of your system fraction, emphasizing the
+resources that are most constrained (e.g., in a memory-constrained system, show
+memory; in an I/O-constrained system, show I/O). Note that many systems degrade
+in performance before they achieve 100% utilization, so having a utilization
+target is essential. In complex systems, saturation can be supplemented with
+higher-level load measurement: can your service properly handle double the
+traffic, handle only 10% more traffic, or handle even less traffic than it
+currently receives? For very simple services that have no parameters that alter
+the complexity of the request (e.g., "Give me a nonce" or "I need a globally
+unique monotonic integer") that rarely change configuration, a static value from
+a load test might be adequate. As discussed in the previous paragraph, however,
+most services need to use indirect signals like CPU utilization or network
+bandwidth that have a known upper bound. Latency increases are often a leading
+indicator of saturation. Measuring your 99th percentile response time over some
+small window (e.g., one minute) can give a very early signal of saturation.
+Finally, saturation is also concerned with predictions of impending saturation,
+such as "It looks like your database will fill its hard drive in 4 hours." If
+you measure all four golden signals and page a human when one signal is
+problematic (or, in the case of saturation, nearly problematic), your service
+will be at least decently covered by monitoring.
+
+### A Word on Monitoring in Machine Learning Systems
+
+In the Machine Learning world, we may have to track things like model and data
+shitfts. For example, model monitoring is about continuously tracking the
+performance of models in production to ensure that they continue to provide
+accurate and reliable predictions.
+
+-   **Performance Monitoring**: Regularly evaluate the model's performance
+    metrics in production. This includes tracking metrics like accuracy,
+    precision, recall, F1 score for classification problems, or Mean Absolute
+    Error (MAE), Root Mean Squared Error (RMSE) for regression problems, etc.
+
+-   **Data Drift Monitoring**: Over time, the data that the model receives can
+    change. These changes can lead to a decrease in the model's performance.
+    Therefore, it's crucial to monitor the data the model is scoring on to
+    detect any drift from the data the model was trained on.
+
+-   **Model Retraining**: If the performance of the model drops or significant
+    data drift is detected, it might be necessary to retrain the model with new
+    data. The model monitoring should provide alerts or triggers for such
+    situations.
+
+-   **A/B Testing**: In case multiple models are in production, monitor their
+    performances comparatively through techniques like A/B testing to determine
+    which model performs better.
+
+In each of these stages, it's essential to keep in mind principles like
+reproducibility, automation, collaboration, and validation to ensure the
+developed models are reliable, efficient, and providing value to the
+organization.
 
 ## References and Further Readings
 
@@ -1145,9 +1281,13 @@ jobs: # (3)
 -   [CI/CD for Machine Learning](https://madewithml.com/courses/mlops/cicd/)
 -   [Stop saying "technical debt" - Stack Overflow](https://stackoverflow.blog/2023/12/27/stop-saying-technical-debt/)
 -   [Is Python strongly typed? - Stack Overflow](https://stackoverflow.com/questions/11328920/is-python-strongly-typed)
+-   [Chapter 6. Monitoring Distributed Systems - Google SRE](https://sre.google/sre-book/monitoring-distributed-systems/)
 
 [^stop_saying_technical_debt]:
     [Stop saying "technical debt" - Stack Overflow](https://stackoverflow.blog/2023/12/27/stop-saying-technical-debt/)
 
 [^python_strongly_and_dynamic_typing]:
     [Is Python strongly typed? - Stack Overflow](https://stackoverflow.com/questions/11328920/is-python-strongly-typed)
+
+[^google-sre-monitoring]:
+    [Chapter 6. Monitoring Distributed Systems - Google SRE](https://sre.google/sre-book/monitoring-distributed-systems/)

@@ -468,12 +468,19 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#release">Release</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring">Phase 6. Continuous Monitoring</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-and-observability">Monitoring and Observability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring-and-observability">Phase 6. Continuous Monitoring and Observability</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-what-and-why">The What and Why.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-four-golden-signals">The Four Golden Signals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#traffic">Traffic</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#errors">Errors</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#saturation">Saturation</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#walkthrough-tbd-if-move-to-playbook-or-readme-or-both">Walkthrough (TBD if move to playbook or readme or both).</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-word-on-monitoring-in-machine-learning-systems">A Word on Monitoring in Machine Learning Systems</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -491,7 +498,6 @@ document.write(`
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
-<a class="reference external" href="https://github.com/gao-hongnan/omniverse/blob/main/omnivault/utils/torch_utils/speed_monitor.py"><img alt="Code" src="https://img.shields.io/badge/View-Code-blue?style=flat-square&amp;logo=github" /></a>
 <img alt="Tag" src="https://img.shields.io/badge/Tag-Maybe_Chaotic-orange" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
@@ -563,14 +569,22 @@ document.write(`
 <li><p><a class="reference internal" href="#release" id="id44">Release</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#phase-6-continuous-monitoring" id="id45">Phase 6. Continuous Monitoring</a></p>
+<li><p><a class="reference internal" href="#phase-6-continuous-monitoring-and-observability" id="id45">Phase 6. Continuous Monitoring and Observability</a></p>
 <ul>
-<li><p><a class="reference internal" href="#monitoring-and-observability" id="id46">Monitoring and Observability</a></p></li>
-<li><p><a class="reference internal" href="#motivation" id="id47">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#motivation" id="id46">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#the-what-and-why" id="id47">The What and Why.</a></p></li>
+<li><p><a class="reference internal" href="#the-four-golden-signals" id="id48">The Four Golden Signals</a></p>
+<ul>
+<li><p><a class="reference internal" href="#latency" id="id49">Latency</a></p></li>
+<li><p><a class="reference internal" href="#traffic" id="id50">Traffic</a></p></li>
+<li><p><a class="reference internal" href="#errors" id="id51">Errors</a></p></li>
+<li><p><a class="reference internal" href="#saturation" id="id52">Saturation</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#walkthrough-tbd-if-move-to-playbook-or-readme-or-both" id="id48">Walkthrough (TBD if move to playbook or readme or both).</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id49">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#a-word-on-monitoring-in-machine-learning-systems" id="id53">A Word on Monitoring in Machine Learning Systems</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id54">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>Continuous Integration (CI) is a software development practice that focuses on
@@ -1608,30 +1622,167 @@ libraries from <code class="docutils literal notranslate"><span class="pre">setu
 <h3><a class="toc-backref" href="#id44" role="doc-backlink">Release</a><a class="headerlink" href="#release" title="Permalink to this heading">#</a></h3>
 </section>
 </section>
-<section id="phase-6-continuous-monitoring">
-<h2><a class="toc-backref" href="#id45" role="doc-backlink">Phase 6. Continuous Monitoring</a><a class="headerlink" href="#phase-6-continuous-monitoring" title="Permalink to this heading">#</a></h2>
-<section id="monitoring-and-observability">
-<h3><a class="toc-backref" href="#id46" role="doc-backlink">Monitoring and Observability</a><a class="headerlink" href="#monitoring-and-observability" title="Permalink to this heading">#</a></h3>
-</section>
+<section id="phase-6-continuous-monitoring-and-observability">
+<h2><a class="toc-backref" href="#id45" role="doc-backlink">Phase 6. Continuous Monitoring and Observability</a><a class="headerlink" href="#phase-6-continuous-monitoring-and-observability" title="Permalink to this heading">#</a></h2>
 <section id="motivation">
-<h3><a class="toc-backref" href="#id47" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p>We may not be able to catch all the bugs and errors in the code.</p></li>
-<li><p>Failure with trace.</p></li>
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h3>
+<p>Consider a financial institution that has a web-based banking application that
+allows customers to transfer money, pay bills, and manage their accounts. The
+motivation for implementing robust observing and monitoring practices is driven
+by the critical need for <strong>security</strong>, <strong>reliability</strong>, <strong>performance</strong>, and
+<strong>regulatory compliance</strong>.</p>
+<ul>
+<li><p>Financial transactions are prime targets for <strong>fraudulent activities</strong> and
+<strong>security breaches</strong>. By <strong>monitoring</strong> system logs, network traffic, and
+user activities, the bank can identify and respond to potential security
+incidents in real time.</p></li>
+<li><p>Customers expect banking services to be available 24/7, without
+interruptions. <strong>Guaranteeing System Reliability and Availability</strong> is
+therefore paramount to establish trust and confidence in your services.
+<strong>Real-time health checks</strong> and <strong>performance metrics</strong> can identify a
+failing server or an overloaded network segment, allowing IT teams to
+quickly reroute traffic or scale resources to prevent service disruption.</p>
+<p>In other words, Murphy’s law is always at play, and things will fail at a
+certain point in time, and <strong>you don’t want to be oblivious to it</strong>. If a
+system fails, we need to know it immediately and take action (logging and
+tracing are important to enable easy debugging).</p>
+</li>
 </ul>
 </section>
+<section id="the-what-and-why">
+<h3><a class="toc-backref" href="#id47" role="doc-backlink">The What and Why.</a><a class="headerlink" href="#the-what-and-why" title="Permalink to this heading">#</a></h3>
+<p>We won’t focus on the <strong>how</strong> to set up monitoring and observability, as there
+are many ways to do it. For example,
+<a class="reference external" href="https://grafana.com/blog/2023/11/20/ci-cd-observability-via-opentelemetry-at-grafana-labs/">Grafana</a>
+is one of the most popular open-source observability platforms, and it is
+commonly used with
+<a class="reference external" href="https://grafana.com/docs/grafana/latest/getting-started/get-started-grafana-prometheus/">Prometheus</a>,
+a monitoring and alerting toolkit.</p>
+<p>Instead, we need to give intuition on the <strong>what</strong> and <strong>why</strong> of monitoring and
+observability.</p>
+<table class="table" id="devops-ci-concept-monitoring-observability">
+<caption><span class="caption-number">Table 6 </span><span class="caption-text">Symptom and Cause</span><a class="headerlink" href="#devops-ci-concept-monitoring-observability" title="Permalink to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symptom</p></th>
+<th class="head"><p>Cause</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>I’m serving HTTP 500s or 404s</p></td>
+<td><p>Database servers are refusing connections</p></td>
+</tr>
+<tr class="row-odd"><td><p>My responses are slow</p></td>
+<td><p>CPUs are overloaded by a bogosort, or an Ethernet cable is crimped under a rack, visible as partial packet loss</p></td>
+</tr>
+<tr class="row-even"><td><p>Users in Antarctica aren’t receiving animated cat GIFs</p></td>
+<td><p>Your Content Distribution Network hates scientists and felines, and thus blacklisted some client IPs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Private content is world-readable</p></td>
+<td><p>A new software push caused ACLs to be forgotten and allowed all requests</p></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="walkthrough-tbd-if-move-to-playbook-or-readme-or-both">
-<h2><a class="toc-backref" href="#id48" role="doc-backlink">Walkthrough (TBD if move to playbook or readme or both).</a><a class="headerlink" href="#walkthrough-tbd-if-move-to-playbook-or-readme-or-both" title="Permalink to this heading">#</a></h2>
+<section id="the-four-golden-signals">
+<h3><a class="toc-backref" href="#id48" role="doc-backlink">The Four Golden Signals</a><a class="headerlink" href="#the-four-golden-signals" title="Permalink to this heading">#</a></h3>
+<p>The four golden signals of monitoring are latency, traffic, errors, and
+saturation. If you can only measure four metrics of your user-facing system,
+focus on these four.</p>
+<section id="latency">
+<h4><a class="toc-backref" href="#id49" role="doc-backlink">Latency</a><a class="headerlink" href="#latency" title="Permalink to this heading">#</a></h4>
+<p>The time it takes to service a request. It’s important to distinguish between
+the latency of successful requests and the latency of failed requests. For
+example, an HTTP 500 error triggered due to loss of connection to a database or
+other critical backend might be served very quickly; however, as an HTTP 500
+error indicates a failed request, factoring 500s into your overall latency might
+result in misleading calculations. On the other hand, a slow error is even worse
+than a fast error! Therefore, it’s important to track error latency, as opposed
+to just filtering out errors.</p>
+</section>
+<section id="traffic">
+<h4><a class="toc-backref" href="#id50" role="doc-backlink">Traffic</a><a class="headerlink" href="#traffic" title="Permalink to this heading">#</a></h4>
+<p>A measure of how much demand is being placed on your system, measured in a
+high-level system-specific metric. For a web service, this measurement is
+usually HTTP requests per second, perhaps broken out by the nature of the
+requests (e.g., static versus dynamic content). For an audio streaming system,
+this measurement might focus on network I/O rate or concurrent sessions. For a
+key-value storage system, this measurement might be transactions and retrievals
+per second.</p>
+</section>
+<section id="errors">
+<h4><a class="toc-backref" href="#id51" role="doc-backlink">Errors</a><a class="headerlink" href="#errors" title="Permalink to this heading">#</a></h4>
+<p>The rate of requests that fail, either explicitly (e.g., HTTP 500s), implicitly
+(for example, an HTTP 200 success response, but coupled with the wrong content),
+or by policy (for example, “If you committed to one-second response times, any
+request over one second is an error”). Where protocol response codes are
+insufficient to express all failure conditions, secondary (internal) protocols
+may be necessary to track partial failure modes. Monitoring these cases can be
+drastically different: catching HTTP 500s at your load balancer can do a decent
+job of catching all completely failed requests, while only end-to-end system
+tests can detect that you’re serving the wrong content.</p>
+</section>
+<section id="saturation">
+<h4><a class="toc-backref" href="#id52" role="doc-backlink">Saturation</a><a class="headerlink" href="#saturation" title="Permalink to this heading">#</a></h4>
+<p>How “full” your service is. A measure of your system fraction, emphasizing the
+resources that are most constrained (e.g., in a memory-constrained system, show
+memory; in an I/O-constrained system, show I/O). Note that many systems degrade
+in performance before they achieve 100% utilization, so having a utilization
+target is essential. In complex systems, saturation can be supplemented with
+higher-level load measurement: can your service properly handle double the
+traffic, handle only 10% more traffic, or handle even less traffic than it
+currently receives? For very simple services that have no parameters that alter
+the complexity of the request (e.g., “Give me a nonce” or “I need a globally
+unique monotonic integer”) that rarely change configuration, a static value from
+a load test might be adequate. As discussed in the previous paragraph, however,
+most services need to use indirect signals like CPU utilization or network
+bandwidth that have a known upper bound. Latency increases are often a leading
+indicator of saturation. Measuring your 99th percentile response time over some
+small window (e.g., one minute) can give a very early signal of saturation.
+Finally, saturation is also concerned with predictions of impending saturation,
+such as “It looks like your database will fill its hard drive in 4 hours.” If
+you measure all four golden signals and page a human when one signal is
+problematic (or, in the case of saturation, nearly problematic), your service
+will be at least decently covered by monitoring.</p>
+</section>
+</section>
+<section id="a-word-on-monitoring-in-machine-learning-systems">
+<h3><a class="toc-backref" href="#id53" role="doc-backlink">A Word on Monitoring in Machine Learning Systems</a><a class="headerlink" href="#a-word-on-monitoring-in-machine-learning-systems" title="Permalink to this heading">#</a></h3>
+<p>In the Machine Learning world, we may have to track things like model and data
+shitfts. For example, model monitoring is about continuously tracking the
+performance of models in production to ensure that they continue to provide
+accurate and reliable predictions.</p>
+<ul class="simple">
+<li><p><strong>Performance Monitoring</strong>: Regularly evaluate the model’s performance
+metrics in production. This includes tracking metrics like accuracy,
+precision, recall, F1 score for classification problems, or Mean Absolute
+Error (MAE), Root Mean Squared Error (RMSE) for regression problems, etc.</p></li>
+<li><p><strong>Data Drift Monitoring</strong>: Over time, the data that the model receives can
+change. These changes can lead to a decrease in the model’s performance.
+Therefore, it’s crucial to monitor the data the model is scoring on to
+detect any drift from the data the model was trained on.</p></li>
+<li><p><strong>Model Retraining</strong>: If the performance of the model drops or significant
+data drift is detected, it might be necessary to retrain the model with new
+data. The model monitoring should provide alerts or triggers for such
+situations.</p></li>
+<li><p><strong>A/B Testing</strong>: In case multiple models are in production, monitor their
+performances comparatively through techniques like A/B testing to determine
+which model performs better.</p></li>
+</ul>
+<p>In each of these stages, it’s essential to keep in mind principles like
+reproducibility, automation, collaboration, and validation to ensure the
+developed models are reliable, efficient, and providing value to the
+organization.</p>
+</section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id49" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id54" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://marvelousmlops.substack.com/i/130911126">Welcome to pre-commit heaven - Marvelous MLOps Substack</a></p></li>
 <li><p><a class="reference external" href="https://www.ravirajag.dev/blog/mlops-github-actions">MLOps Basics [Week 6]: CI/CD - GitHub Actions</a></p></li>
 <li><p><a class="reference external" href="https://madewithml.com/courses/mlops/cicd/">CI/CD for Machine Learning</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.blog/2023/12/27/stop-saying-technical-debt/">Stop saying “technical debt” - Stack Overflow</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/11328920/is-python-strongly-typed">Is Python strongly typed? - Stack Overflow</a></p></li>
+<li><p><a class="reference external" href="https://sre.google/sre-book/monitoring-distributed-systems/">Chapter 6. Monitoring Distributed Systems - Google SRE</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote brackets" id="stop-saying-technical-debt" role="note">
@@ -1771,12 +1922,19 @@ libraries from <code class="docutils literal notranslate"><span class="pre">setu
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#release">Release</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring">Phase 6. Continuous Monitoring</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-and-observability">Monitoring and Observability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-6-continuous-monitoring-and-observability">Phase 6. Continuous Monitoring and Observability</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-what-and-why">The What and Why.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-four-golden-signals">The Four Golden Signals</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#traffic">Traffic</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#errors">Errors</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#saturation">Saturation</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#walkthrough-tbd-if-move-to-playbook-or-readme-or-both">Walkthrough (TBD if move to playbook or readme or both).</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-word-on-monitoring-in-machine-learning-systems">A Word on Monitoring in Machine Learning Systems</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
