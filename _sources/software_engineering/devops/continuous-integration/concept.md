@@ -1183,6 +1183,13 @@ observability.
 
 ### The Four Golden Signals
 
+```{admonition} Verbatim
+:class: attention
+
+The below section is verbatim from the
+[Google SRE Book](https://sre.google/sre-book/monitoring-distributed-systems/).
+```
+
 The four golden signals of monitoring are latency, traffic, errors, and
 saturation. If you can only measure four metrics of your user-facing system,
 focus on these four.
