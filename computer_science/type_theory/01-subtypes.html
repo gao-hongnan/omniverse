@@ -413,12 +413,22 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets">Types are Sets</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-vs-structural-subtyping">Nominal vs. Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-nominal-subtyping">What is Nominal Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-nominal-subtyping">Why Nominal Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-nominal-subtyping">How to Implement Nominal Subtyping?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-structural-subtyping">What is Structural Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-structural-subtyping">Why Structural Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-structural-subtyping">How to Implement Structural Subtyping?</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-nominal-and-structural-subtyping">Pros and Cons of Nominal and Structural Subtyping</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subtyping-schemes">Subtyping Schemes</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs. Coercive Implementations</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-implementations">Inclusive Implementations</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coercive-implementations">Coercive Implementations</a></li>
 </ul>
@@ -441,24 +451,38 @@ document.write(`
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" />
-<img alt="Tag" src="https://img.shields.io/badge/Tag-Maybe_Chaotic-orange" /></p>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Vetted-green" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-2024_03_20-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#types-are-sets" id="id4">Types are Sets</a></p></li>
 <li><p><a class="reference internal" href="#nominal-vs-structural-subtyping" id="id5">Nominal vs. Structural Subtyping</a></p>
 <ul>
-<li><p><a class="reference internal" href="#nominal-subtyping-class-hierarchy-determines-subtypes" id="id6">Nominal Subtyping - Class Hierarchy Determines Subtypes</a></p></li>
-<li><p><a class="reference internal" href="#structural-subtyping" id="id7">Structural Subtyping</a></p></li>
-<li><p><a class="reference internal" href="#pros-and-cons-of-nominal-and-structural-subtyping" id="id8">Pros and Cons of Nominal and Structural Subtyping</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#subtyping-schemes" id="id9">Subtyping Schemes</a></p>
+<li><p><a class="reference internal" href="#nominal-subtyping-class-hierarchy-determines-subtypes" id="id6">Nominal Subtyping - Class Hierarchy Determines Subtypes</a></p>
 <ul>
-<li><p><a class="reference internal" href="#inclusive-implementations" id="id10">Inclusive Implementations</a></p></li>
-<li><p><a class="reference internal" href="#coercive-implementations" id="id11">Coercive Implementations</a></p></li>
+<li><p><a class="reference internal" href="#what-is-nominal-subtyping" id="id7">What is Nominal Subtyping?</a></p></li>
+<li><p><a class="reference internal" href="#why-nominal-subtyping" id="id8">Why Nominal Subtyping?</a></p></li>
+<li><p><a class="reference internal" href="#how-to-implement-nominal-subtyping" id="id9">How to Implement Nominal Subtyping?</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#structural-subtyping" id="id10">Structural Subtyping</a></p>
+<ul>
+<li><p><a class="reference internal" href="#what-is-structural-subtyping" id="id11">What is Structural Subtyping?</a></p></li>
+<li><p><a class="reference internal" href="#why-structural-subtyping" id="id12">Why Structural Subtyping?</a></p></li>
+<li><p><a class="reference internal" href="#how-to-implement-structural-subtyping" id="id13">How to Implement Structural Subtyping?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pros-and-cons-of-nominal-and-structural-subtyping" id="id14">Pros and Cons of Nominal and Structural Subtyping</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#inclusive-vs-coercive-implementations" id="id15">Inclusive vs. Coercive Implementations</a></p>
+<ul>
+<li><p><a class="reference internal" href="#inclusive-implementations" id="id16">Inclusive Implementations</a></p></li>
+<li><p><a class="reference internal" href="#coercive-implementations" id="id17">Coercive Implementations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id18">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>In
@@ -468,8 +492,9 @@ polymorphism or inclusion polymorphism) is a form of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Polymorphism_(computer_science)">type polymorphism</a>.
 A subtype is a datatype that is related to another datatype (the supertype) by
 some notion of
-<a class="reference external" href="https://en.wikipedia.org/wiki/Substitutability">substitutability</a> (read: Liskov
-substitution principle), meaning that program elements (typically
+<a class="reference external" href="https://en.wikipedia.org/wiki/Substitutability">substitutability</a> (read:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>),
+meaning that program elements (typically
 <a class="reference external" href="https://en.wikipedia.org/wiki/Subroutines">subroutines</a> or
 <a class="reference external" href="https://en.wikipedia.org/wiki/Function_(computer_programming)">functions</a>),
 written to operate on elements of the supertype, can also operate on elements of
@@ -520,31 +545,44 @@ implements all the <em>methods</em> present in the supertype, ensuring <em>compa
 based solely on structural <em>characteristics</em>.</p>
 <div class="note admonition">
 <p class="admonition-title">Declaration, Compile, and Run Time</p>
-<p>Nominal subtype relationships are established at declaration time (i.e., when a
-new subclass is declared), and checked at compile time, whereas structural
-subtype relationships are established at the point of use, and checked at run
-time (though in the context of statically typed languages that support
-structural subtyping, the checks may be implemented at compile time).</p>
+<p><strong>Nominal subtype relationships</strong> are established at <strong>declaration time</strong> (i.e.,
+when a new subclass is declared), and checked at <strong>compile time</strong>, whereas
+<strong>structural subtype relationships</strong> are established at the <strong>point of use</strong>,
+and checked at <strong>run time</strong>.</p>
 </div>
 <section id="nominal-subtyping-class-hierarchy-determines-subtypes">
 <h3><a class="toc-backref" href="#id6" role="doc-backlink">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><a class="headerlink" href="#nominal-subtyping-class-hierarchy-determines-subtypes" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>Description</strong>: Nominal subtyping is based on explicit declarations. A type
-is a subtype of another only if it is explicitly declared as such. This is
-typically seen in class-based object-oriented programming languages.</p></li>
-<li><p><strong>Characteristics</strong>: In languages that use nominal subtyping, subclassing or
-interface implementation are used to establish subtype relationships. A
-classic example is Java, where a class must explicitly extend another class
-or implement an interface to be considered its subtype.</p></li>
-<li><p><strong>Implication</strong>: The subtype relationship is determined by the lineage of
-the type declarations rather than the actual structure or content of the
-types themselves.</p></li>
-<li><p><strong>Example</strong>: In Java, if <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dog</span> <span class="pre">extends</span> <span class="pre">Animal</span></code>, <code class="docutils literal notranslate"><span class="pre">Dog</span></code> is a nominal
-subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> because it explicitly extends <code class="docutils literal notranslate"><span class="pre">Animal</span></code>.</p></li>
-</ul>
-<p>This approach allows for controlled polymorphism where the relationships between
-types are well-defined and restricted according to the design of the class
-hierarchy.</p>
+<p>Given the backdrop in the previous section, we would condense out the key
+concepts of nominal subtyping below, and end it off with a python example.</p>
+<section id="what-is-nominal-subtyping">
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">What is Nominal Subtyping?</a><a class="headerlink" href="#what-is-nominal-subtyping" title="Permalink to this heading">#</a></h4>
+<p><strong><em>Nominal subtyping</em></strong> is a type system concept where a type is considered a
+subtype of another <strong>only if it is explicitly declared as such</strong>. This mechanism
+is rooted in <strong>explicit declarations</strong> of type relationships, typically through
+class inheritance in object-oriented programming languages.</p>
+</section>
+<section id="why-nominal-subtyping">
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">Why Nominal Subtyping?</a><a class="headerlink" href="#why-nominal-subtyping" title="Permalink to this heading">#</a></h4>
+<p>Nominal subtyping provides a <strong>controlled environment for polymorphism</strong>, where
+the relationships between types are <strong>well-defined</strong> and <strong>restricted according
+to the class hierarchy</strong>. Consequently, the <em>explicitness</em> of such declaration
+provides clarity to developers. Furthermore, nominal subtype relationships need
+to be planned in advance, and hence it might be easier to ensure that certain
+principles (e.g, the Liskov substitution principle) hold for subtypes.</p>
+</section>
+<section id="how-to-implement-nominal-subtyping">
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">How to Implement Nominal Subtyping?</a><a class="headerlink" href="#how-to-implement-nominal-subtyping" title="Permalink to this heading">#</a></h4>
+<p>In languages that utilize <strong><em>nominal subtyping</em></strong>, <strong>subclassing</strong> or
+<strong>interface implementation</strong> are the primary means to establish subtype
+relationships. For instance, a class must <strong>explicitly extend another class</strong> or
+<strong>implement an interface</strong> to be considered its subtype. This approach relies on
+the <strong>lineage of type declarations</strong> to determine subtype relationships,
+focusing on <strong>names and declarations</strong> rather than the structural content of the
+types.</p>
+<p>In Java for instance, if <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dog</span> <span class="pre">extends</span> <span class="pre">Animal</span></code>, <strong><em>Dog</em></strong> is a <strong><em>nominal
+subtype</em></strong> of <strong><em>Animal</em></strong> because it <strong>explicitly extends</strong> <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. We see a
+similar implementation in Python below, detailing how <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are both
+subtypes of their parent class <code class="docutils literal notranslate"><span class="pre">Animal</span></code> through inheritance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
@@ -570,9 +608,101 @@ hierarchy.</p>
 <span class="linenos">21</span>    <span class="k">def</span> <span class="nf">how_many_lives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="linenos">22</span>        <span class="k">return</span> <span class="s2">&quot;I have 9 lives!&quot;</span>
 <span class="linenos">23</span>
-<span class="linenos">24</span><span class="c1"># Testing nominal subtyping</span>
-<span class="linenos">25</span><span class="n">dog</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">()</span>
-<span class="linenos">26</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dog</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>  <span class="c1"># True, Dog is a nominal subtype of Animal</span>
+<span class="linenos">24</span><span class="k">class</span> <span class="nc">Robot</span><span class="p">:</span>
+<span class="linenos">25</span>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos">26</span>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="linenos">27</span>
+<span class="linenos">28</span>    <span class="k">def</span> <span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos">29</span>        <span class="k">return</span> <span class="s2">&quot;Generic Robot Sound!&quot;</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="n">cat</span> <span class="o">=</span> <span class="n">Cat</span><span class="p">()</span>
+<span class="linenos">32</span><span class="n">dog</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">()</span>
+<span class="linenos">33</span><span class="n">rob</span> <span class="o">=</span> <span class="n">Robot</span><span class="p">()</span>
+<span class="linenos">34</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>  <span class="c1"># True,  Cat is a nominal subtype of Animal</span>
+<span class="linenos">35</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dog</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>  <span class="c1"># True,  Dog is a nominal subtype of Animal</span>
+<span class="linenos">36</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rob</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>  <span class="c1"># False, Robit is not a nominal subtype of Animal</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+True
+False
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this example, <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are nominal subtypes of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> because they
+explicitly inherit from the <code class="docutils literal notranslate"><span class="pre">Animal</span></code> class. However, <code class="docutils literal notranslate"><span class="pre">Robot</span></code> which has the exact
+same methods as <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, is not a subclass of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> and therefore do not
+qualify as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> under the nominal subtyping framework. Note
+that python allows unsafe overriding of attributes and methods, so we really
+want static type checker to ensure we do not violate any rules such as
+<a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a>.</p>
+</section>
+</section>
+<section id="structural-subtyping">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Structural Subtyping</a><a class="headerlink" href="#structural-subtyping" title="Permalink to this heading">#</a></h3>
+<section id="what-is-structural-subtyping">
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">What is Structural Subtyping?</a><a class="headerlink" href="#what-is-structural-subtyping" title="Permalink to this heading">#</a></h4>
+<p><strong><em>Structural subtyping</em></strong> is a type system strategy where a type is considered
+a subtype of another based on its <strong>structure</strong> — specifically, if it possesses
+all the <strong>members</strong> (properties and methods) required by the supertype. This
+approach contrasts with nominal subtyping by focusing on the capabilities of
+types rather than their explicit declarations or lineage. It aligns with the
+concept of “<a class="reference external" href="https://en.wikipedia.org/wiki/Duck_typing">duck typing</a>” in
+dynamically typed languages: if an object behaves like a duck (implements all
+the duck behaviors), it can be treated as a duck</p>
+</section>
+<section id="why-structural-subtyping">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Why Structural Subtyping?</a><a class="headerlink" href="#why-structural-subtyping" title="Permalink to this heading">#</a></h4>
+<p>The flexibility of structural subtyping allows for <strong>novel and unintended uses</strong>
+of existing code by enabling objects that do not share a common inheritance path
+to interact seamlessly as long as they fulfill the structural criteria.
+Sometimes you would like to enable loose coupling and subclass (nominal) may
+just add unwanted complexity.</p>
+<p>Consider a toy example below, where we construct <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> to hold a <code class="docutils literal notranslate"><span class="pre">Sequence</span></code>
+containing elements of type <code class="docutils literal notranslate"><span class="pre">T</span></code>. The current implementation does not have any
+subtyping schemes to it, and therefore, if we try to check if this <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is
+an instance of
+<a class="reference external" href="https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399"><code class="docutils literal notranslate"><span class="pre">Sized</span></code></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+<span class="linenos">2</span>
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
+<span class="linenos">5</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">6</span>        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="linenos">9</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Sized</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
+</pre></div>
+</div>
+</div>
+</div>
+<p>However, once we add <code class="docutils literal notranslate"><span class="pre">__len__</span></code> to the example, then <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is now an instance
+of the <code class="docutils literal notranslate"><span class="pre">Sized</span></code>. The Sized protocol requires just one thing: a <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method
+that returns the size of the container. Despite Dataset not inheriting from any
+specific class that implements Sized, the mere presence of the said method
+adheres to the structural expectations of being “sizable”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">Dataset</span><span class="p">:</span>
+<span class="linenos"> 2</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elements</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 3</span>        <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 6</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the number of elements in the collection.&quot;&quot;&quot;</span>
+<span class="linenos"> 7</span>        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="linenos">10</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">Sized</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -582,27 +712,34 @@ hierarchy.</p>
 </div>
 </div>
 </div>
-<p>In this example, <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are nominal subtypes of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> because they
-explicitly inherit from the <code class="docutils literal notranslate"><span class="pre">Animal</span></code> class. Note that python allows unsafe
-overriding of attributes and methods, so we really want static type checker to
-ensure we do not violate any rules such as
-<a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a>.</p>
+<p>It is worth noting that the <code class="docutils literal notranslate"><span class="pre">Sized</span></code> protocol is not really the <code class="docutils literal notranslate"><span class="pre">Protocol</span></code> we
+know of, instead they use <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> for the <strong><em>structural typing dark
+magic</em></strong> to happen.</p>
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>class Sized(metaclass=ABCMeta):
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>    <span class="gs">__slots__</span> = ()
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>    <span class="ni">@abstractmethod</span>
+<span class="linenos"> 6</span>    def <span class="gs">__len__</span>(self):
+<span class="linenos"> 7</span>        return 0
+<span class="linenos"> 8</span>
+<span class="hll"><span class="linenos"> 9</span>    <span class="ni">@classmethod</span>
+</span><span class="hll"><span class="linenos">10</span>    def <span class="gs">__subclasshook__</span>(cls: Type[Sized], C: Type) -&gt; bool:
+</span><span class="hll"><span class="linenos">11</span>        if cls is Sized:
+</span><span class="hll"><span class="linenos">12</span>            return <span class="ge">_check_</span>methods(C, &quot;<span class="gs">__len__</span>&quot;)
+</span><span class="hll"><span class="linenos">13</span>        return NotImplemented
+</span></pre></div>
+</div>
 </section>
-<section id="structural-subtyping">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Structural Subtyping</a><a class="headerlink" href="#structural-subtyping" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>Description</strong>: Structural subtyping, in contrast, is based on the
-structure of types. A type is considered a subtype of another if it has at
-least all the members (properties and methods) of the supertype.</p></li>
-<li><p><strong>Characteristics</strong>: This scheme is common in dynamically typed languages,
-such as Python, where subtyping is determined by the actual capabilities
-(methods and properties) of the objects, not their explicit type
-declarations. This is often referred to as “duck typing” - if it looks like
-a duck and quacks like a duck, it is treated as a duck.</p></li>
-<li><p><strong>Example</strong>: In a structurally-typed language, if type <code class="docutils literal notranslate"><span class="pre">A</span></code> defines all the
-methods of type <code class="docutils literal notranslate"><span class="pre">B</span></code>, then <code class="docutils literal notranslate"><span class="pre">A</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">B</span></code>, irrespective of their
-inheritance relationship.</p></li>
-</ul>
+<section id="how-to-implement-structural-subtyping">
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">How to Implement Structural Subtyping?</a><a class="headerlink" href="#how-to-implement-structural-subtyping" title="Permalink to this heading">#</a></h4>
+<p>In languages supporting <strong><em>structural subtyping</em></strong>, subtype relationships are
+established through the implementation of the required members, without the need
+for explicit inheritance or interface implementation. This method focuses on the
+actual implementation of the required properties and methods. More concretely,
+if type <code class="docutils literal notranslate"><span class="pre">A</span></code> defines all the methods of type <code class="docutils literal notranslate"><span class="pre">B</span></code> (and <code class="docutils literal notranslate"><span class="pre">B</span></code> is usually a
+<code class="docutils literal notranslate"><span class="pre">Protocol</span></code>), then <code class="docutils literal notranslate"><span class="pre">A</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">B</span></code>, irrespective of their inheritance
+relationship.</p>
 <p>For pedagogical purposes, we can illustrate structural subtyping by implementing
 it manually. Our <code class="docutils literal notranslate"><span class="pre">is_flyable</span></code> function checks if an object has a <code class="docutils literal notranslate"><span class="pre">fly</span></code>
 attribute, and if that attribute is callable so we know that this attribute is a
@@ -662,13 +799,12 @@ type, and use <code class="docutils literal notranslate"><span class="pre">runti
 <span class="linenos"> 5</span>    <span class="k">def</span> <span class="nf">fly</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="linenos"> 6</span>        <span class="o">...</span>
 <span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="c1"># Testing structural subtyping</span>
-<span class="linenos"> 9</span><span class="n">bird</span> <span class="o">=</span> <span class="n">Bird</span><span class="p">()</span>
-<span class="linenos">10</span><span class="n">airplane</span> <span class="o">=</span> <span class="n">Airplane</span><span class="p">()</span>
-<span class="linenos">11</span><span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="p">()</span>
-<span class="linenos">12</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">bird</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>        <span class="c1"># True, Bird is a structural subtype of Flyable</span>
-<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">airplane</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>    <span class="c1"># True, Airplane is a structural subtype of Flyable</span>
-<span class="linenos">14</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">car</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>         <span class="c1"># False, Car is not a structural subtype of Flyable</span>
+<span class="linenos"> 8</span><span class="n">bird</span> <span class="o">=</span> <span class="n">Bird</span><span class="p">()</span>
+<span class="linenos"> 9</span><span class="n">airplane</span> <span class="o">=</span> <span class="n">Airplane</span><span class="p">()</span>
+<span class="linenos">10</span><span class="n">car</span> <span class="o">=</span> <span class="n">Car</span><span class="p">()</span>
+<span class="linenos">11</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">bird</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>        <span class="c1"># True, Bird is a structural subtype of Flyable</span>
+<span class="linenos">12</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">airplane</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>    <span class="c1"># True, Airplane is a structural subtype of Flyable</span>
+<span class="linenos">13</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">car</span><span class="p">,</span> <span class="n">Flyable</span><span class="p">))</span>         <span class="c1"># False, Car is not a structural subtype of Flyable</span>
 </pre></div>
 </div>
 </div>
@@ -686,63 +822,195 @@ they don’t explicitly inherit from <code class="docutils literal notranslate">
 hand, does not implement the <code class="docutils literal notranslate"><span class="pre">fly</span></code> method and is not considered a structural
 subtype of <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>.</p>
 </section>
+</section>
 <section id="pros-and-cons-of-nominal-and-structural-subtyping">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Pros and Cons of Nominal and Structural Subtyping</a><a class="headerlink" href="#pros-and-cons-of-nominal-and-structural-subtyping" title="Permalink to this heading">#</a></h3>
-<p>In summary:</p>
-<ul class="simple">
-<li><p>In the nominal subtyping example, the subtype relationship is established
-through explicit class inheritance.</p></li>
-<li><p>In the structural subtyping example, the subtype relationship is based on
-the implementation of a specific interface (defined by a <code class="docutils literal notranslate"><span class="pre">Protocol</span></code>),
-regardless of the inheritance relationship.</p></li>
-</ul>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Pros and Cons of Nominal and Structural Subtyping</a><a class="headerlink" href="#pros-and-cons-of-nominal-and-structural-subtyping" title="Permalink to this heading">#</a></h3>
+<p>In the nominal subtyping example, the subtype relationship is established
+through explicit class inheritance. In the structural subtyping example, the
+subtype relationship is based on the implementation of a specific interface
+(defined by a <code class="docutils literal notranslate"><span class="pre">Protocol</span></code>), regardless of the inheritance relationship.</p>
+<p>In the context of structural subtyping, a <em>nuanced</em> issue arises from the
+application of the Liskov Substitution Principle (LSP). The LSP <em>asserts that
+objects of a superclass should be replaceable with objects of a subclass without
+affecting the correctness of the program</em>. Structural subtyping, however,
+<em>evaluates</em> type compatibility based on the <em>presence and signature of methods</em>,
+<em>not</em> on the <strong>inherent relationship</strong> or <strong>semantic compatibility</strong> between the
+types. This leads to scenarios where a class <em>might</em> unintentionally become a
+subtype of another by merely implementing the <strong>same</strong> method signatures,
+potentially violating the LSP due to semantic discrepancies.</p>
+<p>Consider the same example from nominal subtyping, but with an added
+<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> method to the <code class="docutils literal notranslate"><span class="pre">Animal</span></code> class. This method is used to check if
+a class is a structural subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> by checking if it implements the
+<code class="docutils literal notranslate"><span class="pre">describe</span></code> and <code class="docutils literal notranslate"><span class="pre">make_sound</span></code> methods.</p>
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span>def <span class="ge">_check_</span>methods(C: Type, *methods: str) -&gt; bool:
+<span class="linenos"> 2</span>    mro = C.__mro__
+<span class="linenos"> 3</span>    for method in methods:
+<span class="linenos"> 4</span>        for B in mro:
+<span class="linenos"> 5</span>            if method in B.__dict__:
+<span class="linenos"> 6</span>                if B.__dict__[method] is None:
+<span class="linenos"> 7</span>                    return NotImplemented
+<span class="linenos"> 8</span>                break
+<span class="linenos"> 9</span>        else:
+<span class="linenos">10</span>            return NotImplemented
+<span class="linenos">11</span>    return True
+<span class="linenos">12</span>
+<span class="linenos">13</span>class Animal:
+<span class="hll"><span class="linenos">14</span>    def describe(self) -&gt; str:
+</span><span class="linenos">15</span>        return str(self.__class__.__name__)
+<span class="linenos">16</span>
+<span class="hll"><span class="linenos">17</span>    def make_sound(self) -&gt; str:
+</span><span class="linenos">18</span>        return &quot;Generic Animal Sound!&quot;
+<span class="linenos">19</span>
+<span class="linenos">20</span>    <span class="ni">@classmethod</span>
+<span class="linenos">21</span>    def <span class="gs">__subclasshook__</span>(cls: Type[Animal], C: Type) -&gt; bool:
+<span class="linenos">22</span>        if cls is Animal:
+<span class="linenos">23</span>            return <span class="ge">_check_</span>methods(C, &quot;describe&quot;, &quot;make_sound&quot;)
+<span class="linenos">24</span>        return NotImplemented
+<span class="linenos">25</span>
+<span class="linenos">26</span>class Dog(Animal):
+<span class="linenos">27</span>    def make_sound(self) -&gt; str:
+<span class="linenos">28</span>        return &quot;Woof!&quot;
+<span class="linenos">29</span>
+<span class="linenos">30</span>    def fetch(self) -&gt; str:
+<span class="linenos">31</span>        return &quot;Happily fetching balls!&quot;
+<span class="linenos">32</span>
+<span class="linenos">33</span>
+<span class="linenos">34</span>class Cat(Animal):
+<span class="linenos">35</span>    def make_sound(self) -&gt; str:
+<span class="linenos">36</span>        return &quot;Meow&quot;
+<span class="linenos">37</span>
+<span class="linenos">38</span>    def how_many_lives(self) -&gt; str:
+<span class="linenos">39</span>        return &quot;I have 9 lives!&quot;
+<span class="linenos">40</span>
+<span class="linenos">41</span>class Robot:
+<span class="hll"><span class="linenos">42</span>    def describe(self) -&gt; str:
+</span><span class="linenos">43</span>        return str(self.__class__.__name__)
+<span class="linenos">44</span>
+<span class="hll"><span class="linenos">45</span>    def make_sound(self) -&gt; str:
+</span><span class="linenos">46</span>        return &quot;Generic Robot Sound!&quot;
+</pre></div>
+</div>
+<p>In this code, <code class="docutils literal notranslate"><span class="pre">Robot</span></code> implements the <code class="docutils literal notranslate"><span class="pre">make_sound</span></code> method, which according to the
+<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> in <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, qualifies it as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> from a
+structural subtyping perspective. However, from a semantic standpoint,
+classifying a <code class="docutils literal notranslate"><span class="pre">Robot</span></code> as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> is incorrect because they belong
+to fundamentally different categories of entities.</p>
+<p>In practice, this can be avoided by adhering to good design patterns for your
+type protocols or interfaces. Golang is a famous language that relies almost
+exclusively on structural subtyping, here’s a good
+<a class="reference external" href="https://appmaster.io/blog/interface-implementation-go">post</a> that summarizes
+some of thees rules.</p>
 </section>
 </section>
-<section id="subtyping-schemes">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Subtyping Schemes</a><a class="headerlink" href="#subtyping-schemes" title="Permalink to this heading">#</a></h2>
-<p>Implementations of programming languages with subtyping fall into two general
-classes, inclusive and coercive<a class="footnote-reference brackets" href="#subtype-schemes-wikipedia" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+<section id="inclusive-vs-coercive-implementations">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Inclusive vs. Coercive Implementations</a><a class="headerlink" href="#inclusive-vs-coercive-implementations" title="Permalink to this heading">#</a></h2>
+<p>While nominal and structural subtyping focus on <em>how</em> type relationships are
+defined, <strong>inclusive</strong> and <strong>coercive</strong> implementations concern themselves with
+<em>what happens</em> when types <strong>interact</strong> in a program, specifically how values of
+one type are treated or converted to another type within the subtype
+relationship<a class="footnote-reference brackets" href="#subtype-schemes-wikipedia" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
 <section id="inclusive-implementations">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Inclusive Implementations</a><a class="headerlink" href="#inclusive-implementations" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>Basic Idea</strong>: In inclusive implementations, the internal representation of
-a value from a subtype is compatible with that of its supertype. This means
-that the value itself doesn’t need to change or be converted when treated as
-a value of the supertype.</p></li>
-<li><p><strong>How It Works in Subtyping</strong>: If you have a subtype <code class="docutils literal notranslate"><span class="pre">A</span></code> and a supertype <code class="docutils literal notranslate"><span class="pre">B</span></code>
-(<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">&lt;:</span> <span class="pre">B</span></code>), any value that belongs to <code class="docutils literal notranslate"><span class="pre">A</span></code> is also valid as a value of <code class="docutils literal notranslate"><span class="pre">B</span></code>.
-The representation of the value in <code class="docutils literal notranslate"><span class="pre">A</span></code> is sufficient to represent it in <code class="docutils literal notranslate"><span class="pre">B</span></code>
-as well.</p></li>
-<li><p><strong>Example in Object-Oriented Languages</strong>: Consider a class hierarchy where
-<code class="docutils literal notranslate"><span class="pre">Dog</span></code> extends <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. A <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object has all the characteristics (fields,
-methods) of an <code class="docutils literal notranslate"><span class="pre">Animal</span></code> and possibly more. When you treat a <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object as
-an <code class="docutils literal notranslate"><span class="pre">Animal</span></code> (for example, passing it to a function that expects an
-<code class="docutils literal notranslate"><span class="pre">Animal</span></code>), no conversion is needed - the <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object ‘fits’ into the
-<code class="docutils literal notranslate"><span class="pre">Animal</span></code> type because it already includes all aspects of an <code class="docutils literal notranslate"><span class="pre">Animal</span></code>.</p></li>
-</ul>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Inclusive Implementations</a><a class="headerlink" href="#inclusive-implementations" title="Permalink to this heading">#</a></h3>
+<p>The <strong>basic idea</strong> of <em>inclusive implementations</em> is that the internal
+representation of a value from a subtype is compatible with that of its
+supertype. This means that the value itself doesn’t need to change or be
+converted when treated as a value of the supertype.</p>
+<p>Think of this as direct <strong>“plug-and-play”</strong>. A subtype is a special case of the
+supertype and can directly be used in any context where the supertype is
+expected. No transformation or special handling is needed; the system inherently
+understands that the subtype fits because its representation <strong>includes all
+necessary aspects</strong> of the supertype.</p>
+<p>In other words, if you have a subtype <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> and a supertype
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, any value that belongs to <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> is also valid as a value
+of <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>. The representation of the value in <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> is sufficient
+to represent it in <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> as well.</p>
+<div class="proof example admonition" id="type-theory-01-subtypes-example-inclusive-impl-oop">
+<p class="admonition-title"><span class="caption-number">Example 4 </span> (Inclusive Implementations in Object-Oriented Languages)</p>
+<section class="example-content" id="proof-content">
+<p>Consider a class hierarchy where <code class="docutils literal notranslate"><span class="pre">Dog</span></code> extends <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. A <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object has all
+the characteristics (fields, methods) of an <code class="docutils literal notranslate"><span class="pre">Animal</span></code> and possibly more. When you
+treat a <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object as an <code class="docutils literal notranslate"><span class="pre">Animal</span></code> (for example, passing it to a function that
+expects an <code class="docutils literal notranslate"><span class="pre">Animal</span></code>), no conversion is needed - the <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object ‘fits’ into the
+<code class="docutils literal notranslate"><span class="pre">Animal</span></code> type because it already includes all aspects of an <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. This very
+much sounds like the nominal subtyping we discussed earlier.</p>
 </section>
+</div></section>
 <section id="coercive-implementations">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Coercive Implementations</a><a class="headerlink" href="#coercive-implementations" title="Permalink to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>Basic Idea</strong>: Coercive implementations involve automatically converting a
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Coercive Implementations</a><a class="headerlink" href="#coercive-implementations" title="Permalink to this heading">#</a></h3>
+<p>On the other hand, coercive implementations involve automatically converting a
 value from one type to another when necessary. This conversion is typically
-needed when the internal representations of the types are different.</p></li>
-<li><p><strong>How It Works in Subtyping</strong>: If you have a subtype <code class="docutils literal notranslate"><span class="pre">A</span></code> and a supertype
-<code class="docutils literal notranslate"><span class="pre">B</span></code>, and <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">&lt;:</span> <span class="pre">B</span></code>, coercive implementations might require converting a value
-from <code class="docutils literal notranslate"><span class="pre">A</span></code> into a compatible format for <code class="docutils literal notranslate"><span class="pre">B</span></code>. This is often seen in types that
-are conceptually related but have different internal representations.</p></li>
-<li><p><strong>Example with Primitive Types</strong>: A common example is numeric types, like
-integers and floating-point numbers. In many languages, an integer can be
-used where a floating-point number is expected. The integer (type <code class="docutils literal notranslate"><span class="pre">A</span></code>) is
-automatically converted (coerced) into a floating-point number (type <code class="docutils literal notranslate"><span class="pre">B</span></code>).
-For instance, in a language like Python, if you have a function that expects
-a float but you pass an integer, the integer will be automatically converted
-to a float.</p></li>
+needed when the internal representations of the types are different. Imagine
+this as needing an “adapter” to make one type fit into the context of another.
+The system recognizes that while the two types are not the same, there’s a known
+way to convert from one to the other so that interactions can proceed smoothly.</p>
+<p>To formalize the concept of coercive implementations in the context of subtypes
+and supertypes with mathematical logic, we consider two types, <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> and
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, not necessary subtype of each other. The coercive implementation
+implies that values of type <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> may need to be converted to type
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span> to be treated as values of <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> be two types within a type system. We define
+a coercive conversion process as a function <span class="math notranslate nohighlight">\(f\)</span> that maps values from
+<span class="math notranslate nohighlight">\(\mathcal{A}\)</span> to <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+f: \mathcal{A} \rightarrow \mathcal{B}
+\]</div>
+<p>This function <span class="math notranslate nohighlight">\(f\)</span> takes a value <span class="math notranslate nohighlight">\(\mathcal{V}_{\mathcal{A}}\)</span> of type
+<span class="math notranslate nohighlight">\(\mathcal{A}\)</span> and converts it into a value <span class="math notranslate nohighlight">\(\mathcal{V}_{\mathcal{B}}\)</span> of type
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, such that:</p>
+<div class="math notranslate nohighlight">
+\[
+\forall \mathcal{V}_{\mathcal{A}} \in \mathcal{A}, \exists \mathcal{V}_{\mathcal{B}} \in \mathcal{B} : \mathcal{V}_{\mathcal{B}} = f(\mathcal{V}_{\mathcal{A}})
+\]</div>
+<div class="proof example admonition" id="type-theory-01-subtypes-example-coercive-impl-primitive-types">
+<p class="admonition-title"><span class="caption-number">Example 5 </span> (Coercive and Primitive Types)</p>
+<section class="example-content" id="proof-content">
+<p>A common example is numeric types, like integers and floating-point numbers. In
+many languages, an integer can be used where a floating-point number is
+expected. The integer (type <code class="docutils literal notranslate"><span class="pre">A</span></code>) is automatically converted (coerced) into a
+floating-point number (type <code class="docutils literal notranslate"><span class="pre">B</span></code>). For instance, in a language like Python, if
+you have a function that expects a float but you pass an integer, the integer
+will be automatically converted to a float.</p>
+<div class="highlight-md notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="gh"># Integer (type A)</span>
+<span class="linenos">2</span>int_value = 5
+<span class="linenos">3</span>
+<span class="linenos">4</span><span class="gh"># Floating-point number (type B)</span>
+<span class="linenos">5</span>float_value = 2.5
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="gh"># Adding an integer to a floating-point number</span>
+<span class="linenos">8</span>result = int_value + float_value # 7.5
+</pre></div>
+</div>
+<p>Even though <code class="docutils literal notranslate"><span class="pre">int_value</span></code> is an integer and <code class="docutils literal notranslate"><span class="pre">float_value</span></code> is a float, the
+programming language automatically converts <code class="docutils literal notranslate"><span class="pre">int_value</span></code> to a float during the
+addition operation. This is coercive implementation: the integer is
+automatically converted to a float (a related but different type) to make the
+operation possible.</p>
+<p>In this context:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span> corresponds to the type <code class="docutils literal notranslate"><span class="pre">int</span></code>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{B}\)</span> corresponds to the type <code class="docutils literal notranslate"><span class="pre">float</span></code>.</p></li>
+<li><p>The function <span class="math notranslate nohighlight">\(f\)</span> represents the implicit conversion process that Python
+performs to convert <code class="docutils literal notranslate"><span class="pre">int</span></code> to <code class="docutils literal notranslate"><span class="pre">float</span></code> before performing the addition.</p></li>
 </ul>
+<p>So, when <code class="docutils literal notranslate"><span class="pre">int_value</span></code> (of type <code class="docutils literal notranslate"><span class="pre">int</span></code>, or <span class="math notranslate nohighlight">\(\mathcal{A}\)</span>) and <code class="docutils literal notranslate"><span class="pre">float_value</span></code> (of
+type <code class="docutils literal notranslate"><span class="pre">float</span></code>, or <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>) are added, Python implicitly applies the
+conversion function <span class="math notranslate nohighlight">\(f\)</span> to <code class="docutils literal notranslate"><span class="pre">int_value</span></code> to convert it into a <code class="docutils literal notranslate"><span class="pre">float</span></code> (type
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>) before the addition. This can be thought of as:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}_{\mathcal{A}} = \text{int_value}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}_{\mathcal{B}} = f(\text{int_value}) = \text{float_value}\)</span></p></li>
+</ul>
+<p>Here, <span class="math notranslate nohighlight">\(f(\text{int_value})\)</span> effectively “coerces” or converts the integer value
+to a floating-point value, ensuring that the addition operation occurs between
+two values of the same type (<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, or <code class="docutils literal notranslate"><span class="pre">float</span></code>). The result of this
+operation is a <code class="docutils literal notranslate"><span class="pre">float</span></code>, demonstrating how the coercive conversion aligns with
+the formalism.</p>
 </section>
+</div></section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id12" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Permalink to this heading">#</a></h2>
 <div class="seealso admonition">
 <p class="admonition-title">References</p>
 <ul class="simple">
@@ -751,6 +1019,8 @@ to a float.</p></li>
 <li><p><a class="reference external" href="https://medium.com/&#64;thejameskyle/type-systems-structural-vs-nominal-typing-explained-56511dd969f4">Type Systems: Structural vs. Nominal Typing Explained - Medium</a></p></li>
 <li><p><a class="reference external" href="https://wiki.edunitas.com/IT/en/114-10/Subtyping_4238_eduNitas.html">Subtyping - eduNitas</a></p></li>
 <li><p><a class="reference external" href="https://peps.python.org/pep-0544/">PEP 544 – Protocols: Structural subtyping (static duck typing)</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Nominal_type_system">Nominal Type System - Wikipedia</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Structural_type_system">Structural Type System - Wikipedia</a></p></li>
 </ul>
 </div>
 <hr class="footnotes docutils" />
@@ -835,12 +1105,22 @@ to a float.</p></li>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets">Types are Sets</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-vs-structural-subtyping">Nominal vs. Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-nominal-subtyping">What is Nominal Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-nominal-subtyping">Why Nominal Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-nominal-subtyping">How to Implement Nominal Subtyping?</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-structural-subtyping">What is Structural Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-structural-subtyping">Why Structural Subtyping?</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-structural-subtyping">How to Implement Structural Subtyping?</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-nominal-and-structural-subtyping">Pros and Cons of Nominal and Structural Subtyping</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subtyping-schemes">Subtyping Schemes</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs. Coercive Implementations</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-implementations">Inclusive Implementations</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coercive-implementations">Coercive Implementations</a></li>
 </ul>
