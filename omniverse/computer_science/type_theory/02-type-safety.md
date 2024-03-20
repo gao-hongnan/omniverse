@@ -40,7 +40,7 @@ an important implication of subtype - type safety.
 
 If $S$ is a subtype of $T$, the subtyping
 [relation](<https://en.wikipedia.org/wiki/Relation_(mathematics)>) (written as
-$S \leq T$, S <: T$, $S \subseteq T$, or $S \leq: T$ ) means that any term of
+$S \leq T$, $S <: T$, $S \subseteq T$, or $S \leq: T$) means that any term of
 **type** $S$ can **safely** be used in any **context** where a term of **type**
 $T$ is **expected**.
 ```
