@@ -21,7 +21,7 @@ kernelspec:
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
-![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
+![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
 ![Tag](https://img.shields.io/badge/Tag-Vetted-green)
 ![Tag](https://img.shields.io/badge/Tag-2024_03_20-green)
 
@@ -222,7 +222,8 @@ Consider a toy example below, where we construct `Dataset` to hold a `Sequence`
 containing elements of type `T`. The current implementation does not have any
 subtyping schemes to it, and therefore, if we try to check if this `Dataset` is
 an instance of
-[`Sized`](https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399).
+[`Sized`](https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399),
+we would get `False`.
 
 ```{code-cell} ipython3
 T = TypeVar("T")
