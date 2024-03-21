@@ -21,7 +21,7 @@ kernelspec:
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
-![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
+![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
 ![Tag](https://img.shields.io/badge/Tag-Vetted-green)
 ![Tag](https://img.shields.io/badge/Tag-2024_03_20-green)
 

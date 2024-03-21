@@ -34,6 +34,19 @@ knowledge! 🚀
 -   https://gao-hongnan.github.io/gaohn-galaxy
 -   https://www.gaohongnan.com (migrating from the previous blog)
 
+The tiered structure of the blogs is as follows:
+
+-   ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red) represents raw,
+    unfiltered and maybe wrong thoughts.
+-   ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange) represents
+    organized thoughts, but still chaotic and potentially incorrect.
+-   ![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
+    represents structured knowledge, but not necessarily correct.
+-   ![Tag](https://img.shields.io/badge/Tag-Polished_Insights-blue) represents
+    refined knowledge, and is polished and correct.
+-   ![Tag](https://img.shields.io/badge/Tag-Mastery-green) represents mastery of
+    the subject.
+
 ## Implementation of Decoder
 
 -   https://github.com/gao-hongnan/omniverse/tree/main/omnivault/transformer
