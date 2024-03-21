@@ -1,4 +1,26 @@
-"""See https://github.com/mosaicml/composer/blob/dev/composer/utils/reproducibility.py"""
+"""Reproducibility.
+
+Notes
+-----
+Reproducibility in deep learning ensures that experiments can be repeated with
+identical results, critical for verifying research findings and deploying
+reliable models. Distributed training introduces complexity because it involves
+multiple computation units which may not synchronize their random states
+perfectly. If training is paused and resumed, ensuring each unit starts with the
+correct seed to reproduce the exact computational path becomes challenging. To
+address this, one can find more sophisticated examples in libraries like
+Composer, where the whole library's core is built around training deep neural
+nets in any environment (distributed or not) with reproducibility in mind.
+
+
+References
+----------
+- Composer: https://github.com/mosaicml/composer/blob/dev/composer/utils/reproducibility.py
+- PyTorch Reproducibility: https://pytorch.org/docs/stable/notes/randomness.html
+- PyTorch Worker: https://pytorch.org/docs/stable/notes/randomness.html#dataloader
+- PyTorch deterministic algorithms: https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
+- CUBLAS reproducibility: https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+"""
 
 from __future__ import annotations
 
@@ -15,8 +37,15 @@ __all__ = ["seed_all"]
 
 def configure_deterministic_mode() -> None:
     """
-    See https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
-    and https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+    Activates deterministic mode in PyTorch and CUDA to ensure reproducible
+    results at the cost of performance and potentially higher CUDA memory usage.
+    It sets deterministic algorithms, disables cudnn benchmarking and enables,
+    and sets the CUBLAS workspace configuration.
+
+    References
+    ----------
+    - PyTorch deterministic algorithms: https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
+    - CUBLAS reproducibility: https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
     """
     # fmt: off
     torch.use_deterministic_algorithms(True, warn_only=True)
@@ -39,19 +68,23 @@ def seed_all(
     set_torch_deterministic: bool = True,
 ) -> int:
     """
-    Seed all random number generators.
+    Seeds all relevant random number generators to ensure reproducible
+    outcomes. Optionally seeds PyTorch and activates deterministic
+    behavior in PyTorch based on the flags provided.
 
     Parameters
     ----------
-    seed : int
-        Seed number to be used, by default 1992.
-    seed_torch : bool
-        Whether to seed PyTorch or not, by default True.
+    seed : int, default 1992
+        The seed number for reproducibility.
+    seed_torch : bool, default True
+        If True, seeds PyTorch's RNGs.
+    set_torch_deterministic : bool, default True
+        If True, activates deterministic mode in PyTorch.
 
     Returns
     -------
-    seed: int
-        The seed number.
+    seed : int
+        The seed used for reproducibility.
     """
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
@@ -69,3 +102,44 @@ def seed_all(
             configure_deterministic_mode()
     # fmt: on
     return seed
+
+def seed_worker(worker_id: int) -> None:  # noqa: ARG001
+    """
+    Initializes random seeds for a worker based on its ID.
+
+    This ensures that each worker, when used in parallel data loading,
+    operates with a unique random state, promoting reproducibility
+    and reducing potential data overlap or bias in data loading processes.
+
+    Parameters
+    ----------
+    worker_id : int
+        The unique identifier for the data loader worker.
+
+    References
+    ----------
+    - PyTorch Worker: https://pytorch.org/docs/stable/notes/randomness.html#dataloader
+
+    Example
+    -------
+    ```python
+    import torch
+    from torch.utils.data import DataLoader
+
+    train_dataset = ...
+
+    g = torch.Generator()
+    g.manual_seed(0)
+
+    DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        num_workers=num_workers,
+        worker_init_fn=seed_worker,
+        generator=g,
+    )
+    ```
+    """
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)  # noqa: NPY002
+    random.seed(worker_seed)

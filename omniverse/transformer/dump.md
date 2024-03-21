@@ -31,6 +31,59 @@ from __future__ import annotations
 import torch
 ```
 
+## TODO DUMP
+
+```python
+def forward_hook(
+    module: nn.Module, input: Tuple[torch.Tensor], output: torch.Tensor
+) -> None:
+    """Custom hook function to print layer information."""
+    if not hasattr(module, "has_printed"):
+        module.has_printed = False
+
+    if not module.has_printed:
+        print(f"Layer: {module.__class__.__name__}")
+        print(f"Input shape: {str(input[0].shape)}")
+        print(f"Output shape: {str(output.shape)}")
+        module.has_printed = True
+
+
+def are_both_models_same(state_dict_1, state_dict_2):
+    # Check if both models have the same keys
+    if set(state_dict_1.keys()) != set(state_dict_2.keys()):
+        return False
+
+    # Check if all tensors have the same shape and values
+    for key in state_dict_1.keys():
+        if state_dict_1[key].shape != state_dict_2[key].shape:
+            return False
+        if not torch.allclose(state_dict_1[key], state_dict_2[key]):
+            return False
+
+    return True
+    # return model_1.state_dict().__str__() == model_2.state_dict().__str__()
+```
+
+```
+## Training (TODO)
+
+See my training logs. Put to another notebook with case-study.
+- scheduler talk briefly.
+
+### Talk about CE Loss
+
+## Generation (TODO)
+
+## Notations (TO UPDATE)
+
+- For example, note to self that $L$ is sequence length instead of $T$ and indexing sequence length $L$ to $i$ instead of $t$
+is because for future proof when talking about encoders.
+
+## Benchmark (See Kaparthy)
+
+## Scaling Law (See NanoGPT)
+```
+
 ## Analogy for self attention (03-march-2024)
 
 Let's use the sentence "cat walks by the bank" to walk through the
