@@ -41,8 +41,18 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
     ----------
     data : List[str]
         A list of strings, each representing an addition problem, e.g., "15+57=072".
+    tokenizer : AdderTokenizer
+        A `AdderTokenizer` object used for encoding the strings into numerical tokens
+        and decoding the numerical tokens back into strings.
+
+    Attributes
+    ----------
     vocabulary : Vocabulary
         A `Vocabulary` object used for encoding the strings into numerical tokens.
+    equal_token_id : int
+        The numerical token ID for the equal sign.
+    pad_token_id : int
+        The numerical token ID for the padding token.
     """
 
     def __init__(self, data: List[str], tokenizer: AdderTokenizer) -> None:

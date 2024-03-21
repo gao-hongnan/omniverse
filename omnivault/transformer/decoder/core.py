@@ -153,33 +153,37 @@ class GPTDecoder(BaseDecoder):
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
     ) -> torch.BoolTensor:
         """
-        Creates a combined target mask for use in decoder layers. If target_padding_masks
-        is not provided, a default mask of ones is created. If future_masks is not provided,
-        a default lower triangular mask is created to mask future tokens.
+        Creates a combined target mask for use in decoder layers. If
+        `target_padding_masks` is not provided, a default mask of ones is
+        created. If `future_masks` is not provided, a default lower triangular
+        mask is created to mask future tokens.
 
-        The default mask created by `torch.ones_like` or `torch.tril` acts as a placeholder that
-        allows operations to proceed without altering the behavior that the mask
-        would impose. This is particularly useful when the absence of a mask should
-        not lead to masking out or altering any data, but rather to a 'pass-through'
-        behavior. For example, in the case of target padding masks, the default mask
-        allows the model to attend to all tokens in the target sequence, since the
-        default mask is all ones and thus does not mask out any tokens. What this
-        means is if the user does not provide a target padding mask, the model will
-        not mask out any tokens in the target sequence, which is the same behavior
+        The default mask created by `torch.ones_like` or `torch.tril` acts as
+        a placeholder that allows operations to proceed without altering the
+        behavior that the mask would impose. This is particularly useful when
+        the absence of a mask should not lead to masking out or altering any
+        data, but rather to a 'pass-through' behavior. For example, in the
+        case of target padding masks, the default mask allows the model to
+        attend to all tokens in the target sequence, since the default mask is
+        all ones and thus does not mask out any tokens. What this means is if
+        the user does not provide a target padding mask, the model will not
+        mask out any tokens in the target sequence, which is the same behavior
         as if the user had provided a target padding mask of all ones.
-
-        Something to note is for future masks, if user does not provide outside,
-        then the default mask is a lower triangular matrix of ones, which means
-        that the model will not be able to attend to future tokens.
 
         Parameters
         ----------
-        target_padding_masks : torch.BoolTensor | NotGiven, optional
+        batch_size : int
+            The batch size of the input sequences.
+
+        seq_len : int
+            The sequence length of the input sequences.
+
+        target_padding_masks : torch.BoolTensor | NotGiven
             The mask for the target padding, indicating which elements of the target
             should be masked out. If not provided, a default mask of ones is created
             that does not mask out anything.
 
-        future_masks : torch.BoolTensor | NotGiven, optional
+        future_masks : torch.BoolTensor | NotGiven
             The mask for future tokens, typically used in self-attention mechanisms
             to prevent the model from 'seeing' future tokens. If not provided, a
             default mask of ones is created that does not prevent attending to future
@@ -190,12 +194,6 @@ class GPTDecoder(BaseDecoder):
         torch.BoolTensor
             A combined boolean mask that is the logical AND of the target padding mask
             and future mask. The shape of the returned mask matches the input masks.
-
-        Raises
-        ------
-        ValueError
-            If both target_padding_masks and future_masks are NotGiven, a ValueError
-            is raised since at least one mask is required for the operation.
         """
         target_masks_shape = (batch_size, 1, seq_len, seq_len)
         if target_padding_masks is NOT_GIVEN and future_masks is NOT_GIVEN:
