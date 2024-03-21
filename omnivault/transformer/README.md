@@ -6,6 +6,7 @@
         -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
         -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
         -   [Step 3: Install Dependencies](#step-3-install-dependencies)
+    -   [Typed but not Typed](#typed-but-not-typed)
     -   [Training Techniques](#training-techniques)
         -   [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
         -   [Improving Performance](#improving-performance)
@@ -87,6 +88,14 @@ Or you can simply do:
 ```
 
 to install both the project dependencies and the development dependencies.
+
+## Typed but not Typed
+
+The entire project is typed, but at the same time, due to the nature of how
+difficult it is to type hint PyTorch's `Tensor` object, I have decided to take
+some shortcuts like using `cast` excessively. I also find myself doing `assert`
+to handle the union of a certain type `T` and `None`, which is not ideal and can
+be handled more elegantly via function overloading.
 
 ## Training Techniques
 

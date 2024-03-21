@@ -103,6 +103,7 @@ def seed_all(
     # fmt: on
     return seed
 
+
 def seed_worker(worker_id: int) -> None:  # noqa: ARG001
     """
     Initializes random seeds for a worker based on its ID.
