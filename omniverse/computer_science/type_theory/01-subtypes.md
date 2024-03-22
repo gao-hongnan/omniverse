@@ -23,7 +23,6 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 ![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
 ![Tag](https://img.shields.io/badge/Tag-Vetted-green)
-![Tag](https://img.shields.io/badge/Tag-2024_03_20-green)
 
 ```{contents}
 :local:
@@ -111,7 +110,9 @@ based solely on structural _characteristics_.
 **Nominal subtype relationships** are established at **declaration time** (i.e.,
 when a new subclass is declared), and checked at **compile time**, whereas
 **structural subtype relationships** are established at the **point of use**,
-and checked at **run time**.
+and checked at **runtime**. However, when defining via `mypy`'s `Protocol`,
+the structural subtyping is actually checked at **compile time**. We will see
+the difference later.
 ```
 
 ### Nominal Subtyping - Class Hierarchy Determines Subtypes
@@ -280,6 +281,11 @@ class Sized(metaclass=ABCMeta):
         return NotImplemented
 ```
 
+To this end, the `Dataset` class is now a structural subtype of the `Sized`
+class, as it implements the `__len__` method required by the `Sized` "protocol".
+The check is done at **runtime** via the `__subclasshook__` method, which
+verifies if the class implements the necessary methods for the protocol.
+
 #### How to Implement Structural Subtyping?
 
 In languages supporting **_structural subtyping_**, subtype relationships are
@@ -327,7 +333,42 @@ While manual checks like the one above illustrate the core idea of structural
 subtyping, Python offers a more streamlined approach through the `typing`
 module. By defining a [protocol](https://peps.python.org/pep-0544/) via the
 `Protocol` class, you can specify the required methods and properties for a
-type, and use `runtime_checkable` to enable runtime instance checks:
+type,
+
+```{code-cell} ipython3
+from typing import Protocol
+
+class Flyable(Protocol):
+    def fly(self) -> str:
+        ...
+
+def can_we_fly(obj: Flyable) -> None:
+    ...
+
+bird = Bird()
+airplane = Airplane()
+car = Car()
+
+can_we_fly(bird)       # No error, Bird is a structural subtype of Flyable
+can_we_fly(airplane)   # No error, Airplane is a structural subtype of Flyable
+can_we_fly(car)        # Error, Car is not a structural subtype of Flyable
+```
+
+Here, both `Bird` and `Airplane` are considered structural subtypes of the
+`Flyable` protocol because they implement the required `fly` method, even though
+they don't explicitly inherit from `Flyable`. The `Car` class, on the other
+hand, does not implement the `fly` method and is not considered a structural
+subtype of `Flyable`.
+
+It is worth noting that `mypy` is a static type checker, and hence if you run
+`mypy` on the above code, the code is checked at **compile time** to ensure that
+the `Bird` and `Airplane` classes are structural subtypes of the `Flyable`
+protocol and that the `Car` class is not.
+
+If you want to ensure that the check is done at runtime with `isinstance`, you
+can use the decorator `runtime_checkable` to enable runtime instance
+checks[^runtime-checkable] (you cannot call `isinstance` on `Flyable` without
+this decorator):
 
 ```{code-cell} ipython3
 from typing import Protocol, runtime_checkable
@@ -337,19 +378,10 @@ class Flyable(Protocol):
     def fly(self) -> str:
         ...
 
-bird = Bird()
-airplane = Airplane()
-car = Car()
 print(isinstance(bird, Flyable))        # True, Bird is a structural subtype of Flyable
 print(isinstance(airplane, Flyable))    # True, Airplane is a structural subtype of Flyable
 print(isinstance(car, Flyable))         # False, Car is not a structural subtype of Flyable
 ```
-
-Here, both `Bird` and `Airplane` are considered structural subtypes of the
-`Flyable` protocol because they implement the required `fly` method, even though
-they don't explicitly inherit from `Flyable`. The `Car` class, on the other
-hand, does not implement the `fly` method and is not considered a structural
-subtype of `Flyable`.
 
 ### Pros and Cons of Nominal and Structural Subtyping
 
@@ -581,3 +613,6 @@ the formalism.
 
 [^subtype-subsumption-wikipedia]:
     [Subtype Subsumption - Wikipedia](https://en.wikipedia.org/wiki/Subtyping#Subsumption)
+
+[^runtime-checkable]:
+    [Using isinstance() with protocols](https://mypy.readthedocs.io/en/stable/protocols.html#using-isinstance-with-protocols)
