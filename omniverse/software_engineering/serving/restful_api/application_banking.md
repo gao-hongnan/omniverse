@@ -1393,7 +1393,7 @@ and take appropriate action in our application.
 
 ## Filter
 
-Recall the URI we have seen in [URI](#uri) section:
+Recall the URI we have seen in URI section:
 
 <pre class="output ai-center-all" style="padding-left: 0rem; padding-right: 0rem; font-weight: 600;"><span style="color:#d63939">https://</span><span style="color:#206bc4">localhost:</span><span style="color: #4299e1">8000</span><span style="color:#2fb344">/models/{modelId}/</span><span style="color:#ae3ec9">?filter=passed</span><span style="color:#f76707">#details</span>
 </pre>
@@ -1491,7 +1491,7 @@ framework. We can separate our application into three components: models, views,
 and controllers. This will help us organize our code and make it easier to
 maintain and scale.
 
-```tree
+```text
 .
 ├── README.md
 ├── app.py
@@ -1647,7 +1647,7 @@ This ensures they are called once when the module is first imported.
 
 Here's a possible structure:
 
-```tree
+```text
 .
 ├── main.py  (or app.py)
 ├── database
