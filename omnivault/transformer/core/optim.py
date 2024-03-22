@@ -33,15 +33,14 @@ def apply_weight_decay_to_different_param_groups(
 
     Returns
     -------
-    List[Dict[str, torch.nn.Parameter]]
-        A list containing two dictionaries, one for parameters to decay and one for others.
+    optim_groups: List[Dict[str, torch.nn.Parameter]]
+        A list containing two dictionaries, one for parameters to decay and
+        one for parameters not to decay.
 
     Raises
     ------
     AssertionError
         If any parameter is found in both decay and no_decay sets.
-
-
     """
 
     decay: Set[str] = set()
