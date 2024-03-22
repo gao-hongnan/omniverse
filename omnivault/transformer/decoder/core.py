@@ -288,7 +288,7 @@ class GPTDecoder(BaseDecoder):
     @torch.no_grad()
     def generate(
         self,
-        starting_tokens: torch.LongTensor | List[int],  # alias is starting_tokens
+        starting_tokens: torch.LongTensor | List[int],
         *,
         max_tokens: int = 100,  # max tokens to generate
         temperature: float = 1.0,  # temperature for sampling
@@ -322,10 +322,10 @@ class GPTDecoder(BaseDecoder):
             If True, the generation uses a greedy approach, selecting
             the most likely next token. If False, uses probabilistic
             sampling. Default is False.
-        top_k : Optional[int], optional
+        top_k : int | None
             Limits the sampling pool to the top k most likely tokens.
             If None, no limit is applied. Default is None.
-        top_p : Optional[float], optional
+        top_p : float | None
             Limits the sampling pool to the smallest set of tokens
             whose cumulative probability exceeds the threshold p.
             If None, no limit is applied. Default is None.
