@@ -618,10 +618,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda-optimization-and-data-transfers">CUDA Optimization and Data Transfers</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
         </div>
@@ -770,11 +767,7 @@ document.write(`
 <li><p><a class="reference internal" href="#decoder" id="id124">Decoder</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id125">References and Further Readings</a></p>
-<ul>
-<li><p><a class="reference internal" href="#cuda-optimization-and-data-transfers" id="id126">CUDA Optimization and Data Transfers</a></p></li>
-</ul>
-</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id125">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="dependencies">
@@ -2697,16 +2690,25 @@ an input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</spa
 token embeddings <span class="math notranslate nohighlight">\(\mathbf{Z} = \mathbf{W}_{e} \mathbf{x}\)</span>, and then add the
 positional embeddings to the token embeddings to obtain the final embeddings.</p>
 <p>The process to encode position into the embeddings is:</p>
-<p>Given an input sequence <span class="math notranslate nohighlight">\(\mathbf{x} = \left(x_1, x_2, ..., x_{T}\right)\)</span>, where <span class="math notranslate nohighlight">\(x_t\)</span> is
-the token at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence, we have transformed the input
-sequence into a sequence of token embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>, holding both the
-static semantics and the positional information of the input sequence.</p>
+<p>Given an input sequence <span class="math notranslate nohighlight">\(\mathbf{x} = \left(x_1, x_2, ..., x_{T}\right)\)</span>, where
+<span class="math notranslate nohighlight">\(x_t\)</span> is the token at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence, we have transformed the
+input sequence into a sequence of token embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>, holding both
+the static semantics and the positional information of the input sequence.</p>
 <div class="math notranslate nohighlight">
 \[
 \mathbf{Z} = \mathbf{W}_{e} \mathbf{x} + \mathbf{W}_{p} \in \mathbb{R}^{T \times D}
 \]</div>
 <p>And note this is only for <span class="math notranslate nohighlight">\(1\)</span> sequence, and we can extend this to <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>
 sequences in a batch.</p>
+<div class="seealso admonition">
+<p class="admonition-title">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://aman.ai/primers/ai/transformers/#positional-encoding">Positional Encodings - Aman Chadha</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html">Self-Attention and Positional Encoding - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://kazemnejad.com/blog/transformer_architecture_positional_encoding/">Transformer Architecture: The Positional Encoding</a></p></li>
+<li><p><a class="reference external" href="https://e2eml.school/transformers.html#positional_encoding">Positional Encoding - Brandon Rohrer</a></p></li>
+</ul>
+</div>
 </section>
 </section>
 <section id="layer-normalization">
@@ -2950,6 +2952,15 @@ Training deep neural networks are challenging, loss can easily be exploded or va
 One simple way is to ensure each layer’s activation has a similar distribution - the intuition is
 that if each layer’s activation has a similar distribution, then the gradients will also have a similar distribution, and this
 will stabilize the training process. Layer normalization is one of the techniques that can help to achieve this.</p>
+<div class="seealso admonition">
+<p class="admonition-title">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/batch-norm.html#layer-normalization">Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html#residual-connection-and-layer-normalization">Residual Connection and Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1607.06450">Layer Normalization - arXiv</a></p></li>
+<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html">PyTorch Documentation: torch.nn.LayerNorm</a></p></li>
+</ul>
+</div>
 </section>
 </section>
 <section id="residual-connection">
@@ -5490,14 +5501,53 @@ the training and inference mechanism, please see the next
 </section>
 <section id="references-and-further-readings">
 <h2><a class="toc-backref" href="#id125" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
-<section id="cuda-optimization-and-data-transfers">
-<h3><a class="toc-backref" href="#id126" role="doc-backlink">CUDA Optimization and Data Transfers</a><a class="headerlink" href="#cuda-optimization-and-data-transfers" title="Link to this heading">#</a></h3>
+<div class="seealso admonition">
+<p class="admonition-title">References</p>
 <ul class="simple">
+<li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/batch-norm.html#layer-normalization">Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html#residual-connection-and-layer-normalization">Residual Connection and Layer Normalization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1607.06450">Layer Normalization - arXiv</a></p></li>
+<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html">PyTorch Documentation: torch.nn.LayerNorm</a></p></li>
+<li><p><a class="reference external" href="https://aman.ai/primers/ai/transformers/#positional-encoding">Positional Encodings - Aman Chadha</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html">Self-Attention and Positional Encoding - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://kazemnejad.com/blog/transformer_architecture_positional_encoding/">Transformer Architecture: The Positional Encoding</a></p></li>
+<li><p><a class="reference external" href="https://e2eml.school/transformers.html#positional_encoding">Positional Encoding - Brandon Rohrer</a></p></li>
+<li><p><a class="reference external" href="https://e2eml.school/transformers.html">Transformers from Scratch - Brandon Rohrer</a></p></li>
+<li><p><a class="reference external" href="https://aman.ai/primers/ai/transformers/#positional-encoding">Primers • Transformers - Aman Chadha</a></p></li>
+<li><p><a class="reference external" href="https://jalammar.github.io/illustrated-gpt2/">The Illustrated GPT-2 (Visualizing Transformer Language Models) - Jay Alammar</a></p></li>
+<li><p><a class="reference external" href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2">The Transformer Family Version 2.0 - Lilian Weng</a></p></li>
+<li><p><a class="reference external" href="https://osanseviero.github.io/hackerllama/blog/posts/random_transformer">The Random Transformer - hackerllama</a></p></li>
+<li><p><a class="reference external" href="https://blog.matdmiller.com/posts/2023-06-10_transformers/notebook.html">Transformers From Scratch - Mat Miller</a></p></li>
+<li><p><a class="reference external" href="https://colab.research.google.com/drive/1JMLa53HDuA-i7ZBmqV7ZnA3c_fvtXnx-?usp=sharing#scrollTo=JB82yzt44REI">Andrej Karpathy GPT Implementation Google Colab</a></p></li>
+<li><p><a class="reference external" href="http://www.columbia.edu/~jsl2239/transformers.html">Transformers: a Primer - Justin Seonyong Lee</a></p></li>
+<li><p><a class="reference external" href="https://leimao.github.io/article/OpenAI-GPT-Models/">OpenAI GPT Models - Lei Mao</a></p></li>
+<li><p><a class="reference external" href="https://leimao.github.io/blog/Transformer-Explained/">Transformer Explained in One Single Page - Lei Mao</a></p></li>
+<li><p><a class="reference external" href="https://deepgenerativemodels.github.io/notes/autoregressive/">Autoregressive models</a></p></li>
+<li><p><a class="reference external" href="https://nlp.seas.harvard.edu/annotated-transformer/">The Annotated Transformer - Harvard NLP</a></p></li>
+<li><p><a class="reference external" href="https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html">Tutorial 6: Transformers and Multi-Head Attention - UvA</a></p></li>
+<li><p><a class="reference external" href="https://eugeneyan.com/writing/attention/">Some Intuition on Attention and the Transformer - Eugene Yan</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Let’s build GPT: from scratch, in code, spelled out - Andrej Karpathy</a></p></li>
+<li><p><a class="reference external" href="https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen">Why does the transformer do better than RNN and LSTM in long-range context dependencies?</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning">How Transformer is Bidirectional - Machine Learning</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/1409.0473">Neural Machine Translation by Jointly Learning to Align and Translate - arXiv</a></p></li>
+<li><p><a class="reference external" href="https://github.com/rasbt/LLMs-from-scratch">Building Language Models from Scratch - Sebastian Raschka</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_multilayer-perceptrons/numerical-stability-and-init.html#breaking-the-symmetry">Numerical Stability and Initialization - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://developers.google.com/machine-learning/gan/generative">Background: What is a Generative Model? - Google Developers</a> -
+Google Developers</p></li>
+<li><p><a class="reference external" href="https://ai.stackexchange.com/questions/12579/why-can-we-approximate-the-joint-probability-distribution-using-the-output-vecto">Why can we approximate the joint probability distribution using the output vector of the GPT model?</a></p></li>
+<li><p><a class="reference external" href="https://datascience.stackexchange.com/questions/65806/why-joint-probability-in-generative-models">Why Joint Probability in Generative Models? - Data Science Stack Exchange</a></p></li>
+<li><p><a class="reference external" href="https://probmlcourse.github.io/csc412/lectures/week_2/">CSC412 Winter 2020: Probabilsitic Machine Learning - University of Toronto</a></p></li>
+<li><p><a class="reference external" href="https://stanford-cs324.github.io/winter2022/lectures/introduction/">CS324 - Large Language Models - Stanford University</a></p></li>
+<li><p><a class="reference external" href="https://www.probabilitycourse.com/chapter5/5_1_1_joint_pmf.php">Joint Probability Mass Function (PMF)</a></p></li>
+<li><p><a class="reference external" href="https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di">Difference Between Joint Probability Distribution and Conditional Probability Distribution - Math Stack Exchange</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_convolutional-modern/resnet.html">Residual Networks (ResNets) - Dive into Deep Learning</a></p></li>
+<li><p><a class="reference external" href="https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/">GPT-1, GPT-2, GPT-3, InstructGPT, ChatGPT, and GPT-4 Summary</a></p></li>
 <li><p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">How to Optimize Data Transfers in CUDA C/C++</a> -
 NVIDIA Developer Blogs</p></li>
 <li><p><a class="reference external" href="https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/">How to Overlap Data Transfers in CUDA C/C++</a> -
 NVIDIA Developer Blogs</p></li>
 </ul>
+</div>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id37" role="doc-footnote">
@@ -5509,7 +5559,6 @@ NVIDIA Developer Blogs</p></li>
 <p><a class="reference external" href="https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/">How to Optimize Data Transfers in CUDA C/C++</a></p>
 </aside>
 </aside>
-</section>
 </section>
 </section>
 
@@ -5691,10 +5740,7 @@ NVIDIA Developer Blogs</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">Decoder</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda-optimization-and-data-transfers">CUDA Optimization and Data Transfers</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
 

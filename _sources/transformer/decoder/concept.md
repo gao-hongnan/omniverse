@@ -247,11 +247,13 @@ GPT-2 paper.
     **single** domain datasets, which limits the model's ability to generalize
     across diverse conditions and tasks.
 
-**Further Readings:**
+```{admonition} References
+:class: seealso
 
 -   [On the importance of the i.i.d. assumption in statistical learning](https://stats.stackexchange.com/questions/213464/on-the-importance-of-the-i-i-d-assumption-in-statistical-learning)
 -   [Independent and identically distributed random variables - Wikipedia](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables)
 -   [Independence and Identically Distributed (IID) - GAO Hongnan](https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html#independence-and-identically-distributed-iid)
+```
 
 #### Key 3. Multi-Task Learning is Nacent (4)
 
@@ -328,10 +330,12 @@ GPT-2 paper.
     lines of work using language model to handle it - commonsense reasoning
     (Schwartz et al., 2017) and sentiment analysis (Radford et al., 2017).
 
-**Further Readings:**
+```{admonition} References
+:class: seealso
 
 -   [Why does the transformer do better than RNN and LSTM in long-range context dependencies?](https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen)
 -   [How Transformer is Bidirectional - Machine Learning](https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning)
+```
 
 #### Key 5. Zero Shot Learning and Zero Shot Transfer (7)
 
@@ -361,7 +365,8 @@ GPT-2 paper.
     domain during training, relying instead on the model's ability to generalize
     across different contexts based on its pre-existing knowledge.
 
-**Further Readings:**
+```{admonition} References
+:class: seealso
 
 -   [Zero-shot learning - Wikipedia](https://en.wikipedia.org/wiki/Zero-shot_learning)
 -   [What is the difference between one-shot learning, transfer learning, and fine-tuning? - AI Stack Exchange](https://ai.stackexchange.com/questions/21719/what-is-the-difference-between-one-shot-learning-transfer-learning-and-fine-tun)
@@ -370,6 +375,7 @@ GPT-2 paper.
 -   [Zero shot learning available labels in testing set - AI Stack Exchange](https://ai.stackexchange.com/questions/23527/zero-shot-learning-available-labels-in-testing-set)
 -   [Zero-Shot Learning: Can You Classify an Object Without Seeing It Before?](https://www.theaidream.com/post/zero-shot-learning-can-you-classify-an-object-without-seeing-it-before)
 -   [A Survey of Zero-Shot Learning: Settings, Methods, and Applications](https://dl.acm.org/doi/10.1145/3293318)
+```
 
 ### Section 2. Approach
 
@@ -557,11 +563,13 @@ to English translation found throughout the WebText training set.
 -   So in summary, BPE is the **tokenizer** used to encode the input text into a
     sequence of tokens - which form the input representation to the model.
 
-Further Readings:
+```{admonition} References
+:class: seealso
 
--   [minBPE GitHub repository by Andrej Karpathy](https://github.com/karpathy/minbpe)
--   [Byte Pair Encoding on Hugging Face's NLP Course](https://huggingface.co/learn/nlp-course/en/chapter6/5)
+-   [https://github.com/karpathy/minbpe](https://github.com/karpathy/minbpe)
 -   [https://github.com/openai/tiktoken](https://github.com/openai/tiktoken)
+-   [Byte Pair Encoding on Hugging Face's NLP Course](https://huggingface.co/learn/nlp-course/en/chapter6/5)
+```
 
 ### 2.3. Model
 
@@ -673,10 +681,14 @@ several GPT-2 variants, distinguished by their scale.
   - 1024
 ```
 
+```{admonition} Implementation
+:class: seealso
+
 See
 [The Implementation of Generative Pre-trained Transformers (GPT)](https://www.gaohongnan.com/transformer/decoder/implementation.html)
 for a more comprehensive walkthrough of the GPT-2 model architecture, annotated
 with code.
+```
 
 ## Autoregressive Self-Supervised Learning Paradigm
 
@@ -896,10 +908,12 @@ $$
 where $\mathbb{P}(x_1 ; \boldsymbol{\Theta})$ can be thought of the "initial
 prompt" or "initial condition" of the sequence $\mathbf{x}$.
 
-For further reading, one can find more details below:
+```{admonition} References
+:class: seealso
 
 -   [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence)
 -   [How do LLMs learn to be "Generative", as we often describe them?](https://github.com/huggingface/transformers/issues/28860)
+```
 
 ### Markov Assumption
 
@@ -942,12 +956,14 @@ words of context {cite}`zhang2023dive`. In short, the Markov assumption is a
 convenient assumption to simplify the modeling of the joint probability
 distribution of the token sequences.
 
-Further readings on the Markov assumption can be found in the following:
+```{admonition} References
+:class: seealso
 
 -   [GPT-4 absolutely isn’t a Markov chain](https://news.ycombinator.com/item?id=35551452)
 -   [GPT is a Finite State Markov Chain - Andrej Karpathy](https://twitter.com/karpathy/status/1645115622517542913)
 -   [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
 -   [Why GPT model is a higher order hidden markov model](https://cs.stackexchange.com/questions/160891/why-gpt-model-is-a-higher-order-hidden-markov-model)
+```
 
 ### The Estimator Function is Smooth with Respect to the Parameters
 
@@ -1062,10 +1078,12 @@ $$
 H\left(X_t \mid X_{<t}\right) = -\mathbb{E}_{\mathcal{D}}\left[\log \mathbb{P}\left(X_t \mid X_{<t} ; \boldsymbol{\Theta}\right)\right]
 $$
 
-One can more details on the concept of conditional entropy in the following:
+```{admonition} References
+:class: seealso
 
 -   [Conditional Entropy - Wikipedia](https://en.wikipedia.org/wiki/Conditional_entropy)
 -   [Conditional Expectation - Wikipedia](https://en.wikipedia.org/wiki/Conditional_expectation)
+```
 
 #### Perplexity
 
@@ -1083,10 +1101,12 @@ $$
 \end{aligned}
 $$
 
-To read more about perplexity, one can find more details in the following:
+```{admonition} References
+:class: seealso
 
 -   [Perplexity - Wikipedia](https://en.wikipedia.org/wiki/Perplexity)
 -   [Perplexity of fixed-length models](https://huggingface.co/docs/transformers/en/perplexity)
+```
 
 #### Loss Function
 
@@ -1401,14 +1421,12 @@ to better predict them, regardless of their method of procurement
 
 ## References and Further Readings
 
-### Independent and Identically Distributed (i.i.d.)
+```{admonition} References
+:class: seealso
 
 -   [On the importance of the i.i.d. assumption in statistical learning](https://stats.stackexchange.com/questions/213464/on-the-importance-of-the-i-i-d-assumption-in-statistical-learning)
 -   [Independent and identically distributed random variables - Wikipedia](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables)
 -   [Independence and Identically Distributed (IID) - GAO Hongnan](https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html#independence-and-identically-distributed-iid)
-
-### Zero/Few Shot(s) Learning
-
 -   [Zero-shot learning - Wikipedia](https://en.wikipedia.org/wiki/Zero-shot_learning)
 -   [What is the difference between one-shot learning, transfer learning, and fine-tuning? - AI Stack Exchange](https://ai.stackexchange.com/questions/21719/what-is-the-difference-between-one-shot-learning-transfer-learning-and-fine-tun)
 -   [Zero-Shot Learning in Modern NLP - Joe Davison](https://joeddav.github.io/blog/2020/05/29/ZSL.html)
@@ -1417,21 +1435,12 @@ to better predict them, regardless of their method of procurement
 -   [Zero-Shot Learning: Can You Classify an Object Without Seeing It Before?](https://www.theaidream.com/post/zero-shot-learning-can-you-classify-an-object-without-seeing-it-before)
 -   [A Survey of Zero-Shot Learning: Settings, Methods, and Applications](https://dl.acm.org/doi/10.1145/3293318)
 -   [Changes in GPT-2/GPT-3 Model During Few-Shot Learning - Stack Overflow](https://stackoverflow.com/questions/66451430/changes-in-gpt2-gpt3-model-during-few-shot-learning)
-
-### Byte Pair Encoding (BPE)
-
--   [minBPE GitHub repository by Andrej Karpathy](https://github.com/karpathy/minbpe)
+-   [https://github.com/karpathy/minbpe](https://github.com/karpathy/minbpe)
 -   [Byte Pair Encoding on Hugging Face's NLP Course](https://huggingface.co/learn/nlp-course/en/chapter6/5)
-
-### Perplexity
-
 -   [Perplexity - Wikipedia](https://en.wikipedia.org/wiki/Perplexity)
 -   [Perplexity of fixed-length models](https://huggingface.co/docs/transformers/en/perplexity)
 -   [9.3.2. Perplexity - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/language-model.html#perplexity)
 -   [3.3 Evaluating Language Models: Perplexity - Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3/3.pdf)
-
-### Transformers, Encoders, Decoders, Encoder-Decoder Models
-
 -   [Transformers from Scratch - Brandon Rohrer](https://e2eml.school/transformers.html)
 -   [Primers • Transformers - Aman Chadha](https://aman.ai/primers/ai/transformers/#positional-encoding)
 -   [The Illustrated GPT-2 (Visualizing Transformer Language Models) - Jay Alammar](https://jalammar.github.io/illustrated-gpt2/)
@@ -1445,28 +1454,8 @@ to better predict them, regardless of their method of procurement
 -   [Autoregressive models](https://deepgenerativemodels.github.io/notes/autoregressive/)
 -   [The Annotated Transformer - Harvard NLP](https://nlp.seas.harvard.edu/annotated-transformer/)
 -   [Tutorial 6: Transformers and Multi-Head Attention - UvA](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial6/Transformers_and_MHAttention.html)
-
-### Positional Encoding
-
--   [Positional Encodings - Aman Chadha](https://aman.ai/primers/ai/transformers/#positional-encoding)
--   [Self-Attention and Positional Encoding - Dive into Deep Learning](https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html)
--   [Transformer Architecture: The Positional Encoding](https://kazemnejad.com/blog/transformer_architecture_positional_encoding/)
--   [Positional Encoding - Brandon Rohrer](https://e2eml.school/transformers.html#positional_encoding) -
-
-### Attention Mechanism
-
 -   [Some Intuition on Attention and the Transformer - Eugene Yan](https://eugeneyan.com/writing/attention/)
 -   [Let's build GPT: from scratch, in code, spelled out - Andrej Karpathy](https://www.youtube.com/watch?v=kCc8FmEb1nY)
-
-### Layer Normalization
-
--   [Layer Normalization - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/batch-norm.html#layer-normalization)
--   [Residual Connection and Layer Normalization - Dive into Deep Learning](https://d2l.ai/chapter_attention-mechanisms-and-transformers/transformer.html#residual-connection-and-layer-normalization)
--   [Layer Normalization - arXiv](https://arxiv.org/abs/1607.06450)
--   [PyTorch Documentation: torch.nn.LayerNorm](https://pytorch.org/docs/stable/generated/torch.nn.LayerNorm.html)
-
-### Others
-
 -   [Why does the transformer do better than RNN and LSTM in long-range context dependencies?](https://ai.stackexchange.com/questions/20075/why-does-the-transformer-do-better-than-rnn-and-lstm-in-long-range-context-depen)
 -   [How Transformer is Bidirectional - Machine Learning](https://stackoverflow.com/questions/55158554/how-transformer-is-bidirectional-machine-learning)
 -   [Neural Machine Translation by Jointly Learning to Align and Translate - arXiv](https://arxiv.org/abs/1409.0473)
@@ -1482,8 +1471,13 @@ to better predict them, regardless of their method of procurement
 -   [Difference Between Joint Probability Distribution and Conditional Probability Distribution - Math Stack Exchange](https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di)
 -   [Residual Networks (ResNets) - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/resnet.html)
 -   [GPT-1, GPT-2, GPT-3, InstructGPT, ChatGPT, and GPT-4 Summary](https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/)
+-   [How to Optimize Data Transfers in CUDA C/C++](https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/) -
+    NVIDIA Developer Blogs
+-   [How to Overlap Data Transfers in CUDA C/C++](https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/) -
+    NVIDIA Developer Blogs
+```
 
-### Citations
+## Citations
 
 -   A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
     ["Chapter 9: Recurrent Neural Networks"](https://d2l.ai/chapter_recurrent-neural-networks/index.html)
@@ -1504,3 +1498,7 @@ to better predict them, regardless of their method of procurement
 
 [^2]:
     [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
+
+```
+
+```
