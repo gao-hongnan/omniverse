@@ -19,6 +19,7 @@ kernelspec:
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 
@@ -242,11 +243,130 @@ old = new  # Unsafe because int <: float
 # assume the static language doesnt compile error then old will truncate to 3 silently because it is defined as an `int`!
 ```
 
+## On Dynamic vs Static Type Checking
+
+We have come quite a long way in understanding subtyping schemes and the concept
+of type safety. We would like to end this discussion with a brief note on the
+difference between dynamic and static type checking. In what follows, we would
+turn to the seminal work by Jeremy Siek, titled
+[_What is Gradual Typing_](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/),
+as a reference.
+
+### Dynamic Type Checking
+
+Dynamic type checking is a form of type checking that is performed at runtime.
+Consider the following Python code, where we erroneously pass a `Car` object to
+the `can_we_fly` function, which expects a `Flyable` object. The error manifests
+as an `AttributeError` at runtime, indicating that the `Car` object does not
+have the `fly` method.
+
+```{code-cell} ipython3
+from __future__ import annotations
+
+from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Flyable(Protocol):
+    def fly(self) -> str:
+        ...
+
+class Bird:
+    def fly(self) -> str:
+        return "Bird flying"
+
+class Car:
+    def drive(self) -> str:
+        return "Car driving"
+
+
+def can_we_fly(obj: Flyable) -> str | None:
+    try:
+        return obj.fly()
+    except AttributeError as err:
+        print(err)
+        return None
+
+bird = Bird()
+car = Car()
+
+_ = can_we_fly(bird)
+_ = can_we_fly(car)
+```
+
+This is deemed as dynamic type checking because the type of the object is only
+checked at runtime and the error is only caught when the code is executed.
+
+### Static Type Checking
+
+Static type checking, on the other hand, is a form of type checking that is
+performed at compile time. Consider the same piece of Python code, but now we
+use the `mypy` static type checker to catch the error at compile time (a better
+example would be to use a language like Java or C# that has a more robust static
+type checking system).
+
+```bash
+sandbox.py:30: error: Argument 1 to "can_we_fly" has incompatible type "Car"; expected "Flyable"  [arg-type]
+    _ = can_we_fly(car)
+                   ^~~
+Found 1 error in 1 file (checked 1 source file)
+```
+
+It is worth noting that static type checking make a _conservative
+approximation_[^what-is-gradual-typing] of what can happen to the code at
+**runtime**, and raise _potential_ type errors that may happen at runtime. In
+fact, the
+[**the halting problem**](https://en.wikipedia.org/wiki/Halting_problem) implies
+that we cannot be 100% sure whether a type error will really occur during
+runtime before execution, and thus impossible to build a type checker that can
+"predict" what type errors will happen in runtime[^what-is-gradual-typing].
+Consequently, static type checkers often make conservative approximations to
+ensure that the code is type-safe and result in false positives (i.e. raising
+type errors that will not actually occur at runtime).
+
+We quote verbatim the example given by Jeremy Siek in his article. Consider the
+following Java code:
+
+```java
+class A {
+    int add1(int x) {
+        return x + 1;
+    }
+    public static void main(String args[]) {
+        A a = new A();
+        if (false)
+            add1(a);
+        else
+            System.out.println("Hello World!");
+    }
+}
+```
+
+The Java compiler rejects the following program even though it would not
+actually result in a type error because the `if (false)` branch is never taken.
+However,the Java type checker does not try to figure out which branch of an if
+statement will be taken at runtime. Instead it conservatively assumes that
+either branch could be taken and therefore checks both
+branches[^what-is-gradual-typing].
+
+### Comparison between Dynamic and Static Type Checking
+
+Some reasons Jeremy gave includes, but not limited to:
+
+-   Static type checking enhances execution speed by eliminating the need for
+    type verification during runtime and allowing for the utilization of more
+    efficient data storage formats.
+-   Dynamic type checking simplifies the handling of scenarios where the type of
+    a value is determined by information available at runtime.
+
+You can find more
+[reasons in his article](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/).
+
 ## References and Further Readings
 
 -   [Unit 2: Variable and Type - CS2030S](https://nus-cs2030s.github.io/2021-s2/02-type.html)
 -   [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
 -   [Subtyping - eduNitas](https://wiki.edunitas.com/IT/en/114-10/Subtyping_4238_eduNitas.html)
+-   [What is Gradual Typing](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)
 
 [^what-is-a-criterion]:
     A criterion is a principle or standard by which something may be judged or
@@ -255,3 +375,6 @@ old = new  # Unsafe because int <: float
 
 [^cs2040s-variable-and-type]:
     [Unit 2: Variable and Type - CS2030S](https://nus-cs2030s.github.io/2021-s2/02-type.html)
+
+[^what-is-gradual-typing]:
+    [What is Gradual Typing](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)

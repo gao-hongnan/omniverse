@@ -29,6 +29,12 @@ in software design and architecture.
 
 ```
 
-## References and Further Readings
+## Citations
 
--   [What is Gradual Typing?](https://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)
+-   [1] Z. Luo, S. Soloviev, and T. Xue,
+    ["Coercive subtyping: Theory and implementation"](https://www.sciencedirect.com/science/article/pii/S0890540112001757),
+    Information and Computation, vol. 223, pp. 18–42, Feb. 2013.
+    doi:10.1016/j.ic.2012.10.020
+-   [2] C. Muñoz,
+    ["Type Theory and Its Applications to Computer Science"](https://shemesh.larc.nasa.gov/fm/papers/ICASE1999-QNews.pdf),
+    National Institute of Aerospace, Hampton, VA, Tech. Rep., Apr. 10, 2007.
