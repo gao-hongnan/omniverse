@@ -22,9 +22,59 @@ kernelspec:
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/schedulers/cosine_annealing_warmup.py)
 
 ```{contents}
 :local:
+```
+
+```{code-cell} ipython3
+:tags: [remove-cell]
+
+%config InlineBackend.figure_format = 'svg'
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+from IPython.display import display
+
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path | None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    if not current_path:
+        current_path = Path.cwd()
+    current_path = current_path.resolve()
+    for parent in [current_path, *current_path.parents]:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+root_dir = find_root_dir(marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.utils.visualization.style import use_svg_display
+else:
+    raise ImportError("Root directory not found.")
+
+use_svg_display()
 ```
 
 ## Motivation
@@ -33,7 +83,7 @@ In training deep neural networks, learning rate is definitely one of the most
 important parameter to tune. Optimization algorithms like
 [Adam](https://arxiv.org/abs/1412.6980) and
 [SGD](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) tell us how the
-weights $\boldsymbol{\theta} \boldsymbol{\Theta}$ should be updated, but the
+weights $\boldsymbol{\theta} \in \boldsymbol{\Theta}$ should be updated, but the
 learning rate $\eta$ tells us the **_rate_** at which the weights are being
 updated.
 
@@ -50,21 +100,21 @@ where the concept can be understood as the ratio between the smallest and
 largest changes possible in response to adjustments in different directions of
 the parameter space, reflecting the variance in sensitivity across these
 directions[^1] {cite}`zhang2023dive`. As we progress through the training steps,
-it is also equally to apply a learning rate scheduler to adjust (may not be
-monotonous decay) the learning rate discriminatively.
+it is also equally important to apply a learning rate scheduler to adjust (may
+_not_ be monotonous decay) the learning rate _discriminatively_.
 
 In the paper
 [_SGDR: Stochastic Gradient Descent with Restarts_](https://arxiv.org/abs/1608.03983)
 by Loshchilov and Hutter, they introduced an heuristic that relies on the
 empirical observation that we can improve the convergence of the model (usually
-in ill-conditioned situations) if we want follow an _annealing_ process over the
-learning rate. This means that at the beginning of training, we do not want to
-decrease the learning too drastically. My (potentially wrong) intuition is that
-this may allow the model to consider exploring a larger parameter space without
-too much constraints if we were to rapidly decrease the learning rate. The
-authors further claim that as we progress towards the end of the training, we
-would want to "fine-tune" the model parameters with a very small learning rate,
-as it could potentially help "refine" the solution space to find a "more
+in ill-conditioned situations) if we want follow an **_annealing_** process over
+the learning rate. This means that at the beginning of training, we do not want
+to decrease the learning too drastically. My (potentially wrong) intuition is
+that this may allow the model to consider exploring a larger parameter space
+without too much constraints if we were to rapidly decrease the learning rate.
+The authors further claim that as we progress towards the end of the training,
+we would want to "fine-tune" the model parameters with a very small learning
+rate, as it could potentially help "refine" the solution space to find a "more
 optimal" set of parameters {cite}`DBLP:journals/corr/LoshchilovH16a`. This idea
 _naturally lands_ us to using _cosine function_ because the cosine curve starts
 with a _gentle slope_, which coincides with the idea of _gradual decrease_ in
@@ -77,7 +127,7 @@ Consequently, a cosine decaying scheduler has the below function form for
 learning rates in the range $t \in [0, T]$:
 
 $$
-\eta_t=\eta_T+\frac{\eta_0-\eta_T}{2}(1+\cos (\pi t / T))
+\eta_t=\eta_T+\frac{\eta_0-\eta_T}{2}\left(1+\cos \left(\frac{\pi t}{T}\right)\right)
 $$
 
 Here $\eta_0$ is the initial learning rate, $\eta_T$ is the target rate at time
@@ -88,62 +138,68 @@ learning rate reaches $\eta_T$, the target rate, and beyond which the learning
 rate is maintained constant at $\eta_T$.
 
 -   During $0 \leq t < T$: The learning rate $\eta_t$ is actively adjusted
-    according to the cosine annealing formula. It smoothly transitions from the
-    initial learning rate $\eta_0$ towards the target rate $\eta_T$, following a
+    according to the cosine annealing formula. It transitions from the initial
+    learning rate $\eta_0$ towards the target rate $\eta_T$, following a
     half-cosine wave.
 -   For $t \geq T$: The learning rate is set to $\eta_T$ and no longer changes.
     This doesn't necessarily mean that training must stop at $t = T$. Training
-    can continue beyond $T$ with the learning rate fixed at $\eta_T$, allowing
-    for further refinement of the model parameters under a stable learning rate.
+    can continue beyond $T$ with the learning rate fixed at $\eta_T$.
 
 In code, we can observe the behavior of the cosine annealing scheduler as
 follows:
 
 ```{code-cell} ipython3
-from torch.optim.lr_scheduler import CosineAnnealingLR
+from __future__ import annotations
+
+from typing import Any, List
+
 import matplotlib.pyplot as plt
 import torch
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import CosineAnnealingLR, _LRScheduler
 
-initial_lr = 0.1
-eta_min = 0
-steps = 100
-model = torch.nn.Linear(2, 1)
+def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int) -> List[float]:
+    lrs = []
+    for _ in range(steps):
+        lrs.append(optimizer.param_groups[0]["lr"])
+        optimizer.step()
+        scheduler.step()
+    return lrs
 
-optimizer = torch.optim.SGD(model.parameters(), lr=initial_lr)
-scheduler_non_cyclic = CosineAnnealingLR(optimizer, T_max=steps, eta_min=eta_min)
-lrs_non_cyclic = []
-for _ in range(steps):
-    optimizer.step()
-    lrs_non_cyclic.append(optimizer.param_groups[0]["lr"])
-    scheduler_non_cyclic.step()
+def plot_learning_rates(
+    lrs: List[float], title: str, marker: str = "o", ax: plt.Axes | None = None, **kwargs: Any
+) -> None:
+    ax = ax or plt.gca()
 
-optimizer = torch.optim.SGD(model.parameters(), lr=initial_lr)
-scheduler_cyclic = CosineAnnealingLR(optimizer, T_max=steps // 8, eta_min=eta_min)
-lrs_cyclic = []
-for _ in range(steps):
-    optimizer.step()  # Dummy step
-    lrs_cyclic.append(optimizer.param_groups[0]["lr"])
-    scheduler_cyclic.step()
+    ax.plot(lrs, label=title, marker=marker, **kwargs)
+    ax.set_title(title)
+    ax.set_xlabel("Step")
+    ax.set_ylabel("Learning Rate")
+    ax.legend()
 
-# Plotting
-plt.figure(figsize=(15, 5))
+def main() -> None:
+    initial_lr = 0.1
+    eta_min = 0
+    steps = 100
+    model = torch.nn.Linear(2, 1)
 
-# Plot for non-cyclic
-plt.subplot(1, 2, 1)
-plt.plot(lrs_non_cyclic, label='Non-Cyclic Cosine Annealing')
-plt.title('Non-Cyclic Cosine Annealing')
-plt.xlabel('Step')
-plt.ylabel('Learning Rate')
+    optimizer = torch.optim.SGD(model.parameters(), lr=initial_lr)
+    scheduler_non_cyclic = CosineAnnealingLR(optimizer, T_max=steps, eta_min=eta_min)
+    lrs_non_cyclic = get_learning_rates(optimizer, scheduler_non_cyclic, steps)
 
-# Plot for cyclic
-plt.subplot(1, 2, 2)
-plt.plot(lrs_cyclic, label='Cyclic Cosine Annealing')
-plt.title('Cyclic Cosine Annealing')
-plt.xlabel('Step')
-plt.ylabel('Learning Rate')
+    optimizer = torch.optim.SGD(model.parameters(), lr=initial_lr)
+    scheduler_cyclic = CosineAnnealingLR(optimizer, T_max=steps // 8, eta_min=eta_min)
+    lrs_cyclic = get_learning_rates(optimizer, scheduler_cyclic, steps)
 
-plt.tight_layout()
-plt.show()
+    # Plotting
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+    plot_learning_rates(lrs_non_cyclic, 'Non-Cyclic Cosine Annealing', ax=axes[0])
+    plot_learning_rates(lrs_cyclic, 'Cyclic Cosine Annealing', ax=axes[1])
+
+    plt.tight_layout()
+    plt.show()
+
+main()
 ```
 
 ## Warmup
@@ -166,17 +222,20 @@ Training loss v.s. # of iterations of Transformers on the De-En IWSLT’14 datas
 
 It might be worth having some intuition on why warmup works so well in practice,
 and in particular, in language models like
-[Transformers](https://arxiv.org/abs/1706.03762). Firstly, the
-[RAdam](https://arxiv.org/pdf/1908.03265.pdf) paper suggests warmup works as a
-variance reduction technique, which overcomes the problem of
+[Transformers](https://arxiv.org/abs/1706.03762).
+
+Firstly, the [RAdam](https://arxiv.org/pdf/1908.03265.pdf) paper suggests warmup
+works as a variance reduction technique, which overcomes the problem of
 [bias correction factors](https://stats.stackexchange.com/questions/232741/why-is-it-important-to-include-a-bias-correction-term-for-the-adam-optimizer-for)
-in optimizers like Adam, which in turn leads to heightened variance in the
-adaptive learning rate during the **initial** training iterations
-{cite}`lippe2023uvadlc`. This calls for a warmup phase to stabilize the learning
-rate and reduce the variance in the early stages of training. Secondly, language
-models like Transformers use iteratively applied Layer Normalization across
-layers can lead to very high gradients during the first iterations, which can be
-solved by using
+in optimizers like Adam, where having these bias correction factors would lead
+to larger variance in the adaptive learning rate during the **initial** training
+iterations {cite}`lippe2023uvadlc`. If we don't want to swap out Adam, then this
+calls for a warmup phase to stabilize the learning rate and reduce the variance
+in the early stages of training.
+
+Secondly, language models like Transformers use iteratively applied Layer
+Normalization across layers can lead to very high gradients during the first
+iterations, which can be solved by using
 [Pre-Layer Normalization](https://proceedings.icml.cc/static/paper_files/icml/2020/328-Paper.pdf)
 (similar to Pre-Activation ResNet), which applies normalization before the
 layer's main operations, contributing to gradient stabilization and reducing the
@@ -189,7 +248,8 @@ techniques
 However, even though there are solutions to the problem, certain setups still
 use the Adam optimizer, and therefore warmup is still a simple and effective
 technique to stabilize the learning rate in the early stages of training -
-solving the afforementioned problems.
+solving the afforementioned problems (i.e. stabilize the bias correction
+factors, moving averages of gradients and squared gradients).
 
 To this end, we end our discussion on the motivation behind 1) using cosine
 annealing schedulers and 2) using warmup phases, often coupled with cosine
@@ -249,7 +309,6 @@ where we denote:
     value. For example, if $\alpha_f = 0.1$ and the initial learning rate is
     $\eta_{\max} = 3e-4$, then the final learning rate will be
     $\eta_{\min} = 3e-4 \times 0.1 = 3e-5$.
-```
 
 The actual learning rate $\eta_{t}$ at time (step) $t$ is then computed as:
 
@@ -261,6 +320,7 @@ $$
 
 where we emphasize again that $\eta_{\max}$ is the **maximum** learning rate
 reached during training.
+```
 
 ```{admonition} A Word on Oscillations
 :class: note
@@ -297,18 +357,94 @@ within a single cycle, unless it is specifically designed to handle restarts or
 multiple cycles.
 ```
 
-## Running Example
+## Implementation
+
+```{code-cell} ipython3
+from __future__ import annotations
+
+import math
+from functools import partial
+
+from torch.optim.lr_scheduler import LambdaLR
+from torch.optim.optimizer import Optimizer
+from torch.optim import Adam
+from torch import nn
+
+def _get_cosine_schedule_with_warmup_lr_lambda(
+    current_step: int, *, num_warmup_steps: int, num_training_steps: int, alpha_f: float
+) -> float:
+    if current_step < num_warmup_steps:
+        alpha = current_step / max(1, num_warmup_steps)
+    else:
+        tau_w = (current_step - num_warmup_steps) / num_training_steps
+        tau_w = min(1.0, tau_w)
+        alpha = alpha_f + (1 - alpha_f) * (1 + math.cos(math.pi * tau_w)) / 2
+    return alpha
+
+
+def get_cosine_annealing_with_warmup(
+    optimizer: Optimizer,
+    num_warmup_steps: int,
+    num_training_steps: int,
+    alpha_f: float = 0.1,
+    last_epoch: int = -1,
+    verbose: bool = False,
+) -> LambdaLR:
+    lr_lambda = partial(
+        _get_cosine_schedule_with_warmup_lr_lambda,
+        num_warmup_steps=num_warmup_steps,
+        num_training_steps=num_training_steps,
+        alpha_f=alpha_f,
+    )
+    return LambdaLR(optimizer, lr_lambda, last_epoch, verbose)
+
+# Experiment 1
+num_warmup_steps = 5
+num_training_steps = 10
+alpha_f = 0.5
+initial_lr = 3e-4
+
+dummy_model = nn.Linear(1, 1)
+optimizer = Adam(dummy_model.parameters(), lr=initial_lr)
+scheduler = get_cosine_annealing_with_warmup(optimizer, num_warmup_steps, num_training_steps, alpha_f)
+assert isinstance(scheduler, LambdaLR)
+lrs1 = get_learning_rates(optimizer, scheduler, steps=num_training_steps)
+
+# Experiment 2
+num_warmup_steps = 200
+num_training_steps = 1000
+
+dummy_model = nn.Linear(1, 1)
+optimizer = Adam(dummy_model.parameters(), lr=initial_lr)
+scheduler = get_cosine_annealing_with_warmup(optimizer, num_warmup_steps, num_training_steps, alpha_f)
+lrs2 = get_learning_rates(optimizer, scheduler, steps=num_training_steps)
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+plot_learning_rates(lrs1, 'Cosine Annealing With Warmup (Short)', ax=axes[0])
+plot_learning_rates(lrs2, 'Cosine Annealing With Warmup (Long)', ax=axes[1])
+```
+
+## An Example Walkthrough
 
 For simplicity, we assume that there are a total of $10$ training steps (or
-epoches) depending on how you define it. Consequently, the $t_{\text{max}}$ is
-$10$.
+epoches) depending on how you define it. We will use the following
+hyperparameters:
 
--   $\eta_{\max} = 3e-4$
+-   $\eta_{\max} = 3 \times 10^{-4}$
 -   $t_{\text{warmup}} = 5$
 -   $t_{\max} = 10$
 -   $\alpha_f = 0.5$
 
-## 1. Warmup Phase
+We can use the code to verify the learning rate at each step with our manual
+computation.
+
+```{code-cell} ipython3
+:tags: [remove-input]
+from rich.pretty import pprint
+pprint(lrs1)
+```
+
+### 1. Warmup Phase
 
 During the warmup phase, when the **current** training step $t$ is less than the
 warmup time $t_{\text{warmup}}$, the learning rate multiplier is **linearly**
@@ -329,42 +465,49 @@ $$
 \end{align*}
 $$
 
-### Example
-
 During the warmup phase, the learning rate will linearly increase from $0$ to
 $\eta_{\max}$ in the first $t_{\text{warmup}}$ steps. Since
 $\eta_{\max} = 3 \times 10^{-4}$ and $t_{\text{warmup}} = 5$, the learning rate
 will be increased as follows:
 
 -   $t = 1$:
+
     $$
     \begin{align*}
     \alpha_1 &= \frac{t}{t_{\text{warmup}}} = \frac{1}{5} = 0.2 \\
     \eta_1 &= \alpha_1 \times \eta_{\max} = 0.2 \times 3 \times 10^{-4} = 6 \times 10^{-5}
     \end{align*}
     $$
+
 -   $t = 2$:
+
     $$
     \begin{align*}
     \alpha_2 &= \frac{t}{t_{\text{warmup}}} = \frac{2}{5} = 0.4 \\
     \eta_2 &= \alpha_2 \times \eta_{\max} = 0.4 \times 3 \times 10^{-4} = 1.2 \times 10^{-4}
     \end{align*}
     $$
+
 -   $t = 3$:
+
     $$
     \begin{align*}
     \alpha_3 &= \frac{t}{t_{\text{warmup}}} = \frac{3}{5} = 0.6 \\
     \eta_3 &= \alpha_3 \times \eta_{\max} = 0.6 \times 3 \times 10^{-4} = 1.8 \times 10^{-4}
     \end{align*}
     $$
+
 -   $t = 4$:
+
     $$
     \begin{align*}
     \alpha_4 &= \frac{t}{t_{\text{warmup}}} = \frac{4}{5} = 0.8 \\
     \eta_4 &= \alpha_4 \times \eta_{\max} = 0.8 \times 3 \times 10^{-4} = 2.4 \times 10^{-4}
     \end{align*}
     $$
+
 -   $t = 5$:
+
     $$
     \begin{align*}
     \alpha_5 &= \frac{t}{t_{\text{warmup}}} = \frac{5}{5} = 1 \\
@@ -383,54 +526,14 @@ where $t_{\text{warmup}}$is the total number of steps in the warmup phase. This
 function describes how the learning rate multiplier $\alpha_t$ grows linearly
 from $0$ to $1$ as $t$ progresses from $0$ to $t_{\text{warmup}}$.
 
-### Intuition
-
-The warmup phase in learning rate scheduling, where the learning rate linearly
-increases from a small value to a larger value, has its own unique intuition and
-benefits. Here's an exploration of the underlying reasoning:
-
-#### Practical Intuition
-
-1. **Gentle Start**: Starting the training with a small learning rate allows the
-   model to make small adjustments initially. This can be beneficial if the
-   initial parameters are far from optimal, as it reduces the risk of
-   overshooting or diverging.
-
-2. **Adaptation to Data**: The gradual increase in learning rate allows the
-   model to adapt to the data distribution and the structure of the loss
-   landscape. This can be particularly valuable when training deep models, where
-   the loss surface can be complex and non-convex.
-
-3. **Acceleration of Convergence**: By gradually increasing the learning rate,
-   the warmup phase can accelerate convergence by guiding the optimizer towards
-   a good region of the loss landscape. Once the learning rate reaches its
-   maximum value, the optimizer can take larger steps to explore this region.
-
-4. **Compatibility with Adaptive Methods**: When used with adaptive optimization
-   methods like Adam, the warmup phase can help stabilize the moving averages of
-   gradients and squared gradients, leading to more robust optimization.
-
-5. **Preventing Poor Local Minima**: By gradually increasing the learning rate,
-   the optimizer may escape shallow or poor local minima in the early stages of
-   training, enabling it to find a better solution.
-
-#### Summary
-
-The warmup phase in learning rate scheduling serves as a controlled and gradual
-start to the training process. By linearly increasing the learning rate, it
-helps the model adapt to the data, avoids potential pitfalls in the loss
-landscape, and sets the stage for efficient optimization. The mathematical
-formulation is simple, but it embodies a thoughtful approach to training
-dynamics, often leading to improved convergence and generalization.
-
-## 2. Cosine Decay Phase
+### 2. Cosine Decay Phase
 
 After the warmup phase, the learning rate multiplier follows a cosine decay
 pattern. This phase commences once the current training step $t$ is greater than
 or equal to the warmup time $t_{\text{warmup}}$, and it continues until the
 maximum training step $t_{\text{max}}$.
 
-### 2.1. Tau Fraction
+#### 2.1. Tau Fraction
 
 We first define a variable $\tau_w$ to represent the fraction of post-warmup
 time elapsed. Mathematically, it is defined as:
@@ -445,19 +548,19 @@ where:
 -   $t_{\text{warmup}}$: Warmup time in training steps.
 -   $t_{\text{max}}$: Total duration of the scheduler in training steps.
 
-### 2.2. Learning Rate Multiplier
+#### 2.2. Learning Rate Multiplier
 
 The learning rate multiplier $\alpha_t$ during the cosine decay phase is given
 by:
 
 $$
-\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\tau_w\pi\right)\right)
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\pi \times \tau_w\right)\right)
 $$
 
 where $\alpha_f$ is the scaling factor that determines the final learning rate
 multiplier to decay to.
 
-### 2.3. Learning Rate
+#### 2.3. Learning Rate
 
 The actual learning rate $\eta_t$ during this phase is then computed as:
 
@@ -465,7 +568,7 @@ $$
 \eta_{t} = \alpha_{t} \times \eta_{\text{max}}
 $$
 
-### Example
+#### Example
 
 Using the running example with:
 
@@ -477,24 +580,31 @@ Using the running example with:
 The learning rate will be computed as follows:
 
 -   $t = 6$:
+
     $$
     \begin{align*}
     \tau_w &= \frac{6 - 5}{10} = 0.1 \\
     \alpha_6 &= 0.5 + \frac{1}{2}(1 - 0.5) \left(1 + \cos \left(0.1\pi\right)\right) = 0.975445 \\
-    \eta_6 &= 3 \times 10^{-4} \times 0.975445 = 2.92634 \times 10^{-4}
+    \eta_6 &= 3 \times 10^{-4} \times 0.975445 = 0.0002963292387221365
     \end{align*}
     $$
+
 -   $t = 7$:
+
     $$
     \begin{align*}
     \tau_w &= \frac{7 - 5}{10} = 0.2 \\
     \alpha_7 &= 0.5 + \frac{1}{2}(1 - 0.5) \left(1 + \cos \left(0.2\pi\right)\right) = 0.904508 \\
-    \eta_7 &= 3 \times 10^{-4} \times 0.904508 = 2.71352 \times 10^{-4}
+    \eta_7 &= 3 \times 10^{-4} \times 0.904508 = 0.00028567627457812104
     \end{align*}
     $$
+
 -   ... (and so on for the remaining steps)
 
 #### Mathematical Intuition
+
+This version of implementation is slightly confusing because there is an
+$\alpha_f$ term in the cosine decay formula.
 
 1. **Cosine Function**: The cosine function oscillates between -1 and 1. By
    taking a scaled and shifted version of the cosine function, we can create a
@@ -505,38 +615,39 @@ The learning rate will be computed as follows:
    decay phase is:
 
     $$
-    \alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+    \alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\pi \times \tau_w\right)\right)
     $$
 
     Here, $\tau_w$ is the fraction of time elapsed since the warmup phase, and
-    it ranges from 0 to 1. The $\cos(\tau_w\pi)$ term creates a curve that
-    starts at 1 (when $\tau_w = 0$) and ends at -1 (when $\tau_w = 1$). The
+    it ranges from 0 to 1. The $\cos(\pi \times \tau_w)$ term creates a curve
+    that starts at 1 (when $\tau_w = 0$) and ends at -1 (when $\tau_w = 1$). The
     scaling and shifting ensure that $\alpha_t$ starts at 1 and decays to
     $\alpha_f$.
 
 More concretely, the expression
 
 $$
-\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\pi \times \tau_w\right)\right)
 $$
 
 describes the learning rate multiplier during the decay phase, where $\tau_w$ is
 the fraction of time elapsed since the warmup phase where $\tau_w$ is the
-fraction of time elapsed since the warmup phase, and it ranges from 0 to 1.
+fraction of time elapsed since the warmup phase, and it ranges from $0$ to $1$.
 
 Let's zoom into the cosine decay part in more details:
 
--   The term $\cos(\tau_w\pi)$ oscillates between 1 and -1 as $\tau_w$ varies
-    from 0 to 1.
--   When you add 1 to this term, the expression $1 + \cos(\tau_w\pi)$ oscillates
-    between 0 and 2.
+-   The term $\cos(\pi \times \tau_w)$ oscillates between $1$ and $-1$ as
+    $\tau_w$ varies from $0$ to $1$.
+-   When you add $1$ to this term, the expression $1 + \cos(\pi \times \tau_w)$
+    oscillates between $0$ and $2$.
 -   Multiplying this by $\frac{1}{2}$ scales it down, so the expression
-    $\frac{1}{2}\left(1 + \cos(\tau_w\pi)\right)$ oscillates between 0 and 1.
+    $\frac{1}{2}\left(1 + \cos(\pi \times \tau_w)\right)$ oscillates between 0
+    and 1.
 -   The term $\frac{1}{2}(1 - \alpha_f)$ scales this oscillation so that the
     amplitude is adjusted based on the desired final learning rate multiplier
     $\alpha_f$. This means if $\alpha_f = 0.5$, the expression
-    $\frac{1}{2}(1 - \alpha_f)\left(1 + \cos(\tau_w\pi)\right)$ oscillates
-    between 0 and 0.5.
+    $\frac{1}{2}(1 - \alpha_f)\left(1 + \cos(\pi \times \tau_w)\right)$
+    oscillates between $0$ and $0.5$.
 -   Adding $\alpha_f$ shifts the entire expression so that it starts at 1 when
     $\tau_w = 0$ and decays to $\alpha_f$ when $\tau_w = 1$.
 
@@ -548,7 +659,7 @@ $\alpha_f$ is added back.
 Given the formula:
 
 $$
-\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\pi \times \tau_w\right)\right)
 $$
 
 First, consider the case where $\tau_w = 0$ (i.e., the beginning of the decay
@@ -568,37 +679,31 @@ Now consider the case where $\tau_w = 1$ (i.e., the end of training):
 -   The cosine term becomes $\cos(\pi) = -1$.
 -   The entire expression inside the parentheses becomes $1 - 1 = 0$.
 -   The scaling factor then multiplies this by
-    $\frac{1 - \alpha_f}{2}\times 0 = 0$.
+    $\frac{1 - \alpha_f}{2} \times 0 = 0$.
 -   So the expression becomes $\alpha_f + 0 = \alpha_f$.
 
 So at $\tau_w = 1$, $\alpha_t$ decays to $\alpha_f$.
 
-By adding $\alpha_f$, you ensure that the learning rate multiplier starts at 1
+By adding $\alpha_f$, we ensure that the learning rate multiplier starts at $1$
 and smoothly decays to the desired final value $\alpha_f$. Without adding
-$\alpha_f$, the expression would start at 1 but decay to 0, rather than the
+$\alpha_f$, the expression would start at $1$ but decay to $0$, rather than the
 intended final value. The addition of $\alpha_f$ shifts the entire decay curve
 so that it aligns with the desired starting and ending values.
 
-#### Summary
+## PyTorch's CosineAnnealingLR vs. Composer's CosineAnnealingScheduler
 
-The cosine decay in the learning rate scheduler is designed to balance
-exploration and exploitation in the optimization process. It starts with a
-relatively high learning rate to explore the loss landscape and then gradually
-reduces it to allow for fine-tuning and convergence. The mathematical
-formulation is inspired by the properties of the cosine function, providing a
-smooth and controlled decay that can be tailored to different training needs.
-
-## PyTorch's CosAnnealingLR
+We know that Composers' `CosineAnnealingWithWarmupScheduler` is basically its
+`CosineAnnealingScheduler` with warmup, and the latter is also basically a copy
+of PyTorch's `CosineAnnealingLR`. However, there is a slight difference in their
+formulas. Let's compare the two to see if they are equivalent.
 
 In PyTorch's
-[CosAnnealingLR](https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR),
+[CosineAnnealingLR](https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR),
 they implemented the cosine annealing scheduler without warmup, but the base
 formula should be similar. Let's take a look to see how they coincide.
 
-1. PyTorch’s `CosineAnnealing` without warmup:
-   <https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR>
-2. Composers `CosineAnnealing` without warmup:
-   <https://docs.mosaicml.com/projects/composer/en/stable/api_reference/generated/composer.optim.CosineAnnealingScheduler.html#composer.optim.CosineAnnealingScheduler>
+1. [PyTorch’s `CosineAnnealingLR` without warmup](https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR)
+2. [Composers `CosineAnnealingScheduler` without warmup](https://docs.mosaicml.com/projects/composer/en/stable/api_reference/generated/composer.optim.CosineAnnealingScheduler.html#composer.optim.CosineAnnealingScheduler)
 
 The formula looks a bit different at first glance (without loss of generality,
 we can ignore warmup here), after digging a bit deeper, I tried to establish the
@@ -622,7 +727,7 @@ $$
          & = \underbrace{\alpha_f \times \eta_{\max}}_{\eta_{\min}} + \frac{1}{2}\left(\eta_{\max} - \underbrace{\alpha_f \times \eta_{\max}}_{\eta_{\min}}\right)\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right) \\
          & = \alpha_f \times \eta_{\max} + \frac{1}{2}\left(1 - \alpha_f\right) \eta_{\max}\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right) \\
          & = \eta_{\max} \left(\alpha_f + \frac{1}{2}\left(1 - \alpha_f\right) \left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right)\right) \\
-         & = \eta_{\max} \underbrace{\left(\alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\tau_w\pi\right)\right)\right)}_{\alpha_t} \\
+         & = \eta_{\max} \underbrace{\left(\alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\pi \times \tau_w\right)\right)\right)}_{\alpha_t} \\
          & = \alpha_t \times \eta_{\max}
 \end{align*}
 $$
@@ -634,170 +739,6 @@ scaling factor that determines the final learning rate multiplier to decay to
 from $\eta_{\max}$. More concretely, if the initial learning rate
 $\eta_{\max} = 3e-4$ and $\alpha_f = 0.1$, then the final learning rate will be
 $\eta_{\min} = 3e-4 \times 0.1 = 3e-5$.
-
-## Implementation
-
-Now, let's write code to plot the graph of this scheduler, showing how the
-learning rate multiplier changes over the training steps.
-
-```python
-import argparse
-import math
-from typing import Union, List, Optional
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-# Function for the learning rate scheduler
-def cosine_annealing_with_warmup(
-    t: int, t_warmup: Union[int, float], t_max: Union[int, float], alpha_f: float
-) -> float:
-    """Computes the learning rate multiplier using cosine annealing with warmup.
-
-    Args:
-        t (int): Current training step.
-        t_warmup (int or float): Warmup time in training steps.
-        t_max (int or float): Total duration of the scheduler in training steps.
-        alpha_f (float): Learning rate multiplier to decay to.
-
-    Returns:
-        alpha (float): The learning rate multiplier at the given training step.
-    """
-    if t < t_warmup:
-        alpha = t / t_warmup
-    else:
-        tau_w = (t - t_warmup) / t_max
-        tau_w = min(1.0, tau_w)
-        alpha = alpha_f + (1 - alpha_f) * (1 + math.cos(math.pi * tau_w)) / 2
-    return alpha
-
-
-def plot_scheduler(
-    steps: np.ndarray,
-    lr_values: List[float],
-    t: int,
-    lr_at_t: Optional[float] = None,
-    save: bool = False,
-) -> None:
-    plt.figure(figsize=(10, 6))
-    plt.plot(steps, lr_values, label="Cosine Annealing with Warmup")
-    plt.xlabel("Training Steps")
-    plt.ylabel("Learning Rate")
-    plt.title("Cosine Annealing with Warmup Scheduler")
-    plt.legend()
-    plt.grid(True)
-    if t is not None:
-        # Draw the red vertical line at the specified step t, with annotation
-        plt.axvline(x=t, color="r", linestyle="--", label=f"Step {t}")
-    if lr_at_t is not None:
-        plt.annotate(
-            f"Step {t}, LR: {lr_at_t}",
-            (t, lr_at_t),
-            xytext=(5, 5),
-            textcoords="offset points",
-            color="r",
-        )
-    if save:
-        plt.savefig("cosine_annealing_with_warmup.png")
-    plt.show()
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Cosine Annealing with Warmup Learning Rate Scheduler"
-    )
-
-    parser.add_argument(
-        "--t_warmup", type=int, default=100, help="Warmup time in training steps"
-    )
-    parser.add_argument(
-        "--t_max",
-        type=int,
-        default=399998,
-        help="Duration of the scheduler in training steps",
-    )
-    parser.add_argument(
-        "--alpha_f",
-        type=float,
-        default=0.1,
-        help="Learning rate multiplier to decay to",
-    )
-    parser.add_argument(
-        "--eta_max", type=float, default=1.6e-4, help="Initial learning rate"
-    )
-    # optional argument
-    parser.add_argument("--t", type=int, help="Training step to plot")
-    parser.add_argument(
-        "--save", action="store_true", help="Save the plot as a PNG file"
-    )
-
-    args = parser.parse_args()
-
-    # Steps
-    steps = np.arange(0, args.t_max + 1)
-
-    # Learning rate values
-    lr_values = [
-        args.eta_max
-        * cosine_annealing_with_warmup(t, args.t_warmup, args.t_max, args.alpha_f)
-        for t in steps
-    ]
-    if args.t is not None:
-        lr_at_t = lr_values[args.t]
-        print(f"Learning rate at step {args.t}:", lr_at_t)
-    else:
-        lr_at_t = None
-
-    # Call the plotting function
-    plot_scheduler(steps, lr_values, args.t, lr_at_t, args.save)
-
-
-if __name__ == "__main__":
-    main()
-    # 692431388224 0.0001589897227106072 21450
-```
-
-## Visualization
-
-The plot visualizes the learning rate schedule defined by the
-`CosineAnnealingWithWarmupScheduler`. Here's what the graph illustrates:
-
-1. **Warmup Phase**: In the initial phase, the learning rate linearly increases
-   from 0 to the initial learning rate $\eta\_{\max}$.
-
-2. **Cosine Decay Phase**: After the warmup phase, the learning rate follows a
-   cosine decay pattern, decreasing towards $\eta\_{\min}$.
-
-## Summary
-
-This combination of initial warmup followed by cosine decay is a common practice
-in training neural networks. It allows the model to start learning slowly and
-then follow a smooth decay, which often leads to better convergence. The
-parameters $\eta*i$, $\alpha_f$, $t*{\text{warmup}}$, and $
-t\_{\text{max}}$
-provide flexibility in configuring the learning rate schedule according to the
-specific needs of the training process.
-
-## Intuition
-
-Cosine annealing modifies the learning rate during training in a way that's
-inspired by the shape of the cosine function. Initially, the learning rate is
-set high, enabling rapid exploration of the parameter space. As training
-progresses, the learning rate is gradually reduced following a cosine curve.
-This helps the model to find more refined solutions by doing fine-tuning during
-later stages of training.
-
-The **intuition** behind cosine annealing involves two aspects:
-
-1. **Exploration vs. Exploitation**: In the initial epochs, a high learning rate
-   encourages exploring a broad region of the parameter space. As the learning
-   rate decreases, the optimizer starts to exploit local minima, fine-tuning the
-   weights.
-2. **Avoiding Saddle Points and Local Minima**: The cosine annealing schedule
-   also includes brief moments where the learning rate increases slightly, which
-   can provide the necessary "nudge" to help the model escape non-optimal
-   solutions.
 
 ## References and Further Readings
 
