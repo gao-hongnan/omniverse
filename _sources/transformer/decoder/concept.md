@@ -1471,10 +1471,10 @@ to better predict them, regardless of their method of procurement
 -   [Difference Between Joint Probability Distribution and Conditional Probability Distribution - Math Stack Exchange](https://math.stackexchange.com/questions/1566215/difference-between-joint-probability-distribution-and-conditional-probability-di)
 -   [Residual Networks (ResNets) - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/resnet.html)
 -   [GPT-1, GPT-2, GPT-3, InstructGPT, ChatGPT, and GPT-4 Summary](https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/)
--   [How to Optimize Data Transfers in CUDA C/C++](https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/) -
+-   [How to Optimize Data Transfers in CUDA C/C++ - NVIDIA Developer Blogs](https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/)
     NVIDIA Developer Blogs
--   [How to Overlap Data Transfers in CUDA C/C++](https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/) -
-    NVIDIA Developer Blogs
+-   [How to Overlap Data Transfers in CUDA C/C++ - NVIDIA Developer Blogs](https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/)
+
 ```
 
 ## Citations
@@ -1498,7 +1498,3 @@ to better predict them, regardless of their method of procurement
 
 [^2]:
     [Working with Sequences - Dive Into Deep Learning](https://d2l.ai/chapter_recurrent-neural-networks/sequence.html)
-
-```
-
-```

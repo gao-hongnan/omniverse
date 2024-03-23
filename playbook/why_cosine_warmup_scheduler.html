@@ -1,0 +1,1553 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Why Do We Like To Use Warmup and Cosine Schedulers? &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/why_cosine_warmup_scheduler';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/playbook/why_cosine_warmup_scheduler.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
+    <link rel="prev" title="How to Inspect Function and Class Signatures in Python" href="how_to_inspect_function_and_class_signatures.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Generative Pre-trained Transformer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/decoder/intro.html">Generative Pre-trained Transformers</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Why Do We Like To Use Warmup and Cosine Schedulers?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/devops/continuous-integration/concept.html">Continuous Integration (CI) Workflow</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/testing.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/why_cosine_warmup_scheduler.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/why_cosine_warmup_scheduler.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/playbook/why_cosine_warmup_scheduler.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../_sources/playbook/why_cosine_warmup_scheduler.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Why Do We Like To Use Warmup and Cosine Schedulers?</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-example">Running Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup-phase">1. Warmup Phase</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-intuition">Practical Intuition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-decay-phase">2. Cosine Decay Phase</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tau-fraction">2.1. Tau Fraction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-multiplier">2.2. Learning Rate Multiplier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate">2.3. Learning Rate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-intuition">Mathematical Intuition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytorch-s-cosannealinglr">PyTorch’s CosAnnealingLR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="why-do-we-like-to-use-warmup-and-cosine-schedulers">
+<h1>Why Do We Like To Use Warmup and Cosine Schedulers?<a class="headerlink" href="#why-do-we-like-to-use-warmup-and-cosine-schedulers" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#motivation" id="id12">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#warmup" id="id13">Warmup</a></p></li>
+<li><p><a class="reference internal" href="#definition" id="id14">Definition</a></p></li>
+<li><p><a class="reference internal" href="#running-example" id="id15">Running Example</a></p></li>
+<li><p><a class="reference internal" href="#warmup-phase" id="id16">1. Warmup Phase</a></p>
+<ul>
+<li><p><a class="reference internal" href="#example" id="id17">Example</a></p></li>
+<li><p><a class="reference internal" href="#intuition" id="id18">Intuition</a></p>
+<ul>
+<li><p><a class="reference internal" href="#practical-intuition" id="id19">Practical Intuition</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id20">Summary</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#cosine-decay-phase" id="id21">2. Cosine Decay Phase</a></p>
+<ul>
+<li><p><a class="reference internal" href="#tau-fraction" id="id22">2.1. Tau Fraction</a></p></li>
+<li><p><a class="reference internal" href="#learning-rate-multiplier" id="id23">2.2. Learning Rate Multiplier</a></p></li>
+<li><p><a class="reference internal" href="#learning-rate" id="id24">2.3. Learning Rate</a></p></li>
+<li><p><a class="reference internal" href="#id7" id="id25">Example</a></p>
+<ul>
+<li><p><a class="reference internal" href="#mathematical-intuition" id="id26">Mathematical Intuition</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id27">Summary</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pytorch-s-cosannealinglr" id="id28">PyTorch’s CosAnnealingLR</a></p></li>
+<li><p><a class="reference internal" href="#implementation" id="id29">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#visualization" id="id30">Visualization</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id31">Summary</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id32">Intuition</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id33">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id34">Citations</a></p></li>
+</ul>
+</nav>
+<section id="motivation">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Link to this heading">#</a></h2>
+<p>In training deep neural networks, learning rate is definitely one of the most
+important parameter to tune. Optimization algorithms like
+<a class="reference external" href="https://arxiv.org/abs/1412.6980">Adam</a> and
+<a class="reference external" href="https://en.wikipedia.org/wiki/Stochastic_gradient_descent">SGD</a> tell us how the
+weights <span class="math notranslate nohighlight">\(\boldsymbol{\theta} \boldsymbol{\Theta}\)</span> should be updated, but the
+learning rate <span class="math notranslate nohighlight">\(\eta\)</span> tells us the <strong><em>rate</em></strong> at which the weights are being
+updated.</p>
+<p>Theoretically and empircally, the <strong><em>magnitude</em></strong> of the learning rate <span class="math notranslate nohighlight">\(\eta\)</span>
+can have a significant impact on the training process. If the learning rate is
+too <em>large</em>, we might experience
+<a class="reference external" href="https://en.wikipedia.org/wiki/Divergence_(mathematics)">divergence</a>, on the
+other hand, if the learning rate is too <em>small</em>, the model might take longer to
+converge or might get stuck in a local
+<a class="reference external" href="https://en.wikipedia.org/wiki/Maxima_and_minima">minima</a>. The condition number
+of the problem also impacts optimization efficiency, as discussed in
+<a class="reference external" href="https://d2l.ai/chapter_optimization/momentum.html#sec-momentum">the momentum section</a>,
+where the concept can be understood as the ratio between the smallest and
+largest changes possible in response to adjustments in different directions of
+the parameter space, reflecting the variance in sensitivity across these
+directions<a class="footnote-reference brackets" href="#id11" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> <span id="id2">[<a class="reference internal" href="../bibliography.html#id2" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>. As we progress through the training steps,
+it is also equally to apply a learning rate scheduler to adjust (may not be
+monotonous decay) the learning rate discriminatively.</p>
+<p>In the paper
+<a class="reference external" href="https://arxiv.org/abs/1608.03983"><em>SGDR: Stochastic Gradient Descent with Restarts</em></a>
+by Loshchilov and Hutter, they introduced an heuristic that relies on the
+empirical observation that we can improve the convergence of the model (usually
+in ill-conditioned situations) if we want follow an <em>annealing</em> process over the
+learning rate. This means that at the beginning of training, we do not want to
+decrease the learning too drastically. My (potentially wrong) intuition is that
+this may allow the model to consider exploring a larger parameter space without
+too much constraints if we were to rapidly decrease the learning rate. The
+authors further claim that as we progress towards the end of the training, we
+would want to “fine-tune” the model parameters with a very small learning rate,
+as it could potentially help “refine” the solution space to find a “more
+optimal” set of parameters <span id="id3">[<a class="reference internal" href="../bibliography.html#id23" title="Ilya Loshchilov and Frank Hutter. SGDR: stochastic gradient descent with restarts. CoRR, 2016. URL: http://arxiv.org/abs/1608.03983, arXiv:1608.03983.">Loshchilov and Hutter, 2016</a>]</span>. This idea
+<em>naturally lands</em> us to using <em>cosine function</em> because the cosine curve starts
+with a <em>gentle slope</em>, which coincides with the idea of <em>gradual decrease</em> in
+learning rate in the beginning, and the cosine curve naturally flattens and
+approaches zero towards the end as it reaches the end of its cycle, which again
+coincides with the idea of <em>fine-tuning</em> the model parameters with a very small
+learning rate.</p>
+<p>Consequently, a cosine decaying scheduler has the below function form for
+learning rates in the range <span class="math notranslate nohighlight">\(t \in [0, T]\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_t=\eta_T+\frac{\eta_0-\eta_T}{2}(1+\cos (\pi t / T))
+\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\eta_0\)</span> is the initial learning rate, <span class="math notranslate nohighlight">\(\eta_T\)</span> is the target rate at time
+<span class="math notranslate nohighlight">\(T\)</span>. Furthermore, for <span class="math notranslate nohighlight">\(t&gt;T\)</span> we simply pin the value to <span class="math notranslate nohighlight">\(\eta_T\)</span> without
+increasing it again. <span class="math notranslate nohighlight">\(T\)</span> represents the end of the learning rate annealing phase
+rather than the absolute end of training. It’s the point in time when the
+learning rate reaches <span class="math notranslate nohighlight">\(\eta_T\)</span>, the target rate, and beyond which the learning
+rate is maintained constant at <span class="math notranslate nohighlight">\(\eta_T\)</span>.</p>
+<ul class="simple">
+<li><p>During <span class="math notranslate nohighlight">\(0 \leq t &lt; T\)</span>: The learning rate <span class="math notranslate nohighlight">\(\eta_t\)</span> is actively adjusted
+according to the cosine annealing formula. It smoothly transitions from the
+initial learning rate <span class="math notranslate nohighlight">\(\eta_0\)</span> towards the target rate <span class="math notranslate nohighlight">\(\eta_T\)</span>, following a
+half-cosine wave.</p></li>
+<li><p>For <span class="math notranslate nohighlight">\(t \geq T\)</span>: The learning rate is set to <span class="math notranslate nohighlight">\(\eta_T\)</span> and no longer changes.
+This doesn’t necessarily mean that training must stop at <span class="math notranslate nohighlight">\(t = T\)</span>. Training
+can continue beyond <span class="math notranslate nohighlight">\(T\)</span> with the learning rate fixed at <span class="math notranslate nohighlight">\(\eta_T\)</span>, allowing
+for further refinement of the model parameters under a stable learning rate.</p></li>
+</ul>
+<p>In code, we can observe the behavior of the cosine annealing scheduler as
+follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">CosineAnnealingLR</span>
+<span class="linenos"> 2</span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="linenos"> 3</span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">initial_lr</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="linenos"> 6</span><span class="n">eta_min</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="linenos"> 7</span><span class="n">steps</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="linenos"> 8</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">initial_lr</span><span class="p">)</span>
+<span class="linenos">11</span><span class="n">scheduler_non_cyclic</span> <span class="o">=</span> <span class="n">CosineAnnealingLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="n">steps</span><span class="p">,</span> <span class="n">eta_min</span><span class="o">=</span><span class="n">eta_min</span><span class="p">)</span>
+<span class="linenos">12</span><span class="n">lrs_non_cyclic</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">13</span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+<span class="linenos">14</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="linenos">15</span>    <span class="n">lrs_non_cyclic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;lr&quot;</span><span class="p">])</span>
+<span class="linenos">16</span>    <span class="n">scheduler_non_cyclic</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">initial_lr</span><span class="p">)</span>
+<span class="linenos">19</span><span class="n">scheduler_cyclic</span> <span class="o">=</span> <span class="n">CosineAnnealingLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">T_max</span><span class="o">=</span><span class="n">steps</span> <span class="o">//</span> <span class="mi">8</span><span class="p">,</span> <span class="n">eta_min</span><span class="o">=</span><span class="n">eta_min</span><span class="p">)</span>
+<span class="linenos">20</span><span class="n">lrs_cyclic</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">21</span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+<span class="linenos">22</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># Dummy step</span>
+<span class="linenos">23</span>    <span class="n">lrs_cyclic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;lr&quot;</span><span class="p">])</span>
+<span class="linenos">24</span>    <span class="n">scheduler_cyclic</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="linenos">25</span>
+<span class="linenos">26</span><span class="c1"># Plotting</span>
+<span class="linenos">27</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="c1"># Plot for non-cyclic</span>
+<span class="linenos">30</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">31</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lrs_non_cyclic</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Non-Cyclic Cosine Annealing&#39;</span><span class="p">)</span>
+<span class="linenos">32</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Non-Cyclic Cosine Annealing&#39;</span><span class="p">)</span>
+<span class="linenos">33</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Step&#39;</span><span class="p">)</span>
+<span class="linenos">34</span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Learning Rate&#39;</span><span class="p">)</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span><span class="c1"># Plot for cyclic</span>
+<span class="linenos">37</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="linenos">38</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lrs_cyclic</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Cyclic Cosine Annealing&#39;</span><span class="p">)</span>
+<span class="linenos">39</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cyclic Cosine Annealing&#39;</span><span class="p">)</span>
+<span class="linenos">40</span><span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Step&#39;</span><span class="p">)</span>
+<span class="linenos">41</span><span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Learning Rate&#39;</span><span class="p">)</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="linenos">44</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e42c011f540f39234c6620406f8bbe79c01fadfbee4870341dd072752321f13e.png" src="../_images/e42c011f540f39234c6620406f8bbe79c01fadfbee4870341dd072752321f13e.png" />
+</div>
+</div>
+</section>
+<section id="warmup">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Warmup</a><a class="headerlink" href="#warmup" title="Link to this heading">#</a></h2>
+<p>Our motivation would have ended here, but in practice, we often see that the
+cosine annealing scheduler is often combined with a warmup phase. In
+<a class="reference internal" href="#why-cosine-warmup-loss-plot"><span class="std std-numref">Fig. 4</span></a>, we can see that the loss curve is
+relatively smooth and converges way better than the ones without warmup.</p>
+<figure class="align-default" id="why-cosine-warmup-loss-plot">
+<img alt="../_images/warmup_loss_plot_uvadlc.svg" src="../_images/warmup_loss_plot_uvadlc.svg" /><figcaption>
+<p><span class="caption-number">Fig. 4 </span><span class="caption-text">Training loss v.s. # of iterations of Transformers on the De-En IWSLT’14 dataset.</span><a class="headerlink" href="#why-cosine-warmup-loss-plot" title="Link to this image">#</a></p>
+<div class="legend">
+<p><strong>Image Credit:</strong>
+<a class="reference external" href="https://arxiv.org/pdf/1908.03265.pdf">ON THE VARIANCE OF THE ADAPTIVE LEARNING RATE AND BEYOND</a></p>
+</div>
+</figcaption>
+</figure>
+<p>It might be worth having some intuition on why warmup works so well in practice,
+and in particular, in language models like
+<a class="reference external" href="https://arxiv.org/abs/1706.03762">Transformers</a>. Firstly, the
+<a class="reference external" href="https://arxiv.org/pdf/1908.03265.pdf">RAdam</a> paper suggests warmup works as a
+variance reduction technique, which overcomes the problem of
+<a class="reference external" href="https://stats.stackexchange.com/questions/232741/why-is-it-important-to-include-a-bias-correction-term-for-the-adam-optimizer-for">bias correction factors</a>
+in optimizers like Adam, which in turn leads to heightened variance in the
+adaptive learning rate during the <strong>initial</strong> training iterations
+<span id="id4">[<a class="reference internal" href="../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. This calls for a warmup phase to stabilize the learning
+rate and reduce the variance in the early stages of training. Secondly, language
+models like Transformers use iteratively applied Layer Normalization across
+layers can lead to very high gradients during the first iterations, which can be
+solved by using
+<a class="reference external" href="https://proceedings.icml.cc/static/paper_files/icml/2020/328-Paper.pdf">Pre-Layer Normalization</a>
+(similar to Pre-Activation ResNet), which applies normalization before the
+layer’s main operations, contributing to gradient stabilization and reducing the
+necessity for a warm-up phase, or replacing Layer Normalization by other
+techniques
+(<a class="reference external" href="https://proceedings.icml.cc/static/paper_files/icml/2020/328-Paper.pdf">Adaptive Normalization</a>,
+<a class="reference external" href="https://arxiv.org/abs/2003.07845">Power Normalization</a>)
+<span id="id5">[<a class="reference internal" href="../bibliography.html#id14" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>.</p>
+<p>However, even though there are solutions to the problem, certain setups still
+use the Adam optimizer, and therefore warmup is still a simple and effective
+technique to stabilize the learning rate in the early stages of training -
+solving the afforementioned problems.</p>
+<p>To this end, we end our discussion on the motivation behind 1) using cosine
+annealing schedulers and 2) using warmup phases, often coupled with cosine
+annealing schedulers. In what follows, we will provide a more formal definition
+of the cosine annealing scheduler with warmup, and provide a running example to
+illustrate the behavior of the scheduler.</p>
+</section>
+<section id="definition">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">CosineAnnealingWithWarmupScheduler</span></code> decays the learning rate <span class="math notranslate nohighlight">\(\eta\)</span>
+according to the decreasing part of a cosine curve, with an initial warmup
+<span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>.</p>
+<p>This scheduler modulates <span class="math notranslate nohighlight">\(\eta\)</span> within defined upper and lower bounds over a
+predetermined interval, employing a cosine function. The formula for cosine
+annealing reflects the shape of a half-cosine wave, which decreases from a
+maximum value to a minimum and then increases back to the maximum. This cycle
+can repeat multiple times over the training process, depending on how the
+scheduler is configured. Although this approach suggests cyclic adjustments
+(oscillations) within the training duration, for simplicity’s sake, our specific
+implementation, inspired by
+<a class="reference external" href="https://docs.mosaicml.com/projects/composer/en/latest/api_reference/generated/composer.optim.CosineAnnealingWithWarmupScheduler.html"><strong>MosaicML’s Composer’s CosineAnnealingWithWarmupScheduler</strong></a>,
+explicitly excludes considerations for such cycles/oscillations.</p>
+<div class="proof definition admonition" id="why-do-we-use-warmup-cosine-scheduler-definition">
+<p class="admonition-title"><span class="caption-number">Definition 13 </span> (Cosine Annealing With Warmup)</p>
+<section class="definition-content" id="proof-content">
+<p>The <code class="docutils literal notranslate"><span class="pre">CosineAnnealingWithWarmupScheduler</span></code> modulates the <strong>learning rate</strong> <span class="math notranslate nohighlight">\(\eta\)</span>
+according to a <strong>two-phase</strong> process: a <strong><em>warmup</em></strong> phase followed by a
+<strong>cosine annealing</strong> phase. The learning rate <em>multiplier</em><a class="footnote-reference brackets" href="#lr-multiplier" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>
+<span class="math notranslate nohighlight">\(\alpha_{t}\)</span> at any given time (step) <span class="math notranslate nohighlight">\(t\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{equation}
+\alpha_{t} = \begin{cases}
+    \frac{t}{t_{\text{warmup}}}, &amp; \text{if } t &lt; t_{\text{warmup}} \\
+    \alpha_f + (1 - \alpha_f) \times \frac{1}{2} \left[1 + \cos(\pi \times \tau_w) \right], &amp; \text{otherwise}
+\end{cases}
+\end{equation}
+\end{split}\]</div>
+<p>where we denote:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t\)</span> represents the <strong>current</strong> training step or epoch.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\eta_{\max}\)</span> as the <strong>maximum</strong> learning rate reached during training, and
+often is the <strong>initial</strong> learning rate given into an optimizer.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span> denotes the duration of the warmup period, in terms of
+the number of steps or epochs, during which the learning rate <strong>linearly</strong>
+increases to the maximum learning rate <span class="math notranslate nohighlight">\(\eta_{\max}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\max}\)</span> as the <strong>maximum</strong> number of training steps, or maximum number of
+iterations in an epoch (see
+<a class="reference external" href="https://github.com/skorch-dev/skorch/issues/610">here</a>).</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau_w = \frac{t - t_{\text{warmup}}}{t_{\max}}\)</span>, the fraction of
+post-warmup time elapsed,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_f\)</span> is a <em>scaling</em> factor that determines the <strong>final</strong> learning rate
+multiplier to decay to (a value between <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>), and this is a <em>fixed</em>
+value. For example, if <span class="math notranslate nohighlight">\(\alpha_f = 0.1\)</span> and the initial learning rate is
+<span class="math notranslate nohighlight">\(\eta_{\max} = 3e-4\)</span>, then the final learning rate will be
+<span class="math notranslate nohighlight">\(\eta_{\min} = 3e-4 \times 0.1 = 3e-5\)</span>.</p></li>
+</ul>
+</section>
+</div><p>The actual learning rate <span class="math notranslate nohighlight">\(\eta_{t}\)</span> at time (step) <span class="math notranslate nohighlight">\(t\)</span> is then computed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+    \eta_{t} = \alpha_{t} \times \eta_{\max}
+\end{equation}
+\]</div>
+<p>where we emphasize again that <span class="math notranslate nohighlight">\(\eta_{\max}\)</span> is the <strong>maximum</strong> learning rate
+reached during training.</p>
+<div class="note admonition">
+<p class="admonition-title">A Word on Oscillations</p>
+<p>Note that if you set <span class="math notranslate nohighlight">\(t_{\max}\)</span> to the total number of training steps that is
+needed for the entire dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, the scheduler <em>will only decay</em> the
+learning rate after the warmup phase and not oscillate further. This
+configuration means that after completing the linear increase during the warmup,
+the learning rate will decrease following a cosine curve until it reaches the
+final learning rate determined by <span class="math notranslate nohighlight">\(\alpha_f\)</span>.</p>
+<ul class="simple">
+<li><p><strong>Single Cycle (No Oscillation)</strong>: If <span class="math notranslate nohighlight">\(t_{\max}\)</span> is set to cover exactly one
+half-cycle of the cosine function from the end of the warmup phase to the
+conclusion of training, the learning rate will monotonically decrease from
+its maximum value (at the end of warmup) to its minimum value (as determined
+by <span class="math notranslate nohighlight">\(\alpha_f\)</span>) without oscillating. This is because the scheduler’s active
+period only spans a single descent phase of the cosine wave.</p></li>
+<li><p><strong>Multiple Cycles (Oscillation)</strong>: If <span class="math notranslate nohighlight">\(t_{\max}\)</span> is set to allow for a
+longer duration than what is needed for a single half-cycle descent, the
+cosine annealing function can complete its initial descent and then begin to
+ascend as part of a new cycle. This leads to oscillations in the learning
+rate—after decreasing, it will start to increase again, potentially multiple
+times, depending on the total number of cycles fitted within <span class="math notranslate nohighlight">\(t_{\max}\)</span>.
+This is where the term “oscillation” comes into play; it describes the
+periodic increase and decrease in the learning rate according to the cosine
+function over multiple cycles.</p></li>
+</ul>
+<p>True oscillation, where the learning rate decreases and then increases within a
+training regime, typically requires either a restart mechanism (as seen in
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingWarmRestarts.html">Cosine Annealing with Warm Restarts</a>)
+or an explicit multi-cycle configuration. A standard cosine annealing scheduler,
+especially with a warmup phase, generally only supports a monotonic decrease
+within a single cycle, unless it is specifically designed to handle restarts or
+multiple cycles.</p>
+</div>
+</section>
+<section id="running-example">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Running Example</a><a class="headerlink" href="#running-example" title="Link to this heading">#</a></h2>
+<p>For simplicity, we assume that there are a total of <span class="math notranslate nohighlight">\(10\)</span> training steps (or
+epoches) depending on how you define it. Consequently, the <span class="math notranslate nohighlight">\(t_{\text{max}}\)</span> is
+<span class="math notranslate nohighlight">\(10\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\eta_{\max} = 3e-4\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{warmup}} = 5\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\max} = 10\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_f = 0.5\)</span></p></li>
+</ul>
+</section>
+<section id="warmup-phase">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">1. Warmup Phase</a><a class="headerlink" href="#warmup-phase" title="Link to this heading">#</a></h2>
+<p>During the warmup phase, when the <strong>current</strong> training step <span class="math notranslate nohighlight">\(t\)</span> is less than the
+warmup time <span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>, the learning rate multiplier is <strong>linearly</strong>
+increased from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(1\)</span>.</p>
+<p>Mathematically, the learning rate multiplier <span class="math notranslate nohighlight">\(\alpha_{t}\)</span> at time (step) <span class="math notranslate nohighlight">\(t\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+\alpha_{t} = \frac{t}{t_{\text{warmup}}}
+\]</div>
+<p>The learning rate at this phase is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\eta_{t} &amp;=  \alpha_{t} \times \eta_{\max} \\
+&amp;= \frac{t}{t_{\text{warmup}}} \times \eta_{\max}
+\end{align*}
+\end{split}\]</div>
+<section id="example">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Example</a><a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<p>During the warmup phase, the learning rate will linearly increase from <span class="math notranslate nohighlight">\(0\)</span> to
+<span class="math notranslate nohighlight">\(\eta_{\max}\)</span> in the first <span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span> steps. Since
+<span class="math notranslate nohighlight">\(\eta_{\max} = 3 \times 10^{-4}\)</span> and <span class="math notranslate nohighlight">\(t_{\text{warmup}} = 5\)</span>, the learning rate
+will be increased as follows:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t = 1\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\alpha_1 &amp;= \frac{t}{t_{\text{warmup}}} = \frac{1}{5} = 0.2 \\
+\eta_1 &amp;= \alpha_1 \times \eta_{\max} = 0.2 \times 3 \times 10^{-4} = 6 \times 10^{-5}
+\end{align*}
+\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(t = 2\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\alpha_2 &amp;= \frac{t}{t_{\text{warmup}}} = \frac{2}{5} = 0.4 \\
+\eta_2 &amp;= \alpha_2 \times \eta_{\max} = 0.4 \times 3 \times 10^{-4} = 1.2 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(t = 3\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\alpha_3 &amp;= \frac{t}{t_{\text{warmup}}} = \frac{3}{5} = 0.6 \\
+\eta_3 &amp;= \alpha_3 \times \eta_{\max} = 0.6 \times 3 \times 10^{-4} = 1.8 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(t = 4\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\alpha_4 &amp;= \frac{t}{t_{\text{warmup}}} = \frac{4}{5} = 0.8 \\
+\eta_4 &amp;= \alpha_4 \times \eta_{\max} = 0.8 \times 3 \times 10^{-4} = 2.4 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(t = 5\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\alpha_5 &amp;= \frac{t}{t_{\text{warmup}}} = \frac{5}{5} = 1 \\
+\eta_5 &amp;= \alpha_5 \times \eta_{\max} = 3 \times 10^{-4} \times 1 = 3 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+</ul>
+<p>The linear relationship for the warmup phase can be represented as a function of
+the current training step <span class="math notranslate nohighlight">\(x\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+f(t) = \frac{t}{t_{\text{warmup}}}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>is the total number of steps in the warmup phase. This
+function describes how the learning rate multiplier <span class="math notranslate nohighlight">\(\alpha_t\)</span> grows linearly
+from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(1\)</span> as <span class="math notranslate nohighlight">\(t\)</span> progresses from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>.</p>
+</section>
+<section id="intuition">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Link to this heading">#</a></h3>
+<p>The warmup phase in learning rate scheduling, where the learning rate linearly
+increases from a small value to a larger value, has its own unique intuition and
+benefits. Here’s an exploration of the underlying reasoning:</p>
+<section id="practical-intuition">
+<h4><a class="toc-backref" href="#id19" role="doc-backlink">Practical Intuition</a><a class="headerlink" href="#practical-intuition" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p><strong>Gentle Start</strong>: Starting the training with a small learning rate allows the
+model to make small adjustments initially. This can be beneficial if the
+initial parameters are far from optimal, as it reduces the risk of
+overshooting or diverging.</p></li>
+<li><p><strong>Adaptation to Data</strong>: The gradual increase in learning rate allows the
+model to adapt to the data distribution and the structure of the loss
+landscape. This can be particularly valuable when training deep models, where
+the loss surface can be complex and non-convex.</p></li>
+<li><p><strong>Acceleration of Convergence</strong>: By gradually increasing the learning rate,
+the warmup phase can accelerate convergence by guiding the optimizer towards
+a good region of the loss landscape. Once the learning rate reaches its
+maximum value, the optimizer can take larger steps to explore this region.</p></li>
+<li><p><strong>Compatibility with Adaptive Methods</strong>: When used with adaptive optimization
+methods like Adam, the warmup phase can help stabilize the moving averages of
+gradients and squared gradients, leading to more robust optimization.</p></li>
+<li><p><strong>Preventing Poor Local Minima</strong>: By gradually increasing the learning rate,
+the optimizer may escape shallow or poor local minima in the early stages of
+training, enabling it to find a better solution.</p></li>
+</ol>
+</section>
+<section id="summary">
+<h4><a class="toc-backref" href="#id20" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h4>
+<p>The warmup phase in learning rate scheduling serves as a controlled and gradual
+start to the training process. By linearly increasing the learning rate, it
+helps the model adapt to the data, avoids potential pitfalls in the loss
+landscape, and sets the stage for efficient optimization. The mathematical
+formulation is simple, but it embodies a thoughtful approach to training
+dynamics, often leading to improved convergence and generalization.</p>
+</section>
+</section>
+</section>
+<section id="cosine-decay-phase">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">2. Cosine Decay Phase</a><a class="headerlink" href="#cosine-decay-phase" title="Link to this heading">#</a></h2>
+<p>After the warmup phase, the learning rate multiplier follows a cosine decay
+pattern. This phase commences once the current training step <span class="math notranslate nohighlight">\(t\)</span> is greater than
+or equal to the warmup time <span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>, and it continues until the
+maximum training step <span class="math notranslate nohighlight">\(t_{\text{max}}\)</span>.</p>
+<section id="tau-fraction">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">2.1. Tau Fraction</a><a class="headerlink" href="#tau-fraction" title="Link to this heading">#</a></h3>
+<p>We first define a variable <span class="math notranslate nohighlight">\(\tau_w\)</span> to represent the fraction of post-warmup
+time elapsed. Mathematically, it is defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\tau_w = \frac{t - t_{\text{warmup}}}{t_{\text{max}}}
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t\)</span>: Current training step.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{warmup}}\)</span>: Warmup time in training steps.</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{max}}\)</span>: Total duration of the scheduler in training steps.</p></li>
+</ul>
+</section>
+<section id="learning-rate-multiplier">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">2.2. Learning Rate Multiplier</a><a class="headerlink" href="#learning-rate-multiplier" title="Link to this heading">#</a></h3>
+<p>The learning rate multiplier <span class="math notranslate nohighlight">\(\alpha_t\)</span> during the cosine decay phase is given
+by:</p>
+<div class="math notranslate nohighlight">
+\[
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\tau_w\pi\right)\right)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_f\)</span> is the scaling factor that determines the final learning rate
+multiplier to decay to.</p>
+</section>
+<section id="learning-rate">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">2.3. Learning Rate</a><a class="headerlink" href="#learning-rate" title="Link to this heading">#</a></h3>
+<p>The actual learning rate <span class="math notranslate nohighlight">\(\eta_t\)</span> during this phase is then computed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_{t} = \alpha_{t} \times \eta_{\text{max}}
+\]</div>
+</section>
+<section id="id7">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Example</a><a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>Using the running example with:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\eta_{\text{max}} = 3 \times 10^{-4}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{warmup}} = 5\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(t_{\text{max}} = 10\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha_f = 0.5\)</span></p></li>
+</ul>
+<p>The learning rate will be computed as follows:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(t = 6\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\tau_w &amp;= \frac{6 - 5}{10} = 0.1 \\
+\alpha_6 &amp;= 0.5 + \frac{1}{2}(1 - 0.5) \left(1 + \cos \left(0.1\pi\right)\right) = 0.975445 \\
+\eta_6 &amp;= 3 \times 10^{-4} \times 0.975445 = 2.92634 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+<li><p><span class="math notranslate nohighlight">\(t = 7\)</span>:
+$<span class="math notranslate nohighlight">\(
+\begin{align*}
+\tau_w &amp;= \frac{7 - 5}{10} = 0.2 \\
+\alpha_7 &amp;= 0.5 + \frac{1}{2}(1 - 0.5) \left(1 + \cos \left(0.2\pi\right)\right) = 0.904508 \\
+\eta_7 &amp;= 3 \times 10^{-4} \times 0.904508 = 2.71352 \times 10^{-4}
+\end{align*}
+\)</span>$</p></li>
+<li><p>… (and so on for the remaining steps)</p></li>
+</ul>
+<section id="mathematical-intuition">
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">Mathematical Intuition</a><a class="headerlink" href="#mathematical-intuition" title="Link to this heading">#</a></h4>
+<ol class="arabic">
+<li><p><strong>Cosine Function</strong>: The cosine function oscillates between -1 and 1. By
+taking a scaled and shifted version of the cosine function, we can create a
+curve that starts at its highest point and gradually descends to its lowest
+point over the interval <span class="math notranslate nohighlight">\([0, t_{\text{max}}]\)</span>.</p></li>
+<li><p><strong>Decay Formula</strong>: The formula for the learning rate multiplier during the
+decay phase is:</p>
+<div class="math notranslate nohighlight">
+\[
+    \alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+    \]</div>
+<p>Here, <span class="math notranslate nohighlight">\(\tau_w\)</span> is the fraction of time elapsed since the warmup phase, and
+it ranges from 0 to 1. The <span class="math notranslate nohighlight">\(\cos(\tau_w\pi)\)</span> term creates a curve that
+starts at 1 (when <span class="math notranslate nohighlight">\(\tau_w = 0\)</span>) and ends at -1 (when <span class="math notranslate nohighlight">\(\tau_w = 1\)</span>). The
+scaling and shifting ensure that <span class="math notranslate nohighlight">\(\alpha_t\)</span> starts at 1 and decays to
+<span class="math notranslate nohighlight">\(\alpha_f\)</span>.</p>
+</li>
+</ol>
+<p>More concretely, the expression</p>
+<div class="math notranslate nohighlight">
+\[
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+\]</div>
+<p>describes the learning rate multiplier during the decay phase, where <span class="math notranslate nohighlight">\(\tau_w\)</span> is
+the fraction of time elapsed since the warmup phase where <span class="math notranslate nohighlight">\(\tau_w\)</span> is the
+fraction of time elapsed since the warmup phase, and it ranges from 0 to 1.</p>
+<p>Let’s zoom into the cosine decay part in more details:</p>
+<ul class="simple">
+<li><p>The term <span class="math notranslate nohighlight">\(\cos(\tau_w\pi)\)</span> oscillates between 1 and -1 as <span class="math notranslate nohighlight">\(\tau_w\)</span> varies
+from 0 to 1.</p></li>
+<li><p>When you add 1 to this term, the expression <span class="math notranslate nohighlight">\(1 + \cos(\tau_w\pi)\)</span> oscillates
+between 0 and 2.</p></li>
+<li><p>Multiplying this by <span class="math notranslate nohighlight">\(\frac{1}{2}\)</span> scales it down, so the expression
+<span class="math notranslate nohighlight">\(\frac{1}{2}\left(1 + \cos(\tau_w\pi)\right)\)</span> oscillates between 0 and 1.</p></li>
+<li><p>The term <span class="math notranslate nohighlight">\(\frac{1}{2}(1 - \alpha_f)\)</span> scales this oscillation so that the
+amplitude is adjusted based on the desired final learning rate multiplier
+<span class="math notranslate nohighlight">\(\alpha_f\)</span>. This means if <span class="math notranslate nohighlight">\(\alpha_f = 0.5\)</span>, the expression
+<span class="math notranslate nohighlight">\(\frac{1}{2}(1 - \alpha_f)\left(1 + \cos(\tau_w\pi)\right)\)</span> oscillates
+between 0 and 0.5.</p></li>
+<li><p>Adding <span class="math notranslate nohighlight">\(\alpha_f\)</span> shifts the entire expression so that it starts at 1 when
+<span class="math notranslate nohighlight">\(\tau_w = 0\)</span> and decays to <span class="math notranslate nohighlight">\(\alpha_f\)</span> when <span class="math notranslate nohighlight">\(\tau_w = 1\)</span>.</p></li>
+</ul>
+<p>The addition of <span class="math notranslate nohighlight">\(\alpha_f\)</span> in the decay formula serves the purpose of setting
+the final value of the learning rate multiplier <span class="math notranslate nohighlight">\(\alpha_t\)</span> to <span class="math notranslate nohighlight">\(\alpha_f\)</span> at the
+end of training. Let’s break down the equation step by step to understand why
+<span class="math notranslate nohighlight">\(\alpha_f\)</span> is added back.</p>
+<p>Given the formula:</p>
+<div class="math notranslate nohighlight">
+\[
+\alpha_{t} = \alpha_f + \frac{1}{2}(1 - \alpha_f)\left(1 + \cos \left(\tau_w\pi\right)\right)
+\]</div>
+<p>First, consider the case where <span class="math notranslate nohighlight">\(\tau_w = 0\)</span> (i.e., the beginning of the decay
+phase):</p>
+<ul class="simple">
+<li><p>The cosine term becomes <span class="math notranslate nohighlight">\(\cos(0) = 1\)</span>.</p></li>
+<li><p>The entire expression inside the parentheses becomes <span class="math notranslate nohighlight">\(1 + 1 = 2\)</span>.</p></li>
+<li><p>The scaling factor <span class="math notranslate nohighlight">\(\frac{1}{2}(1 - \alpha_f)\)</span> then multiplies this by
+<span class="math notranslate nohighlight">\(\frac{1 - \alpha_f}{2}\)</span>.</p></li>
+<li><p>So the expression becomes
+<span class="math notranslate nohighlight">\(\alpha_f + \frac{1 - \alpha_f}{2} \times 2 = \alpha_f + (1 - \alpha_f) = 1\)</span>.</p></li>
+</ul>
+<p>So at <span class="math notranslate nohighlight">\(\tau_w = 0\)</span>, <span class="math notranslate nohighlight">\(\alpha_t\)</span> starts at 1.</p>
+<p>Now consider the case where <span class="math notranslate nohighlight">\(\tau_w = 1\)</span> (i.e., the end of training):</p>
+<ul class="simple">
+<li><p>The cosine term becomes <span class="math notranslate nohighlight">\(\cos(\pi) = -1\)</span>.</p></li>
+<li><p>The entire expression inside the parentheses becomes <span class="math notranslate nohighlight">\(1 - 1 = 0\)</span>.</p></li>
+<li><p>The scaling factor then multiplies this by
+<span class="math notranslate nohighlight">\(\frac{1 - \alpha_f}{2}\times 0 = 0\)</span>.</p></li>
+<li><p>So the expression becomes <span class="math notranslate nohighlight">\(\alpha_f + 0 = \alpha_f\)</span>.</p></li>
+</ul>
+<p>So at <span class="math notranslate nohighlight">\(\tau_w = 1\)</span>, <span class="math notranslate nohighlight">\(\alpha_t\)</span> decays to <span class="math notranslate nohighlight">\(\alpha_f\)</span>.</p>
+<p>By adding <span class="math notranslate nohighlight">\(\alpha_f\)</span>, you ensure that the learning rate multiplier starts at 1
+and smoothly decays to the desired final value <span class="math notranslate nohighlight">\(\alpha_f\)</span>. Without adding
+<span class="math notranslate nohighlight">\(\alpha_f\)</span>, the expression would start at 1 but decay to 0, rather than the
+intended final value. The addition of <span class="math notranslate nohighlight">\(\alpha_f\)</span> shifts the entire decay curve
+so that it aligns with the desired starting and ending values.</p>
+</section>
+<section id="id8">
+<h4><a class="toc-backref" href="#id27" role="doc-backlink">Summary</a><a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>The cosine decay in the learning rate scheduler is designed to balance
+exploration and exploitation in the optimization process. It starts with a
+relatively high learning rate to explore the loss landscape and then gradually
+reduces it to allow for fine-tuning and convergence. The mathematical
+formulation is inspired by the properties of the cosine function, providing a
+smooth and controlled decay that can be tailored to different training needs.</p>
+</section>
+</section>
+</section>
+<section id="pytorch-s-cosannealinglr">
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">PyTorch’s CosAnnealingLR</a><a class="headerlink" href="#pytorch-s-cosannealinglr" title="Link to this heading">#</a></h2>
+<p>In PyTorch’s
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR">CosAnnealingLR</a>,
+they implemented the cosine annealing scheduler without warmup, but the base
+formula should be similar. Let’s take a look to see how they coincide.</p>
+<ol class="arabic simple">
+<li><p>PyTorch’s <code class="docutils literal notranslate"><span class="pre">CosineAnnealing</span></code> without warmup:
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR">https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html#torch.optim.lr_scheduler.CosineAnnealingLR</a></p></li>
+<li><p>Composers <code class="docutils literal notranslate"><span class="pre">CosineAnnealing</span></code> without warmup:
+<a class="reference external" href="https://docs.mosaicml.com/projects/composer/en/stable/api_reference/generated/composer.optim.CosineAnnealingScheduler.html#composer.optim.CosineAnnealingScheduler">https://docs.mosaicml.com/projects/composer/en/stable/api_reference/generated/composer.optim.CosineAnnealingScheduler.html#composer.optim.CosineAnnealingScheduler</a></p></li>
+</ol>
+<p>The formula looks a bit different at first glance (without loss of generality,
+we can ignore warmup here), after digging a bit deeper, I tried to establish the
+equivalence by setting <code class="docutils literal notranslate"><span class="pre">eta_min</span></code> of pytorch to <code class="docutils literal notranslate"><span class="pre">alpha_f</span> <span class="pre">x</span> <span class="pre">eta_max</span></code>,</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation}
+\eta_{t} = \eta_{\min} + \frac{1}{2}(\eta_{\max} - \eta_{\min})\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right)
+\end{equation}
+\]</div>
+<p>where there is a new notation <span class="math notranslate nohighlight">\(\eta_{\min}\)</span>, which is the minimum learning rate.
+Furthermore, they do not have the <span class="math notranslate nohighlight">\(\alpha_f\)</span> term, which is the scaling factor
+that determines the final learning rate multiplier to decay to.</p>
+<p>To prove their equivalence, set <span class="math notranslate nohighlight">\(\eta_{\min} = \alpha_f \times \eta_{\max}\)</span>, and</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\eta_{t} &amp; = \eta_{\min} + \frac{1}{2}(\eta_{\max} - \eta_{\min})\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right) \\
+         &amp; = \underbrace{\alpha_f \times \eta_{\max}}_{\eta_{\min}} + \frac{1}{2}\left(\eta_{\max} - \underbrace{\alpha_f \times \eta_{\max}}_{\eta_{\min}}\right)\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right) \\
+         &amp; = \alpha_f \times \eta_{\max} + \frac{1}{2}\left(1 - \alpha_f\right) \eta_{\max}\left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right) \\
+         &amp; = \eta_{\max} \left(\alpha_f + \frac{1}{2}\left(1 - \alpha_f\right) \left(1 + \cos\left(\frac{t}{t_{\max}}\pi\right)\right)\right) \\
+         &amp; = \eta_{\max} \underbrace{\left(\alpha_f + \frac{1}{2}(1 - \alpha_f)  \left(1 + \cos \left(\tau_w\pi\right)\right)\right)}_{\alpha_t} \\
+         &amp; = \alpha_t \times \eta_{\max}
+\end{align*}
+\end{split}\]</div>
+<p>Setting <span class="math notranslate nohighlight">\(\eta_{\min} = \alpha_f \times \eta_{\max}\)</span> is also not an arbitrary
+choice. If we interpret <span class="math notranslate nohighlight">\(\eta_{\min}\)</span> as the minimum learning rate, then it
+makes sense to set it to <span class="math notranslate nohighlight">\(\alpha_f \times \eta_{\max}\)</span>, since <span class="math notranslate nohighlight">\(\alpha_f\)</span> is the
+scaling factor that determines the final learning rate multiplier to decay to
+from <span class="math notranslate nohighlight">\(\eta_{\max}\)</span>. More concretely, if the initial learning rate
+<span class="math notranslate nohighlight">\(\eta_{\max} = 3e-4\)</span> and <span class="math notranslate nohighlight">\(\alpha_f = 0.1\)</span>, then the final learning rate will be
+<span class="math notranslate nohighlight">\(\eta_{\min} = 3e-4 \times 0.1 = 3e-5\)</span>.</p>
+</section>
+<section id="implementation">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Link to this heading">#</a></h2>
+<p>Now, let’s write code to plot the graph of this scheduler, showing how the
+learning rate multiplier changes over the training steps.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="c1"># Function for the learning rate scheduler</span>
+<span class="k">def</span> <span class="nf">cosine_annealing_with_warmup</span><span class="p">(</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">t_warmup</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">t_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">alpha_f</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes the learning rate multiplier using cosine annealing with warmup.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        t (int): Current training step.</span>
+<span class="sd">        t_warmup (int or float): Warmup time in training steps.</span>
+<span class="sd">        t_max (int or float): Total duration of the scheduler in training steps.</span>
+<span class="sd">        alpha_f (float): Learning rate multiplier to decay to.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        alpha (float): The learning rate multiplier at the given training step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">t_warmup</span><span class="p">:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">t</span> <span class="o">/</span> <span class="n">t_warmup</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tau_w</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">t_warmup</span><span class="p">)</span> <span class="o">/</span> <span class="n">t_max</span>
+        <span class="n">tau_w</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">tau_w</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_f</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha_f</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">tau_w</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">alpha</span>
+
+
+<span class="k">def</span> <span class="nf">plot_scheduler</span><span class="p">(</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">lr_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+    <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">lr_at_t</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">lr_values</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cosine Annealing with Warmup&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Training Steps&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Learning Rate&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cosine Annealing with Warmup Scheduler&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Draw the red vertical line at the specified step t, with annotation</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lr_at_t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Step </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">, LR: </span><span class="si">{</span><span class="n">lr_at_t</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">lr_at_t</span><span class="p">),</span>
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+            <span class="n">textcoords</span><span class="o">=</span><span class="s2">&quot;offset points&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;cosine_annealing_with_warmup.png&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Cosine Annealing with Warmup Learning Rate Scheduler&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--t_warmup&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Warmup time in training steps&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--t_max&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">399998</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Duration of the scheduler in training steps&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--alpha_f&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Learning rate multiplier to decay to&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--eta_max&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.6e-4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Initial learning rate&quot;</span>
+    <span class="p">)</span>
+    <span class="c1"># optional argument</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--t&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Training step to plot&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--save&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save the plot as a PNG file&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Steps</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">t_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Learning rate values</span>
+    <span class="n">lr_values</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">eta_max</span>
+        <span class="o">*</span> <span class="n">cosine_annealing_with_warmup</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">t_warmup</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">t_max</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">alpha_f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">steps</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lr_at_t</span> <span class="o">=</span> <span class="n">lr_values</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">t</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Learning rate at step </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">t</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">,</span> <span class="n">lr_at_t</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lr_at_t</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Call the plotting function</span>
+    <span class="n">plot_scheduler</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">lr_values</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">lr_at_t</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+    <span class="c1"># 692431388224 0.0001589897227106072 21450</span>
+</pre></div>
+</div>
+</section>
+<section id="visualization">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Visualization</a><a class="headerlink" href="#visualization" title="Link to this heading">#</a></h2>
+<p>The plot visualizes the learning rate schedule defined by the
+<code class="docutils literal notranslate"><span class="pre">CosineAnnealingWithWarmupScheduler</span></code>. Here’s what the graph illustrates:</p>
+<ol class="arabic simple">
+<li><p><strong>Warmup Phase</strong>: In the initial phase, the learning rate linearly increases
+from 0 to the initial learning rate <span class="math notranslate nohighlight">\(\eta\_{\max}\)</span>.</p></li>
+<li><p><strong>Cosine Decay Phase</strong>: After the warmup phase, the learning rate follows a
+cosine decay pattern, decreasing towards <span class="math notranslate nohighlight">\(\eta\_{\min}\)</span>.</p></li>
+</ol>
+</section>
+<section id="id9">
+<h2><a class="toc-backref" href="#id31" role="doc-backlink">Summary</a><a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>This combination of initial warmup followed by cosine decay is a common practice
+in training neural networks. It allows the model to start learning slowly and
+then follow a smooth decay, which often leads to better convergence. The
+parameters <span class="math notranslate nohighlight">\(\eta*i\)</span>, <span class="math notranslate nohighlight">\(\alpha_f\)</span>, <span class="math notranslate nohighlight">\(t*{\text{warmup}}\)</span>, and <span class="math notranslate nohighlight">\(
+t\_{\text{max}}\)</span>
+provide flexibility in configuring the learning rate schedule according to the
+specific needs of the training process.</p>
+</section>
+<section id="id10">
+<h2><a class="toc-backref" href="#id32" role="doc-backlink">Intuition</a><a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<p>Cosine annealing modifies the learning rate during training in a way that’s
+inspired by the shape of the cosine function. Initially, the learning rate is
+set high, enabling rapid exploration of the parameter space. As training
+progresses, the learning rate is gradually reduced following a cosine curve.
+This helps the model to find more refined solutions by doing fine-tuning during
+later stages of training.</p>
+<p>The <strong>intuition</strong> behind cosine annealing involves two aspects:</p>
+<ol class="arabic simple">
+<li><p><strong>Exploration vs. Exploitation</strong>: In the initial epochs, a high learning rate
+encourages exploring a broad region of the parameter space. As the learning
+rate decreases, the optimizer starts to exploit local minima, fine-tuning the
+weights.</p></li>
+<li><p><strong>Avoiding Saddle Points and Local Minima</strong>: The cosine annealing schedule
+also includes brief moments where the learning rate increases slightly, which
+can provide the necessary “nudge” to help the model escape non-optimal
+solutions.</p></li>
+</ol>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<div class="seealso admonition">
+<p class="admonition-title">References</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.mosaicml.com/projects/composer/en/latest/api_reference/generated/composer.optim.CosineAnnealingWithWarmupScheduler.html">MosaicML’s Composer’s CosineAnnealingWithWarmupScheduler</a></p></li>
+<li><p><a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html">PyTorch’s CosineAnnealingLR</a></p></li>
+<li><p><a class="reference external" href="https://huggingface.co/docs/transformers/en/main_classes/optimizer_schedules#transformers.get_cosine_schedule_with_warmup">HuggingFace’s CosineDecayWithWarmupScheduler</a></p></li>
+<li><p><a class="reference external" href="https://d2l.ai/chapter_optimization/lr-scheduler.html">Learning Rate Scheduler - Dive Into Deep Learning</a></p></li>
+</ul>
+</div>
+</section>
+<section id="citations">
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>[1] I. Loshchilov and F. Hutter,
+<a class="reference external" href="http://arxiv.org/abs/1608.03983">“SGDR: Stochastic Gradient Descent with Restarts”</a>,
+<em>CoRR</em>, vol. abs/1608.03983, 2016.</p></li>
+<li><p>[2] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+<a class="reference external" href="https://d2l.ai/chapter_optimization/lr-scheduler.html">“Chapter 12.11. Learning Rate Scheduling”</a>
+in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
+<li><p>[3] L. Liu, H. Jiang, P. He, W. Chen, X. Liu, J. Gao, and J. Han,
+<a class="reference external" href="https://arxiv.org/abs/1908.03265">“On the Variance of the Adaptive Learning Rate and Beyond”</a>,
+arXiv preprint arXiv:1908.03265, [Submitted on 8 Aug 2019 (v1), last revised
+26 Oct 2021 (this version, v4)].</p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id11" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+<a class="reference external" href="https://d2l.ai/chapter_optimization/lr-scheduler.html">“Chapter 12.11. Learning Rate Scheduling”</a>
+in Dive into Deep Learning, Cambridge University Press, 2023.</p>
+</aside>
+<aside class="footnote brackets" id="lr-multiplier" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">2</a><span class="fn-bracket">]</span></span>
+<p>this is a multiplier and not the real learning rate</p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./playbook"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="how_to_inspect_function_and_class_signatures.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">How to Inspect Function and Class Signatures in Python</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../deep_learning/training_chronicles/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training Chronicles</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup">Warmup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-example">Running Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#warmup-phase">1. Warmup Phase</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-intuition">Practical Intuition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cosine-decay-phase">2. Cosine Decay Phase</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tau-fraction">2.1. Tau Fraction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-multiplier">2.2. Learning Rate Multiplier</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate">2.3. Learning Rate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-intuition">Mathematical Intuition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pytorch-s-cosannealinglr">PyTorch’s CosAnnealingLR</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
