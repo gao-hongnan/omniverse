@@ -10,6 +10,12 @@ class Activation(ABC):
     Base class for activation functions.
     """
 
+    def __init__(self, dim: int | None = None) -> None:
+        """
+        Initialize the activation function.
+        """
+        self.dim = dim
+
     @abstractmethod
     def __call__(self, z: torch.Tensor) -> torch.Tensor:
         """
