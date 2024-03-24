@@ -20,8 +20,8 @@ kernelspec:
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
-![Tag](https://img.shields.io/badge/Level-Beginner-green)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/schedulers/cosine_annealing_warmup.py)
 
 ```{contents}

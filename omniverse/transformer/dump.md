@@ -68,8 +68,6 @@ def are_both_models_same(state_dict_1, state_dict_2):
 ## Training (TODO)
 
 See my training logs. Put to another notebook with case-study.
-- scheduler talk briefly.
-
 ### Talk about CE Loss
 
 ## Generation (TODO)
