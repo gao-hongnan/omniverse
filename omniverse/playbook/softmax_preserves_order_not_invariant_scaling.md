@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# How does Softmax Work?
+# Softmax Preserves Order, But Not Invariant Under Scaling
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -263,9 +263,11 @@ In particular, for any element $z_j$ of the input vector $\mathbf{z}$, the
 softmax function computes the exponential of the element and normalizes it by
 the sum of the exponentials of all the elements in the input vector.
 
-## Softmax Induces a Probability Distribution
+### Softmax Obeys The Three Axioms of Probability (Kolmogorov Axioms)
 
-## The Three Axioms of Probability (Kolmogorov Axioms)
+First of all, softmax induces a valid probability distribution over the classes.
+Why so? We first need to understand the three axioms of probability, also known
+as the Kolmogorov axioms.
 
 Consider the probability space defined over the triplet
 $\left(\Omega, \mathcal{F}, \mathbb{P}\right)$, where $\Omega$ is the sample
@@ -305,7 +307,7 @@ $$
 $$
 ```
 
-### Non-Negativity
+#### Non-Negativity
 
 To satisfy the first axiom, we need to show that $\sigma(\mathbf{z})_j \geq 0$
 for all $j$.
@@ -316,7 +318,7 @@ a sum of positive terms, thus also positive. A positive number divided by
 another positive number is positive, hence $\sigma(\mathbf{z})_j > 0$ for all
 $i$. This satisfies the non-negativity axiom.
 
-### Normalization
+#### Normalization
 
 To satisfy the second axiom, we need to prove that the sum of the softmax
 function outputs equals 1, i.e., $\sum_{k=1}^{K} \sigma(\mathbf{z})_k = 1$.
@@ -337,20 +339,20 @@ $$
 This shows that the sum of the outputs of the softmax function equals 1,
 satisfying the normalization axiom.
 
-### Additivity
+#### Additivity
 
 This is evident because if we treat each instance $z_j$ as a disjoint event
 since each $z_j$ can only belong to one class, then the events (or classes) form
 a countable sequence of disjoint events.
 
-### Calibration
+#### Calibration
 
 While softmax ensures that the output of the model is a valid probability
 distribution over the classes, it does not guarantee that the model is
 well-calibrated. A well-calibrated model is one that produces predicted
 probabilities that are close to the true probabilities.
 
-## Implementation
+### Implementation
 
 Here we show a simple implementation of the softmax function in PyTorch.
 
@@ -604,34 +606,97 @@ the softmax distribution is more uniform, and when $T$ is low, the softmax
 distribution is more sharp and the highest weight displays an one-hot manner,
 where the rest of the weights are almost zero.
 
----
-
-Main thing is to answer the question: why does temperature in llm enable the
-model to be more random when it is high and more deterministic when it is low?
-worth noting that if greedy sampling then it is deterministic, if sampling from
-multinomial then it is random - and dependent on softmax. but if softmax
-preserves order then how does it become more random? Precisely why i said greedy
-sampling is deterministic since the order is preserved but multinomial sampling
-is random but the order is also preserved - the key lies in the sharpen/dampen
-effect of the softmax distribution. If sharp, means dominated by 1 value
-usually, 0.99, so samplign from that converges to greedy sampling -
-deterministic. If dampened, means more uniform, so sampling from that converges
-to more diverse sampling. But is if converge to uniform no right.
-
-```python
-- softmax sharpens/dampens distribution
-- multinomial enables randomness
-- greedy sampling enables deterministic
-- and multinomial with T=0 converges to greedy = deterministic sampling
-```
-
 ## Temperature
 
-And SINCE the softmax function is not invariant under scaling, we can introduce
-a temperature parameter $T$ to control the entropy of the output distribution.
-BECAUSE TEMPERATURE IS EFFECTIVELY SCALING! The temperature is a way to control
-the entropy of a distribution, while preserving the relative ranks of each
-event.
+We start off this section with an extracted portion from the Wikipedia page that
+is relevant to our discussion on the temperature parameter in the softmax
+function.
+
+```{epigraph}
+The term "softmax" derives from the amplifying effects of the exponential on any
+maxima in the input vector. For example, the standard softmax of $(1,2,8)$ is
+approximately $(0.001,0.002,0.997)$, which amounts to assigning almost all of
+the total unit weight in the result to the position of the vector's maximal
+element (of 8).
+
+In general, instead of $e$ a different base $b>0$ can be used. If $0<b<1$,
+smaller input components will result in larger output probabilities, and
+decreasing the value of $b$ will create probability distributions that are more
+concentrated around the positions of the smallest input values. Conversely, as
+above, if $b>1$ larger input components will result in larger output
+probabilities, and increasing the value of $b$ will create probability
+distributions that are more concentrated around the positions of the largest
+input values.
+
+Writing $b=e^\beta$ or $b=e^{-\beta[\mathbf{a}]}$ (for real $\beta$) yields the
+expressions:
+
+$$
+\sigma(\mathbf{z})_i=\frac{e^{\beta z_i}}{\sum_{j=1}^K e^{\beta z_j}} \text { or } \sigma(\mathbf{z})_i=\frac{e^{-\beta z_i}}{\sum_{j=1}^K e^{-\beta z_j}} \text { for } i=1, \ldots, K
+$$
+
+The reciprocal of $\beta$ is sometimes referred to as the temperature,
+$T=1 / \beta$, with $b=e^{1 / T}$. A higher temperature results in a more
+uniform output distribution (i.e. with higher entropy, and "more random"), while
+a lower temperature results in a sharper output distribution, with one value
+dominating.
+
+-- [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)
+```
+
+More concretely, how temperature is implemented in large language models like
+GPT is by scaling the logits by the temperature parameter $T$ before applying
+the softmax function.
+
+```python
+logits = torch.randn((1, 3), dtype=torch.float32)
+temperature = [0, 0.1, 0.5, 1, 2, 5, 10]
+
+for t in temperature:
+    scaled_logits = logits / t
+    scaled_probs = my_softmax(scaled_logits)
+    print(f"Temperature: {t}, Scaled Probs: {scaled_probs}")
+```
+
+So now we can define the input of the softmax function as $\frac{z}{T}$ where
+$T$ is the temperature parameter. Now our softmax would be like the below:
+
+$$
+\sigma\left(\frac{\mathbf{z}}{T}\right)_j = \frac{e^{z_j / T}}{\sum_{k=1}^K e^{z_k / T}}
+$$
+
+which coincides with the definition from the Wikipedia page.
+
+To conclude, the temperature modifies the "sharpness" of the probability
+distribution without altering the order of the probabilities:
+
+-   At high temperatures ($T > 1$), the distribution becomes more uniform, but
+    if $z_a > z_b$, then $\text{softmax}_T(z_a) > \text{softmax}_T(z_b)$ still
+    holds. The probabilities become closer to each other, making the choice more
+    "random" or "equally likely" among options, but the ranking remains the
+    same.
+
+-   At low temperatures ($T < 1$), the distribution becomes sharper, with a more
+    pronounced difference between the higher and lower probabilities, amplifying
+    the differences in likelihood as determined by the logits. The probability
+    of the largest logit increases towards 1, while others decrease towards 0.
+    Yet, the order of logits is preserved—higher logits translate to higher
+    probabilities.
+
+## Softmax Is Smooth, Continuous and Differentiable
+
+QUOTE
+
+This assumption is a common one in the context of deep learning, because for
+when we say that the estimator function $f_{\hat{\boldsymbol{\Theta}}}(\cdot)$
+is _smooth_ with respect to the parameter space $\hat{\boldsymbol{\Theta}}$, we
+state a simplified definition as follows.
+
+The estimator function $f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is _smooth_ with
+respect to the parameter space $\hat{\boldsymbol{\Theta}}$ if the function is
+continuous and differentiable with respect to the parameter space
+$\hat{\boldsymbol{\Theta}}$ up to a certain order (usually the first for SGD
+variants and second order for Newton).
 
 ## SmoothArgMax and SoftArgMax
 
@@ -644,7 +709,7 @@ discrete class label. This is often achieved through:
     then the one with the highest probability.
 -   **Argmax operation** on the output vector (for methods that produce scores
     or probabilities for each class), i.e.,
-    $y = \arg \max*k
+    $y = \arg \max_k
     f_{\boldsymbol{\theta}}(\mathbf{x})_k$, where
     $f_{\boldsymbol{\theta}}(\mathbf{x})_k$ is the score or probability
     predicted for class $k$.
@@ -659,6 +724,7 @@ discrete class label. This is often achieved through:
 -   4. linear model bisop et al. 2007
 -   [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)
 -   [The Softmax function and its derivative - Eli Bendersky](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/)
+-   [What is the role of temperature in Softmax?](https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax)
 
 [^softmax-wikipedia]:
     [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)

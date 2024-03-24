@@ -111,17 +111,17 @@ in ill-conditioned situations) if we want follow an **_annealing_** process over
 the learning rate. This means that at the beginning of training, we do not want
 to decrease the learning too drastically. My (potentially wrong) intuition is
 that this may allow the model to consider exploring a larger parameter space
-without too much constraints if we were to rapidly decrease the learning rate.
-The authors further claim that as we progress towards the end of the training,
-we would want to "fine-tune" the model parameters with a very small learning
-rate, as it could potentially help "refine" the solution space to find a "more
-optimal" set of parameters {cite}`DBLP:journals/corr/LoshchilovH16a`. This idea
-_naturally lands_ us to using _cosine function_ because the cosine curve starts
-with a _gentle slope_, which coincides with the idea of _gradual decrease_ in
-learning rate in the beginning, and the cosine curve naturally flattens and
-approaches zero towards the end as it reaches the end of its cycle, which again
-coincides with the idea of _fine-tuning_ the model parameters with a very small
-learning rate.
+without too much constraints than if we were to rapidly decrease the learning
+rate. The authors further claim that as we progress towards the end of the
+training, we would want to "fine-tune" the model parameters with a very small
+learning rate, as it could potentially help "refine" the solution space to find
+a "more optimal" set of parameters {cite}`DBLP:journals/corr/LoshchilovH16a`.
+This idea _naturally lands_ us to using _cosine function_ because the cosine
+curve starts with a _gentle slope_, which coincides with the idea of _gradual
+decrease_ in learning rate in the beginning, and the cosine curve naturally
+flattens and approaches zero towards the end as it reaches the end of its cycle,
+which again coincides with the idea of _fine-tuning_ the model parameters with a
+very small learning rate.
 
 Consequently, a cosine decaying scheduler has the below function form for
 learning rates in the range $t \in [0, T]$:
