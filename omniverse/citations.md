@@ -38,6 +38,9 @@
 -   [10] I. Goodfellow, Y. Bengio, A. Courville,
     ["Deep Learning"](http://www.deeplearningbook.org/), MIT Press, 2016.
 
+-   [11] C. M. Bishop, Pattern Recognition and Machine Learning. New York:
+    Springer, 2006.
+
 ## Computer Science
 
 -   [1] Z. Luo, S. Soloviev, and T. Xue,

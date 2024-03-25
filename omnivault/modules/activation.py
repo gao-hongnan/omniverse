@@ -18,6 +18,17 @@ class Softmax(Activation):
     In reality, we can have more than 2 dimension (i.e. softmax in transformer
     model). Furthermore, softmax can be applied on feature dimension as well,
     using class is just convenient for this example.
+
+    Stable
+    -------
+    ```python
+    def stable_softmax(z: torch.Tensor) -> torch.Tensor:
+        max_z = torch.max(z, dim=1, keepdim=True).values
+        numerator = torch.exp(z - max_z)
+        denominator = torch.sum(numerator, dim=1, keepdim=True)
+        g = numerator / denominator
+        return g
+    ```
     """
 
     def __call__(self, z: torch.Tensor) -> torch.Tensor:
