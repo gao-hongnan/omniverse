@@ -63,12 +63,12 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling';</script>
-    <link rel="canonical" href="https://www.gaohongnan.com/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
-    <link rel="prev" title="Stabilizing Training with Warmup and Gradual Cosine Annealing" href="why_cosine_warmup_scheduler.html" />
+    <link rel="prev" title="Why Does Cosine Annealing With Warmup Stabilize Training?" href="why_cosine_annealing_warmup_stabilize_training.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -193,7 +193,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/notations.html">Notations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
 </ul>
 </li>
 </ul>
@@ -201,7 +200,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
-<li class="toctree-l1"><a class="reference internal" href="why_cosine_warmup_scheduler.html">Stabilizing Training with Warmup and Gradual Cosine Annealing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
@@ -335,7 +334,7 @@
       
       
       
-      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onColab"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -383,7 +382,7 @@
       
       
       
-      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -413,7 +412,7 @@
       
       
       
-      <li><a href="../_sources/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.ipynb" target="_blank"
+      <li><a href="../_sources/playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.ipynb" target="_blank"
    class="btn btn-sm btn-download-notebook-button dropdown-item"
    title="Download notebook file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -430,7 +429,7 @@
       
       
       
-      <li><a href="../_sources/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
+      <li><a href="../_sources/playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -566,6 +565,12 @@ document.write(`
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-derivative-of-softmax-as-a-jacobian-matrix">Representing Derivative of Softmax as a Jacobian Matrix</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-jacobian-matrix">Implementation of the Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-softmax-with-respect-to-weight-matrix">Derivative Of Softmax With Respect To Weight Matrix</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-derivative-of-mathcal-l-with-respect-to-mathbf-z">Step 1: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\mathbf{z}\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-derivative-of-mathbf-z-with-respect-to-boldsymbol-theta">Step 2: Derivative of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-derivative-of-mathcal-l-with-respect-to-boldsymbol-theta">Step 3: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-matrix">Hessian Matrix</a></li>
 </ul>
 </li>
@@ -640,11 +645,18 @@ document.write(`
 </li>
 <li><p><a class="reference internal" href="#representing-derivative-of-softmax-as-a-jacobian-matrix" id="id36">Representing Derivative of Softmax as a Jacobian Matrix</a></p></li>
 <li><p><a class="reference internal" href="#implementation-of-the-jacobian-matrix" id="id37">Implementation of the Jacobian Matrix</a></p></li>
-<li><p><a class="reference internal" href="#hessian-matrix" id="id38">Hessian Matrix</a></p></li>
+<li><p><a class="reference internal" href="#derivative-of-softmax-with-respect-to-weight-matrix" id="id38">Derivative Of Softmax With Respect To Weight Matrix</a></p>
+<ul>
+<li><p><a class="reference internal" href="#step-1-derivative-of-mathcal-l-with-respect-to-mathbf-z" id="id39">Step 1: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\mathbf{z}\)</span></a></p></li>
+<li><p><a class="reference internal" href="#step-2-derivative-of-mathbf-z-with-respect-to-boldsymbol-theta" id="id40">Step 2: Derivative of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></p></li>
+<li><p><a class="reference internal" href="#step-3-derivative-of-mathcal-l-with-respect-to-boldsymbol-theta" id="id41">Step 3: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id39">References and Further Readings</a></p></li>
-<li><p><a class="reference internal" href="#citations" id="id40">Citations</a></p></li>
+<li><p><a class="reference internal" href="#hessian-matrix" id="id42">Hessian Matrix</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id43">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id44">Citations</a></p></li>
 </ul>
 </nav>
 <section id="problem-formulation">
@@ -940,11 +952,11 @@ readily available implementation in PyTorch.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0856</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2076</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2894</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1794</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5412</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0823</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1915</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0191</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3710</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1080</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0390</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0686</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4134</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1606</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0764</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1441</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2945</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3244</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0856</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2076</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2894</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1794</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5412</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0823</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1915</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0191</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3710</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1080</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0390</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0686</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4134</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1606</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0764</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1441</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2945</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3244</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
 </div></div>
 </div>
@@ -1191,7 +1203,7 @@ for the original and scaled input vectors.</p>
 Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </pre></div>
 </div>
-<img alt="../_images/4696d4dddcf6f049ef49b965b66983ac1a1075c5185665f32e2eb42f9771d057.svg" src="../_images/4696d4dddcf6f049ef49b965b66983ac1a1075c5185665f32e2eb42f9771d057.svg" /></div>
+<img alt="../_images/380a31f7eaee69a5fe69cd00646b6b83f9ffa99ebad1606a58029075206a415c.svg" src="../_images/380a31f7eaee69a5fe69cd00646b6b83f9ffa99ebad1606a58029075206a415c.svg" /></div>
 </div>
 <p>Another example:</p>
 <div class="cell docutils container">
@@ -1218,7 +1230,7 @@ Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/58ce573226b4c97430854668568d56bb3c1fce6ad441c59cfa730a2c44870c9f.svg" src="../_images/58ce573226b4c97430854668568d56bb3c1fce6ad441c59cfa730a2c44870c9f.svg" /></div>
+<img alt="../_images/b304b02e3baa95f083aeeed954a217575d1dabc04bb39c8ebb3e96de928e3420.svg" src="../_images/b304b02e3baa95f083aeeed954a217575d1dabc04bb39c8ebb3e96de928e3420.svg" /></div>
 </div>
 </section>
 <section id="sharpening-and-dampening-the-softmax-distribution">
@@ -1423,7 +1435,7 @@ the distribution of sampled outcomes is visualized for each temperature.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/3ab9f22a3cf8241020c7b9271a5811853e157940997726ed5e46bc63737f16e0.svg" src="../_images/3ab9f22a3cf8241020c7b9271a5811853e157940997726ed5e46bc63737f16e0.svg" /></div>
+<img alt="../_images/457e9243262c561f43a7e6c3936414222b3f3335f7e66b8bb2fed6543a596624.svg" src="../_images/457e9243262c561f43a7e6c3936414222b3f3335f7e66b8bb2fed6543a596624.svg" /></div>
 </div>
 </section>
 </section>
@@ -1842,45 +1854,124 @@ J_S = \text{diag}(S) - S S^T
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0707</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1719</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9892</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2168</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.6837</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5304</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3039</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5544</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0365</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5882</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">requires_grad</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.4725</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.4471</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.6354</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.2042</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0643</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.4322</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5229</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2165</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.7795</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.2173</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">requires_grad</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1918</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4806</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1439</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0332</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0912</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2101</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2699</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1495</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2792</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2207</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2264</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0690</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1062</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3776</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4444</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0629</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0855</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0487</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3585</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1918</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4806</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1439</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0332</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0912</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2101</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2699</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1495</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2792</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2207</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2264</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0690</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1062</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3776</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4444</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0629</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0855</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0487</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3585</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1550</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1278</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2496</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1232</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0321</span><span style="font-weight: bold">]]</span>,
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1720</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0500</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0152</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0234</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0834</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0500</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1752</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0240</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0855</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0152</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0156</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0642</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0073</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0261</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0234</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0240</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0073</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0949</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0401</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0834</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0855</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0261</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0401</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2350</span><span style="font-weight: bold">]]</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span>
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0829</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1971</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1271</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2013</span><span style="font-weight: bold">]]])</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2469</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0280</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0216</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1593</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0280</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0590</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0054</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0031</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0226</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0054</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0782</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0042</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0306</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0216</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0031</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0042</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0463</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0175</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1593</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0226</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0306</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0175</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2300</span><span style="font-weight: bold">]]])</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1550</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1278</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2496</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1232</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0321</span><span style="font-weight: bold">]]</span>,
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1720</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0500</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0152</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0234</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0834</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0500</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1752</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0240</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0855</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0152</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0156</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0642</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0073</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0261</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0234</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0240</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0073</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0949</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0401</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0834</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0855</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0261</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0401</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2350</span><span style="font-weight: bold">]]</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span>
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0829</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1971</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1271</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2013</span><span style="font-weight: bold">]]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2469</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0280</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0216</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1593</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0280</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0590</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0054</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0031</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0226</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0054</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0782</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0042</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0306</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0216</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0031</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0042</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0463</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0175</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1593</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0226</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0306</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0175</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2300</span><span style="font-weight: bold">]]]</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│      </span><span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SqueezeBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
 </div></div>
 </div>
 </section>
+<section id="derivative-of-softmax-with-respect-to-weight-matrix">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Derivative Of Softmax With Respect To Weight Matrix</a><a class="headerlink" href="#derivative-of-softmax-with-respect-to-weight-matrix" title="Link to this heading">#</a></h3>
+<p>In the context of neural networks, the softmax function is often used in the
+output layer to compute the probabilities of each class. The output of the
+linear transformation can be represented as:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{z} = \boldsymbol{\theta}^{\top} \mathbf{x} + \mathbf{b}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> is the weight matrix, <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is the input
+vector, and <span class="math notranslate nohighlight">\(\mathbf{b}\)</span> is the bias vector.</p>
+<p>Our predicted softmax output is expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\mathbf{y}} = \sigma(\mathbf{z}) \quad \textrm{where}\quad \hat{y}_k = \frac{e^{z_k}}{\sum_{j=1}^K e^{z_j}}
+\]</div>
+<p>For a classification task, a common choice is the Cross-Entropy Loss, defined
+between the predicted probability distribution <span class="math notranslate nohighlight">\(\hat{\mathbf{y}}\)</span> and the true
+distribution <span class="math notranslate nohighlight">\(\mathbf{y}\)</span>. If <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is one-hot encoded, where <span class="math notranslate nohighlight">\(y_i = 1\)</span>
+for the correct class and <span class="math notranslate nohighlight">\(y_i = 0\)</span> for all others, the Cross-Entropy Loss
+<span class="math notranslate nohighlight">\(\mathcal{L}\)</span> over <span class="math notranslate nohighlight">\(K\)</span> classes can be defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{L}\left(\mathbf{y}, \hat{\mathbf{y}}, \boldsymbol{\hat{\theta}}\right) = -\sum_{j=1}^{K} y_j \log(\hat{y}_j)
+\]</div>
+<p>where we make explicit the dependence on the parameters
+<span class="math notranslate nohighlight">\(\boldsymbol{\hat{\theta}}\)</span> of the model because ultimately, the loss function
+is a function of the model’s parameters.</p>
+<section id="step-1-derivative-of-mathcal-l-with-respect-to-mathbf-z">
+<h4><a class="toc-backref" href="#id39" role="doc-backlink">Step 1: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\mathbf{z}\)</span></a><a class="headerlink" href="#step-1-derivative-of-mathcal-l-with-respect-to-mathbf-z" title="Link to this heading">#</a></h4>
+<p>Given:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{L} = -\sum_{j=1}^{K} y_j \log(\hat{y}_j)\]</div>
+<p>And the softmax output:</p>
+<div class="math notranslate nohighlight">
+\[\hat{y}_j = \sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}\]</div>
+<p>The derivative of the Cross-Entropy Loss with respect to each logit <span class="math notranslate nohighlight">\(z_j\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \mathcal{L}}{\partial z_j} = \hat{y}_j - y_j\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\frac{\partial \mathcal{L}}{\partial z_j}\)</span> can be expressed as chain
+rule:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial z_j} &amp;= \frac{\partial \mathcal{L}}{\partial \hat{y}_j} \cdot \frac{\partial \hat{y}_j}{\partial z_j} \\
+&amp;= \frac{\partial \mathcal{L}}{\partial \sigma(\mathbf{z})_j} \cdot \frac{\partial \sigma(\mathbf{z})_j}{\partial z_j} \\
+\end{aligned}
+\end{split}\]</div>
+</section>
+<section id="step-2-derivative-of-mathbf-z-with-respect-to-boldsymbol-theta">
+<h4><a class="toc-backref" href="#id40" role="doc-backlink">Step 2: Derivative of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a><a class="headerlink" href="#step-2-derivative-of-mathbf-z-with-respect-to-boldsymbol-theta" title="Link to this heading">#</a></h4>
+<p>The linear transformation that produces the logits is:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{z} = \boldsymbol{\theta}^{\top} \mathbf{x} + \mathbf{b}\]</div>
+<p>For a specific element <span class="math notranslate nohighlight">\(z_j\)</span> and a weight <span class="math notranslate nohighlight">\(\theta_{ij}\)</span> (the weight connecting
+input <span class="math notranslate nohighlight">\(i\)</span> to output class <span class="math notranslate nohighlight">\(j\)</span>), the derivative is:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial z_j}{\partial \theta_{ij}} = x_i\]</div>
+</section>
+<section id="step-3-derivative-of-mathcal-l-with-respect-to-boldsymbol-theta">
+<h4><a class="toc-backref" href="#id41" role="doc-backlink">Step 3: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a><a class="headerlink" href="#step-3-derivative-of-mathcal-l-with-respect-to-boldsymbol-theta" title="Link to this heading">#</a></h4>
+<p>Applying the chain rule to connect the derivative of the loss with respect to
+<span class="math notranslate nohighlight">\(\theta_{ij}\)</span> through the logits:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \mathcal{L}}{\partial \theta_{ij}} = \frac{\partial
+\mathcal{L}}{\partial z_j} \cdot \frac{\partial z_j}{\partial \theta_{ij}} =
+(\hat{y}_j - y_j) \cdot x_i
+\]</div>
+<p>The full gradient with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> is constructed by
+aggregating these individual derivatives:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial \boldsymbol{\theta}} &amp;= \left(\hat{\mathbf{y}} - \mathbf{y}\right) \mathbf{x}^{\top} \\
+\end{aligned}
+\end{split}\]</div>
+</section>
+</section>
 <section id="hessian-matrix">
-<h3><a class="toc-backref" href="#id38" role="doc-backlink">Hessian Matrix</a><a class="headerlink" href="#hessian-matrix" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">Hessian Matrix</a><a class="headerlink" href="#hessian-matrix" title="Link to this heading">#</a></h3>
 <p>The Hessian matrix represents the second-order partial derivatives of the
 softmax function’s components with respect to the components of the input vector
 <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. The Hessian gives us insight into the curvature of the softmax
@@ -1909,15 +2000,18 @@ as:</p>
 </section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id39" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id43" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/">The Softmax function and its derivative - Eli Bendersky</a></p></li>
 <li><p><a class="reference external" href="https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax">What is the role of temperature in Softmax?</a></p></li>
+<li><p><a class="reference external" href="https://stats.stackexchange.com/questions/235528/backpropagation-with-softmax-cross-entropy">Backpropagation with Softmax / Cross Entropy</a></p></li>
+<li><p><a class="reference external" href="https://stats.stackexchange.com/questions/189331/why-is-the-softmax-used-to-represent-a-probability-distribution">Why is the softmax used to represent a probability distribution?</a></p></li>
+<li><p><a class="reference external" href="https://jmlb.github.io/ml/2017/12/26/Calculate_Gradient_Softmax/">Derivation of the Gradient of the cross-entropy Loss</a></p></li>
 </ul>
 </section>
 <section id="citations">
-<h2><a class="toc-backref" href="#id40" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id44" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>[1] D. A. Roberts, S. Yaida, B. Hanin, “Chapter 6.2.1 Bayesian Model
 Fitting” in
@@ -1978,12 +2072,12 @@ in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="why_cosine_warmup_scheduler.html"
+       href="why_cosine_annealing_warmup_stabilize_training.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Stabilizing Training with Warmup and Gradual Cosine Annealing</p>
+        <p class="prev-next-title">Why Does Cosine Annealing With Warmup Stabilize Training?</p>
       </div>
     </a>
     <a class="right-next"
@@ -2053,6 +2147,12 @@ in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-derivative-of-softmax-as-a-jacobian-matrix">Representing Derivative of Softmax as a Jacobian Matrix</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-jacobian-matrix">Implementation of the Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-softmax-with-respect-to-weight-matrix">Derivative Of Softmax With Respect To Weight Matrix</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-derivative-of-mathcal-l-with-respect-to-mathbf-z">Step 1: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\mathbf{z}\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-derivative-of-mathbf-z-with-respect-to-boldsymbol-theta">Step 2: Derivative of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-derivative-of-mathcal-l-with-respect-to-boldsymbol-theta">Step 3: Derivative of <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> with respect to <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-matrix">Hessian Matrix</a></li>
 </ul>
 </li>

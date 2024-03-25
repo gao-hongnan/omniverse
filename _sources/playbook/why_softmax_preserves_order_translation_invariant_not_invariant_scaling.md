@@ -1306,6 +1306,94 @@ torch.testing.assert_close(
 )
 ```
 
+### Derivative Of Softmax With Respect To Weight Matrix
+
+In the context of neural networks, the softmax function is often used in the
+output layer to compute the probabilities of each class. The output of the
+linear transformation can be represented as:
+
+$$
+\mathbf{z} = \boldsymbol{\theta}^{\top} \mathbf{x} + \mathbf{b}
+$$
+
+where $\boldsymbol{\theta}$ is the weight matrix, $\mathbf{x}$ is the input
+vector, and $\mathbf{b}$ is the bias vector.
+
+Our predicted softmax output is expressed as:
+
+$$
+\hat{\mathbf{y}} = \sigma(\mathbf{z}) \quad \textrm{where}\quad \hat{y}_k = \frac{e^{z_k}}{\sum_{j=1}^K e^{z_j}}
+$$
+
+For a classification task, a common choice is the Cross-Entropy Loss, defined
+between the predicted probability distribution $\hat{\mathbf{y}}$ and the true
+distribution $\mathbf{y}$. If $\mathbf{y}$ is one-hot encoded, where $y_i = 1$
+for the correct class and $y_i = 0$ for all others, the Cross-Entropy Loss
+$\mathcal{L}$ over $K$ classes can be defined as:
+
+$$
+\mathcal{L}\left(\mathbf{y}, \hat{\mathbf{y}}, \boldsymbol{\hat{\theta}}\right) = -\sum_{j=1}^{K} y_j \log(\hat{y}_j)
+$$
+
+where we make explicit the dependence on the parameters
+$\boldsymbol{\hat{\theta}}$ of the model because ultimately, the loss function
+is a function of the model's parameters.
+
+#### Step 1: Derivative of $\mathcal{L}$ with respect to $\mathbf{z}$
+
+Given:
+
+$$\mathcal{L} = -\sum_{j=1}^{K} y_j \log(\hat{y}_j)$$
+
+And the softmax output:
+
+$$\hat{y}_j = \sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}$$
+
+The derivative of the Cross-Entropy Loss with respect to each logit $z_j$ is:
+
+$$\frac{\partial \mathcal{L}}{\partial z_j} = \hat{y}_j - y_j$$
+
+Note that $\frac{\partial \mathcal{L}}{\partial z_j}$ can be expressed as chain
+rule:
+
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial z_j} &= \frac{\partial \mathcal{L}}{\partial \hat{y}_j} \cdot \frac{\partial \hat{y}_j}{\partial z_j} \\
+&= \frac{\partial \mathcal{L}}{\partial \sigma(\mathbf{z})_j} \cdot \frac{\partial \sigma(\mathbf{z})_j}{\partial z_j} \\
+\end{aligned}
+$$
+
+#### Step 2: Derivative of $\mathbf{z}$ with respect to $\boldsymbol{\theta}$
+
+The linear transformation that produces the logits is:
+
+$$\mathbf{z} = \boldsymbol{\theta}^{\top} \mathbf{x} + \mathbf{b}$$
+
+For a specific element $z_j$ and a weight $\theta_{ij}$ (the weight connecting
+input $i$ to output class $j$), the derivative is:
+
+$$\frac{\partial z_j}{\partial \theta_{ij}} = x_i$$
+
+#### Step 3: Derivative of $\mathcal{L}$ with respect to $\boldsymbol{\theta}$
+
+Applying the chain rule to connect the derivative of the loss with respect to
+$\theta_{ij}$ through the logits:
+
+$$
+\frac{\partial \mathcal{L}}{\partial \theta_{ij}} = \frac{\partial
+\mathcal{L}}{\partial z_j} \cdot \frac{\partial z_j}{\partial \theta_{ij}} =
+(\hat{y}_j - y_j) \cdot x_i
+$$
+
+The full gradient with respect to $\boldsymbol{\theta}$ is constructed by
+aggregating these individual derivatives:
+
+$$
+\begin{aligned}
+\frac{\partial \mathcal{L}}{\partial \boldsymbol{\theta}} &= \left(\hat{\mathbf{y}} - \mathbf{y}\right) \mathbf{x}^{\top} \\
+\end{aligned}
+$$
+
 ### Hessian Matrix
 
 The Hessian matrix represents the second-order partial derivatives of the
@@ -1341,6 +1429,9 @@ $$
 -   [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)
 -   [The Softmax function and its derivative - Eli Bendersky](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/)
 -   [What is the role of temperature in Softmax?](https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax)
+-   [Backpropagation with Softmax / Cross Entropy](https://stats.stackexchange.com/questions/235528/backpropagation-with-softmax-cross-entropy)
+-   [Why is the softmax used to represent a probability distribution?](https://stats.stackexchange.com/questions/189331/why-is-the-softmax-used-to-represent-a-probability-distribution)
+-   [Derivation of the Gradient of the cross-entropy Loss](https://jmlb.github.io/ml/2017/12/26/Calculate_Gradient_Softmax/)
 
 ## Citations
 

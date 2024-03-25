@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Stabilizing Training with Warmup and Gradual Cosine Annealing
+# Why Does Cosine Annealing With Warmup Stabilize Training?
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
