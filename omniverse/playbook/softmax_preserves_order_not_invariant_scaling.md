@@ -485,6 +485,58 @@ print("Translated softmax:", translated_probs)
 torch.testing.assert_close(my_softmax_probs, translated_probs, rtol=1.3e-6, atol=1e-5, msg="Translation Invariance Violated!")
 ```
 
+### Numerical Instability of the Softmax Function
+
+Recall the softmax function as follows:
+
+$$
+\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \quad \text{for }
+j = 1, \ldots, K
+$$
+
+When elements of $\mathbf{z}$ are very large (positive or negative), computing
+$e^{z_j}$ can lead to numerical instability:
+
+-   **Overflow**: If $z_j$ is very large, $e^{z_j}$ can exceed the range of
+    floating-point numbers, leading to infinity ($\infty$).
+-   **Underflow**: If $z_j$ is very negative, $e^{z_j}$ can become so small that
+    it's considered as zero in floating-point arithmetic.
+
+Both situations can cause issues when computing the softmax, leading to
+inaccurate results or failures in computation due to divisions by infinity or
+zero.
+
+To mitigate these issues, we leverage the invariance property of softmax to
+shifts in the input vector {cite}`Goodfellow-et-al-2016`. Specifically, adding
+or subtracting the same scalar from every element of $\mathbf{z}$ doesn't change
+the output of the softmax function:
+
+$$\sigma(\mathbf{z}) = \sigma(\mathbf{z} + c)$$
+
+By choosing $c = -\max_i z_i$, we subtract the maximum element of $\mathbf{z}$
+from every element. This operation ensures that the maximum value in the shifted
+vector is $0$, which helps in avoiding overflow (since $e^0 = 1$ is within
+range) and reduces the risk of underflow for other elements.
+
+The numerically stable softmax function can thus be reformulated as:
+
+$$
+\sigma(\mathbf{z})_j = \frac{e^{z_j - \max_i z_i}}{\sum_{k=1}^K e^{z_k -
+\max_i z_i}} \quad \text{for } j = 1, \ldots, K
+$$
+
+This reformulation achieves the following:
+
+-   **Maximal Value Normalization**: By ensuring that the maximum exponentiated
+    value is $e^0 = 1$, we prevent overflow.
+-   **Relative Differences Preserved**: The operation preserves the relative
+    differences between the elements of $\mathbf{z}$, ensuring the softmax
+    output remains unchanged in terms of its distribution properties.
+-   **Improved Numerical Stability**: The risk of underflow is also mitigated
+    since subtracting a large value ($\max_i z_i$) from each $z_j$ makes the
+    values more manageable for computation without affecting the ratios that
+    softmax aims to model.
+
 ## Softmax Is Not Invariant Under Scaling
 
 A function $f: \mathbb{R}^D \rightarrow \mathbb{R}^D$ is said to be scale
@@ -576,13 +628,15 @@ plt.show()
 
 ## Sharpening and Dampening the Softmax Distribution
 
-Continuing from our previous example, the 3rd element of the softmax output has
-largest weight, and suppressing the other elements. The sharp readers would have
-noticed that even though the 3rd element has the largest weight, it was at a
-whooping $0.99995$, which is almost $1$ - which means the rest of the elements
-are almost zero. As we shall briefly touch upon later, sampling from a
+Continuing from our first example, the 3rd element of the softmax output has the
+largest weight (`9.9995e-01`), thereby suppressing the other elements. The sharp
+readers would have noticed that even though the 3rd element has the largest
+weight, it was at a whooping $0.99995$, which is almost $1$ - which means the
+rest of the elements are almost zero. As we shall briefly touch upon later,
+sampling from a
 [multinomial distribution](https://en.wikipedia.org/wiki/Multinomial_distribution)
-with the parameter $\boldsymbol{\pi}$, where $\boldsymbol{\pi}$ is the softmax
+(number of trials is 1 because we are sampling one token at each time step) with
+the parameter $\boldsymbol{\pi}$, where $\boldsymbol{\pi}$ is the softmax
 output, almost surely will select the 3rd element because of the high
 probability. This is what we call a **_sharp_** softmax distribution.
 
@@ -593,8 +647,10 @@ the 3rd element has a weight of $0.3672$, which is still the maximum in the
 array, but the relative weights of the other elements are higher compared to the
 original softmax output. Similarly, sampling from a multinomial distribution
 with the parameter $\boldsymbol{\pi}$ this time will be more diverse, because
-our $\boldsymbol{\pi}$ is more uniform. This is what we call a **_dampened_**
-softmax distribution.
+our $\boldsymbol{\pi}$ is more uniform (at
+$\begin{bmatrix} 0.3006 & 0.3322 & 0.3672 \end{bmatrix}$ and therefore the other
+two elements are likely to get selected as they are quite close to the max
+weight). This is what we call a **_dampened_** softmax distribution.
 
 For people who has toyed around with the temperature parameter in the language
 model, we were told that when the temperature is high, the model is more random,
@@ -668,7 +724,8 @@ $$
 which coincides with the definition from the Wikipedia page.
 
 To conclude, the temperature modifies the "sharpness" of the probability
-distribution without altering the order of the probabilities:
+distribution without altering the order of the probabilities, a desirable
+property:
 
 -   At high temperatures ($T > 1$), the distribution becomes more uniform, but
     if $z_a > z_b$, then $\text{softmax}_T(z_a) > \text{softmax}_T(z_b)$ still
@@ -683,40 +740,159 @@ distribution without altering the order of the probabilities:
     Yet, the order of logits is preserved—higher logits translate to higher
     probabilities.
 
+-   At $T = 1$, the softmax function is the standard softmax function.
+
+### Sampling from the Softmax Distribution
+
+Below we show the effect of temperature on multinomial sampling from the softmax
+distribution. The experiements are repeated 1000 times for each temperature, and
+the distribution of sampled outcomes is visualized for each temperature.
+
+```{code-cell} ipython3
+:tags: [hide-input]
+
+import torch
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from typing import Dict, List, Tuple
+import numpy as np
+
+
+def demonstrate_multinomial_sampling_effect(
+    logits: torch.Tensor, temperatures: List[float], num_experiments: int, epsilon: float = 1e-8
+) -> Tuple[Dict[float, np.ndarray], Dict[float, List[int]]]:
+    """
+    Demonstrates the effect of temperature on multinomial sampling from the softmax distribution.
+
+    Parameters
+    ----------
+    logits : torch.Tensor
+        The input logits vector.
+    temperatures : List[float]
+        A list of temperatures to apply to the softmax function.
+    num_experiments : int
+        The number of sampling experiments to run for each temperature.
+    epsilon : float, optional
+        A small value added to the temperature to prevent division by zero, by default 1e-8.
+
+    Returns
+    -------
+    Tuple[Dict[float, np.ndarray], Dict[float, List[int]]]
+        A tuple containing two dictionaries:
+        - The first maps each temperature to its corresponding softmax probabilities as a numpy array.
+        - The second maps each temperature to a list of sampled outcomes (indices of logits).
+
+    Examples
+    --------
+    >>> logits = torch.tensor([2.0, 1.0, 3.0, 5.0, 4.0], dtype=torch.float32)
+    >>> temperatures = [0.1, 1.0, 10.0]
+    >>> softmax_results, sampling_results = demonstrate_multinomial_sampling_effect(
+    ...     logits, temperatures, num_experiments=1000
+    ... )
+    """
+    softmax_results: Dict[float, np.ndarray] = {}
+    sampling_results: Dict[float, List[int]] = defaultdict(list)
+
+    for temperature in temperatures:
+        # Scale logits by temperature
+        scaled_logits = logits / (temperature + epsilon)
+        # Apply softmax to scaled logits
+        probs = torch.softmax(scaled_logits, dim=-1)
+        softmax_results[temperature] = probs.numpy()
+
+        for _ in range(num_experiments):
+            sample = torch.multinomial(probs, num_samples=1, replacement=True)
+            sampling_results[temperature].append(sample.item())
+
+    return softmax_results, dict(sampling_results)
+
+
+logits = torch.tensor([2.0, 1.0, 3.0, 5.0, 4.0], dtype=torch.float32)
+temperatures = [0.1, 0.5, 1.0, 10.0]
+
+num_experiments = 1000
+softmax_results, sampling_results = demonstrate_multinomial_sampling_effect(
+    logits, temperatures, num_experiments=num_experiments
+)
+
+outcome_counts = {
+    temp: np.bincount(outcomes, minlength=len(logits)) / num_experiments * 100
+    for temp, outcomes in sampling_results.items()
+}
+
+fig, axs = plt.subplots(len(temperatures), 1, figsize=(10, 5 * len(temperatures)))
+for ax, temperature in zip(axs, temperatures):
+    bars = ax.bar(range(len(logits)), outcome_counts[temperature], alpha=0.5, label=f"Temperature: {temperature}")
+    ax.legend()
+    ax.set_title(f"Distribution of sampled outcomes at temperature {temperature}")
+    ax.set_xlabel("Outcome")
+    ax.set_ylabel("Percentage (%)")
+
+    for bar in bars:
+        yval = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width() / 2, yval + 0.01, f"{yval:.3f}%", ha="center", va="bottom")
+
+plt.tight_layout()
+plt.show()
+```
+
 ## Softmax Is Smooth, Continuous and Differentiable
 
-QUOTE
+The term "softmax" is a misnomer, as one would have thought it is a
+[smooth max](https://en.wikipedia.org/wiki/Smooth_maximum) - a
+[smooth approximation](https://en.wikipedia.org/wiki/Smoothness) of the
+[maximum function](https://en.wikipedia.org/wiki/Maximum_function). However, the
+softmax function is not a smooth approximation of the maximum function, but
+rather a smooth approximation of the
+[argmax](https://en.wikipedia.org/wiki/Arg_max) function[^softmax-wikipedia],
+where argmax is the function that outputs the **index** of the maximum element
+in a vector.
 
-This assumption is a common one in the context of deep learning, because for
-when we say that the estimator function $f_{\hat{\boldsymbol{\Theta}}}(\cdot)$
-is _smooth_ with respect to the parameter space $\hat{\boldsymbol{\Theta}}$, we
-state a simplified definition as follows.
+The argmax function is _not_ continuous or differentiable, because it is a
+discrete function that jumps from one index to another as the input vector
+changes (i.e. not smooth). The softmax function, on the other hand, is a smooth
+approximation of the argmax function, as it outputs a probability distribution
+over the elements of the input vector, with the highest probability assigned to
+the maximum element - essentially a continuous and differentiable version of the
+argmax function (we call it a "softened" version of the argmax function)
+{cite}`Goodfellow-et-al-2016`. Consequently, it is more appropriate to name the
+function "softargmax" instead of "softmax".
 
-The estimator function $f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is _smooth_ with
-respect to the parameter space $\hat{\boldsymbol{\Theta}}$ if the function is
-continuous and differentiable with respect to the parameter space
-$\hat{\boldsymbol{\Theta}}$ up to a certain order (usually the first for SGD
-variants and second order for Newton).
+To this end, it is worth mentioning that softmax gains its popularity in the
+deep learning space because it is smooth and normalizer over the input vector.
 
-## SmoothArgMax and SoftArgMax
+The smoothness assumption is a common one in the context of deep learning,
+because for when we say that the estimator function
+$f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is _smooth_ with respect to the parameter
+space $\hat{\boldsymbol{\Theta}}$, it means that the estimator function
+$f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is _smooth_ with respect to the parameter
+space $\hat{\boldsymbol{\Theta}}$ if the function is continuous and
+differentiable with respect to the parameter space $\hat{\boldsymbol{\Theta}}$
+up to a certain order (usually the first for SGD variants and second order for
+Newton).
 
-In multi-class classification problems, the final step usually involves
-transforming the raw output of $f_{\boldsymbol{\theta}}(\mathbf{x})$ into a
-discrete class label. This is often achieved through:
-
--   **Softmax function** in the case of neural networks, which outputs a
-    probability distribution over $K$ classes. The predicted class label $y$ is
-    then the one with the highest probability.
--   **Argmax operation** on the output vector (for methods that produce scores
-    or probabilities for each class), i.e.,
-    $y = \arg \max_k
-    f_{\boldsymbol{\theta}}(\mathbf{x})_k$, where
-    $f_{\boldsymbol{\theta}}(\mathbf{x})_k$ is the score or probability
-    predicted for class $k$.
+What this implies is that the derivative of the function with respect to the
+parameter space $\hat{\boldsymbol{\Theta}}$, denoted as
+$\nabla_{\hat{\boldsymbol{\Theta}}} f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ is
+continuous. Loosely, you can think of that a small perturbation in the parameter
+space $\hat{\boldsymbol{\Theta}}$ will result in a small change in the output of
+the function $f_{\hat{\boldsymbol{\Theta}}}(\cdot)$ - enabling gradient-based
+optimization algorithms to work effectively as if not, then taking a step in the
+direction of the gradient would not guarantee a decrease in the loss function,
+slowing down convergence.
 
 ## Gradient, Jacobian, and Hessian of Softmax
 
 ... to be continued
+
+## Derivation of Softmax Function via Exponential Family
+
+For a rigorous derivation of the softmax function - which will give rise to
+intuition on how sigmoid and softmax is derived from the exponential family of
+distributions - we refer the reader to chapter 2.4. The Exponential Family of
+Christopher Bishop's _Pattern Recognition and Machine Learning_
+{cite}`bishop2007` with reference
+[here](https://math.stackexchange.com/questions/328115/derivation-of-softmax-function).
 
 ## References and Further Readings
 
@@ -725,6 +901,18 @@ discrete class label. This is often achieved through:
 -   [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)
 -   [The Softmax function and its derivative - Eli Bendersky](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/)
 -   [What is the role of temperature in Softmax?](https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax)
+
+## Citations
+
+-   [1] D. A. Roberts, S. Yaida, B. Hanin, "Chapter 6.2.1 Bayesian Model
+    Fitting" in
+    ["The Principles of Deep Learning Theory"](https://arxiv.org/abs/2106.10165),
+    arXiv preprint arXiv:2106.10165, [Submitted on 18 Jun 2021 (v1), last
+    revised 24 Aug 2021 (this version, v2)].
+-   [2] I. Goodfellow, Y. Bengio, A. Courville, Chapter 6.2.2.3 Softmax Units
+    for Multinoulli Output Distributions in
+    ["Deep Learning"](http://www.deeplearningbook.org/), MIT Press, 2016. pp.
+    180-184
 
 [^softmax-wikipedia]:
     [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)

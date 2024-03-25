@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Why Do We Like To Use Warmup and Cosine Schedulers?
+# Stabilizing Training with Warmup and Gradual Cosine Annealing
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -229,9 +229,12 @@ works as a variance reduction technique, which overcomes the problem of
 [bias correction factors](https://stats.stackexchange.com/questions/232741/why-is-it-important-to-include-a-bias-correction-term-for-the-adam-optimizer-for)
 in optimizers like Adam, where having these bias correction factors would lead
 to larger variance in the adaptive learning rate during the **initial** training
-iterations {cite}`lippe2023uvadlc`. If we don't want to swap out Adam, then this
-calls for a warmup phase to stabilize the learning rate and reduce the variance
-in the early stages of training.
+iterations {cite}`lippe2023uvadlc`. More concretely, Adam estimates the first
+and second moments of the gradient to change the learning rate of each
+individual parameter (hence adaptive) and having high variance between adaptive
+learning rates may de-stablize the training. If we don't want to swap out Adam,
+then this calls for a warmup phase to stabilize the learning rate and reduce the
+variance in the early stages of training.
 
 Secondly, language models like Transformers use iteratively applied Layer
 Normalization across layers can lead to very high gradients during the first
