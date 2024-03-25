@@ -206,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="playbook/how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
 <li class="toctree-l1"><a class="reference internal" href="playbook/why_cosine_warmup_scheduler.html">Stabilizing Training with Warmup and Gradual Cosine Annealing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="playbook/softmax_preserves_order_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
@@ -494,12 +494,15 @@ document.write(`
    <a href="#cap-how-does-softmax-work-additivity"><strong>how-does-softmax-work-additivity</strong></a> | 
    <a href="#cap-how-does-softmax-work-non-negativity"><strong>how-does-softmax-work-non-negativity</strong></a> | 
    <a href="#cap-how-does-softmax-work-normalization"><strong>how-does-softmax-work-normalization</strong></a> | 
+   <a href="#cap-jacobian-softmax"><strong>jacobian-softmax</strong></a> | 
    <a href="#cap-linear-algebra-01-preliminaries-field"><strong>linear-algebra-01-preliminaries-field</strong></a> | 
    <a href="#cap-linear-algebra-02-vectors-04-vector-products-dot-product-example-1"><strong>linear-algebra-02-vectors-04-vector-products-dot-product-example-1</strong></a> | 
    <a href="#cap-linear-algebra-preliminaries-fields-on-the-real-numbers"><strong>linear-algebra-preliminaries-fields-on-the-real-numbers</strong></a> | 
    <a href="#cap-linear-search-loop-invariant-theorem"><strong>linear-search-loop-invariant-theorem</strong></a> | 
    <a href="#cap-master-theorem-generic-divide-and-conquer-algorithm"><strong>master-theorem-generic-divide-and-conquer-algorithm</strong></a> | 
+   <a href="#cap-matrix-formulation-softmax"><strong>matrix-formulation-softmax</strong></a> | 
    <a href="#cap-omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness"><strong>omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness</strong></a> | 
+   <a href="#cap-softmax-output-vector"><strong>softmax-output-vector</strong></a> | 
    <a href="#cap-software-engineering-concurrency-parallelism-asynchronous-generator-yield-is-an-expression"><strong>software-engineering-concurrency-parallelism-asynchronous-generator-yield-is-an-expression</strong></a> | 
    <a href="#cap-software-engineering-concurrency-parallelism-asynchronous-generator-yield-remark"><strong>software-engineering-concurrency-parallelism-asynchronous-generator-yield-remark</strong></a> | 
    <a href="#cap-stack-list-amortized-worst-case-time-complexity"><strong>stack-list-amortized-worst-case-time-complexity</strong></a> | 
@@ -947,7 +950,7 @@ document.write(`
      <tr>
        <td></td>
        <td>
-       <a href="playbook/softmax_preserves_order_not_invariant_scaling.html#how-does-softmax-work-additivity"><code class="xref">how-does-softmax-work-additivity</code></a> <em>(playbook/softmax_preserves_order_not_invariant_scaling)</em></td><td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#how-does-softmax-work-additivity"><code class="xref">how-does-softmax-work-additivity</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
        <em>axiom</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-how-does-softmax-work-non-negativity"><td></td><td>
@@ -955,7 +958,7 @@ document.write(`
      <tr>
        <td></td>
        <td>
-       <a href="playbook/softmax_preserves_order_not_invariant_scaling.html#how-does-softmax-work-non-negativity"><code class="xref">how-does-softmax-work-non-negativity</code></a> <em>(playbook/softmax_preserves_order_not_invariant_scaling)</em></td><td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#how-does-softmax-work-non-negativity"><code class="xref">how-does-softmax-work-non-negativity</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
        <em>axiom</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-how-does-softmax-work-normalization"><td></td><td>
@@ -963,8 +966,16 @@ document.write(`
      <tr>
        <td></td>
        <td>
-       <a href="playbook/softmax_preserves_order_not_invariant_scaling.html#how-does-softmax-work-normalization"><code class="xref">how-does-softmax-work-normalization</code></a> <em>(playbook/softmax_preserves_order_not_invariant_scaling)</em></td><td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#how-does-softmax-work-normalization"><code class="xref">how-does-softmax-work-normalization</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
        <em>axiom</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-jacobian-softmax"><td></td><td>
+       <strong>jacobian-softmax</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#jacobian-softmax"><code class="xref">jacobian-softmax</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
+       <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-linear-algebra-01-preliminaries-field"><td></td><td>
        <strong>linear-algebra-01-preliminaries-field</strong></td><td></td></tr>
@@ -1006,6 +1017,14 @@ document.write(`
        <a href="dsa/complexity_analysis/master_theorem.html#master-theorem-generic-divide-and-conquer-algorithm"><code class="xref">master-theorem-generic-divide-and-conquer-algorithm</code></a> <em>(dsa/complexity_analysis/master_theorem)</em></td><td>
        <em>algorithm</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-matrix-formulation-softmax"><td></td><td>
+       <strong>matrix-formulation-softmax</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#matrix-formulation-softmax"><code class="xref">matrix-formulation-softmax</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness"><td></td><td>
        <strong>omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness</strong></td><td></td></tr>
      <tr>
@@ -1013,6 +1032,14 @@ document.write(`
        <td>
        <a href="dsa/searching_algorithms/binary_search/concept.html#omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness"><code class="xref">omniverse-dsa-searching-algorithms-binary-search-recursive-algorithm-correctness</code></a> <em>(dsa/searching_algorithms/binary_search/concept)</em></td><td>
        <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-softmax-output-vector"><td></td><td>
+       <strong>softmax-output-vector</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html#softmax-output-vector"><code class="xref">softmax-output-vector</code></a> <em>(playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling)</em></td><td>
+       <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-software-engineering-concurrency-parallelism-asynchronous-generator-yield-is-an-expression"><td></td><td>
        <strong>software-engineering-concurrency-parallelism-asynchronous-generator-yield-is-an-expression</strong></td><td></td></tr>

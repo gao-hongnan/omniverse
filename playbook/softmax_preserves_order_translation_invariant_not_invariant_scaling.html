@@ -63,8 +63,8 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/softmax_preserves_order_not_invariant_scaling';</script>
-    <link rel="canonical" href="https://www.gaohongnan.com/playbook/softmax_preserves_order_not_invariant_scaling.html" />
+    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
@@ -335,7 +335,7 @@
       
       
       
-      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/softmax_preserves_order_not_invariant_scaling.md" target="_blank"
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onColab"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -383,7 +383,7 @@
       
       
       
-      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/softmax_preserves_order_not_invariant_scaling.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/softmax_preserves_order_translation_invariant_not_invariant_scaling.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -413,7 +413,7 @@
       
       
       
-      <li><a href="../_sources/playbook/softmax_preserves_order_not_invariant_scaling.ipynb" target="_blank"
+      <li><a href="../_sources/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.ipynb" target="_blank"
    class="btn btn-sm btn-download-notebook-button dropdown-item"
    title="Download notebook file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -430,7 +430,7 @@
       
       
       
-      <li><a href="../_sources/playbook/softmax_preserves_order_not_invariant_scaling.md" target="_blank"
+      <li><a href="../_sources/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -558,7 +558,15 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-as-a-vector-function">Softmax as a Vector Function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-of-the-softmax-function">Derivatives of the Softmax Function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix-of-softmax">The Jacobian Matrix of Softmax</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#case-1-i-j">Case 1: <span class="math notranslate nohighlight">\(i = j\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#case-2-i-neq-j">Case 2: <span class="math notranslate nohighlight">\(i \neq j\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-delta">Kronecker Delta</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-derivative-of-softmax-as-a-jacobian-matrix">Representing Derivative of Softmax as a Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-jacobian-matrix">Implementation of the Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-matrix">Hessian Matrix</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
@@ -623,11 +631,20 @@ document.write(`
 <li><p><a class="reference internal" href="#softmax-as-a-vector-function" id="id29">Softmax as a Vector Function</a></p></li>
 <li><p><a class="reference internal" href="#derivatives-of-the-softmax-function" id="id30">Derivatives of the Softmax Function</a></p></li>
 <li><p><a class="reference internal" href="#the-jacobian-matrix-of-softmax" id="id31">The Jacobian Matrix of Softmax</a></p></li>
-<li><p><a class="reference internal" href="#derivative-of-the-softmax-function" id="id32">Derivative of the Softmax Function</a></p></li>
+<li><p><a class="reference internal" href="#derivative-of-the-softmax-function" id="id32">Derivative of the Softmax Function</a></p>
+<ul>
+<li><p><a class="reference internal" href="#case-1-i-j" id="id33">Case 1: <span class="math notranslate nohighlight">\(i = j\)</span></a></p></li>
+<li><p><a class="reference internal" href="#case-2-i-neq-j" id="id34">Case 2: <span class="math notranslate nohighlight">\(i \neq j\)</span></a></p></li>
+<li><p><a class="reference internal" href="#kronecker-delta" id="id35">Kronecker Delta</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id33">References and Further Readings</a></p></li>
-<li><p><a class="reference internal" href="#citations" id="id34">Citations</a></p></li>
+<li><p><a class="reference internal" href="#representing-derivative-of-softmax-as-a-jacobian-matrix" id="id36">Representing Derivative of Softmax as a Jacobian Matrix</a></p></li>
+<li><p><a class="reference internal" href="#implementation-of-the-jacobian-matrix" id="id37">Implementation of the Jacobian Matrix</a></p></li>
+<li><p><a class="reference internal" href="#hessian-matrix" id="id38">Hessian Matrix</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id39">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id40">Citations</a></p></li>
 </ul>
 </nav>
 <section id="problem-formulation">
@@ -923,11 +940,11 @@ readily available implementation in PyTorch.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0363</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1310</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0219</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.7952</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0355</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1974</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1369</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1711</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4591</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0856</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2076</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2894</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1794</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5412</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0823</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1915</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0191</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0363</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1310</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0219</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.7952</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0355</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1974</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1369</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1711</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4591</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2380</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0856</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2076</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2894</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1794</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5412</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0823</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1915</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0191</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
 </div></div>
 </div>
@@ -1174,7 +1191,7 @@ for the original and scaled input vectors.</p>
 Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </pre></div>
 </div>
-<img alt="../_images/be4d5fa75b16fe24f796afe8a788dc961d9f1c9a4603a6f849eaf053dda556ff.svg" src="../_images/be4d5fa75b16fe24f796afe8a788dc961d9f1c9a4603a6f849eaf053dda556ff.svg" /></div>
+<img alt="../_images/4696d4dddcf6f049ef49b965b66983ac1a1075c5185665f32e2eb42f9771d057.svg" src="../_images/4696d4dddcf6f049ef49b965b66983ac1a1075c5185665f32e2eb42f9771d057.svg" /></div>
 </div>
 <p>Another example:</p>
 <div class="cell docutils container">
@@ -1201,7 +1218,7 @@ Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/86f1073ddc5ca073fcbfb51b090432bd2bd40a109cce20a6e328368ca1668d16.svg" src="../_images/86f1073ddc5ca073fcbfb51b090432bd2bd40a109cce20a6e328368ca1668d16.svg" /></div>
+<img alt="../_images/58ce573226b4c97430854668568d56bb3c1fce6ad441c59cfa730a2c44870c9f.svg" src="../_images/58ce573226b4c97430854668568d56bb3c1fce6ad441c59cfa730a2c44870c9f.svg" /></div>
 </div>
 </section>
 <section id="sharpening-and-dampening-the-softmax-distribution">
@@ -1406,7 +1423,7 @@ the distribution of sampled outcomes is visualized for each temperature.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/13f4335df4d1c4f6be463a93eb9fd69a95807776c2315a0b869c5947743e1ec4.svg" src="../_images/13f4335df4d1c4f6be463a93eb9fd69a95807776c2315a0b869c5947743e1ec4.svg" /></div>
+<img alt="../_images/3ab9f22a3cf8241020c7b9271a5811853e157940997726ed5e46bc63737f16e0.svg" src="../_images/3ab9f22a3cf8241020c7b9271a5811853e157940997726ed5e46bc63737f16e0.svg" /></div>
 </div>
 </section>
 </section>
@@ -1539,15 +1556,15 @@ which for a function <span class="math notranslate nohighlight">\(f(x) = \frac{g
 component are defined as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\begin{aligned} g_i &amp;= e^{z_i} \\ h_k &amp;= \sum_{k=1}^K e^{z_k} \end{aligned}
+\begin{aligned} g_i &amp;= e^{z_i} \\ h &amp;= \sum_{k=1}^K e^{z_k} \end{aligned}
 \end{split}\]</div>
 <div class="note admonition">
 <p class="admonition-title">Some Derivatives Tips So Far…</p>
-<p>Firstly, the derivative of <span class="math notranslate nohighlight">\(h_k\)</span> with respect to any <span class="math notranslate nohighlight">\(z_j\)</span> is always <span class="math notranslate nohighlight">\(e^{z_j}\)</span>.
-Why? The function <span class="math notranslate nohighlight">\(h_k\)</span> represents the sum of the exponentials of all components
-of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. Mathematically, <span class="math notranslate nohighlight">\(h_k\)</span> is independent of the
+<p>Firstly, the derivative of <span class="math notranslate nohighlight">\(h\)</span> with respect to any <span class="math notranslate nohighlight">\(z_j\)</span> is always <span class="math notranslate nohighlight">\(e^{z_j}\)</span>.
+Why? The function <span class="math notranslate nohighlight">\(h\)</span> represents the sum of the exponentials of all components
+of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. Mathematically, <span class="math notranslate nohighlight">\(h\)</span> is independent of the
 index <span class="math notranslate nohighlight">\(i\)</span> and is a function of all <span class="math notranslate nohighlight">\(z_k\)</span> in the vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. When we
-differentiate <span class="math notranslate nohighlight">\(h_k\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span>, we treat <span class="math notranslate nohighlight">\(z_j\)</span> as the variable and
+differentiate <span class="math notranslate nohighlight">\(h\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span>, we treat <span class="math notranslate nohighlight">\(z_j\)</span> as the variable and
 all other <span class="math notranslate nohighlight">\(z_k\)</span> (<span class="math notranslate nohighlight">\(k \neq j\)</span>)$ as constants.</p>
 <p>The derivative of <span class="math notranslate nohighlight">\(e^{z_k}\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is <span class="math notranslate nohighlight">\(e^{z_j}\)</span> when <span class="math notranslate nohighlight">\(k=j\)</span>
 because of the basic derivative rule <span class="math notranslate nohighlight">\(d\left(e^x\right) / d x=e^x\)</span>, and it’s 0
@@ -1555,6 +1572,10 @@ for all <span class="math notranslate nohighlight">\(k \neq j\)</span> because t
 you sum up all these derivatives <span class="math notranslate nohighlight">\(\left(e^{z_j}\right.\)</span> for the term where <span class="math notranslate nohighlight">\(k=j\)</span>
 and 0 for all others), the derivative of the sum <span class="math notranslate nohighlight">\(h_k\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is
 simply <span class="math notranslate nohighlight">\(e^{z_j}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial h}{\partial z_j}=\frac{\partial}{\partial z_j}\left(\sum_{k=1}^K e^{z_k}\right)=e^{z_j}
+\]</div>
 <p>Secondly, the derivative of <span class="math notranslate nohighlight">\(g_i\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is <span class="math notranslate nohighlight">\(e^{z_j}\)</span> if <span class="math notranslate nohighlight">\(i=j\)</span>,
 and 0 otherwise. Why? The function <span class="math notranslate nohighlight">\(g_i\)</span> is defined as <span class="math notranslate nohighlight">\(e^{z_i}\)</span>, which only
 involves a single component <span class="math notranslate nohighlight">\(z_i\)</span> of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. The
@@ -1568,11 +1589,327 @@ rule.</p></li>
 the principle that the derivative of a constant (or a term that does not
 involve the variable of differentiation) is 0.</p></li>
 </ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial g_i}{\partial z_j}=\frac{\partial e^{z_i}}{\partial z_j}= \begin{cases}e^{z_j} &amp; \text { if } i=j \\ 0 &amp; \text { if } i \neq j\end{cases}
+\end{split}\]</div>
 </div>
+<section id="case-1-i-j">
+<h4><a class="toc-backref" href="#id33" role="doc-backlink">Case 1: <span class="math notranslate nohighlight">\(i = j\)</span></a><a class="headerlink" href="#case-1-i-j" title="Link to this heading">#</a></h4>
+<p>We seek to find the derivative of <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span>
+and since <span class="math notranslate nohighlight">\(i=j\)</span>, we seek to find the derivative of <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> with
+respect to <span class="math notranslate nohighlight">\(z_i\)</span>. Note it doesn’t matter if we use <span class="math notranslate nohighlight">\(i\)</span> or <span class="math notranslate nohighlight">\(j\)</span> as the index
+because it applies to <em>any</em> index.</p>
+<p>Given the softmax function’s <span class="math notranslate nohighlight">\(i\)</span>-th component:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+\]</div>
+<p>To find the derivative of <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> with respect to <span class="math notranslate nohighlight">\(z_i\)</span>, we apply
+the quotient rule:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{\left(e^{z_i} \cdot \sum_{k=1}^K e^{z_k}\right)-\left(e^{z_i} \cdot e^{z_i}\right)}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+\]</div>
+<p>Simplifying this expression, where the denominator is the square of the sum of
+all exponentiated components of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, and recognizing that the numerator
+simplifies to the difference between the product of <span class="math notranslate nohighlight">\(e^{z_i}\)</span> and the sum of all
+exponentiated components minus the square of <span class="math notranslate nohighlight">\(e^{z_i}\)</span> :</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{e^{z_i} \cdot \sum_{k=1}^K e^{z_k}-e^{2 z_i}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+\]</div>
+<p>Upon substituting the definition of <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> into this equation,
+we observe:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}-\left(\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}\right)^2
+\]</div>
+<p>Given that <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}\)</span>, it
+follows that the derivative simplifies to:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\sigma(\mathbf{z})_i-\sigma(\mathbf{z})_i^2
+\]</div>
+<p>Thus, expressing it in a more compact form:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i} = \sigma(\mathbf{z})_i (1 - \sigma(\mathbf{z})_i)
+\]</div>
+</section>
+<section id="case-2-i-neq-j">
+<h4><a class="toc-backref" href="#id34" role="doc-backlink">Case 2: <span class="math notranslate nohighlight">\(i \neq j\)</span></a><a class="headerlink" href="#case-2-i-neq-j" title="Link to this heading">#</a></h4>
+<p>We then consider the scenario where we aim to compute the derivative of the
+<span class="math notranslate nohighlight">\(i\)</span>-th component of the softmax output with respect to a different component
+<span class="math notranslate nohighlight">\(z_j\)</span>, where <span class="math notranslate nohighlight">\(i \neq j\)</span>. This examines how changes in one input logit affect the
+probability associated with a different class.</p>
+<p>Given the <span class="math notranslate nohighlight">\(i\)</span>-th component of the softmax function:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+\]</div>
+<p>To compute <span class="math notranslate nohighlight">\(\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}\)</span> for <span class="math notranslate nohighlight">\(i \neq j\)</span>,
+we again apply the quotient rule, but with an understanding that the derivative
+of the numerator <span class="math notranslate nohighlight">\(e^{z_i}\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is 0 , since <span class="math notranslate nohighlight">\(z_i\)</span> does not
+change when <span class="math notranslate nohighlight">\(z_j\)</span> changes:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=\frac{0-e^{z_i} \cdot e^{z_j}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+\]</div>
+<p>This expression can be simplified as:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\frac{e^{z_i} \cdot e^{z_j}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+\]</div>
+<p>Substituting the definition of <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> into this equation, we
+get:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \cdot \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+\]</div>
+<p>Given <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}\)</span> and similarly,
+the term <span class="math notranslate nohighlight">\(\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}\)</span> can be recognized as
+<span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_j\)</span> , the expression simplifies to:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j
+\]</div>
+<p>This formulation shows that the rate of change of the probability of one class
+<span class="math notranslate nohighlight">\((i)\)</span> with respect to the logit of a different class <span class="math notranslate nohighlight">\((j)\)</span> is negative,
+indicating that as the logit <span class="math notranslate nohighlight">\(z_j\)</span> increases, the probability of class <span class="math notranslate nohighlight">\(i\)</span>
+decreases, assuming <span class="math notranslate nohighlight">\(i \neq j\)</span>.</p>
+<p>Thus, for <span class="math notranslate nohighlight">\(i \neq j\)</span>, the derivative of the <span class="math notranslate nohighlight">\(i\)</span>-th softmax component with
+respect to <span class="math notranslate nohighlight">\(z_j\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j
+\]</div>
+</section>
+<section id="kronecker-delta">
+<h4><a class="toc-backref" href="#id35" role="doc-backlink">Kronecker Delta</a><a class="headerlink" href="#kronecker-delta" title="Link to this heading">#</a></h4>
+<p>The partial derivative of the softmax output with respect to its input,
+considering both cases, can be written in cases:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \begin{cases} \sigma(\mathbf{z})_i (1 - \sigma(\mathbf{z})_i) &amp; \text{if } i=j \\ -\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j &amp; \text{if } i \neq j \end{cases}
+\end{split}\]</div>
+<p>And it is common to represent the above case either as indicator functions or
+the <a class="reference external" href="https://en.wikipedia.org/wiki/Kronecker_delta">Kronecker delta</a>
+<span class="math notranslate nohighlight">\(\delta_{ij}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \sigma(\mathbf{z})_i
+(\delta_{ij} - \sigma(\mathbf{z})_j)
+\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\delta_{ij} = \begin{cases} 1 &amp; \text{if } i=j \\ 0 &amp; \text{if } i \neq j \end{cases}
+\end{split}\]</div>
+<p>And if we were to use indicator functions, the above equation can be written as:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \sigma(\mathbf{z})_i
+\left(\mathbb{1}_{i=j} - \sigma(\mathbf{z})_j\right)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbb{1}_{i=j}\)</span> is the indicator function that evaluates to 1 if <span class="math notranslate nohighlight">\(i=j\)</span>
+and 0 otherwise.</p>
+</section>
+</section>
+<section id="representing-derivative-of-softmax-as-a-jacobian-matrix">
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Representing Derivative of Softmax as a Jacobian Matrix</a><a class="headerlink" href="#representing-derivative-of-softmax-as-a-jacobian-matrix" title="Link to this heading">#</a></h3>
+<p>Consider the softmax output vector <span class="math notranslate nohighlight">\(S\)</span> for an input vector
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} z_1 &amp; z_2 &amp; \ldots &amp; z_K \end{bmatrix}^\top\)</span>,
+where <span class="math notranslate nohighlight">\(K\)</span> is the number of classes or dimensions of the softmax output. The
+softmax function is defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+S_i = \sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}} \quad
+\text{for } i=1, \ldots, K
+\]</div>
+<div class="proof definition admonition" id="softmax-output-vector">
+<p class="admonition-title"><span class="caption-number">Definition 14 </span> (Softmax Output as Vector)</p>
+<section class="definition-content" id="proof-content">
+<p>The softmax output vector <span class="math notranslate nohighlight">\(S\)</span> can be explicitly represented as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+S = \begin{bmatrix} S_1 \\ S_2 \\ \vdots \\ S_K \end{bmatrix} =
+\begin{bmatrix} \frac{e^{z_1}}{\sum_{k=1}^K e^{z_k}} \\
+\frac{e^{z_2}}{\sum_{k=1}^K e^{z_k}} \\ \vdots \\ \frac{e^{z_K}}{\sum_{k=1}^K
+e^{z_k}} \end{bmatrix}
+\end{split}\]</div>
+</section>
+</div><div class="proof definition admonition" id="jacobian-softmax">
+<p class="admonition-title"><span class="caption-number">Definition 15 </span> (Jacobian Matrix of Softmax Function)</p>
+<section class="definition-content" id="proof-content">
+<p>The Jacobian matrix <span class="math notranslate nohighlight">\(J_S\)</span> of the softmax function captures the partial
+derivatives of each component of <span class="math notranslate nohighlight">\(S\)</span> with respect to each component of
+<span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. Specifically, the element at the <span class="math notranslate nohighlight">\(i\)</span>-th row and <span class="math notranslate nohighlight">\(j\)</span>-th column of
+<span class="math notranslate nohighlight">\(J_S\)</span>, denoted as <span class="math notranslate nohighlight">\((J_S)_{ij}\)</span>, is the partial derivative of <span class="math notranslate nohighlight">\(S_i\)</span> with respect
+to <span class="math notranslate nohighlight">\(z_j\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[(J_S)_{ij} = \frac{\partial S_i}{\partial z_j}\]</div>
+<p>For <span class="math notranslate nohighlight">\(i = j\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial S_i}{\partial z_i} = S_i (1 - S_i)\]</div>
+<p>For <span class="math notranslate nohighlight">\(i \neq j\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial S_i}{\partial z_j} = -S_i S_j\]</div>
+<p>Putting it all together, the Jacobian matrix <span class="math notranslate nohighlight">\(J_S\)</span> can be written as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+J_S = \begin{bmatrix} S_1 (1 - S_1) &amp; -S_1 S_2 &amp; \cdots &amp; -S_1 S_K \\ -S_2
+S_1 &amp; S_2 (1 - S_2) &amp; \cdots &amp; -S_2 S_K \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+-S_K S_1 &amp; -S_K S_2 &amp; \cdots &amp; S_K (1 - S_K) \end{bmatrix}
+\end{split}\]</div>
+</section>
+</div><div class="proof definition admonition" id="matrix-formulation-softmax">
+<p class="admonition-title"><span class="caption-number">Definition 16 </span> (Matrix Formulation)</p>
+<section class="definition-content" id="proof-content">
+<p>We can express <span class="math notranslate nohighlight">\(J_S\)</span> using matrix operations for compactness:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\text{diag}(S)\)</span> is a diagonal matrix where each diagonal element is <span class="math notranslate nohighlight">\(S_i\)</span>,
+the softmax output for class <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(S S^T\)</span> is the outer product of <span class="math notranslate nohighlight">\(S\)</span> with itself, creating a matrix where
+each element <span class="math notranslate nohighlight">\((i, j)\)</span> is <span class="math notranslate nohighlight">\(S_i S_j\)</span>.</p></li>
+</ul>
+<p>Thus, the Jacobian matrix <span class="math notranslate nohighlight">\(J_S\)</span> can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+J_S = \text{diag}(S) - S S^T
+\]</div>
+</section>
+</div></section>
+<section id="implementation-of-the-jacobian-matrix">
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Implementation of the Jacobian Matrix</a><a class="headerlink" href="#implementation-of-the-jacobian-matrix" title="Link to this heading">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="k">class</span> <span class="nc">Softmax</span><span class="p">:</span>
+<span class="linenos"> 6</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="linenos"> 7</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="linenos">10</span>        <span class="n">max_z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="linenos">11</span>        <span class="n">numerator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">max_z</span><span class="p">)</span>
+<span class="linenos">12</span>        <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos">13</span>        <span class="n">g</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+<span class="linenos">14</span>        <span class="k">return</span> <span class="n">g</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>    <span class="k">def</span> <span class="nf">gradient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="linenos">17</span>        <span class="n">S</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">18</span>        <span class="n">diag_S</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag_embed</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+<span class="linenos">19</span>        <span class="n">outer_S</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">S</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="linenos">20</span>        <span class="n">gradient</span> <span class="o">=</span> <span class="n">diag_S</span> <span class="o">-</span> <span class="n">outer_S</span>
+<span class="linenos">21</span>        <span class="k">return</span> <span class="n">gradient</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos">25</span><span class="n">pprint</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="n">pytorch_softmax</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">28</span><span class="n">pytorch_softmax_outputs</span> <span class="o">=</span> <span class="n">pytorch_softmax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">29</span><span class="n">pprint</span><span class="p">(</span><span class="n">pytorch_softmax_outputs</span><span class="p">)</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="n">my_softmax</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">32</span><span class="n">my_softmax_outputs</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">33</span><span class="n">pprint</span><span class="p">(</span><span class="n">my_softmax_outputs</span><span class="p">)</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
+<span class="linenos">36</span>    <span class="n">pytorch_softmax_outputs</span><span class="p">,</span> <span class="n">my_softmax_outputs</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.3e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Softmax function outputs do not match.&quot;</span>
+<span class="linenos">37</span><span class="p">)</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span><span class="n">B</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span><span class="n">pytorch_jacobian</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">42</span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+<span class="linenos">43</span>    <span class="n">grad</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autograd</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">pytorch_softmax_outputs</span><span class="p">[:,</span> <span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">z</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="linenos">44</span>    <span class="n">pytorch_jacobian</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="n">pytorch_jacobian</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">pytorch_jacobian</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">47</span><span class="n">pprint</span><span class="p">(</span><span class="n">pytorch_jacobian</span><span class="p">)</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span><span class="n">my_jacobian</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">50</span><span class="n">pprint</span><span class="p">(</span><span class="n">my_jacobian</span><span class="p">)</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span><span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
+<span class="linenos">53</span>    <span class="n">pytorch_jacobian</span><span class="p">,</span> <span class="n">my_jacobian</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.3e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Jacobian matrices do not match.&quot;</span>
+<span class="linenos">54</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0707</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.1719</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.9892</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.2168</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-1.6837</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.5304</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3039</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5544</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0365</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5882</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">requires_grad</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1918</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4806</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1439</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0332</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0912</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2101</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2699</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1495</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2792</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1918</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4806</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1439</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0332</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0912</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2101</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2699</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1495</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2792</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1550</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1278</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2496</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1232</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0321</span><span style="font-weight: bold">]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0829</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1971</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1271</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2013</span><span style="font-weight: bold">]]])</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1550</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0289</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1278</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0922</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0723</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2496</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0276</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0217</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0692</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1232</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0064</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0050</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0159</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0048</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0321</span><span style="font-weight: bold">]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[[</span> <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0829</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0192</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1660</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0246</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0567</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1971</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0136</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0314</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0404</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1271</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │    </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0255</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0587</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0754</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">-0.0417</span>,  <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2013</span><span style="font-weight: bold">]]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│      </span><span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SqueezeBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div></div>
+</div>
+</section>
+<section id="hessian-matrix">
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Hessian Matrix</a><a class="headerlink" href="#hessian-matrix" title="Link to this heading">#</a></h3>
+<p>The Hessian matrix represents the second-order partial derivatives of the
+softmax function’s components with respect to the components of the input vector
+<span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. The Hessian gives us insight into the curvature of the softmax
+function, which is particularly useful for understanding the optimization
+landscape. In fact, the Hessian matrix is a key component in monitoring the loss
+function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> where the first order partial derivatives measures the
+rate of change of the loss function with respect to the parameters, and the
+second order partial derivatives measures the curvature of the loss function -
+which says about convexity/concavity, saddle points, minima and maxima etc. See
+<a class="reference external" href="https://d2l.ai/chapter_optimization/optimization-intro.html">12.1. Optimization and Deep Learning - Dive Into Deep Learning</a>
+for more insights.</p>
+<p>Given the softmax function <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i\)</span> for component <span class="math notranslate nohighlight">\(i\)</span>, defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+\]</div>
+<p>Hessian Matrix for Softmax The Hessian matrix <span class="math notranslate nohighlight">\(\left(H_\sigma\right)\)</span> of the
+softmax function with respect to the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is a <span class="math notranslate nohighlight">\(K \times K\)</span>
+matrix where each element <span class="math notranslate nohighlight">\((i, j)\)</span> is the second-order partial derivative of the
+softmax output for class <span class="math notranslate nohighlight">\(i\)</span> with respect to the inputs <span class="math notranslate nohighlight">\(z_i\)</span> and <span class="math notranslate nohighlight">\(z_j\)</span>, denoted
+as:</p>
+<div class="math notranslate nohighlight">
+\[
+\left(H_\sigma\right)_{i j}=\frac{\partial^2 \sigma(\mathbf{z})}{\partial z_i \partial z_j}
+\]</div>
 </section>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id33" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id39" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/">The Softmax function and its derivative - Eli Bendersky</a></p></li>
@@ -1580,7 +1917,7 @@ involve the variable of differentiation) is 0.</p></li>
 </ul>
 </section>
 <section id="citations">
-<h2><a class="toc-backref" href="#id34" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id40" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>[1] D. A. Roberts, S. Yaida, B. Hanin, “Chapter 6.2.1 Bayesian Model
 Fitting” in
@@ -1593,8 +1930,12 @@ for Multinoulli Output Distributions in
 180-184</p></li>
 <li><p>[3] C. M. Bishop, Chapter 4. Linear Models for Classification in Pattern
 Recognition and Machine Learning. New York: Springer, 2006.</p></li>
-<li><p>[4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola, “Chapter 3.4. Softmax
-Regression” in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
+<li><p>[4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+<a class="reference external" href="https://d2l.ai/chapter_linear-classification/softmax-regression.html">“Chapter 3.4. Softmax Regression”</a>
+in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
+<li><p>[5] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+<a class="reference external" href="https://d2l.ai/chapter_optimization/optimization-intro.html">“Chapter 12.1. Optimization and Deep Learning”</a>
+in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
@@ -1704,7 +2045,15 @@ Regression” in Dive into Deep Learning, Cambridge University Press, 2023.</p><
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-as-a-vector-function">Softmax as a Vector Function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-of-the-softmax-function">Derivatives of the Softmax Function</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix-of-softmax">The Jacobian Matrix of Softmax</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#case-1-i-j">Case 1: <span class="math notranslate nohighlight">\(i = j\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#case-2-i-neq-j">Case 2: <span class="math notranslate nohighlight">\(i \neq j\)</span></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kronecker-delta">Kronecker Delta</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#representing-derivative-of-softmax-as-a-jacobian-matrix">Representing Derivative of Softmax as a Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-of-the-jacobian-matrix">Implementation of the Jacobian Matrix</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hessian-matrix">Hessian Matrix</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
