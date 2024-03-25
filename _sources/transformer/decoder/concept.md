@@ -1494,7 +1494,7 @@ to better predict them, regardless of their method of procurement
     arXiv preprint arXiv:1908.03265, [Submitted on 8 Aug 2019 (v1), last revised
     26 Oct 2021 (this version, v4)].
 -   [5] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
-    ["Chapter 9: Recurrent Neural Networks"](https://d2l.ai/chapter_recurrent-neural-networks/index.html)
+    ["Chapter 9. Recurrent Neural Networks"](https://d2l.ai/chapter_recurrent-neural-networks/index.html)
     in Dive into Deep Learning, Cambridge University Press, 2023.
 -   [6] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
     ["Chapter 11. Attention Mechanisms and Transformers"](https://d2l.ai/chapter_attention-mechanisms-and-transformers/index.html)

@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Softmax Preserves Order, But Not Invariant Under Scaling
+# Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -537,6 +537,28 @@ This reformulation achieves the following:
     values more manageable for computation without affecting the ratios that
     softmax aims to model.
 
+To this end, a rough implementation of the numerically stable softmax function
+is shown below:
+
+```{code-cell} ipython3
+super_large_logits = torch.tensor([[1000.0, 2000.0, 3000.0, 4000.0, 5000.0]], dtype=torch.float32)
+unstable_softmax = my_softmax(super_large_logits)
+pprint(unstable_softmax)
+
+def stable_softmax(z: torch.Tensor) -> torch.Tensor:
+    """
+    Compute the numerically stable softmax function for a given input.
+    """
+    max_z = torch.max(z, dim=1, keepdim=True).values
+    numerator = torch.exp(z - max_z)
+    denominator = torch.sum(numerator, dim=1, keepdim=True)
+    g = numerator / denominator
+    return g
+
+stable_softmax_probs = stable_softmax(super_large_logits)
+pprint(stable_softmax_probs)
+```
+
 ## Softmax Is Not Invariant Under Scaling
 
 A function $f: \mathbb{R}^D \rightarrow \mathbb{R}^D$ is said to be scale
@@ -553,7 +575,7 @@ the function's output depends only on the direction of the vector $\mathbf{x}$
 and not its magnitude.
 
 In contrast, a function is not invariant under scaling if there exists at least
-one vector $\mathbf{x} \in \mathbb{R}^n$ and one scalar $c > 0$ such that
+one vector $\mathbf{x} \in \mathbb{R}^D$ and one scalar $c > 0$ such that
 $f(c\mathbf{x}) \neq f(\mathbf{x})$.
 
 The softmax function is **_not_** invariant under scaling. This is because the
@@ -881,11 +903,7 @@ optimization algorithms to work effectively as if not, then taking a step in the
 direction of the gradient would not guarantee a decrease in the loss function,
 slowing down convergence.
 
-## Gradient, Jacobian, and Hessian of Softmax
-
-... to be continued
-
-## Derivation of Softmax Function via Exponential Family
+## Softmax Function via Exponential Family
 
 For a rigorous derivation of the softmax function - which will give rise to
 intuition on how sigmoid and softmax is derived from the exponential family of
@@ -894,10 +912,126 @@ Christopher Bishop's _Pattern Recognition and Machine Learning_
 {cite}`bishop2007` with reference
 [here](https://math.stackexchange.com/questions/328115/derivation-of-softmax-function).
 
+## Gradient, Jacobian, and Hessian of Softmax
+
+### Softmax as a Vector Function
+
+The softmax function $\sigma$ represents a mapping from $\mathbb{R}^K$ to
+$(0,1)^K$, where each output component $\sigma(\mathbf{z})_j$ is a function of
+all input components $z_1, z_2, \ldots, z_K$. Given its vector-to-vector nature,
+it does not make sense to talk about the derivative of softmax as a
+scalar-valued function. Instead, the analysis of its derivatives involves the
+following:
+
+1. Which component of the output vector we are interested in, and
+2. Which and how the input components affect that output component.
+
+### Derivatives of the Softmax Function
+
+As a result, the above considerations lands ourselves naturally into the realm
+of multivariable calculus, where we consider the partial derivatives of the
+softmax function - which measure the change in a specific output component in
+response to a small change in a specific input component. For the $i$-th output
+of softmax with respect to the $j$-th input, we denote the partial derivative
+as:
+
+$$\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}$$
+
+This notation precisely indicates the partial derivative of the $i$-th output
+with respect to the $j$-th input.
+
+To this end, given the softmax function $\sigma$ defined on a vector
+$\mathbf{z} \in \mathbb{R}^K$, the goal is to compute the partial derivative of
+the $i$-th output of the softmax function with respect to the $j$ th component
+of the input vector $\mathbf{z}$.
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=\frac{\partial \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}}{\partial z_j}
+$$
+
+### The Jacobian Matrix of Softmax
+
+The formal representation of the derivatives for a vector function like softmax
+is the Jacobian matrix, $\mathbf{J}_{\sigma}$, which contains all the
+first-order partial derivatives. For the softmax function, the Jacobian matrix
+is defined as:
+
+$$
+\mathbf{J}_{\sigma}(\mathbf{z}) = \begin{bmatrix} \frac{\partial
+\sigma(\mathbf{z})_1}{\partial z_1} & \cdots & \frac{\partial
+\sigma(\mathbf{z})_1}{\partial z_K} \\ \vdots & \ddots & \vdots \\
+\frac{\partial \sigma(\mathbf{z})_K}{\partial z_1} & \cdots & \frac{\partial
+\sigma(\mathbf{z})_K}{\partial z_K} \end{bmatrix}
+$$
+
+This matrix provides a full description of how the softmax function responds to
+changes in its inputs, indicating the sensitivity of each output component to
+each input component.
+
+While "gradient" is a term often used in machine learning to describe the
+derivative of a function, it strictly applies to scalar-valued functions. For
+vector-valued functions like softmax, describing the comprehensive derivative
+structure requires the Jacobian matrix, $\mathbf{J}_{\sigma}$, not a gradient.
+Therefore, in discussions involving softmax and its impact on learning in neural
+networks, it is more accurate to refer to the Jacobian matrix when considering
+its derivatives.
+
+### Derivative of the Softmax Function
+
+To compute the partial derivative of the $i$-th component of the softmax output
+with respect to the $j$-th component of the input vector $\mathbf{z}$, we
+express this as:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \frac{\partial
+\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}}{\partial z_j}
+$$
+
+Since there is division involved, we'll apply the quotient rule of derivatives,
+which for a function $f(x) = \frac{g(x)}{h(x)}$ is given by:
+
+$$f'(x) = \frac{g'(x)h(x) - h'(x)g(x)}{[h(x)]^2}$$
+
+For our specific case, the functions $g$ and $h$ with respect to the $i$-th
+component are defined as:
+
+$$
+\begin{aligned} g_i &= e^{z_i} \\ h_k &= \sum_{k=1}^K e^{z_k} \end{aligned}
+$$
+
+```{admonition} Some Derivatives Tips So Far...
+:class: note
+
+Firstly, the derivative of $h_k$ with respect to any $z_j$ is always $e^{z_j}$.
+Why? The function $h_k$ represents the sum of the exponentials of all components
+of the input vector $\mathbf{z}$. Mathematically, $h_k$ is independent of the
+index $i$ and is a function of all $z_k$ in the vector $\mathbf{z}$. When we
+differentiate $h_k$ with respect to $z_j$, we treat $z_j$ as the variable and
+all other $z_k$ ($k \neq j$)$ as constants.
+
+The derivative of $e^{z_k}$ with respect to $z_j$ is $e^{z_j}$ when $k=j$
+because of the basic derivative rule $d\left(e^x\right) / d x=e^x$, and it's 0
+for all $k \neq j$ because the derivative of a constant is 0 . Therefore, when
+you sum up all these derivatives $\left(e^{z_j}\right.$ for the term where $k=j$
+and 0 for all others), the derivative of the sum $h_k$ with respect to $z_j$ is
+simply $e^{z_j}$.
+
+Secondly, the derivative of $g_i$ with respect to $z_j$ is $e^{z_j}$ if $i=j$,
+and 0 otherwise. Why? The function $g_i$ is defined as $e^{z_i}$, which only
+involves a single component $z_i$ of the input vector $\mathbf{z}$. The
+derivative of $g_i$ with respect to $z_j$ depends on whether $i$ equals $j$
+
+-   If $i=j$, then $g_i=e^{z_j}$, and the derivative of $e^{z_j}$ with respect
+    to $z_j$ is $e^{z_j}$ itself, following the basic exponential derivative
+    rule.
+-   If $i \neq j, z_i$ and $z_j$ are considered independent variables. Since
+    $g_i$ does not involve $z_j$ in this case, the derivative is 0, reflecting
+    the principle that the derivative of a constant (or a term that does not
+    involve the variable of differentiation) is 0.
+```
+
 ## References and Further Readings
 
--   4.3.4 Multiclass logistic regression bishop et al. 2007
--   4. linear model bisop et al. 2007
 -   [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)
 -   [The Softmax function and its derivative - Eli Bendersky](https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/)
 -   [What is the role of temperature in Softmax?](https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax)
@@ -913,6 +1047,10 @@ Christopher Bishop's _Pattern Recognition and Machine Learning_
     for Multinoulli Output Distributions in
     ["Deep Learning"](http://www.deeplearningbook.org/), MIT Press, 2016. pp.
     180-184
+-   [3] C. M. Bishop, Chapter 4. Linear Models for Classification in Pattern
+    Recognition and Machine Learning. New York: Springer, 2006.
+-   [4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola, "Chapter 3.4. Softmax
+    Regression" in Dive into Deep Learning, Cambridge University Press, 2023.
 
 [^softmax-wikipedia]:
     [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)

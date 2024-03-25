@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Softmax Preserves Order, But Not Invariant Under Scaling &#8212; Omniverse</title>
+    <title>Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling &#8212; Omniverse</title>
   
   
   
@@ -202,7 +202,7 @@
 <li class="toctree-l1"><a class="reference internal" href="how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
 <li class="toctree-l1"><a class="reference internal" href="why_cosine_warmup_scheduler.html">Stabilizing Training with Warmup and Gradual Cosine Annealing</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Softmax Preserves Order, But Not Invariant Under Scaling</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
@@ -514,7 +514,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Softmax Preserves Order, But Not Invariant Under Scaling</h1>
+    <h1>Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -553,8 +553,14 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-smooth-continuous-and-differentiable">Softmax Is Smooth, Continuous and Differentiable</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-of-softmax-function-via-exponential-family">Derivation of Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-function-via-exponential-family">Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-as-a-vector-function">Softmax as a Vector Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-of-the-softmax-function">Derivatives of the Softmax Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix-of-softmax">The Jacobian Matrix of Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
@@ -568,8 +574,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="softmax-preserves-order-but-not-invariant-under-scaling">
-<h1>Softmax Preserves Order, But Not Invariant Under Scaling<a class="headerlink" href="#softmax-preserves-order-but-not-invariant-under-scaling" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="softmax-preserves-order-is-translation-invariant-but-not-invariant-under-scaling">
+<h1>Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling<a class="headerlink" href="#softmax-preserves-order-is-translation-invariant-but-not-invariant-under-scaling" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
@@ -611,10 +617,17 @@ document.write(`
 </ul>
 </li>
 <li><p><a class="reference internal" href="#softmax-is-smooth-continuous-and-differentiable" id="id26">Softmax Is Smooth, Continuous and Differentiable</a></p></li>
-<li><p><a class="reference internal" href="#gradient-jacobian-and-hessian-of-softmax" id="id27">Gradient, Jacobian, and Hessian of Softmax</a></p></li>
-<li><p><a class="reference internal" href="#derivation-of-softmax-function-via-exponential-family" id="id28">Derivation of Softmax Function via Exponential Family</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id29">References and Further Readings</a></p></li>
-<li><p><a class="reference internal" href="#citations" id="id30">Citations</a></p></li>
+<li><p><a class="reference internal" href="#softmax-function-via-exponential-family" id="id27">Softmax Function via Exponential Family</a></p></li>
+<li><p><a class="reference internal" href="#gradient-jacobian-and-hessian-of-softmax" id="id28">Gradient, Jacobian, and Hessian of Softmax</a></p>
+<ul>
+<li><p><a class="reference internal" href="#softmax-as-a-vector-function" id="id29">Softmax as a Vector Function</a></p></li>
+<li><p><a class="reference internal" href="#derivatives-of-the-softmax-function" id="id30">Derivatives of the Softmax Function</a></p></li>
+<li><p><a class="reference internal" href="#the-jacobian-matrix-of-softmax" id="id31">The Jacobian Matrix of Softmax</a></p></li>
+<li><p><a class="reference internal" href="#derivative-of-the-softmax-function" id="id32">Derivative of the Softmax Function</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id33">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id34">Citations</a></p></li>
 </ul>
 </nav>
 <section id="problem-formulation">
@@ -910,11 +923,11 @@ readily available implementation in PyTorch.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1641</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2960</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0349</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4862</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0188</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0508</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0848</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6198</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0941</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0363</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1310</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0219</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.7952</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0355</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1974</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1369</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1711</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4591</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1641</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2960</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0349</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4862</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0188</span><span style="font-weight: bold">]</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0508</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0848</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6198</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0941</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0363</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1310</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0219</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0156</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.7952</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0355</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1974</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1369</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1711</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4591</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
 </pre>
 </div></div>
 </div>
@@ -1062,6 +1075,36 @@ since subtracting a large value (<span class="math notranslate nohighlight">\(\m
 values more manageable for computation without affecting the ratios that
 softmax aims to model.</p></li>
 </ul>
+<p>To this end, a rough implementation of the numerically stable softmax function
+is shown below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">super_large_logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">2000.0</span><span class="p">,</span> <span class="mf">3000.0</span><span class="p">,</span> <span class="mf">4000.0</span><span class="p">,</span> <span class="mf">5000.0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos"> 2</span><span class="n">unstable_softmax</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">super_large_logits</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">pprint</span><span class="p">(</span><span class="n">unstable_softmax</span><span class="p">)</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="k">def</span> <span class="nf">stable_softmax</span><span class="p">(</span><span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 7</span><span class="sd">    Compute the numerically stable softmax function for a given input.</span>
+<span class="linenos"> 8</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos"> 9</span>    <span class="n">max_z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+<span class="linenos">10</span>    <span class="n">numerator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">max_z</span><span class="p">)</span>
+<span class="linenos">11</span>    <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos">12</span>    <span class="n">g</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+<span class="linenos">13</span>    <span class="k">return</span> <span class="n">g</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="n">stable_softmax_probs</span> <span class="o">=</span> <span class="n">stable_softmax</span><span class="p">(</span><span class="n">super_large_logits</span><span class="p">)</span>
+<span class="linenos">16</span><span class="n">pprint</span><span class="p">(</span><span class="n">stable_softmax_probs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span>nan, nan, nan, nan, nan<span style="font-weight: bold">]])</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>., <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>., <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>., <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>., <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>.<span style="font-weight: bold">]])</span>
+</pre>
+</div></div>
+</div>
 </section>
 </section>
 <section id="softmax-is-not-invariant-under-scaling">
@@ -1078,7 +1121,7 @@ does not change the output of the function <span class="math notranslate nohighl
 the function’s output depends only on the direction of the vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>
 and not its magnitude.</p>
 <p>In contrast, a function is not invariant under scaling if there exists at least
-one vector <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^n\)</span> and one scalar <span class="math notranslate nohighlight">\(c &gt; 0\)</span> such that
+one vector <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^D\)</span> and one scalar <span class="math notranslate nohighlight">\(c &gt; 0\)</span> such that
 <span class="math notranslate nohighlight">\(f(c\mathbf{x}) \neq f(\mathbf{x})\)</span>.</p>
 <p>The softmax function is <strong><em>not</em></strong> invariant under scaling. This is because the
 softmax output changes when the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is scaled by a
@@ -1131,7 +1174,7 @@ for the original and scaled input vectors.</p>
 Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </pre></div>
 </div>
-<img alt="../_images/99cf8c2f325d09e1b14f03c4d9dfa5c2e9f0df66c75325ceff5fbaf4f0058727.svg" src="../_images/99cf8c2f325d09e1b14f03c4d9dfa5c2e9f0df66c75325ceff5fbaf4f0058727.svg" /></div>
+<img alt="../_images/be4d5fa75b16fe24f796afe8a788dc961d9f1c9a4603a6f849eaf053dda556ff.svg" src="../_images/be4d5fa75b16fe24f796afe8a788dc961d9f1c9a4603a6f849eaf053dda556ff.svg" /></div>
 </div>
 <p>Another example:</p>
 <div class="cell docutils container">
@@ -1158,7 +1201,7 @@ Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/0692ef81c61a72f020623879389078afb5802565a1273cbf3c8dccb2ee4ca336.svg" src="../_images/0692ef81c61a72f020623879389078afb5802565a1273cbf3c8dccb2ee4ca336.svg" /></div>
+<img alt="../_images/86f1073ddc5ca073fcbfb51b090432bd2bd40a109cce20a6e328368ca1668d16.svg" src="../_images/86f1073ddc5ca073fcbfb51b090432bd2bd40a109cce20a6e328368ca1668d16.svg" /></div>
 </div>
 </section>
 <section id="sharpening-and-dampening-the-softmax-distribution">
@@ -1363,7 +1406,7 @@ the distribution of sampled outcomes is visualized for each temperature.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../_images/a717fe406ab3b3949cb26755b5d9f7292ceefdce2e0c6adb3844c9abed9bed56.svg" src="../_images/a717fe406ab3b3949cb26755b5d9f7292ceefdce2e0c6adb3844c9abed9bed56.svg" /></div>
+<img alt="../_images/13f4335df4d1c4f6be463a93eb9fd69a95807776c2315a0b869c5947743e1ec4.svg" src="../_images/13f4335df4d1c4f6be463a93eb9fd69a95807776c2315a0b869c5947743e1ec4.svg" /></div>
 </div>
 </section>
 </section>
@@ -1408,12 +1451,8 @@ optimization algorithms to work effectively as if not, then taking a step in the
 direction of the gradient would not guarantee a decrease in the loss function,
 slowing down convergence.</p>
 </section>
-<section id="gradient-jacobian-and-hessian-of-softmax">
-<h2><a class="toc-backref" href="#id27" role="doc-backlink">Gradient, Jacobian, and Hessian of Softmax</a><a class="headerlink" href="#gradient-jacobian-and-hessian-of-softmax" title="Link to this heading">#</a></h2>
-<p>… to be continued</p>
-</section>
-<section id="derivation-of-softmax-function-via-exponential-family">
-<h2><a class="toc-backref" href="#id28" role="doc-backlink">Derivation of Softmax Function via Exponential Family</a><a class="headerlink" href="#derivation-of-softmax-function-via-exponential-family" title="Link to this heading">#</a></h2>
+<section id="softmax-function-via-exponential-family">
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">Softmax Function via Exponential Family</a><a class="headerlink" href="#softmax-function-via-exponential-family" title="Link to this heading">#</a></h2>
 <p>For a rigorous derivation of the softmax function - which will give rise to
 intuition on how sigmoid and softmax is derived from the exponential family of
 distributions - we refer the reader to chapter 2.4. The Exponential Family of
@@ -1421,21 +1460,127 @@ Christopher Bishop’s <em>Pattern Recognition and Machine Learning</em>
 <span id="id7">[<a class="reference internal" href="../bibliography.html#id3" title="Christopher M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 1 edition, 2007. ISBN 0387310738. URL: http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%3FSubscriptionId%3D13CT5CVB80YFWJEPWS02%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0387310738.">Bishop, 2007</a>]</span> with reference
 <a class="reference external" href="https://math.stackexchange.com/questions/328115/derivation-of-softmax-function">here</a>.</p>
 </section>
-<section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id29" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>4.3.4 Multiclass logistic regression bishop et al. 2007</p></li>
-<li><ol class="arabic simple" start="4">
-<li><p>linear model bisop et al. 2007</p></li>
+<section id="gradient-jacobian-and-hessian-of-softmax">
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">Gradient, Jacobian, and Hessian of Softmax</a><a class="headerlink" href="#gradient-jacobian-and-hessian-of-softmax" title="Link to this heading">#</a></h2>
+<section id="softmax-as-a-vector-function">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Softmax as a Vector Function</a><a class="headerlink" href="#softmax-as-a-vector-function" title="Link to this heading">#</a></h3>
+<p>The softmax function <span class="math notranslate nohighlight">\(\sigma\)</span> represents a mapping from <span class="math notranslate nohighlight">\(\mathbb{R}^K\)</span> to
+<span class="math notranslate nohighlight">\((0,1)^K\)</span>, where each output component <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_j\)</span> is a function of
+all input components <span class="math notranslate nohighlight">\(z_1, z_2, \ldots, z_K\)</span>. Given its vector-to-vector nature,
+it does not make sense to talk about the derivative of softmax as a
+scalar-valued function. Instead, the analysis of its derivatives involves the
+following:</p>
+<ol class="arabic simple">
+<li><p>Which component of the output vector we are interested in, and</p></li>
+<li><p>Which and how the input components affect that output component.</p></li>
 </ol>
-</li>
+</section>
+<section id="derivatives-of-the-softmax-function">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Derivatives of the Softmax Function</a><a class="headerlink" href="#derivatives-of-the-softmax-function" title="Link to this heading">#</a></h3>
+<p>As a result, the above considerations lands ourselves naturally into the realm
+of multivariable calculus, where we consider the partial derivatives of the
+softmax function - which measure the change in a specific output component in
+response to a small change in a specific input component. For the <span class="math notranslate nohighlight">\(i\)</span>-th output
+of softmax with respect to the <span class="math notranslate nohighlight">\(j\)</span>-th input, we denote the partial derivative
+as:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}\]</div>
+<p>This notation precisely indicates the partial derivative of the <span class="math notranslate nohighlight">\(i\)</span>-th output
+with respect to the <span class="math notranslate nohighlight">\(j\)</span>-th input.</p>
+<p>To this end, given the softmax function <span class="math notranslate nohighlight">\(\sigma\)</span> defined on a vector
+<span class="math notranslate nohighlight">\(\mathbf{z} \in \mathbb{R}^K\)</span>, the goal is to compute the partial derivative of
+the <span class="math notranslate nohighlight">\(i\)</span>-th output of the softmax function with respect to the <span class="math notranslate nohighlight">\(j\)</span> th component
+of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=\frac{\partial \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}}{\partial z_j}
+\]</div>
+</section>
+<section id="the-jacobian-matrix-of-softmax">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">The Jacobian Matrix of Softmax</a><a class="headerlink" href="#the-jacobian-matrix-of-softmax" title="Link to this heading">#</a></h3>
+<p>The formal representation of the derivatives for a vector function like softmax
+is the Jacobian matrix, <span class="math notranslate nohighlight">\(\mathbf{J}_{\sigma}\)</span>, which contains all the
+first-order partial derivatives. For the softmax function, the Jacobian matrix
+is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{J}_{\sigma}(\mathbf{z}) = \begin{bmatrix} \frac{\partial
+\sigma(\mathbf{z})_1}{\partial z_1} &amp; \cdots &amp; \frac{\partial
+\sigma(\mathbf{z})_1}{\partial z_K} \\ \vdots &amp; \ddots &amp; \vdots \\
+\frac{\partial \sigma(\mathbf{z})_K}{\partial z_1} &amp; \cdots &amp; \frac{\partial
+\sigma(\mathbf{z})_K}{\partial z_K} \end{bmatrix}
+\end{split}\]</div>
+<p>This matrix provides a full description of how the softmax function responds to
+changes in its inputs, indicating the sensitivity of each output component to
+each input component.</p>
+<p>While “gradient” is a term often used in machine learning to describe the
+derivative of a function, it strictly applies to scalar-valued functions. For
+vector-valued functions like softmax, describing the comprehensive derivative
+structure requires the Jacobian matrix, <span class="math notranslate nohighlight">\(\mathbf{J}_{\sigma}\)</span>, not a gradient.
+Therefore, in discussions involving softmax and its impact on learning in neural
+networks, it is more accurate to refer to the Jacobian matrix when considering
+its derivatives.</p>
+</section>
+<section id="derivative-of-the-softmax-function">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Derivative of the Softmax Function</a><a class="headerlink" href="#derivative-of-the-softmax-function" title="Link to this heading">#</a></h3>
+<p>To compute the partial derivative of the <span class="math notranslate nohighlight">\(i\)</span>-th component of the softmax output
+with respect to the <span class="math notranslate nohighlight">\(j\)</span>-th component of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, we
+express this as:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \frac{\partial
+\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}}{\partial z_j}
+\]</div>
+<p>Since there is division involved, we’ll apply the quotient rule of derivatives,
+which for a function <span class="math notranslate nohighlight">\(f(x) = \frac{g(x)}{h(x)}\)</span> is given by:</p>
+<div class="math notranslate nohighlight">
+\[f'(x) = \frac{g'(x)h(x) - h'(x)g(x)}{[h(x)]^2}\]</div>
+<p>For our specific case, the functions <span class="math notranslate nohighlight">\(g\)</span> and <span class="math notranslate nohighlight">\(h\)</span> with respect to the <span class="math notranslate nohighlight">\(i\)</span>-th
+component are defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned} g_i &amp;= e^{z_i} \\ h_k &amp;= \sum_{k=1}^K e^{z_k} \end{aligned}
+\end{split}\]</div>
+<div class="note admonition">
+<p class="admonition-title">Some Derivatives Tips So Far…</p>
+<p>Firstly, the derivative of <span class="math notranslate nohighlight">\(h_k\)</span> with respect to any <span class="math notranslate nohighlight">\(z_j\)</span> is always <span class="math notranslate nohighlight">\(e^{z_j}\)</span>.
+Why? The function <span class="math notranslate nohighlight">\(h_k\)</span> represents the sum of the exponentials of all components
+of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. Mathematically, <span class="math notranslate nohighlight">\(h_k\)</span> is independent of the
+index <span class="math notranslate nohighlight">\(i\)</span> and is a function of all <span class="math notranslate nohighlight">\(z_k\)</span> in the vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. When we
+differentiate <span class="math notranslate nohighlight">\(h_k\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span>, we treat <span class="math notranslate nohighlight">\(z_j\)</span> as the variable and
+all other <span class="math notranslate nohighlight">\(z_k\)</span> (<span class="math notranslate nohighlight">\(k \neq j\)</span>)$ as constants.</p>
+<p>The derivative of <span class="math notranslate nohighlight">\(e^{z_k}\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is <span class="math notranslate nohighlight">\(e^{z_j}\)</span> when <span class="math notranslate nohighlight">\(k=j\)</span>
+because of the basic derivative rule <span class="math notranslate nohighlight">\(d\left(e^x\right) / d x=e^x\)</span>, and it’s 0
+for all <span class="math notranslate nohighlight">\(k \neq j\)</span> because the derivative of a constant is 0 . Therefore, when
+you sum up all these derivatives <span class="math notranslate nohighlight">\(\left(e^{z_j}\right.\)</span> for the term where <span class="math notranslate nohighlight">\(k=j\)</span>
+and 0 for all others), the derivative of the sum <span class="math notranslate nohighlight">\(h_k\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is
+simply <span class="math notranslate nohighlight">\(e^{z_j}\)</span>.</p>
+<p>Secondly, the derivative of <span class="math notranslate nohighlight">\(g_i\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> is <span class="math notranslate nohighlight">\(e^{z_j}\)</span> if <span class="math notranslate nohighlight">\(i=j\)</span>,
+and 0 otherwise. Why? The function <span class="math notranslate nohighlight">\(g_i\)</span> is defined as <span class="math notranslate nohighlight">\(e^{z_i}\)</span>, which only
+involves a single component <span class="math notranslate nohighlight">\(z_i\)</span> of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>. The
+derivative of <span class="math notranslate nohighlight">\(g_i\)</span> with respect to <span class="math notranslate nohighlight">\(z_j\)</span> depends on whether <span class="math notranslate nohighlight">\(i\)</span> equals <span class="math notranslate nohighlight">\(j\)</span></p>
+<ul class="simple">
+<li><p>If <span class="math notranslate nohighlight">\(i=j\)</span>, then <span class="math notranslate nohighlight">\(g_i=e^{z_j}\)</span>, and the derivative of <span class="math notranslate nohighlight">\(e^{z_j}\)</span> with respect
+to <span class="math notranslate nohighlight">\(z_j\)</span> is <span class="math notranslate nohighlight">\(e^{z_j}\)</span> itself, following the basic exponential derivative
+rule.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(i \neq j, z_i\)</span> and <span class="math notranslate nohighlight">\(z_j\)</span> are considered independent variables. Since
+<span class="math notranslate nohighlight">\(g_i\)</span> does not involve <span class="math notranslate nohighlight">\(z_j\)</span> in this case, the derivative is 0, reflecting
+the principle that the derivative of a constant (or a term that does not
+involve the variable of differentiation) is 0.</p></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id33" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/">The Softmax function and its derivative - Eli Bendersky</a></p></li>
 <li><p><a class="reference external" href="https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax">What is the role of temperature in Softmax?</a></p></li>
 </ul>
 </section>
 <section id="citations">
-<h2><a class="toc-backref" href="#id30" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>[1] D. A. Roberts, S. Yaida, B. Hanin, “Chapter 6.2.1 Bayesian Model
 Fitting” in
@@ -1446,6 +1591,10 @@ revised 24 Aug 2021 (this version, v2)].</p></li>
 for Multinoulli Output Distributions in
 <a class="reference external" href="http://www.deeplearningbook.org/">“Deep Learning”</a>, MIT Press, 2016. pp.
 180-184</p></li>
+<li><p>[3] C. M. Bishop, Chapter 4. Linear Models for Classification in Pattern
+Recognition and Machine Learning. New York: Springer, 2006.</p></li>
+<li><p>[4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola, “Chapter 3.4. Softmax
+Regression” in Dive into Deep Learning, Cambridge University Press, 2023.</p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
@@ -1550,8 +1699,14 @@ for Multinoulli Output Distributions in
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-smooth-continuous-and-differentiable">Softmax Is Smooth, Continuous and Differentiable</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-of-softmax-function-via-exponential-family">Derivation of Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-function-via-exponential-family">Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-as-a-vector-function">Softmax as a Vector Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivatives-of-the-softmax-function">Derivatives of the Softmax Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-jacobian-matrix-of-softmax">The Jacobian Matrix of Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#derivative-of-the-softmax-function">Derivative of the Softmax Function</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
 </ul>
