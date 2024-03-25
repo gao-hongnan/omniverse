@@ -996,17 +996,17 @@ For our specific case, the functions $g$ and $h$ with respect to the $i$-th
 component are defined as:
 
 $$
-\begin{aligned} g_i &= e^{z_i} \\ h_k &= \sum_{k=1}^K e^{z_k} \end{aligned}
+\begin{aligned} g_i &= e^{z_i} \\ h &= \sum_{k=1}^K e^{z_k} \end{aligned}
 $$
 
 ```{admonition} Some Derivatives Tips So Far...
 :class: note
 
-Firstly, the derivative of $h_k$ with respect to any $z_j$ is always $e^{z_j}$.
-Why? The function $h_k$ represents the sum of the exponentials of all components
-of the input vector $\mathbf{z}$. Mathematically, $h_k$ is independent of the
+Firstly, the derivative of $h$ with respect to any $z_j$ is always $e^{z_j}$.
+Why? The function $h$ represents the sum of the exponentials of all components
+of the input vector $\mathbf{z}$. Mathematically, $h$ is independent of the
 index $i$ and is a function of all $z_k$ in the vector $\mathbf{z}$. When we
-differentiate $h_k$ with respect to $z_j$, we treat $z_j$ as the variable and
+differentiate $h$ with respect to $z_j$, we treat $z_j$ as the variable and
 all other $z_k$ ($k \neq j$)$ as constants.
 
 The derivative of $e^{z_k}$ with respect to $z_j$ is $e^{z_j}$ when $k=j$
@@ -1015,6 +1015,10 @@ for all $k \neq j$ because the derivative of a constant is 0 . Therefore, when
 you sum up all these derivatives $\left(e^{z_j}\right.$ for the term where $k=j$
 and 0 for all others), the derivative of the sum $h_k$ with respect to $z_j$ is
 simply $e^{z_j}$.
+
+$$
+\frac{\partial h}{\partial z_j}=\frac{\partial}{\partial z_j}\left(\sum_{k=1}^K e^{z_k}\right)=e^{z_j}
+$$
 
 Secondly, the derivative of $g_i$ with respect to $z_j$ is $e^{z_j}$ if $i=j$,
 and 0 otherwise. Why? The function $g_i$ is defined as $e^{z_i}$, which only
@@ -1028,7 +1032,309 @@ derivative of $g_i$ with respect to $z_j$ depends on whether $i$ equals $j$
     $g_i$ does not involve $z_j$ in this case, the derivative is 0, reflecting
     the principle that the derivative of a constant (or a term that does not
     involve the variable of differentiation) is 0.
+
+$$
+\frac{\partial g_i}{\partial z_j}=\frac{\partial e^{z_i}}{\partial z_j}= \begin{cases}e^{z_j} & \text { if } i=j \\ 0 & \text { if } i \neq j\end{cases}
+$$
 ```
+
+#### Case 1: $i = j$
+
+We seek to find the derivative of $\sigma(\mathbf{z})_i$ with respect to $z_j$
+and since $i=j$, we seek to find the derivative of $\sigma(\mathbf{z})_i$ with
+respect to $z_i$. Note it doesn't matter if we use $i$ or $j$ as the index
+because it applies to _any_ index.
+
+Given the softmax function's $i$-th component:
+
+$$
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+$$
+
+To find the derivative of $\sigma(\mathbf{z})_i$ with respect to $z_i$, we apply
+the quotient rule:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{\left(e^{z_i} \cdot \sum_{k=1}^K e^{z_k}\right)-\left(e^{z_i} \cdot e^{z_i}\right)}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+$$
+
+Simplifying this expression, where the denominator is the square of the sum of
+all exponentiated components of $\mathbf{z}$, and recognizing that the numerator
+simplifies to the difference between the product of $e^{z_i}$ and the sum of all
+exponentiated components minus the square of $e^{z_i}$ :
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{e^{z_i} \cdot \sum_{k=1}^K e^{z_k}-e^{2 z_i}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+$$
+
+Upon substituting the definition of $\sigma(\mathbf{z})_i$ into this equation,
+we observe:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}-\left(\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}\right)^2
+$$
+
+Given that $\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}$, it
+follows that the derivative simplifies to:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i}=\sigma(\mathbf{z})_i-\sigma(\mathbf{z})_i^2
+$$
+
+Thus, expressing it in a more compact form:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_i} = \sigma(\mathbf{z})_i (1 - \sigma(\mathbf{z})_i)
+$$
+
+#### Case 2: $i \neq j$
+
+We then consider the scenario where we aim to compute the derivative of the
+$i$-th component of the softmax output with respect to a different component
+$z_j$, where $i \neq j$. This examines how changes in one input logit affect the
+probability associated with a different class.
+
+Given the $i$-th component of the softmax function:
+
+$$
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+$$
+
+To compute $\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}$ for $i \neq j$,
+we again apply the quotient rule, but with an understanding that the derivative
+of the numerator $e^{z_i}$ with respect to $z_j$ is 0 , since $z_i$ does not
+change when $z_j$ changes:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=\frac{0-e^{z_i} \cdot e^{z_j}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+$$
+
+This expression can be simplified as:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\frac{e^{z_i} \cdot e^{z_j}}{\left(\sum_{k=1}^K e^{z_k}\right)^2}
+$$
+
+Substituting the definition of $\sigma(\mathbf{z})_i$ into this equation, we
+get:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \cdot \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+$$
+
+Given $\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}$ and similarly,
+the term $\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}}$ can be recognized as
+$\sigma(\mathbf{z})_j$ , the expression simplifies to:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j
+$$
+
+This formulation shows that the rate of change of the probability of one class
+$(i)$ with respect to the logit of a different class $(j)$ is negative,
+indicating that as the logit $z_j$ increases, the probability of class $i$
+decreases, assuming $i \neq j$.
+
+Thus, for $i \neq j$, the derivative of the $i$-th softmax component with
+respect to $z_j$ is:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j}=-\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j
+$$
+
+#### Kronecker Delta
+
+The partial derivative of the softmax output with respect to its input,
+considering both cases, can be written in cases:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \begin{cases} \sigma(\mathbf{z})_i (1 - \sigma(\mathbf{z})_i) & \text{if } i=j \\ -\sigma(\mathbf{z})_i \sigma(\mathbf{z})_j & \text{if } i \neq j \end{cases}
+$$
+
+And it is common to represent the above case either as indicator functions or
+the [Kronecker delta](https://en.wikipedia.org/wiki/Kronecker_delta)
+$\delta_{ij}$,
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \sigma(\mathbf{z})_i
+(\delta_{ij} - \sigma(\mathbf{z})_j)
+$$
+
+where
+
+$$
+\delta_{ij} = \begin{cases} 1 & \text{if } i=j \\ 0 & \text{if } i \neq j \end{cases}
+$$
+
+And if we were to use indicator functions, the above equation can be written as:
+
+$$
+\frac{\partial \sigma(\mathbf{z})_i}{\partial z_j} = \sigma(\mathbf{z})_i
+\left(\mathbb{1}_{i=j} - \sigma(\mathbf{z})_j\right)
+$$
+
+where $\mathbb{1}_{i=j}$ is the indicator function that evaluates to 1 if $i=j$
+and 0 otherwise.
+
+### Representing Derivative of Softmax as a Jacobian Matrix
+
+Consider the softmax output vector $S$ for an input vector
+$\mathbf{z} = \begin{bmatrix} z_1 & z_2 & \ldots & z_K \end{bmatrix}^\top$,
+where $K$ is the number of classes or dimensions of the softmax output. The
+softmax function is defined as:
+
+$$
+S_i = \sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}} \quad
+\text{for } i=1, \ldots, K
+$$
+
+```{prf:definition} Softmax Output as Vector
+:label: softmax-output-vector
+
+The softmax output vector $S$ can be explicitly represented as:
+
+$$
+S = \begin{bmatrix} S_1 \\ S_2 \\ \vdots \\ S_K \end{bmatrix} =
+\begin{bmatrix} \frac{e^{z_1}}{\sum_{k=1}^K e^{z_k}} \\
+\frac{e^{z_2}}{\sum_{k=1}^K e^{z_k}} \\ \vdots \\ \frac{e^{z_K}}{\sum_{k=1}^K
+e^{z_k}} \end{bmatrix}
+$$
+```
+
+```{prf:definition} Jacobian Matrix of Softmax Function
+:label: jacobian-softmax
+
+The Jacobian matrix $J_S$ of the softmax function captures the partial
+derivatives of each component of $S$ with respect to each component of
+$\mathbf{z}$. Specifically, the element at the $i$-th row and $j$-th column of
+$J_S$, denoted as $(J_S)_{ij}$, is the partial derivative of $S_i$ with respect
+to $z_j$:
+
+$$(J_S)_{ij} = \frac{\partial S_i}{\partial z_j}$$
+
+For $i = j$, we have:
+
+$$\frac{\partial S_i}{\partial z_i} = S_i (1 - S_i)$$
+
+For $i \neq j$, we have:
+
+$$\frac{\partial S_i}{\partial z_j} = -S_i S_j$$
+
+Putting it all together, the Jacobian matrix $J_S$ can be written as:
+
+$$
+J_S = \begin{bmatrix} S_1 (1 - S_1) & -S_1 S_2 & \cdots & -S_1 S_K \\ -S_2
+S_1 & S_2 (1 - S_2) & \cdots & -S_2 S_K \\ \vdots & \vdots & \ddots & \vdots \\
+-S_K S_1 & -S_K S_2 & \cdots & S_K (1 - S_K) \end{bmatrix}
+$$
+```
+
+```{prf:definition} Matrix Formulation
+:label: matrix-formulation-softmax
+
+We can express $J_S$ using matrix operations for compactness:
+
+-   $\text{diag}(S)$ is a diagonal matrix where each diagonal element is $S_i$,
+    the softmax output for class $i$.
+
+-   $S S^T$ is the outer product of $S$ with itself, creating a matrix where
+    each element $(i, j)$ is $S_i S_j$.
+
+Thus, the Jacobian matrix $J_S$ can be expressed as:
+
+$$
+J_S = \text{diag}(S) - S S^T
+$$
+```
+
+### Implementation of the Jacobian Matrix
+
+```{code-cell} ipython3
+import torch
+from rich.pretty import pprint
+from torch import nn
+
+class Softmax:
+    def __init__(self, dim: int = 1):
+        self.dim = dim
+
+    def __call__(self, z: torch.Tensor) -> torch.Tensor:
+        max_z = torch.max(z, dim=self.dim, keepdim=True).values
+        numerator = torch.exp(z - max_z)
+        denominator = torch.sum(numerator, dim=self.dim, keepdim=True)
+        g = numerator / denominator
+        return g
+
+    def gradient(self, z: torch.Tensor) -> torch.Tensor:
+        S = self.__call__(z)
+        diag_S = torch.diag_embed(S)
+        outer_S = torch.matmul(S.unsqueeze(2), S.unsqueeze(1))
+        gradient = diag_S - outer_S
+        return gradient.squeeze()
+
+
+z = torch.randn((2, 5), requires_grad=True, dtype=torch.float32)
+pprint(z)
+
+pytorch_softmax = nn.Softmax(dim=1)
+pytorch_softmax_outputs = pytorch_softmax(z)
+pprint(pytorch_softmax_outputs)
+
+my_softmax = Softmax(dim=1)
+my_softmax_outputs = my_softmax(z)
+pprint(my_softmax_outputs)
+
+torch.testing.assert_close(
+    pytorch_softmax_outputs, my_softmax_outputs, rtol=1.3e-6, atol=1e-5, msg="Softmax function outputs do not match."
+)
+
+B, K = z.size()
+
+pytorch_jacobian = []
+for k in range(K):
+    grad = torch.autograd.grad(pytorch_softmax_outputs[:, k].sum(), z, retain_graph=True)[0]
+    pytorch_jacobian.append(grad)
+
+pytorch_jacobian = torch.stack(pytorch_jacobian, dim=1)
+pprint(pytorch_jacobian)
+
+my_jacobian = my_softmax.gradient(z)
+pprint(my_jacobian)
+
+torch.testing.assert_close(
+    pytorch_jacobian, my_jacobian, rtol=1.3e-6, atol=1e-5, msg="Jacobian matrices do not match."
+)
+```
+
+### Hessian Matrix
+
+The Hessian matrix represents the second-order partial derivatives of the
+softmax function's components with respect to the components of the input vector
+$\mathbf{z}$. The Hessian gives us insight into the curvature of the softmax
+function, which is particularly useful for understanding the optimization
+landscape. In fact, the Hessian matrix is a key component in monitoring the loss
+function $\mathcal{L}$ where the first order partial derivatives measures the
+rate of change of the loss function with respect to the parameters, and the
+second order partial derivatives measures the curvature of the loss function -
+which says about convexity/concavity, saddle points, minima and maxima etc. See
+[12.1. Optimization and Deep Learning - Dive Into Deep Learning](https://d2l.ai/chapter_optimization/optimization-intro.html)
+for more insights.
+
+Given the softmax function $\sigma(\mathbf{z})_i$ for component $i$, defined as:
+
+$$
+\sigma(\mathbf{z})_i=\frac{e^{z_i}}{\sum_{k=1}^K e^{z_k}}
+$$
+
+Hessian Matrix for Softmax The Hessian matrix $\left(H_\sigma\right)$ of the
+softmax function with respect to the input vector $\mathbf{z}$ is a $K \times K$
+matrix where each element $(i, j)$ is the second-order partial derivative of the
+softmax output for class $i$ with respect to the inputs $z_i$ and $z_j$, denoted
+as:
+
+$$
+\left(H_\sigma\right)_{i j}=\frac{\partial^2 \sigma(\mathbf{z})}{\partial z_i \partial z_j}
+$$
 
 ## References and Further Readings
 
@@ -1049,8 +1355,12 @@ derivative of $g_i$ with respect to $z_j$ depends on whether $i$ equals $j$
     180-184
 -   [3] C. M. Bishop, Chapter 4. Linear Models for Classification in Pattern
     Recognition and Machine Learning. New York: Springer, 2006.
--   [4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola, "Chapter 3.4. Softmax
-    Regression" in Dive into Deep Learning, Cambridge University Press, 2023.
+-   [4] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+    ["Chapter 3.4. Softmax Regression"](https://d2l.ai/chapter_linear-classification/softmax-regression.html)
+    in Dive into Deep Learning, Cambridge University Press, 2023.
+-   [5] A. Zhang, Z. C. Lipton, M. Li, and A. J. Smola,
+    ["Chapter 12.1. Optimization and Deep Learning"](https://d2l.ai/chapter_optimization/optimization-intro.html)
+    in Dive into Deep Learning, Cambridge University Press, 2023.
 
 [^softmax-wikipedia]:
     [Softmax - Wikipedia](https://en.wikipedia.org/wiki/Softmax_function)

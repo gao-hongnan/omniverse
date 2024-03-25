@@ -42,10 +42,11 @@ class Softmax(Activation):
 
     def gradient(self, z: torch.Tensor) -> torch.Tensor:
         """
-        Compute the derivative of the softmax function with respect to its input.
+        Use the Jacobian matrix to compute the gradient. For usage, see
+        `omniverse/playbook/softmax_preserves_order_translation_invariant_not_invariant_scaling.md`.
         """
-        g = self.__call__(z)
-        g = g.unsqueeze(-1)  # add an extra dimension
-        eye = torch.eye(g.shape[1], device=z.device)[None, :]  # identity matrix for each sample
-        dg_dz = g * (eye - g.transpose(-1, -2))
-        return dg_dz.sum(dim=1)
+        S = self.__call__(z)
+        diag_S = torch.diag_embed(S)
+        outer_S = torch.matmul(S.unsqueeze(2), S.unsqueeze(1))
+        gradient = diag_S - outer_S
+        return gradient.squeeze()
