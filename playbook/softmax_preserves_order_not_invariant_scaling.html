@@ -1,0 +1,1611 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Softmax Preserves Order, But Not Invariant Under Scaling &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'playbook/softmax_preserves_order_not_invariant_scaling';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/playbook/softmax_preserves_order_not_invariant_scaling.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
+    <link rel="prev" title="Stabilizing Training with Warmup and Gradual Cosine Annealing" href="why_cosine_warmup_scheduler.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Generative Pre-trained Transformer</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transformer/decoder/intro.html">Generative Pre-trained Transformers</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transformer/decoder/adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="why_cosine_warmup_scheduler.html">Stabilizing Training with Warmup and Gradual Cosine Annealing</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Softmax Preserves Order, But Not Invariant Under Scaling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../deep_learning/training_chronicles/intro.html">Training Chronicles</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deep_learning/training_chronicles/loss.html">The Loss Landscape</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/devops/continuous-integration/concept.html">Continuous Integration (CI) Workflow</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/devops/continuous-integration/testing.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/playbook/softmax_preserves_order_not_invariant_scaling.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fplaybook/softmax_preserves_order_not_invariant_scaling.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/playbook/softmax_preserves_order_not_invariant_scaling.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../_sources/playbook/softmax_preserves_order_not_invariant_scaling.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Softmax Preserves Order, But Not Invariant Under Scaling</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-formulation">Problem Formulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-form-of-f">Functional Form of <span class="math notranslate nohighlight">\(f\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-interpretation">Probabilistic Interpretation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unnormalized-logits">Unnormalized Logits</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-function">Softmax Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-obeys-the-three-axioms-of-probability-kolmogorov-axioms">Softmax Obeys The Three Axioms of Probability (Kolmogorov Axioms)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#non-negativity">Non-Negativity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#additivity">Additivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-preserves-order-monotonicity">Softmax Preserves Order (Monotonicity)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-translation-invariance">Softmax Is Translation Invariance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-instability-of-the-softmax-function">Numerical Instability of the Softmax Function</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-not-invariant-under-scaling">Softmax Is Not Invariant Under Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpening-and-dampening-the-softmax-distribution">Sharpening and Dampening the Softmax Distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-from-the-softmax-distribution">Sampling from the Softmax Distribution</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-smooth-continuous-and-differentiable">Softmax Is Smooth, Continuous and Differentiable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-of-softmax-function-via-exponential-family">Derivation of Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="softmax-preserves-order-but-not-invariant-under-scaling">
+<h1>Softmax Preserves Order, But Not Invariant Under Scaling<a class="headerlink" href="#softmax-preserves-order-but-not-invariant-under-scaling" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#problem-formulation" id="id8">Problem Formulation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#functional-form-of-f" id="id9">Functional Form of <span class="math notranslate nohighlight">\(f\)</span></a></p></li>
+<li><p><a class="reference internal" href="#probabilistic-interpretation" id="id10">Probabilistic Interpretation</a></p></li>
+<li><p><a class="reference internal" href="#unnormalized-logits" id="id11">Unnormalized Logits</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#softmax-function" id="id12">Softmax Function</a></p>
+<ul>
+<li><p><a class="reference internal" href="#softmax-obeys-the-three-axioms-of-probability-kolmogorov-axioms" id="id13">Softmax Obeys The Three Axioms of Probability (Kolmogorov Axioms)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#non-negativity" id="id14">Non-Negativity</a></p></li>
+<li><p><a class="reference internal" href="#normalization" id="id15">Normalization</a></p></li>
+<li><p><a class="reference internal" href="#additivity" id="id16">Additivity</a></p></li>
+<li><p><a class="reference internal" href="#calibration" id="id17">Calibration</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#implementation" id="id18">Implementation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#softmax-preserves-order-monotonicity" id="id19">Softmax Preserves Order (Monotonicity)</a></p></li>
+<li><p><a class="reference internal" href="#softmax-is-translation-invariance" id="id20">Softmax Is Translation Invariance</a></p>
+<ul>
+<li><p><a class="reference internal" href="#numerical-instability-of-the-softmax-function" id="id21">Numerical Instability of the Softmax Function</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#softmax-is-not-invariant-under-scaling" id="id22">Softmax Is Not Invariant Under Scaling</a></p></li>
+<li><p><a class="reference internal" href="#sharpening-and-dampening-the-softmax-distribution" id="id23">Sharpening and Dampening the Softmax Distribution</a></p></li>
+<li><p><a class="reference internal" href="#temperature" id="id24">Temperature</a></p>
+<ul>
+<li><p><a class="reference internal" href="#sampling-from-the-softmax-distribution" id="id25">Sampling from the Softmax Distribution</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#softmax-is-smooth-continuous-and-differentiable" id="id26">Softmax Is Smooth, Continuous and Differentiable</a></p></li>
+<li><p><a class="reference internal" href="#gradient-jacobian-and-hessian-of-softmax" id="id27">Gradient, Jacobian, and Hessian of Softmax</a></p></li>
+<li><p><a class="reference internal" href="#derivation-of-softmax-function-via-exponential-family" id="id28">Derivation of Softmax Function via Exponential Family</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id29">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#citations" id="id30">Citations</a></p></li>
+</ul>
+</nav>
+<section id="problem-formulation">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Problem Formulation</a><a class="headerlink" href="#problem-formulation" title="Link to this heading">#</a></h2>
+<p>Consider a classification problem with a dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> samples,
+defined formally below,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{S} \overset{\mathrm{iid}}{\sim} \mathcal{D} = \left \{ \left(\mathbf{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^N \in \left(\mathcal{X}, \mathcal{Y} \right)^N
+\]</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{X}\)</span> is the input space, <span class="math notranslate nohighlight">\(\mathcal{X} \subseteq \mathbb{R}^{D}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is the output space, <span class="math notranslate nohighlight">\(\mathcal{Y} \subseteq \mathbb{Z}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}^{(n)} \in \mathcal{X}\)</span> is the input feature vector of the <span class="math notranslate nohighlight">\(n\)</span>-th
+sample,</p></li>
+<li><p><span class="math notranslate nohighlight">\(y^{(n)} \in \mathcal{Y}\)</span> is the output label of the <span class="math notranslate nohighlight">\(n\)</span>-th sample,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is the underlying, true but unknown, data distribution,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is the dataset, a finite sample drawn <span class="math notranslate nohighlight">\(\mathrm{iid}\)</span> (the
+independent and identically distributed assumption) from <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p></li>
+</ul>
+<p>Given the classification setuo, the goal is to define a functional form
+<span class="math notranslate nohighlight">\(f(\cdot)\)</span> that maps an input vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> to a predicted output label
+<span class="math notranslate nohighlight">\(y\)</span>. This mapping is typically represented by a function
+<span class="math notranslate nohighlight">\(f: \mathcal{X} \rightarrow \mathcal{Y}\)</span>, which takes an input <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> from
+the input space <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and predicts an output label <span class="math notranslate nohighlight">\(y\)</span> from the output
+space <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>. Consequently, for a classification problem with <span class="math notranslate nohighlight">\(K\)</span>
+discrete classes <span class="math notranslate nohighlight">\(\mathcal{C}_{k}\)</span>, where <span class="math notranslate nohighlight">\(k=1 , \ldots, K\)</span>, the output space
+<span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> corresponds to the set of these <span class="math notranslate nohighlight">\(K\)</span> classes, often represented as
+<span class="math notranslate nohighlight">\(\{1, 2, \ldots, K\}\)</span> or <span class="math notranslate nohighlight">\(\{0, 1, \ldots, K-1\}\)</span>, depending on the indexing
+convention. Therefore, <span class="math notranslate nohighlight">\(y \in \mathcal{Y}\)</span> is the class label assigned to the
+input vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> <span id="id1">[<a class="reference internal" href="../bibliography.html#id3" title="Christopher M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 1 edition, 2007. ISBN 0387310738. URL: http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%3FSubscriptionId%3D13CT5CVB80YFWJEPWS02%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0387310738.">Bishop, 2007</a>]</span>.</p>
+<section id="functional-form-of-f">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Functional Form of <span class="math notranslate nohighlight">\(f\)</span></a><a class="headerlink" href="#functional-form-of-f" title="Link to this heading">#</a></h3>
+<p>The function <span class="math notranslate nohighlight">\(f\)</span> can be explicitly defined in terms of parameters that need to
+be learned from the data <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>. A common approach in machine learning is
+to use a parameterized model <span class="math notranslate nohighlight">\(f_{\boldsymbol{\theta}}\)</span>, where
+<span class="math notranslate nohighlight">\(\boldsymbol{\theta} \in \boldsymbol{\Theta}\)</span> denotes the parameters of the
+model. This model aims to approximate the true but unknown function that maps
+inputs to outputs in the underlying data distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p>
+<p>For a given input vector <span class="math notranslate nohighlight">\(\mathbf{x}^{(n)}\)</span>, the functional form of the model
+can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+y^{(n)} = f_{\boldsymbol{\theta}}\left(\mathbf{x}^{(n)}\right)
+\]</div>
+<p>and the functional form of the estimated label <span class="math notranslate nohighlight">\(\hat{y}^{(n)}\)</span> can be expressed
+as:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{y}^{(n)} = f_{\hat{\boldsymbol{\theta}}}\left(\mathbf{x}^{(n)}\right)
+\]</div>
+<p>For simplicity, we would consider the family of <strong><em>linear models</em></strong>, where the
+functional form can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+f_{\boldsymbol{\theta}}\left(\mathbf{x}\right) = \boldsymbol{\theta}^{\top} \mathbf{x} + b
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{\theta} \in \mathbb{R}^{D}\)</span> is the weight vector,
+<span class="math notranslate nohighlight">\(b \in \mathbb{R}\)</span> is the bias term, and
+<span class="math notranslate nohighlight">\(\boldsymbol{\theta} = \{\boldsymbol{\theta}, b\}\)</span> are the parameters of the
+model. We then seek <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\theta}}\)</span> that minimizes the discrepancy
+between the predicted label <span class="math notranslate nohighlight">\(\hat{y}^{(n)}\)</span> and the true label <span class="math notranslate nohighlight">\(y^{(n)}\)</span> for all
+samples in the dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> via an optimization procedure (learning
+algorithm) <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> over some loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>.</p>
+<p>It is also worth noting the functional form is usually extended to include an
+activation (inverse is the link function in statistics theory) function
+<span class="math notranslate nohighlight">\(\sigma(\cdot)\)</span>, which introduces non-linearity to the model, and more
+importantly, ensures the output of the model is a valid probability distribution
+over the classes (note ensuring the output is a valid probability distribution
+does not equate to the model being well-calibrated). In our context, we would
+treat the activation function as the <strong><em>softmax function</em></strong> and is only applied
+to the output layer of the model.</p>
+<div class="math notranslate nohighlight">
+\[
+f_{\boldsymbol{\theta}}\left(\mathbf{x}\right) = \sigma\left(\underbrace{\boldsymbol{\theta}^{\top} \mathbf{x} + b}_{\mathbf{z}}\right)
+\]</div>
+<p>In the setting of multiclass classification, it is common to represent the
+predicted <span class="math notranslate nohighlight">\(\hat{y}\)</span> as a <span class="math notranslate nohighlight">\(K\)</span>-dimensional vector, where <span class="math notranslate nohighlight">\(K\)</span> is the number of
+classes. And thus, the output of the model can be expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\boldsymbol{y}} := f_{\boldsymbol{\theta}}\left(\mathbf{x}\right) = \begin{bmatrix} \hat{y}_1 &amp; \hat{y}_2 &amp; \cdots &amp; \hat{y}_K \end{bmatrix}
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\hat{y}_k = p\left(y = \mathcal{C}_k \mid \mathbf{x}\right)\)</span>, the
+probability of the input vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> belonging to class <span class="math notranslate nohighlight">\(\mathcal{C}_k\)</span>.</p>
+<p>To this end, it would be incomplete not to mention the probabilistic
+interpretation of the classification problem. We state very briefly in the next
+section. For a more rigorous treatment, we refer the reader to chapter 4 of
+<em>Pattern Recognition and Machine Learning</em> by Bishop <span id="id2">[<a class="reference internal" href="../bibliography.html#id3" title="Christopher M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 1 edition, 2007. ISBN 0387310738. URL: http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%3FSubscriptionId%3D13CT5CVB80YFWJEPWS02%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0387310738.">Bishop, 2007</a>]</span>.</p>
+</section>
+<section id="probabilistic-interpretation">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Probabilistic Interpretation</a><a class="headerlink" href="#probabilistic-interpretation" title="Link to this heading">#</a></h3>
+<p>We can also divide the classification to either <strong><em>discriminative</em></strong> or
+<strong><em>generative</em></strong> models. Discriminative models learn the decision boundary
+directly from the data, while generative models learn the joint distribution of
+the input and output, and then use Bayes’ rule to infer the decision boundary.</p>
+<p>For example, if we look through the multiclass problem through the lens of
+generative models, our goal is basically to find
+<span class="math notranslate nohighlight">\(p\left(\mathcal{C}_k \mid \mathbf{x}\right)\)</span>. One approach to determine this
+conditional probability is to adopt a generative approach in which we model the
+class-conditional densities given by
+<span class="math notranslate nohighlight">\(p\left(\mathbf{x} \mid \mathcal{C}_k\right)\)</span>, together with the prior
+probabilities <span class="math notranslate nohighlight">\(p\left(\mathcal{C}_k\right)\)</span> for the classes, and then we compute
+the required posterior probabilities using Bayes’ theorem <span id="id3">[<a class="reference internal" href="../bibliography.html#id3" title="Christopher M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 1 edition, 2007. ISBN 0387310738. URL: http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%3FSubscriptionId%3D13CT5CVB80YFWJEPWS02%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0387310738.">Bishop, 2007</a>]</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+p\left(\mathcal{C}_k \mid \mathbf{x} ; \boldsymbol{\theta} \right)=\frac{p\left(\mathbf{x} \mid \mathcal{C}_k\right) p\left(\mathcal{C}_k\right)}{p(\mathbf{x})}
+\]</div>
+</section>
+<section id="unnormalized-logits">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Unnormalized Logits</a><a class="headerlink" href="#unnormalized-logits" title="Link to this heading">#</a></h3>
+<p>At this juncture, we would take a look at what happens before the activation
+function, in our case, the softmax function is applied. The linear projection
+layer, often the head/output layer, of the model
+<span class="math notranslate nohighlight">\(f_{\boldsymbol{\theta}}\left(\mathbf{x}\right)\)</span> (pre-softmax), yields what we
+often referred to as the <strong><em>logits</em></strong> or <strong><em>unnormalized scores</em></strong>. We often
+denote the logits as <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, and it is a <span class="math notranslate nohighlight">\(K\)</span>-dimensional vector, where <span class="math notranslate nohighlight">\(K\)</span>
+is the number of classes.</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{z} \in \mathbb{R}^{K} = \boldsymbol{\theta}^{\top} \mathbf{x} + b
+\]</div>
+<p>where each element <span class="math notranslate nohighlight">\(z_k\)</span> of the vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is the unnormalized score of
+the <span class="math notranslate nohighlight">\(k\)</span>-th class.</p>
+<p>Since the logits are unnormalized and unbounded, it follows that we need to
+<em>induce</em> the model to produce a valid probability distribution over the classes.
+This is where the softmax function comes into play.</p>
+<div class="warning admonition">
+<p class="admonition-title">Enough is Enough</p>
+<p>I don’t even know enough to continue the theoretical blabbering. I would stop
+here and transit to the highlight and regurgitate the key points of the softmax
+function.</p>
+</div>
+</section>
+</section>
+<section id="softmax-function">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Softmax Function</a><a class="headerlink" href="#softmax-function" title="Link to this heading">#</a></h2>
+<p>The softmax function (a <strong><em>vector function</em></strong>) takes as input a vector
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} z_1 &amp; z_2 &amp; \cdots &amp; z_K \end{bmatrix}^{\top} \in \mathbb{R}^{K}\)</span>
+of <span class="math notranslate nohighlight">\(K\)</span> real numbers, and normalizes it into a probability distribution
+consisting of <span class="math notranslate nohighlight">\(K\)</span> probabilities proportional to the exponentials of the input
+numbers. That is, prior to applying softmax, some vector components could be
+negative, or greater than one; and might not sum to 1 ; but after applying
+softmax, each component will be in the interval <span class="math notranslate nohighlight">\((0,1)\)</span>, and the components will
+add up to <span class="math notranslate nohighlight">\(1\)</span>, so that they can be interpreted as probabilities. Furthermore,
+the larger input components will correspond to larger probabilities.</p>
+<p>For a vector <span class="math notranslate nohighlight">\(\mathbf{z} \in \mathbb{R}^{K}\)</span> of <span class="math notranslate nohighlight">\(K\)</span> real numbers, the standard
+(unit) softmax function <span class="math notranslate nohighlight">\(\sigma: \mathbb{R}^K \mapsto(0,1)^K\)</span>, where <span class="math notranslate nohighlight">\(K \geq 1\)</span>,
+is defined by the formula</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_j=\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \text { for } j=1, \ldots, K
+\]</div>
+<p>More concretely, we can write explicitly the mapping as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\sigma(\cdot): \mathbb{R}^{K} &amp; \rightarrow(0,1)^{K} \\
+\mathbf{z} &amp; \mapsto \begin{bmatrix} \sigma(\mathbf{z})_1 &amp; \sigma(\mathbf{z})_2 &amp; \cdots &amp; \sigma(\mathbf{z})_K \end{bmatrix}^{\top} \\
+\begin{bmatrix} z_1 &amp; z_2 &amp; \cdots &amp; z_K \end{bmatrix}^{\top} &amp; \mapsto \begin{bmatrix} \frac{e^{z_1}}{\sum_{k=1}^K e^{z_k}} &amp; \frac{e^{z_2}}{\sum_{k=1}^K e^{z_k}} &amp; \cdots &amp; \frac{e^{z_K}}{\sum_{k=1}^K e^{z_k}} \end{bmatrix}^{\top}
+\end{aligned}
+\end{split}\]</div>
+<p>In particular, for any element <span class="math notranslate nohighlight">\(z_j\)</span> of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, the
+softmax function computes the exponential of the element and normalizes it by
+the sum of the exponentials of all the elements in the input vector.</p>
+<section id="softmax-obeys-the-three-axioms-of-probability-kolmogorov-axioms">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Softmax Obeys The Three Axioms of Probability (Kolmogorov Axioms)</a><a class="headerlink" href="#softmax-obeys-the-three-axioms-of-probability-kolmogorov-axioms" title="Link to this heading">#</a></h3>
+<p>First of all, softmax induces a valid probability distribution over the classes.
+Why so? We first need to understand the three axioms of probability, also known
+as the Kolmogorov axioms.</p>
+<p>Consider the probability space defined over the triplet
+<span class="math notranslate nohighlight">\(\left(\Omega, \mathcal{F}, \mathbb{P}\right)\)</span>, where <span class="math notranslate nohighlight">\(\Omega\)</span> is the sample
+space, <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> is the sigma-algebra event space (collection of events),
+and <span class="math notranslate nohighlight">\(\mathbb{P}\)</span> is the probability function.</p>
+<p>A probability function <span class="math notranslate nohighlight">\(\mathbb{P}\)</span> defined over the probability space must
+satisfy the three axioms below. Recall that the <strong>probability function</strong> in a
+well defined <strong>experiment</strong> is a function <span class="math notranslate nohighlight">\(\mathbb{P}: \mathcal{F} \to [0, 1]\)</span>.
+Informally, for any event <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(\mathbb{P}(A)\)</span> is defined as the probability of
+event <span class="math notranslate nohighlight">\(A\)</span> happening.</p>
+<p>This probability function/law <span class="math notranslate nohighlight">\(\mathbb{P}(A)\)</span> must satisfy the following three
+axioms:</p>
+<div class="proof axiom admonition" id="how-does-softmax-work-non-negativity">
+<p class="admonition-title"><span class="caption-number">Axiom 1 </span> (Non-Negativity)</p>
+<section class="axiom-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(\mathbb{P}(A) \geq 0\)</span> for any event <span class="math notranslate nohighlight">\(A \subseteq \S\)</span>.</p>
+</section>
+</div><div class="proof axiom admonition" id="how-does-softmax-work-normalization">
+<p class="admonition-title"><span class="caption-number">Axiom 2 </span> (Normalization)</p>
+<section class="axiom-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(\sum_{i=1}^{n}\mathbb{P}(A_i) = 1\)</span>
+where <span class="math notranslate nohighlight">\(A_i\)</span> are all possible outcomes for <span class="math notranslate nohighlight">\(i = 1, 2,..., n\)</span>.</p>
+</section>
+</div><div class="proof axiom admonition" id="how-does-softmax-work-additivity">
+<p class="admonition-title"><span class="caption-number">Axiom 3 </span> (Additivity)</p>
+<section class="axiom-content" id="proof-content">
+<p>Given a countable sequence of
+<strong>disjoint events</strong> <span class="math notranslate nohighlight">\(A_1, A_2, ..., A_n,... \subset \S\)</span>, we have</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{P}\left(\bigsqcup_{i=1}^{\infty} A_i \right) = \sum_{i=1}^{\infty}\mathbb{P}[A_i]
+\]</div>
+</section>
+</div><section id="non-negativity">
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Non-Negativity</a><a class="headerlink" href="#non-negativity" title="Link to this heading">#</a></h4>
+<p>To satisfy the first axiom, we need to show that <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_j \geq 0\)</span>
+for all <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p>It is easy to see that the exponential function <span class="math notranslate nohighlight">\(e^{z_j}\)</span> is always positive for
+any real number <span class="math notranslate nohighlight">\(z_j\)</span>. Therefore, <span class="math notranslate nohighlight">\(e^{z_j} &gt; 0\)</span> for all <span class="math notranslate nohighlight">\(i\)</span>. The denominator is
+a sum of positive terms, thus also positive. A positive number divided by
+another positive number is positive, hence <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_j &gt; 0\)</span> for all
+<span class="math notranslate nohighlight">\(i\)</span>. This satisfies the non-negativity axiom.</p>
+</section>
+<section id="normalization">
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Normalization</a><a class="headerlink" href="#normalization" title="Link to this heading">#</a></h4>
+<p>To satisfy the second axiom, we need to prove that the sum of the softmax
+function outputs equals 1, i.e., <span class="math notranslate nohighlight">\(\sum_{k=1}^{K} \sigma(\mathbf{z})_k = 1\)</span>.</p>
+<p>By definition of softmax, for any element <span class="math notranslate nohighlight">\(z_j\)</span> of the input vector
+<span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, we have
+<span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^{K} e^{z_k}}\)</span>, and summing
+over all <span class="math notranslate nohighlight">\(K\)</span> classes, we have</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\sum_{j=1}^{K} \sigma(\mathbf{z})_j &amp; = \sum_{j=1}^{K} \frac{e^{z_j}}{\sum_{k=1}^{K} e^{z_k}} \\
+&amp; = \frac{\sum_{j=1}^{K} e^{z_j}}{\sum_{k=1}^{K} e^{z_k}} \\
+&amp; = 1
+\end{aligned}
+\end{split}\]</div>
+<p>This shows that the sum of the outputs of the softmax function equals 1,
+satisfying the normalization axiom.</p>
+</section>
+<section id="additivity">
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">Additivity</a><a class="headerlink" href="#additivity" title="Link to this heading">#</a></h4>
+<p>This is evident because if we treat each instance <span class="math notranslate nohighlight">\(z_j\)</span> as a disjoint event
+since each <span class="math notranslate nohighlight">\(z_j\)</span> can only belong to one class, then the events (or classes) form
+a countable sequence of disjoint events.</p>
+</section>
+<section id="calibration">
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">Calibration</a><a class="headerlink" href="#calibration" title="Link to this heading">#</a></h4>
+<p>While softmax ensures that the output of the model is a valid probability
+distribution over the classes, it does not guarantee that the model is
+well-calibrated. A well-calibrated model is one that produces predicted
+probabilities that are close to the true probabilities.</p>
+</section>
+</section>
+<section id="implementation">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Implementation</a><a class="headerlink" href="#implementation" title="Link to this heading">#</a></h3>
+<p>Here we show a simple implementation of the softmax function in PyTorch.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span> <span class="nc">Softmax</span><span class="p">:</span>
+<span class="linenos"> 2</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 3</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 4</span><span class="sd">        Initialize the softmax function.</span>
+<span class="linenos"> 5</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 6</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">10</span><span class="sd">        Compute the softmax function for a given input.</span>
+<span class="linenos">11</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">12</span>        <span class="n">numerator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos">13</span>        <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numerator</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dim</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos">14</span>        <span class="n">g</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+<span class="linenos">15</span>        <span class="k">return</span> <span class="n">g</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Note</p>
+<p>Note that this version of implementation supports only taking in <code class="docutils literal notranslate"><span class="pre">z</span></code> as a single
+tensor, and not a batch of tensors.</p>
+</div>
+<p>We do a rough comparison of the softmax function implemented in PyTorch with the
+readily available implementation in PyTorch.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos"> 2</span><span class="n">pytorch_softmax</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">pytorch_softmax_probs</span> <span class="o">=</span> <span class="n">pytorch_softmax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos"> 4</span><span class="n">pprint</span><span class="p">(</span><span class="n">pytorch_softmax_probs</span><span class="p">)</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="n">my_softmax</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">my_softmax_probs</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="n">pprint</span><span class="p">(</span><span class="n">my_softmax_probs</span><span class="p">)</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
+<span class="linenos">11</span>    <span class="n">pytorch_softmax_probs</span><span class="p">,</span> <span class="n">my_softmax_probs</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.3e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Softmax function outputs do not match.&quot;</span>
+<span class="linenos">12</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1641</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2960</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0349</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4862</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0188</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0508</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0848</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6198</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0941</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">SoftmaxBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1641</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2960</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0349</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4862</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0188</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0508</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0848</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1505</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6198</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.0941</span><span style="font-weight: bold">]]</span>, <span style="color: #808000; text-decoration-color: #808000">grad_fn</span>=<span style="font-weight: bold">&lt;</span><span style="color: #ff00ff; text-decoration-color: #ff00ff; font-weight: bold">DivBackward0</span><span style="font-weight: bold">&gt;)</span>
+</pre>
+</div></div>
+</div>
+</section>
+</section>
+<section id="softmax-preserves-order-monotonicity">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Softmax Preserves Order (Monotonicity)</a><a class="headerlink" href="#softmax-preserves-order-monotonicity" title="Link to this heading">#</a></h2>
+<p>Order preservation, in the context of mathematical functions, refers to a
+property where the function maintains the relative ordering of its input
+elements in the output. Specifically, for a function <span class="math notranslate nohighlight">\(f\)</span> to be considered
+order-preserving, the following condition must hold:</p>
+<p>Given any two elements <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span> in the domain of <span class="math notranslate nohighlight">\(f\)</span>, if <span class="math notranslate nohighlight">\(a &gt; b\)</span>, then
+<span class="math notranslate nohighlight">\(f(a) &gt; f(b)\)</span>.</p>
+<p>For the softmax function, which is defined for a vector
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} z_1 &amp; z_2 &amp; \cdots &amp; z_K \end{bmatrix}^{\top}\)</span> of
+<span class="math notranslate nohighlight">\(K\)</span> real numbers as:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_j=\frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \text { for } j=1, \ldots, K
+\]</div>
+<p>and for it to be order-preserving, it must satisfy the condition that for any
+two elements <span class="math notranslate nohighlight">\(z_i\)</span> and <span class="math notranslate nohighlight">\(z_j\)</span> in the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, if <span class="math notranslate nohighlight">\(z_i &gt; z_j\)</span>,
+then <span class="math notranslate nohighlight">\(\sigma(\mathbf{z})_i &gt; \sigma(\mathbf{z})_j\)</span>. The proof is relatively
+simple, since the exponential function is monotonically increasing.</p>
+<p>We can show one example in code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos"> 2</span><span class="n">my_softmax</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">my_softmax_probs</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">)</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">_</span><span class="p">,</span> <span class="n">indices_logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">_</span><span class="p">,</span> <span class="n">indices_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">my_softmax_probs</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">pprint</span><span class="p">(</span><span class="n">indices_logits</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="n">pprint</span><span class="p">(</span><span class="n">indices_probs</span><span class="p">)</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span>
+<span class="linenos">12</span>    <span class="n">indices_logits</span><span class="p">,</span> <span class="n">indices_probs</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.3e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Softmax Ordering is not preserved?!&quot;</span>
+<span class="linenos">13</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span><span style="font-weight: bold">]])</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">tensor</span><span style="font-weight: bold">([[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span><span style="font-weight: bold">]])</span>
+</pre>
+</div></div>
+</div>
+<p>Indeed, if the logits is
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} 2.0 &amp; 1.0 &amp; 3.0 &amp; 5.0 &amp; 4.0 \end{bmatrix}\)</span>, with
+ordering of the elements <span class="math notranslate nohighlight">\(z_2 &lt; z_1 &lt; z_3 &lt; z_5 &lt; z_4\)</span> (indices 1, 0, 2, 4, 3),
+we show that the softmax function preserves the ordering of the elements in the
+output probability distribution.</p>
+</section>
+<section id="softmax-is-translation-invariance">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">Softmax Is Translation Invariance</a><a class="headerlink" href="#softmax-is-translation-invariance" title="Link to this heading">#</a></h2>
+<p>The softmax function showcases an important characteristic known as translation
+invariance. This means that if we translate each coordinate of the input vector
+<span class="math notranslate nohighlight">\(\mathbf{z}\)</span> by the same scalar value <span class="math notranslate nohighlight">\(c\)</span>, the output of the softmax function
+remains unchanged. Mathematically, adding a constant vector
+<span class="math notranslate nohighlight">\(\mathbf{c} = (c, \ldots, c)\)</span> to the inputs <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> results in
+<span class="math notranslate nohighlight">\(\sigma(\mathbf{z} + \mathbf{c}) = \sigma(\mathbf{z})\)</span>, because this operation
+multiplies each exponent in the softmax function by the same factor <span class="math notranslate nohighlight">\(e^c\)</span>, due
+to the property <span class="math notranslate nohighlight">\(e^{z_i + c} = e^{z_i} \cdot e^c\)</span>. Consequently, the ratios of
+the exponents do not alter.</p>
+<p>Given the input vector
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} z_1 &amp; z_2 &amp; \ldots &amp; z_K \end{bmatrix}\)</span> and a
+constant scalar <span class="math notranslate nohighlight">\(c\)</span>, the translation invariance of the softmax function can be
+expressed as:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z} + \mathbf{c})_j = \frac{e^{z_j + c}}{\sum_{k=1}^{K}
+e^{z_k + c}} = \frac{e^{z_j} \cdot e^c}{\sum_{k=1}^{K} e^{z_k} \cdot e^c} =
+\sigma(\mathbf{z})_j
+\]</div>
+<p>for <span class="math notranslate nohighlight">\(j = 1, \ldots, K\)</span>, where <span class="math notranslate nohighlight">\(K\)</span> is the number of elements in vector
+<span class="math notranslate nohighlight">\(\mathbf{z}\)</span>.</p>
+<p>In code, we can demonstrate this property as follows:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">constant</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="linenos">2</span><span class="n">translated_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">+</span> <span class="n">constant</span>
+<span class="linenos">3</span><span class="n">translated_probs</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">translated_logits</span><span class="p">)</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original softmax  :&quot;</span><span class="p">,</span> <span class="n">my_softmax_probs</span><span class="p">)</span>
+<span class="linenos">6</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Translated softmax:&quot;</span><span class="p">,</span> <span class="n">translated_probs</span><span class="p">)</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="n">torch</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_close</span><span class="p">(</span><span class="n">my_softmax_probs</span><span class="p">,</span> <span class="n">translated_probs</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.3e-6</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Translation Invariance Violated!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Original softmax  : tensor([[0.0317, 0.0117, 0.0861, 0.6364, 0.2341]])
+Translated softmax: tensor([[0.0317, 0.0117, 0.0861, 0.6364, 0.2341]])
+</pre></div>
+</div>
+</div>
+</div>
+<section id="numerical-instability-of-the-softmax-function">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Numerical Instability of the Softmax Function</a><a class="headerlink" href="#numerical-instability-of-the-softmax-function" title="Link to this heading">#</a></h3>
+<p>Recall the softmax function as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_j = \frac{e^{z_j}}{\sum_{k=1}^K e^{z_k}} \quad \text{for }
+j = 1, \ldots, K
+\]</div>
+<p>When elements of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> are very large (positive or negative), computing
+<span class="math notranslate nohighlight">\(e^{z_j}\)</span> can lead to numerical instability:</p>
+<ul class="simple">
+<li><p><strong>Overflow</strong>: If <span class="math notranslate nohighlight">\(z_j\)</span> is very large, <span class="math notranslate nohighlight">\(e^{z_j}\)</span> can exceed the range of
+floating-point numbers, leading to infinity (<span class="math notranslate nohighlight">\(\infty\)</span>).</p></li>
+<li><p><strong>Underflow</strong>: If <span class="math notranslate nohighlight">\(z_j\)</span> is very negative, <span class="math notranslate nohighlight">\(e^{z_j}\)</span> can become so small that
+it’s considered as zero in floating-point arithmetic.</p></li>
+</ul>
+<p>Both situations can cause issues when computing the softmax, leading to
+inaccurate results or failures in computation due to divisions by infinity or
+zero.</p>
+<p>To mitigate these issues, we leverage the invariance property of softmax to
+shifts in the input vector <span id="id4">[<a class="reference internal" href="../bibliography.html#id5" title="Ian Goodfellow, Yoshua Bengio, and Aaron Courville. Deep Learning. MIT Press, 2016. http://www.deeplearningbook.org.">Goodfellow <em>et al.</em>, 2016</a>]</span>. Specifically, adding
+or subtracting the same scalar from every element of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> doesn’t change
+the output of the softmax function:</p>
+<div class="math notranslate nohighlight">
+\[\sigma(\mathbf{z}) = \sigma(\mathbf{z} + c)\]</div>
+<p>By choosing <span class="math notranslate nohighlight">\(c = -\max_i z_i\)</span>, we subtract the maximum element of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>
+from every element. This operation ensures that the maximum value in the shifted
+vector is <span class="math notranslate nohighlight">\(0\)</span>, which helps in avoiding overflow (since <span class="math notranslate nohighlight">\(e^0 = 1\)</span> is within
+range) and reduces the risk of underflow for other elements.</p>
+<p>The numerically stable softmax function can thus be reformulated as:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_j = \frac{e^{z_j - \max_i z_i}}{\sum_{k=1}^K e^{z_k -
+\max_i z_i}} \quad \text{for } j = 1, \ldots, K
+\]</div>
+<p>This reformulation achieves the following:</p>
+<ul class="simple">
+<li><p><strong>Maximal Value Normalization</strong>: By ensuring that the maximum exponentiated
+value is <span class="math notranslate nohighlight">\(e^0 = 1\)</span>, we prevent overflow.</p></li>
+<li><p><strong>Relative Differences Preserved</strong>: The operation preserves the relative
+differences between the elements of <span class="math notranslate nohighlight">\(\mathbf{z}\)</span>, ensuring the softmax
+output remains unchanged in terms of its distribution properties.</p></li>
+<li><p><strong>Improved Numerical Stability</strong>: The risk of underflow is also mitigated
+since subtracting a large value (<span class="math notranslate nohighlight">\(\max_i z_i\)</span>) from each <span class="math notranslate nohighlight">\(z_j\)</span> makes the
+values more manageable for computation without affecting the ratios that
+softmax aims to model.</p></li>
+</ul>
+</section>
+</section>
+<section id="softmax-is-not-invariant-under-scaling">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Softmax Is Not Invariant Under Scaling</a><a class="headerlink" href="#softmax-is-not-invariant-under-scaling" title="Link to this heading">#</a></h2>
+<p>A function <span class="math notranslate nohighlight">\(f: \mathbb{R}^D \rightarrow \mathbb{R}^D\)</span> is said to be scale
+invariant if for any positive scalar <span class="math notranslate nohighlight">\(c &gt; 0\)</span> and any vector
+<span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^D\)</span>, the following condition holds:</p>
+<div class="math notranslate nohighlight">
+\[
+f(c\mathbf{x}) = f(\mathbf{x})
+\]</div>
+<p>This means that scaling the input vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> by any positive factor <span class="math notranslate nohighlight">\(c\)</span>
+does not change the output of the function <span class="math notranslate nohighlight">\(f\)</span>. Scale invariance implies that
+the function’s output depends only on the direction of the vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>
+and not its magnitude.</p>
+<p>In contrast, a function is not invariant under scaling if there exists at least
+one vector <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathbb{R}^n\)</span> and one scalar <span class="math notranslate nohighlight">\(c &gt; 0\)</span> such that
+<span class="math notranslate nohighlight">\(f(c\mathbf{x}) \neq f(\mathbf{x})\)</span>.</p>
+<p>The softmax function is <strong><em>not</em></strong> invariant under scaling. This is because the
+softmax output changes when the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is scaled by a
+positive scalar <span class="math notranslate nohighlight">\(c\)</span>, as the exponential function magnifies differences in the
+scaled inputs.</p>
+<p>The difference in softmax’s response to scaling can be attributed to the
+exponential operation applied to each element of the input vector before
+normalization. Since the exponential function is not linear, scaling the input
+vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> by a scalar <span class="math notranslate nohighlight">\(c\)</span> does not merely scale the output by the same
+factor, but rather changes the relative weights of the output probabilities.</p>
+<p>Consider the input vector
+<span class="math notranslate nohighlight">\(\mathbf{z} = \begin{bmatrix} 10.0 &amp; 20.0 &amp; 30.0 \end{bmatrix}\)</span>, and its scaled
+version
+<span class="math notranslate nohighlight">\(\tilde{\mathbf{z}} = c \cdot \mathbf{z} = \begin{bmatrix} 0.1 &amp; 0.2 &amp; 0.3 \end{bmatrix}\)</span>
+where <span class="math notranslate nohighlight">\(c = 0.01\)</span>. The softmax output for the larger input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> is
+approximately
+<span class="math notranslate nohighlight">\(\begin{bmatrix} 2.0611e-09 &amp; 4.5398e-05 &amp; 9.9995e-01 \end{bmatrix}\)</span>, while the
+softmax output for the scaled input vector <span class="math notranslate nohighlight">\(\tilde{\mathbf{z}}\)</span> is approximately
+<span class="math notranslate nohighlight">\(\begin{bmatrix} 0.3006 &amp; 0.3322 &amp; 0.3672 \end{bmatrix}\)</span> which show that the
+softmax function is not invariant under scaling by comparing the softmax outputs
+for the original and scaled input vectors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">c</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="linenos"> 2</span><span class="n">input_large</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">input_small</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">input_large</span> <span class="c1"># torch.tensor([0.1, 0.2, 0.3], dtype=torch.float32)</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">softmax_large</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">input_large</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">softmax_small</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">input_small</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Softmax of the larger input :&quot;</span><span class="p">,</span> <span class="n">softmax_large</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Softmax of the smaller input:&quot;</span><span class="p">,</span> <span class="n">softmax_small</span><span class="p">)</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">14</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">softmax_large</span><span class="p">)),</span> <span class="n">softmax_large</span><span class="p">)</span>
+<span class="linenos">15</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Softmax probabilities (original scale)&#39;</span><span class="p">)</span>
+<span class="linenos">16</span>
+<span class="linenos">17</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="linenos">18</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">softmax_small</span><span class="p">)),</span> <span class="n">softmax_small</span><span class="p">)</span>
+<span class="linenos">19</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Softmax probabilities (scale factor: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Softmax of the larger input : tensor([2.0611e-09, 4.5398e-05, 9.9995e-01])
+Softmax of the smaller input: tensor([0.3006, 0.3322, 0.3672])
+</pre></div>
+</div>
+<img alt="../_images/99cf8c2f325d09e1b14f03c4d9dfa5c2e9f0df66c75325ceff5fbaf4f0058727.svg" src="../_images/99cf8c2f325d09e1b14f03c4d9dfa5c2e9f0df66c75325ceff5fbaf4f0058727.svg" /></div>
+</div>
+<p>Another example:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">c</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="linenos"> 2</span><span class="n">input_large</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos"> 3</span><span class="n">input_small</span> <span class="o">=</span> <span class="n">c</span> <span class="o">*</span> <span class="n">input_large</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="n">softmax_large</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">input_large</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">softmax_small</span> <span class="o">=</span> <span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">input_small</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="linenos">11</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">softmax_large</span><span class="p">)),</span> <span class="n">softmax_large</span><span class="p">)</span>
+<span class="linenos">12</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Softmax probabilities (original scale)&#39;</span><span class="p">)</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="linenos">15</span><span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">softmax_small</span><span class="p">)),</span> <span class="n">softmax_small</span><span class="p">)</span>
+<span class="linenos">16</span><span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Softmax probabilities (scale factor: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0692ef81c61a72f020623879389078afb5802565a1273cbf3c8dccb2ee4ca336.svg" src="../_images/0692ef81c61a72f020623879389078afb5802565a1273cbf3c8dccb2ee4ca336.svg" /></div>
+</div>
+</section>
+<section id="sharpening-and-dampening-the-softmax-distribution">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Sharpening and Dampening the Softmax Distribution</a><a class="headerlink" href="#sharpening-and-dampening-the-softmax-distribution" title="Link to this heading">#</a></h2>
+<p>Continuing from our first example, the 3rd element of the softmax output has the
+largest weight (<code class="docutils literal notranslate"><span class="pre">9.9995e-01</span></code>), thereby suppressing the other elements. The sharp
+readers would have noticed that even though the 3rd element has the largest
+weight, it was at a whooping <span class="math notranslate nohighlight">\(0.99995\)</span>, which is almost <span class="math notranslate nohighlight">\(1\)</span> - which means the
+rest of the elements are almost zero. As we shall briefly touch upon later,
+sampling from a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Multinomial_distribution">multinomial distribution</a>
+(number of trials is 1 because we are sampling one token at each time step) with
+the parameter <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span>, where <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span> is the softmax
+output, almost surely will select the 3rd element because of the high
+probability. This is what we call a <strong><em>sharp</em></strong> softmax distribution.</p>
+<p>On the other hand, if we scale the input vector by a factor <span class="math notranslate nohighlight">\(c=0.01\)</span>, even
+though the ranking (order) is preserved, the softmax output is more uniformly
+distributed, with the weights of the elements more evenly spread out. We can see
+the 3rd element has a weight of <span class="math notranslate nohighlight">\(0.3672\)</span>, which is still the maximum in the
+array, but the relative weights of the other elements are higher compared to the
+original softmax output. Similarly, sampling from a multinomial distribution
+with the parameter <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span> this time will be more diverse, because
+our <span class="math notranslate nohighlight">\(\boldsymbol{\pi}\)</span> is more uniform (at
+<span class="math notranslate nohighlight">\(\begin{bmatrix} 0.3006 &amp; 0.3322 &amp; 0.3672 \end{bmatrix}\)</span> and therefore the other
+two elements are likely to get selected as they are quite close to the max
+weight). This is what we call a <strong><em>dampened</em></strong> softmax distribution.</p>
+<p>For people who has toyed around with the temperature parameter in the language
+model, we were told that when the temperature is high, the model is more random,
+and when the temperature is low, the model is more deterministic. This is
+because the temperature parameter effectively scales the logits by <span class="math notranslate nohighlight">\(T\)</span> (the
+temperature), where we can think of it as <code class="docutils literal notranslate"><span class="pre">logits</span> <span class="pre">=</span> <span class="pre">logits</span> <span class="pre">/</span> <span class="pre">(T</span> <span class="pre">+</span> <span class="pre">epsilon)</span></code>.
+This is the same as scaling the logits by a factor <span class="math notranslate nohighlight">\(c = 1/T\)</span>. When <span class="math notranslate nohighlight">\(T\)</span> is high,
+the softmax distribution is more uniform, and when <span class="math notranslate nohighlight">\(T\)</span> is low, the softmax
+distribution is more sharp and the highest weight displays an one-hot manner,
+where the rest of the weights are almost zero.</p>
+</section>
+<section id="temperature">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Temperature</a><a class="headerlink" href="#temperature" title="Link to this heading">#</a></h2>
+<p>We start off this section with an extracted portion from the Wikipedia page that
+is relevant to our discussion on the temperature parameter in the softmax
+function.</p>
+<blockquote class="epigraph">
+<div><p>The term “softmax” derives from the amplifying effects of the exponential on any
+maxima in the input vector. For example, the standard softmax of <span class="math notranslate nohighlight">\((1,2,8)\)</span> is
+approximately <span class="math notranslate nohighlight">\((0.001,0.002,0.997)\)</span>, which amounts to assigning almost all of
+the total unit weight in the result to the position of the vector’s maximal
+element (of 8).</p>
+<p>In general, instead of <span class="math notranslate nohighlight">\(e\)</span> a different base <span class="math notranslate nohighlight">\(b&gt;0\)</span> can be used. If <span class="math notranslate nohighlight">\(0&lt;b&lt;1\)</span>,
+smaller input components will result in larger output probabilities, and
+decreasing the value of <span class="math notranslate nohighlight">\(b\)</span> will create probability distributions that are more
+concentrated around the positions of the smallest input values. Conversely, as
+above, if <span class="math notranslate nohighlight">\(b&gt;1\)</span> larger input components will result in larger output
+probabilities, and increasing the value of <span class="math notranslate nohighlight">\(b\)</span> will create probability
+distributions that are more concentrated around the positions of the largest
+input values.</p>
+<p>Writing <span class="math notranslate nohighlight">\(b=e^\beta\)</span> or <span class="math notranslate nohighlight">\(b=e^{-\beta[\mathbf{a}]}\)</span> (for real <span class="math notranslate nohighlight">\(\beta\)</span>) yields the
+expressions:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_i=\frac{e^{\beta z_i}}{\sum_{j=1}^K e^{\beta z_j}} \text { or } \sigma(\mathbf{z})_i=\frac{e^{-\beta z_i}}{\sum_{j=1}^K e^{-\beta z_j}} \text { for } i=1, \ldots, K
+\]</div>
+<p>The reciprocal of <span class="math notranslate nohighlight">\(\beta\)</span> is sometimes referred to as the temperature,
+<span class="math notranslate nohighlight">\(T=1 / \beta\)</span>, with <span class="math notranslate nohighlight">\(b=e^{1 / T}\)</span>. A higher temperature results in a more
+uniform output distribution (i.e. with higher entropy, and “more random”), while
+a lower temperature results in a sharper output distribution, with one value
+dominating.</p>
+<p class="attribution">—<a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p>
+</div></blockquote>
+<p>More concretely, how temperature is implemented in large language models like
+GPT is by scaling the logits by the temperature parameter <span class="math notranslate nohighlight">\(T\)</span> before applying
+the softmax function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">temperature</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">temperature</span><span class="p">:</span>
+    <span class="n">scaled_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">/</span> <span class="n">t</span>
+    <span class="n">scaled_probs</span> <span class="o">=</span> <span class="n">my_softmax</span><span class="p">(</span><span class="n">scaled_logits</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">, Scaled Probs: </span><span class="si">{</span><span class="n">scaled_probs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>So now we can define the input of the softmax function as <span class="math notranslate nohighlight">\(\frac{z}{T}\)</span> where
+<span class="math notranslate nohighlight">\(T\)</span> is the temperature parameter. Now our softmax would be like the below:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma\left(\frac{\mathbf{z}}{T}\right)_j = \frac{e^{z_j / T}}{\sum_{k=1}^K e^{z_k / T}}
+\]</div>
+<p>which coincides with the definition from the Wikipedia page.</p>
+<p>To conclude, the temperature modifies the “sharpness” of the probability
+distribution without altering the order of the probabilities, a desirable
+property:</p>
+<ul class="simple">
+<li><p>At high temperatures (<span class="math notranslate nohighlight">\(T &gt; 1\)</span>), the distribution becomes more uniform, but
+if <span class="math notranslate nohighlight">\(z_a &gt; z_b\)</span>, then <span class="math notranslate nohighlight">\(\text{softmax}_T(z_a) &gt; \text{softmax}_T(z_b)\)</span> still
+holds. The probabilities become closer to each other, making the choice more
+“random” or “equally likely” among options, but the ranking remains the
+same.</p></li>
+<li><p>At low temperatures (<span class="math notranslate nohighlight">\(T &lt; 1\)</span>), the distribution becomes sharper, with a more
+pronounced difference between the higher and lower probabilities, amplifying
+the differences in likelihood as determined by the logits. The probability
+of the largest logit increases towards 1, while others decrease towards 0.
+Yet, the order of logits is preserved—higher logits translate to higher
+probabilities.</p></li>
+<li><p>At <span class="math notranslate nohighlight">\(T = 1\)</span>, the softmax function is the standard softmax function.</p></li>
+</ul>
+<section id="sampling-from-the-softmax-distribution">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Sampling from the Softmax Distribution</a><a class="headerlink" href="#sampling-from-the-softmax-distribution" title="Link to this heading">#</a></h3>
+<p>Below we show the effect of temperature on multinomial sampling from the softmax
+distribution. The experiements are repeated 1000 times for each temperature, and
+the distribution of sampled outcomes is visualized for each temperature.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="linenos"> 2</span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="linenos"> 3</span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="linenos"> 4</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="linenos"> 5</span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="k">def</span> <span class="nf">demonstrate_multinomial_sampling_effect</span><span class="p">(</span>
+<span class="linenos"> 9</span>    <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">num_experiments</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+<span class="linenos">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+<span class="linenos">11</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">12</span><span class="sd">    Demonstrates the effect of temperature on multinomial sampling from the softmax distribution.</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="sd">    Parameters</span>
+<span class="linenos">15</span><span class="sd">    ----------</span>
+<span class="linenos">16</span><span class="sd">    logits : torch.Tensor</span>
+<span class="linenos">17</span><span class="sd">        The input logits vector.</span>
+<span class="linenos">18</span><span class="sd">    temperatures : List[float]</span>
+<span class="linenos">19</span><span class="sd">        A list of temperatures to apply to the softmax function.</span>
+<span class="linenos">20</span><span class="sd">    num_experiments : int</span>
+<span class="linenos">21</span><span class="sd">        The number of sampling experiments to run for each temperature.</span>
+<span class="linenos">22</span><span class="sd">    epsilon : float, optional</span>
+<span class="linenos">23</span><span class="sd">        A small value added to the temperature to prevent division by zero, by default 1e-8.</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="sd">    Returns</span>
+<span class="linenos">26</span><span class="sd">    -------</span>
+<span class="linenos">27</span><span class="sd">    Tuple[Dict[float, np.ndarray], Dict[float, List[int]]]</span>
+<span class="linenos">28</span><span class="sd">        A tuple containing two dictionaries:</span>
+<span class="linenos">29</span><span class="sd">        - The first maps each temperature to its corresponding softmax probabilities as a numpy array.</span>
+<span class="linenos">30</span><span class="sd">        - The second maps each temperature to a list of sampled outcomes (indices of logits).</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span><span class="sd">    Examples</span>
+<span class="linenos">33</span><span class="sd">    --------</span>
+<span class="linenos">34</span><span class="sd">    &gt;&gt;&gt; logits = torch.tensor([2.0, 1.0, 3.0, 5.0, 4.0], dtype=torch.float32)</span>
+<span class="linenos">35</span><span class="sd">    &gt;&gt;&gt; temperatures = [0.1, 1.0, 10.0]</span>
+<span class="linenos">36</span><span class="sd">    &gt;&gt;&gt; softmax_results, sampling_results = demonstrate_multinomial_sampling_effect(</span>
+<span class="linenos">37</span><span class="sd">    ...     logits, temperatures, num_experiments=1000</span>
+<span class="linenos">38</span><span class="sd">    ... )</span>
+<span class="linenos">39</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">40</span>    <span class="n">softmax_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="linenos">41</span>    <span class="n">sampling_results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span>    <span class="k">for</span> <span class="n">temperature</span> <span class="ow">in</span> <span class="n">temperatures</span><span class="p">:</span>
+<span class="linenos">44</span>        <span class="c1"># Scale logits by temperature</span>
+<span class="linenos">45</span>        <span class="n">scaled_logits</span> <span class="o">=</span> <span class="n">logits</span> <span class="o">/</span> <span class="p">(</span><span class="n">temperature</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
+<span class="linenos">46</span>        <span class="c1"># Apply softmax to scaled logits</span>
+<span class="linenos">47</span>        <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scaled_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">48</span>        <span class="n">softmax_results</span><span class="p">[</span><span class="n">temperature</span><span class="p">]</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_experiments</span><span class="p">):</span>
+<span class="linenos">51</span>            <span class="n">sample</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">replacement</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="linenos">52</span>            <span class="n">sampling_results</span><span class="p">[</span><span class="n">temperature</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+<span class="linenos">53</span>
+<span class="linenos">54</span>    <span class="k">return</span> <span class="n">softmax_results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sampling_results</span><span class="p">)</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span>
+<span class="linenos">57</span><span class="n">logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="linenos">58</span><span class="n">temperatures</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">]</span>
+<span class="linenos">59</span>
+<span class="linenos">60</span><span class="n">num_experiments</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="linenos">61</span><span class="n">softmax_results</span><span class="p">,</span> <span class="n">sampling_results</span> <span class="o">=</span> <span class="n">demonstrate_multinomial_sampling_effect</span><span class="p">(</span>
+<span class="linenos">62</span>    <span class="n">logits</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">,</span> <span class="n">num_experiments</span><span class="o">=</span><span class="n">num_experiments</span>
+<span class="linenos">63</span><span class="p">)</span>
+<span class="linenos">64</span>
+<span class="linenos">65</span><span class="n">outcome_counts</span> <span class="o">=</span> <span class="p">{</span>
+<span class="linenos">66</span>    <span class="n">temp</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">outcomes</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">logits</span><span class="p">))</span> <span class="o">/</span> <span class="n">num_experiments</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="linenos">67</span>    <span class="k">for</span> <span class="n">temp</span><span class="p">,</span> <span class="n">outcomes</span> <span class="ow">in</span> <span class="n">sampling_results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="linenos">68</span><span class="p">}</span>
+<span class="linenos">69</span>
+<span class="linenos">70</span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">temperatures</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">temperatures</span><span class="p">)))</span>
+<span class="linenos">71</span><span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">temperature</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axs</span><span class="p">,</span> <span class="n">temperatures</span><span class="p">):</span>
+<span class="linenos">72</span>    <span class="n">bars</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">logits</span><span class="p">)),</span> <span class="n">outcome_counts</span><span class="p">[</span><span class="n">temperature</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Temperature: </span><span class="si">{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">73</span>    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="linenos">74</span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Distribution of sampled outcomes at temperature </span><span class="si">{</span><span class="n">temperature</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="linenos">75</span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Outcome&quot;</span><span class="p">)</span>
+<span class="linenos">76</span>    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Percentage (%)&quot;</span><span class="p">)</span>
+<span class="linenos">77</span>
+<span class="linenos">78</span>    <span class="k">for</span> <span class="n">bar</span> <span class="ow">in</span> <span class="n">bars</span><span class="p">:</span>
+<span class="linenos">79</span>        <span class="n">yval</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+<span class="linenos">80</span>        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">bar</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">bar</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">yval</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">yval</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
+<span class="linenos">81</span>
+<span class="linenos">82</span><span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="linenos">83</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="../_images/a717fe406ab3b3949cb26755b5d9f7292ceefdce2e0c6adb3844c9abed9bed56.svg" src="../_images/a717fe406ab3b3949cb26755b5d9f7292ceefdce2e0c6adb3844c9abed9bed56.svg" /></div>
+</div>
+</section>
+</section>
+<section id="softmax-is-smooth-continuous-and-differentiable">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Softmax Is Smooth, Continuous and Differentiable</a><a class="headerlink" href="#softmax-is-smooth-continuous-and-differentiable" title="Link to this heading">#</a></h2>
+<p>The term “softmax” is a misnomer, as one would have thought it is a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Smooth_maximum">smooth max</a> - a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Smoothness">smooth approximation</a> of the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Maximum_function">maximum function</a>. However, the
+softmax function is not a smooth approximation of the maximum function, but
+rather a smooth approximation of the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Arg_max">argmax</a> function<a class="footnote-reference brackets" href="#softmax-wikipedia" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>,
+where argmax is the function that outputs the <strong>index</strong> of the maximum element
+in a vector.</p>
+<p>The argmax function is <em>not</em> continuous or differentiable, because it is a
+discrete function that jumps from one index to another as the input vector
+changes (i.e. not smooth). The softmax function, on the other hand, is a smooth
+approximation of the argmax function, as it outputs a probability distribution
+over the elements of the input vector, with the highest probability assigned to
+the maximum element - essentially a continuous and differentiable version of the
+argmax function (we call it a “softened” version of the argmax function)
+<span id="id6">[<a class="reference internal" href="../bibliography.html#id5" title="Ian Goodfellow, Yoshua Bengio, and Aaron Courville. Deep Learning. MIT Press, 2016. http://www.deeplearningbook.org.">Goodfellow <em>et al.</em>, 2016</a>]</span>. Consequently, it is more appropriate to name the
+function “softargmax” instead of “softmax”.</p>
+<p>To this end, it is worth mentioning that softmax gains its popularity in the
+deep learning space because it is smooth and normalizer over the input vector.</p>
+<p>The smoothness assumption is a common one in the context of deep learning,
+because for when we say that the estimator function
+<span class="math notranslate nohighlight">\(f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span> is <em>smooth</em> with respect to the parameter
+space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, it means that the estimator function
+<span class="math notranslate nohighlight">\(f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span> is <em>smooth</em> with respect to the parameter
+space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> if the function is continuous and
+differentiable with respect to the parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>
+up to a certain order (usually the first for SGD variants and second order for
+Newton).</p>
+<p>What this implies is that the derivative of the function with respect to the
+parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, denoted as
+<span class="math notranslate nohighlight">\(\nabla_{\hat{\boldsymbol{\Theta}}} f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span> is
+continuous. Loosely, you can think of that a small perturbation in the parameter
+space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> will result in a small change in the output of
+the function <span class="math notranslate nohighlight">\(f_{\hat{\boldsymbol{\Theta}}}(\cdot)\)</span> - enabling gradient-based
+optimization algorithms to work effectively as if not, then taking a step in the
+direction of the gradient would not guarantee a decrease in the loss function,
+slowing down convergence.</p>
+</section>
+<section id="gradient-jacobian-and-hessian-of-softmax">
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">Gradient, Jacobian, and Hessian of Softmax</a><a class="headerlink" href="#gradient-jacobian-and-hessian-of-softmax" title="Link to this heading">#</a></h2>
+<p>… to be continued</p>
+</section>
+<section id="derivation-of-softmax-function-via-exponential-family">
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">Derivation of Softmax Function via Exponential Family</a><a class="headerlink" href="#derivation-of-softmax-function-via-exponential-family" title="Link to this heading">#</a></h2>
+<p>For a rigorous derivation of the softmax function - which will give rise to
+intuition on how sigmoid and softmax is derived from the exponential family of
+distributions - we refer the reader to chapter 2.4. The Exponential Family of
+Christopher Bishop’s <em>Pattern Recognition and Machine Learning</em>
+<span id="id7">[<a class="reference internal" href="../bibliography.html#id3" title="Christopher M. Bishop. Pattern Recognition and Machine Learning (Information Science and Statistics). Springer, 1 edition, 2007. ISBN 0387310738. URL: http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738%3FSubscriptionId%3D13CT5CVB80YFWJEPWS02%26tag%3Dws%26linkCode%3Dxm2%26camp%3D2025%26creative%3D165953%26creativeASIN%3D0387310738.">Bishop, 2007</a>]</span> with reference
+<a class="reference external" href="https://math.stackexchange.com/questions/328115/derivation-of-softmax-function">here</a>.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id29" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>4.3.4 Multiclass logistic regression bishop et al. 2007</p></li>
+<li><ol class="arabic simple" start="4">
+<li><p>linear model bisop et al. 2007</p></li>
+</ol>
+</li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p></li>
+<li><p><a class="reference external" href="https://eli.thegreenplace.net/2016/the-softmax-function-and-its-derivative/">The Softmax function and its derivative - Eli Bendersky</a></p></li>
+<li><p><a class="reference external" href="https://stats.stackexchange.com/questions/527080/what-is-the-role-of-temperature-in-softmax">What is the role of temperature in Softmax?</a></p></li>
+</ul>
+</section>
+<section id="citations">
+<h2><a class="toc-backref" href="#id30" role="doc-backlink">Citations</a><a class="headerlink" href="#citations" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>[1] D. A. Roberts, S. Yaida, B. Hanin, “Chapter 6.2.1 Bayesian Model
+Fitting” in
+<a class="reference external" href="https://arxiv.org/abs/2106.10165">“The Principles of Deep Learning Theory”</a>,
+arXiv preprint arXiv:2106.10165, [Submitted on 18 Jun 2021 (v1), last
+revised 24 Aug 2021 (this version, v2)].</p></li>
+<li><p>[2] I. Goodfellow, Y. Bengio, A. Courville, Chapter 6.2.2.3 Softmax Units
+for Multinoulli Output Distributions in
+<a class="reference external" href="http://www.deeplearningbook.org/">“Deep Learning”</a>, MIT Press, 2016. pp.
+180-184</p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="softmax-wikipedia" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">Softmax - Wikipedia</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./playbook"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="why_cosine_warmup_scheduler.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Stabilizing Training with Warmup and Gradual Cosine Annealing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../deep_learning/training_chronicles/intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training Chronicles</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-formulation">Problem Formulation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-form-of-f">Functional Form of <span class="math notranslate nohighlight">\(f\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probabilistic-interpretation">Probabilistic Interpretation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#unnormalized-logits">Unnormalized Logits</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-function">Softmax Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-obeys-the-three-axioms-of-probability-kolmogorov-axioms">Softmax Obeys The Three Axioms of Probability (Kolmogorov Axioms)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#non-negativity">Non-Negativity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization">Normalization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#additivity">Additivity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation">Implementation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-preserves-order-monotonicity">Softmax Preserves Order (Monotonicity)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-translation-invariance">Softmax Is Translation Invariance</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-instability-of-the-softmax-function">Numerical Instability of the Softmax Function</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-not-invariant-under-scaling">Softmax Is Not Invariant Under Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sharpening-and-dampening-the-softmax-distribution">Sharpening and Dampening the Softmax Distribution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#temperature">Temperature</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sampling-from-the-softmax-distribution">Sampling from the Softmax Distribution</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax-is-smooth-continuous-and-differentiable">Softmax Is Smooth, Continuous and Differentiable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-jacobian-and-hessian-of-softmax">Gradient, Jacobian, and Hessian of Softmax</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#derivation-of-softmax-function-via-exponential-family">Derivation of Softmax Function via Exponential Family</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citations">Citations</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

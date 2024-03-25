@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Why Do We Like To Use Warmup and Cosine Schedulers? &#8212; Omniverse</title>
+    <title>Stabilizing Training with Warmup and Gradual Cosine Annealing &#8212; Omniverse</title>
   
   
   
@@ -67,7 +67,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/playbook/why_cosine_warmup_scheduler.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Training Chronicles" href="../deep_learning/training_chronicles/intro.html" />
+    <link rel="next" title="Softmax Preserves Order, But Not Invariant Under Scaling" href="softmax_preserves_order_not_invariant_scaling.html" />
     <link rel="prev" title="How to Inspect Function and Class Signatures in Python" href="how_to_inspect_function_and_class_signatures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -201,7 +201,8 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Why Do We Like To Use Warmup and Cosine Schedulers?</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Stabilizing Training with Warmup and Gradual Cosine Annealing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="softmax_preserves_order_not_invariant_scaling.html">Softmax Preserves Order, But Not Invariant Under Scaling</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
 <ul class="nav bd-sidenav">
@@ -279,6 +280,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citations.html">IEEE (Style) Citations</a></li>
 </ul>
 
     </div>
@@ -512,7 +514,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Why Do We Like To Use Warmup and Cosine Schedulers?</h1>
+    <h1>Stabilizing Training with Warmup and Gradual Cosine Annealing</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -552,8 +554,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="why-do-we-like-to-use-warmup-and-cosine-schedulers">
-<h1>Why Do We Like To Use Warmup and Cosine Schedulers?<a class="headerlink" href="#why-do-we-like-to-use-warmup-and-cosine-schedulers" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="stabilizing-training-with-warmup-and-gradual-cosine-annealing">
+<h1>Stabilizing Training with Warmup and Gradual Cosine Annealing<a class="headerlink" href="#stabilizing-training-with-warmup-and-gradual-cosine-annealing" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
@@ -708,7 +710,7 @@ follows:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c067238e61b80132a3c17b2a6a8ef6c4e925d7504d4fd7002ae01cb4f7f37144.svg" src="../_images/c067238e61b80132a3c17b2a6a8ef6c4e925d7504d4fd7002ae01cb4f7f37144.svg" /></div>
+<img alt="../_images/5dcc5950b5ad5168a175d4229e1dfde8cfc7411bb79395ec74346846277f94df.svg" src="../_images/5dcc5950b5ad5168a175d4229e1dfde8cfc7411bb79395ec74346846277f94df.svg" /></div>
 </div>
 </section>
 <section id="warmup">
@@ -734,9 +736,12 @@ works as a variance reduction technique, which overcomes the problem of
 <a class="reference external" href="https://stats.stackexchange.com/questions/232741/why-is-it-important-to-include-a-bias-correction-term-for-the-adam-optimizer-for">bias correction factors</a>
 in optimizers like Adam, where having these bias correction factors would lead
 to larger variance in the adaptive learning rate during the <strong>initial</strong> training
-iterations <span id="id4">[<a class="reference internal" href="../bibliography.html#id17" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. If we don’t want to swap out Adam, then this
-calls for a warmup phase to stabilize the learning rate and reduce the variance
-in the early stages of training.</p>
+iterations <span id="id4">[<a class="reference internal" href="../bibliography.html#id17" title="Phillip Lippe. UvA Deep Learning Tutorials. https://uvadlc-notebooks.readthedocs.io/en/latest/, 2023.">Lippe, 2023</a>]</span>. More concretely, Adam estimates the first
+and second moments of the gradient to change the learning rate of each
+individual parameter (hence adaptive) and having high variance between adaptive
+learning rates may de-stablize the training. If we don’t want to swap out Adam,
+then this calls for a warmup phase to stabilize the learning rate and reduce the
+variance in the early stages of training.</p>
 <p>Secondly, language models like Transformers use iteratively applied Layer
 Normalization across layers can lead to very high gradients during the first
 iterations, which can be solved by using
@@ -927,7 +932,7 @@ multiple cycles.</p>
   warnings.warn(&quot;The verbose parameter is deprecated. Please use get_last_lr() &quot;
 </pre></div>
 </div>
-<img alt="../_images/e89b0763e290db39d8b98d99108690bfcc0b3d983fb81e3cb9bacfbff9a30edf.svg" src="../_images/e89b0763e290db39d8b98d99108690bfcc0b3d983fb81e3cb9bacfbff9a30edf.svg" /></div>
+<img alt="../_images/4e4334654052bd0dbfc96a46f9ceeb5ff930529cd8ac6672ac0cf78e76d2e177.svg" src="../_images/4e4334654052bd0dbfc96a46f9ceeb5ff930529cd8ac6672ac0cf78e76d2e177.svg" /></div>
 </div>
 </section>
 <section id="an-example-walkthrough">
@@ -1325,11 +1330,11 @@ in Dive into Deep Learning, Cambridge University Press, 2023.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../deep_learning/training_chronicles/intro.html"
+       href="softmax_preserves_order_not_invariant_scaling.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Training Chronicles</p>
+        <p class="prev-next-title">Softmax Preserves Order, But Not Invariant Under Scaling</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
