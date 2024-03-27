@@ -1505,6 +1505,10 @@ to better predict them, regardless of their method of procurement
 -   [8] D. Jurafsky and J. H. Martin,
     ["Chapter 10. Transformers and Large Language Models"](https://web.stanford.edu/~jurafsky/slp3/10.pdf)
     in Speech and Language Processing, 3rd ed., Pearson, 2023. pp. 213-241.
+-   [9] A. Radford, K. Narasimhan, T. Salimans, and I. Sutskever,
+    ["Improving Language Understanding by Generative Pre-Training"](https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf).
+-   [10] A. Radford, J. Wu, R. Child, D. Luan, D. Amodei, and I. Sutskever,
+    ["Language Models are Unsupervised Multitask Learners"](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf).
 
 [^1]:
     This part is not concrete as the formalization is not rigorous in the
