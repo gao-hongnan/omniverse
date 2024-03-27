@@ -37,9 +37,12 @@
     revised 24 Aug 2021 (this version, v2)].
 -   [10] I. Goodfellow, Y. Bengio, A. Courville,
     ["Deep Learning"](http://www.deeplearningbook.org/), MIT Press, 2016.
-
 -   [11] C. M. Bishop, Pattern Recognition and Machine Learning. New York:
     Springer, 2006.
+-   [12] A. Radford, K. Narasimhan, T. Salimans, and I. Sutskever,
+    ["Improving Language Understanding by Generative Pre-Training"](https://s3-us-west-2.amazonaws.com/openai-assets/research-covers/language-unsupervised/language_understanding_paper.pdf).
+-   [13] A. Radford, J. Wu, R. Child, D. Luan, D. Amodei, and I. Sutskever,
+    ["Language Models are Unsupervised Multitask Learners"](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf).
 
 ## Computer Science
 
