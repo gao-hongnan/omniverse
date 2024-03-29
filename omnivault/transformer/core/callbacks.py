@@ -10,13 +10,8 @@ from omnivault.transformer.utils.format import format_lr
 
 def update_state(trainer: Trainer) -> None:
     """Update the state of the trainer."""
-    trainer.state.model = trainer.model
-    trainer.state.criterion = trainer.criterion
-    trainer.state.optimizer = trainer.optimizer
-    trainer.state.scheduler = trainer.scheduler
-    trainer.state.epoch_index = trainer.epoch_index
-    trainer.state.train_batch_index = trainer.train_batch_index
-    trainer.state.step_index = trainer.step_index
+    relevant_attrs = ['model', 'criterion', 'optimizer', 'scheduler', 'epoch_index', 'train_batch_index', 'step_index', 'history']
+    trainer.state.__dict__.update({attr: getattr(trainer, attr) for attr in relevant_attrs})
 
 
 def save_state(trainer: Trainer) -> None:
