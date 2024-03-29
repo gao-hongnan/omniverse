@@ -40,8 +40,8 @@ from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.general_utils import cleanup
-from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+from omnivault.utils.reproducibility.seed import seed_all
 
 seed_all(set_torch_deterministic=False)  # set to False since it may cause a slight increase in memory usage
 tf.random.set_seed(1992)

@@ -8,7 +8,7 @@ import seaborn as sns
 
 
 def save_plot_history(history: Dict[str, List[float]], plot: bool = False, save_path: str | None = None) -> None:
-    sns.set(style="whitegrid")
+    sns.set_theme(style="whitegrid")
     plt.rcParams["font.family"] = "DejaVu Sans"
 
     num_metrics = len(history.keys())

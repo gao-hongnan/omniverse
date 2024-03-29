@@ -7,8 +7,8 @@ from typing import Any, Dict, Type, Union
 import torch
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from omnivault.transformer.utils.device import get_device
 from omnivault.transformer.utils.general_utils import PYTORCH_DTYPE_MAP
+from omnivault.utils.torch_utils.device import get_device
 
 __all__ = ["TrainerConfig"]
 

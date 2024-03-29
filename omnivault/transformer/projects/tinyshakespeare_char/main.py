@@ -31,9 +31,9 @@ from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import TextCharacterVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_on_train_batch_end
-from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
-from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
+from omnivault.utils.reproducibility.seed import seed_all
 
 
 def main(cfg: DictConfig | ListConfig) -> None:

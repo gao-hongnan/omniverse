@@ -56,7 +56,7 @@ def configure_deterministic_mode() -> None:
     os.environ['CUBLAS_WORKSPACE_CONFIG'] = ':4096:8'
     # fmt: on
     warnings.warn(
-        "Deterministic mode is activated. This will negatively impact performance.",
+        "Deterministic mode is activated. This will negatively impact performance and may cause increase in CUDA memory footprint.",
         category=UserWarning,
         stacklevel=2,
     )

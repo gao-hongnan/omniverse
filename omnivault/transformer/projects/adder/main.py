@@ -34,10 +34,10 @@ from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.utils.config_utils import load_yaml_config, merge_configs
 from omnivault.transformer.utils.general_utils import create_directory, download_file, validate_and_cleanup
-from omnivault.transformer.utils.reproducibility import seed_all
 from omnivault.transformer.utils.visualization import save_plot_history
+from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
+from omnivault.utils.reproducibility.seed import seed_all
 
 warnings.filterwarnings("ignore", category=UserWarning)  # usually related to deterministic behavior of pytorch
 
