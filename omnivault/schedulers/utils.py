@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 
+__all__ = ["get_learning_rates", "plot_learning_rates"]
+
 
 def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int) -> List[float]:
     """

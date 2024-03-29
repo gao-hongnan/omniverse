@@ -6,6 +6,9 @@
         -   [29th March, 2024](#29th-march-2024)
             -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
             -   [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+            -   [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
+            -   [Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#tiny-shakespeare-character-token-level-run-1-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
     -   [Setup and Installation](#setup-and-installation)
         -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
         -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
@@ -32,7 +35,7 @@
         -   [Experiments](#experiments-1)
             -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
             -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-    -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
+    -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level-1)
         -   [Commit Hash](#commit-hash-2)
         -   [KerasNLP Example](#kerasnlp-example)
         -   [Training](#training)
@@ -98,6 +101,91 @@ python omnivault/transformer/projects/adder/main.py \
 ```
 
 ![ffd2392_run_2](./projects/adder/assets/ffd2392_run_2.jpg)
+
+#### Adder Run 3. CPU Bound 3 Epochs (Debug)
+
+-   Commit Hash `ffd2392`
+
+| Epoch | Train Avg Loss     | Train Avg Perplexity | Valid Avg Loss     | Valid Avg Perplexity |
+| ----- | ------------------ | -------------------- | ------------------ | -------------------- |
+| 1     | 2.1339846214566913 | 8.448463439941406    | 1.497946394920349  | 4.472494602203369    |
+| 2     | 1.261589478765215  | 3.53102970123291     | 1.0334483652114868 | 2.810741424560547    |
+| 3     | 0.9781474182946341 | 2.65952467918396     | 0.9288828363418579 | 2.531679391860962    |
+
+#### Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler
+
+-   Commit Hash `ffd2392`
+
+![ffd2392-tiny-shakespeare](./projects/adder/assets/ffd2392_run_1.jpg)
+
+End of the 5th epoch, pretty decent results for a character level language
+model.
+
+```python
+O God, O God! then, he spoke to business' tender,
+And brought the father, they cannot be curs,
+Or blessed by the horn: there that we love at
+To take off our course, our good city and pains
+To cure or his book: have we mean'd and look for
+Boldly force of partical corse,
+And not so despair.
+
+PERDITA:
+Why, wrange, the lord?
+
+First Officer:
+Ay, my good lord, that I spy to take
+A claudious intrusting; for in the humour,
+And live in all ten feel as traitor.
+If this weak world for me, I will part to thee,
+The senator of thy child since thou art.
+I will hold my bind my sad open,
+If a dastard of murderer, or my sovereign,
+Thou hast a broken pawn upon thy grave,
+Tybalt bosom a sister-pinch, and breward,
+My showmanly but a certain strength
+Was, by this night and wear and two wonder;
+For that my grey must have much;
+So many to speak mother within flatter.
+To love upon it, for you both the best,
+Have all no less for so fall'n of you.
+
+Boy:
+And look, good and torture! I have done see
+To be more obedient out.
+```
+
+#### SimpleBooks-92 (Word Token Level)
+
+-   Commit Hash `ffd2392`
+-   [Kaggle Notebook](https://www.kaggle.com/code/reighns/gptdecoder-simplebooks-92?scriptVersionId=169290789)
+
+| Epoch | Train Avg Loss     | Train Avg Perplexity | Valid Avg Loss     | Valid Avg Perplexity |
+| ----- | ------------------ | -------------------- | ------------------ | -------------------- |
+| 1     | 4.8803375387611165 | 131.6751251220703    | 4.355229377746582  | 77.88468933105469    |
+| 2     | 4.43865847368137   | 84.66127014160156    | 4.166375637054443  | 64.4813232421875     |
+| 3     | 4.309790557989876  | 74.4249038696289     | 4.079253673553467  | 59.10134506225586    |
+| 4     | 4.242468370935819  | 69.57938385009766    | 4.034135341644287  | 56.49405288696289    |
+| 5     | 4.19857784984399   | 66.59156036376953    | 3.991755485534668  | 54.149864196777344   |
+| 6     | 4.167113543678388  | 64.52893829345703    | 3.9651288986206055 | 52.72706604003906    |
+| 7     | 4.1421090829443115 | 62.93540573120117    | 3.9476492404937744 | 51.81342315673828    |
+| 8     | 4.12189095486988   | 61.67576217651367    | 3.9435625076293945 | 51.602108001708984   |
+
+![ffd2392](./projects/adder/assets/ffd2392_simplebook.png)
+
+-   Epoch 6 Results
+
+    ```python
+    TopKSampler search Generated text tf.Tensor([b'[BOS] the two men had taken up
+    their horses in the morning , while they were in command of the army , while
+    they were advancing behind . the two horses were fired at the enemy , and they
+    had been driven to the ground , the infantry were driven into the line of the
+    enemy . the british were wounded , and the english were wounded , and , having
+    the whole party in the rear , they could not see the battle of conflict , but as
+    they did not see themselves in the battle of battle , they were now killed . the
+    latter , having not only a moment . the men of the portuguese were driven back
+    into the village ,'], shape=(1,), dtype=string)
+    ```
 
 ## Setup and Installation
 

@@ -27,6 +27,7 @@ from omnivault.transformer.core.callbacks import (
 )
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
+from omnivault.transformer.utils.format import format_lr
 from omnivault.transformer.utils.general_utils import get_default_logger
 
 
@@ -323,7 +324,7 @@ class Trainer:
                     "total_batch_loss": f"{this_batch_total_loss:.5f}",
                     "average_batch_loss": f"{this_batch_average_loss:.5f}",
                     "average_batch_perplexity": f"{this_batch_average_perplexity:.5f}",
-                    "lr": f"{self._get_current_lr_or_lrs():.9f}",
+                    "lr": f"{format_lr(self._get_current_lr_or_lrs(), precision=9)}",
                 }
             )
 

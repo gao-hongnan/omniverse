@@ -6,6 +6,8 @@ from functools import partial
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim.optimizer import Optimizer
 
+__all__ = ["_get_cosine_schedule_with_warmup_lr_lambda", "get_cosine_annealing_with_warmup"]
+
 
 def _get_cosine_schedule_with_warmup_lr_lambda(
     current_step: int, *, num_warmup_steps: int, num_training_steps: int, alpha_f: float
@@ -62,17 +64,26 @@ def get_cosine_annealing_with_warmup(
         The number of steps for the warmup phase.
     num_training_steps: int
         The total number of training steps.
-    alpha_f: float, optional
+    alpha_f: float
         The minimum learning rate at the end of the schedule, by default 0.1.
-    last_epoch: int, optional
+    last_epoch: int
         The index of the last epoch when resuming training, by default -1.
-    verbose: bool, optional
+    verbose: bool
         Whether to print the learning rate at every update, by default False.
 
     Returns
     -------
     `torch.optim.lr_scheduler.LambdaLR`
         The scheduler with the appropriate schedule.
+
+    Examples
+    --------
+    >>> from torch import nn
+    >>> from torch.optim import Adam
+    >>> dummy_model = nn.Linear(1, 1)
+    >>> optimizer = Adam(dummy_model.parameters(), lr=3e-4)
+    >>> scheduler = get_cosine_annealing_with_warmup(optimizer, num_warmup_steps=5, num_training_steps=10, alpha_f=0.5)
+    >>> assert isinstance(scheduler, LambdaLR)
     """
 
     lr_lambda = partial(

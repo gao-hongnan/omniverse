@@ -53,7 +53,7 @@ def evaluate_and_generate_on_valid_epoch_end(
     generator_config = trainer.composer.generator
     assert (
         generator_config.max_tokens == trainer.composer.constants.NUM_DIGITS + 1 + 1  # type: ignore[attr-defined]
-    ), "In this dataset, the max tokens to generate is fixed and derived from the number of digits. If we add two 2-digits together, it does not make sense for us to keep generating since the max digits for answer is 3 digits, with an optional `<EOS` token if it is in our vocabulary."
+    ), "In this dataset, the max tokens to generate is fixed and derived from the number of digits. If we add two 2-digits together, it does not make sense for us to keep generating since the max digits for answer is 3 digits, with an optional `<EOS>` token if it is in our vocabulary."
     assert generator_config.greedy is True, "We should use greedy generation for this task in particular."
 
     vocabulary = trainer.state.vocabulary

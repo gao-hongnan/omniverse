@@ -8,7 +8,8 @@
 -   [Omniverse](#omniverse)
     -   [Blogs](#blogs)
     -   [Implementation of Decoder](#implementation-of-decoder)
-    -   [Building and Running the Jupyter Book Docker Image](#building-and-running-the-jupyter-book-docker-image)
+    -   [Building and Running NVIDIA Docker Image](#building-and-running-nvidia-docker-image)
+    -   [Building and Running Jupyter Book Docker Image](#building-and-running-jupyter-book-docker-image)
         -   [Building the Docker Image](#building-the-docker-image)
         -   [Running the Docker Container](#running-the-docker-container)
         -   [Stopping the Docker Container](#stopping-the-docker-container)
@@ -51,7 +52,22 @@ The tiered structure of the blogs is as follows:
 
 -   https://github.com/gao-hongnan/omniverse/tree/main/omnivault/transformer
 
-## Building and Running the Jupyter Book Docker Image
+## Building and Running NVIDIA Docker Image
+
+Currently our `.github/workflows/nvidia-docker.yaml` workflow is used to build
+and push the Docker image to Docker Hub. To use it, follow the below steps.
+
+```bash
+cd </path/to/project> # i.e. go to omniverse dir first so we can call pwd
+chmod -R 777 $PWD # need for mkdir etc
+docker run --gpus all -it --user 2222:2222 --shm-size=16g -v $PWD:/workspace gaohn/omniverse-nvidia:6140759e
+```
+
+The `-shm-size` is needed because if your virtual machine has say, 8 CPU cores,
+then you would likely use 8 workers in the dataloading, and you would require
+more shared memory.
+
+## Building and Running Jupyter Book Docker Image
 
 This section provides detailed instructions on how to build the Dockerfile
 (`docker/documentation/jupyterbook.Dockerfile`) and run the Docker image. The
