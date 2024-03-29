@@ -22,7 +22,7 @@ class MultiHeadedAttentionConfig(BaseModel):
 class PositionwiseFeedForwardConfig(BaseModel):
     d_model: int
     d_ff: int
-    activation: nn.Module = Field(default=nn.GELU(approximate="tanh"))
+    activation: nn.Module = Field(default=nn.GELU(approximate="tanh")) # NOTE: https://github.com/facebookresearch/xformers/issues/759
     dropout: float = 0.1
     bias: bool = True
 
