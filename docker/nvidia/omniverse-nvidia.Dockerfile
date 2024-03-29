@@ -54,4 +54,4 @@ ENV PATH ${CONDA_HOME}/bin:${HOME_DIR}/.local/bin:$PATH
 RUN echo "source ${CONDA_HOME}/bin/activate" >> "${HOME_DIR}/.bashrc"
 
 # Use ENTRYPOINT to activate the conda base environment upon startup
-ENTRYPOINT [ "/bin/bash", "-c", "source ${CONDA_HOME}/bin/activate && exec bash" ]
+ENTRYPOINT /bin/bash -c "source ${CONDA_HOME}/bin/activate && exec bash"
