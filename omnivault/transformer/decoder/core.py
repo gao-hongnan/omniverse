@@ -96,9 +96,11 @@ class GPTDecoder(BaseDecoder):
 
         self.apply(self._init_weights)
 
+        context_projections = ("context_projection.weight", "W_O.weight")
         # apply special scaled init to the residual projections, per GPT-2 paper
         for parameter_name, parameter in self.named_parameters():
-            if parameter_name.endswith("context_projection.weight"):
+            # NOTE: W_O is also projection but I did not have foresight to name it as such.
+            if parameter_name.endswith(context_projections):
                 mean = 0.0
                 std_dev = 0.02 / torch.sqrt(torch.tensor(2 * config.num_decoder_blocks, dtype=torch.float))
                 torch.nn.init.normal_(parameter, mean=mean, std=std_dev)
