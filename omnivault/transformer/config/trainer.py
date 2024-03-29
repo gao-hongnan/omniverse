@@ -14,7 +14,7 @@ __all__ = ["TrainerConfig"]
 
 
 class TrainerConfig(BaseModel):
-    device: str = Field(default="auto", description="Device to use for training.")
+    device: torch.device = Field(default_factory=get_device, description="Device to use for training.")
 
     # general
     max_epochs: int = Field(default=2, description="Number of epochs to train for.")
@@ -30,7 +30,7 @@ class TrainerConfig(BaseModel):
     # mixed precision training
     use_amp: bool = Field(default=False, description="Whether to use automatic mixed precision training.")
     autocast_config: Dict[str, Any] = Field(
-        default={"enabled": False, "dtype": torch.float16, "cache_enabled": True},
+        default={"enabled": False, "dtype": None, "cache_enabled": None},
         description="Autocast configuration, for details of the params, see `torch.cuda.amp.autocast`.",
     )
     scaler_config: Dict[str, Any] = Field(
@@ -81,7 +81,7 @@ class TrainerConfig(BaseModel):
     )
     mode: str = Field(default="min", description="The mode to monitor for saving best model.", examples=["min", "max"])
 
-    @field_validator("device", mode="plain")
+    @field_validator("device", mode="before")
     @classmethod
     def set_device(cls: Type[TrainerConfig], v: str) -> torch.device:
         if v == "auto":
@@ -107,3 +107,8 @@ class TrainerConfig(BaseModel):
             if key == "dtype" and value in PYTORCH_DTYPE_MAP:
                 autocast_config[key] = PYTORCH_DTYPE_MAP[value]
         return self
+
+    class Config:
+        """Pydantic config."""
+
+        arbitrary_types_allowed = True
