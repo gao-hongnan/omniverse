@@ -1,0 +1,18 @@
+name: docker-nvidia-omniverse
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docker/nvidia/omniverse-gpu.Dockerfile" # only run on changes to this file
+  workflow_dispatch: # Allows to trigger the workflow manually in GitHub UI
+  workflow_call: # Allows triggering from another workflow
+
+jobs:
+  release:
+    uses: ./.github/workflows/_nvidia_docker.yaml
+    with:
+      dockerfile: docker/release/release.Dockerfile
+      image: omniverse-gpu
+    secrets: inherit
