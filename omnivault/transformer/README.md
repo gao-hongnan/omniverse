@@ -2,6 +2,10 @@
 
 -   [Decoder](#decoder)
     -   [Overview](#overview)
+    -   [Change Log](#change-log)
+        -   [29th March, 2024](#29th-march-2024)
+            -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
     -   [Setup and Installation](#setup-and-installation)
         -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
         -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
@@ -42,6 +46,58 @@ to be used for production.
 This project is not possible without Andrej Karpathy's
 [nanoGPT](https://github.com/karpathy/nanoGPT) implementation, as it provides a
 source of truth of how GPT is actually implemented.
+
+## Change Log
+
+### 29th March, 2024
+
+-   Fixed a bunch of problems in
+    [Issue 72](https://github.com/gao-hongnan/omniverse/issues/72).
+-   Commit Hash `ffd2392`
+
+#### Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler
+
+-   Commit Hash `ffd2392`
+-   Accuracy @15th epoch -> 0.993
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    optimizer.lr=0.2 \
+    trainer.gradient_accumulation_steps=1 \
+    trainer.max_epochs=30 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda'
+```
+
+![ffd2392_run_1](./projects/adder/assets/ffd2392_run_1.jpg)
+
+#### Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation
+
+-   Commit Hash `ffd2392`
+-   Accuracy @15th epoch -> 0.956
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    optimizer.lr=0.4 \
+    trainer.gradient_accumulation_steps=2 \
+    trainer.max_epochs=15 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda'
+```
+
+![ffd2392_run_2](./projects/adder/assets/ffd2392_run_2.jpg)
 
 ## Setup and Installation
 
