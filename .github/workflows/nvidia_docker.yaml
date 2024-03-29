@@ -6,11 +6,12 @@ on:
       - main
     paths:
       - "docker/nvidia/omniverse-nvidia.Dockerfile" # only run on changes to this file
+      - ".github/workflows/_nvidia_docker.yaml" # only run on changes to this file
   workflow_dispatch: # Allows to trigger the workflow manually in GitHub UI
   workflow_call: # Allows triggering from another workflow
 
 jobs:
-  release:
+  build-push-nvidia-image:
     uses: ./.github/workflows/_nvidia_docker.yaml
     with:
       dockerfile: docker/nvidia/omniverse-nvidia.Dockerfile

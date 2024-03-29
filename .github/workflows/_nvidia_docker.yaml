@@ -16,7 +16,7 @@ env:
   LATEST_TAG: ${{ inputs.image }}:latest
 
 jobs:
-  release:
+  docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -52,8 +52,10 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: docker/nvidia/omniverse-nvidia.Dockerfile
-        platforms: linux/amd64
+        file: ${{ inputs.dockerfile }}
+        # We can only build for the intersection of platforms supported by
+        # QEMU and base python image, for now build only for
+        # linux/amd64 and linux/arm64
+        platforms: linux/amd64 # FIXME: multibuild not allowed if I specify drivert o be docker,linux/arm64
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.VERSION_TAG }}
         push: true
-        tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.VERSION_TAG }}
