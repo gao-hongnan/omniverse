@@ -1470,9 +1470,7 @@ to better predict them, regardless of their method of procurement
 -   [Residual Networks (ResNets) - Dive into Deep Learning](https://d2l.ai/chapter_convolutional-modern/resnet.html)
 -   [GPT-1, GPT-2, GPT-3, InstructGPT, ChatGPT, and GPT-4 Summary](https://songhuiming.github.io/pages/2023/05/28/gpt-1-gpt-2-gpt-3-instructgpt-chatgpt-and-gpt-4-summary/)
 -   [How to Optimize Data Transfers in CUDA C/C++ - NVIDIA Developer Blogs](https://devblogs.nvidia.com/how-optimize-data-transfers-cuda-cc/)
-    NVIDIA Developer Blogs
 -   [How to Overlap Data Transfers in CUDA C/C++ - NVIDIA Developer Blogs](https://developer.nvidia.com/blog/how-overlap-data-transfers-cuda-cc/)
-
 ```
 
 ## Citations
