@@ -51,7 +51,6 @@ RUN curl -O https://repo.anaconda.com/miniconda/${MINICONDA_SH} && \
 ENV PATH ${CONDA_HOME}/bin:${HOME_DIR}/.local/bin:$PATH
 
 # Ensure base conda environment is activated by default
-RUN echo "source ${CONDA_HOME}/bin/activate" >> "${HOME_DIR}/.bashrc"
-
-# Use ENTRYPOINT to activate the conda base environment upon startup
-ENTRYPOINT /bin/bash -c "source ${CONDA_HOME}/bin/activate && exec bash"
+RUN ${CONDA_BIN} init bash && \
+    ${CONDA_BIN} clean -a -y && \
+    echo "source ${CONDA_HOME}/bin/activate" >> "${HOME_DIR}/.bashrc"
