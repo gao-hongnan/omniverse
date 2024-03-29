@@ -23,16 +23,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Get git tag
-      id: get-latest-git-tag
-      run: |
-        echo "LATEST_GIT_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_ENV
-
     - name: Set docker tag
       env:
         VERSION: ${{ env.LATEST_GIT_TAG }}
       run: |
-        echo "VERSION_TAG=${{ inputs.image }}:${VERSION#v}" >> $GITHUB_ENV
+        echo "VERSION_TAG=${{ inputs.image }}:${GITHUB_SHA::8}" >> $GITHUB_ENV
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
