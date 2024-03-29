@@ -314,6 +314,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)
     _trained_state.pretty_print()
     history = _trained_state.history
+    print(history)
     _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
 
     loaded_state = State.load_snapshots(
