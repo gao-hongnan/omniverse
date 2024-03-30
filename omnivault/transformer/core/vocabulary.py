@@ -115,7 +115,7 @@ class TextCharacterVocabulary(Vocabulary):
 
         filepath = dest_folder_path / f"{dataset_name}.txt"
 
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True) # TODO: add timeout
         response.raise_for_status()
 
         with open(filepath, "wb") as f:
