@@ -245,7 +245,7 @@ To be more obedient out.
 | 7     | 4.1421090829443115 | 62.93540573120117    | 3.9476492404937744 | 51.81342315673828    |
 | 8     | 4.12189095486988   | 61.67576217651367    | 3.9435625076293945 | 51.602108001708984   |
 
-![ffd2392](./projects/adder/assets/ffd2392_simplebook.png)
+![ffd2392](./projects/simplebooks92/assets/ffd2392_simplebook.png)
 
 -   Epoch 6 Results
 

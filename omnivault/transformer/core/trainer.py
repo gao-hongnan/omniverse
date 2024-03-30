@@ -354,7 +354,9 @@ class Trainer:
         # argmax_of_predicted_logits = torch.argmax(logits, dim=-1) # shape [B, S or V]
         # decoded_logits = batch_decode_equation(argmax_of_predicted_logits)
 
-        loss: torch.nn.Module = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
+        loss: torch.nn.Module = self.criterion(
+            logits.permute(0, 2, 1).contiguous(), targets.contiguous()
+        )  # FIXME: type hint wrong
 
         this_batch_average_loss: float = loss.item()
         this_batch_total_loss: float = this_batch_average_loss * batch_size
