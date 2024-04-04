@@ -196,6 +196,9 @@ Now note some quirks here:
     the `Trainer` object. I like things to start from `1`, so I add `1` to the
     `epoch_index` in the loop. Consequently, the `torch.manual_seed` will start
     from `1` and not `0`.
+-   Seeding manual seeds of torch is not really going to be enough, you may need
+    to see cuda deterministic settings. I tried to resume from a checkpoint with
+    CUDA and the results were only up to the like 7-8th decimal point.
 
 Now suppose we want to resume from a checkpoint, say epoch 8, then this means
 you are loading all the states **_at the end of epoch 8_**. This means that the
@@ -306,7 +309,7 @@ python omnivault/transformer/projects/adder/main.py \
     data.valid_loader.batch_size=256 \
     optimizer.lr=0.2 \
     trainer.gradient_accumulation_steps=1 \
-    trainer.max_epochs=30 \
+    trainer.max_epochs=15 \
     trainer.use_amp=True \
     trainer.autocast_config.enabled=True \
     trainer.autocast_config.dtype=float16 \
