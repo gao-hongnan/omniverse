@@ -99,14 +99,38 @@ def validate_and_cleanup(
     state_1: State, state_2: State, objects: List[Any], logger: logging.Logger | None = None
 ) -> None:
     """
-    Deletes the provided objects and performs cleanup.
+    Validates the equality of two State instances and performs cleanup by deleting
+    the provided objects.
+
+    This function compares `state_1` and `state_2` to ensure that they are equal,
+    indicating that the loaded state is consistent with the last state of the
+    Trainer. If the states are not equal, an `AssertionError` is raised and logged
+    using the provided logger or a default logger. After the validation, the
+    function deletes the objects specified in the `objects` list to perform cleanup.
 
     Parameters
     ----------
-    state_1: State
-    state_2: State
-    objects: List[Any]
-        The list of objects to be deleted.
+    state_1 : State
+        The first State instance to compare.
+    state_2 : State
+        The second State instance to compare.
+    objects : List[Any]
+        A list of objects to be deleted during cleanup.
+    logger : logging.Logger, optional
+        The logger to use for logging any errors or exceptions. If not provided,
+        a default logger will be used.
+
+    Raises
+    ------
+    AssertionError
+        If `state_1` and `state_2` are not equal, indicating a mismatch between
+        the loaded state and the last state of the Trainer.
+
+    Notes
+    -----
+    This function performs a strict equality check between `state_1` and `state_2`
+    using the `==` operator. We can do this because we implemented `_eq_` method
+    in the `State` class.
     """
     if logger is None:
         logger = get_default_logger()
