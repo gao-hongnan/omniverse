@@ -2,6 +2,7 @@
 
 -   [Decoder](#decoder)
     -   [Overview](#overview)
+    -   [A Word On Reproducibility](#a-word-on-reproducibility)
     -   [Change Log](#change-log)
         -   [29th March, 2024](#29th-march-2024)
             -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
@@ -49,6 +50,241 @@ to be used for production.
 This project is not possible without Andrej Karpathy's
 [nanoGPT](https://github.com/karpathy/nanoGPT) implementation, as it provides a
 source of truth of how GPT is actually implemented.
+
+## A Word On Reproducibility
+
+While model, optimizer and scheduler's state dict is more or less deterministic,
+things like `DataLoader` and `Sampler` are not. Furthermore, the dataloader will
+shuffle every epoch if you set `shuffle=True`. This means that when you resume
+from a checkpoint, and the spunned up `DataLoader` will shuffle the data in a
+different order, which will lead to different results. Even if you set
+`shuffle=False`, other parts such as `LayerNorm` and `Dropout` layers will still
+behave differently due to the random seed not being set within each epoch.
+
+We can introduce `rng` state at each epoch, this may work until you start
+playing with distributed training, where each worker will have its own `rng`
+state and it not easily solvable, have a look at MosaicML's Composer for a
+possible solution.
+
+Firstly, recognize that the below snippet tells you indeed that each epoch will
+have different results due to the shuffling of the data. You can also verify
+that each epoch will have the same input if you set `shuffle=False` (no
+guarantee that it extends to distributed training).
+
+```python
+def _train_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
+    self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_START.value)
+    inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
+    batch_size = inputs.size(0)
+    if self.epoch_index < 5 and self.train_batch_index == 0:
+        from rich.pretty import pprint
+        pprint(inputs[0])
+```
+
+Let's walk through a simple example:
+
+```bash
+python omnivault/transformer/projects/adder/main.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.train_loader.shuffle=True \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=10 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=False \
+    trainer.scaler_config.enabled=False \
+    trainer.device='cpu'
+```
+
+Let's say the above command trains for 10 epochs, and you see the following
+output:
+
+```python
+{
+    "train_this_epoch_average_loss": [
+        2.1311146670750207,
+        1.2593259513037545,
+        0.9856199538367135,
+        0.8891705652645656,
+        0.7993362490109035,
+        0.7111465426172529,
+        0.49866415636880057,
+        0.38200149631500246,
+        0.270275697350502,
+        0.23284611753055026,
+    ],
+    "train_this_epoch_average_perplexity": [
+        8.4242525100708,
+        3.5230460166931152,
+        2.6794724464416504,
+        2.4331107139587402,
+        2.2240641117095947,
+        2.0363247394561768,
+        1.6465203762054443,
+        1.4652142524719238,
+        1.3103256225585938,
+        1.2621872425079346,
+    ],
+    "valid_this_epoch_average_loss": [
+        1.4898229427337646,
+        1.0477802028656007,
+        0.8911682767868042,
+        0.8262371664047241,
+        0.7179275789260864,
+        0.5456617059707641,
+        0.337036429643631,
+        0.25437658512592315,
+        0.1755179933309555,
+        0.11549221700429917,
+    ],
+    "valid_this_epoch_average_perplexity": [
+        4.436310291290283,
+        2.8513145446777344,
+        2.437976360321045,
+        2.284705638885498,
+        2.050179958343506,
+        1.7257499694824219,
+        1.4007900953292847,
+        1.2896573543548584,
+        1.1918634176254272,
+        1.1224257946014404,
+    ],
+}
+```
+
+During the training, we saved the rng states in the callback called
+`save_state`:
+
+```python
+def save_state(trainer: Trainer) -> None:
+    # perform other saving operations
+    ...
+
+    # save the rng state
+    save_rng_state(save_dir=trainer.save_dir, epoch_index=trainer.epoch_index)
+```
+
+And furthermore, in the trainer loop below, we set the manual seed to the epoch.
+In other words, we set the seed to the epoch number, so that each epoch will
+have the same rng state. Now this is a weak form of reproducibility, since you
+may miss out on other sources of randomness such as `numpy` and python's
+`random` module. For our simple example, we will ignore these sources of
+randomness.
+
+```python
+def fit(
+    self,
+    *,
+    train_loader: DataLoader[DatasetYield],
+    valid_loader: DataLoader[DatasetYield] | None = None,
+    test_loader: DataLoader[DatasetYield] | None = None,
+) -> State:
+    # do some things
+    ...
+
+    # start the training loop
+    for _ in range(1, self.max_epochs + 1):
+        self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
+        torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
+        if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+            torch.cuda.manual_seed_all(self.epoch_index)
+```
+
+Now note some quirks here:
+
+-   `self.epoch_index` starts from `0` if `resume_from_rng_path` is not set in
+    the `Trainer` object. I like things to start from `1`, so I add `1` to the
+    `epoch_index` in the loop. Consequently, the `torch.manual_seed` will start
+    from `1` and not `0`.
+
+Now suppose we want to resume from a checkpoint, say epoch 8, then this means
+you are loading all the states **_at the end of epoch 8_**. This means that the
+first epoch in resumption will actually be the result of epoch 9 in the original
+training loop.
+
+We would then define the below to initialize the loaded states for model,
+criterion, optimizer and scheduler, these are independent of the `rng` state.
+Our next key is to pass `resume_from_rng_state_path` to the `Trainer`'s
+constructor, matching the keyword argument `resume_from_rng_path`.
+
+```python
+resume_from_state_path = ...
+resume_from_rng_state_path = ...
+loaded_state = State.load_snapshots(
+    filepath=resume_from_state_path,
+    device=device,  # type: ignore[arg-type]
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+)
+
+# train
+trainer = Trainer(
+    state=loaded_state,
+    composer=composer,
+    logger=logger,
+    device=device,  # type: ignore[arg-type]
+    resume_from_rng_path=resume_from_rng_state_path,
+)
+```
+
+Two common things happen if you pass an `rng` state path.
+
+Firstly, the `Trainer` object will set the `rng` state globally first, as seen
+below.
+
+```python
+self.resume_from_rng_path = resume_from_rng_path # resume from rng state
+if resume_from_rng_path:
+    self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path) # set RNG globally first
+```
+
+Secondly, the `Trainer` object will set the `rng` state at the beginning of each
+epoch, as seen below. This will make the `self.epoch_index` start from the
+correct epoch number. For example, we resume from epoch 8, then the next epoch
+will be epoch 9 and so the `self.epoch_index` will be set to `9`.
+
+```python
+self.epoch_index = self.rng_state["epoch_index"] if resume_from_rng_path else 0
+for _ in range(1, self.max_epochs + 1):
+    # fmt: off
+    self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
+    torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
+    if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+        torch.cuda.manual_seed_all(self.epoch_index)
+```
+
+Running the script `resume.py` for three more epochs, loaded from the end of
+epoch 8, and the training will start from epoch 9, yields correct results.
+
+```bash
+python omnivault/transformer/projects/adder/resume.py \
+    omnivault/transformer/projects/adder/config.yaml \
+    data.train_loader.batch_size=256 \
+    data.train_loader.shuffle=True \
+    data.valid_loader.batch_size=256 \
+    trainer.max_epochs=3 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=False \
+    trainer.scaler_config.enabled=False \
+    trainer.device='cpu'
+```
+
+You can see the first two epochs are the same as the last two epochs of the
+original training loop for 10 epochs.
+
+```python
+{
+    "train_this_epoch_average_loss":       [0.270275697350502,  0.23284611753055026, 0.18166282841137477],
+    "train_this_epoch_average_perplexity": [1.3103256225585938, 1.2621872425079346,  1.1992098093032837 ],
+    "valid_this_epoch_average_loss":       [0.1755179933309555, 0.11549221700429917, 0.12722234988212586],
+    "valid_this_epoch_average_perplexity": [1.1918634176254272, 1.1224257946014404,  1.135669469833374  ],
+}
+```
+
+Note I could combine `resume.py` to `main.py` with some additional flags,
+configuration handling, but I decided to keep them separate for clarity.
 
 ## Change Log
 

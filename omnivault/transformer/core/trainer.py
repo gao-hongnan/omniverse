@@ -29,6 +29,7 @@ from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
 from omnivault.transformer.utils.format import format_lr
 from omnivault.transformer.utils.general_utils import get_default_logger
+from omnivault.utils.reproducibility.rng import load_and_set_rng_state
 
 
 @runtime_checkable
@@ -110,11 +111,16 @@ class Trainer:
         composer: Composer,
         logger: logging.Logger | None = None,
         device: torch.device | None = None,
+        resume_from_rng_path: str | None = None,
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
         not all scenarios demand such code."""
         # fmt: off
+        self.resume_from_rng_path = resume_from_rng_path # resume from rng state
+        if resume_from_rng_path:
+            self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path) # set RNG globally first
+
         self.state            = state
         self.composer         = composer
 
@@ -162,7 +168,7 @@ class Trainer:
         self.history: Dict[str, List[float]] = defaultdict(list) # NOTE: not in __init__ constructor and not in composer, set in callback
 
         # attributes not in __init__ constructor
-        self.epoch_index = 0
+        self.epoch_index = self.rng_state["epoch_index"] if resume_from_rng_path else 0
         self.train_batch_index = 0
         self.step_index = 0
         self.tokens_per_step = composer.data.train_loader["batch_size"] * composer.data.context_length # see nanogpt
@@ -454,7 +460,13 @@ class Trainer:
         self.trigger_callbacks(TrainerEvent.ON_FIT_START.value)
 
         for _ in range(1, self.max_epochs + 1):
-            self.epoch_index += 1
+            # fmt: off
+            self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
+            torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
+            if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+                torch.cuda.manual_seed_all(self.epoch_index)
+            # fmt: on
+
             self.train_loss = self.train_one_epoch(dataloader=train_loader)
 
             if valid_loader:

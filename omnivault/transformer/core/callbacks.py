@@ -5,7 +5,9 @@ from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from omnivault.transformer.core.trainer import Trainer
 
+
 from omnivault.transformer.utils.format import format_lr
+from omnivault.utils.reproducibility.rng import save_rng_state
 
 
 def update_state(trainer: Trainer) -> None:
@@ -56,6 +58,10 @@ def save_state(trainer: Trainer) -> None:
         trainer.state.save_snapshots(filepath=save_path)
         trainer.logger.info("Saved checkpoint at epoch %s to %s", trainer.epoch_index, save_path)
 
+    # TODO: put this in `State` class for modularity
+    # NOTE: I save this every epoch because it's cheap and useful for resuming
+    save_rng_state(save_dir=trainer.save_dir, epoch_index=trainer.epoch_index)
+
 
 def log_on_fit_start(trainer: Trainer) -> None:
     initial_lr_or_lrs = trainer._get_current_lr_or_lrs()
@@ -84,6 +90,7 @@ def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", 
             trainer.logger.info(f"%-{max_width}s %s", "Learning rates for each parameter group:", lr_str)
         else:
             trainer.logger.info(f"%-{max_width}s %s", "Learning rate:", lr_str)
+
 
 # TODO: add `phase` so can support valid and test
 def log_every_n_steps_on_batch_end(trainer: Trainer) -> None:
