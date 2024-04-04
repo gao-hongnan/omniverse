@@ -75,7 +75,15 @@ def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", 
         trainer.epoch_index,
         trainer.max_epochs,
     )
+    max_width = 32  # hardcoded value from `log_on_epoch_end`
+    if phase == "train":
+        initial_lr_or_lrs = trainer._get_current_lr_or_lrs()
+        lr_str = format_lr(initial_lr_or_lrs, precision=20)
 
+        if isinstance(initial_lr_or_lrs, list):
+            trainer.logger.info(f"%-{max_width}s %s", "Learning rates for each parameter group:", lr_str)
+        else:
+            trainer.logger.info(f"%-{max_width}s %s", "Learning rate:", lr_str)
 
 # TODO: add `phase` so can support valid and test
 def log_every_n_steps_on_batch_end(trainer: Trainer) -> None:
@@ -109,7 +117,6 @@ def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"])
         f"Average Epoch {phase_capitalized} Perplexity:",
     ]
     max_width = max(len(label) for label in labels) + 1  # +1 for the space after the label
-
     trainer.logger.info(f"%-{max_width}s %d", "Total Samples:", total_samples)
     trainer.logger.info(f"%-{max_width}s %d", "Total Batches:", total_batches)
     trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Loss:", average_loss)
