@@ -1,4 +1,5 @@
-"""Reproducibility.
+"""This module contains utilities for seeding the random number generators to
+ensure reproducibility.
 
 Notes
 -----
@@ -14,11 +15,12 @@ nets in any environment (distributed or not) with reproducibility in mind.
 
 References
 ----------
--   [Composer](https://github.com/mosaicml/composer/blob/dev/composer/utils/reproducibility.py)
--   [PyTorch Reproducibility](https://pytorch.org/docs/stable/notes/randomness.html)
--   [PyTorch Worker](https://pytorch.org/docs/stable/notes/randomness.html#dataloader)
--   [PyTorch deterministic algorithms](https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html)
--   [CUBLAS reproducibility](https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility)
+
+- `PyTorch Reproducibility <https://pytorch.org/docs/stable/notes/randomness.html>`_
+- `PyTorch deterministic algorithms <https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html>`_
+- `CUBLAS reproducibility <https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility>`_
+- `PyTorch Worker <https://pytorch.org/docs/stable/notes/randomness.html#dataloader>`_
+- `Composer <https://github.com/mosaicml/composer/blob/dev/composer/utils/reproducibility.py>`_
 """
 
 from __future__ import annotations
@@ -31,11 +33,11 @@ import numpy as np
 import torch
 import torch.backends.cudnn
 
-__all__ = ["seed_all"]
+__all__ = ["seed_all", "seed_worker", "configure_deterministic_mode"]
 
 
 def configure_deterministic_mode() -> None:
-    """
+    r"""
     Activates deterministic mode in PyTorch and CUDA to ensure reproducible
     results at the cost of performance and potentially higher CUDA memory usage.
     It sets deterministic algorithms, disables cudnn benchmarking and enables,
@@ -43,10 +45,11 @@ def configure_deterministic_mode() -> None:
 
     References
     ----------
-    - PyTorch Reproducibility: https://pytorch.org/docs/stable/notes/randomness.html
-    - PyTorch deterministic algorithms: https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html
-    - CUBLAS reproducibility: https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility
+    - `PyTorch Reproducibility <https://pytorch.org/docs/stable/notes/randomness.html>`_
+    - `PyTorch deterministic algorithms <https://pytorch.org/docs/stable/generated/torch.use_deterministic_algorithms.html>`_
+    - `CUBLAS reproducibility <https://docs.nvidia.com/cuda/cublas/index.html#cublasApi_reproducibility>`_
     """
+
     # fmt: off
     torch.use_deterministic_algorithms(True, warn_only=True)
     torch.backends.cudnn.benchmark        = False
@@ -74,17 +77,17 @@ def seed_all(
 
     Parameters
     ----------
-    seed : int, default 1992
+    seed : int, default=1992
         The seed number for reproducibility.
-    seed_torch : bool, default True
+    seed_torch : bool, default=True
         If True, seeds PyTorch's RNGs.
-    set_torch_deterministic : bool, default True
+    set_torch_deterministic : bool, default=True
         If True, activates deterministic mode in PyTorch.
 
     Returns
     -------
     seed : int
-        The seed used for reproducibility.
+        The seed number used for reproducibility.
     """
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
@@ -109,7 +112,7 @@ def seed_worker(worker_id: int) -> None:  # noqa: ARG001
     Initializes random seeds for a worker based on its ID.
 
     This ensures that each worker, when used in parallel data loading,
-    operates with a unique random state, promoting reproducibility
+    operates with a unique random state, which enhances reproducibility
     and reducing potential data overlap or bias in data loading processes.
 
     Parameters
@@ -119,27 +122,27 @@ def seed_worker(worker_id: int) -> None:  # noqa: ARG001
 
     References
     ----------
-    - PyTorch Worker: https://pytorch.org/docs/stable/notes/randomness.html#dataloader
+    - `PyTorch Worker <https://pytorch.org/docs/stable/notes/randomness.html#dataloader>`_
 
-    Example
-    -------
-    ```python
-    import torch
-    from torch.utils.data import DataLoader
+    Examples
+    --------
+    .. code-block:: python
 
-    train_dataset = ...
+        import torch
+        from torch.utils.data import DataLoader
 
-    g = torch.Generator()
-    g.manual_seed(0)
+        train_dataset = ...
 
-    DataLoader(
-        train_dataset,
-        batch_size=batch_size,
-        num_workers=num_workers,
-        worker_init_fn=seed_worker,
-        generator=g,
-    )
-    ```
+        g = torch.Generator()
+        g.manual_seed(0)
+
+        DataLoader(
+            train_dataset,
+            batch_size=batch_size,
+            num_workers=num_workers,
+            worker_init_fn=seed_worker,
+            generator=g,
+        )
     """
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)  # noqa: NPY002
