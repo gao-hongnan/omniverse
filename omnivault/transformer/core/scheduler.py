@@ -19,7 +19,3 @@ def noam_lr_decay(step: int, *, d_model: int, warmup_steps: int) -> float:
     """
 
     return float(d_model ** (-0.5) * min((step + 1) ** (-0.5), (step + 1) * warmup_steps ** (-1.5)))
-
-
-def get_linear_schedule_with_warmup() -> None:
-    ...
