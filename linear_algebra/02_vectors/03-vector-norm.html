@@ -206,6 +206,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../transformer/decoder/notations.html">Notations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../transformer/decoder/concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../transformer/decoder/implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../transformer/decoder/adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
 </ul>
 </li>
 </ul>
@@ -606,7 +607,7 @@ vector space:</p>
 <div class="math notranslate nohighlight" id="equation-03-vector-norm-vector-in-rd">
 <span class="eqno">(20)<a class="headerlink" href="#equation-03-vector-norm-vector-in-rd" title="Link to this equation">#</a></span>\[\begin{split}\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}\end{split}\]</div>
 <div class="proof definition admonition" id="03-vector-norm-norm-on-a-vector-space">
-<p class="admonition-title"><span class="caption-number">Definition 33 </span> (Norm on a Vector Space)</p>
+<p class="admonition-title"><span class="caption-number">Definition 34 </span> (Norm on a Vector Space)</p>
 <section class="definition-content" id="proof-content">
 <p>A norm on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
 <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
@@ -658,7 +659,7 @@ as a set of vectors in the <span class="math notranslate nohighlight">\(D\)</spa
 specific case of the norm function. The <span class="math notranslate nohighlight">\(L_p\)</span> is a generalization of the concept
 of “length” for vectors in the <strong><em>vector space</em></strong> <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-lp-norm">
-<p class="admonition-title"><span class="caption-number">Definition 34 </span> (<span class="math notranslate nohighlight">\(L_p\)</span> Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 35 </span> (<span class="math notranslate nohighlight">\(L_p\)</span> Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>For a vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span> over the field
 <span class="math notranslate nohighlight">\(\mathbb{F} =
@@ -681,7 +682,7 @@ representing the <span class="math notranslate nohighlight">\(L_p\)</span> norm 
 <span class="math notranslate nohighlight">\(p\)</span> is a real number greater than or equal to 1.</p>
 </section>
 </div><p>One can easily verify that the <span class="math notranslate nohighlight">\(L_p\)</span> norm satisfies the properties of a norm
-function in <a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a>.</p>
+function in <a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a>.</p>
 <p>As we shall see later (likely when we discuss about analytic geometry), the
 choice of <span class="math notranslate nohighlight">\(p\)</span> determines the metric’s sensitivity to differences in vector
 components, influencing its application in various algorithms.</p>
@@ -691,7 +692,7 @@ components, influencing its application in various algorithms.</p>
 <p>The <span class="math notranslate nohighlight">\(L_1\)</span> <strong>norm</strong>, also known as the <strong>Manhattan norm</strong> or <strong>Taxicab norm</strong>, is
 a specific case of the <span class="math notranslate nohighlight">\(L_p\)</span> norm where <span class="math notranslate nohighlight">\(p = 1\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-l1-norm">
-<p class="admonition-title"><span class="caption-number">Definition 35 </span> (<span class="math notranslate nohighlight">\(L_1\)</span> Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 36 </span> (<span class="math notranslate nohighlight">\(L_1\)</span> Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>For the same vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_1\)</span> norm is
 defined by:</p>
@@ -721,7 +722,7 @@ encouraging sparsity in the model parameters.</p>
 <figure class="align-default" id="vector-norm-manhattan-distance">
 <img alt="../../_images/wikipedia-520px-Manhattan_distance.svg.png" src="../../_images/wikipedia-520px-Manhattan_distance.svg.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 15 </span><span class="caption-text">Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
+<p><span class="caption-number">Fig. 16 </span><span class="caption-text">Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
 yellow, and blue paths all have the same length of 12. In Euclidean
 geometry, the green line has length <span class="math notranslate nohighlight">\(6 \sqrt{2} \approx 8.49\)</span> and is the unique
 shortest path, while the other paths have the longer length of 12.</span><a class="headerlink" href="#vector-norm-manhattan-distance" title="Link to this image">#</a></p>
@@ -736,7 +737,7 @@ shortest path, while the other paths have the longer length of 12.</span><a clas
 <p>The <span class="math notranslate nohighlight">\(L_2\)</span> <strong>norm</strong>, or <strong>Euclidean norm</strong>, obtained by setting <span class="math notranslate nohighlight">\(p = 2\)</span>, is the
 most familiar norm in machine learning.</p>
 <div class="proof definition admonition" id="03-vector-norm-l2-norm">
-<p class="admonition-title"><span class="caption-number">Definition 36 </span> (L2 Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 37 </span> (L2 Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>Similarly, for <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_2\)</span> norm is given by:</p>
 <div class="math notranslate nohighlight">
@@ -758,7 +759,7 @@ most familiar norm in machine learning.</p>
 machine learning to measure the magnitude of vectors, in optimization algorithms
 (like gradient descent), and in computing distances between points in feature
 space.</p>
-<p>With reference to figure <a class="reference internal" href="#vector-norm-manhattan-distance"><span class="std std-numref">Fig. 15</span></a>, the green
+<p>With reference to figure <a class="reference internal" href="#vector-norm-manhattan-distance"><span class="std std-numref">Fig. 16</span></a>, the green
 line defines the Euclidean distance between two points in <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span> and is
 the shortest path between the two points.</p>
 <p>Let’s see how the L2 norm looks like in a 2D space.</p>
@@ -804,7 +805,7 @@ the shortest path between the two points.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/58b2da685cdbb220c0276318522158801a66c6c362e127523ab5bfb4132d336c.svg" src="../../_images/58b2da685cdbb220c0276318522158801a66c6c362e127523ab5bfb4132d336c.svg" /></div>
+<img alt="../../_images/061adadb6881c94965b3c5ec5d6aee603179506b3d744b2d3aeba280c39a693c.svg" src="../../_images/061adadb6881c94965b3c5ec5d6aee603179506b3d744b2d3aeba280c39a693c.svg" /></div>
 </div>
 <p>Notice that the calculation is equivalent to the
 <a class="reference external" href="https://en.wikipedia.org/wiki/Pythagorean_theorem"><strong>Pythagorean theorem</strong></a>,
@@ -849,11 +850,11 @@ hypotenuse is the square root of the sum of the squares of the other sides.</p>
 <p>We can use 3D as a way to illustrate this. The following series of images are
 taken from
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a>.</p>
-<p>First, consider <a class="reference internal" href="#vector-norm-pythagorean-theorem-3d-a"><span class="std std-numref">Fig. 16</span></a>, we want to
+<p>First, consider <a class="reference internal" href="#vector-norm-pythagorean-theorem-3d-a"><span class="std std-numref">Fig. 17</span></a>, we want to
 find the length of the diagonal.</p>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-a">
 <img alt="../../_images/mathsisfun-pythagoras-3d-a.svg" src="../../_images/mathsisfun-pythagoras-3d-a.svg" /><figcaption>
-<p><span class="caption-number">Fig. 16 </span><span class="caption-text">Finding the length of the diagonal.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-a" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 17 </span><span class="caption-text">Finding the length of the diagonal.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-a" title="Link to this image">#</a></p>
 <div class="legend">
 <p><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
@@ -869,7 +870,7 @@ c = \sqrt{x^2 + y^2}
 <p>where <span class="math notranslate nohighlight">\(c\)</span> is the length of the diagonal of the base.</p>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-b">
 <img alt="../../_images/mathsisfun-pythagoras-3d-b.svg" src="../../_images/mathsisfun-pythagoras-3d-b.svg" /><figcaption>
-<p><span class="caption-number">Fig. 17 </span><span class="caption-text"><strong>Image Credit:
+<p><span class="caption-number">Fig. 18 </span><span class="caption-text"><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-b" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
@@ -877,7 +878,7 @@ c = \sqrt{x^2 + y^2}
 to find.</p>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-c">
 <img alt="../../_images/mathsisfun-pythagoras-3d-c.svg" src="../../_images/mathsisfun-pythagoras-3d-c.svg" /><figcaption>
-<p><span class="caption-number">Fig. 18 </span><span class="caption-text"><strong>Image Credit:
+<p><span class="caption-number">Fig. 19 </span><span class="caption-text"><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-c" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
@@ -892,7 +893,7 @@ d   &amp;= \sqrt{c^2 + z^2} \\
 \end{split}\]</div>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d">
 <img alt="../../_images/mathsisfun-pythagoras-3d-d.svg" src="../../_images/mathsisfun-pythagoras-3d-d.svg" /><figcaption>
-<p><span class="caption-number">Fig. 19 </span><span class="caption-text">The Pythagorean Theorem in 3D.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 20 </span><span class="caption-text">The Pythagorean Theorem in 3D.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d" title="Link to this image">#</a></p>
 <div class="legend">
 <p><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
@@ -944,11 +945,11 @@ length of the sides of the triangle (or the vector components).</p>
 <em>exactly</em> the same.</p>
 <p>The key difference (without going to deep into real analysis and metric spaces)
 is that the <strong>norm</strong> as defined in
-<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a> is a function that maps a
+<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a> is a function that maps a
 vector to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (i.e. real number <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>), while the
 <strong>distance</strong> is a function that maps a pair of vectors to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-distance">
-<p class="admonition-title"><span class="caption-number">Definition 37 </span> (Distance)</p>
+<p class="admonition-title"><span class="caption-number">Definition 38 </span> (Distance)</p>
 <section class="definition-content" id="proof-content">
 <p>A distance on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
 <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
@@ -998,7 +999,7 @@ of the distances between the vectors and a third vector.</p>
 </ol>
 </section>
 </div><p>We say that every norm induces a distance metric defined in
-<a class="reference internal" href="#03-vector-norm-distance">Definition 37</a>.</p>
+<a class="reference internal" href="#03-vector-norm-distance">Definition 38</a>.</p>
 <p><strong>Why?</strong></p>
 <p>Given a norm <span class="math notranslate nohighlight">\(\|\cdot\|\)</span> on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, one can define a
 distance function induced by this norm as
@@ -1009,10 +1010,10 @@ metric space properties:</p>
 <li><p><strong>Non-negativity</strong>: For any vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}\)</span>, the distance
 <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is never negative because norms are always
 non-negative. This is a direct result of the norm’s property of <strong>positive
-definiteness</strong> (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a>).</p></li>
+definiteness</strong> (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a>).</p></li>
 <li><p><strong>Identity of Indiscernibles</strong>: The distance <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is
 zero if and only if <span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{v}\)</span>. This follows from the positive
-definiteness property (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a>) of
+definiteness property (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a>) of
 norms which states that <span class="math notranslate nohighlight">\(\|\mathbf{u}\| =
 0\)</span> if and only if
 <span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{0}\)</span>. Thus, <span class="math notranslate nohighlight">\(\|\mathbf{u} -
@@ -1026,7 +1027,7 @@ norms which states that <span class="math notranslate nohighlight">\(\|\mathbf{u
 <span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|\mathbf{v}-\mathbf{u}\|\)</span>, as the norm of a
 vector remains the same if its sign is reversed. This follows directly from
 the norm’s property of <strong>absolute homogeneity</strong>
-(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a>) because you can just set
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a>) because you can just set
 <span class="math notranslate nohighlight">\(\lambda = -1\)</span>. Thus,
 <span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|-1\| \|\mathbf{v}-\mathbf{u}\| =
  \|\mathbf{v}-\mathbf{u}\|\)</span>.</p></li>
@@ -1037,7 +1038,7 @@ which states that for any
 <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{w}) \leq
 d(\mathbf{u}, \mathbf{v}) + d(\mathbf{v}, \mathbf{w})\)</span>
 holds. This is a consequence of the norm’s triangle inequality
-(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 33</a>),
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 34</a>),
 <span class="math notranslate nohighlight">\(\|\mathbf{u}+\mathbf{v}\|
 \leq \|\mathbf{u}\| + \|\mathbf{v}\|\)</span>, applied
 to the vectors <span class="math notranslate nohighlight">\(\mathbf{u}-\mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}-\mathbf{w}\)</span>, which
