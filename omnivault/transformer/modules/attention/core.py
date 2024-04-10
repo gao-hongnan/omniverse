@@ -6,19 +6,26 @@ This module defines the Scaled Dot-Product Attention mechanism, which is a key
 component in transformer architectures. It follows the equations:
 
 .. math::
-    \text{Attention}(Q, K, V) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) V
+    \text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax} \left( \frac{\mathbf{Q}\mathbf{K}^T}{\sqrt{d_k}} \right) \mathbf{V}
 
 The attention mechanism is computed as follows:
+
 1. Find the embedding dimension $D$ or $d_q$ from the query feature vector. Note
    the query vector has the below representation:
 
    .. math::
-       Q   = Z @ W_Q  \in  \mathbb{R}^{L \times D}
-       Q_h = Q @ W_Q^h \in \mathbb{R}^{L \times d_q}
+       \mathbf{Q}   = \mathbf{Z} @ \mathbf{W}^{\mathbf{Q}} \in \mathbb{R}^{T \times D}
+       \mathbf{Q}_h = \mathbf{Q} @ \mathbf{W}_{h}^{\mathbf{Q}} \in \mathbb{R}^{T \times d_q}
+       d_q = \frac{D}{H}
 
-2. Compute the dot product of the query feature vector with the key feature
-   vector. Note since key is of dim (batch_size, L, $d_k$) so we operate the
-   transpose on the last two dimensions, specified by dim0 and dim1.
+    However, we note :math:\mathbf{Q}_h is more of a symbolic understanding
+    than a real implementation.
+
+2. Compute the dot product of the query feature vector :math:`\mathbf{Q}` with
+   the transpose of the key feature vector :math:`\mathbf{K}`.
+   Note since in practice the query, key and value are batched, we would have
+   :math:`\mathbf{K} \in \mathbb{R}^{B \times T \times D}` and so we operate the
+   transpose on the last two dimensions, specified by `dim0` and `dim1`.
    key.transpose(dim0=-2, dim1=-1) means let the second last dimension be the
    last dimension and let the last dimension be the second last dimension.
 
@@ -75,14 +82,14 @@ This module defines the Multi-Head Attention mechanism, which is a key
 component in transformer architectures. It follows the equations:
 
 .. math::
-    \text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, ..., \text{head}_H)W^O
+    \text{MultiHead}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{Concat}(\text{head}_1, ..., \text{head}_H)W^O
 
 where each head is computed as:
 
 .. math::
     \text{head}_h = \text{Attention}(QW^Q_h, KW^K_h, VW^V_h) where h \in [1, H]
 
-Here, Q, K, V are the query, key, and value vectors. W^Q_h, W^K_h, W^V_h are
+Here, \mathbf{Q}, \mathbf{K}, \mathbf{V} are the query, key, and value vectors. W^Q_h, W^K_h, W^V_h are
 parameter matrices. H is the number of heads.
 
 Notations
@@ -114,13 +121,13 @@ __all__ = ["MultiHeadedAttention", "ScaledDotProductAttention"]
 
 
 class ScaledDotProductAttention(Attention):
-    """Implements scaled dot-product attention mechanism.
+    r"""Implements scaled dot-product attention mechanism.
 
     This class is a derived instance of the `Attention` class that computes the
     scaled dot-product attention, defined by the following operation:
 
     .. math::
-        \\text{Attention}(Q, K, V) = \\text{softmax} \\left( \\frac{QK^T}{\\sqrt{d_k}} \\right) V
+        \text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax} \left( \frac{QK^T}{\sqrt{d_k}} \right) \mathbf{V}
 
     where:
 
@@ -156,11 +163,6 @@ class ScaledDotProductAttention(Attention):
     the decoder, but the keys (K) and values (V) come from the output of the
     encoder. This allows each position in the decoder to attend to all positions
     in the input sequence.
-
-    Methods
-    -------
-    forward(query, key, value, mask)
-        Computes the forward pass for the scaled dot-product attention.
     """
 
     def forward(
@@ -245,13 +247,13 @@ class ScaledDotProductAttention(Attention):
         # fmt: off
         d_q               = query.size(dim=-1)
 
-        attention_scores  = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())
-        attention_scores  = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores
+        attention_scores  = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())        # [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]
+        attention_scores  = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores    # [B, H, T, T]
 
-        attention_weights = attention_scores.softmax(dim=-1)
-        attention_weights = self.dropout(attention_weights)
+        attention_weights = attention_scores.softmax(dim=-1)        # [B, H, T, T]
+        attention_weights = self.dropout(attention_weights)         # [B, H, T, T]
 
-        context_vector    = torch.matmul(attention_weights, value)
+        context_vector    = torch.matmul(attention_weights, value)  # [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]
         # fmt: on
         return context_vector, attention_weights
 
@@ -359,7 +361,7 @@ class MultiHeadedAttention(nn.Module):
             assert mask.shape[2] == mask.shape[3] == query.shape[1], ("Mask should have shape (batch_size, 1, seq_len, seq_len).")
 
 
-        Q = self.W_Q(query).contiguous() # Z @ W_Q -> LxD @ DxD = LxD -> [B, L, D]
+        Q = self.W_Q(query).contiguous() # Z @ W_Q -> BxTxD @ DxD = BxTxD
         K = self.W_K(key).contiguous()   # Z @ W_K
         V = self.W_V(value).contiguous() # Z @ W_V
 
