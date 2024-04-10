@@ -2788,7 +2788,36 @@ ensuring that we never divide by zero or approach zero in the denominator.</p></
 dimension <span class="math notranslate nohighlight">\(D\)</span> for the token, normalizing each feature based on the statistics of
 the features within the same token.</p>
 </section>
-</div><div class="tip admonition">
+</div><p>Since layer normalization is performed for each token vector across the feature
+dimension <span class="math notranslate nohighlight">\(D\)</span>, the process can be vectorized and applied simultaneously to all
+<span class="math notranslate nohighlight">\(T\)</span> token vectors in the sequence.</p>
+<ul class="simple">
+<li><p>For each token <span class="math notranslate nohighlight">\(t = 1, \ldots, T\)</span>, the mean <span class="math notranslate nohighlight">\(\mu_t\)</span> and variance
+<span class="math notranslate nohighlight">\(\sigma_t^2\)</span> are computed.</p></li>
+<li><p>Each token vector <span class="math notranslate nohighlight">\(\mathbf{Z}_t\)</span> is then normalized using its respective
+<span class="math notranslate nohighlight">\(\mu_t\)</span> and <span class="math notranslate nohighlight">\(\sigma_t^2\)</span>.</p></li>
+</ul>
+<p>This results in a normalized sequence
+<span class="math notranslate nohighlight">\(\overline{\mathbf{Z}} \in \mathbb{R}^{T \times D}\)</span>, where each token vector
+<span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}_t\)</span> has been normalized independently. The normalized
+sequence retains its original shape <span class="math notranslate nohighlight">\((T \times D)\)</span>.</p>
+<p>When considering a batch of sequences, represented as
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{\mathcal{B}} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span>, the
+layer normalization process extends naturally:</p>
+<ul class="simple">
+<li><p>The normalization process is applied independently to each token vector in
+each sequence within the batch. This means for each sequence <span class="math notranslate nohighlight">\(b\)</span> in the
+batch <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>, and for each token <span class="math notranslate nohighlight">\(t\)</span> in each sequence, the process
+computes <span class="math notranslate nohighlight">\(\mu_{bt}\)</span> and <span class="math notranslate nohighlight">\(\sigma_{bt}^2\)</span>, and normalizes each
+<span class="math notranslate nohighlight">\(\mathbf{Z}_{bt}\)</span> accordingly.</p></li>
+<li><p>Since the operation is independent across tokens and sequences, it can be
+parallelized, allowing for efficient computation over the entire batch.</p></li>
+</ul>
+<p>The result is a batch of normalized sequences,
+<span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}^{\mathcal{B}} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span>,
+where each token vector <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}_{bt}\)</span> in each sequence of the
+batch has been normalized based on its own mean and variance.</p>
+<div class="tip admonition">
 <p class="admonition-title">Broadcasting</p>
 <p>It is worth noting that the notation above involves broadcasting, we are
 essentially subtracting a scalar value (<span class="math notranslate nohighlight">\(\mu_t\)</span>) from a vector (<span class="math notranslate nohighlight">\(\mathbf{Z}_t\)</span>)
@@ -2892,19 +2921,39 @@ Standard deviation: tensor([1.1547, 1.1547, 1.1547], grad_fn=&lt;SelectBackward0
 </section>
 <section id="learnable-affine-transformation">
 <h3><a class="toc-backref" href="#id78" role="doc-backlink">Learnable Affine Transformation</a><a class="headerlink" href="#learnable-affine-transformation" title="Link to this heading">#</a></h3>
-<p>After normalization, it is common to apply a <em>learnable</em> affine transformation (which is
-scaling and shifting) to the normalized output to allow the model to adjust the
-normalized output as needed.</p>
+<p>Normalizing the activations to have zero mean and unit variance can limit the
+representational power of the network, and thus after computing the normalized
+features <span class="math notranslate nohighlight">\(\hat{\mathbf{Z}}_t\)</span> for each token, we introduce a <strong><em>learnable</em></strong>
+affine transformation (scaling and shifting), in terms of parameters <span class="math notranslate nohighlight">\(\gamma\)</span>
+and <span class="math notranslate nohighlight">\(\beta\)</span>, which are of the same dimensionality as the feature space <span class="math notranslate nohighlight">\(D\)</span>, to
+scale and shift the normalized features, allowing the model to “undo” the
+normalization if it is beneficial for the learning process.</p>
 <div class="math notranslate nohighlight">
 \[
-\hat{\mathbf{Z}}_{t d}=\frac{\mathbf{Z}_{t d}-\mu_t}{\sqrt{\sigma_t^2+\epsilon}} \cdot \gamma + \beta
+\overline{\mathbf{Z}}_t = \dfrac{\mathbf{Z}_t - \mu_t}{\sqrt{\sigma_t^2 + \epsilon}} \odot \gamma + \beta
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are learnable parameters of the same shape as
-<span class="math notranslate nohighlight">\(\mathbf{Z}_{t}\)</span>, and they are learned during training.</p>
-<p>All in all, it is just taking each row in <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>, sum all <span class="math notranslate nohighlight">\(D\)</span> elements in
-the row, and then calculate the mean and variance. Then, we subtract the mean
-from each element in the row, divide by the standard deviation, and then scale
-and shift the result using <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<p>where <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}_t\)</span> represents the output of the layer normalization
+for the token at position <span class="math notranslate nohighlight">\(t\)</span>, and <span class="math notranslate nohighlight">\(\odot\)</span> denotes element-wise multiplication.
+And for each activation <span class="math notranslate nohighlight">\(\mathbf{Z}_{td}\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[
+\overline{\mathbf{Z}}_{t d}=\frac{\mathbf{Z}_{t d}-\mu_t}{\sqrt{\sigma_t^2+\epsilon}} \cdot \gamma_d + \beta_d
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma_d\)</span> and <span class="math notranslate nohighlight">\(\beta_d\)</span> are the scaling and shifting parameters for the
+<span class="math notranslate nohighlight">\(d\)</span>-th feature of the token at position <span class="math notranslate nohighlight">\(t\)</span>. However notice that I did not
+index <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> by <span class="math notranslate nohighlight">\(t\)</span> because they are shared across all tokens in
+the sequence.</p>
+<p>The notation <span class="math notranslate nohighlight">\(\gamma_{d}\)</span> without indexing <span class="math notranslate nohighlight">\(t\)</span> implies that the scaling
+parameter <span class="math notranslate nohighlight">\(\gamma\)</span> is feature-specific but shared across all tokens in the
+sequence. It means that each feature dimension <span class="math notranslate nohighlight">\(d\)</span> across all tokens <span class="math notranslate nohighlight">\(t\)</span> in the
+sequence has its own unique scaling parameter, but this parameter does not
+change with different tokens. This is the common setup in layer normalization,
+where <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> parameters are learned for each feature dimension <span class="math notranslate nohighlight">\(D\)</span>
+and are applied identically across all tokens <span class="math notranslate nohighlight">\(T\)</span>.</p>
+<p>Overall, layer norm is just taking each row in <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>, sum all <span class="math notranslate nohighlight">\(D\)</span>
+elements in the row, and then calculate the mean and variance. Then, we subtract
+the mean from each element in the row, divide by the standard deviation, and
+then scale and shift the result using <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 </section>
 <section id="id16">
 <h3><a class="toc-backref" href="#id79" role="doc-backlink">Implementation</a><a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
