@@ -374,13 +374,6 @@ class Softmax:
         return g
 ```
 
-```{admonition} Note
-:class: note
-
-Note that this version of implementation supports only taking in `z` as a single
-tensor, and not a batch of tensors.
-```
-
 We do a rough comparison of the softmax function implemented in PyTorch with the
 readily available implementation in PyTorch.
 
