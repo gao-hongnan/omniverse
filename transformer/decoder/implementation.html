@@ -2735,31 +2735,76 @@ sequences in a batch.</p>
 <h2><a class="toc-backref" href="#id76" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h2>
 <section id="id15">
 <h3><a class="toc-backref" href="#id77" role="doc-backlink">Definition</a><a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<p>Layer normalization is a technique applied in the context of neural networks to
+stabilize the learning process by normalizing the inputs across the features for
+each token in a sequence. Given a data representation
+<span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is the sequence length
+(number of tokens) and <span class="math notranslate nohighlight">\(D\)</span> is the hidden dimension (feature space), layer
+normalization is applied <strong>independently</strong> to each vector (or token) across the
+<strong>feature</strong> dimension <span class="math notranslate nohighlight">\(D\)</span>. You can think of each token <span class="math notranslate nohighlight">\(t=1, \ldots, T\)</span> as a
+separate example, and <span class="math notranslate nohighlight">\(\mathbf{Z}_{t}\)</span> represents each row/token. We then
+compute the mean and variance for each row/token and then apply the
+normalization to each row/token. This process is repeated for each row/token in
+the input matrix <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</p>
+<p>When considering a batch of such sequences, represented as
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{\mathcal{B}} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span>, where
+<span class="math notranslate nohighlight">\(\mathcal{B}\)</span> is the batch size, layer normalization still focuses on
+normalizing each token vector within each sequence in the batch. The operation
+does not aggregate or normalize across different tokens (<span class="math notranslate nohighlight">\(T\)</span> dimension) or
+different sequences in the batch (<span class="math notranslate nohighlight">\(\mathcal{B}\)</span> dimension); instead, it
+normalizes the values across the features (<span class="math notranslate nohighlight">\(D\)</span> dimension) for each token.</p>
+<p>For a single token <span class="math notranslate nohighlight">\(\mathbf{Z}_t \in \mathbb{R}^{1 \times D}\)</span> in a sequence
+<span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span>, the the normalization process involves
+subtracting the mean <span class="math notranslate nohighlight">\(\mu_t\)</span> and dividing by the standard deviation <span class="math notranslate nohighlight">\(\sigma_t\)</span>
+(adjusted with a small constant <span class="math notranslate nohighlight">\(\epsilon\)</span> for numerical stability) of its
+features. This process ensures that, for each token, the features are centered
+around zero with a unit variance.</p>
 <div class="proof definition admonition" id="decoder-layer-normalization">
 <p class="admonition-title"><span class="caption-number">Definition 2 </span> (Layer Normalization)</p>
 <section class="definition-content" id="proof-content">
-<p>Given an input matrix <span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span>, layer
-normalization computes the normalized output matrix
-<span class="math notranslate nohighlight">\(\bar{\mathbf{Z}} \in \mathbb{R}^{T \times D}\)</span> as follows:</p>
+<p>Given a token <span class="math notranslate nohighlight">\(\mathbf{Z}_t \in \mathbb{R}^{1 \times D}\)</span> from the sequence
+<span class="math notranslate nohighlight">\(\mathbf{Z} \in \mathbb{R}^{T \times D}\)</span>, the normalized output
+<span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}_t \in \mathbb{R}^{1 \times D}\)</span> for this token can be
+expressed as follows:</p>
 <div class="math notranslate nohighlight">
 \[
-\hat{\mathbf{Z}}_{t d}=\frac{\mathbf{Z}_{t d}-\mu_t}{\sqrt{\sigma_t^2+\epsilon}}
+\overline{\mathbf{Z}}_{t} = \frac{\mathbf{Z}_{t} - \mu_{t}}{\sqrt{\sigma_{t}^2 + \epsilon}}
 \]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Z}_t\)</span> is the vector of features for the token at position <span class="math notranslate nohighlight">\(t\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu_t \in \mathbb{R}\)</span> is the mean of the features for this token,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma_t^2 \in \mathbb{R}\)</span> is the variance of the features for this token,</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon \in \mathbb{R}\)</span> is a small constant added for numerical stability,
+ensuring that we never divide by zero or approach zero in the denominator.</p></li>
+</ul>
+<p>The mean <span class="math notranslate nohighlight">\(\mu_t\)</span> and variance <span class="math notranslate nohighlight">\(\sigma_t^2\)</span> are computed as follows:</p>
 <div class="math notranslate nohighlight">
 \[
 \mu_t \stackrel{\text { def }}{=} \frac{1}{D} \sum_{d=1}^D Z_{t d}, \quad \sigma_t^2 \stackrel{\text { def }}{=} \frac{1}{D} \sum_{d=1}^D\left(Z_{t d}-\mu_t\right)^2
 \]</div>
-<p>for <span class="math notranslate nohighlight">\(d=1, \ldots, D\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is the number of tokens in the sequence, <span class="math notranslate nohighlight">\(D\)</span> is
-hidden dimension. Furthermore, the mean and variance are computed for each token
-<span class="math notranslate nohighlight">\(\mathbf{Z}_{t} \in \mathbb{R}^{1 \times D}\)</span> along the feature (embedding)
-dimension across all positions, respectively. We add a small constant
-<span class="math notranslate nohighlight">\(\epsilon&gt;0\)</span> to prevent division by zero and numerical stability.</p>
-<p>You can think of each token <span class="math notranslate nohighlight">\(t=1, \ldots, T\)</span> as a separate example, and
-<span class="math notranslate nohighlight">\(\mathbf{Z}_{t}\)</span> represents each row/token. We then compute the mean and
-variance for each row/token and then apply the normalization to each row/token.
-This process is repeated for each row/token in the input matrix <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>.</p>
+<p>Here, <span class="math notranslate nohighlight">\(\mathbf{Z}_{td}\)</span> represents the <span class="math notranslate nohighlight">\(d\)</span>-th feature of the token at position
+<span class="math notranslate nohighlight">\(t\)</span>. The division and subtraction are applied element-wise across the feature
+dimension <span class="math notranslate nohighlight">\(D\)</span> for the token, normalizing each feature based on the statistics of
+the features within the same token.</p>
 </section>
-</div><div class="cell docutils container">
+</div><div class="tip admonition">
+<p class="admonition-title">Broadcasting</p>
+<p>It is worth noting that the notation above involves broadcasting, we are
+essentially subtracting a scalar value (<span class="math notranslate nohighlight">\(\mu_t\)</span>) from a vector (<span class="math notranslate nohighlight">\(\mathbf{Z}_t\)</span>)
+and dividing by another scalar value (<span class="math notranslate nohighlight">\(\sigma_t\)</span>). This is fine in practice, as
+the scalar values are broadcasted to match the shape of the vector during the
+element-wise operations.</p>
+<p>We can however make the definition clearer by removing the implicit
+broadcasting, and say that for each activation <span class="math notranslate nohighlight">\(Z_{td}\)</span> (feature <span class="math notranslate nohighlight">\(d\)</span> of a token
+at position <span class="math notranslate nohighlight">\(t\)</span>), we compute the normalized activation <span class="math notranslate nohighlight">\(\overline{Z}_{td}\)</span></p>
+<div class="math notranslate nohighlight">
+\[
+\overline{\mathbf{Z}}_{td} = \frac{\mathbf{Z}_{td} - \mu_{t}}{\sqrt{\sigma_{t}^2 + \epsilon}}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_t\)</span> and <span class="math notranslate nohighlight">\(\sigma_t^2\)</span> are computed as before.</p>
+</div>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">generator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">composer</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 <span class="n">generator</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>

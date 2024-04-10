@@ -15,3 +15,6 @@ RNG.
 
 .. automodule:: omnivault.utils.reproducibility.rng
     :members:
+
+.. automodule:: omnivault.transformer.modules.layers.normalization
+    :members:
