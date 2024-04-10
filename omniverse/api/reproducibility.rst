@@ -18,3 +18,6 @@ RNG.
 
 .. automodule:: omnivault.transformer.modules.layers.normalization
     :members:
+
+.. automodule:: omnivault.modules.activation
+    :members:

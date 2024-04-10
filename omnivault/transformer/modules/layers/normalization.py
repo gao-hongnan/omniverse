@@ -32,16 +32,16 @@ class LayerNorm(nn.Module):
 
     Formulation
     -----------
-    The LayerNorm operation for each feature dimension `d` in token `t` is defined as:
+    The `LayerNorm` operation for each feature dimension :math:`d=1,2,\ldots,D` in token :math:`t=1,2,\ldots,T` is defined as:
 
     .. math::
         \overline{\mathbf{Z}}_{td} = \frac{\mathbf{Z}_{td} - \mu_t}{\sqrt{\sigma_t^2 + \epsilon}} \cdot \gamma_d + \beta_d
 
     where:
-        - :math:`\mathbf{Z}_{td}` is the `d`-th feature of the token at position `t`.
-        - :math:`\mu_t` is the mean of the features for token `t`.
-        - :math:`\sigma_t^2` is the variance of the features for token `t`.
-        - :math:`\gamma_d` and :math:`\beta_d` are the scaling and shifting parameters for feature `d`.
+        - :math:`\mathbf{Z}_{td}` is the :math:`d`-th feature of the token at position :math:`t`.
+        - :math:`\mu_t` is the mean of the features for token :math:`t`.
+        - :math:`\sigma_t^2` is the variance of the features for token :math:`t`.
+        - :math:`\gamma_d` and :math:`\beta_d` are the scaling and shifting parameters for feature :math:`d`.
         - :math:`\epsilon` is a small constant added for numerical stability.
 
     The mean :math:`\mu_t` and variance :math:`\sigma_t^2` are computed across
@@ -110,6 +110,7 @@ class LayerNorm(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self) -> None:
+        """Initialize the learnable parameters of the layer normalization module."""
         if self.elementwise_affine:
             nn.init.ones_(self.gamma)
             nn.init.zeros_(self.beta)
@@ -149,9 +150,9 @@ class RMSNorm(nn.Module):
     -   :math:`\mathbf{Z}`: One sequence in the batch consisting of :math:`T`
         tokens, of shape :math:`(1, T, D)` or simply :math:`(T, D)` when considering
         it independently.
-    -   :math:`\mathbf{Z}_t`: A single vector/token of `D` features at position `t`
+    -   :math:`\mathbf{Z}_t`: A single vector/token of :math:`D` features at position :math:`t`
         in the input sequence, of shape :math:`(1, D)` or simply :math:`(D,)`.
-    -   :math:`Z_{td}`: `d`-th element of the $t$-th token vector :math:`\mathbf{Z}_t`, where
+    -   :math:`Z_{td}`: :math:`d`-th element of the :math:`t`-th token vector :math:`\mathbf{Z}_t`, where
         :math:`d \in \{1, 2, \ldots, D\}`.
     -   :math:`\text{RMS}(\mathbf{Z}_t)`: Root mean square of the vector
         :math:`\mathbf{Z}_t`, applied element-wise.
@@ -261,7 +262,7 @@ class RMSNorm(nn.Module):
         """
         Resets the learnable parameters of the RMSNorm module.
 
-        The `gain` parameter is initialized to ones, following the default initialization scheme.
+        The `gain` parameter is initialized to ones.
         """
         nn.init.ones_(self.gain)
 
