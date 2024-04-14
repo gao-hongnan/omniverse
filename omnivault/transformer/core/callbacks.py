@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from omnivault.transformer.core.trainer import Trainer
 
-
+from omnivault._types._alias import Missing
+from omnivault._types._sentinel import MISSING
 from omnivault.transformer.utils.format import format_lr
 from omnivault.utils.reproducibility.rng import save_rng_state
 
@@ -67,6 +68,8 @@ def log_on_fit_start(trainer: Trainer) -> None:
     # TODO: add torchinfo's summary
     total_params = trainer.model.total_parameters
     trainable_params = trainer.model.total_trainable_parameters
+
+    assert trainer.composer.model is not MISSING and not isinstance(trainer.composer.model, Missing)
     vocab_size = trainer.composer.model.vocab_size
     context_length = trainer.composer.model.context_length
     device = trainer.device
