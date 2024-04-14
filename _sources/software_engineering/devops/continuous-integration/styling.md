@@ -326,7 +326,7 @@ cycle, allowing for consistent code quality checks with each commit or build.
 Linters check for syntax errors and potential bugs, while formatters ensure the
 code adheres to style guidelines, both acting before unit tests in the pipeline
 to catch and correct issues early, streamlining development, and deployment
-processes. This integration is pivotal in maintaining a high standard of code
+processes. This integration is important in maintaining a high standard of code
 quality throughout the software development lifecycle.
 
 Frequent code commits and daily integration are crucial practices for reducing
