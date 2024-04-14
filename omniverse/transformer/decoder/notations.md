@@ -1284,6 +1284,12 @@ $$
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
+
+So for our case with $\ell = 1$, we have:
+
+$$
+\mathbf{Z}^{(1)}_4 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
+$$
 ````
 
 ```{admonition} Step 8. Position-wise Feed-Forward Network
@@ -1295,25 +1301,182 @@ operations within the FFN can be mathematically represented as follows:
 $$
 \begin{aligned}
 \mathbf{Z}^{FF, (\ell)}_1 &= \text{GELU}\left(\mathbf{Z}^{(\ell)}_4 \mathbf{W}^{FF, (\ell)}_1 + \mathbf{b}^{FF, (\ell)}_1\right) \\
-\mathbf{Z}^{(\ell)}_5 &= \mathbf{Z}^{FF, (\ell)}_1 \mathbf{W}^{FF, (\ell)}_2 + \mathbf{b}^{FF, (\ell)}_2
+\mathcal{B} \times T \times d_{\text{ff}} &\leftarrow \text{GELU}\left(\mathcal{B} \times T \times D \operatorname{@} D \times d_{\text{ff}} + d_{\text{ff}}\right) \\
+\mathcal{B} \times T \times d_{\text{ff}} &\leftarrow \mathcal{B} \times T \times d_{\text{ff}} \\
+\mathbf{Z}^{(\ell)}_5 &= \mathbf{Z}^{FF, (\ell)}_1 \mathbf{W}^{FF, (\ell)}_2 + \mathbf{b}^{FF, (\ell)}_2 \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times d_{\text{ff}} \operatorname{@} d_{\text{ff}} \times D + D \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
+\end{aligned}
+$$
+
+Note slight abuse of notation where I used $\mathbf{Z}^{FF, (\ell)}_1$ to denote
+the intermediate output of the first linear transformation in the FFN. This should
+not be confused with earlier $\mathbf{Z}^{(\ell)}_1$.
+
+For our case with $\ell = 1$, we have:
+
+$$
+\begin{aligned}
+\mathbf{Z}^{FF, (1)}_1 &= \text{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
+\mathbf{Z}^{(1)}_5 &= \mathbf{Z}^{FF, (1)}_1 \mathbf{W}^{FF, (1)}_2 + \mathbf{b}^{FF, (1)}_2
 \end{aligned}
 $$
 ```
 
+````{admonition} Step 9. Residual Connection
+:class: note
+
+Given the output $\mathbf{Z}^{(\ell)}_5$ from the feed-forward network in layer
+$\ell$, we apply a residual connection followed by layer normalization:
+
+```python
+z = z + self.ffn(self.ln_2(z))
+```
+
+Mathematically, this is represented as:
+
+$$
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_6 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5\right) \\
+\mathcal{B} \times T \times D &\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D + \mathcal{B} \times T \times D\right) \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
+\end{aligned}
+$$
+
+Where:
+
+-   $\mathbf{Z}^{(\ell)}_3$ is the input to the feed-forward network that was
+    initially passed through layer normalization at the beginning of this
+    layer's computation cycle.
+-   $\mathbf{Z}^{(\ell)}_5$ is the output from the position-wise feed-forward
+    network.
+-   The output of this step, $\mathbf{Z}^{(\ell)}_6$, becomes the input to the
+    next decoder block.
+
+So in our case, we are at $\ell=1$, so we have:
+
+$$
+\mathbf{Z}^{(1)}_6 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5\right)
+$$
+````
+
+### Iterative Process Through L Decoder Blocks
+
+Now $\mathbf{Z}^{(1)}_6$ becomes the input to the next decoder block and so on.
+More concretely, the operation of each decoder block can be described through a
+series of mathematical transformations, where each block builds upon the output
+of the previous block. The subscript notation $\mathbf{Z}^{(\ell)}_i$ indicates
+the i-th step output of the $\ell$-th decoder block.
+
+#### For the First Decoder Block ($\ell = 1$)
+
+$$
+\begin{aligned}
+\mathbf{Z}^{(1)}_1 &= \text{LayerNorm}\left(\tilde{\mathbf{X}}\right) & \text{(Initial normalization of inputs)} \\
+\mathbf{Z}^{(1)}_2 &= \text{MaskedMultiHead}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) & \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(1)}_3 &= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_2 & \text{(Addition of the first residual connection)} \\
+\mathbf{Z}^{(1)}_4 &= \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right) & \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(1)}_5 &= \text{FFN}\left(\mathbf{Z}^{(1)}_4\right) & \text{(Feed-forward network)}\\
+\mathbf{Z}^{(1)}_6 &= \mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5 & \text{(Second residual connection)}
+\end{aligned}
+$$
+
+### For Subsequent Blocks ($\ell > 1$)
+
+Each subsequent block $\ell$ uses the output of the previous block’s final
+output $\mathbf{Z}^{(\ell-1)}_6$ as the input for its operations.
+
+$$
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_1 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_6\right) & \text{(Normalization of previous block's output)} \\
+\mathbf{Z}^{(\ell)}_2 &= \text{MaskedMultiHead}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) & \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(\ell)}_3 &= \mathbf{Z}^{(\ell)}_1 + \mathbf{Z}^{(\ell)}_2 & \text{(First residual connection post self-attention)} \\
+\mathbf{Z}^{(\ell)}_4 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) & \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(\ell)}_5 &= \text{FFN}\left(\mathbf{Z}^{(\ell)}_4\right) & \text{(Feed-forward network)}\\
+\mathbf{Z}^{(\ell)}_6 &= \mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5 & \text{(Second residual connection post FFN)}
+\end{aligned}
+$$
+
+Finally, after going through the decoder blocks a total number of $L$ times, the
+final output we get now is $\mathbf{Z}^{(L)}_6$ which is the output of the last
+decoder block of shape $\mathcal{B} \times T \times D$. We need to apply one
+more layer normalization to this output to get the final output before
+projection to the vocabulary space.
+
+```python
+z = self.backbone.ln_final(z)  # [B, T, D]
+```
+
+```{admonition} Step 10. Layer Normalization Before Projection
+:class: note
+
+The final output of the decoder block $\mathbf{Z}^{(L)}_6$ is passed through a
+layer normalization before being projected to the vocabulary space.
+
+$$
+\begin{aligned}
+\mathbf{Z}^{(L)}_7 &= \text{LayerNorm}\left(\mathbf{Z}^{(L)}_6\right) \\
+\mathcal{B} \times T \times D &\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
+\end{aligned}
+$$
+```
+
+### Head
+
+We denote the weight of the last projection layer as $\mathbf{W}_{s}$ where $s$
+indicates the softmax layer, essentially projecting the output of the last layer
+to the vocabulary space.
+
+```python
+self.head = nn.Linear(
+    in_features=self.d_model, out_features=self.vocab_size, bias=config.bias
+)
+logits = self.head(z)  # [B, T, V]
+```
+
+We have:
+
+$$
+\begin{aligned}
+\mathbf{Z} &= \mathbf{Z}^{(L)}_7 \mathbf{W}_{s} \\
+\mathcal{B} \times T \times V &\leftarrow \mathcal{B} \times T \times D \operatorname{@} D \times V \\
+\mathcal{B} \times T \times V &\leftarrow \mathcal{B} \times T \times V
+\end{aligned}
+$$
+
+This is the logits $\mathbf{Z}$ of shape $\mathcal{B} \times T \times V$ where
+$V$ is the size of the vocabulary.
+
 ## Table
 
-| Matrix Description                                     | Symbol                             | Dimensions            | Description                                                                                                                                                                |
-| ------------------------------------------------------ | ---------------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| One-Hot Encoded Input Matrix                           | $\mathbf{X}^{\text{ohe}}$          | $T \times V$          | Each row corresponds to a one-hot encoded vector representing a token in the sequence.                                                                                     |
-| Embedding Matrix                                       | $\mathbf{W}_e$                     | $V \times D$          | Each row is the embedding vector of the corresponding token in the vocabulary.                                                                                             |
-| Embedded Input Matrix                                  | $\mathbf{X}$                       | $T \times D$          | Each row is the embedding vector of the corresponding token in the input sequence.                                                                                         |
-| Embedding Vector for Token $t$                         | $\mathbf{X}_t$                     | $1 \times D$          | The embedding vector for the token at position $t$ in the input sequence.                                                                                                  |
-| Batched Input Tensor                                   | $\mathbf{X}^{\mathcal{B}}$         | $B \times T \times D$ | A batched tensor containing $B$ input sequences, each sequence is of shape $T \times D$.                                                                                   |
-| Positional Encoding Matrix                             | $\mathbf{W}_{p}$                   | $T \times D$          | Matrix with positional encoding vectors for each position in the sequence, computed using sinusoidal functions.                                                            |
-| Output of Positional Encoding Layer                    | $\tilde{\mathbf{X}}$               | $T \times D$          | The resultant embeddings matrix after adding positional encoding $\mathbf{W}_{p}$ to the embedded input matrix $\mathbf{X}$. Each row now includes positional information. |
-| Embedding Vector for Token $t$                         | $\tilde{\mathbf{X}}_t$             | $1 \times D$          | The token and positional embedding vector for the token at position $t$ in the input sequence.                                                                             |
-| Batched Input Tensor                                   | $\tilde{\mathbf{X}}^{\mathcal{B}}$ | $B \times T \times D$ | A batched tensor containing $B$ input sequences, each sequence is of shape $T \times D$.                                                                                   |
-| Batched Embedding Matrix Sequence $b$                  | $\mathbf{X}^{(b)}$                 | $T \times D$          | The token and positional embedding vector for the $b$-th input sequence of the batch.                                                                                      |
-| Batched Embedding Vector for Token $t$ in Sequence $b$ | $\mathbf{X}^{(b)}_t$               | $1 \times D$          | The token and positional embedding vector for the token at position $t$ in the $b$-th input sequence of the batch.                                                         |
+| Matrix Description                                     | Symbol                             | Dimensions            | Description                                                                                                                                                                          |
+| ------------------------------------------------------ | ---------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| One-Hot Encoded Input Matrix                           | $\mathbf{X}^{\text{ohe}}$          | $T \times V$          | Each row corresponds to a one-hot encoded vector representing a token in the sequence.                                                                                               |
+| Embedding Matrix                                       | $\mathbf{W}_e$                     | $V \times D$          | Each row is the embedding vector of the corresponding token in the vocabulary.                                                                                                       |
+| Embedded Input Matrix                                  | $\mathbf{X}$                       | $T \times D$          | Each row is the embedding vector of the corresponding token in the input sequence.                                                                                                   |
+| Embedding Vector for Token $t$                         | $\mathbf{X}_t$                     | $1 \times D$          | The embedding vector for the token at position $t$ in the input sequence.                                                                                                            |
+| Batched Input Tensor                                   | $\mathbf{X}^{\mathcal{B}}$         | $B \times T \times D$ | A batched tensor containing $B$ input sequences, each sequence is of shape $T \times D$.                                                                                             |
+| Positional Encoding Matrix                             | $\mathbf{W}_{p}$                   | $T \times D$          | Matrix with positional encoding vectors for each position in the sequence, computed using sinusoidal functions.                                                                      |
+| Output of Positional Encoding Layer                    | $\tilde{\mathbf{X}}$               | $T \times D$          | The resultant embeddings matrix after adding positional encoding $\mathbf{W}_{p}$ to the embedded input matrix $\mathbf{X}$. Each row now includes positional information.           |
+| Embedding Vector for Token $t$                         | $\tilde{\mathbf{X}}_t$             | $1 \times D$          | The token and positional embedding vector for the token at position $t$ in the input sequence.                                                                                       |
+| Batched Input Tensor                                   | $\tilde{\mathbf{X}}^{\mathcal{B}}$ | $B \times T \times D$ | A batched tensor containing $B$ input sequences, each sequence is of shape $T \times D$.                                                                                             |
+| Batched Embedding Matrix Sequence $b$                  | $\mathbf{X}^{(b)}$                 | $T \times D$          | The token and positional embedding vector for the $b$-th input sequence of the batch.                                                                                                |
+| Batched Embedding Vector for Token $t$ in Sequence $b$ | $\mathbf{X}^{(b)}_t$               | $1 \times D$          | The token and positional embedding vector for the token at position $t$ in the $b$-th input sequence of the batch.                                                                   |
+| First Layer Normalized Input                           | $\mathbf{Z}^{(1)}_1$               | $B \times T \times D$ | The output of the initial layer normalization applied to $\tilde{\mathbf{X}}^{\mathcal{B}}$, serving as the input to the first decoder block's self-attention mechanism.             |
+| First Self-Attention Output                            | $\mathbf{Z}^{(1)}_2$               | $B \times T \times D$ | Output from the first block's self-attention mechanism; processes $\mathbf{Z}^{(1)}_1$ with respect to itself to refine token representations.                                       |
+| Output After First Residual Connection                 | $\mathbf{Z}^{(1)}_3$               | $B \times T \times D$ | Resultant tensor after adding the self-attention outputs back to the initial normalized inputs ($\mathbf{Z}^{(1)}_1$), i.e., the input to the first feed-forward network.            |
+| Normalized Before Feed-Forward Network (FFN)           | $\mathbf{Z}^{(1)}_4$               | $B \times T \times D$ | Output of applying layer normalization to $\mathbf{Z}^{(1)}_3$, prepping it for processing through the FFN.                                                                          |
+| Output of First Feed-Forward Network                   | $\mathbf{Z}^{(1)}_5$               | $B \times T \times D$ | The result of applying the first FFN to $\mathbf{Z}^{(1)}_4$, which involves two linear transformations and a non-linear activation (typically GELU).                                |
+| Output After Second Residual Connection                | $\mathbf{Z}^{(1)}_6$               | $B \times T \times D$ | Final output of the first decoder block, which is the sum of $\mathbf{Z}^{(1)}_3$ and $\mathbf{Z}^{(1)}_5$. This output is used as the input to the next decoder block ($\ell = 2$). |
+| Subsequent Block Input (Normalized)                    | $\mathbf{Z}^{(\ell)}_1$            | $B \times T \times D$ | For $\ell > 1$, $\mathbf{Z}^{(\ell)}_1$ is the layer normalized output of $\mathbf{Z}^{(\ell-1)}_6$, serving as the input to the self-attention of block $\ell$.                     |
+| Subsequent Self-Attention Output                       | $\mathbf{Z}^{(\ell)}_2$            | $B \times T \times D$ | Self-attention output for block $\ell$, refining the input based on the learned attention mechanisms within the block.                                                               |
+| Output After First Residual Connection (Block $\ell$)  | $\mathbf{Z}^{(\ell)}_3$            | $B \times T \times D$ | Resultant tensor after adding the self-attention output ($\mathbf{Z}^{(\ell)}_2$) to the normalized input from the previous block's output ($\mathbf{Z}^{(\ell)}_1$).                |
+| Normalized Before FFN (Block $\ell$)                   | $\mathbf{Z}^{(\ell)}_4$            | $B \times T \times D$ | Output from applying layer normalization to $\mathbf{Z}^{(\ell)}_3$, which is the input to the FFN of block $\ell$.                                                                  |
+| Output of FFN (Block $\ell$)                           | $\mathbf{Z}^{(\ell)}_5$            | $B \times T \times D$ | Output from the FFN for block $\ell$, which includes non-linear processing through two layers of linear transformations and GELU activation.                                         |
+| Output After Second Residual Connection (Block $\ell$) | $\mathbf{Z}^{(\ell)}_6$            | $B \times T \times D$ | Final output of block $\ell$, being the addition of $\mathbf{Z}^{(\ell)}_3$ and $\mathbf{Z}^{(\ell)}_5$. This output is used as the input to the next block or as the final output.  |
 
--   https://leimao.github.io/blog/Transformer-Explained/
+## References
+
+-   [The Transformer Family v2.0 - Lilian Weng, OpenAI](https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/)
+-   [Transformer Explained - Lei Mao, NVIDIA](https://leimao.github.io/blog/Transformer-Explained/)
