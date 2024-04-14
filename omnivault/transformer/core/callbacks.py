@@ -64,13 +64,51 @@ def save_state(trainer: Trainer) -> None:
 
 
 def log_on_fit_start(trainer: Trainer) -> None:
+    # TODO: add torchinfo's summary
+    total_params = trainer.model.total_parameters
+    trainable_params = trainer.model.total_trainable_parameters
+    vocab_size = trainer.composer.model.vocab_size
+    context_length = trainer.composer.model.context_length
+    device = trainer.device
+
+    ddp_world_size = trainer.ddp_world_size if hasattr(trainer, "ddp_world_size") else 1
+    tokens_per_iter = (
+        trainer.gradient_accumulation_steps
+        * trainer.composer.data.train_loader["batch_size"]
+        * context_length
+        * ddp_world_size
+    )
+    total_tokens = tokens_per_iter * trainer.max_epochs * len(trainer.composer.data.train_loader)
+
     initial_lr_or_lrs = trainer._get_current_lr_or_lrs()
     lr_str = format_lr(initial_lr_or_lrs, precision=9)
 
+    labels = [
+        "Total Parameters:",
+        "Trainable Parameters:",
+        "Vocabulary Size:",
+        "Context Length:",
+        "Device:",
+        "Tokens per Iteration:",
+        "Total Tokens:",
+        "Initial Learning Rate(s):",
+    ]
+    max_width = max(len(label) for label in labels) + 1  # +1 for the space after the label
+
+    trainer.logger.info(f"%-{max_width}s %d", "Total Parameters:", total_params)
+    trainer.logger.info(f"%-{max_width}s %d", "Trainable Parameters:", trainable_params)
+    trainer.logger.info(f"%-{max_width}s %d", "Vocabulary Size:", vocab_size)
+    trainer.logger.info(f"%-{max_width}s %d", "Context Length:", context_length)
+    trainer.logger.info(f"%-{max_width}s %s", "Device:", str(device))
+    trainer.logger.info(f"%-{max_width}s %d", "Tokens per Iteration:", tokens_per_iter)
+    trainer.logger.info(f"%-{max_width}s %d", "Total Tokens:", total_tokens)
+
     if isinstance(initial_lr_or_lrs, list):
-        trainer.logger.info("Initial learning rates for each parameter group: %s", lr_str)
+        trainer.logger.info(f"%-{max_width}s %s", "Initial Learning Rate(s):", lr_str)
     else:
-        trainer.logger.info("Initial learning rate: %s", initial_lr_or_lrs)
+        trainer.logger.info(f"%-{max_width}s %.9f", "Initial Learning Rate:", initial_lr_or_lrs)
+
+    trainer.logger.info("\n")
 
 
 def log_on_train_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
@@ -129,10 +167,3 @@ def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"])
     trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Loss:", average_loss)
     trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Perplexity:", average_perplexity)
     trainer.logger.info("\n")
-
-
-def log_on_fit_start_model_summary(trainer: Trainer) -> None:
-    # TODO: add torchinfo's summary
-    total_params = trainer.model.total_parameters
-    trainable_params = trainer.model.total_trainable_parameters
-    trainer.logger.info("Total Parameters: %d, Trainable Parameters: %d", total_params, trainable_params)

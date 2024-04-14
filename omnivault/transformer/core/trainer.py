@@ -20,7 +20,6 @@ from omnivault.transformer.core.callbacks import (
     log_every_n_steps_on_batch_end,
     log_on_epoch_end,
     log_on_fit_start,
-    log_on_fit_start_model_summary,
     log_on_train_epoch_start,
     save_state,
     update_state,
@@ -186,7 +185,6 @@ class Trainer:
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_START.value, log_on_train_epoch_start)
         self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, log_on_epoch_end)
         self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, log_on_epoch_end)
-        self.add_callback(TrainerEvent.ON_FIT_START.value, log_on_fit_start_model_summary)
 
     def add_callback(self, event: str, callback: TrainerCallback) -> None:
         """Adds a callback to the list for a given event."""
