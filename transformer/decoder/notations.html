@@ -545,8 +545,17 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-error-linear-unit-gelu">Gaussian Error Linear Unit (GELU)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-subsequent-blocks-ell-1">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#head">Head</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table">Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
             </nav>
         </div>
@@ -625,8 +634,19 @@ document.write(`
 <li><p><a class="reference internal" href="#gaussian-error-linear-unit-gelu" id="id38">Gaussian Error Linear Unit (GELU)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#the-full-setup" id="id39">The Full Setup</a></p></li>
-<li><p><a class="reference internal" href="#table" id="id40">Table</a></p></li>
+<li><p><a class="reference internal" href="#the-full-setup" id="id39">The Full Setup</a></p>
+<ul>
+<li><p><a class="reference internal" href="#iterative-process-through-l-decoder-blocks" id="id40">Iterative Process Through L Decoder Blocks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#for-the-first-decoder-block-ell-1" id="id41">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#for-subsequent-blocks-ell-1" id="id42">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#head" id="id43">Head</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#table" id="id44">Table</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id45">References</a></p></li>
 </ul>
 </nav>
 <section id="dimensions-and-indexing">
@@ -2116,6 +2136,11 @@ feed-forward network as we can see below.</p>
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
+<p>So for our case with <span class="math notranslate nohighlight">\(\ell = 1\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{Z}^{(1)}_4 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
+\]</div>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Step 8. Position-wise Feed-Forward Network</p>
@@ -2125,13 +2150,142 @@ operations within the FFN can be mathematically represented as follows:</p>
 \[\begin{split}
 \begin{aligned}
 \mathbf{Z}^{FF, (\ell)}_1 &amp;= \text{GELU}\left(\mathbf{Z}^{(\ell)}_4 \mathbf{W}^{FF, (\ell)}_1 + \mathbf{b}^{FF, (\ell)}_1\right) \\
-\mathbf{Z}^{(\ell)}_5 &amp;= \mathbf{Z}^{FF, (\ell)}_1 \mathbf{W}^{FF, (\ell)}_2 + \mathbf{b}^{FF, (\ell)}_2
+\mathcal{B} \times T \times d_{\text{ff}} &amp;\leftarrow \text{GELU}\left(\mathcal{B} \times T \times D \operatorname{&#64;} D \times d_{\text{ff}} + d_{\text{ff}}\right) \\
+\mathcal{B} \times T \times d_{\text{ff}} &amp;\leftarrow \mathcal{B} \times T \times d_{\text{ff}} \\
+\mathbf{Z}^{(\ell)}_5 &amp;= \mathbf{Z}^{FF, (\ell)}_1 \mathbf{W}^{FF, (\ell)}_2 + \mathbf{b}^{FF, (\ell)}_2 \\
+\mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times d_{\text{ff}} \operatorname{&#64;} d_{\text{ff}} \times D + D \\
+\mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
+\end{aligned}
+\end{split}\]</div>
+<p>Note slight abuse of notation where I used <span class="math notranslate nohighlight">\(\mathbf{Z}^{FF, (\ell)}_1\)</span> to denote
+the intermediate output of the first linear transformation in the FFN. This should
+not be confused with earlier <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span>.</p>
+<p>For our case with <span class="math notranslate nohighlight">\(\ell = 1\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{FF, (1)}_1 &amp;= \text{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
+\mathbf{Z}^{(1)}_5 &amp;= \mathbf{Z}^{FF, (1)}_1 \mathbf{W}^{FF, (1)}_2 + \mathbf{b}^{FF, (1)}_2
+\end{aligned}
+\end{split}\]</div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Step 9. Residual Connection</p>
+<p>Given the output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_5\)</span> from the feed-forward network in layer
+<span class="math notranslate nohighlight">\(\ell\)</span>, we apply a residual connection followed by layer normalization:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_2</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Mathematically, this is represented as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_6 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D + \mathcal{B} \times T \times D\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
+\end{aligned}
+\end{split}\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span> is the input to the feed-forward network that was
+initially passed through layer normalization at the beginning of this
+layer’s computation cycle.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_5\)</span> is the output from the position-wise feed-forward
+network.</p></li>
+<li><p>The output of this step, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_6\)</span>, becomes the input to the
+next decoder block.</p></li>
+</ul>
+<p>So in our case, we are at <span class="math notranslate nohighlight">\(\ell=1\)</span>, so we have:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{Z}^{(1)}_6 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5\right)
+\]</div>
+</div>
+<section id="iterative-process-through-l-decoder-blocks">
+<h3><a class="toc-backref" href="#id40" role="doc-backlink">Iterative Process Through L Decoder Blocks</a><a class="headerlink" href="#iterative-process-through-l-decoder-blocks" title="Link to this heading">#</a></h3>
+<p>Now <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_6\)</span> becomes the input to the next decoder block and so on.
+More concretely, the operation of each decoder block can be described through a
+series of mathematical transformations, where each block builds upon the output
+of the previous block. The subscript notation <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_i\)</span> indicates
+the i-th step output of the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder block.</p>
+<section id="for-the-first-decoder-block-ell-1">
+<h4><a class="toc-backref" href="#id41" role="doc-backlink">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a><a class="headerlink" href="#for-the-first-decoder-block-ell-1" title="Link to this heading">#</a></h4>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(1)}_1 &amp;= \text{LayerNorm}\left(\tilde{\mathbf{X}}\right) &amp; \text{(Initial normalization of inputs)} \\
+\mathbf{Z}^{(1)}_2 &amp;= \text{MaskedMultiHead}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) &amp; \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(1)}_3 &amp;= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_2 &amp; \text{(Addition of the first residual connection)} \\
+\mathbf{Z}^{(1)}_4 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right) &amp; \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(1)}_5 &amp;= \text{FFN}\left(\mathbf{Z}^{(1)}_4\right) &amp; \text{(Feed-forward network)}\\
+\mathbf{Z}^{(1)}_6 &amp;= \mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5 &amp; \text{(Second residual connection)}
+\end{aligned}
+\end{split}\]</div>
+</section>
+</section>
+<section id="for-subsequent-blocks-ell-1">
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a><a class="headerlink" href="#for-subsequent-blocks-ell-1" title="Link to this heading">#</a></h3>
+<p>Each subsequent block <span class="math notranslate nohighlight">\(\ell\)</span> uses the output of the previous block’s final
+output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_6\)</span> as the input for its operations.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_1 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_6\right) &amp; \text{(Normalization of previous block's output)} \\
+\mathbf{Z}^{(\ell)}_2 &amp;= \text{MaskedMultiHead}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) &amp; \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(\ell)}_3 &amp;= \mathbf{Z}^{(\ell)}_1 + \mathbf{Z}^{(\ell)}_2 &amp; \text{(First residual connection post self-attention)} \\
+\mathbf{Z}^{(\ell)}_4 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) &amp; \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(\ell)}_5 &amp;= \text{FFN}\left(\mathbf{Z}^{(\ell)}_4\right) &amp; \text{(Feed-forward network)}\\
+\mathbf{Z}^{(\ell)}_6 &amp;= \mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5 &amp; \text{(Second residual connection post FFN)}
+\end{aligned}
+\end{split}\]</div>
+<p>Finally, after going through the decoder blocks a total number of <span class="math notranslate nohighlight">\(L\)</span> times, the
+final output we get now is <span class="math notranslate nohighlight">\(\mathbf{Z}^{(L)}_6\)</span> which is the output of the last
+decoder block of shape <span class="math notranslate nohighlight">\(\mathcal{B} \times T \times D\)</span>. We need to apply one
+more layer normalization to this output to get the final output before
+projection to the vocabulary space.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">ln_final</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>  <span class="c1"># [B, T, D]</span>
+</pre></div>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Step 10. Layer Normalization Before Projection</p>
+<p>The final output of the decoder block <span class="math notranslate nohighlight">\(\mathbf{Z}^{(L)}_6\)</span> is passed through a
+layer normalization before being projected to the vocabulary space.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(L)}_7 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(L)}_6\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
 </div>
 </section>
+<section id="head">
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">Head</a><a class="headerlink" href="#head" title="Link to this heading">#</a></h3>
+<p>We denote the weight of the last projection layer as <span class="math notranslate nohighlight">\(\mathbf{W}_{s}\)</span> where <span class="math notranslate nohighlight">\(s\)</span>
+indicates the softmax layer, essentially projecting the output of the last layer
+to the vocabulary space.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+    <span class="n">in_features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">bias</span>
+<span class="p">)</span>
+<span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>  <span class="c1"># [B, T, V]</span>
+</pre></div>
+</div>
+<p>We have:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z} &amp;= \mathbf{Z}^{(L)}_7 \mathbf{W}_{s} \\
+\mathcal{B} \times T \times V &amp;\leftarrow \mathcal{B} \times T \times D \operatorname{&#64;} D \times V \\
+\mathcal{B} \times T \times V &amp;\leftarrow \mathcal{B} \times T \times V
+\end{aligned}
+\end{split}\]</div>
+<p>This is the logits <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span> of shape <span class="math notranslate nohighlight">\(\mathcal{B} \times T \times V\)</span> where
+<span class="math notranslate nohighlight">\(V\)</span> is the size of the vocabulary.</p>
+</section>
+</section>
 <section id="table">
-<h2><a class="toc-backref" href="#id40" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id44" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Matrix Description</p></th>
@@ -2196,10 +2350,74 @@ operations within the FFN can be mathematically represented as follows:</p>
 <td><p><span class="math notranslate nohighlight">\(1 \times D\)</span></p></td>
 <td><p>The token and positional embedding vector for the token at position <span class="math notranslate nohighlight">\(t\)</span> in the <span class="math notranslate nohighlight">\(b\)</span>-th input sequence of the batch.</p></td>
 </tr>
+<tr class="row-odd"><td><p>First Layer Normalized Input</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>The output of the initial layer normalization applied to <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}^{\mathcal{B}}\)</span>, serving as the input to the first decoder block’s self-attention mechanism.</p></td>
+</tr>
+<tr class="row-even"><td><p>First Self-Attention Output</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Output from the first block’s self-attention mechanism; processes <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_1\)</span> with respect to itself to refine token representations.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output After First Residual Connection</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_3\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Resultant tensor after adding the self-attention outputs back to the initial normalized inputs (<span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_1\)</span>), i.e., the input to the first feed-forward network.</p></td>
+</tr>
+<tr class="row-even"><td><p>Normalized Before Feed-Forward Network (FFN)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_4\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Output of applying layer normalization to <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_3\)</span>, prepping it for processing through the FFN.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output of First Feed-Forward Network</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_5\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>The result of applying the first FFN to <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_4\)</span>, which involves two linear transformations and a non-linear activation (typically GELU).</p></td>
+</tr>
+<tr class="row-even"><td><p>Output After Second Residual Connection</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_6\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Final output of the first decoder block, which is the sum of <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_3\)</span> and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_5\)</span>. This output is used as the input to the next decoder block (<span class="math notranslate nohighlight">\(\ell = 2\)</span>).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Subsequent Block Input (Normalized)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>For <span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> is the layer normalized output of <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_6\)</span>, serving as the input to the self-attention of block <span class="math notranslate nohighlight">\(\ell\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Subsequent Self-Attention Output</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Self-attention output for block <span class="math notranslate nohighlight">\(\ell\)</span>, refining the input based on the learned attention mechanisms within the block.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output After First Residual Connection (Block <span class="math notranslate nohighlight">\(\ell\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Resultant tensor after adding the self-attention output (<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>) to the normalized input from the previous block’s output (<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span>).</p></td>
+</tr>
+<tr class="row-even"><td><p>Normalized Before FFN (Block <span class="math notranslate nohighlight">\(\ell\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_4\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Output from applying layer normalization to <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span>, which is the input to the FFN of block <span class="math notranslate nohighlight">\(\ell\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Output of FFN (Block <span class="math notranslate nohighlight">\(\ell\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_5\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Output from the FFN for block <span class="math notranslate nohighlight">\(\ell\)</span>, which includes non-linear processing through two layers of linear transformations and GELU activation.</p></td>
+</tr>
+<tr class="row-even"><td><p>Output After Second Residual Connection (Block <span class="math notranslate nohighlight">\(\ell\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_6\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(B \times T \times D\)</span></p></td>
+<td><p>Final output of block <span class="math notranslate nohighlight">\(\ell\)</span>, being the addition of <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span> and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_5\)</span>. This output is used as the input to the next block or as the final output.</p></td>
+</tr>
 </tbody>
 </table>
+</section>
+<section id="references">
+<h2><a class="toc-backref" href="#id45" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference external" href="https://leimao.github.io/blog/Transformer-Explained/">https://leimao.github.io/blog/Transformer-Explained/</a></p></li>
+<li><p><a class="reference external" href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">The Transformer Family v2.0 - Lilian Weng, OpenAI</a></p></li>
+<li><p><a class="reference external" href="https://leimao.github.io/blog/Transformer-Explained/">Transformer Explained - Lei Mao, NVIDIA</a></p></li>
 </ul>
 </section>
 </section>
@@ -2319,8 +2537,17 @@ operations within the FFN can be mathematically represented as follows:</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-error-linear-unit-gelu">Gaussian Error Linear Unit (GELU)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#for-subsequent-blocks-ell-1">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#head">Head</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table">Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
 </ul>
   </nav></div>
 
