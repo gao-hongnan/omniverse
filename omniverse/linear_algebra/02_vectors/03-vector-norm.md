@@ -96,8 +96,8 @@ is crucial for tasks like
 In the context of
 **[generative AI](https://en.wikipedia.org/wiki/Generative_adversarial_network)**
 and **[embedding spaces](https://en.wikipedia.org/wiki/Word_embedding)**, norms
-play a pivotal role in quantifying the magnitude and distance of vectors, which
-represent complex entities like features, words, or even images.
+play an important role in quantifying the magnitude and distance of vectors,
+which represent complex entities like features, words, or even images.
 
 ## Norm
 

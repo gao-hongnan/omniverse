@@ -275,7 +275,7 @@ class GPTDecoder(BaseDecoder):
 
         target_masks = target_masks.to(input_tokens.device) # type: ignore[assignment]
 
-        z = self.tok_embed(input_tokens) # * math.sqrt(self.d_model) for better optimization landscape
+        z = self.tok_embed(input_tokens) # TODO: * math.sqrt(self.d_model) for better optimization landscape
         z = z + self.pos_embed[:, :seq_len, :]
         z = self.dropout(z)
 

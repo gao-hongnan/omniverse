@@ -117,9 +117,7 @@ class LayerNorm(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         mean = x.mean(dim=-1, keepdim=True)
-        std = x.std(
-            dim=-1, keepdim=True, unbiased=False
-        )  # NOTE: it is unbiased=False as according to PyTorch documentation.
+        std = x.std(dim=-1, keepdim=True, unbiased=False)  # `unbiased=False` as according to PyTorch documentation.
         if self.elementwise_affine:
             return self.gamma * (x - mean) / (std + self.eps) + self.beta
         return (x - mean) / (std + self.eps)

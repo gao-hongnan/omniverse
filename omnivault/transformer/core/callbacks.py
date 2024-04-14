@@ -5,8 +5,6 @@ from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from omnivault.transformer.core.trainer import Trainer
 
-from omnivault._types._alias import Missing
-from omnivault._types._sentinel import MISSING
 from omnivault.transformer.utils.format import format_lr
 from omnivault.utils.reproducibility.rng import save_rng_state
 
@@ -69,9 +67,8 @@ def log_on_fit_start(trainer: Trainer) -> None:
     total_params = trainer.model.total_parameters
     trainable_params = trainer.model.total_trainable_parameters
 
-    assert trainer.composer.model is not MISSING and not isinstance(trainer.composer.model, Missing)
-    vocab_size = trainer.composer.model.vocab_size
-    context_length = trainer.composer.model.context_length
+    vocab_size = trainer.composer.model.vocab_size  # type: ignore[union-attr]
+    context_length = trainer.composer.model.context_length  # type: ignore[union-attr]
     device = trainer.device
 
     ddp_world_size = trainer.ddp_world_size if hasattr(trainer, "ddp_world_size") else 1
@@ -93,7 +90,7 @@ def log_on_fit_start(trainer: Trainer) -> None:
         "Context Length:",
         "Device:",
         "Tokens per Iteration:",
-        "Total Tokens:",
+        "Total Tokens Consumed In Training:",
         "Initial Learning Rate(s):",
     ]
     max_width = max(len(label) for label in labels) + 1  # +1 for the space after the label
@@ -104,7 +101,7 @@ def log_on_fit_start(trainer: Trainer) -> None:
     trainer.logger.info(f"%-{max_width}s %d", "Context Length:", context_length)
     trainer.logger.info(f"%-{max_width}s %s", "Device:", str(device))
     trainer.logger.info(f"%-{max_width}s %d", "Tokens per Iteration:", tokens_per_iter)
-    trainer.logger.info(f"%-{max_width}s %d", "Total Tokens:", total_tokens)
+    trainer.logger.info(f"%-{max_width}s %d", "Total Tokens Consumed In Training:", total_tokens)
 
     if isinstance(initial_lr_or_lrs, list):
         trainer.logger.info(f"%-{max_width}s %s", "Initial Learning Rate(s):", lr_str)
