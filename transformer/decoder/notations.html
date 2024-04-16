@@ -496,6 +496,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensions-and-indexing">Dimensions and Indexing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-notations">General Notations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elementwise-and-vectorwise-operations">Elementwise and Vectorwise Operations</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vocabulary">Vocabulary</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-sequence">Input Sequence</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#batched-input-sequences">Batched Input Sequences</a></li>
@@ -545,7 +546,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-error-linear-unit-gelu">Gaussian Error Linear Unit (GELU)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-workflow">The Full Workflow</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
 </ul>
@@ -578,75 +579,76 @@ document.write(`
 <li><p><a class="reference internal" href="#dimensions-and-indexing" id="id4">Dimensions and Indexing</a></p></li>
 <li><p><a class="reference internal" href="#general-notations" id="id5">General Notations</a></p>
 <ul>
-<li><p><a class="reference internal" href="#vocabulary" id="id6">Vocabulary</a></p></li>
-<li><p><a class="reference internal" href="#input-sequence" id="id7">Input Sequence</a></p>
+<li><p><a class="reference internal" href="#elementwise-and-vectorwise-operations" id="id6">Elementwise and Vectorwise Operations</a></p></li>
+<li><p><a class="reference internal" href="#vocabulary" id="id7">Vocabulary</a></p></li>
+<li><p><a class="reference internal" href="#input-sequence" id="id8">Input Sequence</a></p>
 <ul>
-<li><p><a class="reference internal" href="#batched-input-sequences" id="id8">Batched Input Sequences</a></p></li>
+<li><p><a class="reference internal" href="#batched-input-sequences" id="id9">Batched Input Sequences</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#token-to-index-and-index-to-token-mappings" id="id9">Token to Index, and Index to Token Mappings</a></p>
+<li><p><a class="reference internal" href="#token-to-index-and-index-to-token-mappings" id="id10">Token to Index, and Index to Token Mappings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#string-to-index-mapping" id="id10">String-to-Index Mapping</a></p></li>
-<li><p><a class="reference internal" href="#index-to-string-mapping" id="id11">Index-to-String Mapping</a></p></li>
+<li><p><a class="reference internal" href="#string-to-index-mapping" id="id11">String-to-Index Mapping</a></p></li>
+<li><p><a class="reference internal" href="#index-to-string-mapping" id="id12">Index-to-String Mapping</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#one-hot-representation-of-input-sequence-mathbf-x" id="id12">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a></p>
+<li><p><a class="reference internal" href="#one-hot-representation-of-input-sequence-mathbf-x" id="id13">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a></p>
 <ul>
-<li><p><a class="reference internal" href="#definition" id="id13">Definition</a></p></li>
-<li><p><a class="reference internal" href="#one-hot-encoding-process" id="id14">One-Hot Encoding Process</a></p></li>
-<li><p><a class="reference internal" href="#batched" id="id15">Batched</a></p></li>
+<li><p><a class="reference internal" href="#definition" id="id14">Definition</a></p></li>
+<li><p><a class="reference internal" href="#one-hot-encoding-process" id="id15">One-Hot Encoding Process</a></p></li>
+<li><p><a class="reference internal" href="#batched" id="id16">Batched</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#weights-and-embeddings" id="id16">Weights And Embeddings</a></p>
+<li><p><a class="reference internal" href="#weights-and-embeddings" id="id17">Weights And Embeddings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#matrix-multiplication-primer" id="id17">Matrix Multiplication Primer</a></p></li>
-<li><p><a class="reference internal" href="#mathbf-x-output-of-the-embedding-layer" id="id18"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a></p>
+<li><p><a class="reference internal" href="#matrix-multiplication-primer" id="id18">Matrix Multiplication Primer</a></p></li>
+<li><p><a class="reference internal" href="#mathbf-x-output-of-the-embedding-layer" id="id19"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id1" id="id19">Definition</a></p></li>
-<li><p><a class="reference internal" href="#lookup" id="id20">Lookup</a></p></li>
-<li><p><a class="reference internal" href="#semantic-representation" id="id21">Semantic Representation</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id20">Definition</a></p></li>
+<li><p><a class="reference internal" href="#lookup" id="id21">Lookup</a></p></li>
+<li><p><a class="reference internal" href="#semantic-representation" id="id22">Semantic Representation</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#mathbf-w-e-embedding-matrix" id="id22"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a></p></li>
-<li><p><a class="reference internal" href="#pe-positional-encoding-layer" id="id23"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a></p></li>
-<li><p><a class="reference internal" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" id="id24"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a></p></li>
+<li><p><a class="reference internal" href="#mathbf-w-e-embedding-matrix" id="id23"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a></p></li>
+<li><p><a class="reference internal" href="#pe-positional-encoding-layer" id="id24"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a></p></li>
+<li><p><a class="reference internal" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" id="id25"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#layer-normalization" id="id25">Layer Normalization</a></p></li>
-<li><p><a class="reference internal" href="#attention-notations" id="id26">Attention Notations</a></p>
+<li><p><a class="reference internal" href="#layer-normalization" id="id26">Layer Normalization</a></p></li>
+<li><p><a class="reference internal" href="#attention-notations" id="id27">Attention Notations</a></p>
 <ul>
-<li><p><a class="reference internal" href="#dimensions" id="id27">Dimensions</a></p></li>
-<li><p><a class="reference internal" href="#query-key-and-values" id="id28">Query, Key and Values</a></p></li>
-<li><p><a class="reference internal" href="#general-attention-mechanism" id="id29">General Attention Mechanism</a></p></li>
-<li><p><a class="reference internal" href="#multi-head-attention-for-layer-ell" id="id30">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
-<li><p><a class="reference internal" href="#masked-multi-head-attention-for-decoder-layer-ell" id="id31">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
-<li><p><a class="reference internal" href="#updated-matrix-description-table-with-batch-and-head-dimensions" id="id32">Updated Matrix Description Table with Batch and Head Dimensions</a></p></li>
+<li><p><a class="reference internal" href="#dimensions" id="id28">Dimensions</a></p></li>
+<li><p><a class="reference internal" href="#query-key-and-values" id="id29">Query, Key and Values</a></p></li>
+<li><p><a class="reference internal" href="#general-attention-mechanism" id="id30">General Attention Mechanism</a></p></li>
+<li><p><a class="reference internal" href="#multi-head-attention-for-layer-ell" id="id31">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
+<li><p><a class="reference internal" href="#masked-multi-head-attention-for-decoder-layer-ell" id="id32">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
+<li><p><a class="reference internal" href="#updated-matrix-description-table-with-batch-and-head-dimensions" id="id33">Updated Matrix Description Table with Batch and Head Dimensions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#positionwise-feed-forward-networks" id="id33">Positionwise Feed-Forward Networks</a></p>
+<li><p><a class="reference internal" href="#positionwise-feed-forward-networks" id="id34">Positionwise Feed-Forward Networks</a></p>
 <ul>
-<li><p><a class="reference internal" href="#independent-processing" id="id34">Independent Processing</a></p></li>
-<li><p><a class="reference internal" href="#identical-application" id="id35">Identical Application</a></p></li>
-<li><p><a class="reference internal" href="#id2" id="id36">Definition</a></p></li>
-<li><p><a class="reference internal" href="#projection-to-a-higher-dimension-space" id="id37">Projection to a Higher Dimension Space</a></p></li>
-<li><p><a class="reference internal" href="#gaussian-error-linear-unit-gelu" id="id38">Gaussian Error Linear Unit (GELU)</a></p></li>
+<li><p><a class="reference internal" href="#independent-processing" id="id35">Independent Processing</a></p></li>
+<li><p><a class="reference internal" href="#identical-application" id="id36">Identical Application</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id37">Definition</a></p></li>
+<li><p><a class="reference internal" href="#projection-to-a-higher-dimension-space" id="id38">Projection to a Higher Dimension Space</a></p></li>
+<li><p><a class="reference internal" href="#gaussian-error-linear-unit-gelu" id="id39">Gaussian Error Linear Unit (GELU)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#the-full-setup" id="id39">The Full Setup</a></p>
+<li><p><a class="reference internal" href="#the-full-workflow" id="id40">The Full Workflow</a></p>
 <ul>
-<li><p><a class="reference internal" href="#iterative-process-through-l-decoder-blocks" id="id40">Iterative Process Through L Decoder Blocks</a></p>
+<li><p><a class="reference internal" href="#iterative-process-through-l-decoder-blocks" id="id41">Iterative Process Through L Decoder Blocks</a></p>
 <ul>
-<li><p><a class="reference internal" href="#for-the-first-decoder-block-ell-1" id="id41">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#for-the-first-decoder-block-ell-1" id="id42">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#for-subsequent-blocks-ell-1" id="id42">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></p></li>
-<li><p><a class="reference internal" href="#head" id="id43">Head</a></p></li>
+<li><p><a class="reference internal" href="#for-subsequent-blocks-ell-1" id="id43">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#head" id="id44">Head</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#table" id="id44">Table</a></p></li>
-<li><p><a class="reference internal" href="#references" id="id45">References</a></p></li>
+<li><p><a class="reference internal" href="#table" id="id45">Table</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id46">References</a></p></li>
 </ul>
 </nav>
 <section id="dimensions-and-indexing">
@@ -676,8 +678,25 @@ represented as <span class="math notranslate nohighlight">\(d_{\text{model}}\)</
 </section>
 <section id="general-notations">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">General Notations</a><a class="headerlink" href="#general-notations" title="Link to this heading">#</a></h2>
+<section id="elementwise-and-vectorwise-operations">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Elementwise and Vectorwise Operations</a><a class="headerlink" href="#elementwise-and-vectorwise-operations" title="Link to this heading">#</a></h3>
+<p>Element-wise operations like dropout or activation functions are applied to each
+element of a tensor independently. For example, applying the ReLU activation
+function to a tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{B \times T \times D}\)</span> results
+in a tensor of the same shape, where the ReLU function is applied to each
+element of <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> independently (i.e. you can think of it as applying the
+ReLU a total of <span class="math notranslate nohighlight">\(B \times T \times D\)</span> times).</p>
+<p>For vector-wise operations, the operation is applied to each vector along a
+specific <em>dimension</em> or <em>axis</em> of the tensor. For example, applying layer
+normalization to a tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{B \times T \times D}\)</span> will
+apply the normalization operation to each vector along the feature dimension <span class="math notranslate nohighlight">\(D\)</span>
+independently. This means that the normalization operation is applied to each
+vector of size <span class="math notranslate nohighlight">\(D\)</span> independently across all batches and sequence positions. You
+can then think of the normalization operation as being applied a total of
+<span class="math notranslate nohighlight">\(B \times T\)</span> times.</p>
+</section>
 <section id="vocabulary">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Vocabulary</a><a class="headerlink" href="#vocabulary" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Vocabulary</a><a class="headerlink" href="#vocabulary" title="Link to this heading">#</a></h3>
 <p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: The set of all unique words in the vocabulary, defined as:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -712,7 +731,7 @@ represented as <span class="math notranslate nohighlight">\(d_{\text{model}}\)</
 <code class="docutils literal notranslate"><span class="pre">[CLS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[BOS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[EOS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[UNK]</span></code>, etc.) may also be included in <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
 </section>
 <section id="input-sequence">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Input Sequence</a><a class="headerlink" href="#input-sequence" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Input Sequence</a><a class="headerlink" href="#input-sequence" title="Link to this heading">#</a></h3>
 <p>The input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> for a GPT model is defined as a sequence of <span class="math notranslate nohighlight">\(T\)</span>
 tokens. Each token in this sequence is typically represented as an integer that
 corresponds to a position in the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>. The sequence is
@@ -733,7 +752,7 @@ vocabulary, and each integer corresponds to a unique word or symbol in
 <span class="math notranslate nohighlight">\(1 \leq t \leq T\)</span>.</p></li>
 </ul>
 <section id="batched-input-sequences">
-<h4><a class="toc-backref" href="#id8" role="doc-backlink">Batched Input Sequences</a><a class="headerlink" href="#batched-input-sequences" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Batched Input Sequences</a><a class="headerlink" href="#batched-input-sequences" title="Link to this heading">#</a></h4>
 <p>In practice, GPT models are often trained on batches of sequences to improve
 computational efficiency. A batched input is represented as
 <span class="math notranslate nohighlight">\(\mathbf{x}^{\mathcal{B}}\)</span>, where <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> denotes the batch size. The
@@ -759,9 +778,9 @@ batch.</p></li>
 </section>
 </section>
 <section id="token-to-index-and-index-to-token-mappings">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Token to Index, and Index to Token Mappings</a><a class="headerlink" href="#token-to-index-and-index-to-token-mappings" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Token to Index, and Index to Token Mappings</a><a class="headerlink" href="#token-to-index-and-index-to-token-mappings" title="Link to this heading">#</a></h3>
 <section id="string-to-index-mapping">
-<h4><a class="toc-backref" href="#id10" role="doc-backlink">String-to-Index Mapping</a><a class="headerlink" href="#string-to-index-mapping" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">String-to-Index Mapping</a><a class="headerlink" href="#string-to-index-mapping" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[
 f_{\text{stoi}} : \mathcal{V} \to \{0, 1, \ldots, V-1\}
@@ -781,7 +800,7 @@ unique index. For a token <span class="math notranslate nohighlight">\(w \in \ma
 </ul>
 </section>
 <section id="index-to-string-mapping">
-<h4><a class="toc-backref" href="#id11" role="doc-backlink">Index-to-String Mapping</a><a class="headerlink" href="#index-to-string-mapping" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Index-to-String Mapping</a><a class="headerlink" href="#index-to-string-mapping" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[
 f_{\text{itos}} : \{0, 1, \ldots, V-1\} \to \mathcal{V}
@@ -801,13 +820,13 @@ token <span class="math notranslate nohighlight">\(w\)</span> in the vocabulary 
 </section>
 </section>
 <section id="one-hot-representation-of-input-sequence-mathbf-x">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a><a class="headerlink" href="#one-hot-representation-of-input-sequence-mathbf-x" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a><a class="headerlink" href="#one-hot-representation-of-input-sequence-mathbf-x" title="Link to this heading">#</a></h3>
 <p>The one-hot representation of the input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is denoted as
 <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span>. This representation converts each token in the
 sequence to a one-hot encoded vector, where each vector has a length equal to
 the size of the vocabulary <span class="math notranslate nohighlight">\(V\)</span>.</p>
 <section id="definition">
-<h4><a class="toc-backref" href="#id13" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h4>
 <p>The one-hot encoded matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is defined as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -835,7 +854,7 @@ the token at position <span class="math notranslate nohighlight">\(t\)</span> in
 </ul>
 </section>
 <section id="one-hot-encoding-process">
-<h4><a class="toc-backref" href="#id14" role="doc-backlink">One-Hot Encoding Process</a><a class="headerlink" href="#one-hot-encoding-process" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">One-Hot Encoding Process</a><a class="headerlink" href="#one-hot-encoding-process" title="Link to this heading">#</a></h4>
 <p>For each token <span class="math notranslate nohighlight">\(x_t\)</span> at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>
 (<span class="math notranslate nohighlight">\(1 \leq t \leq T\)</span>), the corresponding row vector <span class="math notranslate nohighlight">\(\mathbf{o}_{t, :}\)</span> in
 <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is defined as:</p>
@@ -876,7 +895,7 @@ the second, which is seen in their respective one-hot vectors.</p></li>
 </section>
 </div></section>
 <section id="batched">
-<h4><a class="toc-backref" href="#id15" role="doc-backlink">Batched</a><a class="headerlink" href="#batched" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">Batched</a><a class="headerlink" href="#batched" title="Link to this heading">#</a></h4>
 <p>The batched one-hot encoded matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe, }\mathcal{B}}\)</span> for a
 batch of size <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> is defined as a three-dimensional tensor, where each
 “slice” (or matrix) along the first dimension corresponds to the one-hot encoded
@@ -902,9 +921,9 @@ in the batch.</p></li>
 </section>
 </section>
 <section id="weights-and-embeddings">
-<h2><a class="toc-backref" href="#id16" role="doc-backlink">Weights And Embeddings</a><a class="headerlink" href="#weights-and-embeddings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Weights And Embeddings</a><a class="headerlink" href="#weights-and-embeddings" title="Link to this heading">#</a></h2>
 <section id="matrix-multiplication-primer">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Matrix Multiplication Primer</a><a class="headerlink" href="#matrix-multiplication-primer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Matrix Multiplication Primer</a><a class="headerlink" href="#matrix-multiplication-primer" title="Link to this heading">#</a></h3>
 <p>See
 <a class="reference external" href="https://math.stackexchange.com/questions/2063241/matrix-multiplication-notation">source</a>.</p>
 <blockquote>
@@ -964,7 +983,7 @@ matrix <span class="math notranslate nohighlight">\(C=AB\)</span> and therefore 
 <span class="math notranslate nohighlight">\(j=1,...,p\)</span>.</p>
 </section>
 <section id="mathbf-x-output-of-the-embedding-layer">
-<h3><a class="toc-backref" href="#id18" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a><a class="headerlink" href="#mathbf-x-output-of-the-embedding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id19" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a><a class="headerlink" href="#mathbf-x-output-of-the-embedding-layer" title="Link to this heading">#</a></h3>
 <p>Once the one hot encoding representation <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is well
 defined, we can then pass it as input through our GPT model, in which the first
 layer is a embedding lookup table. In the GPT model architecture, the first
@@ -1016,7 +1035,7 @@ embeddings, we would then matrix multiply <span class="math notranslate nohighli
 \mathbf{X} = \mathbf{X}^{\text{ohe}} \cdot \mathbf{W}_{e}
 \]</div>
 <section id="id1">
-<h4><a class="toc-backref" href="#id19" role="doc-backlink">Definition</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id20" role="doc-backlink">Definition</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
 <p>The embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span> is structured as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1087,7 +1106,7 @@ V &amp; w_{V,1} &amp; w_{V,2} &amp; \cdots &amp; w_{V,D} \\
 \end{split}\]</div>
 </section>
 <section id="lookup">
-<h4><a class="toc-backref" href="#id20" role="doc-backlink">Lookup</a><a class="headerlink" href="#lookup" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">Lookup</a><a class="headerlink" href="#lookup" title="Link to this heading">#</a></h4>
 <p>When the one-hot encoded input matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> multiplies with
 the embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_e\)</span>, each row of <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span>
 effectively selects a corresponding row from <span class="math notranslate nohighlight">\(\mathbf{W}_e\)</span>. This operation
@@ -1095,7 +1114,7 @@ simplifies to row selection because each row of <span class="math notranslate no
 contains exactly one ‘1’ and the rest are ‘0’s.</p>
 </section>
 <section id="semantic-representation">
-<h4><a class="toc-backref" href="#id21" role="doc-backlink">Semantic Representation</a><a class="headerlink" href="#semantic-representation" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id22" role="doc-backlink">Semantic Representation</a><a class="headerlink" href="#semantic-representation" title="Link to this heading">#</a></h4>
 <p>Now each row of the output tensor, indexed by <span class="math notranslate nohighlight">\(t\)</span>, <span class="math notranslate nohighlight">\(\mathbf{X}_{t, :}\)</span>: is the
 <span class="math notranslate nohighlight">\(D\)</span> dimensional embedding vector for the token <span class="math notranslate nohighlight">\(x_t\)</span> at the <span class="math notranslate nohighlight">\(t\)</span>-th position in
 the sequence. In this context, each token in the sequence is represented by a
@@ -1108,7 +1127,7 @@ more semantically similar they are.</p>
 </section>
 </section>
 <section id="mathbf-w-e-embedding-matrix">
-<h3><a class="toc-backref" href="#id22" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a><a class="headerlink" href="#mathbf-w-e-embedding-matrix" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id23" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a><a class="headerlink" href="#mathbf-w-e-embedding-matrix" title="Link to this heading">#</a></h3>
 <p>The embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span> is structured as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1136,7 +1155,7 @@ vocabulary <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p
 </ul>
 </section>
 <section id="pe-positional-encoding-layer">
-<h3><a class="toc-backref" href="#id23" role="doc-backlink"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a><a class="headerlink" href="#pe-positional-encoding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a><a class="headerlink" href="#pe-positional-encoding-layer" title="Link to this heading">#</a></h3>
 <p>For a given input matrix <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is
 the sequence length and <span class="math notranslate nohighlight">\(D\)</span> is the embedding dimension (denoted as
 <span class="math notranslate nohighlight">\(d_{\text{model}}\)</span> in typical Transformer literature), the positional encoding
@@ -1160,7 +1179,7 @@ x'_{i, j} =
 <p>for <span class="math notranslate nohighlight">\(i = 1, \ldots, T\)</span> and <span class="math notranslate nohighlight">\(j = 1, \ldots, D\)</span>.</p>
 </section>
 <section id="tilde-mathbf-x-output-of-the-positional-encoding-layer">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a><a class="headerlink" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a><a class="headerlink" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" title="Link to this heading">#</a></h3>
 <p>We can update our original embeddings tensor <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> to include positional
 information:</p>
 <div class="math notranslate nohighlight">
@@ -1204,7 +1223,7 @@ model.</p>
 </section>
 </section>
 <section id="layer-normalization">
-<h2><a class="toc-backref" href="#id25" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h2>
 <p>Layer normalization modifies the activations within each layer to have zero mean
 and unit variance across the features for each data point in a batch
 independently, which helps in stabilizing the learning process. It then applies
@@ -1288,9 +1307,9 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 </table>
 </section>
 <section id="attention-notations">
-<h2><a class="toc-backref" href="#id26" role="doc-backlink">Attention Notations</a><a class="headerlink" href="#attention-notations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">Attention Notations</a><a class="headerlink" href="#attention-notations" title="Link to this heading">#</a></h2>
 <section id="dimensions">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink">Dimensions</a><a class="headerlink" href="#dimensions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Dimensions</a><a class="headerlink" href="#dimensions" title="Link to this heading">#</a></h3>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Symbol</p></th>
@@ -1323,7 +1342,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 </table>
 </section>
 <section id="query-key-and-values">
-<h3><a class="toc-backref" href="#id28" role="doc-backlink">Query, Key and Values</a><a class="headerlink" href="#query-key-and-values" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Query, Key and Values</a><a class="headerlink" href="#query-key-and-values" title="Link to this heading">#</a></h3>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p><strong>Matrix Description</strong></p></th>
@@ -1418,7 +1437,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 <p>We will talk about the relevant shapes in the last section.</p>
 </section>
 <section id="general-attention-mechanism">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink">General Attention Mechanism</a><a class="headerlink" href="#general-attention-mechanism" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">General Attention Mechanism</a><a class="headerlink" href="#general-attention-mechanism" title="Link to this heading">#</a></h3>
 <p>To calculate the embeddings after attention in the GPT model:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1426,7 +1445,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 \]</div>
 </section>
 <section id="multi-head-attention-for-layer-ell">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#multi-head-attention-for-layer-ell" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#multi-head-attention-for-layer-ell" title="Link to this heading">#</a></h3>
 <p>For the multi-head attention in layer <span class="math notranslate nohighlight">\(\ell\)</span> of the Transformer (applicable to
 both encoder and decoder in architectures that have both components, but here
 tailored for GPT which primarily uses decoder stacks):</p>
@@ -1448,7 +1467,7 @@ the <span class="math notranslate nohighlight">\(\ell\)</span>-th layer, respect
 </ul>
 </section>
 <section id="masked-multi-head-attention-for-decoder-layer-ell">
-<h3><a class="toc-backref" href="#id31" role="doc-backlink">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#masked-multi-head-attention-for-decoder-layer-ell" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#masked-multi-head-attention-for-decoder-layer-ell" title="Link to this heading">#</a></h3>
 <p>Masked multi-head attention, used in the decoder to ensure that the predictions
 for position <span class="math notranslate nohighlight">\(t\)</span> can only depend on known outputs at positions less than <span class="math notranslate nohighlight">\(t\)</span>
 (auto-regressive property):</p>
@@ -1479,7 +1498,7 @@ predictions of the current token in an auto-regressive manner.</p></li>
 </ul>
 </section>
 <section id="updated-matrix-description-table-with-batch-and-head-dimensions">
-<h3><a class="toc-backref" href="#id32" role="doc-backlink">Updated Matrix Description Table with Batch and Head Dimensions</a><a class="headerlink" href="#updated-matrix-description-table-with-batch-and-head-dimensions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Updated Matrix Description Table with Batch and Head Dimensions</a><a class="headerlink" href="#updated-matrix-description-table-with-batch-and-head-dimensions" title="Link to this heading">#</a></h3>
 <p>To accurately reflect the practical shapes of the Query (Q), Key (K), and Value
 (V) matrices in implementations like GPT, where batch processing and multi-head
 attention are used, we should adjust the notation to include batch size <span class="math notranslate nohighlight">\(B\)</span>,
@@ -1519,7 +1538,7 @@ head.</p>
 </section>
 </section>
 <section id="positionwise-feed-forward-networks">
-<h2><a class="toc-backref" href="#id33" role="doc-backlink">Positionwise Feed-Forward Networks</a><a class="headerlink" href="#positionwise-feed-forward-networks" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Positionwise Feed-Forward Networks</a><a class="headerlink" href="#positionwise-feed-forward-networks" title="Link to this heading">#</a></h2>
 <p>The term “positionwise feed-forward network” (FFN) in the context of Transformer
 models refers to a dense neural network (otherwise known as multilayer
 perceptron) that operates on the output of the Multi-Head Attention mechanism.
@@ -1527,7 +1546,7 @@ This component is called “positionwise” because it applies the <strong>same<
 feed-forward neural network (FFN) <strong>independently</strong> and <strong>identically</strong> to each
 position <span class="math notranslate nohighlight">\(t\)</span> in the sequence of length <span class="math notranslate nohighlight">\(T\)</span>.</p>
 <section id="independent-processing">
-<h3><a class="toc-backref" href="#id34" role="doc-backlink">Independent Processing</a><a class="headerlink" href="#independent-processing" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">Independent Processing</a><a class="headerlink" href="#independent-processing" title="Link to this heading">#</a></h3>
 <p>In the Transformer architecture, after the Multi-Head Attention mechanism
 aggregates information from different positions in the sequence based on
 attention scores, each element (or position) <span class="math notranslate nohighlight">\(t\)</span> in the sequence has an updated
@@ -1540,7 +1559,7 @@ the FFN is applied <span class="math notranslate nohighlight">\(T \times \mathca
 batch size.</p>
 </section>
 <section id="identical-application">
-<h3><a class="toc-backref" href="#id35" role="doc-backlink">Identical Application</a><a class="headerlink" href="#identical-application" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Identical Application</a><a class="headerlink" href="#identical-application" title="Link to this heading">#</a></h3>
 <p>The term “using the same FFN” signifies that the same set of parameters (weights
 and biases) of the feed-forward neural network is used for each position in the
 sequence. The rationale is that the transformation is consistent across all
@@ -1551,7 +1570,7 @@ positions/tokens, the weight matrices and bias vectors of the FFN are the same
 for all three positions.</p>
 </section>
 <section id="id2">
-<h3><a class="toc-backref" href="#id36" role="doc-backlink">Definition</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Definition</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>Typically, a positionwise FFN consists of two linear transformations with a
 non-linear activation function in between. The general form can be represented
 as follows.</p>
@@ -1578,7 +1597,7 @@ Linear Unit (GELU) or the Rectified Linear Unit (ReLU).</p></li>
 </section>
 </div></section>
 <section id="projection-to-a-higher-dimension-space">
-<h3><a class="toc-backref" href="#id37" role="doc-backlink">Projection to a Higher Dimension Space</a><a class="headerlink" href="#projection-to-a-higher-dimension-space" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Projection to a Higher Dimension Space</a><a class="headerlink" href="#projection-to-a-higher-dimension-space" title="Link to this heading">#</a></h3>
 <p>In the Transformer architecture, the dimensionality of the hidden layer in the
 positionwise FFN, denoted as <span class="math notranslate nohighlight">\(d_{\text{ff}}\)</span>, is often chosen to be larger than
 the dimensionality of the input and output embeddings, <span class="math notranslate nohighlight">\(D\)</span>. This means that the
@@ -1596,7 +1615,7 @@ For example, in the original Transformer paper <span id="id3">[<a class="referen
 authors used <span class="math notranslate nohighlight">\(d_{\text{ff}} = 4 \times D\)</span>.</p>
 </section>
 <section id="gaussian-error-linear-unit-gelu">
-<h3><a class="toc-backref" href="#id38" role="doc-backlink">Gaussian Error Linear Unit (GELU)</a><a class="headerlink" href="#gaussian-error-linear-unit-gelu" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">Gaussian Error Linear Unit (GELU)</a><a class="headerlink" href="#gaussian-error-linear-unit-gelu" title="Link to this heading">#</a></h3>
 <p>The Gaussian Error Linear Unit (GELU) is a non-linear activation function used
 in the context of neural networks, which allows the model to capture more
 complex patterns in the data compared to traditional activation functions like
@@ -1732,30 +1751,117 @@ sequence (from 1 to <span class="math notranslate nohighlight">\(T\)</span> ) an
 </table>
 </section>
 </section>
-<section id="the-full-setup">
-<h2><a class="toc-backref" href="#id39" role="doc-backlink">The Full Setup</a><a class="headerlink" href="#the-full-setup" title="Link to this heading">#</a></h2>
+<section id="the-full-workflow">
+<h2><a class="toc-backref" href="#id40" role="doc-backlink">The Full Workflow</a><a class="headerlink" href="#the-full-workflow" title="Link to this heading">#</a></h2>
 <div class="note admonition">
 <p class="admonition-title">Step 1. Corpus</p>
-<p>To this end, consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> sequences
-<span class="math notranslate nohighlight">\(\left\{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\right\}\)</span>,</p>
+<p>Consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> consisting of <span class="math notranslate nohighlight">\(N\)</span> sequences, denoted as
+<span class="math notranslate nohighlight">\({\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N}\)</span>, where each sequence
+<span class="math notranslate nohighlight">\(\mathbf{x} = (x_1, x_2, \ldots, x_T) \in \mathcal{S}\)</span> is a sequence of <span class="math notranslate nohighlight">\(T\)</span>
+tokens. These tokens are sampled i.i.d. from a true, unknown distribution
+<span class="math notranslate nohighlight">\(\mathcal{D}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[
 \mathcal{S}=\left\{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\right\} \underset{\text { i.i.d. }}{\sim} \mathcal{D}
 \]</div>
-<p>where each sequence <span class="math notranslate nohighlight">\(\mathbf{x}_n = (x_1, x_2, \ldots, x_T)\)</span> is a sequence of
-tokens that are sampled i.i.d. from the unknown but true distribution
-<span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p>
+<p>Each sequence <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{S}\)</span> represents a collection of tokenized
+elements (e.g., words or characters), where each token <span class="math notranslate nohighlight">\(x_t\)</span> comes from a finite
+vocabulary <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 2. One Hot Encoding</p>
-<p>For each sequence <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{S}\)</span> in the corpus, we would apply one
-hot encoding so that each sample/sequence is transformed to
-<span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times V}\)</span>.</p>
+<p class="admonition-title">Step 2. Vocabulary and Tokenization</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{V} = \{w_1, w_2, \ldots, w_V\}\)</span> be the vocabulary set, where <span class="math notranslate nohighlight">\(w_j\)</span>
+is the <span class="math notranslate nohighlight">\(j\)</span>-th token in the vocabulary and <span class="math notranslate nohighlight">\(V = |\mathcal{V}|\)</span> is the size of the
+vocabulary. It is worth noting that it is common to train one’s own vocabulary
+and tokenizer on the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, but for simplicity, we assume that
+the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> is predefined.</p>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> be the set of all possible sequences that can be formed by
+concatenating tokens from the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>. Each sequence
+<span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{X}\)</span> is a finite sequence of tokens, and the length of
+each sequence is denoted by <span class="math notranslate nohighlight">\(\tau\)</span>. Formally:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{X} = \bigcup_{\tau=1}^{T} \mathcal{V}^{\tau}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{V}^\tau\)</span> represents the set of all sequences of length <span class="math notranslate nohighlight">\(\tau\)</span>
+formed by concatenating tokens from <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, and <span class="math notranslate nohighlight">\(T\)</span> is the maximum
+sequence length.</p>
+<p>Now, let
+<span class="math notranslate nohighlight">\(\mathcal{S} = \{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\} \subset \mathcal{X}\)</span>
+be a corpus of <span class="math notranslate nohighlight">\(N\)</span> sequences, where each sequence <span class="math notranslate nohighlight">\(\mathbf{x}_n \in \mathcal{X}\)</span>
+is a finite sequence of tokens from the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
+<p>The tokenizer algorithm <span class="math notranslate nohighlight">\(\mathcal{T}\)</span> is a function that operates on individual
+sequences <span class="math notranslate nohighlight">\(\mathbf{x}_n\)</span> from the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> and maps the tokens to
+their corresponding integer indices using the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{T}: \mathcal{X} \rightarrow \mathbb{N}^{\leq T}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbb{N}^{\leq T}\)</span> represents the set of all finite sequences of
+natural numbers (non-negative integers) with lengths up to <span class="math notranslate nohighlight">\(T\)</span>. The output of
+<span class="math notranslate nohighlight">\(\mathcal{T}\)</span> is a tokenized sequence, which is a finite sequence of integer
+indices corresponding to the tokens in the input sequence.</p>
+<p>To map the tokens to their corresponding integer indices, we define a bijective
+mapping function <span class="math notranslate nohighlight">\(f: \mathcal{V} \rightarrow \{1, 2, \ldots, V\}\)</span> such that:</p>
+<div class="math notranslate nohighlight">
+\[
+f(w_j) = j, \quad \forall j \in \{1, 2, \ldots, V\}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(f(w_j)\)</span> represents the integer index assigned to the token
+<span class="math notranslate nohighlight">\(w_j \in \mathcal{V}\)</span>.</p>
+<p>Given a sequence <span class="math notranslate nohighlight">\(\mathbf{x} = (x_1, x_2, \ldots, x_\tau) \in \mathcal{X}\)</span>,
+where <span class="math notranslate nohighlight">\(\tau \leq T\)</span> is the length of the sequence, the tokenizer algorithm
+<span class="math notranslate nohighlight">\(\mathcal{T}\)</span> maps each token <span class="math notranslate nohighlight">\(x_t\)</span> to its corresponding integer index using the
+bijective mapping function <span class="math notranslate nohighlight">\(f\)</span>. The tokenized representation of the sequence
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span> can be defined as:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{T}(\mathbf{x}) = \left(f(x_1), f(x_2), \ldots, f(x_\tau)\right)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(f(x_t)\)</span> is the integer index assigned to the token <span class="math notranslate nohighlight">\(x_t\)</span> based on <span class="math notranslate nohighlight">\(f\)</span>.</p>
+<p>In the case where a token <span class="math notranslate nohighlight">\(x_t\)</span> is not present in the vocabulary set
+<span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, a special token index, such as <span class="math notranslate nohighlight">\(f(\text{&lt;UNK&gt;})\)</span>, can be assigned
+to represent an unknown token.</p>
+<p>The tokenizer algorithm <span class="math notranslate nohighlight">\(\mathcal{T}\)</span> can be applied to each sequence
+<span class="math notranslate nohighlight">\(\mathbf{x}_n\)</span> in the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> to obtain the tokenized corpus
+<span class="math notranslate nohighlight">\(\mathcal{S}^{\mathcal{T}}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{S}^{\mathcal{T}} = \left\{\mathcal{T}(\mathbf{x}_1), \mathcal{T}(\mathbf{x}_2), \ldots, \mathcal{T}(\mathbf{x}_N)\right\} \subset \mathbb{N}^{\leq T}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{T}(\mathbf{x}_n)\)</span> is the tokenized representation of the
+sequence <span class="math notranslate nohighlight">\(\mathbf{x}_n \in \mathcal{S}\)</span>.</p>
+<p>The tokenized corpus <span class="math notranslate nohighlight">\(\mathcal{S}^{\mathcal{T}}\)</span> is a set of sequences, where
+each sequence is a finite sequence of integer indices representing the tokens in
+the original sequences from the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.</p>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 3. Token Embedding</p>
-<p>Subsequently, we would run this input through the token embedding weight
-<span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span> to obtain the matrix <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>:</p>
+<p class="admonition-title">Step 3. One Hot Encoding</p>
+<p>For each sequence <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{S}^{\mathcal{T}}\)</span> in the corpus, we
+would apply one hot encoding so that each sample/sequence is transformed to
+<span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times V}\)</span> where <span class="math notranslate nohighlight">\(V\)</span> is the vocabulary
+size and <span class="math notranslate nohighlight">\(T\)</span> the pre-defined context window size.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{X}^{\text{ohe}} = \begin{bmatrix}
+o_{1,1} &amp; o_{1,2} &amp; \cdots &amp; o_{1,V} \\
+o_{2,1} &amp; o_{2,2} &amp; \cdots &amp; o_{2,V} \\
+\vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+o_{T,1} &amp; o_{T,2} &amp; \cdots &amp; o_{T,V}
+\end{bmatrix} \in \{0, 1\}^{T \times V}
+\end{split}\]</div>
+<p>Each row <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}_{t} \in \mathbb{R}^{1 \times V}\)</span> represents
+the one-hot encoded representation of the token at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence.</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Step 4. Token Embedding</p>
+<p>Given the one-hot encoded input
+<span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times |\mathcal{V}|}\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is
+the sequence length and <span class="math notranslate nohighlight">\(V = |\mathcal{V}|\)</span> is the vocabulary size, we obtain
+the token embedding matrix <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span> by matrix
+multiplying <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> with the token embedding weight matrix
+<span class="math notranslate nohighlight">\(\mathbf{W}_e \in \mathbb{R}^{V \times D}\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the embedding
+dimension:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -1770,7 +1876,7 @@ T \times D                      &amp;\leftarrow T \times V \operatorname{&#64;} 
 <p>Note carefully that with the addition of batch dimension <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> the
 matrix multiplication is still well-defined for such tensor in PyTorch because
 we are essentially just performing matrix multiplication in <span class="math notranslate nohighlight">\(T \times D\)</span> for
-each sequence <span class="math notranslate nohighlight">\(\mathbf{X}_b \in \mathcal{X}^{\mathcal{B}}\)</span> with the same weight
+each sequence <span class="math notranslate nohighlight">\(\mathbf{X}_b \in \mathbf{X}^{\mathcal{B}}\)</span> with the same weight
 matrix <span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>.</p>
 <p>The token embedding weight matrix <span class="math notranslate nohighlight">\(\mathbf{W}_e\)</span> with dimensions <span class="math notranslate nohighlight">\(V \times D\)</span> is
 shared across all sequences in the batch. Each sequence <span class="math notranslate nohighlight">\(\mathbf{X}^{(b)}\)</span> in the
@@ -1785,9 +1891,16 @@ sharing allows the model to learn a common representation for the tokens across
 different sequences.</p>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 4. Positional Embedding</p>
-<p>We will now further add positional encoding to the embedding matrix which
-results in:</p>
+<p class="admonition-title">Step 5. Positional Embedding</p>
+<p>In addition to the token embeddings, we incorporate positional information into
+the input representation to capture the sequential nature of the input
+sequences. Let <span class="math notranslate nohighlight">\(\operatorname{PE}(\cdot)\)</span> denote the positional encoding
+function that maps the token positions to their corresponding positional
+embeddings.</p>
+<p>Given the token embedding matrix <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>, where
+<span class="math notranslate nohighlight">\(T\)</span> is the sequence length and <span class="math notranslate nohighlight">\(D\)</span> is the embedding dimension, we add the
+positional embeddings to obtain the position-aware input representation
+<span class="math notranslate nohighlight">\(\tilde{\mathbf{X}} \in \mathbb{R}^{T \times D}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -1796,45 +1909,88 @@ T \times D                      &amp;\leftarrow T \times D \operatorname{+} T \t
 \mathcal{B} \times T \times D   &amp;\leftarrow \mathcal{B} \times T \times D \operatorname{+} \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>At this stage, it is also usual to add a dropout layer
-<span class="math notranslate nohighlight">\(\operatorname{Dropout}(\cdot)\)</span> on the <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>.</p>
+<p>The positional encoding function <span class="math notranslate nohighlight">\(\operatorname{PE}(\cdot)\)</span> can be implemented
+in various ways, such as using fixed sinusoidal functions or learned positional
+embeddings. For the latter, we can easily replace <span class="math notranslate nohighlight">\(\operatorname{PE}(\cdot)\)</span>
+with a learnable positional embedding layer in the model architecture
+(<span class="math notranslate nohighlight">\(\mathbf{W}_{p}\)</span>).</p>
 </div>
-<div class="note admonition">
-<p class="admonition-title">Step 5. Pre-Layer Normalization For Masked Multi-Head Attention</p>
-<p>Before passing the input through the Multi-Head Attention (MHA) layer, we apply
-Layer Normalization to the positionally encoded embeddings <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>.
-This is known as pre-Layer Normalization in the GPT architecture.
-The Layer Normalization function <span class="math notranslate nohighlight">\(\operatorname{LayerNorm}(\cdot)\)</span> operates on
-the feature dimension <span class="math notranslate nohighlight">\(D\)</span> of the input tensor, normalizing the activations to
-have zero mean and unit variance across the features for each token
-independently. Note carefully that layer norm is a vector-wise function because
-during calculation, it needs to aggregate the info of the whole vector - and
-that we apply layer norm independently on each row
-<span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}_{t} \in \mathbb{R}^{1 \times D}\)</span>.</p>
+<div class="tip admonition">
+<p class="admonition-title">Dropout And Elementwise Operation</p>
+<p>At this stage, it is common practice to apply a dropout layer
+<span class="math notranslate nohighlight">\(\operatorname{Dropout}(\cdot)\)</span> to the position-aware input representation
+<span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> (or <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}_{\text{batch}}\)</span> in the case of a
+batch). Dropout is a regularization technique that randomly sets a fraction of
+the elements in the input tensor to zero during training and is an
+<strong><em>element-wise</em></strong> operation that acts <strong><em>independently</em></strong> on each element in
+the tensor. This means that each element has a fixed probability (usually
+denoted as <span class="math notranslate nohighlight">\(p\)</span>) of being set to zero, regardless of its position or the values
+of other elements in the tensor.</p>
+<p>Mathematically, for an input tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>,
+elementwise dropout can be expressed as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_1 &amp;= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}
-\right) \\
+\mathbf{X}^{\text{dropout}} &amp;= \mathbf{X} \odot \mathbf{M} \\
+T \times D &amp;= T \times D \odot T \times D
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\odot\)</span> denotes the elementwise (Hadamard) product, and
+<span class="math notranslate nohighlight">\(\mathbf{M} \in {0, 1}^{T \times D}\)</span> is a binary mask tensor of the same shape
+as <span class="math notranslate nohighlight">\(\mathbf{X}\)</span>. Each element in <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> is independently sampled from a
+Bernoulli distribution with probability <span class="math notranslate nohighlight">\(p\)</span> of being 0 (i.e., dropped) and
+probability <span class="math notranslate nohighlight">\(1-p\)</span> of being 1 (i.e., retained).</p>
+</div>
+<div class="note admonition">
+<p class="admonition-title">Step 6. Pre-Layer Normalization For Masked Multi-Head Attention</p>
+<p>Before passing the input through the Multi-Head Attention (MHA) layer, we apply
+Layer Normalization to the positionally encoded embeddings <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>.
+This is known as pre-layer Normalization in the more modern GPT architecture (as
+opposed to post-layer Normalization, which is applied after the MHA layer).</p>
+<p>The Layer Normalization function <span class="math notranslate nohighlight">\(\operatorname{LayerNorm}(\cdot)\)</span> is a
+<strong><em>vectorwise</em></strong> operation that operates on the feature dimension <span class="math notranslate nohighlight">\(D\)</span> of the
+input tensor. It normalizes the activations to have zero mean and unit variance
+across the features for each token independently. The vectorwise nature of Layer
+Normalization arises from the fact that it computes the mean and standard
+deviation along the feature dimension, requiring <strong>aggregation</strong> of information
+across the entire feature vector for each token.</p>
+<p>Mathematically, for an input tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>,
+Layer Normalization is applied independently to each row
+<span class="math notranslate nohighlight">\(\mathbf{x}_t \in \mathbb{R}^{1 \times D}\)</span>, where <span class="math notranslate nohighlight">\(t \in \{1, 2, \ldots, T\}\)</span>.
+The normalization is performed using the following formula:</p>
+<div class="math notranslate nohighlight">
+\[
+\operatorname{LayerNorm}(\mathbf{x}_t) = \frac{\mathbf{x}_t - \mu_t}{\sqrt{\sigma_t^2 + \epsilon}} \odot \gamma + \beta
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu_t \in \mathbb{R}\)</span> and <span class="math notranslate nohighlight">\(\sigma_t^2 \in \mathbb{R}\)</span> are the mean and
+variance of the features in <span class="math notranslate nohighlight">\(\mathbf{x}_t\)</span> (broadcasted), respectively,
+<span class="math notranslate nohighlight">\(\epsilon\)</span> is a small constant for numerical stability,
+<span class="math notranslate nohighlight">\(\gamma \in \mathbb{R}^D\)</span> and <span class="math notranslate nohighlight">\(\beta \in \mathbb{R}^D\)</span> are learnable affine
+parameters (scale and shift), and <span class="math notranslate nohighlight">\(\odot\)</span> denotes the elementwise product.</p>
+<p>Applying Layer Normalization to the positionally encoded embeddings
+<span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> at layer <span class="math notranslate nohighlight">\(\ell\)</span> results in the normalized embeddings
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_1 &amp;= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}\right) \\
 T \times D &amp;\leftarrow T \times D \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> represents the normalized embeddings at layer
-<span class="math notranslate nohighlight">\(\ell\)</span>, the index <span class="math notranslate nohighlight">\(1\)</span> refers to the first sub-layer/sub-step in the decoder
-block, and <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> represents the positionally encoded embeddings.</p>
-<p>For the first layer, we set <span class="math notranslate nohighlight">\(\ell = 1\)</span>, <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> is the output from
-Step 4 (Positional Embedding). So we get:</p>
+<span class="math notranslate nohighlight">\(\ell\)</span>, and the index <span class="math notranslate nohighlight">\(1\)</span> refers to the first sub-layer/sub-step in the decoder
+block.</p>
+<p>For the first layer (<span class="math notranslate nohighlight">\(\ell = 1\)</span>), <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> is the output from Step 4
+(Positional Embedding). So we have:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(1)}_1 &amp;= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}
-\right) \\
+\mathbf{Z}^{(1)}_1 &amp;= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}\right) \\
 T \times D &amp;\leftarrow T \times D \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-</div>
 <p>In code we have:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="n">mean</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># [1]</span>
@@ -1843,6 +1999,7 @@ T \times D &amp;\leftarrow T \times D \\
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>  <span class="c1"># [3]</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>  <span class="c1"># [4]</span>
 </pre></div>
+</div>
 </div>
 <table class="table">
 <thead>
@@ -1886,54 +2043,97 @@ T \times D &amp;\leftarrow T \times D \\
 </tbody>
 </table>
 <div class="note admonition">
-<p class="admonition-title">Step 6. Masked Multi-Head Self-Attention</p>
-<p>Note that I did not denote the index <span class="math notranslate nohighlight">\(M\)</span> below to indicated for masked/causal
-self-attention because the intent is clear in GPT only model.</p>
-<p>Given the normalized input embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> from Step 5, we
-apply the masked multi-head self-attention mechanism to compute the output
-embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> where the index <span class="math notranslate nohighlight">\(2\)</span> denotes the second
-sub-layer within the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer (multi-head attention).</p>
+<p class="admonition-title">Step 7. Masked Multi-Head Self-Attention</p>
+<p>Given the normalized input embeddings
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1 \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span> from Step
+6 (Pre-Layer Normalization), we apply the masked multi-head self-attention
+mechanism to compute the output embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>, where the
+index <span class="math notranslate nohighlight">\(2\)</span> denotes the second sub-layer within the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer
+(multi-head attention).</p>
+<p>Let <span class="math notranslate nohighlight">\(\operatorname{MaskedMultiHead}^{(\ell)}(\cdot)\)</span> denote the masked
+multi-head self-attention function at layer <span class="math notranslate nohighlight">\(\ell\)</span>. The masked multi-head
+self-attention operation takes the normalized input embeddings
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> as the query, key, and value matrices, and produces the
+output embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>.</p>
+<p>For the first layer (<span class="math notranslate nohighlight">\(\ell = 1\)</span>), the masked multi-head self-attention operation
+can be expressed as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(1)}_2 &amp;= \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) \\
-\mathcal{B} \times T \times D &amp;\leftarrow \text{MaskedMultiHead}(\mathcal{B} \times T \times D, \mathcal{B} \times T \times D, \mathcal{B} \times T \times D) \\
+\mathbf{Z}^{(1)}_2 &amp;= \operatorname{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \operatorname{MaskedMultiHead}^{(1)}\left(\mathcal{B} \times T \times D, \mathcal{B} \times T \times D, \mathcal{B} \times T \times D\right) \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>Note in particular <span class="math notranslate nohighlight">\(\text{MaskedMultiHead}^{(1)}\)</span> is indexed with <span class="math notranslate nohighlight">\(1\)</span> to
-indicate that it is the first block within the decoder layer <span class="math notranslate nohighlight">\(\ell\)</span>.</p>
-<p>To this end, we would break down this and first calculate the query, key, and
-value matrices.</p>
+<p>Here, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_2 \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span>
+represents the output embeddings of the masked multi-head self-attention
+operation at layer <span class="math notranslate nohighlight">\(1\)</span>, and
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_1 \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span> represents
+the normalized input embeddings from Step 6.</p>
+<p>The <span class="math notranslate nohighlight">\(\operatorname{MaskedMultiHead}^{(\ell)}(\cdot)\)</span> function internally
+performs the following steps:</p>
+<ol class="arabic simple">
+<li><p>Linearly projects the input embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> into query,
+key, and value matrices for each attention head.</p></li>
+<li><p>Computes the scaled dot-product attention scores between the query and key
+matrices, and applies the attention mask to prevent attending to future
+tokens.</p></li>
+<li><p>Applies the softmax function to the masked attention scores to obtain the
+attention weights.</p></li>
+<li><p>Multiplies the attention weights with the value matrices to produce the
+output embeddings for each attention head.</p></li>
+<li><p>Concatenates the output embeddings from all attention heads and linearly
+projects them to obtain the final output embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>.</p></li>
+</ol>
+<p>The specifics of the scaled dot-product attention mechanism and the multi-head
+attention operation will be discussed in the next few steps.</p>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 6.1. Query, Key, and Value Matrices</p>
-<p>In code, we have:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_Q</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span> <span class="c1"># Z @ W_Q = [B, T, D] @ [D, D] = [B, T, D]</span>
-<span class="n">K</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_K</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span> <span class="c1"># Z @ W_K = [B, T, D] @ [D, D] = [B, T, D]</span>
-<span class="n">V</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_V</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span> <span class="c1"># Z @ W_V = [B, T, D] @ [D, D] = [B, T, D]</span>
-</pre></div>
-</div>
+<p class="admonition-title">Step 7.1. Linear Projections, Query, Key, and Value Matrices</p>
+<p>In the masked multi-head self-attention mechanism, the first step is to linearly
+project the normalized input embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> into query, key,
+and value matrices for each attention head. This step is performed using
+learnable weight matrices <span class="math notranslate nohighlight">\(\mathbf{W}^{Q, (\ell)}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}^{K, (\ell)}\)</span>,
+and <span class="math notranslate nohighlight">\(\mathbf{W}^{V, (\ell)}\)</span>.</p>
+<p>Mathematically, the linear projections can be expressed as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Q}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{Q, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{&#64;} \mathcal{B} \times D \times D \\
-\mathbf{K}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{K, (\ell)} ,\quad
-\mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{&#64;} \mathcal{B} \times D \times D \\
-\mathbf{V}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{V, (\ell)} ,\quad
-\mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{&#64;} \mathcal{B} \times D \times D
+\mathbf{Q}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{Q, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D \\
+\mathbf{K}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{K, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D \\
+\mathbf{V}^{(\ell)} &amp;= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{V, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D
 \end{aligned}
 \end{split}\]</div>
+<p>where:</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{K}^{(\ell)}\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{V}^{(\ell)}\)</span> are
-the query, key, and value matrices for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer.</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{W}^{Q, (\ell)}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{W}^{K, (\ell)}\)</span>, and
-<span class="math notranslate nohighlight">\(\mathbf{W}^{V, (\ell)}\)</span> are the parameter matrices that transform the
-normalized embeddings into queries, keys, and values respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span> is the
+query matrix for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{K}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span> is the
+key matrix for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{V}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}\)</span> is the
+value matrix for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder layer.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{W}^{Q, (\ell)} \in \mathbb{R}^{D \times D}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{W}^{K, (\ell)} \in \mathbb{R}^{D \times D}\)</span>, and
+<span class="math notranslate nohighlight">\(\mathbf{W}^{V, (\ell)} \in \mathbb{R}^{D \times D}\)</span> are the learnable
+weight matrices that transform the normalized embeddings into queries, keys,
+and values, respectively.</p></li>
+<li><p>Again notice that we are using the same weight matrices for all heads,
+weight/parameters sharing.</p></li>
 </ul>
+<p>The linear projections are performed using matrix multiplication between the
+normalized input embeddings <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> and the corresponding weight
+matrices. The resulting query, key, and value matrices have the same shape as
+the input embeddings: <span class="math notranslate nohighlight">\(\mathcal{B} \times T \times D\)</span>.</p>
+<p>In the provided code snippet, the linear projections are implemented using the
+<code class="docutils literal notranslate"><span class="pre">torch.nn.Linear</span></code> modules <code class="docutils literal notranslate"><span class="pre">self.W_Q</span></code>, <code class="docutils literal notranslate"><span class="pre">self.W_K</span></code>, and <code class="docutils literal notranslate"><span class="pre">self.W_V</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_Q</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>  <span class="c1"># Z @ W_Q = [B, T, D] @ [D, D] = [B, T, D]</span>
+<span class="n">K</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_K</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>  <span class="c1"># Z @ W_K = [B, T, D] @ [D, D] = [B, T, D]</span>
+<span class="n">V</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W_V</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span>  <span class="c1"># Z @ W_V = [B, T, D] @ [D, D] = [B, T, D]</span>
+</pre></div>
+</div>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 6.2. Reshaping and Transposing Query, Key, and Value Matrices</p>
+<p class="admonition-title">Step 7.2. Reshaping and Transposing Query, Key, and Value Matrices</p>
 <p>Subsequently, we have already known that instead of for loop to compute each
 head, we can compute all heads in parallel using matrix operations. The query,
 key, and value matrices are split into <span class="math notranslate nohighlight">\(H\)</span> heads, and the attention scores are
@@ -1945,7 +2145,7 @@ permuted and combined:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Q}_{b,t,d} &amp; \rightarrow \mathbf{Q}_{b,t,h,d_q} \quad \text{where } d = h \cdot (D // H) + d_q, \text{ for } h \in [0, H-1] \text{ and } d_h \in [0, D//H-1] \\
+\mathbf{Q}_{b,t,d} &amp; \rightarrow \mathbf{Q}_{b,t,h,d_q} \quad \text{where } d = h \cdot (D // H) + d_q, \text{ for } h \in [0, H-1] \text{ and } d_q \in [0, D//H-1] \\
 \mathbf{Q}_{b,t,h,d_q} &amp; \rightarrow \mathbf{Q}_{b,h,t,d_q} \quad \text{(transpose dimensions)}
 \end{aligned}
 \end{split}\]</div>
@@ -1973,15 +2173,18 @@ as follows:</p>
 \mathbf{V}^{(\ell)}  &amp;\in \mathbb{R}^{\mathcal{B} \times T \times D} \rightarrow \mathbf{V}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times T \times H \times D // H} \rightarrow \mathbf{V}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times H \times T \times D // H}
 \end{aligned}
 \end{split}\]</div>
-<p>In code that is:</p>
+<p>In code, the reshaping and transposition operations are performed as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">D</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># [B, T, D] -&gt; [B, T, H, D // H] -&gt; [B, H, T, D//H]</span>
 <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">D</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">V</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">,</span> <span class="n">D</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The <code class="docutils literal notranslate"><span class="pre">view</span></code> operation reshapes the matrices to include the head dimension, and
+the <code class="docutils literal notranslate"><span class="pre">transpose</span></code> operation swaps the sequence and head dimensions to obtain the
+desired ordering of dimensions.</p>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 6.3. Scaled Dot-Product Attention and Masking</p>
+<p class="admonition-title">Step 7.3. Scaled Dot-Product Attention and Masking</p>
 <p>The masked attention weights <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> for layer <span class="math notranslate nohighlight">\(\ell\)</span> are
 calculated using the query matrix <span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)}\)</span> and the key matrix
 <span class="math notranslate nohighlight">\(\mathbf{K}^{(\ell)}\)</span> as follows:</p>
@@ -2041,7 +2244,7 @@ each head <span class="math notranslate nohighlight">\(h\)</span> in the layer <
 </div>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 6.4. Concatenation and Projection</p>
+<p class="admonition-title">Step 7.4. Concatenation and Projection</p>
 <p>Post attention, the outputs from all heads are concatenated and then linearly
 transformed with the projection matrix <span class="math notranslate nohighlight">\(\mathbf{W}^{O, M, (\ell)}\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -2071,7 +2274,7 @@ same layer (e.g., feed-forward network).</p></li>
 </ul>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 7. Residual Connection</p>
+<p class="admonition-title">Step 8. Residual Connection</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_1</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -2119,7 +2322,7 @@ connection.</p>
 \end{split}\]</div>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 7. Pre-Layer Normalization For Position-wise Feed-Forward Network</p>
+<p class="admonition-title">Step 9. Pre-Layer Normalization For Position-wise Feed-Forward Network</p>
 <p>In what follows, we have came out of the masked multi-head attention block and
 we are now ready to apply the feed-forward network to the output of the
 self-attention mechanism and the residual block <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span>.
@@ -2143,7 +2346,7 @@ feed-forward network as we can see below.</p>
 \]</div>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 8. Position-wise Feed-Forward Network</p>
+<p class="admonition-title">Step 10. Position-wise Feed-Forward Network</p>
 <p>Given the input <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_4\)</span> to the FFN in layer <span class="math notranslate nohighlight">\(\ell\)</span>, the
 operations within the FFN can be mathematically represented as follows:</p>
 <div class="math notranslate nohighlight">
@@ -2202,14 +2405,14 @@ next decoder block.</p></li>
 \]</div>
 </div>
 <section id="iterative-process-through-l-decoder-blocks">
-<h3><a class="toc-backref" href="#id40" role="doc-backlink">Iterative Process Through L Decoder Blocks</a><a class="headerlink" href="#iterative-process-through-l-decoder-blocks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id41" role="doc-backlink">Iterative Process Through L Decoder Blocks</a><a class="headerlink" href="#iterative-process-through-l-decoder-blocks" title="Link to this heading">#</a></h3>
 <p>Now <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_6\)</span> becomes the input to the next decoder block and so on.
 More concretely, the operation of each decoder block can be described through a
 series of mathematical transformations, where each block builds upon the output
 of the previous block. The subscript notation <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_i\)</span> indicates
 the i-th step output of the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder block.</p>
 <section id="for-the-first-decoder-block-ell-1">
-<h4><a class="toc-backref" href="#id41" role="doc-backlink">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a><a class="headerlink" href="#for-the-first-decoder-block-ell-1" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id42" role="doc-backlink">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a><a class="headerlink" href="#for-the-first-decoder-block-ell-1" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -2224,7 +2427,7 @@ the i-th step output of the <span class="math notranslate nohighlight">\(\ell\)<
 </section>
 </section>
 <section id="for-subsequent-blocks-ell-1">
-<h3><a class="toc-backref" href="#id42" role="doc-backlink">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a><a class="headerlink" href="#for-subsequent-blocks-ell-1" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a><a class="headerlink" href="#for-subsequent-blocks-ell-1" title="Link to this heading">#</a></h3>
 <p>Each subsequent block <span class="math notranslate nohighlight">\(\ell\)</span> uses the output of the previous block’s final
 output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_6\)</span> as the input for its operations.</p>
 <div class="math notranslate nohighlight">
@@ -2261,7 +2464,7 @@ layer normalization before being projected to the vocabulary space.</p>
 </div>
 </section>
 <section id="head">
-<h3><a class="toc-backref" href="#id43" role="doc-backlink">Head</a><a class="headerlink" href="#head" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id44" role="doc-backlink">Head</a><a class="headerlink" href="#head" title="Link to this heading">#</a></h3>
 <p>We denote the weight of the last projection layer as <span class="math notranslate nohighlight">\(\mathbf{W}_{s}\)</span> where <span class="math notranslate nohighlight">\(s\)</span>
 indicates the softmax layer, essentially projecting the output of the last layer
 to the vocabulary space.</p>
@@ -2285,7 +2488,7 @@ to the vocabulary space.</p>
 </section>
 </section>
 <section id="table">
-<h2><a class="toc-backref" href="#id44" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id45" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Matrix Description</p></th>
@@ -2414,7 +2617,7 @@ to the vocabulary space.</p>
 </table>
 </section>
 <section id="references">
-<h2><a class="toc-backref" href="#id45" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id46" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">The Transformer Family v2.0 - Lilian Weng, OpenAI</a></p></li>
 <li><p><a class="reference external" href="https://leimao.github.io/blog/Transformer-Explained/">Transformer Explained - Lei Mao, NVIDIA</a></p></li>
@@ -2488,6 +2691,7 @@ to the vocabulary space.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensions-and-indexing">Dimensions and Indexing</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-notations">General Notations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elementwise-and-vectorwise-operations">Elementwise and Vectorwise Operations</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vocabulary">Vocabulary</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-sequence">Input Sequence</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#batched-input-sequences">Batched Input Sequences</a></li>
@@ -2537,7 +2741,7 @@ to the vocabulary space.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gaussian-error-linear-unit-gelu">Gaussian Error Linear Unit (GELU)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-setup">The Full Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-workflow">The Full Workflow</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
 </ul>
