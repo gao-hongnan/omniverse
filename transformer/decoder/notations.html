@@ -547,6 +547,8 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-workflow">The Full Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autoregressive-self-supervised-learning-paradigm">Autoregressive Self-Supervised Learning Paradigm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps">Steps</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
 </ul>
@@ -576,83 +578,85 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#dimensions-and-indexing" id="id4">Dimensions and Indexing</a></p></li>
-<li><p><a class="reference internal" href="#general-notations" id="id5">General Notations</a></p>
+<li><p><a class="reference internal" href="#dimensions-and-indexing" id="id5">Dimensions and Indexing</a></p></li>
+<li><p><a class="reference internal" href="#general-notations" id="id6">General Notations</a></p>
 <ul>
-<li><p><a class="reference internal" href="#elementwise-and-vectorwise-operations" id="id6">Elementwise and Vectorwise Operations</a></p></li>
-<li><p><a class="reference internal" href="#vocabulary" id="id7">Vocabulary</a></p></li>
-<li><p><a class="reference internal" href="#input-sequence" id="id8">Input Sequence</a></p>
+<li><p><a class="reference internal" href="#elementwise-and-vectorwise-operations" id="id7">Elementwise and Vectorwise Operations</a></p></li>
+<li><p><a class="reference internal" href="#vocabulary" id="id8">Vocabulary</a></p></li>
+<li><p><a class="reference internal" href="#input-sequence" id="id9">Input Sequence</a></p>
 <ul>
-<li><p><a class="reference internal" href="#batched-input-sequences" id="id9">Batched Input Sequences</a></p></li>
+<li><p><a class="reference internal" href="#batched-input-sequences" id="id10">Batched Input Sequences</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#token-to-index-and-index-to-token-mappings" id="id10">Token to Index, and Index to Token Mappings</a></p>
+<li><p><a class="reference internal" href="#token-to-index-and-index-to-token-mappings" id="id11">Token to Index, and Index to Token Mappings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#string-to-index-mapping" id="id11">String-to-Index Mapping</a></p></li>
-<li><p><a class="reference internal" href="#index-to-string-mapping" id="id12">Index-to-String Mapping</a></p></li>
+<li><p><a class="reference internal" href="#string-to-index-mapping" id="id12">String-to-Index Mapping</a></p></li>
+<li><p><a class="reference internal" href="#index-to-string-mapping" id="id13">Index-to-String Mapping</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#one-hot-representation-of-input-sequence-mathbf-x" id="id13">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a></p>
+<li><p><a class="reference internal" href="#one-hot-representation-of-input-sequence-mathbf-x" id="id14">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a></p>
 <ul>
-<li><p><a class="reference internal" href="#definition" id="id14">Definition</a></p></li>
-<li><p><a class="reference internal" href="#one-hot-encoding-process" id="id15">One-Hot Encoding Process</a></p></li>
-<li><p><a class="reference internal" href="#batched" id="id16">Batched</a></p></li>
+<li><p><a class="reference internal" href="#definition" id="id15">Definition</a></p></li>
+<li><p><a class="reference internal" href="#one-hot-encoding-process" id="id16">One-Hot Encoding Process</a></p></li>
+<li><p><a class="reference internal" href="#batched" id="id17">Batched</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#weights-and-embeddings" id="id17">Weights And Embeddings</a></p>
+<li><p><a class="reference internal" href="#weights-and-embeddings" id="id18">Weights And Embeddings</a></p>
 <ul>
-<li><p><a class="reference internal" href="#matrix-multiplication-primer" id="id18">Matrix Multiplication Primer</a></p></li>
-<li><p><a class="reference internal" href="#mathbf-x-output-of-the-embedding-layer" id="id19"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a></p>
+<li><p><a class="reference internal" href="#matrix-multiplication-primer" id="id19">Matrix Multiplication Primer</a></p></li>
+<li><p><a class="reference internal" href="#mathbf-x-output-of-the-embedding-layer" id="id20"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id1" id="id20">Definition</a></p></li>
-<li><p><a class="reference internal" href="#lookup" id="id21">Lookup</a></p></li>
-<li><p><a class="reference internal" href="#semantic-representation" id="id22">Semantic Representation</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id21">Definition</a></p></li>
+<li><p><a class="reference internal" href="#lookup" id="id22">Lookup</a></p></li>
+<li><p><a class="reference internal" href="#semantic-representation" id="id23">Semantic Representation</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#mathbf-w-e-embedding-matrix" id="id23"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a></p></li>
-<li><p><a class="reference internal" href="#pe-positional-encoding-layer" id="id24"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a></p></li>
-<li><p><a class="reference internal" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" id="id25"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a></p></li>
+<li><p><a class="reference internal" href="#mathbf-w-e-embedding-matrix" id="id24"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a></p></li>
+<li><p><a class="reference internal" href="#pe-positional-encoding-layer" id="id25"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a></p></li>
+<li><p><a class="reference internal" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" id="id26"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#layer-normalization" id="id26">Layer Normalization</a></p></li>
-<li><p><a class="reference internal" href="#attention-notations" id="id27">Attention Notations</a></p>
+<li><p><a class="reference internal" href="#layer-normalization" id="id27">Layer Normalization</a></p></li>
+<li><p><a class="reference internal" href="#attention-notations" id="id28">Attention Notations</a></p>
 <ul>
-<li><p><a class="reference internal" href="#dimensions" id="id28">Dimensions</a></p></li>
-<li><p><a class="reference internal" href="#query-key-and-values" id="id29">Query, Key and Values</a></p></li>
-<li><p><a class="reference internal" href="#general-attention-mechanism" id="id30">General Attention Mechanism</a></p></li>
-<li><p><a class="reference internal" href="#multi-head-attention-for-layer-ell" id="id31">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
-<li><p><a class="reference internal" href="#masked-multi-head-attention-for-decoder-layer-ell" id="id32">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
-<li><p><a class="reference internal" href="#updated-matrix-description-table-with-batch-and-head-dimensions" id="id33">Updated Matrix Description Table with Batch and Head Dimensions</a></p></li>
+<li><p><a class="reference internal" href="#dimensions" id="id29">Dimensions</a></p></li>
+<li><p><a class="reference internal" href="#query-key-and-values" id="id30">Query, Key and Values</a></p></li>
+<li><p><a class="reference internal" href="#general-attention-mechanism" id="id31">General Attention Mechanism</a></p></li>
+<li><p><a class="reference internal" href="#multi-head-attention-for-layer-ell" id="id32">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
+<li><p><a class="reference internal" href="#masked-multi-head-attention-for-decoder-layer-ell" id="id33">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a></p></li>
+<li><p><a class="reference internal" href="#updated-matrix-description-table-with-batch-and-head-dimensions" id="id34">Updated Matrix Description Table with Batch and Head Dimensions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#positionwise-feed-forward-networks" id="id34">Positionwise Feed-Forward Networks</a></p>
+<li><p><a class="reference internal" href="#positionwise-feed-forward-networks" id="id35">Positionwise Feed-Forward Networks</a></p>
 <ul>
-<li><p><a class="reference internal" href="#independent-processing" id="id35">Independent Processing</a></p></li>
-<li><p><a class="reference internal" href="#identical-application" id="id36">Identical Application</a></p></li>
-<li><p><a class="reference internal" href="#id2" id="id37">Definition</a></p></li>
-<li><p><a class="reference internal" href="#projection-to-a-higher-dimension-space" id="id38">Projection to a Higher Dimension Space</a></p></li>
-<li><p><a class="reference internal" href="#gaussian-error-linear-unit-gelu" id="id39">Gaussian Error Linear Unit (GELU)</a></p></li>
+<li><p><a class="reference internal" href="#independent-processing" id="id36">Independent Processing</a></p></li>
+<li><p><a class="reference internal" href="#identical-application" id="id37">Identical Application</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id38">Definition</a></p></li>
+<li><p><a class="reference internal" href="#projection-to-a-higher-dimension-space" id="id39">Projection to a Higher Dimension Space</a></p></li>
+<li><p><a class="reference internal" href="#gaussian-error-linear-unit-gelu" id="id40">Gaussian Error Linear Unit (GELU)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#the-full-workflow" id="id40">The Full Workflow</a></p>
+<li><p><a class="reference internal" href="#the-full-workflow" id="id41">The Full Workflow</a></p>
 <ul>
-<li><p><a class="reference internal" href="#iterative-process-through-l-decoder-blocks" id="id41">Iterative Process Through L Decoder Blocks</a></p>
+<li><p><a class="reference internal" href="#autoregressive-self-supervised-learning-paradigm" id="id42">Autoregressive Self-Supervised Learning Paradigm</a></p></li>
+<li><p><a class="reference internal" href="#steps" id="id43">Steps</a></p></li>
+<li><p><a class="reference internal" href="#iterative-process-through-l-decoder-blocks" id="id44">Iterative Process Through L Decoder Blocks</a></p>
 <ul>
-<li><p><a class="reference internal" href="#for-the-first-decoder-block-ell-1" id="id42">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#for-the-first-decoder-block-ell-1" id="id45">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#for-subsequent-blocks-ell-1" id="id43">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></p></li>
-<li><p><a class="reference internal" href="#head" id="id44">Head</a></p></li>
+<li><p><a class="reference internal" href="#for-subsequent-blocks-ell-1" id="id46">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a></p></li>
+<li><p><a class="reference internal" href="#head" id="id47">Head</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#table" id="id45">Table</a></p></li>
-<li><p><a class="reference internal" href="#references" id="id46">References</a></p></li>
+<li><p><a class="reference internal" href="#table" id="id48">Table</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id49">References</a></p></li>
 </ul>
 </nav>
 <section id="dimensions-and-indexing">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Dimensions and Indexing</a><a class="headerlink" href="#dimensions-and-indexing" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Dimensions and Indexing</a><a class="headerlink" href="#dimensions-and-indexing" title="Link to this heading">#</a></h2>
 <p>This section outlines the common dimensions and indexing conventions utilized in
 the Transformer model.</p>
 <ul class="simple">
@@ -677,9 +681,9 @@ represented as <span class="math notranslate nohighlight">\(d_{\text{model}}\)</
 </ul>
 </section>
 <section id="general-notations">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">General Notations</a><a class="headerlink" href="#general-notations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">General Notations</a><a class="headerlink" href="#general-notations" title="Link to this heading">#</a></h2>
 <section id="elementwise-and-vectorwise-operations">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Elementwise and Vectorwise Operations</a><a class="headerlink" href="#elementwise-and-vectorwise-operations" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Elementwise and Vectorwise Operations</a><a class="headerlink" href="#elementwise-and-vectorwise-operations" title="Link to this heading">#</a></h3>
 <p>Element-wise operations like dropout or activation functions are applied to each
 element of a tensor independently. For example, applying the ReLU activation
 function to a tensor <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{B \times T \times D}\)</span> results
@@ -696,7 +700,7 @@ can then think of the normalization operation as being applied a total of
 <span class="math notranslate nohighlight">\(B \times T\)</span> times.</p>
 </section>
 <section id="vocabulary">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Vocabulary</a><a class="headerlink" href="#vocabulary" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Vocabulary</a><a class="headerlink" href="#vocabulary" title="Link to this heading">#</a></h3>
 <p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span>: The set of all unique words in the vocabulary, defined as:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -731,7 +735,7 @@ can then think of the normalization operation as being applied a total of
 <code class="docutils literal notranslate"><span class="pre">[CLS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[BOS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[EOS]</span></code>, <code class="docutils literal notranslate"><span class="pre">[UNK]</span></code>, etc.) may also be included in <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
 </section>
 <section id="input-sequence">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Input Sequence</a><a class="headerlink" href="#input-sequence" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Input Sequence</a><a class="headerlink" href="#input-sequence" title="Link to this heading">#</a></h3>
 <p>The input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> for a GPT model is defined as a sequence of <span class="math notranslate nohighlight">\(T\)</span>
 tokens. Each token in this sequence is typically represented as an integer that
 corresponds to a position in the vocabulary set <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>. The sequence is
@@ -752,7 +756,7 @@ vocabulary, and each integer corresponds to a unique word or symbol in
 <span class="math notranslate nohighlight">\(1 \leq t \leq T\)</span>.</p></li>
 </ul>
 <section id="batched-input-sequences">
-<h4><a class="toc-backref" href="#id9" role="doc-backlink">Batched Input Sequences</a><a class="headerlink" href="#batched-input-sequences" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Batched Input Sequences</a><a class="headerlink" href="#batched-input-sequences" title="Link to this heading">#</a></h4>
 <p>In practice, GPT models are often trained on batches of sequences to improve
 computational efficiency. A batched input is represented as
 <span class="math notranslate nohighlight">\(\mathbf{x}^{\mathcal{B}}\)</span>, where <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> denotes the batch size. The
@@ -778,9 +782,9 @@ batch.</p></li>
 </section>
 </section>
 <section id="token-to-index-and-index-to-token-mappings">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Token to Index, and Index to Token Mappings</a><a class="headerlink" href="#token-to-index-and-index-to-token-mappings" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Token to Index, and Index to Token Mappings</a><a class="headerlink" href="#token-to-index-and-index-to-token-mappings" title="Link to this heading">#</a></h3>
 <section id="string-to-index-mapping">
-<h4><a class="toc-backref" href="#id11" role="doc-backlink">String-to-Index Mapping</a><a class="headerlink" href="#string-to-index-mapping" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">String-to-Index Mapping</a><a class="headerlink" href="#string-to-index-mapping" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[
 f_{\text{stoi}} : \mathcal{V} \to \{0, 1, \ldots, V-1\}
@@ -800,7 +804,7 @@ unique index. For a token <span class="math notranslate nohighlight">\(w \in \ma
 </ul>
 </section>
 <section id="index-to-string-mapping">
-<h4><a class="toc-backref" href="#id12" role="doc-backlink">Index-to-String Mapping</a><a class="headerlink" href="#index-to-string-mapping" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">Index-to-String Mapping</a><a class="headerlink" href="#index-to-string-mapping" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[
 f_{\text{itos}} : \{0, 1, \ldots, V-1\} \to \mathcal{V}
@@ -820,13 +824,13 @@ token <span class="math notranslate nohighlight">\(w\)</span> in the vocabulary 
 </section>
 </section>
 <section id="one-hot-representation-of-input-sequence-mathbf-x">
-<h3><a class="toc-backref" href="#id13" role="doc-backlink">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a><a class="headerlink" href="#one-hot-representation-of-input-sequence-mathbf-x" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">One-Hot Representation of Input Sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span></a><a class="headerlink" href="#one-hot-representation-of-input-sequence-mathbf-x" title="Link to this heading">#</a></h3>
 <p>The one-hot representation of the input sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is denoted as
 <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span>. This representation converts each token in the
 sequence to a one-hot encoded vector, where each vector has a length equal to
 the size of the vocabulary <span class="math notranslate nohighlight">\(V\)</span>.</p>
 <section id="definition">
-<h4><a class="toc-backref" href="#id14" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h4>
 <p>The one-hot encoded matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is defined as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -854,7 +858,7 @@ the token at position <span class="math notranslate nohighlight">\(t\)</span> in
 </ul>
 </section>
 <section id="one-hot-encoding-process">
-<h4><a class="toc-backref" href="#id15" role="doc-backlink">One-Hot Encoding Process</a><a class="headerlink" href="#one-hot-encoding-process" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">One-Hot Encoding Process</a><a class="headerlink" href="#one-hot-encoding-process" title="Link to this heading">#</a></h4>
 <p>For each token <span class="math notranslate nohighlight">\(x_t\)</span> at position <span class="math notranslate nohighlight">\(t\)</span> in the sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>
 (<span class="math notranslate nohighlight">\(1 \leq t \leq T\)</span>), the corresponding row vector <span class="math notranslate nohighlight">\(\mathbf{o}_{t, :}\)</span> in
 <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is defined as:</p>
@@ -895,7 +899,7 @@ the second, which is seen in their respective one-hot vectors.</p></li>
 </section>
 </div></section>
 <section id="batched">
-<h4><a class="toc-backref" href="#id16" role="doc-backlink">Batched</a><a class="headerlink" href="#batched" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">Batched</a><a class="headerlink" href="#batched" title="Link to this heading">#</a></h4>
 <p>The batched one-hot encoded matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe, }\mathcal{B}}\)</span> for a
 batch of size <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> is defined as a three-dimensional tensor, where each
 “slice” (or matrix) along the first dimension corresponds to the one-hot encoded
@@ -921,9 +925,9 @@ in the batch.</p></li>
 </section>
 </section>
 <section id="weights-and-embeddings">
-<h2><a class="toc-backref" href="#id17" role="doc-backlink">Weights And Embeddings</a><a class="headerlink" href="#weights-and-embeddings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Weights And Embeddings</a><a class="headerlink" href="#weights-and-embeddings" title="Link to this heading">#</a></h2>
 <section id="matrix-multiplication-primer">
-<h3><a class="toc-backref" href="#id18" role="doc-backlink">Matrix Multiplication Primer</a><a class="headerlink" href="#matrix-multiplication-primer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Matrix Multiplication Primer</a><a class="headerlink" href="#matrix-multiplication-primer" title="Link to this heading">#</a></h3>
 <p>See
 <a class="reference external" href="https://math.stackexchange.com/questions/2063241/matrix-multiplication-notation">source</a>.</p>
 <blockquote>
@@ -983,7 +987,7 @@ matrix <span class="math notranslate nohighlight">\(C=AB\)</span> and therefore 
 <span class="math notranslate nohighlight">\(j=1,...,p\)</span>.</p>
 </section>
 <section id="mathbf-x-output-of-the-embedding-layer">
-<h3><a class="toc-backref" href="#id19" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a><a class="headerlink" href="#mathbf-x-output-of-the-embedding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id20" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: Output of the Embedding Layer</a><a class="headerlink" href="#mathbf-x-output-of-the-embedding-layer" title="Link to this heading">#</a></h3>
 <p>Once the one hot encoding representation <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> is well
 defined, we can then pass it as input through our GPT model, in which the first
 layer is a embedding lookup table. In the GPT model architecture, the first
@@ -1035,7 +1039,7 @@ embeddings, we would then matrix multiply <span class="math notranslate nohighli
 \mathbf{X} = \mathbf{X}^{\text{ohe}} \cdot \mathbf{W}_{e}
 \]</div>
 <section id="id1">
-<h4><a class="toc-backref" href="#id20" role="doc-backlink">Definition</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">Definition</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
 <p>The embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span> is structured as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1106,7 +1110,7 @@ V &amp; w_{V,1} &amp; w_{V,2} &amp; \cdots &amp; w_{V,D} \\
 \end{split}\]</div>
 </section>
 <section id="lookup">
-<h4><a class="toc-backref" href="#id21" role="doc-backlink">Lookup</a><a class="headerlink" href="#lookup" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id22" role="doc-backlink">Lookup</a><a class="headerlink" href="#lookup" title="Link to this heading">#</a></h4>
 <p>When the one-hot encoded input matrix <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span> multiplies with
 the embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_e\)</span>, each row of <span class="math notranslate nohighlight">\(\mathbf{X}^{\text{ohe}}\)</span>
 effectively selects a corresponding row from <span class="math notranslate nohighlight">\(\mathbf{W}_e\)</span>. This operation
@@ -1114,7 +1118,7 @@ simplifies to row selection because each row of <span class="math notranslate no
 contains exactly one ‘1’ and the rest are ‘0’s.</p>
 </section>
 <section id="semantic-representation">
-<h4><a class="toc-backref" href="#id22" role="doc-backlink">Semantic Representation</a><a class="headerlink" href="#semantic-representation" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id23" role="doc-backlink">Semantic Representation</a><a class="headerlink" href="#semantic-representation" title="Link to this heading">#</a></h4>
 <p>Now each row of the output tensor, indexed by <span class="math notranslate nohighlight">\(t\)</span>, <span class="math notranslate nohighlight">\(\mathbf{X}_{t, :}\)</span>: is the
 <span class="math notranslate nohighlight">\(D\)</span> dimensional embedding vector for the token <span class="math notranslate nohighlight">\(x_t\)</span> at the <span class="math notranslate nohighlight">\(t\)</span>-th position in
 the sequence. In this context, each token in the sequence is represented by a
@@ -1127,7 +1131,7 @@ more semantically similar they are.</p>
 </section>
 </section>
 <section id="mathbf-w-e-embedding-matrix">
-<h3><a class="toc-backref" href="#id23" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a><a class="headerlink" href="#mathbf-w-e-embedding-matrix" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span>: Embedding Matrix</a><a class="headerlink" href="#mathbf-w-e-embedding-matrix" title="Link to this heading">#</a></h3>
 <p>The embedding matrix <span class="math notranslate nohighlight">\(\mathbf{W}_{e}\)</span> is structured as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -1155,7 +1159,7 @@ vocabulary <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p
 </ul>
 </section>
 <section id="pe-positional-encoding-layer">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a><a class="headerlink" href="#pe-positional-encoding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="math notranslate nohighlight">\(PE\)</span>: Positional Encoding Layer</a><a class="headerlink" href="#pe-positional-encoding-layer" title="Link to this heading">#</a></h3>
 <p>For a given input matrix <span class="math notranslate nohighlight">\(\mathbf{X} \in \mathbb{R}^{T \times D}\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is
 the sequence length and <span class="math notranslate nohighlight">\(D\)</span> is the embedding dimension (denoted as
 <span class="math notranslate nohighlight">\(d_{\text{model}}\)</span> in typical Transformer literature), the positional encoding
@@ -1179,7 +1183,7 @@ x'_{i, j} =
 <p>for <span class="math notranslate nohighlight">\(i = 1, \ldots, T\)</span> and <span class="math notranslate nohighlight">\(j = 1, \ldots, D\)</span>.</p>
 </section>
 <section id="tilde-mathbf-x-output-of-the-positional-encoding-layer">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a><a class="headerlink" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id26" role="doc-backlink"><span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span>: Output of the Positional Encoding Layer</a><a class="headerlink" href="#tilde-mathbf-x-output-of-the-positional-encoding-layer" title="Link to this heading">#</a></h3>
 <p>We can update our original embeddings tensor <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> to include positional
 information:</p>
 <div class="math notranslate nohighlight">
@@ -1223,7 +1227,7 @@ model.</p>
 </section>
 </section>
 <section id="layer-normalization">
-<h2><a class="toc-backref" href="#id26" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id27" role="doc-backlink">Layer Normalization</a><a class="headerlink" href="#layer-normalization" title="Link to this heading">#</a></h2>
 <p>Layer normalization modifies the activations within each layer to have zero mean
 and unit variance across the features for each data point in a batch
 independently, which helps in stabilizing the learning process. It then applies
@@ -1307,9 +1311,9 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 </table>
 </section>
 <section id="attention-notations">
-<h2><a class="toc-backref" href="#id27" role="doc-backlink">Attention Notations</a><a class="headerlink" href="#attention-notations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id28" role="doc-backlink">Attention Notations</a><a class="headerlink" href="#attention-notations" title="Link to this heading">#</a></h2>
 <section id="dimensions">
-<h3><a class="toc-backref" href="#id28" role="doc-backlink">Dimensions</a><a class="headerlink" href="#dimensions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Dimensions</a><a class="headerlink" href="#dimensions" title="Link to this heading">#</a></h3>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Symbol</p></th>
@@ -1342,7 +1346,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 </table>
 </section>
 <section id="query-key-and-values">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink">Query, Key and Values</a><a class="headerlink" href="#query-key-and-values" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Query, Key and Values</a><a class="headerlink" href="#query-key-and-values" title="Link to this heading">#</a></h3>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p><strong>Matrix Description</strong></p></th>
@@ -1437,7 +1441,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 <p>We will talk about the relevant shapes in the last section.</p>
 </section>
 <section id="general-attention-mechanism">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">General Attention Mechanism</a><a class="headerlink" href="#general-attention-mechanism" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">General Attention Mechanism</a><a class="headerlink" href="#general-attention-mechanism" title="Link to this heading">#</a></h3>
 <p>To calculate the embeddings after attention in the GPT model:</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1445,7 +1449,7 @@ output tensor <span class="math notranslate nohighlight">\(\overline{\mathbf{Z}}
 \]</div>
 </section>
 <section id="multi-head-attention-for-layer-ell">
-<h3><a class="toc-backref" href="#id31" role="doc-backlink">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#multi-head-attention-for-layer-ell" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Multi-Head Attention for Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#multi-head-attention-for-layer-ell" title="Link to this heading">#</a></h3>
 <p>For the multi-head attention in layer <span class="math notranslate nohighlight">\(\ell\)</span> of the Transformer (applicable to
 both encoder and decoder in architectures that have both components, but here
 tailored for GPT which primarily uses decoder stacks):</p>
@@ -1467,7 +1471,7 @@ the <span class="math notranslate nohighlight">\(\ell\)</span>-th layer, respect
 </ul>
 </section>
 <section id="masked-multi-head-attention-for-decoder-layer-ell">
-<h3><a class="toc-backref" href="#id32" role="doc-backlink">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#masked-multi-head-attention-for-decoder-layer-ell" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Masked Multi-Head Attention for Decoder Layer <span class="math notranslate nohighlight">\(\ell\)</span></a><a class="headerlink" href="#masked-multi-head-attention-for-decoder-layer-ell" title="Link to this heading">#</a></h3>
 <p>Masked multi-head attention, used in the decoder to ensure that the predictions
 for position <span class="math notranslate nohighlight">\(t\)</span> can only depend on known outputs at positions less than <span class="math notranslate nohighlight">\(t\)</span>
 (auto-regressive property):</p>
@@ -1498,7 +1502,7 @@ predictions of the current token in an auto-regressive manner.</p></li>
 </ul>
 </section>
 <section id="updated-matrix-description-table-with-batch-and-head-dimensions">
-<h3><a class="toc-backref" href="#id33" role="doc-backlink">Updated Matrix Description Table with Batch and Head Dimensions</a><a class="headerlink" href="#updated-matrix-description-table-with-batch-and-head-dimensions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id34" role="doc-backlink">Updated Matrix Description Table with Batch and Head Dimensions</a><a class="headerlink" href="#updated-matrix-description-table-with-batch-and-head-dimensions" title="Link to this heading">#</a></h3>
 <p>To accurately reflect the practical shapes of the Query (Q), Key (K), and Value
 (V) matrices in implementations like GPT, where batch processing and multi-head
 attention are used, we should adjust the notation to include batch size <span class="math notranslate nohighlight">\(B\)</span>,
@@ -1538,7 +1542,7 @@ head.</p>
 </section>
 </section>
 <section id="positionwise-feed-forward-networks">
-<h2><a class="toc-backref" href="#id34" role="doc-backlink">Positionwise Feed-Forward Networks</a><a class="headerlink" href="#positionwise-feed-forward-networks" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">Positionwise Feed-Forward Networks</a><a class="headerlink" href="#positionwise-feed-forward-networks" title="Link to this heading">#</a></h2>
 <p>The term “positionwise feed-forward network” (FFN) in the context of Transformer
 models refers to a dense neural network (otherwise known as multilayer
 perceptron) that operates on the output of the Multi-Head Attention mechanism.
@@ -1546,7 +1550,7 @@ This component is called “positionwise” because it applies the <strong>same<
 feed-forward neural network (FFN) <strong>independently</strong> and <strong>identically</strong> to each
 position <span class="math notranslate nohighlight">\(t\)</span> in the sequence of length <span class="math notranslate nohighlight">\(T\)</span>.</p>
 <section id="independent-processing">
-<h3><a class="toc-backref" href="#id35" role="doc-backlink">Independent Processing</a><a class="headerlink" href="#independent-processing" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Independent Processing</a><a class="headerlink" href="#independent-processing" title="Link to this heading">#</a></h3>
 <p>In the Transformer architecture, after the Multi-Head Attention mechanism
 aggregates information from different positions in the sequence based on
 attention scores, each element (or position) <span class="math notranslate nohighlight">\(t\)</span> in the sequence has an updated
@@ -1559,7 +1563,7 @@ the FFN is applied <span class="math notranslate nohighlight">\(T \times \mathca
 batch size.</p>
 </section>
 <section id="identical-application">
-<h3><a class="toc-backref" href="#id36" role="doc-backlink">Identical Application</a><a class="headerlink" href="#identical-application" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">Identical Application</a><a class="headerlink" href="#identical-application" title="Link to this heading">#</a></h3>
 <p>The term “using the same FFN” signifies that the same set of parameters (weights
 and biases) of the feed-forward neural network is used for each position in the
 sequence. The rationale is that the transformation is consistent across all
@@ -1570,7 +1574,7 @@ positions/tokens, the weight matrices and bias vectors of the FFN are the same
 for all three positions.</p>
 </section>
 <section id="id2">
-<h3><a class="toc-backref" href="#id37" role="doc-backlink">Definition</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">Definition</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>Typically, a positionwise FFN consists of two linear transformations with a
 non-linear activation function in between. The general form can be represented
 as follows.</p>
@@ -1597,7 +1601,7 @@ Linear Unit (GELU) or the Rectified Linear Unit (ReLU).</p></li>
 </section>
 </div></section>
 <section id="projection-to-a-higher-dimension-space">
-<h3><a class="toc-backref" href="#id38" role="doc-backlink">Projection to a Higher Dimension Space</a><a class="headerlink" href="#projection-to-a-higher-dimension-space" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">Projection to a Higher Dimension Space</a><a class="headerlink" href="#projection-to-a-higher-dimension-space" title="Link to this heading">#</a></h3>
 <p>In the Transformer architecture, the dimensionality of the hidden layer in the
 positionwise FFN, denoted as <span class="math notranslate nohighlight">\(d_{\text{ff}}\)</span>, is often chosen to be larger than
 the dimensionality of the input and output embeddings, <span class="math notranslate nohighlight">\(D\)</span>. This means that the
@@ -1615,7 +1619,7 @@ For example, in the original Transformer paper <span id="id3">[<a class="referen
 authors used <span class="math notranslate nohighlight">\(d_{\text{ff}} = 4 \times D\)</span>.</p>
 </section>
 <section id="gaussian-error-linear-unit-gelu">
-<h3><a class="toc-backref" href="#id39" role="doc-backlink">Gaussian Error Linear Unit (GELU)</a><a class="headerlink" href="#gaussian-error-linear-unit-gelu" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id40" role="doc-backlink">Gaussian Error Linear Unit (GELU)</a><a class="headerlink" href="#gaussian-error-linear-unit-gelu" title="Link to this heading">#</a></h3>
 <p>The Gaussian Error Linear Unit (GELU) is a non-linear activation function used
 in the context of neural networks, which allows the model to capture more
 complex patterns in the data compared to traditional activation functions like
@@ -1752,7 +1756,117 @@ sequence (from 1 to <span class="math notranslate nohighlight">\(T\)</span> ) an
 </section>
 </section>
 <section id="the-full-workflow">
-<h2><a class="toc-backref" href="#id40" role="doc-backlink">The Full Workflow</a><a class="headerlink" href="#the-full-workflow" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id41" role="doc-backlink">The Full Workflow</a><a class="headerlink" href="#the-full-workflow" title="Link to this heading">#</a></h2>
+<section id="autoregressive-self-supervised-learning-paradigm">
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#autoregressive-self-supervised-learning-paradigm" title="Link to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> be the true but unknown distribution of the natural language
+space. In the context of unsupervised learning with self-supervision, such as
+language modeling, we consider both the inputs and the implicit labels derived
+from the same data sequence. Thus, while traditionally we might decompose the
+distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> of a supervised learning task into input space
+<span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and label space <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span>, in this scenario, <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and
+<span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> are intrinsically linked, because <span class="math notranslate nohighlight">\(\mathcal{Y}\)</span> is a shifted
+version of <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, and so we can consider <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> as a distribution
+over <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> only.</p>
+<p>Since <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is a distribution, we also define it as a probability
+distribution over <span class="math notranslate nohighlight">\(\mathcal{X}\)</span>, and we can write it as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathcal{D} &amp;= \mathbb{P}(\mathcal{X} ; \boldsymbol{\Theta}) \\
+            &amp;= \mathbb{P}_{\{\mathcal{X} ; \boldsymbol{\Theta}\}}(\mathbf{x})
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span> is the parameter space that defines the distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}(\mathcal{X} ; \boldsymbol{\Theta})\)</span> and <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is a sample
+from <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> generated by the distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>. It is common to
+treat <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> as a sequence of tokens (i.e. a sentence is a sequence of
+tokens), and we can write <span class="math notranslate nohighlight">\(\mathbf{x} = \left(x_1, x_2, \ldots, x_T\right)\)</span>,
+where <span class="math notranslate nohighlight">\(T\)</span> is the length of the sequence.</p>
+<p>Given such a sequence <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, the joint probability of the sequence can be
+factorized into the product of the conditional probabilities of each token in
+the sequence via the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Chain_rule_(probability)">chain rule of probability</a>:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{P}(\mathbf{x} ; \boldsymbol{\Theta}) = \prod_{t=1}^T \mathbb{P}(x_t \mid x_1, x_2, \ldots, x_{t-1} ; \boldsymbol{\Theta})
+\]</div>
+<p>We can do this because natural language are <em>inherently ordered</em>. Such
+decomposition allows for <em>tractable sampling</em> from and <em>estimation</em> of the
+distribution <span class="math notranslate nohighlight">\(\mathbb{P}(\mathbf{x} ; \boldsymbol{\Theta})\)</span> as well as any
+conditionals in the form of
+<span class="math notranslate nohighlight">\(\mathbb{P}(x_{t-k}, x_{t-k+1}, \ldots, x_{t} \mid x_{1}, x_{2}, \ldots, x_{t-k-1} ; \boldsymbol{\Theta})\)</span>
+<span id="id4">[<a class="reference internal" href="../../bibliography.html#id13" title="Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya Sutskever. Language models are unsupervised multitask learners. 2019.">Radford <em>et al.</em>, 2019</a>]</span>.</p>
+<p>To this end, consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> sequences
+<span class="math notranslate nohighlight">\(\left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{S} = \left\{\mathbf{x}_{1}, \mathbf{x}_{2}, \ldots, \mathbf{x}_{N}\right\} \underset{\text{i.i.d.}}{\sim} \mathcal{D}
+\]</div>
+<p>where each sequence <span class="math notranslate nohighlight">\(\mathbf{x}_{n}\)</span> is a sequence of tokens that are sampled
+<span class="math notranslate nohighlight">\(\text{i.i.d.}\)</span> from the distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p>
+<p>Then, we can frame the
+<a class="reference external" href="https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">likelihood function</a>
+<span class="math notranslate nohighlight">\(\hat{\mathcal{L}}(\cdot)\)</span> as the likelihood of observing the sequences in the
+corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) = \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}})
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span> is the estimated parameter space that
+approximates the true parameter space <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span>.</p>
+<p>Subsequently, the objective function is now well-defined, to be the maximization
+of the likelihood of the sequences in the corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right) \\
+                              &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \mathbb{P}(\mathbf{x}_{n} ; \hat{\boldsymbol{\Theta}}) \\
+                              &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \prod_{n=1}^N \prod_{t=1}^{T_n} \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(T_n\)</span> is the length of the sequence <span class="math notranslate nohighlight">\(\mathbf{x}_{n}\)</span>.</p>
+<p>Owing to the fact that multiplying many probabilities together can lead to
+<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/maximum-likelihood.html#numerical-optimization-and-the-negative-log-likelihood">numerical instability</a>
+because the product of many probabilities can be very small, it is common and
+necessary to use the log-likelihood as the objective function, because it can be
+proven that maximizing the log-likelihood is equivalent to maximizing the
+likelihood itself.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right) \\
+&amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmax}} \sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}}) \\
+\end{aligned}
+\end{split}\]</div>
+<p>Furthermore, since we are treating the the loss function as a form of
+minimization, we can simply negate the log-likelihood to obtain the negative
+log-likelihood as the objective function to be minimized,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{\boldsymbol{\theta}}^{*} &amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\log\left(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\right)\right) \\
+&amp;= \underset{\hat{\boldsymbol{\theta}} \in \boldsymbol{\Theta}}{\text{argmin}} \left(-\sum_{n=1}^N \sum_{t=1}^{T_n} \log \mathbb{P}(x_{n, t} \mid x_{n, 1}, x_{n, 2}, \ldots, x_{n, t-1} ; \hat{\boldsymbol{\Theta}})\right) \\
+\end{aligned}
+\end{split}\]</div>
+<p>It is worth noting that the objective function is a function of the parameter
+space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>, and not the data <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>, so all
+analysis such as convergence and consistency will be with respect to the
+parameter space <span class="math notranslate nohighlight">\(\hat{\boldsymbol{\Theta}}\)</span>.</p>
+<p>To this end, we denote the GPT model <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> to be an <em>autoregressive</em> and
+<em>self-supervised learning</em> model that is trained to maximize the likelihood of
+observing all data points <span class="math notranslate nohighlight">\(\mathbf{x} \in \mathcal{S}\)</span> via the objective
+function <span class="math notranslate nohighlight">\(\hat{\mathcal{L}}\left(\mathcal{S} ; \hat{\boldsymbol{\Theta}}\right)\)</span>
+by learning the conditional probability distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}(x_t \mid x_{&lt;t} ; \hat{\boldsymbol{\Theta}})\)</span> over the vocabulary
+<span class="math notranslate nohighlight">\(\mathcal{V}\)</span> of tokens, conditioned on the contextual preciding tokens
+<span class="math notranslate nohighlight">\(x_{&lt;t} = \left(x_1, x_2, \ldots, x_{t-1}\right)\)</span>. We are clear that although
+the goal is to model the joint probability distribution of the token sequences,
+we can do so by estimating the joint probability distribution via the
+conditional probability distributions.</p>
+</section>
+<section id="steps">
+<h3><a class="toc-backref" href="#id43" role="doc-backlink">Steps</a><a class="headerlink" href="#steps" title="Link to this heading">#</a></h3>
 <div class="note admonition">
 <p class="admonition-title">Step 1. Corpus</p>
 <p>Consider a corpus <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> consisting of <span class="math notranslate nohighlight">\(N\)</span> sequences, denoted as
@@ -1936,7 +2050,7 @@ T \times D &amp;= T \times D \odot T \times D
 \end{aligned}
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\odot\)</span> denotes the elementwise (Hadamard) product, and
-<span class="math notranslate nohighlight">\(\mathbf{M} \in {0, 1}^{T \times D}\)</span> is a binary mask tensor of the same shape
+<span class="math notranslate nohighlight">\(\mathbf{M} \in \{0, 1\}^{T \times D}\)</span> is a binary mask tensor of the same shape
 as <span class="math notranslate nohighlight">\(\mathbf{X}\)</span>. Each element in <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> is independently sampled from a
 Bernoulli distribution with probability <span class="math notranslate nohighlight">\(p\)</span> of being 0 (i.e., dropped) and
 probability <span class="math notranslate nohighlight">\(1-p\)</span> of being 1 (i.e., retained).</p>
@@ -2185,64 +2299,176 @@ desired ordering of dimensions.</p>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Step 7.3. Scaled Dot-Product Attention and Masking</p>
-<p>The masked attention weights <span class="math notranslate nohighlight">\(\mathbf{A}^{(\ell)}\)</span> for layer <span class="math notranslate nohighlight">\(\ell\)</span> are
-calculated using the query matrix <span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)}\)</span> and the key matrix
-<span class="math notranslate nohighlight">\(\mathbf{K}^{(\ell)}\)</span> as follows:</p>
+<p>The attention mask matrix <span class="math notranslate nohighlight">\(\mathbf{M} \in \{0, -\infty\}^{T \times T}\)</span> is
+initially constructed as a lower triangular matrix of ones and zeros:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{M} = \begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp; \cdots &amp; 0 \\
+1 &amp; 1 &amp; 0 &amp; \cdots &amp; 0 \\
+1 &amp; 1 &amp; 1 &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; 1 &amp; 1 &amp; \cdots &amp; 1
+\end{bmatrix}
+\end{split}\]</div>
+<p>In this matrix, “1” (conceptually) allows attention, and “0” blocks it. This
+mask is broadcastable to the attention scores tensor
+<span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span> since this is a typical shape for
+multi-head self-attention.</p>
+<p>However, before applying the mask, the ones in <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> are typically
+replaced with zeros, and the zeros are replaced with a large negative value
+(e.g., <span class="math notranslate nohighlight">\(-\infty\)</span>) to effectively set the attention weights of the masked
+positions to zero after the softmax operation (which is to mimic the
+<code class="docutils literal notranslate"><span class="pre">masked_fill</span></code> operation in the code). So, the actual mask matrix used in the
+attention mechanism looks like this:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{M}_{ij} = \left\{\begin{array}{ll}
+0 &amp; \text{if } i \geq j \\
+-\infty &amp; \text{if } i &lt; j
+\end{array} \right\} \quad \text{forms a triangular matrix:} \quad \begin{bmatrix}
+0 &amp; -\infty &amp; -\infty &amp; \cdots &amp; -\infty \\
+0 &amp; 0 &amp; -\infty &amp; \cdots &amp; -\infty \\
+0 &amp; 0 &amp; 0 &amp; \cdots &amp; -\infty \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; 0 &amp; \cdots &amp; 0
+\end{bmatrix}
+\end{split}\]</div>
+<p>The masking operation will then be applied elementwise to the attention scores
+tensor <span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{(\ell)}\)</span>, which is first obtained by computing the
+scaled dot product between the query matrix <span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)}\)</span> and the key
+matrix <span class="math notranslate nohighlight">\(\mathbf{K}^{(\ell)}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{A}^{(\ell)} &amp;= \operatorname{softmax}\left(\frac{\mathbf{Q}^{(\ell)} (\mathbf{K}^{(\ell)})^T}{\sqrt{d_k}} \odot \text{Mask}\right) \\
-\mathcal{B} \times H \times T \times T &amp;\leftarrow \operatorname{softmax}\left(\frac{\mathcal{B} \times H \times T \times D//H \operatorname{&#64;} \mathcal{B} \times H \times D//H \times T}{\sqrt{D//H}} \odot \text{Mask}\right) \\
+\mathbf{A}_{s}^{(\ell)} &amp;= \frac{\mathbf{Q}^{(\ell)} (\mathbf{K}^{(\ell)})^T}{\sqrt{D//H}} \\
+\mathcal{B} \times H \times T \times T &amp;\leftarrow \frac{\mathcal{B} \times H \times T \times D//H \operatorname{&#64;} \mathcal{B} \times H \times D//H \times T}{\sqrt{D//H}}
+\end{aligned}
+\end{split}\]</div>
+<p>The masking operation is performed using the elementwise sum (<span class="math notranslate nohighlight">\(\oplus\)</span>) between
+the attention scores tensor
+<span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times H \times T \times T}\)</span>
+and the <strong><em>broadcasted</em></strong> mask matrix
+<span class="math notranslate nohighlight">\(\mathbf{M} \in \{0, -\infty\}^{\mathcal{B} \times H \times T \times T}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{A}_{s}^{M, (\ell)} &amp;= \mathbf{A}_{s}^{(\ell)} \oplus \mathbf{M} \\
+\mathcal{B} \times H \times T \times T &amp;\leftarrow \mathcal{B} \times H \times T \times T \oplus \mathcal{B} \times H \times T \times T
+\end{aligned}
+\end{split}\]</div>
+<p>The elementwise sum ensures that the attention scores corresponding to future
+tokens (positions above the diagonal) are added by <span class="math notranslate nohighlight">\(-\infty\)</span> to effectively
+block attention to those positions and added by <span class="math notranslate nohighlight">\(0\)</span> for the rest of the
+positions that are allowed to attend to.</p>
+<p>Finally, the masked attention scores <span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{M, (\ell)}\)</span> are passed
+through the softmax function to obtain the attention weights
+<span class="math notranslate nohighlight">\(\mathbf{A}_{w}^{(\ell)}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{A}_{w}^{(\ell)} &amp;= \operatorname{softmax}\left(\mathbf{A}_{s}^{M, (\ell)}\right) \\
 \mathcal{B} \times H \times T \times T &amp;\leftarrow \operatorname{softmax}\left(\mathcal{B} \times H \times T \times T\right) \\
 \mathcal{B} \times H \times T \times T &amp;\leftarrow \mathcal{B} \times H \times T \times T
 \end{aligned}
 \end{split}\]</div>
-<p>The Mask matrix is defined as:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\text{Mask}_{ij} = \begin{cases}
-1 &amp; \text{if } i \geq j \\
--\infty &amp; \text{if } i &lt; j
-\end{cases}
-\end{split}\]</div>
-<ul class="simple">
-<li><p><strong>Lower Triangular Form</strong>: The Mask is a <span class="math notranslate nohighlight">\(T \times T\)</span> matrix where all
-elements above the diagonal are <span class="math notranslate nohighlight">\(-\infty\)</span> (blocking attention to future
-tokens), and all elements on and below the diagonal are 0 (allowing
-attention to current and past tokens).</p></li>
-<li><p><strong>Broadcasting</strong>: The mask is broadcasted across the batch (<span class="math notranslate nohighlight">\(\mathcal{B}\)</span>)
-and head (<span class="math notranslate nohighlight">\(H\)</span>) dimensions, which aligns with the dimensions of the attention
-scores tensor.</p></li>
-</ul>
-<p>In code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">future_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">seq_len</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>And for the sake of completeness, the softmax operation is <em>vector-wise</em> applied
-to the attention scores tensor for each row over the last dimension. What this
-means is that if the attention scores is of shape
-<span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span>, the softmax operation is applied to
-each row of the last dimension independently, which means we “ignore” the batch
-and head dimensions and focus on normalizing the attention scores for each token
-position across the sequence length in the matrix <span class="math notranslate nohighlight">\(T \times T\)</span> - we end up with
-each row of <span class="math notranslate nohighlight">\(T \times T\)</span> summing to 1.</p>
-<p>Before concatenation, the last piece of the self attention is to matrix multiply
-the attention weights with the value matrix <span class="math notranslate nohighlight">\(\mathbf{V}^{(\ell)}\)</span>:</p>
+<p>The softmax function is then applied to the masked attention scores tensor in a
+<strong>vectorwise</strong> manner. Specifically, the softmax operation is applied
+<strong>independently</strong> to each row of the last two dimensions (<span class="math notranslate nohighlight">\(T \times T\)</span>) for each
+batch and head. This ensures that the attention weights for each token position
+across the sequence length sum up to 1. The large negative values in the masked
+positions ensure that the corresponding attention weights become close to zero
+after the softmax operation.</p>
+<p>Finally, the context matrix <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span> is obtained by multiplying the
+attention weights <span class="math notranslate nohighlight">\(\mathbf{A}_{w}^{(\ell)}\)</span> with the value matrix
+<span class="math notranslate nohighlight">\(\mathbf{V}^{(\ell)}\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{C}^{(\ell)} &amp;= \mathbf{A}^{(\ell)} \mathbf{V}^{(\ell)} \\
-\mathcal{B} \times H \times T \times D//H &amp;\leftarrow \mathcal{B} \times H \times T \times T \operatorname{&#64;} \mathcal{B} \times H \times T \times D//H
+\mathbf{C}^{(\ell)} &amp;= \mathbf{A}_{w}^{(\ell)} \mathbf{V}^{(\ell)} \\
+\mathcal{B} \times H \times T \times D//H &amp;\leftarrow \mathcal{B} \times H \times T \times T \times \mathcal{B} \times H \times T \times D//H
 \end{aligned}
 \end{split}\]</div>
+<p>The resulting context matrix <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span> contains the attended values
+for each head in layer <span class="math notranslate nohighlight">\(\ell\)</span>.</p>
 <p>Note <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span> is the context matrix which is the output of the
 self-attention mechanism and it contains <span class="math notranslate nohighlight">\(\operatorname{head}_{\ell, h}^{M}\)</span> for
 each head <span class="math notranslate nohighlight">\(h\)</span> in the layer <span class="math notranslate nohighlight">\(\ell\)</span>.</p>
-<p>In code, we have:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">causal_mask</span><span class="p">)</span> <span class="c1"># ([B, H, T, D // H], [B, H, T, T])</span>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d_q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_q</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>  <span class="c1"># [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]</span>
+<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">attention_scores</span>  <span class="c1"># [B, H, T, T]</span>
+
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [B, H, T, T]</span>
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>  <span class="c1"># [B, H, T, T]</span>
+
+<span class="n">context_vector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>  <span class="c1"># [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]</span>
+<span class="k">return</span> <span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span>
 </pre></div>
 </div>
-</div>
+<table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Line</strong></p></th>
+<th class="head"><p><strong>Code</strong></p></th>
+<th class="head"><p><strong>Operation Description</strong></p></th>
+<th class="head"><p><strong>Input Shape</strong></p></th>
+<th class="head"><p><strong>Output Shape</strong></p></th>
+<th class="head"><p><strong>Notes</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>[1]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">d_q</span> <span class="pre">=</span> <span class="pre">query.size(dim=-1)</span></code></p></td>
+<td><p>Retrieves the dimension of the query vectors.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_q\)</span></p></td>
+<td><p>Scalar value</p></td>
+<td><p>The last dimension of the query tensor represents the query vector dimension.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[2]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attention_scores</span> <span class="pre">=</span> <span class="pre">torch.matmul(query,</span> <span class="pre">key.transpose(dim0=-2,</span> <span class="pre">dim1=-1))</span> <span class="pre">/</span> <span class="pre">torch.sqrt(torch.tensor(d_q).float())</span></code></p></td>
+<td><p>Computes the scaled dot-product attention scores by matrix multiplying the query and key matrices and scaling by the square root of the query dimension.</p></td>
+<td><p>Query: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_q\)</span><br>Key: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_k\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p>The key matrix is transposed to align the dimensions for matrix multiplication. The scaling factor helps stabilize gradients during training.</p></td>
+</tr>
+<tr class="row-even"><td><p>[3]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attention_scores</span> <span class="pre">=</span> <span class="pre">attention_scores.masked_fill(mask</span> <span class="pre">==</span> <span class="pre">0,</span> <span class="pre">float(&quot;-inf&quot;))</span> <span class="pre">if</span> <span class="pre">mask</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">None</span> <span class="pre">else</span> <span class="pre">attention_scores</span></code></p></td>
+<td><p>Applies the attention mask to the attention scores. Positions where the mask is 0 are filled with <span class="math notranslate nohighlight">\(-\infty\)</span> to effectively block attention to those positions.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">masked_fill</span></code> operation is an elementwise operation that replaces the attention scores at masked positions with <span class="math notranslate nohighlight">\(-\infty\)</span>. This step is skipped if no mask is provided.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[4]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attention_weights</span> <span class="pre">=</span> <span class="pre">attention_scores.softmax(dim=-1)</span></code></p></td>
+<td><p>Applies the softmax function to the masked attention scores along the last dimension to obtain the attention weights.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p>The softmax operation is applied in a vectorwise manner, independently for each row of the last two dimensions (<span class="math notranslate nohighlight">\(T \times T\)</span>) for each batch and head. This ensures that the attention weights for each token position across the sequence length sum up to 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>[5]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">attention_weights</span> <span class="pre">=</span> <span class="pre">self.dropout(attention_weights)</span></code></p></td>
+<td><p>Applies dropout regularization to the attention weights to prevent overfitting.</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p>Dropout randomly sets a fraction of the attention weights to zero during training, which helps improve generalization. This is element-wise operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[6]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">context_vector</span> <span class="pre">=</span> <span class="pre">torch.matmul(attention_weights,</span> <span class="pre">value)</span></code></p></td>
+<td><p>Computes the context vector by matrix multiplying the attention weights with the value matrix.</p></td>
+<td><p>Attention Weights: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span><br>Value: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_v\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_v\)</span></p></td>
+<td><p>The attention weights are used to weight the importance of each token’s value vector. The resulting context vector captures the attended information from the input sequence.</p></td>
+</tr>
+<tr class="row-even"><td><p>[7]</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">context_vector,</span> <span class="pre">attention_weights</span></code></p></td>
+<td><p>Returns the computed context vector and attention weights.</p></td>
+<td><p>Context Vector: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_v\)</span><br>Attention Weights: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
+<td><p>-</p></td>
+<td><p>The context vector is passed to the next layer of the model, while the attention weights can be used for interpretation or visualization purposes.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="note admonition">
 <p class="admonition-title">Step 7.4. Concatenation and Projection</p>
 <p>Post attention, the outputs from all heads are concatenated and then linearly
@@ -2404,15 +2630,16 @@ next decoder block.</p></li>
 \mathbf{Z}^{(1)}_6 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5\right)
 \]</div>
 </div>
+</section>
 <section id="iterative-process-through-l-decoder-blocks">
-<h3><a class="toc-backref" href="#id41" role="doc-backlink">Iterative Process Through L Decoder Blocks</a><a class="headerlink" href="#iterative-process-through-l-decoder-blocks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id44" role="doc-backlink">Iterative Process Through L Decoder Blocks</a><a class="headerlink" href="#iterative-process-through-l-decoder-blocks" title="Link to this heading">#</a></h3>
 <p>Now <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_6\)</span> becomes the input to the next decoder block and so on.
 More concretely, the operation of each decoder block can be described through a
 series of mathematical transformations, where each block builds upon the output
 of the previous block. The subscript notation <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_i\)</span> indicates
 the i-th step output of the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder block.</p>
 <section id="for-the-first-decoder-block-ell-1">
-<h4><a class="toc-backref" href="#id42" role="doc-backlink">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a><a class="headerlink" href="#for-the-first-decoder-block-ell-1" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id45" role="doc-backlink">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a><a class="headerlink" href="#for-the-first-decoder-block-ell-1" title="Link to this heading">#</a></h4>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -2427,7 +2654,7 @@ the i-th step output of the <span class="math notranslate nohighlight">\(\ell\)<
 </section>
 </section>
 <section id="for-subsequent-blocks-ell-1">
-<h3><a class="toc-backref" href="#id43" role="doc-backlink">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a><a class="headerlink" href="#for-subsequent-blocks-ell-1" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">For Subsequent Blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>)</a><a class="headerlink" href="#for-subsequent-blocks-ell-1" title="Link to this heading">#</a></h3>
 <p>Each subsequent block <span class="math notranslate nohighlight">\(\ell\)</span> uses the output of the previous block’s final
 output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_6\)</span> as the input for its operations.</p>
 <div class="math notranslate nohighlight">
@@ -2464,7 +2691,7 @@ layer normalization before being projected to the vocabulary space.</p>
 </div>
 </section>
 <section id="head">
-<h3><a class="toc-backref" href="#id44" role="doc-backlink">Head</a><a class="headerlink" href="#head" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id47" role="doc-backlink">Head</a><a class="headerlink" href="#head" title="Link to this heading">#</a></h3>
 <p>We denote the weight of the last projection layer as <span class="math notranslate nohighlight">\(\mathbf{W}_{s}\)</span> where <span class="math notranslate nohighlight">\(s\)</span>
 indicates the softmax layer, essentially projecting the output of the last layer
 to the vocabulary space.</p>
@@ -2488,7 +2715,7 @@ to the vocabulary space.</p>
 </section>
 </section>
 <section id="table">
-<h2><a class="toc-backref" href="#id45" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id48" role="doc-backlink">Table</a><a class="headerlink" href="#table" title="Link to this heading">#</a></h2>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Matrix Description</p></th>
@@ -2617,7 +2844,7 @@ to the vocabulary space.</p>
 </table>
 </section>
 <section id="references">
-<h2><a class="toc-backref" href="#id46" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id49" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://lilianweng.github.io/posts/2023-01-27-the-transformer-family-v2/">The Transformer Family v2.0 - Lilian Weng, OpenAI</a></p></li>
 <li><p><a class="reference external" href="https://leimao.github.io/blog/Transformer-Explained/">Transformer Explained - Lei Mao, NVIDIA</a></p></li>
@@ -2742,6 +2969,8 @@ to the vocabulary space.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-full-workflow">The Full Workflow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autoregressive-self-supervised-learning-paradigm">Autoregressive Self-Supervised Learning Paradigm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps">Steps</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iterative-process-through-l-decoder-blocks">Iterative Process Through L Decoder Blocks</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#for-the-first-decoder-block-ell-1">For the First Decoder Block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>)</a></li>
 </ul>
