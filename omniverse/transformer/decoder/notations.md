@@ -26,6 +26,24 @@ the Transformer model.
 
 ## General Notations
 
+### Elementwise and Vectorwise Operations
+
+Element-wise operations like dropout or activation functions are applied to each
+element of a tensor independently. For example, applying the ReLU activation
+function to a tensor $\mathbf{X} \in \mathbb{R}^{B \times T \times D}$ results
+in a tensor of the same shape, where the ReLU function is applied to each
+element of $\mathbf{X}$ independently (i.e. you can think of it as applying the
+ReLU a total of $B \times T \times D$ times).
+
+For vector-wise operations, the operation is applied to each vector along a
+specific _dimension_ or _axis_ of the tensor. For example, applying layer
+normalization to a tensor $\mathbf{X} \in \mathbb{R}^{B \times T \times D}$ will
+apply the normalization operation to each vector along the feature dimension $D$
+independently. This means that the normalization operation is applied to each
+vector of size $D$ independently across all batches and sequence positions. You
+can then think of the normalization operation as being applied a total of
+$B \times T$ times.
+
 ### Vocabulary
 
 $\mathcal{V}$: The set of all unique words in the vocabulary, defined as:
@@ -859,36 +877,139 @@ $$
 | Weights for Second Linear Transformation               | $\mathbf{W}^{FF, (\ell)}_2$                    | $d_{\text{ff}} \times D$                    | Weights used to project the activated embeddings from dimension $d_{\text{ff}}$ back to $D$.                                         |
 | Biases for Second Linear Transformation                | $\mathbf{b}^{FF, (\ell)}_2$                    | $D$                                         | Biases added to the output of the second linear transformation in the FFN, shaping it back to the original embedding dimension.      |
 
-## The Full Setup
+## The Full Workflow
 
 ```{admonition} Step 1. Corpus
 :class: note
 
-To this end, consider a corpus $\mathcal{S}$ with $N$ sequences
-$\left\{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\right\}$,
+Consider a corpus $\mathcal{S}$ consisting of $N$ sequences, denoted as
+${\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N}$, where each sequence
+$\mathbf{x} = (x_1, x_2, \ldots, x_T) \in \mathcal{S}$ is a sequence of $T$
+tokens. These tokens are sampled i.i.d. from a true, unknown distribution
+$\mathcal{D}$:
 
 $$
 \mathcal{S}=\left\{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\right\} \underset{\text { i.i.d. }}{\sim} \mathcal{D}
 $$
 
-where each sequence $\mathbf{x}_n = (x_1, x_2, \ldots, x_T)$ is a sequence of
-tokens that are sampled i.i.d. from the unknown but true distribution
-$\mathcal{D}$.
+Each sequence $\mathbf{x} \in \mathcal{S}$ represents a collection of tokenized
+elements (e.g., words or characters), where each token $x_t$ comes from a finite
+vocabulary $\mathcal{V}$.
 ```
 
-```{admonition} Step 2. One Hot Encoding
+```{admonition} Step 2. Vocabulary and Tokenization
 :class: note
 
-For each sequence $\mathbf{x} \in \mathcal{S}$ in the corpus, we would apply one
-hot encoding so that each sample/sequence is transformed to
-$\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times V}$.
+Let $\mathcal{V} = \{w_1, w_2, \ldots, w_V\}$ be the vocabulary set, where $w_j$
+is the $j$-th token in the vocabulary and $V = |\mathcal{V}|$ is the size of the
+vocabulary. It is worth noting that it is common to train one's own vocabulary
+and tokenizer on the corpus $\mathcal{S}$, but for simplicity, we assume that
+the vocabulary set $\mathcal{V}$ is predefined.
+
+Let $\mathcal{X}$ be the set of all possible sequences that can be formed by
+concatenating tokens from the vocabulary set $\mathcal{V}$. Each sequence
+$\mathbf{x} \in \mathcal{X}$ is a finite sequence of tokens, and the length of
+each sequence is denoted by $\tau$. Formally:
+
+$$
+\mathcal{X} = \bigcup_{\tau=1}^{T} \mathcal{V}^{\tau}
+$$
+
+where $\mathcal{V}^\tau$ represents the set of all sequences of length $\tau$
+formed by concatenating tokens from $\mathcal{V}$, and $T$ is the maximum
+sequence length.
+
+Now, let
+$\mathcal{S} = \{\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_N\} \subset \mathcal{X}$
+be a corpus of $N$ sequences, where each sequence $\mathbf{x}_n \in \mathcal{X}$
+is a finite sequence of tokens from the vocabulary set $\mathcal{V}$.
+
+The tokenizer algorithm $\mathcal{T}$ is a function that operates on individual
+sequences $\mathbf{x}_n$ from the corpus $\mathcal{S}$ and maps the tokens to
+their corresponding integer indices using the vocabulary set $\mathcal{V}$:
+
+$$
+\mathcal{T}: \mathcal{X} \rightarrow \mathbb{N}^{\leq T}
+$$
+
+where $\mathbb{N}^{\leq T}$ represents the set of all finite sequences of
+natural numbers (non-negative integers) with lengths up to $T$. The output of
+$\mathcal{T}$ is a tokenized sequence, which is a finite sequence of integer
+indices corresponding to the tokens in the input sequence.
+
+To map the tokens to their corresponding integer indices, we define a bijective
+mapping function $f: \mathcal{V} \rightarrow \{1, 2, \ldots, V\}$ such that:
+
+$$
+f(w_j) = j, \quad \forall j \in \{1, 2, \ldots, V\}
+$$
+
+where $f(w_j)$ represents the integer index assigned to the token
+$w_j \in \mathcal{V}$.
+
+Given a sequence $\mathbf{x} = (x_1, x_2, \ldots, x_\tau) \in \mathcal{X}$,
+where $\tau \leq T$ is the length of the sequence, the tokenizer algorithm
+$\mathcal{T}$ maps each token $x_t$ to its corresponding integer index using the
+bijective mapping function $f$. The tokenized representation of the sequence
+$\mathbf{x}$ can be defined as:
+
+$$
+\mathcal{T}(\mathbf{x}) = \left(f(x_1), f(x_2), \ldots, f(x_\tau)\right)
+$$
+
+where $f(x_t)$ is the integer index assigned to the token $x_t$ based on $f$.
+
+In the case where a token $x_t$ is not present in the vocabulary set
+$\mathcal{V}$, a special token index, such as $f(\text{<UNK>})$, can be assigned
+to represent an unknown token.
+
+The tokenizer algorithm $\mathcal{T}$ can be applied to each sequence
+$\mathbf{x}_n$ in the corpus $\mathcal{S}$ to obtain the tokenized corpus
+$\mathcal{S}^{\mathcal{T}}$:
+
+$$
+\mathcal{S}^{\mathcal{T}} = \left\{\mathcal{T}(\mathbf{x}_1), \mathcal{T}(\mathbf{x}_2), \ldots, \mathcal{T}(\mathbf{x}_N)\right\} \subset \mathbb{N}^{\leq T}
+$$
+
+where $\mathcal{T}(\mathbf{x}_n)$ is the tokenized representation of the
+sequence $\mathbf{x}_n \in \mathcal{S}$.
+
+The tokenized corpus $\mathcal{S}^{\mathcal{T}}$ is a set of sequences, where
+each sequence is a finite sequence of integer indices representing the tokens in
+the original sequences from the corpus $\mathcal{S}$.
 ```
 
-```{admonition} Step 3. Token Embedding
+```{admonition} Step 3. One Hot Encoding
 :class: note
 
-Subsequently, we would run this input through the token embedding weight
-$\mathbf{W}_{e}$ to obtain the matrix $\mathbf{X} \in \mathbb{R}^{T \times D}$:
+For each sequence $\mathbf{x} \in \mathcal{S}^{\mathcal{T}}$ in the corpus, we
+would apply one hot encoding so that each sample/sequence is transformed to
+$\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times V}$ where $V$ is the vocabulary
+size and $T$ the pre-defined context window size.
+
+$$
+\mathbf{X}^{\text{ohe}} = \begin{bmatrix}
+o_{1,1} & o_{1,2} & \cdots & o_{1,V} \\
+o_{2,1} & o_{2,2} & \cdots & o_{2,V} \\
+\vdots  & \vdots  & \ddots & \vdots  \\
+o_{T,1} & o_{T,2} & \cdots & o_{T,V}
+\end{bmatrix} \in \{0, 1\}^{T \times V}
+$$
+
+Each row $\mathbf{X}^{\text{ohe}}_{t} \in \mathbb{R}^{1 \times V}$ represents
+the one-hot encoded representation of the token at position $t$ in the sequence.
+```
+
+```{admonition} Step 4. Token Embedding
+:class: note
+
+Given the one-hot encoded input
+$\mathbf{X}^{\text{ohe}} \in \{0, 1\}^{T \times |\mathcal{V}|}$, where $T$ is
+the sequence length and $V = |\mathcal{V}|$ is the vocabulary size, we obtain
+the token embedding matrix $\mathbf{X} \in \mathbb{R}^{T \times D}$ by matrix
+multiplying $\mathbf{X}^{\text{ohe}}$ with the token embedding weight matrix
+$\mathbf{W}_e \in \mathbb{R}^{V \times D}$, where $D$ is the embedding
+dimension:
 
 $$
 \begin{aligned}
@@ -905,7 +1026,7 @@ $$
 Note carefully that with the addition of batch dimension $\mathcal{B}$ the
 matrix multiplication is still well-defined for such tensor in PyTorch because
 we are essentially just performing matrix multiplication in $T \times D$ for
-each sequence $\mathbf{X}_b \in \mathcal{X}^{\mathcal{B}}$ with the same weight
+each sequence $\mathbf{X}_b \in \mathbf{X}^{\mathcal{B}}$ with the same weight
 matrix $\mathbf{W}_{e}$.
 
 The token embedding weight matrix $\mathbf{W}_e$ with dimensions $V \times D$ is
@@ -922,11 +1043,19 @@ sharing allows the model to learn a common representation for the tokens across
 different sequences.
 ```
 
-```{admonition} Step 4. Positional Embedding
+```{admonition} Step 5. Positional Embedding
 :class: note
 
-We will now further add positional encoding to the embedding matrix which
-results in:
+In addition to the token embeddings, we incorporate positional information into
+the input representation to capture the sequential nature of the input
+sequences. Let $\operatorname{PE}(\cdot)$ denote the positional encoding
+function that maps the token positions to their corresponding positional
+embeddings.
+
+Given the token embedding matrix $\mathbf{X} \in \mathbb{R}^{T \times D}$, where
+$T$ is the sequence length and $D$ is the embedding dimension, we add the
+positional embeddings to obtain the position-aware input representation
+$\tilde{\mathbf{X}} \in \mathbb{R}^{T \times D}$:
 
 $$
 \begin{aligned}
@@ -936,49 +1065,100 @@ T \times D                      &\leftarrow T \times D \operatorname{+} T \times
 \end{aligned}
 $$
 
-At this stage, it is also usual to add a dropout layer
-$\operatorname{Dropout}(\cdot)$ on the $\tilde{\mathbf{X}}$.
+The positional encoding function $\operatorname{PE}(\cdot)$ can be implemented
+in various ways, such as using fixed sinusoidal functions or learned positional
+embeddings. For the latter, we can easily replace $\operatorname{PE}(\cdot)$
+with a learnable positional embedding layer in the model architecture
+($\mathbf{W}_{p}$).
 ```
 
-```{admonition} Step 5. Pre-Layer Normalization For Masked Multi-Head Attention
+```{admonition} Dropout And Elementwise Operation
+:class: tip
+
+At this stage, it is common practice to apply a dropout layer
+$\operatorname{Dropout}(\cdot)$ to the position-aware input representation
+$\tilde{\mathbf{X}}$ (or $\tilde{\mathbf{X}}_{\text{batch}}$ in the case of a
+batch). Dropout is a regularization technique that randomly sets a fraction of
+the elements in the input tensor to zero during training and is an
+**_element-wise_** operation that acts **_independently_** on each element in
+the tensor. This means that each element has a fixed probability (usually
+denoted as $p$) of being set to zero, regardless of its position or the values
+of other elements in the tensor.
+
+Mathematically, for an input tensor $\mathbf{X} \in \mathbb{R}^{T \times D}$,
+elementwise dropout can be expressed as:
+
+$$
+\begin{aligned}
+\mathbf{X}^{\text{dropout}} &= \mathbf{X} \odot \mathbf{M} \\
+T \times D &= T \times D \odot T \times D
+\end{aligned}
+$$
+
+where $\odot$ denotes the elementwise (Hadamard) product, and
+$\mathbf{M} \in {0, 1}^{T \times D}$ is a binary mask tensor of the same shape
+as $\mathbf{X}$. Each element in $\mathbf{M}$ is independently sampled from a
+Bernoulli distribution with probability $p$ of being 0 (i.e., dropped) and
+probability $1-p$ of being 1 (i.e., retained).
+```
+
+````{admonition} Step 6. Pre-Layer Normalization For Masked Multi-Head Attention
 :class: note
 
 Before passing the input through the Multi-Head Attention (MHA) layer, we apply
 Layer Normalization to the positionally encoded embeddings $\tilde{\mathbf{X}}$.
-This is known as pre-Layer Normalization in the GPT architecture.
-The Layer Normalization function $\operatorname{LayerNorm}(\cdot)$ operates on
-the feature dimension $D$ of the input tensor, normalizing the activations to
-have zero mean and unit variance across the features for each token
-independently. Note carefully that layer norm is a vector-wise function because
-during calculation, it needs to aggregate the info of the whole vector - and
-that we apply layer norm independently on each row
-$\tilde{\mathbf{X}}_{t} \in \mathbb{R}^{1 \times D}$.
+This is known as pre-layer Normalization in the more modern GPT architecture (as
+opposed to post-layer Normalization, which is applied after the MHA layer).
+
+The Layer Normalization function $\operatorname{LayerNorm}(\cdot)$ is a
+**_vectorwise_** operation that operates on the feature dimension $D$ of the
+input tensor. It normalizes the activations to have zero mean and unit variance
+across the features for each token independently. The vectorwise nature of Layer
+Normalization arises from the fact that it computes the mean and standard
+deviation along the feature dimension, requiring **aggregation** of information
+across the entire feature vector for each token.
+
+Mathematically, for an input tensor $\mathbf{X} \in \mathbb{R}^{T \times D}$,
+Layer Normalization is applied independently to each row
+$\mathbf{x}_t \in \mathbb{R}^{1 \times D}$, where $t \in \{1, 2, \ldots, T\}$.
+The normalization is performed using the following formula:
+
+$$
+\operatorname{LayerNorm}(\mathbf{x}_t) = \frac{\mathbf{x}_t - \mu_t}{\sqrt{\sigma_t^2 + \epsilon}} \odot \gamma + \beta
+$$
+
+where $\mu_t \in \mathbb{R}$ and $\sigma_t^2 \in \mathbb{R}$ are the mean and
+variance of the features in $\mathbf{x}_t$ (broadcasted), respectively,
+$\epsilon$ is a small constant for numerical stability,
+$\gamma \in \mathbb{R}^D$ and $\beta \in \mathbb{R}^D$ are learnable affine
+parameters (scale and shift), and $\odot$ denotes the elementwise product.
+
+Applying Layer Normalization to the positionally encoded embeddings
+$\tilde{\mathbf{X}}$ at layer $\ell$ results in the normalized embeddings
+$\mathbf{Z}^{(\ell)}_1$:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_1 &= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}
-\right) \\
+\mathbf{Z}^{(\ell)}_1 &= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}\right) \\
 T \times D &\leftarrow T \times D \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
 Here, $\mathbf{Z}^{(\ell)}_1$ represents the normalized embeddings at layer
-$\ell$, the index $1$ refers to the first sub-layer/sub-step in the decoder
-block, and $\tilde{\mathbf{X}}$ represents the positionally encoded embeddings.
+$\ell$, and the index $1$ refers to the first sub-layer/sub-step in the decoder
+block.
 
-For the first layer, we set $\ell = 1$, $\tilde{\mathbf{X}}$ is the output from
-Step 4 (Positional Embedding). So we get:
+For the first layer ($\ell = 1$), $\tilde{\mathbf{X}}$ is the output from Step 4
+(Positional Embedding). So we have:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(1)}_1 &= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}
-\right) \\
+\mathbf{Z}^{(1)}_1 &= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}\right) \\
 T \times D &\leftarrow T \times D \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
-```
 
 In code we have:
 
@@ -990,6 +1170,7 @@ def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.gamma * (x - mean) / (std + self.eps) + self.beta  # [3]
     return (x - mean) / (std + self.eps)  # [4]
 ```
+````
 
 | **Line** | **Code**                                                        | **Operation Description**                                                                        | **Input Shape**                 | **Output Shape**                | **Notes**                                                                                                                                                                         |
 | -------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -998,61 +1179,109 @@ def forward(self, x: torch.Tensor) -> torch.Tensor:
 | [3]      | `return self.gamma * (x - mean) / (std + self.eps) + self.beta` | Applies the normalization formula with learnable parameters gamma ($\gamma$) and beta ($\beta$). | $\mathcal{B} \times T \times D$ | $\mathcal{B} \times T \times D$ | Element-wise operations are used. $\gamma$ and $\beta$ are of shape $D$, and are broadcasted to match the input shape. This line only executes if `elementwise_affine` is `True`. |
 | [4]      | `return (x - mean) / (std + self.eps)`                          | Applies the normalization formula without learnable parameters.                                  | $\mathcal{B} \times T \times D$ | $\mathcal{B} \times T \times D$ | Simple normalization where each element in the feature vector $x$ is normalized by the corresponding mean and standard deviation.                                                 |
 
-```{admonition} Step 6. Masked Multi-Head Self-Attention
+```{admonition} Step 7. Masked Multi-Head Self-Attention
 :class: note
 
-Note that I did not denote the index $M$ below to indicated for masked/causal
-self-attention because the intent is clear in GPT only model.
+Given the normalized input embeddings
+$\mathbf{Z}^{(\ell)}_1 \in \mathbb{R}^{\mathcal{B} \times T \times D}$ from Step
+6 (Pre-Layer Normalization), we apply the masked multi-head self-attention
+mechanism to compute the output embeddings $\mathbf{Z}^{(\ell)}_2$, where the
+index $2$ denotes the second sub-layer within the $\ell$-th decoder layer
+(multi-head attention).
 
-Given the normalized input embeddings $\mathbf{Z}^{(\ell)}_1$ from Step 5, we
-apply the masked multi-head self-attention mechanism to compute the output
-embeddings $\mathbf{Z}^{(\ell)}_2$ where the index $2$ denotes the second
-sub-layer within the $\ell$-th decoder layer (multi-head attention).
+Let $\operatorname{MaskedMultiHead}^{(\ell)}(\cdot)$ denote the masked
+multi-head self-attention function at layer $\ell$. The masked multi-head
+self-attention operation takes the normalized input embeddings
+$\mathbf{Z}^{(\ell)}_1$ as the query, key, and value matrices, and produces the
+output embeddings $\mathbf{Z}^{(\ell)}_2$.
+
+For the first layer ($\ell = 1$), the masked multi-head self-attention operation
+can be expressed as:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(1)}_2 &= \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) \\
-\mathcal{B} \times T \times D &\leftarrow \text{MaskedMultiHead}(\mathcal{B} \times T \times D, \mathcal{B} \times T \times D, \mathcal{B} \times T \times D) \\
+\mathbf{Z}^{(1)}_2 &= \operatorname{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) \\
+\mathcal{B} \times T \times D &\leftarrow \operatorname{MaskedMultiHead}^{(1)}\left(\mathcal{B} \times T \times D, \mathcal{B} \times T \times D, \mathcal{B} \times T \times D\right) \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
-Note in particular $\text{MaskedMultiHead}^{(1)}$ is indexed with $1$ to
-indicate that it is the first block within the decoder layer $\ell$.
+Here, $\mathbf{Z}^{(1)}_2 \in \mathbb{R}^{\mathcal{B} \times T \times D}$
+represents the output embeddings of the masked multi-head self-attention
+operation at layer $1$, and
+$\mathbf{Z}^{(1)}_1 \in \mathbb{R}^{\mathcal{B} \times T \times D}$ represents
+the normalized input embeddings from Step 6.
 
-To this end, we would break down this and first calculate the query, key, and
-value matrices.
+The $\operatorname{MaskedMultiHead}^{(\ell)}(\cdot)$ function internally
+performs the following steps:
+
+1. Linearly projects the input embeddings $\mathbf{Z}^{(\ell)}_1$ into query,
+   key, and value matrices for each attention head.
+2. Computes the scaled dot-product attention scores between the query and key
+   matrices, and applies the attention mask to prevent attending to future
+   tokens.
+3. Applies the softmax function to the masked attention scores to obtain the
+   attention weights.
+4. Multiplies the attention weights with the value matrices to produce the
+   output embeddings for each attention head.
+5. Concatenates the output embeddings from all attention heads and linearly
+   projects them to obtain the final output embeddings $\mathbf{Z}^{(\ell)}_2$.
+
+The specifics of the scaled dot-product attention mechanism and the multi-head
+attention operation will be discussed in the next few steps.
 ```
 
-````{admonition} Step 6.1. Query, Key, and Value Matrices
+````{admonition} Step 7.1. Linear Projections, Query, Key, and Value Matrices
 :class: note
 
-In code, we have:
+In the masked multi-head self-attention mechanism, the first step is to linearly
+project the normalized input embeddings $\mathbf{Z}^{(\ell)}_1$ into query, key,
+and value matrices for each attention head. This step is performed using
+learnable weight matrices $\mathbf{W}^{Q, (\ell)}$, $\mathbf{W}^{K, (\ell)}$,
+and $\mathbf{W}^{V, (\ell)}$.
 
-```python
-Q: torch.Tensor = self.W_Q(z).contiguous() # Z @ W_Q = [B, T, D] @ [D, D] = [B, T, D]
-K: torch.Tensor = self.W_K(z).contiguous() # Z @ W_K = [B, T, D] @ [D, D] = [B, T, D]
-V: torch.Tensor = self.W_V(z).contiguous() # Z @ W_V = [B, T, D] @ [D, D] = [B, T, D]
-```
+Mathematically, the linear projections can be expressed as:
 
 $$
 \begin{aligned}
-\mathbf{Q}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{Q, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{@} \mathcal{B} \times D \times D \\
-\mathbf{K}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{K, (\ell)} ,\quad
-\mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{@} \mathcal{B} \times D \times D \\
-\mathbf{V}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{V, (\ell)} ,\quad
-\mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \operatorname{@} \mathcal{B} \times D \times D
+\mathbf{Q}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{Q, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D \\
+\mathbf{K}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{K, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D \\
+\mathbf{V}^{(\ell)} &= \mathbf{Z}^{(\ell)}_1 \mathbf{W}^{V, (\ell)} ,\quad \mathcal{B} \times T \times D \leftarrow \mathcal{B} \times T \times D \times D
 \end{aligned}
 $$
 
--   $\mathbf{Q}^{(\ell)}$, $\mathbf{K}^{(\ell)}$, and $\mathbf{V}^{(\ell)}$ are
-    the query, key, and value matrices for the $\ell$-th decoder layer.
--   $\mathbf{W}^{Q, (\ell)}$, $\mathbf{W}^{K, (\ell)}$, and
-    $\mathbf{W}^{V, (\ell)}$ are the parameter matrices that transform the
-    normalized embeddings into queries, keys, and values respectively.
+where:
+
+-   $\mathbf{Q}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}$ is the
+    query matrix for the $\ell$-th decoder layer.
+-   $\mathbf{K}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}$ is the
+    key matrix for the $\ell$-th decoder layer.
+-   $\mathbf{V}^{(\ell)} \in \mathbb{R}^{\mathcal{B} \times T \times D}$ is the
+    value matrix for the $\ell$-th decoder layer.
+-   $\mathbf{W}^{Q, (\ell)} \in \mathbb{R}^{D \times D}$,
+    $\mathbf{W}^{K, (\ell)} \in \mathbb{R}^{D \times D}$, and
+    $\mathbf{W}^{V, (\ell)} \in \mathbb{R}^{D \times D}$ are the learnable
+    weight matrices that transform the normalized embeddings into queries, keys,
+    and values, respectively.
+-   Again notice that we are using the same weight matrices for all heads,
+    weight/parameters sharing.
+
+The linear projections are performed using matrix multiplication between the
+normalized input embeddings $\mathbf{Z}^{(\ell)}_1$ and the corresponding weight
+matrices. The resulting query, key, and value matrices have the same shape as
+the input embeddings: $\mathcal{B} \times T \times D$.
+
+In the provided code snippet, the linear projections are implemented using the
+`torch.nn.Linear` modules `self.W_Q`, `self.W_K`, and `self.W_V`:
+
+```python
+Q: torch.Tensor = self.W_Q(z).contiguous()  # Z @ W_Q = [B, T, D] @ [D, D] = [B, T, D]
+K: torch.Tensor = self.W_K(z).contiguous()  # Z @ W_K = [B, T, D] @ [D, D] = [B, T, D]
+V: torch.Tensor = self.W_V(z).contiguous()  # Z @ W_V = [B, T, D] @ [D, D] = [B, T, D]
+```
 ````
 
-````{admonition} Step 6.2. Reshaping and Transposing Query, Key, and Value Matrices
+````{admonition} Step 7.2. Reshaping and Transposing Query, Key, and Value Matrices
 :class: note
 
 Subsequently, we have already known that instead of for loop to compute each
@@ -1066,7 +1295,7 @@ permuted and combined:
 
 $$
 \begin{aligned}
-\mathbf{Q}_{b,t,d} & \rightarrow \mathbf{Q}_{b,t,h,d_q} \quad \text{where } d = h \cdot (D // H) + d_q, \text{ for } h \in [0, H-1] \text{ and } d_h \in [0, D//H-1] \\
+\mathbf{Q}_{b,t,d} & \rightarrow \mathbf{Q}_{b,t,h,d_q} \quad \text{where } d = h \cdot (D // H) + d_q, \text{ for } h \in [0, H-1] \text{ and } d_q \in [0, D//H-1] \\
 \mathbf{Q}_{b,t,h,d_q} & \rightarrow \mathbf{Q}_{b,h,t,d_q} \quad \text{(transpose dimensions)}
 \end{aligned}
 $$
@@ -1096,16 +1325,20 @@ $$
 \end{aligned}
 $$
 
-In code that is:
+In code, the reshaping and transposition operations are performed as follows:
 
 ```python
 Q = Q.view(B, T, self.H, D // self.H).transpose(dim0=1, dim1=2) # [B, T, D] -> [B, T, H, D // H] -> [B, H, T, D//H]
 K = K.view(B, T, self.H, D // self.H).transpose(dim0=1, dim1=2)
 V = V.view(B, T, self.H, D // self.H).transpose(dim0=1, dim1=2)
 ```
+
+The `view` operation reshapes the matrices to include the head dimension, and
+the `transpose` operation swaps the sequence and head dimensions to obtain the
+desired ordering of dimensions.
 ````
 
-````{admonition} Step 6.3. Scaled Dot-Product Attention and Masking
+````{admonition} Step 7.3. Scaled Dot-Product Attention and Masking
 :class: note
 
 The masked attention weights $\mathbf{A}^{(\ell)}$ for layer $\ell$ are
@@ -1174,7 +1407,7 @@ self.context_vector, self.attention_weights = self.attention(query=Q, key=K, val
 ```
 ````
 
-````{admonition} Step 6.4. Concatenation and Projection
+````{admonition} Step 7.4. Concatenation and Projection
 :class: note
 
 Post attention, the outputs from all heads are concatenated and then linearly
@@ -1207,7 +1440,7 @@ projected_context_vector: torch.Tensor = self.resid_dropout(
 -   We can optionally apply dropout to the output.
 ````
 
-````{admonition} Step 7. Residual Connection
+````{admonition} Step 8. Residual Connection
 :class: note
 
 ```python
@@ -1264,7 +1497,7 @@ $$
 $$
 ````
 
-````{admonition} Step 7. Pre-Layer Normalization For Position-wise Feed-Forward Network
+````{admonition} Step 9. Pre-Layer Normalization For Position-wise Feed-Forward Network
 :class: note
 
 In what follows, we have came out of the masked multi-head attention block and
@@ -1292,7 +1525,7 @@ $$
 $$
 ````
 
-```{admonition} Step 8. Position-wise Feed-Forward Network
+```{admonition} Step 10. Position-wise Feed-Forward Network
 :class: note
 
 Given the input $\mathbf{Z}^{(\ell)}_4$ to the FFN in layer $\ell$, the
