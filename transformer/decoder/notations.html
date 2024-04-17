@@ -45,7 +45,7 @@
   <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
@@ -2397,14 +2397,13 @@ each head <span class="math notranslate nohighlight">\(h\)</span> in the layer <
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">d_q</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_q</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>  <span class="c1"># [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]</span>
-<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">attention_scores</span>  <span class="c1"># [B, H, T, T]</span>
+<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">d_q</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>         <span class="c1"># [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]</span>
+<span class="n">attention_scores</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">masked_fill</span><span class="p">(</span><span class="n">mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">attention_scores</span>     <span class="c1"># [B, H, T, T]</span>
 
-<span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [B, H, T, T]</span>
-<span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>  <span class="c1"># [B, H, T, T]</span>
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="n">attention_scores</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># [B, H, T, T]</span>
+<span class="n">attention_weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">)</span>         <span class="c1"># [B, H, T, T]</span>
 
-<span class="n">context_vector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>  <span class="c1"># [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]</span>
-<span class="k">return</span> <span class="n">context_vector</span><span class="p">,</span> <span class="n">attention_weights</span>
+<span class="n">context_vector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attention_weights</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>     <span class="c1"># [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]</span>
 </pre></div>
 </div>
 <table class="table">
@@ -2460,121 +2459,192 @@ each head <span class="math notranslate nohighlight">\(h\)</span> in the layer <
 <td><p><span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_v\)</span></p></td>
 <td><p>The attention weights are used to weight the importance of each token’s value vector. The resulting context vector captures the attended information from the input sequence.</p></td>
 </tr>
-<tr class="row-even"><td><p>[7]</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">context_vector,</span> <span class="pre">attention_weights</span></code></p></td>
-<td><p>Returns the computed context vector and attention weights.</p></td>
-<td><p>Context Vector: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times d_v\)</span><br>Attention Weights: <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times T\)</span></p></td>
-<td><p>-</p></td>
-<td><p>The context vector is passed to the next layer of the model, while the attention weights can be used for interpretation or visualization purposes.</p></td>
-</tr>
 </tbody>
 </table>
 <div class="note admonition">
 <p class="admonition-title">Step 7.4. Concatenation and Projection</p>
-<p>Post attention, the outputs from all heads are concatenated and then linearly
-transformed with the projection matrix <span class="math notranslate nohighlight">\(\mathbf{W}^{O, M, (\ell)}\)</span>:</p>
+<p>Recall that the output from the masked multi-head self-attention operation,
+denoted as <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span>, has a shape of
+<span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times D//H\)</span>, where <span class="math notranslate nohighlight">\(\mathcal{B}\)</span> is the batch
+size, <span class="math notranslate nohighlight">\(H\)</span> is the number of attention heads, <span class="math notranslate nohighlight">\(T\)</span> is the sequence length, and
+<span class="math notranslate nohighlight">\(D//H\)</span> is the dimension of each head.</p>
+<p>To concatenate the heads and obtain a tensor of shape
+<span class="math notranslate nohighlight">\(\mathcal{B} \times T \times D\)</span>, we first need to transpose the dimensions of
+<span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span> from <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times D//H\)</span> to
+<span class="math notranslate nohighlight">\(\mathcal{B} \times T \times H \times D//H\)</span> - necessary to concatenate the heads
+along the last dimension (feature dimension).</p>
+<p>Using tensor index notation or semi einsum notation, we can denote the
+transposition operation as follows:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mathbf{C}^{(\ell)}_{b,h,t,d} &amp; \rightarrow \mathbf{C}^{(\ell)}_{b,t,h,d} \quad \text{(transpose dimensions)}
+\end{aligned}
+\]</div>
+<p>After transposition, the heads are concatenated along the last dimension
+(feature dimension) to obtain a tensor of shape <span class="math notranslate nohighlight">\(\mathcal{B} \times T \times D\)</span>.
+The concatenation operation can be expressed using the direct sum notation as
+follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_2 &amp;= \left(\operatorname{{head}_{\ell, 1}} \oplus \operatorname{{head}_{\ell, 2}} \oplus \cdots \oplus \operatorname{{head}_{\ell, H}}\right) \mathbf{W}^{\mathbf{O}, (\ell)} \\
+\mathbf{C}^{(\ell)}_{\text{concat}} &amp;= \bigoplus_{h=0}^{H-1} \mathbf{C}^{(\ell)}_{b,t,h,:} \\
+&amp;= \mathbf{C}^{(\ell)}_{b,t,0,:} \oplus \mathbf{C}^{(\ell)}_{b,t,1,:} \oplus \cdots \oplus \mathbf{C}^{(\ell)}_{b,t,H-1,:} \\
+&amp;= \operatorname{head}^{\ell}_1 \oplus \operatorname{head}^{\ell}_2 \oplus \cdots \oplus \operatorname{head}^{\ell}_H \\
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}_{b,t,h,:}\)</span> represents the tensor slice corresponding
+to the <span class="math notranslate nohighlight">\(h\)</span>-th head at batch index <span class="math notranslate nohighlight">\(b\)</span> and time step <span class="math notranslate nohighlight">\(t\)</span>, and <span class="math notranslate nohighlight">\(\oplus\)</span> denotes
+the concatenation operation along the feature dimension.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Direct Sum Notation Is Concatenation</p>
+<p>In the concatenation of attention heads, the direct sum notation (<span class="math notranslate nohighlight">\(\oplus\)</span>) is
+used to represent the concatenation operation, not elementwise addition. The
+direct sum combines the output tensors from each attention head along a specific
+dimension (usually the feature dimension). It is a vectorwise operation that
+stacks the tensors along the specified dimension, creating a new tensor with an
+increased dimension size.</p>
+</div>
+<p>The concatenation operation can be summarized as:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mathbf{C}^{(\ell)} &amp;\in \mathbb{R}^{\mathcal{B} \times T \times H \times D//H} \xrightarrow{\text{concatenate}} \mathbf{C}^{(\ell)}_{\text{concat}} \in \mathbb{R}^{\mathcal{B} \times T \times D}
+\end{aligned}
+\]</div>
+<p>To summarize, the transposition and concatenation operations can be represented
+as:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mathbf{C}^{(\ell)} &amp;\in \mathbb{R}^{\mathcal{B} \times H \times T \times D//H} \rightarrow \mathbf{C}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times T \times H \times D//H} \rightarrow \mathbf{C}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times T \times D}
+\end{aligned}
+\]</div>
+<p>Finally, the concatenated tensor is linearly transformed using the projection
+matrix <span class="math notranslate nohighlight">\(\mathbf{W}^{O, (\ell)}\)</span> to obtain the output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_2 &amp;= \mathbf{C}^{(\ell)}_{\text{concat}} \mathbf{W}^{O, (\ell)} \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D \operatorname{&#64;} D \times D \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>A small details in between, note and recall that <span class="math notranslate nohighlight">\(\mathbf{C}^{(\ell)}\)</span> is of
-shape <span class="math notranslate nohighlight">\(\mathcal{B} \times H \times T \times D//H\)</span> and we need to concatenate the
-heads along the feature dimension to get <span class="math notranslate nohighlight">\(\mathcal{B} \times T \times D\)</span>. This
-is easily done via the below code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span> <span class="c1"># merge all heads together</span>
-<span class="c1"># fmt: on</span>
+<p>In code, these operations can be implemented as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dim0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dim1</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>  <span class="c1"># merge all heads together</span>
 
 <span class="n">projected_context_vector</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resid_dropout</span><span class="p">(</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">context_projection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span><span class="p">)</span> <span class="c1"># [B, T, D] @ [D, D] = [B, T, D]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">context_projection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context_vector</span><span class="p">)</span>  <span class="c1"># [B, T, D] @ [D, D] = [B, T, D]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> becomes the input to the next sub-layer within the
-same layer (e.g., feed-forward network).</p></li>
-<li><p>We can optionally apply dropout to the output.</p></li>
-</ul>
+<p>To this end, for layer <span class="math notranslate nohighlight">\(\ell=1\)</span>, we would have the output tensor
+<span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_2\)</span> - which becomes the input to the next sub-layer within the
+same block <span class="math notranslate nohighlight">\(\ell\)</span>. Optionally, we can apply a projection dropout to the output
+tensor <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> before passing it to the next sub-layer.</p>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Step 8. Residual Connection</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_1</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>The next step is to add the residual connection to the output of the
-self-attention mechanism.</p>
+<p>In the Transformer/GPT architecture, residual connections are used to facilitate
+the flow of information and gradients throughout the network. The residual
+connection in the decoder block is added between the input to the block and the
+output of the Masked Multi-Head Attention layer.</p>
+<p>For the first decoder block (<span class="math notranslate nohighlight">\(\ell = 1\)</span>), the residual connection is added
+between the positionally encoded embeddings <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> and the output
+of the Masked Multi-Head Attention layer <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_2\)</span>:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_{3} &amp;= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right)\right) \\
-\mathbf{Z}^{(\ell)}_{3} &amp;= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(\ell)}_{1}, \mathbf{Z}^{(\ell)}_{1}, \mathbf{Z}^{(\ell)}_{1}\right) \\
-\mathbf{Z}^{(\ell)}_{3} &amp;= \tilde{\mathbf{X}} + \mathbf{Z}^{(\ell)}_{2} \\
+\mathbf{Z}^{(1)}_{3} &amp;= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right)\right) \\
+&amp;= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}\right) \\
+&amp;= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_{2} \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D + \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>So for our first layer, we have:</p>
-<div class="math notranslate nohighlight">
-\[
-\mathbf{Z}^{(1)}_3 = \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_2
-\]</div>
-<p>It’s important to note that in the first decoder block, the residual connection
-is added between the input <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> (output of the Positional
-Embedding step) and the output of the Masked Multi-Head Attention layer
-<span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span>.</p>
-<p>However, in the subsequent decoder blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>), the residual connection
-is added between the output of the previous decoder block
+<p>where <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_{3}\)</span> represents the output of the residual connection
+for the first decoder block, <span class="math notranslate nohighlight">\(\tilde{\mathbf{X}}\)</span> is the positionally encoded
+embeddings, and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(1)}_{2}\)</span> is the output of the Masked Multi-Head
+Attention layer.</p>
+<p>For subsequent decoder blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>), the residual connection is added
+between the output of the previous decoder block
 <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_{\text{out}}\)</span> and the output of the Masked Multi-Head
-Attention layer <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> of the current block.</p>
-<p>Mathematically, for decoder blocks with <span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>, the residual connection step
-is represented as:</p>
+Attention layer <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> of the current block:</p>
 <div class="math notranslate nohighlight">
 \[
 \mathbf{Z}^{(\ell)}_3 = \mathbf{Z}^{(\ell-1)}_{\text{out}} + \mathbf{Z}^{(\ell)}_2
 \]</div>
-<p>where <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_{\text{out}}\)</span> is the output of the previous decoder
-block after the Position-wise Feed-Forward Network and the second residual
-connection.</p>
-<p>For subsequent blocks (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>):</p>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span> represents the output of the residual connection
+for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder block, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell-1)}_{\text{out}}\)</span> is the
+output of the previous decoder block after the Position-wise Feed-Forward
+Network and the second residual connection, and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> is the
+output of the Masked Multi-Head Attention layer of the current block.</p>
+<p>The complete set of equations for the <span class="math notranslate nohighlight">\(\ell\)</span>-th decoder block (<span class="math notranslate nohighlight">\(\ell &gt; 1\)</span>) can
+be summarized as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
 \mathbf{Z}^{(\ell)}_1 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_{\text{out}}\right) \\
 \mathbf{Z}^{(\ell)}_2 &amp;= \text{MaskedMultiHead}^{(\ell)}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) \\
-\mathbf{Z}^{(\ell)}_3 &amp;= \mathbf{Z}^{(\ell)}_1 + \mathbf{Z}^{(\ell)}_2 \\
+\mathbf{Z}^{(\ell)}_3 &amp;= \mathbf{Z}^{(\ell-1)}_{\text{out}} + \mathbf{Z}^{(\ell)}_2
 \end{aligned}
 \end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span> represents the output of the Layer Normalization
+step, <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_2\)</span> represents the output of the Masked Multi-Head
+Attention layer, and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span> represents the output of the
+residual connection.</p>
+<p>The residual connection allows the model to learn the identity function more
+easily, enabling the flow of information and gradients across multiple layers.
+By adding the input of the block to the output of the Masked Multi-Head
+Attention layer, the model can choose to either learn new information from the
+attention mechanism or retain the original input information if it is already
+sufficient.</p>
+<p>In code, the whole series of operation up till now is simply:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attn</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_1</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</pre></div>
+</div>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Step 9. Pre-Layer Normalization For Position-wise Feed-Forward Network</p>
-<p>In what follows, we have came out of the masked multi-head attention block and
-we are now ready to apply the feed-forward network to the output of the
-self-attention mechanism and the residual block <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span>.
-Before that, we would apply pre-norm layer normalization to the input of the
-feed-forward network as we can see below.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_2</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
-</pre></div>
-</div>
+<p>After the masked multi-head attention block and the residual connection, the
+next step is to apply the position-wise feed-forward network (FFN) to the output
+of the self-attention mechanism and the residual block <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span>.
+However, before applying the FFN, we perform pre-layer normalization on the
+input to the FFN.</p>
+<p>Mathematically, the pre-layer normalization step for the FFN can be expressed
+as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_4 &amp;= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) \\
-\mathcal{B} \times T \times D &amp;\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
+\mathbf{Z}^{(\ell)}_4 &amp;= \operatorname{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) \\
+\mathcal{B} \times T \times D &amp;\leftarrow \operatorname{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>So for our case with <span class="math notranslate nohighlight">\(\ell = 1\)</span>, we have:</p>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_4\)</span> represents the normalized input to the FFN at
+layer <span class="math notranslate nohighlight">\(\ell\)</span>, and <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_3\)</span> is the output of the residual
+connection from the previous step.</p>
+<p>As discussed in Step 6, the Layer Normalization function
+<span class="math notranslate nohighlight">\(\operatorname{LayerNorm}(\cdot)\)</span> is a vectorwise operation that operates on the
+feature dimension <span class="math notranslate nohighlight">\(D\)</span> of the input tensor. It normalizes the activations to have
+zero mean and unit variance across the features for each token independently.
+It’s important to note that the pre-layer normalization step is applied
+independently to each token
+<span class="math notranslate nohighlight">\(\mathbf{Z}_{3, t}^{(\ell)} \in \mathbf{Z}_3^{(\ell)}\)</span> in the sequence with
+shape <span class="math notranslate nohighlight">\(T \times D\)</span>, where <span class="math notranslate nohighlight">\(T\)</span> is the sequence length and <span class="math notranslate nohighlight">\(D\)</span> is the feature
+dimension, normalizing the features across the feature dimension <span class="math notranslate nohighlight">\(D\)</span>.</p>
+<p>For the first layer (<span class="math notranslate nohighlight">\(\ell = 1\)</span>), the pre-layer normalization step can be
+written as:</p>
 <div class="math notranslate nohighlight">
 \[
-\mathbf{Z}^{(1)}_4 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
+\mathbf{Z}^{(1)}_4 = \operatorname{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
 \]</div>
 </div>
 <div class="note admonition">
 <p class="admonition-title">Step 10. Position-wise Feed-Forward Network</p>
-<p>Given the input <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_4\)</span> to the FFN in layer <span class="math notranslate nohighlight">\(\ell\)</span>, the
-operations within the FFN can be mathematically represented as follows:</p>
+<p>Given the normalized input <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_4\)</span> to the Position-wise
+Feed-Forward Network (FFN) in layer <span class="math notranslate nohighlight">\(\ell\)</span>, the FFN applies two linear
+transformations with a GELU activation function in between. The operations
+within the FFN can be mathematically represented as follows:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
@@ -2586,20 +2656,33 @@ operations within the FFN can be mathematically represented as follows:</p>
 \mathcal{B} \times T \times D &amp;\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 \end{split}\]</div>
-<p>Note slight abuse of notation where I used <span class="math notranslate nohighlight">\(\mathbf{Z}^{FF, (\ell)}_1\)</span> to denote
-the intermediate output of the first linear transformation in the FFN. This should
-not be confused with earlier <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span>.</p>
-<p>For our case with <span class="math notranslate nohighlight">\(\ell = 1\)</span>, we have:</p>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{W}^{FF, (\ell)}_1 \in \mathbb{R}^{D \times d_{\text{ff}}}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{b}^{FF, (\ell)}_1 \in \mathbb{R}^{d_{\text{ff}}}\)</span> are the weights
+and biases of the first linear transformation, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{W}^{FF, (\ell)}_2 \in \mathbb{R}^{d_{\text{ff}} \times D}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{b}^{FF, (\ell)}_2 \in \mathbb{R}^{D}\)</span> are the weights and biases of
+the second linear transformation, respectively.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d_{\text{ff}}\)</span> is the dimensionality of the hidden layer in the FFN, which
+is typically larger than the input dimensionality <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\operatorname{GELU}(\cdot)\)</span> denotes the Gaussian Error Linear Unit
+activation function.</p></li>
+</ul>
+<p>Note the slight abuse of notation where <span class="math notranslate nohighlight">\(\mathbf{Z}^{FF, (\ell)}_1\)</span> is used to
+denote the intermediate output of the first linear transformation in the FFN.
+This should not be confused with the earlier notation <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_1\)</span>.</p>
+<p>For the first layer (<span class="math notranslate nohighlight">\(\ell = 1\)</span>), the FFN operations can be written as:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
 \begin{aligned}
-\mathbf{Z}^{FF, (1)}_1 &amp;= \text{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
+\mathbf{Z}^{FF, (1)}_1 &amp;= \operatorname{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
 \mathbf{Z}^{(1)}_5 &amp;= \mathbf{Z}^{FF, (1)}_1 \mathbf{W}^{FF, (1)}_2 + \mathbf{b}^{FF, (1)}_2
 \end{aligned}
 \end{split}\]</div>
 </div>
 <div class="note admonition">
-<p class="admonition-title">Step 9. Residual Connection</p>
+<p class="admonition-title">Step 11. Residual Connection</p>
 <p>Given the output <span class="math notranslate nohighlight">\(\mathbf{Z}^{(\ell)}_5\)</span> from the feed-forward network in layer
 <span class="math notranslate nohighlight">\(\ell\)</span>, we apply a residual connection followed by layer normalization:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ffn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_2</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>

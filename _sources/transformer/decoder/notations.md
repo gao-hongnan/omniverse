@@ -1575,149 +1575,240 @@ each head $h$ in the layer $\ell$.
 ```python
 d_q = query.size(dim=-1)
 
-attention_scores = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())  # [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]
-attention_scores = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores  # [B, H, T, T]
+attention_scores = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())         # [B, H, T, d_q] @ [B, H, d_q, T] = [B, H, T, T]
+attention_scores = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores     # [B, H, T, T]
 
-attention_weights = attention_scores.softmax(dim=-1)  # [B, H, T, T]
-attention_weights = self.dropout(attention_weights)  # [B, H, T, T]
+attention_weights = attention_scores.softmax(dim=-1)        # [B, H, T, T]
+attention_weights = self.dropout(attention_weights)         # [B, H, T, T]
 
-context_vector = torch.matmul(attention_weights, value)  # [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]
-return context_vector, attention_weights
+context_vector = torch.matmul(attention_weights, value)     # [B, H, T, T] @ [B, H, T, d_v] = [B, H, T, d_v]
 ```
 
-| **Line** | **Code**                                                                                                              | **Operation Description**                                                                                                                                      | **Input Shape**                                                                                                           | **Output Shape**                           | **Notes**                                                                                                                                                                                                                                                      |
-| -------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [1]      | `d_q = query.size(dim=-1)`                                                                                            | Retrieves the dimension of the query vectors.                                                                                                                  | $\mathcal{B} \times H \times T \times d_q$                                                                                | Scalar value                               | The last dimension of the query tensor represents the query vector dimension.                                                                                                                                                                                  |
-| [2]      | `attention_scores = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())`     | Computes the scaled dot-product attention scores by matrix multiplying the query and key matrices and scaling by the square root of the query dimension.       | Query: $\mathcal{B} \times H \times T \times d_q$<br>Key: $\mathcal{B} \times H \times T \times d_k$                      | $\mathcal{B} \times H \times T \times T$   | The key matrix is transposed to align the dimensions for matrix multiplication. The scaling factor helps stabilize gradients during training.                                                                                                                  |
-| [3]      | `attention_scores = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores` | Applies the attention mask to the attention scores. Positions where the mask is 0 are filled with $-\infty$ to effectively block attention to those positions. | $\mathcal{B} \times H \times T \times T$                                                                                  | $\mathcal{B} \times H \times T \times T$   | The `masked_fill` operation is an elementwise operation that replaces the attention scores at masked positions with $-\infty$. This step is skipped if no mask is provided.                                                                                    |
-| [4]      | `attention_weights = attention_scores.softmax(dim=-1)`                                                                | Applies the softmax function to the masked attention scores along the last dimension to obtain the attention weights.                                          | $\mathcal{B} \times H \times T \times T$                                                                                  | $\mathcal{B} \times H \times T \times T$   | The softmax operation is applied in a vectorwise manner, independently for each row of the last two dimensions ($T \times T$) for each batch and head. This ensures that the attention weights for each token position across the sequence length sum up to 1. |
-| [5]      | `attention_weights = self.dropout(attention_weights)`                                                                 | Applies dropout regularization to the attention weights to prevent overfitting.                                                                                | $\mathcal{B} \times H \times T \times T$                                                                                  | $\mathcal{B} \times H \times T \times T$   | Dropout randomly sets a fraction of the attention weights to zero during training, which helps improve generalization. This is element-wise operation.                                                                                                         |
-| [6]      | `context_vector = torch.matmul(attention_weights, value)`                                                             | Computes the context vector by matrix multiplying the attention weights with the value matrix.                                                                 | Attention Weights: $\mathcal{B} \times H \times T \times T$<br>Value: $\mathcal{B} \times H \times T \times d_v$          | $\mathcal{B} \times H \times T \times d_v$ | The attention weights are used to weight the importance of each token's value vector. The resulting context vector captures the attended information from the input sequence.                                                                                  |
-| [7]      | `return context_vector, attention_weights`                                                                            | Returns the computed context vector and attention weights.                                                                                                     | Context Vector: $\mathcal{B} \times H \times T \times d_v$<br>Attention Weights: $\mathcal{B} \times H \times T \times T$ | -                                          | The context vector is passed to the next layer of the model, while the attention weights can be used for interpretation or visualization purposes.                                                                                                             |
+| **Line** | **Code**                                                                                                              | **Operation Description**                                                                                                                                      | **Input Shape**                                                                                                  | **Output Shape**                           | **Notes**                                                                                                                                                                                                                                                      |
+| -------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [1]      | `d_q = query.size(dim=-1)`                                                                                            | Retrieves the dimension of the query vectors.                                                                                                                  | $\mathcal{B} \times H \times T \times d_q$                                                                       | Scalar value                               | The last dimension of the query tensor represents the query vector dimension.                                                                                                                                                                                  |
+| [2]      | `attention_scores = torch.matmul(query, key.transpose(dim0=-2, dim1=-1)) / torch.sqrt(torch.tensor(d_q).float())`     | Computes the scaled dot-product attention scores by matrix multiplying the query and key matrices and scaling by the square root of the query dimension.       | Query: $\mathcal{B} \times H \times T \times d_q$<br>Key: $\mathcal{B} \times H \times T \times d_k$             | $\mathcal{B} \times H \times T \times T$   | The key matrix is transposed to align the dimensions for matrix multiplication. The scaling factor helps stabilize gradients during training.                                                                                                                  |
+| [3]      | `attention_scores = attention_scores.masked_fill(mask == 0, float("-inf")) if mask is not None else attention_scores` | Applies the attention mask to the attention scores. Positions where the mask is 0 are filled with $-\infty$ to effectively block attention to those positions. | $\mathcal{B} \times H \times T \times T$                                                                         | $\mathcal{B} \times H \times T \times T$   | The `masked_fill` operation is an elementwise operation that replaces the attention scores at masked positions with $-\infty$. This step is skipped if no mask is provided.                                                                                    |
+| [4]      | `attention_weights = attention_scores.softmax(dim=-1)`                                                                | Applies the softmax function to the masked attention scores along the last dimension to obtain the attention weights.                                          | $\mathcal{B} \times H \times T \times T$                                                                         | $\mathcal{B} \times H \times T \times T$   | The softmax operation is applied in a vectorwise manner, independently for each row of the last two dimensions ($T \times T$) for each batch and head. This ensures that the attention weights for each token position across the sequence length sum up to 1. |
+| [5]      | `attention_weights = self.dropout(attention_weights)`                                                                 | Applies dropout regularization to the attention weights to prevent overfitting.                                                                                | $\mathcal{B} \times H \times T \times T$                                                                         | $\mathcal{B} \times H \times T \times T$   | Dropout randomly sets a fraction of the attention weights to zero during training, which helps improve generalization. This is element-wise operation.                                                                                                         |
+| [6]      | `context_vector = torch.matmul(attention_weights, value)`                                                             | Computes the context vector by matrix multiplying the attention weights with the value matrix.                                                                 | Attention Weights: $\mathcal{B} \times H \times T \times T$<br>Value: $\mathcal{B} \times H \times T \times d_v$ | $\mathcal{B} \times H \times T \times d_v$ | The attention weights are used to weight the importance of each token's value vector. The resulting context vector captures the attended information from the input sequence.                                                                                  |
 
 ````{admonition} Step 7.4. Concatenation and Projection
 :class: note
 
-Post attention, the outputs from all heads are concatenated and then linearly
-transformed with the projection matrix $\mathbf{W}^{O, M, (\ell)}$:
+Recall that the output from the masked multi-head self-attention operation,
+denoted as $\mathbf{C}^{(\ell)}$, has a shape of
+$\mathcal{B} \times H \times T \times D//H$, where $\mathcal{B}$ is the batch
+size, $H$ is the number of attention heads, $T$ is the sequence length, and
+$D//H$ is the dimension of each head.
+
+To concatenate the heads and obtain a tensor of shape
+$\mathcal{B} \times T \times D$, we first need to transpose the dimensions of
+$\mathbf{C}^{(\ell)}$ from $\mathcal{B} \times H \times T \times D//H$ to
+$\mathcal{B} \times T \times H \times D//H$ - necessary to concatenate the heads
+along the last dimension (feature dimension).
+
+Using tensor index notation or semi einsum notation, we can denote the
+transposition operation as follows:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_2 &= \left(\operatorname{{head}_{\ell, 1}} \oplus \operatorname{{head}_{\ell, 2}} \oplus \cdots \oplus \operatorname{{head}_{\ell, H}}\right) \mathbf{W}^{\mathbf{O}, (\ell)} \\
+\mathbf{C}^{(\ell)}_{b,h,t,d} & \rightarrow \mathbf{C}^{(\ell)}_{b,t,h,d} \quad \text{(transpose dimensions)}
+\end{aligned}
+$$
+
+After transposition, the heads are concatenated along the last dimension
+(feature dimension) to obtain a tensor of shape $\mathcal{B} \times T \times D$.
+The concatenation operation can be expressed using the direct sum notation as
+follows:
+
+$$
+\begin{aligned}
+\mathbf{C}^{(\ell)}_{\text{concat}} &= \bigoplus_{h=0}^{H-1} \mathbf{C}^{(\ell)}_{b,t,h,:} \\
+&= \mathbf{C}^{(\ell)}_{b,t,0,:} \oplus \mathbf{C}^{(\ell)}_{b,t,1,:} \oplus \cdots \oplus \mathbf{C}^{(\ell)}_{b,t,H-1,:} \\
+&= \operatorname{head}^{\ell}_1 \oplus \operatorname{head}^{\ell}_2 \oplus \cdots \oplus \operatorname{head}^{\ell}_H \\
+\end{aligned}
+$$
+
+where $\mathbf{C}^{(\ell)}_{b,t,h,:}$ represents the tensor slice corresponding
+to the $h$-th head at batch index $b$ and time step $t$, and $\oplus$ denotes
+the concatenation operation along the feature dimension.
+
+```{admonition} Direct Sum Notation Is Concatenation
+:class: dropdown
+
+In the concatenation of attention heads, the direct sum notation ($\oplus$) is
+used to represent the concatenation operation, not elementwise addition. The
+direct sum combines the output tensors from each attention head along a specific
+dimension (usually the feature dimension). It is a vectorwise operation that
+stacks the tensors along the specified dimension, creating a new tensor with an
+increased dimension size.
+```
+
+The concatenation operation can be summarized as:
+
+$$
+\begin{aligned}
+\mathbf{C}^{(\ell)} &\in \mathbb{R}^{\mathcal{B} \times T \times H \times D//H} \xrightarrow{\text{concatenate}} \mathbf{C}^{(\ell)}_{\text{concat}} \in \mathbb{R}^{\mathcal{B} \times T \times D}
+\end{aligned}
+$$
+
+To summarize, the transposition and concatenation operations can be represented
+as:
+
+$$
+\begin{aligned}
+\mathbf{C}^{(\ell)} &\in \mathbb{R}^{\mathcal{B} \times H \times T \times D//H} \rightarrow \mathbf{C}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times T \times H \times D//H} \rightarrow \mathbf{C}^{(\ell)}  \in \mathbb{R}^{\mathcal{B} \times T \times D}
+\end{aligned}
+$$
+
+Finally, the concatenated tensor is linearly transformed using the projection
+matrix $\mathbf{W}^{O, (\ell)}$ to obtain the output $\mathbf{Z}^{(\ell)}_2$:
+
+$$
+\begin{aligned}
+\mathbf{Z}^{(\ell)}_2 &= \mathbf{C}^{(\ell)}_{\text{concat}} \mathbf{W}^{O, (\ell)} \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D \operatorname{@} D \times D \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
-A small details in between, note and recall that $\mathbf{C}^{(\ell)}$ is of
-shape $\mathcal{B} \times H \times T \times D//H$ and we need to concatenate the
-heads along the feature dimension to get $\mathcal{B} \times T \times D$. This
-is easily done via the below code:
+In code, these operations can be implemented as follows:
 
 ```python
-self.context_vector = self.context_vector.transpose(dim0=1, dim1=2).contiguous().view(B, T, D) # merge all heads together
-# fmt: on
+self.context_vector = self.context_vector.transpose(dim0=1, dim1=2).contiguous().view(B, T, D)  # merge all heads together
 
 projected_context_vector: torch.Tensor = self.resid_dropout(
-    self.context_projection(self.context_vector) # [B, T, D] @ [D, D] = [B, T, D]
+    self.context_projection(self.context_vector)  # [B, T, D] @ [D, D] = [B, T, D]
 )
 ```
 
--   $\mathbf{Z}^{(\ell)}_2$ becomes the input to the next sub-layer within the
-    same layer (e.g., feed-forward network).
--   We can optionally apply dropout to the output.
+To this end, for layer $\ell=1$, we would have the output tensor
+$\mathbf{Z}^{(1)}_2$ - which becomes the input to the next sub-layer within the
+same block $\ell$. Optionally, we can apply a projection dropout to the output
+tensor $\mathbf{Z}^{(\ell)}_2$ before passing it to the next sub-layer.
 ````
 
 ````{admonition} Step 8. Residual Connection
 :class: note
 
-```python
-z = z + self.attn(z=self.ln_1(z))
-```
+In the Transformer/GPT architecture, residual connections are used to facilitate
+the flow of information and gradients throughout the network. The residual
+connection in the decoder block is added between the input to the block and the
+output of the Masked Multi-Head Attention layer.
 
-The next step is to add the residual connection to the output of the
-self-attention mechanism.
+For the first decoder block ($\ell = 1$), the residual connection is added
+between the positionally encoded embeddings $\tilde{\mathbf{X}}$ and the output
+of the Masked Multi-Head Attention layer $\mathbf{Z}^{(1)}_2$:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_{3} &= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right)\right) \\
-\mathbf{Z}^{(\ell)}_{3} &= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(\ell)}_{1}, \mathbf{Z}^{(\ell)}_{1}, \mathbf{Z}^{(\ell)}_{1}\right) \\
-\mathbf{Z}^{(\ell)}_{3} &= \tilde{\mathbf{X}} + \mathbf{Z}^{(\ell)}_{2} \\
+\mathbf{Z}^{(1)}_{3} &= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right)\right) \\
+&= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}\right) \\
+&= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_{2} \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D + \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
-So for our first layer, we have:
+where $\mathbf{Z}^{(1)}_{3}$ represents the output of the residual connection
+for the first decoder block, $\tilde{\mathbf{X}}$ is the positionally encoded
+embeddings, and $\mathbf{Z}^{(1)}_{2}$ is the output of the Masked Multi-Head
+Attention layer.
 
-$$
-\mathbf{Z}^{(1)}_3 = \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_2
-$$
-
-It's important to note that in the first decoder block, the residual connection
-is added between the input $\tilde{\mathbf{X}}$ (output of the Positional
-Embedding step) and the output of the Masked Multi-Head Attention layer
-$\mathbf{Z}^{(\ell)}_2$.
-
-However, in the subsequent decoder blocks ($\ell > 1$), the residual connection
-is added between the output of the previous decoder block
+For subsequent decoder blocks ($\ell > 1$), the residual connection is added
+between the output of the previous decoder block
 $\mathbf{Z}^{(\ell-1)}_{\text{out}}$ and the output of the Masked Multi-Head
-Attention layer $\mathbf{Z}^{(\ell)}_2$ of the current block.
-
-Mathematically, for decoder blocks with $\ell > 1$, the residual connection step
-is represented as:
+Attention layer $\mathbf{Z}^{(\ell)}_2$ of the current block:
 
 $$
 \mathbf{Z}^{(\ell)}_3 = \mathbf{Z}^{(\ell-1)}_{\text{out}} + \mathbf{Z}^{(\ell)}_2
 $$
 
-where $\mathbf{Z}^{(\ell-1)}_{\text{out}}$ is the output of the previous decoder
-block after the Position-wise Feed-Forward Network and the second residual
-connection.
+where $\mathbf{Z}^{(\ell)}_3$ represents the output of the residual connection
+for the $\ell$-th decoder block, $\mathbf{Z}^{(\ell-1)}_{\text{out}}$ is the
+output of the previous decoder block after the Position-wise Feed-Forward
+Network and the second residual connection, and $\mathbf{Z}^{(\ell)}_2$ is the
+output of the Masked Multi-Head Attention layer of the current block.
 
-For subsequent blocks ($\ell > 1$):
+The complete set of equations for the $\ell$-th decoder block ($\ell > 1$) can
+be summarized as follows:
 
 $$
 \begin{aligned}
 \mathbf{Z}^{(\ell)}_1 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_{\text{out}}\right) \\
 \mathbf{Z}^{(\ell)}_2 &= \text{MaskedMultiHead}^{(\ell)}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) \\
-\mathbf{Z}^{(\ell)}_3 &= \mathbf{Z}^{(\ell)}_1 + \mathbf{Z}^{(\ell)}_2 \\
+\mathbf{Z}^{(\ell)}_3 &= \mathbf{Z}^{(\ell-1)}_{\text{out}} + \mathbf{Z}^{(\ell)}_2
 \end{aligned}
 $$
-````
 
-````{admonition} Step 9. Pre-Layer Normalization For Position-wise Feed-Forward Network
-:class: note
+where $\mathbf{Z}^{(\ell)}_1$ represents the output of the Layer Normalization
+step, $\mathbf{Z}^{(\ell)}_2$ represents the output of the Masked Multi-Head
+Attention layer, and $\mathbf{Z}^{(\ell)}_3$ represents the output of the
+residual connection.
 
-In what follows, we have came out of the masked multi-head attention block and
-we are now ready to apply the feed-forward network to the output of the
-self-attention mechanism and the residual block $\mathbf{Z}^{(\ell)}_3$.
-Before that, we would apply pre-norm layer normalization to the input of the
-feed-forward network as we can see below.
+The residual connection allows the model to learn the identity function more
+easily, enabling the flow of information and gradients across multiple layers.
+By adding the input of the block to the output of the Masked Multi-Head
+Attention layer, the model can choose to either learn new information from the
+attention mechanism or retain the original input information if it is already
+sufficient.
+
+In code, the whole series of operation up till now is simply:
 
 ```python
-z = z + self.ffn(z=self.ln_2(z))
+z = z + self.attn(z=self.ln_1(z))
 ```
+````
+
+```{admonition} Step 9. Pre-Layer Normalization For Position-wise Feed-Forward Network
+:class: note
+
+After the masked multi-head attention block and the residual connection, the
+next step is to apply the position-wise feed-forward network (FFN) to the output
+of the self-attention mechanism and the residual block $\mathbf{Z}^{(\ell)}_3$.
+However, before applying the FFN, we perform pre-layer normalization on the
+input to the FFN.
+
+Mathematically, the pre-layer normalization step for the FFN can be expressed
+as:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_4 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) \\
-\mathcal{B} \times T \times D &\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
+\mathbf{Z}^{(\ell)}_4 &= \operatorname{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) \\
+\mathcal{B} \times T \times D &\leftarrow \operatorname{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
-So for our case with $\ell = 1$, we have:
+where $\mathbf{Z}^{(\ell)}_4$ represents the normalized input to the FFN at
+layer $\ell$, and $\mathbf{Z}^{(\ell)}_3$ is the output of the residual
+connection from the previous step.
+
+As discussed in Step 6, the Layer Normalization function
+$\operatorname{LayerNorm}(\cdot)$ is a vectorwise operation that operates on the
+feature dimension $D$ of the input tensor. It normalizes the activations to have
+zero mean and unit variance across the features for each token independently.
+It's important to note that the pre-layer normalization step is applied
+independently to each token
+$\mathbf{Z}_{3, t}^{(\ell)} \in \mathbf{Z}_3^{(\ell)}$ in the sequence with
+shape $T \times D$, where $T$ is the sequence length and $D$ is the feature
+dimension, normalizing the features across the feature dimension $D$.
+
+For the first layer ($\ell = 1$), the pre-layer normalization step can be
+written as:
 
 $$
-\mathbf{Z}^{(1)}_4 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
+\mathbf{Z}^{(1)}_4 = \operatorname{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right)
 $$
-````
+```
 
 ```{admonition} Step 10. Position-wise Feed-Forward Network
 :class: note
 
-Given the input $\mathbf{Z}^{(\ell)}_4$ to the FFN in layer $\ell$, the
-operations within the FFN can be mathematically represented as follows:
+Given the normalized input $\mathbf{Z}^{(\ell)}_4$ to the Position-wise
+Feed-Forward Network (FFN) in layer $\ell$, the FFN applies two linear
+transformations with a GELU activation function in between. The operations
+within the FFN can be mathematically represented as follows:
 
 $$
 \begin{aligned}
@@ -1730,21 +1821,34 @@ $$
 \end{aligned}
 $$
 
-Note slight abuse of notation where I used $\mathbf{Z}^{FF, (\ell)}_1$ to denote
-the intermediate output of the first linear transformation in the FFN. This should
-not be confused with earlier $\mathbf{Z}^{(\ell)}_1$.
+where:
 
-For our case with $\ell = 1$, we have:
+-   $\mathbf{W}^{FF, (\ell)}_1 \in \mathbb{R}^{D \times d_{\text{ff}}}$ and
+    $\mathbf{b}^{FF, (\ell)}_1 \in \mathbb{R}^{d_{\text{ff}}}$ are the weights
+    and biases of the first linear transformation, respectively.
+-   $\mathbf{W}^{FF, (\ell)}_2 \in \mathbb{R}^{d_{\text{ff}} \times D}$ and
+    $\mathbf{b}^{FF, (\ell)}_2 \in \mathbb{R}^{D}$ are the weights and biases of
+    the second linear transformation, respectively.
+-   $d_{\text{ff}}$ is the dimensionality of the hidden layer in the FFN, which
+    is typically larger than the input dimensionality $D$.
+-   $\operatorname{GELU}(\cdot)$ denotes the Gaussian Error Linear Unit
+    activation function.
+
+Note the slight abuse of notation where $\mathbf{Z}^{FF, (\ell)}_1$ is used to
+denote the intermediate output of the first linear transformation in the FFN.
+This should not be confused with the earlier notation $\mathbf{Z}^{(\ell)}_1$.
+
+For the first layer ($\ell = 1$), the FFN operations can be written as:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{FF, (1)}_1 &= \text{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
+\mathbf{Z}^{FF, (1)}_1 &= \operatorname{GELU}\left(\mathbf{Z}^{(1)}_4 \mathbf{W}^{FF, (1)}_1 + \mathbf{b}^{FF, (1)}_1\right) \\
 \mathbf{Z}^{(1)}_5 &= \mathbf{Z}^{FF, (1)}_1 \mathbf{W}^{FF, (1)}_2 + \mathbf{b}^{FF, (1)}_2
 \end{aligned}
 $$
 ```
 
-````{admonition} Step 9. Residual Connection
+````{admonition} Step 11. Residual Connection
 :class: note
 
 Given the output $\mathbf{Z}^{(\ell)}_5$ from the feed-forward network in layer
