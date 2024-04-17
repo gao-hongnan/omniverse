@@ -877,7 +877,7 @@ $$
 | Weights for Second Linear Transformation               | $\mathbf{W}^{FF, (\ell)}_2$                    | $d_{\text{ff}} \times D$                    | Weights used to project the activated embeddings from dimension $d_{\text{ff}}$ back to $D$.                                         |
 | Biases for Second Linear Transformation                | $\mathbf{b}^{FF, (\ell)}_2$                    | $D$                                         | Biases added to the output of the second linear transformation in the FFN, shaping it back to the original embedding dimension.      |
 
-## The Full Workflow
+## The Training Phase
 
 ### Autoregressive Self-Supervised Learning Paradigm
 
@@ -1001,7 +1001,7 @@ the goal is to model the joint probability distribution of the token sequences,
 we can do so by estimating the joint probability distribution via the
 conditional probability distributions.
 
-### Steps
+### Corpus and Tokenization
 
 ```{admonition} Step 1. Corpus
 :class: note
@@ -1102,6 +1102,8 @@ The tokenized corpus $\mathcal{S}^{\mathcal{T}}$ is a set of sequences, where
 each sequence is a finite sequence of integer indices representing the tokens in
 the original sequences from the corpus $\mathcal{S}$.
 ```
+
+### Token Embedding and Positional Encoding
 
 ```{admonition} Step 3. One Hot Encoding
 :class: note
@@ -1225,6 +1227,8 @@ as $\mathbf{X}$. Each element in $\mathbf{M}$ is independently sampled from a
 Bernoulli distribution with probability $p$ of being 0 (i.e., dropped) and
 probability $1-p$ of being 1 (i.e., retained).
 ```
+
+### Backbone Architecture
 
 ````{admonition} Step 6. Pre-Layer Normalization For Masked Multi-Head Attention
 :class: note
@@ -1706,7 +1710,8 @@ $$
 \mathbf{Z}^{(1)}_{3} &= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right), \text{LayerNorm}\left(\tilde{\mathbf{X}}\right)\right) \\
 &= \tilde{\mathbf{X}} + \text{MaskedMultiHead}^{(1)}\left(\mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}, \mathbf{Z}^{(1)}_{1}\right) \\
 &= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_{2} \\
-\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D + \mathcal{B} \times T \times D
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D + \mathcal{B} \times T \times D \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
@@ -1848,130 +1853,168 @@ $$
 $$
 ```
 
-````{admonition} Step 11. Residual Connection
+```{admonition} Step 11. Residual Connection
 :class: note
 
-Given the output $\mathbf{Z}^{(\ell)}_5$ from the feed-forward network in layer
-$\ell$, we apply a residual connection followed by layer normalization:
+After obtaining the output $\mathbf{Z}^{(\ell)}_5$ from the Position-wise
+Feed-Forward Network (FFN) in layer $\ell$, the final step in the decoder block
+is to apply a residual connection.
 
-```python
-z = z + self.ffn(self.ln_2(z))
-```
-
-Mathematically, this is represented as:
+Mathematically, this step can be represented as follows:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_6 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5\right) \\
-\mathcal{B} \times T \times D &\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D + \mathcal{B} \times T \times D\right) \\
+\mathbf{Z}^{(\ell)}_{\text{out}} &= \mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5 \\
+\mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D + \mathcal{B} \times T \times D \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
 
-Where:
+where:
 
--   $\mathbf{Z}^{(\ell)}_3$ is the input to the feed-forward network that was
-    initially passed through layer normalization at the beginning of this
-    layer's computation cycle.
--   $\mathbf{Z}^{(\ell)}_5$ is the output from the position-wise feed-forward
-    network.
--   The output of this step, $\mathbf{Z}^{(\ell)}_6$, becomes the input to the
-    next decoder block.
+-   $\mathbf{Z}^{(\ell)}_3 \in \mathbb{R}^{\mathcal{B} \times T \times D}$ is
+    the output of the residual connection from the Masked Multi-Head Attention
+    block (Step 8).
+-   $\mathbf{Z}^{(\ell)}_5 \in \mathbb{R}^{\mathcal{B} \times T \times D}$ is
+    the output from the FFN (Step 10).
+-   $\mathbf{Z}^{(\ell)}_{\text{out}} \in \mathbb{R}^{\mathcal{B} \times T \times D}$
+    is the output of the decoder block at layer $\ell$ and serves as the input
+    to the next decoder block ($\ell + 1$).
 
-So in our case, we are at $\ell=1$, so we have:
+The residual connection is performed by adding the output of the Masked
+Multi-Head Attention block $\left(\mathbf{Z}^{(\ell)}_3\right)$ and the output
+of the FFN $\left(\mathbf{Z}^{(\ell)}_5\right)$. This addition operation is
+element-wise, where corresponding elements of the two tensors are added
+together.
+
+For the first layer ($\ell = 1$), the residual connection step can be written
+as:
 
 $$
-\mathbf{Z}^{(1)}_6 = \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5\right)
+\mathbf{Z}^{(1)}_{\text{out}} = \mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5
 $$
-````
+
+The output of this step, $\mathbf{Z}^{(\ell)}_{\text{out}}$, becomes the input
+to the next decoder block.
+```
 
 ### Iterative Process Through L Decoder Blocks
 
-Now $\mathbf{Z}^{(1)}_6$ becomes the input to the next decoder block and so on.
-More concretely, the operation of each decoder block can be described through a
-series of mathematical transformations, where each block builds upon the output
-of the previous block. The subscript notation $\mathbf{Z}^{(\ell)}_i$ indicates
-the i-th step output of the $\ell$-th decoder block.
+Let $\mathbf{Z}^{(1)}_{\text{out}}$ be the output of the first decoder block.
+This output becomes the input to the next decoder block, and the process
+continues iteratively. Each decoder block builds upon the output of the previous
+block through a series of mathematical transformations. The subscript notation
+$\mathbf{Z}^{(\ell)}_i$ indicates the i-th step output of the $\ell$-th decoder
+block.
 
-#### For the First Decoder Block ($\ell = 1$)
+#### First Decoder Block ($\ell = 1$)
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(1)}_1 &= \text{LayerNorm}\left(\tilde{\mathbf{X}}\right) & \text{(Initial normalization of inputs)} \\
-\mathbf{Z}^{(1)}_2 &= \text{MaskedMultiHead}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) & \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(1)}_1 &= \operatorname{LayerNorm}\left(\tilde{\mathbf{X}}\right) & \text{(Initial normalization of inputs)} \\
+\mathbf{Z}^{(1)}_2 &= \operatorname{MaskedMultiHead}\left(\mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1, \mathbf{Z}^{(1)}_1\right) & \text{(Self-attention mechanism)} \\
 \mathbf{Z}^{(1)}_3 &= \tilde{\mathbf{X}} + \mathbf{Z}^{(1)}_2 & \text{(Addition of the first residual connection)} \\
-\mathbf{Z}^{(1)}_4 &= \text{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right) & \text{(Normalization before FFN)}\\
-\mathbf{Z}^{(1)}_5 &= \text{FFN}\left(\mathbf{Z}^{(1)}_4\right) & \text{(Feed-forward network)}\\
-\mathbf{Z}^{(1)}_6 &= \mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5 & \text{(Second residual connection)}
+\mathbf{Z}^{(1)}_4 &= \operatorname{LayerNorm}\left(\mathbf{Z}^{(1)}_3\right) & \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(1)}_5 &= \operatorname{FFN}\left(\mathbf{Z}^{(1)}_4\right) & \text{(Feed-forward network)}\\
+\mathbf{Z}^{(1)}_{\text{out}} &= \mathbf{Z}^{(1)}_3 + \mathbf{Z}^{(1)}_5 & \text{(Second residual connection)}
 \end{aligned}
 $$
 
-### For Subsequent Blocks ($\ell > 1$)
+#### Subsequent Decoder Blocks ($\ell > 1$)
 
-Each subsequent block $\ell$ uses the output of the previous block’s final
-output $\mathbf{Z}^{(\ell-1)}_6$ as the input for its operations.
+For each subsequent decoder block $\ell$, the output of the previous block's
+final step $\mathbf{Z}^{(\ell-1)}_{\text{out}}$ serves as the input for the
+current block's operations.
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(\ell)}_1 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_6\right) & \text{(Normalization of previous block's output)} \\
-\mathbf{Z}^{(\ell)}_2 &= \text{MaskedMultiHead}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) & \text{(Self-attention mechanism)} \\
-\mathbf{Z}^{(\ell)}_3 &= \mathbf{Z}^{(\ell)}_1 + \mathbf{Z}^{(\ell)}_2 & \text{(First residual connection post self-attention)} \\
-\mathbf{Z}^{(\ell)}_4 &= \text{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) & \text{(Normalization before FFN)}\\
-\mathbf{Z}^{(\ell)}_5 &= \text{FFN}\left(\mathbf{Z}^{(\ell)}_4\right) & \text{(Feed-forward network)}\\
-\mathbf{Z}^{(\ell)}_6 &= \mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5 & \text{(Second residual connection post FFN)}
+\mathbf{Z}^{(\ell)}_1 &= \operatorname{LayerNorm}\left(\mathbf{Z}^{(\ell-1)}_{\text{out}}\right) & \text{(Normalization of previous block's output)} \\
+\mathbf{Z}^{(\ell)}_2 &= \operatorname{MaskedMultiHead}\left(\mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1, \mathbf{Z}^{(\ell)}_1\right) & \text{(Self-attention mechanism)} \\
+\mathbf{Z}^{(\ell)}_3 &= \mathbf{Z}^{(\ell-1)}_{\text{out}} + \mathbf{Z}^{(\ell)}_2 & \text{(First residual connection post self-attention)} \\
+\mathbf{Z}^{(\ell)}_4 &= \operatorname{LayerNorm}\left(\mathbf{Z}^{(\ell)}_3\right) & \text{(Normalization before FFN)}\\
+\mathbf{Z}^{(\ell)}_5 &= \operatorname{FFN}\left(\mathbf{Z}^{(\ell)}_4\right) & \text{(Feed-forward network)}\\
+\mathbf{Z}^{(\ell)}_{\text{out}} &= \mathbf{Z}^{(\ell)}_3 + \mathbf{Z}^{(\ell)}_5 & \text{(Second residual connection post FFN)}
 \end{aligned}
 $$
 
-Finally, after going through the decoder blocks a total number of $L$ times, the
-final output we get now is $\mathbf{Z}^{(L)}_6$ which is the output of the last
-decoder block of shape $\mathcal{B} \times T \times D$. We need to apply one
-more layer normalization to this output to get the final output before
-projection to the vocabulary space.
+After processing the input through a total of $L$ decoder blocks, the final
+output is denoted as $\mathbf{Z}^{(L)}_{\text{out}}$, which is the output of the
+last decoder block. The shape of $\mathbf{Z}^{(L)}_{\text{out}}$ is
+$\mathcal{B} \times T \times D$, where $\mathcal{B}$ is the batch size, $T$ is
+the sequence length, and $D$ is the hidden dimension.
 
-```python
-z = self.backbone.ln_final(z)  # [B, T, D]
-```
+### Layer Normalization Before Projection
 
 ```{admonition} Step 10. Layer Normalization Before Projection
 :class: note
 
-The final output of the decoder block $\mathbf{Z}^{(L)}_6$ is passed through a
-layer normalization before being projected to the vocabulary space.
+The final output of the decoder block $\mathbf{Z}^{(L)}_{\text{out}}$ undergoes
+a layer normalization step before being projected to the vocabulary space. This
+step is commonly referred to as the "pre-projection layer normalization" or
+"final layer normalization" in the context of the Transformer/GPT architecture.
+
+The pre-projection/head layer normalization can be represented as follows:
 
 $$
 \begin{aligned}
-\mathbf{Z}^{(L)}_7 &= \text{LayerNorm}\left(\mathbf{Z}^{(L)}_6\right) \\
-\mathcal{B} \times T \times D &\leftarrow \text{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
+\mathbf{Z}_{\text{pre-head}} &= \operatorname{LayerNorm}\left(\mathbf{Z}^{(L)}_{\text{out}}\right) \\
+\mathcal{B} \times T \times D &\leftarrow \operatorname{LayerNorm}\left(\mathcal{B} \times T \times D\right) \\
 \mathcal{B} \times T \times D &\leftarrow \mathcal{B} \times T \times D
 \end{aligned}
 $$
+
+where:
+
+-   $\mathbf{Z}^{(L)}_{\text{out}} \in \mathbb{R}^{\mathcal{B} \times T \times D}$
+    is the output of the last decoder block ($\ell = L$).
+-   $\operatorname{LayerNorm}(\cdot)$ denotes the Layer Normalization operation,
+    which normalizes the activations across the feature dimension $D$ for each
+    token independently.
+-   $\mathbf{Z}_{\text{pre-proj}} \in \mathbb{R}^{\mathcal{B} \times T \times D}$
+    is the normalized output, which is ready to be projected to the vocabulary
+    space.
+
+The usual purpose of applying layer normalization before the projection step is
+to stabilize the activations and improve training stability.
 ```
 
 ### Head
 
-We denote the weight of the last projection layer as $\mathbf{W}_{s}$ where $s$
-indicates the softmax layer, essentially projecting the output of the last layer
-to the vocabulary space.
+The final step in the GPT architecture is to project the normalized output of
+the last decoder block, $\mathbf{Z}_{\text{pre-head}}$, to the vocabulary space.
+This projection is performed using a linear transformation, where the weights of
+the projection layer are denoted as
+$\mathbf{W}_{s} \in \mathbb{R}^{D \times V}$. The subscript $s$ indicates that
+this is the projection layer before the softmax operation, and $V$ represents
+the size of the vocabulary.
 
-```python
-self.head = nn.Linear(
-    in_features=self.d_model, out_features=self.vocab_size, bias=config.bias
-)
-logits = self.head(z)  # [B, T, V]
-```
-
-We have:
+Mathematically, the projection operation can be expressed as follows:
 
 $$
 \begin{aligned}
-\mathbf{Z} &= \mathbf{Z}^{(L)}_7 \mathbf{W}_{s} \\
-\mathcal{B} \times T \times V &\leftarrow \mathcal{B} \times T \times D \operatorname{@} D \times V \\
+\mathbf{Z} &= \mathbf{Z}_{\text{pre-head}} \mathbf{W}_{s} \\
+\mathcal{B} \times T \times V &\leftarrow \mathcal{B} \times T \times D \times \operatorname{@} D \times V \\
 \mathcal{B} \times T \times V &\leftarrow \mathcal{B} \times T \times V
 \end{aligned}
 $$
 
-This is the logits $\mathbf{Z}$ of shape $\mathcal{B} \times T \times V$ where
-$V$ is the size of the vocabulary.
+where:
+
+-   $\mathbf{Z}_{\text{pre-head}} \in \mathbb{R}^{\mathcal{B} \times T \times D}$
+    is the normalized output from the pre-projection layer normalization step
+    (Step 12).
+-   $\mathbf{W}_{s} \in \mathbb{R}^{D \times V}$ is the weight matrix of the
+    projection layer, which maps the hidden dimension $D$ to the vocabulary size
+    $V$.
+-   $\mathbf{Z} \in \mathbb{R}^{\mathcal{B} \times T \times V}$ is the resulting
+    logits tensor, representing the unnormalized scores for each token in the
+    vocabulary at each position in the sequence.
+
+The purpose of the projection layer is to map the hidden representations from
+the decoder to the vocabulary space, allowing the model to generate probability
+distributions over the vocabulary for each token position. The logits tensor
+$\mathbf{Z}$ can be further processed by applying a softmax function to obtain
+the final probability distribution for token prediction.
 
 ## Table
 
