@@ -9,8 +9,8 @@ from torch.optim.optimizer import Optimizer
 __all__ = [
     "_get_cosine_schedule_with_warmup_lr_lambda",
     "get_cosine_annealing_with_warmup",
-    "_cosine_schedule_with_warmup_lr_lambda_cs336",
-    "get_cosine_annealing_with_warmup_cs336",
+    "_cosine_schedule_with_warmup_and_post_annealing_lr_lambda",
+    "get_cosine_annealing_with_warmup_and_post_annealing",
 ]
 
 
@@ -100,7 +100,7 @@ def get_cosine_annealing_with_warmup(
     return LambdaLR(optimizer, lr_lambda, last_epoch, verbose)
 
 
-def _cosine_schedule_with_warmup_lr_lambda_cs336(
+def _cosine_schedule_with_warmup_and_post_annealing_lr_lambda(
     iter: int,
     *,
     max_learning_rate: float,
@@ -138,7 +138,8 @@ def _cosine_schedule_with_warmup_lr_lambda_cs336(
         return min_learning_rate
 
 
-def get_cosine_annealing_with_warmup_cs336(
+# NOTE: see cs336
+def get_cosine_annealing_with_warmup_and_post_annealing(
     optimizer: Optimizer,
     max_learning_rate: float,
     min_learning_rate: float,
@@ -173,7 +174,7 @@ def get_cosine_annealing_with_warmup_cs336(
         The scheduler with the appropriate schedule.
     """
     lr_lambda = partial(
-        _cosine_schedule_with_warmup_lr_lambda_cs336,
+        _cosine_schedule_with_warmup_and_post_annealing_lr_lambda,
         max_learning_rate=max_learning_rate,
         min_learning_rate=min_learning_rate,
         warmup_iters=warmup_iters,

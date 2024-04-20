@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Tuple, TypeVar, Union, cast
+from typing import Any, Dict, Iterable, List, Literal, Tuple, TypeVar, Union, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -81,11 +81,8 @@ def get_batch(
     #     raise ValueError("The dataset should be a memory-mapped array. Example: data = np.memmap('data.npy', dtype=np.uint16, mode='r')")
 
     device = torch.device("cuda") if device_type == "cuda" else torch.device("cpu")
-
     low, high = 0, len(dataset) - context_length
-
     size = (batch_size,)
-
     indices = torch.randint(low=low, high=high, size=size, generator=generator)
 
     x = torch.stack([torch.from_numpy((dataset[index : index + context_length]).astype(np.int64)) for index in indices])
@@ -98,6 +95,21 @@ def get_batch(
     else:
         x, y = x.to(device), y.to(device)
     return x, y
+
+
+def data_generator(
+    dataset: npt.NDArray[np.uint16],
+    batch_size: int,
+    context_length: int,
+    device_type: Literal["cpu", "cuda"],
+) -> Iterable[tuple[torch.Tensor, torch.Tensor]]:
+    while True:
+        yield get_batch(
+            dataset=dataset,
+            batch_size=batch_size,
+            context_length=context_length,
+            device_type=device_type,
+        )
 
 
 class BaseDataset(Dataset[Dataset_co]):
