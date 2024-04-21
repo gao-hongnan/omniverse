@@ -1,7 +1,6 @@
 """Shows a violation of the strategy pattern."""
-# mypy: ignore-errors
-# ruff: noqa
 from enum import Enum, auto
+from typing import Any, List, Union
 
 
 class ModelType(Enum):
@@ -13,49 +12,61 @@ class ModelType(Enum):
 
 
 class LinearRegression:
-    def fit(self, X, y):
-        print("Fitting linear regression model")
+    def train(self, X: List[List[float]], y: List[float]) -> None:
+        print("Training linear regression model")
+        print(f"X: {X}, y: {y}")
 
 
-class DecisionTreeRegressor:
-    def fit(self, X, y):
-        print("Fitting decision tree model")
+class DecisionTree:
+    def train(self, X: List[List[float]], y: List[float]) -> None:
+        print("Training decision tree model")
+        print(f"X: {X}, y: {y}")
 
 
-class KNeighborsRegressor:
-    def fit(self, X, y):
-        print("Fitting KNN model")
+class KNN:
+    def train(self, X: List[List[float]], y: List[float]) -> None:
+        print("Training KNN model")
+        print(f"X: {X}, y: {y}")
 
 
-class GradientBoostingRegressor:
-    def fit(self, X, y):
-        print("Fitting gradient boosting model")
+class GradientBoosting:
+    def train(self, X: List[List[float]], y: List[float]) -> None:
+        print("Training gradient boosting model")
+        print(f"X: {X}, y: {y}")
 
 
-class NeuralNetworkRegressor:
-    def fit(self, X, y):
-        print("Fitting neural network model")
+class NeuralNetwork:
+    def train(self, X: List[List[float]], y: List[float]) -> None:
+        print("Training neural network model")
+        print(f"X: {X}, y: {y}")
 
 
 class Trainer:
     def __init__(self, model_type: ModelType):
         self.model_type = model_type
-        self.model = None
+        self.model: Union[
+            LinearRegression,
+            DecisionTree,
+            KNN,
+            GradientBoosting,
+            NeuralNetwork,
+        ]
 
-    def fit(self, X, y):
+    def fit(self, X: Any, y: Any) -> None:
         if self.model_type == ModelType.LINEAR_REGRESSION:
             self.model = LinearRegression()
         elif self.model_type == ModelType.DECISION_TREE:
-            self.model = DecisionTreeRegressor()
+            self.model = DecisionTree()
         elif self.model_type == ModelType.K_NEAREST_NEIGHBORS:
-            self.model = KNeighborsRegressor()
+            self.model = KNN()
         elif self.model_type == ModelType.GRADIENT_BOOSTING:
-            self.model = GradientBoostingRegressor()
+            self.model = GradientBoosting()
         elif self.model_type == ModelType.NEURAL_NETWORK:
-            self.model = NeuralNetworkRegressor()
+            self.model = NeuralNetwork()
         else:
             raise ValueError("Invalid model type")
-        self.model.fit(X, y)
+
+        self.model.train(X, y)
 
 
 if __name__ == "__main__":

@@ -43,7 +43,6 @@ class CustomDataset:
         self.data: List[Any] = data
         self.stage: str = stage
 
-        # Directly using ImageClassificationTransforms without interface/abstraction
         self.transforms = transforms
 
     def apply_transforms(self, item: Any) -> str:
