@@ -1,10 +1,14 @@
 import math
-from typing import Callable, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
 
 import torch
-from torch.optim.optimizer import params_t as ParamsT
+from typing_extensions import TypeAlias
+
+# from torch.optim.optimizer import params_t as ParamsT
 
 __all__ = ["AdamW"]
+
+ParamsT: TypeAlias = Union[Iterable[torch.Tensor], Iterable[Dict[str, Any]]]
 
 
 class AdamW(torch.optim.Optimizer):

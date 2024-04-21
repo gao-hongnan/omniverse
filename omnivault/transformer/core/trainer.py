@@ -231,13 +231,13 @@ class Trainer:
             loss: torch.Tensor = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
             loss: torch.Tensor = loss / self.gradient_accumulation_steps  # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
 
-        self.scaler.scale(loss).backward()  # NOTE: no ops if scaler is not enabled
+        # fmt: off
+        self.scaler.scale(loss).backward()              # NOTE: no ops if scaler is not enabled
 
-        this_batch_average_loss: float = loss.item()  # because reduction="mean"
+        this_batch_average_loss: float = loss.item()    # because reduction="mean"
         this_batch_total_loss: float = this_batch_average_loss * batch_size * self.gradient_accumulation_steps
-        this_batch_average_perplexity: float = self.perplexity(
-            logits, targets
-        ).item()  # torch.exp(this_batch_average_loss)
+        this_batch_average_perplexity: float = self.perplexity(logits, targets).item() # torch.exp(this_batch_average_loss)
+        # fmt: on
 
         # if grad accum is 1 then this is our normal training because any integer
         # modulo 1 is 0 so this if loop will be executed after every batch!
@@ -358,9 +358,7 @@ class Trainer:
         # argmax_of_predicted_logits = torch.argmax(logits, dim=-1) # shape [B, S or V]
         # decoded_logits = batch_decode_equation(argmax_of_predicted_logits)
 
-        loss: torch.nn.Module = self.criterion(
-            logits.permute(0, 2, 1).contiguous(), targets.contiguous()
-        )  # FIXME: type hint wrong
+        loss: torch.Tensor = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
 
         this_batch_average_loss: float = loss.item()
         this_batch_total_loss: float = this_batch_average_loss * batch_size
