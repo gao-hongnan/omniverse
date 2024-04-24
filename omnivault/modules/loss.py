@@ -10,7 +10,7 @@ class Reduction(Enum):
 
 
 class CrossEntropyLoss:
-    def __init__(self, reduction: Reduction = Reduction.MEAN):
+    def __init__(self, reduction: Reduction = Reduction.MEAN) -> None:
         """
         Initialize the CrossEntropyLoss.
 
@@ -44,6 +44,12 @@ class CrossEntropyLoss:
             raise ValueError(
                 f"Logits and targets must have compatible shapes. "
                 f"Received logits shape: {logits.shape} and targets shape: {targets.shape}"
+            )
+
+        if len(logits.shape) > 3:
+            raise ValueError(
+                f"Only 1D, 2D, and 3D logits are supported. "
+                f"Received logits shape: {logits.shape}"
             )
 
         logits_max, _ = torch.max(logits, dim=-1, keepdim=True)

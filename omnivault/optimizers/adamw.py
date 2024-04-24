@@ -20,7 +20,7 @@ class AdamW(torch.optim.Optimizer):
         eps: float = 1e-8,
         weight_decay: float = 0,
     ) -> None:
-        self.validate_params(lr, betas, eps)
+        self.validate_params(lr, betas, eps, weight_decay)
 
         defaults = {
             "lr": lr,
@@ -35,15 +35,15 @@ class AdamW(torch.optim.Optimizer):
         # self.param_groups: List[Dict[str, Any]] = []
 
     @staticmethod
-    def validate_params(lr: float, betas: Tuple[float, float], eps: float) -> None:
+    def validate_params(lr: float, betas: Tuple[float, float], eps: float, weight_decay: float) -> None:
         if not 0.0 <= lr:
-            raise ValueError(f"Invalid learning rate: {lr}")
+            raise ValueError(f"Invalid learning rate: {lr}, must be >= 0.")
         if not 0.0 <= eps:
-            raise ValueError(f"Invalid epsilon value: {eps}")
-        if not 0.0 <= betas[0] < 1.0:
-            raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
-        if not 0.0 <= betas[1] < 1.0:
-            raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
+            raise ValueError(f"Invalid epsilon value: {eps}, must be >= 0.")
+        if not 0.0 <= weight_decay:
+            raise ValueError(f"Invalid weight_decay value: {weight_decay}, must be >= 0.")
+        if not 0.0 <= betas[0] < 1.0 and 0.0 <= betas[1] < 1.0:
+            raise ValueError(f"Invalid beta values: {betas}, must be in [0, 1).")
 
     def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
         loss = None
