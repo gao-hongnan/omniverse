@@ -98,6 +98,15 @@ class Softmax(Activation):
         return gradient.squeeze()
 
 
+class SoftmaxStable(Softmax):
+    def __call__(self, z: torch.Tensor) -> torch.Tensor:
+        max_z = torch.max(z, dim=self.dim, keepdim=True).values
+        numerator = torch.exp(z - max_z)
+        denominator = torch.sum(numerator, dim=self.dim, keepdim=True)
+        g = numerator / denominator
+        return g
+
+
 class GELU(nn.Module):
     r"""A Gaussian Error Linear Unit (GELU) activation layer that applies the GELU function element-wise.
 
