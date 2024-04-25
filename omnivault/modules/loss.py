@@ -47,10 +47,7 @@ class CrossEntropyLoss:
             )
 
         if len(logits.shape) > 3:
-            raise ValueError(
-                f"Only 1D, 2D, and 3D logits are supported. "
-                f"Received logits shape: {logits.shape}"
-            )
+            raise ValueError(f"Only 1D, 2D, and 3D logits are supported. " f"Received logits shape: {logits.shape}")
 
         logits_max, _ = torch.max(logits, dim=-1, keepdim=True)
         logits_stable = logits - logits_max
