@@ -1,46 +1,46 @@
 # Decoder
 
-- [Decoder](#decoder)
-    - [Overview](#overview)
-    - [A Word On Reproducibility](#a-word-on-reproducibility)
-    - [Change Log](#change-log)
-        - [4th April, 2024: `3d613c0`](#4th-april-2024-3d613c0)
-        - [29th March, 2024: `ffd2392`](#29th-march-2024-ffd2392)
-            - [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
-            - [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
-            - [Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#tiny-shakespeare-character-token-level-run-1-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
-    - [Setup and Installation](#setup-and-installation)
-        - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-        - [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
-        - [Step 3: Install Dependencies](#step-3-install-dependencies)
-    - [Typed but not Typed](#typed-but-not-typed)
-    - [Training Techniques](#training-techniques)
-        - [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
-        - [Improving Performance](#improving-performance)
-    - [Adder](#adder)
-        - [Commit Hash](#commit-hash)
-        - [Composer (Configuration)](#composer-configuration)
-        - [State](#state)
-        - [Some Quirks of the Adder Project](#some-quirks-of-the-adder-project)
-        - [Experiments](#experiments)
-            - [Run 1. CPU Bound 3 Epochs (Debug)](#run-1-cpu-bound-3-epochs-debug)
-            - [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
-            - [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
-            - [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
-        - [Generalization](#generalization)
-    - [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
-        - [Commit Hash](#commit-hash-1)
-        - [Experiments](#experiments-1)
-            - [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
-            - [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-    - [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level-1)
-        - [Commit Hash](#commit-hash-2)
-        - [KerasNLP Example](#kerasnlp-example)
-        - [Training](#training)
+-   [Decoder](#decoder)
+    -   [Overview](#overview)
+    -   [A Word On Reproducibility](#a-word-on-reproducibility)
+    -   [Change Log](#change-log)
+        -   [4th April, 2024: `3d613c0`](#4th-april-2024-3d613c0)
+        -   [29th March, 2024: `ffd2392`](#29th-march-2024-ffd2392)
+            -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+            -   [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
+            -   [Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#tiny-shakespeare-character-token-level-run-1-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
+    -   [Setup and Installation](#setup-and-installation)
+        -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
+        -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
+        -   [Step 3: Install Dependencies](#step-3-install-dependencies)
+    -   [Typed but not Typed](#typed-but-not-typed)
+    -   [Training Techniques](#training-techniques)
+        -   [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
+        -   [Improving Performance](#improving-performance)
+    -   [Adder](#adder)
+        -   [Commit Hash](#commit-hash)
+        -   [Composer (Configuration)](#composer-configuration)
+        -   [State](#state)
+        -   [Some Quirks of the Adder Project](#some-quirks-of-the-adder-project)
+        -   [Experiments](#experiments)
+            -   [Run 1. CPU Bound 3 Epochs (Debug)](#run-1-cpu-bound-3-epochs-debug)
+            -   [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
+            -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
+            -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+        -   [Generalization](#generalization)
+    -   [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
+        -   [Commit Hash](#commit-hash-1)
+        -   [Experiments](#experiments-1)
+            -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
+            -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+    -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level-1)
+        -   [Commit Hash](#commit-hash-2)
+        -   [KerasNLP Example](#kerasnlp-example)
+        -   [Training](#training)
 
 ## Overview
 
@@ -593,6 +593,8 @@ The core configuration for the project is defined in the
 such as constants, logger configurations, data specifications, model parameters,
 optimizer details, and more.
 
+![Adder Configuration](./projects/adder/assets/config.png)
+
 Here is a snippet of the configuration file:
 
 ```yaml
@@ -846,6 +848,8 @@ and additional metadata. The inspiration for both `Composer` and `State` comes
 from [MosaicML's Composer](https://github.com/mosaicml/composer), a library that
 has been beneficial in the context of pretraining Language Models (LLMs) and is
 also the library that me and my team adopted for our LLM pretraining project.
+
+![Adder State](./projects/adder/assets/state.png)
 
 Here is a snippet of the `State` object:
 

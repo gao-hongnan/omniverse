@@ -4,6 +4,7 @@ import logging
 import sys
 import time
 import warnings
+from pathlib import Path
 
 import pandas as pd
 import torch
@@ -289,9 +290,13 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     device = composer.trainer.device
 
-    root_dir = find_root_dir(marker="omnivault")
-    resume_from_state_path = f"{root_dir}/data/adder/checkpoints/2024-04-04_20-07-43/model_checkpoint_epoch_8.pt"
-    resume_from_rng_state_path = f"{root_dir}/data/adder/checkpoints/2024-04-04_20-07-43/rng_state_epoch_8.pt"
+    root_dir = find_root_dir(current_path=Path(__file__), marker="omnivault")
+    resume_from_state_path = (
+        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-04-04_20-07-43/model_checkpoint_epoch_8.pt"
+    )
+    resume_from_rng_state_path = (
+        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-04-04_20-07-43/rng_state_epoch_8.pt"
+    )
 
     loaded_state = State.load_snapshots(
         filepath=resume_from_state_path,
