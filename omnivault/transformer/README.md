@@ -57,7 +57,7 @@ source of truth of how GPT is actually implemented.
 While model, optimizer and scheduler's state dict is more or less deterministic,
 things like `DataLoader` and `Sampler` are not. Furthermore, the dataloader will
 shuffle every epoch if you set `shuffle=True`. This means that when you resume
-from a checkpoint, and the spunned up `DataLoader` will shuffle the data in a
+from a checkpoint, the spun up `DataLoader` will shuffle the data in a
 different order, which will lead to different results. Even if you set
 `shuffle=False`, other parts such as `LayerNorm` and `Dropout` layers will still
 behave differently due to the random seed not being set within each epoch.
