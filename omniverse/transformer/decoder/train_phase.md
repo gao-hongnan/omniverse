@@ -595,7 +595,7 @@ the `transpose` operation swaps the sequence and head dimensions to obtain the
 desired ordering of dimensions.
 ````
 
-```{admonition} Step 7.3. Scaled Dot-Product Attention and Masking
+````{admonition} Step 7.3. Scaled Dot-Product Attention and Masking
 :class: note
 
 The attention mask matrix $\mathbf{M} \in \{0, -\infty\}^{T \times T}$ is
@@ -620,11 +620,11 @@ However, before applying the mask, the ones in $\mathbf{M}$ are typically
 replaced with zeros, and the zeros are replaced with a large negative value
 (e.g., $-\infty$) to effectively set the attention weights of the masked
 positions to zero after the softmax operation (which is to mimic the
-`masked_fill` operation in the code). So, the actual mask matrix used in the
-attention mechanism looks like this:
+`masked_fill` operation in the code). We define
+$\mathbf{M}^{-\infty} \in \{0, -\infty\}^{T \times T} = 1 - \mathbf{M}$, where:
 
 $$
-\mathbf{M}_{ij} = \left\{\begin{array}{ll}
+\mathbf{M}^{-\infty}_{ij} = \left\{\begin{array}{ll}
 0 & \text{if } i \geq j \\
 -\infty & \text{if } i < j
 \end{array} \right\} \quad \text{forms a triangular matrix:} \quad \begin{bmatrix}
@@ -635,6 +635,13 @@ $$
 0 & 0 & 0 & \cdots & 0
 \end{bmatrix}
 $$
+
+```{admonition} Notation Abuse
+:class: warning
+
+For the ease of notation, we abuse notation by using $\mathbf{M}$ to denote the
+final mask matrix $\mathbf{M}^{-\infty}$.
+```
 
 The masking operation will then be applied elementwise to the attention scores
 tensor $\mathbf{A}_{s}^{(\ell)}$, which is first obtained by computing the
@@ -665,6 +672,29 @@ The elementwise sum ensures that the attention scores corresponding to future
 tokens (positions above the diagonal) are added by $-\infty$ to effectively
 block attention to those positions and added by $0$ for the rest of the
 positions that are allowed to attend to.
+
+```{admonition} Alternative Masking
+:class: dropdown
+
+I have some quirks with the above because it "feels weird" to use $0$ as
+"allowed" instead of $1$. After all the above formulation neatly fits the
+notation. However, an alternative way is to use $1$ as "allowed" - where we
+define $\mathbf{M}^{-\infty}$ again but this time we have:
+
+$$
+\begin{aligned}
+\mathbf{A}_{s}^{M, (\ell)} &= \mathbf{A}_{s}^{(\ell)} \odot \mathbf{M} + \mathbf{M}^{-\infty} \\
+\mathcal{B} \times H \times T \times T &\leftarrow (\mathcal{B} \times H \times T \times T \odot \mathcal{B} \times H \times T \times T) + \mathcal{B} \times H \times T \times T
+\end{aligned}
+$$
+
+The elementwise multiplication $\mathbf{A}_{s}^{(\ell)} \odot \mathbf{M}$
+preserves the attention scores for the allowed positions (where $\mathbf{M}$
+is 1) and sets the scores to zero for the masked positions (where $\mathbf{M}$
+is 0). Then, the elementwise addition with $\mathbf{M}_{-\infty}$ effectively
+pushes the attention scores of the masked positions towards negative infinity,
+while leaving the scores of the allowed positions unchanged.
+```
 
 Finally, the masked attention scores $\mathbf{A}_{s}^{M, (\ell)}$ are passed
 through the softmax function to obtain the attention weights
@@ -703,7 +733,7 @@ for each head in layer $\ell$.
 Note $\mathbf{C}^{(\ell)}$ is the context matrix which is the output of the
 self-attention mechanism and it contains $\operatorname{head}_{\ell, h}^{M}$ for
 each head $h$ in the layer $\ell$.
-```
+````
 
 ```python
 d_q = query.size(dim=-1)
@@ -1036,7 +1066,7 @@ block through a series of mathematical transformations. The subscript notation
 $\mathbf{Z}^{(\ell)}_i$ indicates the i-th step output of the $\ell$-th decoder
 block.
 
-#### First Decoder Block ($\ell = 1$)
+### First Decoder Block ($\ell = 1$)
 
 $$
 \begin{aligned}
@@ -1049,7 +1079,7 @@ $$
 \end{aligned}
 $$
 
-#### Subsequent Decoder Blocks ($\ell > 1$)
+### Subsequent Decoder Blocks ($\ell > 1$)
 
 For each subsequent decoder block $\ell$, the output of the previous block's
 final step $\mathbf{Z}^{(\ell-1)}_{\text{out}}$ serves as the input for the
@@ -1246,7 +1276,7 @@ all tensors are batched unless otherwise stated.
 | First Layer Normalized Input                           | $\mathbf{Z}^{(1)}_1$                                            | $\mathcal{B} \times T \times D$                                                             | The output of the initial layer normalization applied to $\tilde{\mathbf{X}}$, serving as the input to the first decoder block's masked multi-head attention mechanism.                                                                                                                                                                                                 |
 | Query, Key, Value Matrices (Block $\ell$)              | $\mathbf{Q}^{(\ell)}, \mathbf{K}^{(\ell)}, \mathbf{V}^{(\ell)}$ | $\mathcal{B} \times H \times T \times D//H$                                                 | The query, key, and value matrices obtained by linearly projecting $\mathbf{Z}^{(\ell)}_1$ using learned weights $\mathbf{W}^{Q, (\ell)}, \mathbf{W}^{K, (\ell)}, \mathbf{W}^{V, (\ell)}$, and then splitting into $H$ attention heads. **Note that the last dimension must be the same for query and key for the dot product to be valid, but can differ for values.** |
 | Attention Scores (Block $\ell$)                        | $\mathbf{A}^{(\ell)}_s$                                         | $\mathcal{B} \times H \times T \times T$                                                    | The scaled dot-product attention scores computed between the query and key matrices, before applying the attention mask.                                                                                                                                                                                                                                                |
-| Attention Mask                                         | $\mathbf{M}$                                                    | $T \times T \overset{\text{broadcast}}{\rightarrow} \mathcal{B} \times H \times T \times T$ | A binary mask matrix used to prevent attending to future tokens. It has a lower triangular structure with $-\infty$ for future positions and $0$ for allowed positions.                                                                                                                                                                                                 |
+| Attention Mask                                         | $\mathbf{M}$                                                    | $T \times T \overset{\text{broadcast}}{\rightarrow} \mathcal{B} \times H \times T \times T$ | A binary mask matrix used to prevent attending to future tokens. It has a lower triangular structure with $-\infty$ for future positions and $0$ for allowed positions. Note that $1$ for allowed positions can also be used, one just need to handle it in code.                                                                                                       |
 | Masked Attention Scores (Block $\ell$)                 | $\mathbf{A}^{M, (\ell)}_s$                                      | $\mathcal{B} \times H \times T \times T$                                                    | The attention scores after applying the attention mask $\mathbf{M}$, which sets the scores of future tokens to $-\infty$.                                                                                                                                                                                                                                               |
 | Attention Weights (Block $\ell$)                       | $\mathbf{A}^{(\ell)}_w$                                         | $\mathcal{B} \times H \times T \times T$                                                    | The attention weights obtained by applying the softmax function to the masked attention scores $\mathbf{A}^{M, (\ell)}_s$.                                                                                                                                                                                                                                              |
 | Context Matrix (Block $\ell$)                          | $\mathbf{C}^{(\ell)}$                                           | $\mathcal{B} \times H \times T \times D//H$                                                 | The context matrix obtained by multiplying the attention weights $\mathbf{A}^{(\ell)}_w$ with the value matrix $\mathbf{V}^{(\ell)}$.                                                                                                                                                                                                                                   |
