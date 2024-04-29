@@ -1,10 +1,14 @@
-## The Training Phase
+# The Training Phase
 
 ```{contents}
 :local:
 ```
 
-### Autoregressive Self-Supervised Learning Paradigm
+This chapter will cover the training phase of the GPT model, which involves
+digging deep into the shapes and dimensions of the tensors that are passed
+through the model.
+
+## Autoregressive Self-Supervised Learning Paradigm
 
 Let $\mathcal{D}$ be the true but unknown distribution of the natural language
 space. In the context of unsupervised learning with self-supervision, such as
@@ -126,7 +130,7 @@ the goal is to model the joint probability distribution of the token sequences,
 we can do so by estimating the joint probability distribution via the
 conditional probability distributions.
 
-### Corpus and Tokenization
+## Corpus and Tokenization
 
 ```{admonition} Step 1. Corpus
 :class: note
@@ -228,7 +232,7 @@ each sequence is a finite sequence of integer indices representing the tokens in
 the original sequences from the corpus $\mathcal{S}$.
 ```
 
-### Token Embedding and Positional Encoding
+## Token Embedding and Positional Encoding
 
 ```{admonition} Step 3. One Hot Encoding
 :class: note
@@ -353,7 +357,7 @@ Bernoulli distribution with probability $p$ of being 0 (i.e., dropped) and
 probability $1-p$ of being 1 (i.e., retained).
 ```
 
-### Backbone Architecture
+## Backbone Architecture
 
 ````{admonition} Step 6. Pre-Layer Normalization For Masked Multi-Head Attention
 :class: note
@@ -1023,7 +1027,7 @@ The output of this step, $\mathbf{Z}^{(\ell)}_{\text{out}}$, becomes the input
 to the next decoder block.
 ```
 
-### Iterative Process Through L Decoder Blocks
+## Iterative Process Through L Decoder Blocks
 
 Let $\mathbf{Z}^{(1)}_{\text{out}}$ be the output of the first decoder block.
 This output becomes the input to the next decoder block, and the process
@@ -1068,7 +1072,7 @@ last decoder block. The shape of $\mathbf{Z}^{(L)}_{\text{out}}$ is
 $\mathcal{B} \times T \times D$, where $\mathcal{B}$ is the batch size, $T$ is
 the sequence length, and $D$ is the hidden dimension.
 
-### Layer Normalization Before Projection
+## Layer Normalization Before Projection
 
 ```{admonition} Step 10. Layer Normalization Before Projection
 :class: note
@@ -1103,7 +1107,7 @@ The usual purpose of applying layer normalization before the projection step is
 to stabilize the activations and improve training stability.
 ```
 
-### Head
+## Head
 
 The final step in the GPT architecture is to project the normalized output of
 the last decoder block, $\mathbf{Z}_{\text{pre-head}}$, to the vocabulary space.
@@ -1141,7 +1145,7 @@ distributions over the vocabulary for each token position. The logits tensor
 $\mathbf{Z}$ can be further processed by applying a softmax function to obtain
 the final probability distribution for token prediction.
 
-### Softmax Layer
+## Softmax Layer
 
 The softmax function is applied to the logits tensor
 $\mathbf{Z} \in \mathbb{R}^{\mathcal{B} \times T \times V}$ to obtain the
@@ -1184,7 +1188,7 @@ corresponding row vector $\mathbf{Z}_{b,t,:} \in \mathbb{R}^{1 \times V}$ and
 computes the predicted probability distribution
 $\mathbf{P}_{b,t,:} \in \mathbb{R}^{1 \times V}$ over the vocabulary.
 
-### Cross-Entropy Loss Function
+## Cross-Entropy Loss Function
 
 The cross-entropy loss function $\mathcal{L}$ is used to measure the
 dissimilarity between the predicted probability distribution $\mathbf{P}$ and
@@ -1223,7 +1227,7 @@ $\mathbf{P}_{b,t,v}$ is the predicted probability of token $v$ at position $t$
 in the sequence for batch instance $b$. Note carefully that the sum is over all
 batch instances, all token positions, and all tokens in the vocabulary.
 
-### Table of Notations
+## Table of Notations
 
 In the table below, we will not add notational burden by adding superscript
 $\mathcal{B}$ to indicate a certain tensor is batched. We would just assume that
