@@ -2336,11 +2336,11 @@ multi-head self-attention.</p>
 replaced with zeros, and the zeros are replaced with a large negative value
 (e.g., <span class="math notranslate nohighlight">\(-\infty\)</span>) to effectively set the attention weights of the masked
 positions to zero after the softmax operation (which is to mimic the
-<code class="docutils literal notranslate"><span class="pre">masked_fill</span></code> operation in the code). So, the actual mask matrix used in the
-attention mechanism looks like this:</p>
+<code class="docutils literal notranslate"><span class="pre">masked_fill</span></code> operation in the code). We define
+<span class="math notranslate nohighlight">\(\mathbf{M}^{-\infty} \in \{0, -\infty\}^{T \times T} = 1 - \mathbf{M}\)</span>, where:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\mathbf{M}_{ij} = \left\{\begin{array}{ll}
+\mathbf{M}^{-\infty}_{ij} = \left\{\begin{array}{ll}
 0 &amp; \text{if } i \geq j \\
 -\infty &amp; \text{if } i &lt; j
 \end{array} \right\} \quad \text{forms a triangular matrix:} \quad \begin{bmatrix}
@@ -2351,6 +2351,11 @@ attention mechanism looks like this:</p>
 0 &amp; 0 &amp; 0 &amp; \cdots &amp; 0
 \end{bmatrix}
 \end{split}\]</div>
+<div class="warning admonition">
+<p class="admonition-title">Notation Abuse</p>
+<p>For the ease of notation, we abuse notation by using <span class="math notranslate nohighlight">\(\mathbf{M}\)</span> to denote the
+final mask matrix <span class="math notranslate nohighlight">\(\mathbf{M}^{-\infty}\)</span>.</p>
+</div>
 <p>The masking operation will then be applied elementwise to the attention scores
 tensor <span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{(\ell)}\)</span>, which is first obtained by computing the
 scaled dot product between the query matrix <span class="math notranslate nohighlight">\(\mathbf{Q}^{(\ell)}\)</span> and the key
@@ -2378,6 +2383,26 @@ and the <strong><em>broadcasted</em></strong> mask matrix
 tokens (positions above the diagonal) are added by <span class="math notranslate nohighlight">\(-\infty\)</span> to effectively
 block attention to those positions and added by <span class="math notranslate nohighlight">\(0\)</span> for the rest of the
 positions that are allowed to attend to.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">Alternative Masking</p>
+<p>I have some quirks with the above because it “feels weird” to use <span class="math notranslate nohighlight">\(0\)</span> as
+“allowed” instead of <span class="math notranslate nohighlight">\(1\)</span>. After all the above formulation neatly fits the
+notation. However, an alternative way is to use <span class="math notranslate nohighlight">\(1\)</span> as “allowed” - where we
+define <span class="math notranslate nohighlight">\(\mathbf{M}^{-\infty}\)</span> again but this time we have:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{A}_{s}^{M, (\ell)} &amp;= \mathbf{A}_{s}^{(\ell)} \odot \mathbf{M} + \mathbf{M}^{-\infty} \\
+\mathcal{B} \times H \times T \times T &amp;\leftarrow (\mathcal{B} \times H \times T \times T \odot \mathcal{B} \times H \times T \times T) + \mathcal{B} \times H \times T \times T
+\end{aligned}
+\end{split}\]</div>
+<p>The elementwise multiplication <span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{(\ell)} \odot \mathbf{M}\)</span>
+preserves the attention scores for the allowed positions (where <span class="math notranslate nohighlight">\(\mathbf{M}\)</span>
+is 1) and sets the scores to zero for the masked positions (where <span class="math notranslate nohighlight">\(\mathbf{M}\)</span>
+is 0). Then, the elementwise addition with <span class="math notranslate nohighlight">\(\mathbf{M}_{-\infty}\)</span> effectively
+pushes the attention scores of the masked positions towards negative infinity,
+while leaving the scores of the allowed positions unchanged.</p>
+</div>
 <p>Finally, the masked attention scores <span class="math notranslate nohighlight">\(\mathbf{A}_{s}^{M, (\ell)}\)</span> are passed
 through the softmax function to obtain the attention weights
 <span class="math notranslate nohighlight">\(\mathbf{A}_{w}^{(\ell)}\)</span>:</p>
@@ -2997,7 +3022,7 @@ all tensors are batched unless otherwise stated.</p>
 <tr class="row-odd"><td><p>Attention Mask</p></td>
 <td><p><span class="math notranslate nohighlight">\(\mathbf{M}\)</span></p></td>
 <td><p><span class="math notranslate nohighlight">\(T \times T \overset{\text{broadcast}}{\rightarrow} \mathcal{B} \times H \times T \times T\)</span></p></td>
-<td><p>A binary mask matrix used to prevent attending to future tokens. It has a lower triangular structure with <span class="math notranslate nohighlight">\(-\infty\)</span> for future positions and <span class="math notranslate nohighlight">\(0\)</span> for allowed positions.</p></td>
+<td><p>A binary mask matrix used to prevent attending to future tokens. It has a lower triangular structure with <span class="math notranslate nohighlight">\(-\infty\)</span> for future positions and <span class="math notranslate nohighlight">\(0\)</span> for allowed positions. Note that <span class="math notranslate nohighlight">\(1\)</span> for allowed positions can also be used, one just need to handle it in code.</p></td>
 </tr>
 <tr class="row-even"><td><p>Masked Attention Scores (Block <span class="math notranslate nohighlight">\(\ell\)</span>)</p></td>
 <td><p><span class="math notranslate nohighlight">\(\mathbf{A}^{M, (\ell)}_s\)</span></p></td>
