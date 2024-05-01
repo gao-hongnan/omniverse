@@ -311,8 +311,8 @@ The algorithm performs the following steps:
 #### Loop Invariant
 
 After detailing the iterative approach to the **Unordered Sequential Search**,
-it is imperative to delve into the **correctness** of the algorithm. This aspect
-is crucial in
+it is imperative to see through the **correctness** of the algorithm. This
+aspect is crucial in
 [algorithmic design](https://en.wikipedia.org/wiki/Algorithm_design) as it
 assures that the method not only works in theory but also functions correctly in
 practical scenarios. The correctness of an algorithm can typically be

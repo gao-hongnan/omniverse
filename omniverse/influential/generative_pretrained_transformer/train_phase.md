@@ -6,7 +6,9 @@
 
 This chapter will cover the training phase of the GPT model, which involves
 digging deep into the shapes and dimensions of the tensors that are passed
-through the model.
+through the model. This is a repeat of the notation section, but more focused on
+the dynamics of the model architecture and the tensor shapes that are involved
+in the training process.
 
 ## Autoregressive Self-Supervised Learning Paradigm
 
