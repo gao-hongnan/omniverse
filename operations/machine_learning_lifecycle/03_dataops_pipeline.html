@@ -80,7 +80,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/03_dataops_pipeline.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Bibliography" href="../../bibliography.html" />
+    <link rel="next" title="Stage 3. Extract, Transform, Load (ETL)" href="03_etl.html" />
     <link rel="prev" title="Stage 2. Project Scoping And Framing The Problem" href="02_project_scoping.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -295,7 +295,11 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="00_intro.html">The Lifecycle of an AIOps System</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Stage 3. Data Pipeline (Data Engineering and DataOps)</a></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_etl.html">Stage 3. Extract, Transform, Load (ETL)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_data_source_and_format.html">Stage 3. Data Source and Formats</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -576,85 +580,9 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-evolution-of-data-engineering-don-t-quote-me-on-this">The Evolution of Data Engineering (Don’t Quote Me On This!)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-etl-elt-framework">The ETL/ELT Framework</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl-extract-transform-load">ETL (Extract, Transform, Load)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elt-extract-load-transform">ELT (Extract, Load, Transform)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eltl-extract-load-transform-load">ELTL (Extract, Load, Transform, Load)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-on-when-to-use-etl-vs-elt">Intuition on When to Use ETL vs ELT</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl-versus-elt">ETL versus ELT</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-eltl-pipeline">Sample ELTL Pipeline</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#extract">Extract</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis">Data Analysis</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-raw">Validate Raw</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load">Load</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#transform">Transform</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-transformed">Validate Transformed</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load-transformed">Load Transformed</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Summary</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-and-scope-the-data-source">Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-what-comes-before-data-extraction">Intuition (What comes before Data Extraction?)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-identify-and-scope-the-data-source">Steps to Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a-define-the-type-of-data">A. Define the Type of Data</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b-locate-the-data">B. Locate the Data</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c-assess-accessibility-and-compliance">C. Assess Accessibility and Compliance</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#d-gauge-the-data-volume">D. Gauge the Data Volume</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#e-understand-data-characteristics">E. Understand Data Characteristics</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types-in-machine-learning-systems">Data Types in Machine Learning Systems</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources-in-machine-learning-systems">Data Sources in Machine Learning Systems</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats-in-machine-learning-systems">Data Formats in Machine Learning Systems</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-sharding-in-hugging-face">Example: Sharding in Hugging Face</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-multimodal-data-storage-for-e-commerce">Example: Multimodal Data Storage for E-Commerce</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats">Data Formats</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-serialization-vs-data-deserialization">Data Serialization vs Data Deserialization</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#row-and-columnar-formats">Row and Columnar Formats</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-of-row-major-vs-column-major-order">Concept of Row-major vs Column-major order</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-row-major-vs-column-major-order">Examples of Row-major vs Column-major order</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-row-major-vs-column-major-order">Pros and cons of Row-major vs Column-major order</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#row-major-order">Row-major order</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#column-major-order">Column-major order</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modern-row-and-columnar-formats">Modern Row and Columnar Formats</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#text-vs-binary-formats">Text vs Binary Formats</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-storage-in-machine-learning-systems">Data Storage in Machine Learning Systems</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-storage-options">Data Storage Options</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-lake">Data Lake</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-warehouse">Data Warehouse</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-lakehouse">Data Lakehouse</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delta-lake">Delta Lake</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sql-vs-nosql">SQL vs NoSQL</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-database-a-high-dimensional-playground-for-large-language-models">Vector Database (A High-dimensional Playground for Large Language Models)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#transformation-and-embeddings">Transformation and Embeddings</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-power-of-similarity-search">The Power of Similarity Search</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-working-mechanism">The Working Mechanism</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases-from-nlp-to-recommendation-systems">Use Cases: From NLP to Recommendation Systems</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-kid-in-town">The New Kid in Town</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-processing-vs-stream-processing-todo-as-not-familiar-with-stream-processing">Batch Processing vs. Stream Processing (TODO as not familiar with stream processing)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -676,126 +604,40 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#data-engineering-in-machine-learning" id="id2">Data Engineering In Machine Learning</a></p></li>
-<li><p><a class="reference internal" href="#a-naive-dataops-pipeline" id="id3">A Naive DataOps Pipeline</a></p>
+<li><p><a class="reference internal" href="#data-engineering-in-machine-learning" id="id1">Data Engineering In Machine Learning</a></p></li>
+<li><p><a class="reference internal" href="#a-naive-dataops-pipeline" id="id2">A Naive DataOps Pipeline</a></p>
 <ul>
-<li><p><a class="reference internal" href="#architecture" id="id4">Architecture</a></p></li>
-<li><p><a class="reference internal" href="#staging-experiment-development" id="id5">Staging/Experiment/Development</a></p>
+<li><p><a class="reference internal" href="#architecture" id="id3">Architecture</a></p></li>
+<li><p><a class="reference internal" href="#staging-experiment-development" id="id4">Staging/Experiment/Development</a></p>
 <ul>
-<li><p><a class="reference internal" href="#step-1-data-extraction" id="id6">Step 1. Data Extraction</a></p></li>
-<li><p><a class="reference internal" href="#step-2-data-loading-to-staging-lake" id="id7">Step 2. Data Loading to Staging Lake</a></p></li>
-<li><p><a class="reference internal" href="#step-3-loading-data-to-staging-warehouse" id="id8">Step 3. Loading Data to Staging Warehouse</a></p></li>
-<li><p><a class="reference internal" href="#step-4-data-validation-after-extraction-and-load" id="id9">Step 4. Data Validation After Extraction and Load</a></p></li>
-<li><p><a class="reference internal" href="#step-5-data-transformation" id="id10">Step 5. Data Transformation</a></p></li>
-<li><p><a class="reference internal" href="#step-6-data-validation-after-transformation" id="id11">Step 6. Data Validation After Transformation</a></p></li>
-<li><p><a class="reference internal" href="#step-7-load-transformed-data-to-staging-gcs-and-bigquery" id="id12">Step 7. Load Transformed Data to Staging GCS and BigQuery</a></p></li>
-<li><p><a class="reference internal" href="#step-8-optional-writing-a-dag-to-automate-the-pipeline" id="id13">Step 8. (Optional) Writing a DAG to Automate the Pipeline</a></p></li>
-<li><p><a class="reference internal" href="#step-9-containerize-the-dag" id="id14">Step 9. Containerize the DAG</a></p></li>
-<li><p><a class="reference internal" href="#step-10-deploy-the-dag-staging-environment" id="id15">Step 10. Deploy the DAG (Staging Environment)</a></p></li>
-<li><p><a class="reference internal" href="#step-11-trigger-the-dag-as-part-of-a-ci-cd-pipeline" id="id16">Step 11. Trigger the DAG as part of a CI/CD pipeline</a></p></li>
+<li><p><a class="reference internal" href="#step-1-data-extraction" id="id5">Step 1. Data Extraction</a></p></li>
+<li><p><a class="reference internal" href="#step-2-data-loading-to-staging-lake" id="id6">Step 2. Data Loading to Staging Lake</a></p></li>
+<li><p><a class="reference internal" href="#step-3-loading-data-to-staging-warehouse" id="id7">Step 3. Loading Data to Staging Warehouse</a></p></li>
+<li><p><a class="reference internal" href="#step-4-data-validation-after-extraction-and-load" id="id8">Step 4. Data Validation After Extraction and Load</a></p></li>
+<li><p><a class="reference internal" href="#step-5-data-transformation" id="id9">Step 5. Data Transformation</a></p></li>
+<li><p><a class="reference internal" href="#step-6-data-validation-after-transformation" id="id10">Step 6. Data Validation After Transformation</a></p></li>
+<li><p><a class="reference internal" href="#step-7-load-transformed-data-to-staging-gcs-and-bigquery" id="id11">Step 7. Load Transformed Data to Staging GCS and BigQuery</a></p></li>
+<li><p><a class="reference internal" href="#step-8-optional-writing-a-dag-to-automate-the-pipeline" id="id12">Step 8. (Optional) Writing a DAG to Automate the Pipeline</a></p></li>
+<li><p><a class="reference internal" href="#step-9-containerize-the-dag" id="id13">Step 9. Containerize the DAG</a></p></li>
+<li><p><a class="reference internal" href="#step-10-deploy-the-dag-staging-environment" id="id14">Step 10. Deploy the DAG (Staging Environment)</a></p></li>
+<li><p><a class="reference internal" href="#step-11-trigger-the-dag-as-part-of-a-ci-cd-pipeline" id="id15">Step 11. Trigger the DAG as part of a CI/CD pipeline</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#production-layer" id="id17">Production Layer</a></p>
+<li><p><a class="reference internal" href="#production-layer" id="id16">Production Layer</a></p>
 <ul>
-<li><p><a class="reference internal" href="#step-1-triggering-the-production-deployment-pipeline" id="id18">Step 1. Triggering the Production Deployment Pipeline</a></p></li>
-<li><p><a class="reference internal" href="#step-2-ci-cd-deploy-image-to-production-environment" id="id19">Step 2. CI/CD: Deploy Image to Production Environment</a></p>
+<li><p><a class="reference internal" href="#step-1-triggering-the-production-deployment-pipeline" id="id17">Step 1. Triggering the Production Deployment Pipeline</a></p></li>
+<li><p><a class="reference internal" href="#step-2-ci-cd-deploy-image-to-production-environment" id="id18">Step 2. CI/CD: Deploy Image to Production Environment</a></p>
 <ul>
-<li><p><a class="reference internal" href="#monitoring-and-alerting" id="id20">Monitoring and Alerting</a></p></li>
-<li><p><a class="reference internal" href="#feedback-loop" id="id21">Feedback Loop</a></p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#summary" id="id22">Summary</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#the-evolution-of-data-engineering-don-t-quote-me-on-this" id="id23">The Evolution of Data Engineering (Don’t Quote Me On This!)</a></p></li>
-<li><p><a class="reference internal" href="#the-etl-elt-framework" id="id24">The ETL/ELT Framework</a></p>
-<ul>
-<li><p><a class="reference internal" href="#etl-extract-transform-load" id="id25">ETL (Extract, Transform, Load)</a></p></li>
-<li><p><a class="reference internal" href="#elt-extract-load-transform" id="id26">ELT (Extract, Load, Transform)</a></p></li>
-<li><p><a class="reference internal" href="#eltl-extract-load-transform-load" id="id27">ELTL (Extract, Load, Transform, Load)</a></p></li>
-<li><p><a class="reference internal" href="#intuition-on-when-to-use-etl-vs-elt" id="id28">Intuition on When to Use ETL vs ELT</a></p></li>
-<li><p><a class="reference internal" href="#etl-versus-elt" id="id29">ETL versus ELT</a></p></li>
-<li><p><a class="reference internal" href="#sample-eltl-pipeline" id="id30">Sample ELTL Pipeline</a></p>
-<ul>
-<li><p><a class="reference internal" href="#extract" id="id31">Extract</a></p></li>
-<li><p><a class="reference internal" href="#data-analysis" id="id32">Data Analysis</a></p></li>
-<li><p><a class="reference internal" href="#validate-raw" id="id33">Validate Raw</a></p></li>
-<li><p><a class="reference internal" href="#load" id="id34">Load</a></p></li>
-<li><p><a class="reference internal" href="#transform" id="id35">Transform</a></p></li>
-<li><p><a class="reference internal" href="#validate-transformed" id="id36">Validate Transformed</a></p></li>
-<li><p><a class="reference internal" href="#load-transformed" id="id37">Load Transformed</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#id1" id="id38">Summary</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#identify-and-scope-the-data-source" id="id39">Identify and Scope the Data Source</a></p>
-<ul>
-<li><p><a class="reference internal" href="#intuition-what-comes-before-data-extraction" id="id40">Intuition (What comes before Data Extraction?)</a></p></li>
-<li><p><a class="reference internal" href="#steps-to-identify-and-scope-the-data-source" id="id41">Steps to Identify and Scope the Data Source</a></p>
-<ul>
-<li><p><a class="reference internal" href="#a-define-the-type-of-data" id="id42">A. Define the Type of Data</a></p></li>
-<li><p><a class="reference internal" href="#b-locate-the-data" id="id43">B. Locate the Data</a></p></li>
-<li><p><a class="reference internal" href="#c-assess-accessibility-and-compliance" id="id44">C. Assess Accessibility and Compliance</a></p></li>
-<li><p><a class="reference internal" href="#d-gauge-the-data-volume" id="id45">D. Gauge the Data Volume</a></p></li>
-<li><p><a class="reference internal" href="#e-understand-data-characteristics" id="id46">E. Understand Data Characteristics</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#data-types-in-machine-learning-systems" id="id47">Data Types in Machine Learning Systems</a></p></li>
-<li><p><a class="reference internal" href="#data-sources-in-machine-learning-systems" id="id48">Data Sources in Machine Learning Systems</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#data-formats-in-machine-learning-systems" id="id49">Data Formats in Machine Learning Systems</a></p>
-<ul>
-<li><p><a class="reference internal" href="#intuition" id="id50">Intuition</a></p></li>
-<li><p><a class="reference internal" href="#example-sharding-in-hugging-face" id="id51">Example: Sharding in Hugging Face</a></p></li>
-<li><p><a class="reference internal" href="#example-multimodal-data-storage-for-e-commerce" id="id52">Example: Multimodal Data Storage for E-Commerce</a></p></li>
-<li><p><a class="reference internal" href="#data-formats" id="id53">Data Formats</a></p>
-<ul>
-<li><p><a class="reference internal" href="#data-serialization-vs-data-deserialization" id="id54">Data Serialization vs Data Deserialization</a></p></li>
-<li><p><a class="reference internal" href="#json" id="id55">JSON</a></p></li>
-<li><p><a class="reference internal" href="#row-and-columnar-formats" id="id56">Row and Columnar Formats</a></p>
-<ul>
-<li><p><a class="reference internal" href="#concept-of-row-major-vs-column-major-order" id="id57">Concept of Row-major vs Column-major order</a></p></li>
-<li><p><a class="reference internal" href="#examples-of-row-major-vs-column-major-order" id="id58">Examples of Row-major vs Column-major order</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#pros-and-cons-of-row-major-vs-column-major-order" id="id59">Pros and cons of Row-major vs Column-major order</a></p>
-<ul>
-<li><p><a class="reference internal" href="#row-major-order" id="id60">Row-major order</a></p></li>
-<li><p><a class="reference internal" href="#column-major-order" id="id61">Column-major order</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#modern-row-and-columnar-formats" id="id62">Modern Row and Columnar Formats</a></p></li>
-<li><p><a class="reference internal" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance" id="id63">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#text-vs-binary-formats" id="id64">Text vs Binary Formats</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#data-storage-in-machine-learning-systems" id="id65">Data Storage in Machine Learning Systems</a></p>
-<ul>
-<li><p><a class="reference internal" href="#data-storage-options" id="id66">Data Storage Options</a></p></li>
-<li><p><a class="reference internal" href="#data-lake" id="id67">Data Lake</a></p></li>
-<li><p><a class="reference internal" href="#data-warehouse" id="id68">Data Warehouse</a></p></li>
-<li><p><a class="reference internal" href="#data-lakehouse" id="id69">Data Lakehouse</a></p></li>
-<li><p><a class="reference internal" href="#delta-lake" id="id70">Delta Lake</a></p></li>
-<li><p><a class="reference internal" href="#sql-vs-nosql" id="id71">SQL vs NoSQL</a></p></li>
-<li><p><a class="reference internal" href="#vector-database-a-high-dimensional-playground-for-large-language-models" id="id72">Vector Database (A High-dimensional Playground for Large Language Models)</a></p>
-<ul>
-<li><p><a class="reference internal" href="#transformation-and-embeddings" id="id73">Transformation and Embeddings</a></p></li>
-<li><p><a class="reference internal" href="#the-power-of-similarity-search" id="id74">The Power of Similarity Search</a></p></li>
-<li><p><a class="reference internal" href="#the-working-mechanism" id="id75">The Working Mechanism</a></p></li>
-<li><p><a class="reference internal" href="#use-cases-from-nlp-to-recommendation-systems" id="id76">Use Cases: From NLP to Recommendation Systems</a></p></li>
-<li><p><a class="reference internal" href="#the-new-kid-in-town" id="id77">The New Kid in Town</a></p></li>
+<li><p><a class="reference internal" href="#monitoring-and-alerting" id="id19">Monitoring and Alerting</a></p></li>
+<li><p><a class="reference internal" href="#feedback-loop" id="id20">Feedback Loop</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#batch-processing-vs-stream-processing-todo-as-not-familiar-with-stream-processing" id="id78">Batch Processing vs. Stream Processing (TODO as not familiar with stream processing)</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id79">References and Further Readings</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#summary" id="id21">Summary</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id22">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>As we transition from the <a class="reference internal" href="02_project_scoping.html"><span class="std std-doc"><strong>project scoping phase</strong></span></a>,
@@ -819,7 +661,7 @@ engineers helped me load terabytes of data for pretraining and without them I am
 jobless), but this post is to draw some reference from those who know. So, let’s
 dive in.</p>
 <section id="data-engineering-in-machine-learning">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Data Engineering In Machine Learning</a><a class="headerlink" href="#data-engineering-in-machine-learning" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Data Engineering In Machine Learning</a><a class="headerlink" href="#data-engineering-in-machine-learning" title="Link to this heading">#</a></h2>
 <p><strong>Machine learning models</strong> require require data. And from the GPT-2 paper named
 <em>Language Models are Unsupervised Multitask Learners</em>, the authors mentioned
 that one major key to the success of their model is the <strong>quantity</strong> and
@@ -836,7 +678,7 @@ continuous integration and real-time processing. So yes, not only is MLOps all
 the hype, but DataOps is also a critical part of the machine learning lifecycle.</p>
 </section>
 <section id="a-naive-dataops-pipeline">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">A Naive DataOps Pipeline</a><a class="headerlink" href="#a-naive-dataops-pipeline" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">A Naive DataOps Pipeline</a><a class="headerlink" href="#a-naive-dataops-pipeline" title="Link to this heading">#</a></h2>
 <p>In this section we outline a very naive and simple workflow of a data
 engineering pipeline. This is meant to give you a high-level overview of the
 process, and by no means encapsulates the complexity of a real-world data
@@ -875,7 +717,7 @@ executed in parallel or series, and the pipeline ensures that data transitions
 smoothly through the stages, maintaining consistency, efficiency, and
 scalability.</p>
 <section id="architecture">
-<h3><a class="toc-backref" href="#id4" role="doc-backlink">Architecture</a><a class="headerlink" href="#architecture" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Architecture</a><a class="headerlink" href="#architecture" title="Link to this heading">#</a></h3>
 <p>Here’s a high-level overview of the data engineering workflow, in the form of a
 diagram:</p>
 <figure class="align-default" id="ml-lifecycle-03-dataops-lifecycle">
@@ -893,7 +735,7 @@ This by no means represent the actual (and often much more complex) workflow in
 the industry, however, it should give you a good idea of the general process.</p>
 </section>
 <section id="staging-experiment-development">
-<h3><a class="toc-backref" href="#id5" role="doc-backlink">Staging/Experiment/Development</a><a class="headerlink" href="#staging-experiment-development" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Staging/Experiment/Development</a><a class="headerlink" href="#staging-experiment-development" title="Link to this heading">#</a></h3>
 <p><strong>Legends</strong>:</p>
 <ul class="simple">
 <li><p>Staging: The staging environment is where the code is deployed for testing
@@ -907,7 +749,7 @@ users.</p></li>
 like QA, UAT, etc. However, for the sake of simplicity, we will focus on the
 staging and production environments.</p>
 <section id="step-1-data-extraction">
-<h4><a class="toc-backref" href="#id6" role="doc-backlink">Step 1. Data Extraction</a><a class="headerlink" href="#step-1-data-extraction" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id5" role="doc-backlink">Step 1. Data Extraction</a><a class="headerlink" href="#step-1-data-extraction" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Source data is identified and extracted from various internal and external
 databases and APIs.</p></li>
@@ -962,7 +804,7 @@ can be API, database, etc.</p></li>
 </ul>
 </section>
 <section id="step-2-data-loading-to-staging-lake">
-<h4><a class="toc-backref" href="#id7" role="doc-backlink">Step 2. Data Loading to Staging Lake</a><a class="headerlink" href="#step-2-data-loading-to-staging-lake" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id6" role="doc-backlink">Step 2. Data Loading to Staging Lake</a><a class="headerlink" href="#step-2-data-loading-to-staging-lake" title="Link to this heading">#</a></h4>
 <p>Let’s assume that we want to extract our data from a remote API and load it to a
 staging layer in Google Cloud Storage (GCS), where the GCS serves as the staging
 data lake.</p>
@@ -1072,7 +914,7 @@ just BigQuery, so it’s a general-purpose storage solution.</p></li>
 </ul>
 </section>
 <section id="step-3-loading-data-to-staging-warehouse">
-<h4><a class="toc-backref" href="#id8" role="doc-backlink">Step 3. Loading Data to Staging Warehouse</a><a class="headerlink" href="#step-3-loading-data-to-staging-warehouse" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">Step 3. Loading Data to Staging Warehouse</a><a class="headerlink" href="#step-3-loading-data-to-staging-warehouse" title="Link to this heading">#</a></h4>
 <p>Now, once we have the data in the staging GCS, we can load it to staging
 BigQuery. This is done using the following.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LoadToWarehouse</span><span class="p">(</span><span class="n">Load</span><span class="p">):</span>
@@ -1115,7 +957,7 @@ dashboards, and reports.</p></li>
 </ul>
 </section>
 <section id="step-4-data-validation-after-extraction-and-load">
-<h4><a class="toc-backref" href="#id9" role="doc-backlink">Step 4. Data Validation After Extraction and Load</a><a class="headerlink" href="#step-4-data-validation-after-extraction-and-load" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">Step 4. Data Validation After Extraction and Load</a><a class="headerlink" href="#step-4-data-validation-after-extraction-and-load" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>Once the data is extracted and loaded into the staging area in GCS or
 BigQuery, a preliminary data validation process is conducted.</p></li>
@@ -1172,7 +1014,7 @@ obvious bad data can be filtered out at the GCS layer, while more complex and
 specific validation can be done at the BigQuery layer.</p>
 </section>
 <section id="step-5-data-transformation">
-<h4><a class="toc-backref" href="#id10" role="doc-backlink">Step 5. Data Transformation</a><a class="headerlink" href="#step-5-data-transformation" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Step 5. Data Transformation</a><a class="headerlink" href="#step-5-data-transformation" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>In this step, the raw data from the staging area undergoes a series of
 transformation processes to be refined into a format suitable for downstream
@@ -1261,7 +1103,7 @@ within the organization.</p>
 </div>
 </section>
 <section id="step-6-data-validation-after-transformation">
-<h4><a class="toc-backref" href="#id11" role="doc-backlink">Step 6. Data Validation After Transformation</a><a class="headerlink" href="#step-6-data-validation-after-transformation" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Step 6. Data Validation After Transformation</a><a class="headerlink" href="#step-6-data-validation-after-transformation" title="Link to this heading">#</a></h4>
 <p>In step 5, we have another <code class="docutils literal notranslate"><span class="pre">validator</span></code> instance that validates the transformed
 data. The <code class="docutils literal notranslate"><span class="pre">validator</span></code> instance is passed to the <code class="docutils literal notranslate"><span class="pre">Transformation</span></code> class in the
 constructor.</p>
@@ -1287,7 +1129,7 @@ beginning of the pipeline, but rather a continuous process that occurs at
 multiple stages throughout the pipeline. Phew, so much work!</p>
 </section>
 <section id="step-7-load-transformed-data-to-staging-gcs-and-bigquery">
-<h4><a class="toc-backref" href="#id12" role="doc-backlink">Step 7. Load Transformed Data to Staging GCS and BigQuery</a><a class="headerlink" href="#step-7-load-transformed-data-to-staging-gcs-and-bigquery" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">Step 7. Load Transformed Data to Staging GCS and BigQuery</a><a class="headerlink" href="#step-7-load-transformed-data-to-staging-gcs-and-bigquery" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>After the data transformation and validation, the resulting data is loaded
 back into the staging environment. This involves both Google Cloud Storage
@@ -1310,7 +1152,7 @@ be reused for this step as well.</p></li>
 </ul>
 </section>
 <section id="step-8-optional-writing-a-dag-to-automate-the-pipeline">
-<h4><a class="toc-backref" href="#id13" role="doc-backlink">Step 8. (Optional) Writing a DAG to Automate the Pipeline</a><a class="headerlink" href="#step-8-optional-writing-a-dag-to-automate-the-pipeline" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Step 8. (Optional) Writing a DAG to Automate the Pipeline</a><a class="headerlink" href="#step-8-optional-writing-a-dag-to-automate-the-pipeline" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>The whole step from 1 to 7 can be wrapped in a DAG.</p></li>
 <li><p>This means you can use things like Airflow to orchestrate the whole process.</p></li>
@@ -1374,7 +1216,7 @@ capabilities it provides, which is crucial. Imagine a cronjob failing and you
 have no idea why, and you have to dig through logs to find out what happened.</p>
 </section>
 <section id="step-9-containerize-the-dag">
-<h4><a class="toc-backref" href="#id14" role="doc-backlink">Step 9. Containerize the DAG</a><a class="headerlink" href="#step-9-containerize-the-dag" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">Step 9. Containerize the DAG</a><a class="headerlink" href="#step-9-containerize-the-dag" title="Link to this heading">#</a></h4>
 <p>Once your DAG or python code is ready, we can containerize it and deploy it.</p>
 <p>A templated Dockerfile can look like this:</p>
 <div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="k">ARG</span><span class="w"> </span><span class="nv">PYTHON_VERSION</span><span class="o">=</span><span class="m">3</span>.9
@@ -1452,7 +1294,7 @@ have no idea why, and you have to dig through logs to find out what happened.</p
 </div>
 </section>
 <section id="step-10-deploy-the-dag-staging-environment">
-<h4><a class="toc-backref" href="#id15" role="doc-backlink">Step 10. Deploy the DAG (Staging Environment)</a><a class="headerlink" href="#step-10-deploy-the-dag-staging-environment" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Step 10. Deploy the DAG (Staging Environment)</a><a class="headerlink" href="#step-10-deploy-the-dag-staging-environment" title="Link to this heading">#</a></h4>
 <p>After containerizing the DAG, we can deploy it. For instance, we can deploy it
 to a Kubernetes cluster on a <code class="docutils literal notranslate"><span class="pre">CronJob</span></code> resource.</p>
 <p>We will not go into the details of how to deploy a DAG to a somewhere like a
@@ -1460,7 +1302,7 @@ Kubernetes cluster here - it is out of scope and can be a whole topic on its
 own.</p>
 </section>
 <section id="step-11-trigger-the-dag-as-part-of-a-ci-cd-pipeline">
-<h4><a class="toc-backref" href="#id16" role="doc-backlink">Step 11. Trigger the DAG as part of a CI/CD pipeline</a><a class="headerlink" href="#step-11-trigger-the-dag-as-part-of-a-ci-cd-pipeline" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Step 11. Trigger the DAG as part of a CI/CD pipeline</a><a class="headerlink" href="#step-11-trigger-the-dag-as-part-of-a-ci-cd-pipeline" title="Link to this heading">#</a></h4>
 <table class="table" id="ml-lifecycle-03-ci-cd-pipeline">
 <caption><span class="caption-number">Table 28 </span><span class="caption-text">CI/CD Pipeline</span><a class="headerlink" href="#ml-lifecycle-03-ci-cd-pipeline" title="Link to this table">#</a></caption>
 <thead>
@@ -1566,9 +1408,9 @@ environment.</p></td>
 </section>
 </section>
 <section id="production-layer">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Production Layer</a><a class="headerlink" href="#production-layer" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Production Layer</a><a class="headerlink" href="#production-layer" title="Link to this heading">#</a></h3>
 <section id="step-1-triggering-the-production-deployment-pipeline">
-<h4><a class="toc-backref" href="#id18" role="doc-backlink">Step 1. Triggering the Production Deployment Pipeline</a><a class="headerlink" href="#step-1-triggering-the-production-deployment-pipeline" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">Step 1. Triggering the Production Deployment Pipeline</a><a class="headerlink" href="#step-1-triggering-the-production-deployment-pipeline" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p><strong>Action</strong>:</p>
 <ul>
@@ -1590,12 +1432,12 @@ production.</p></li>
 </ul>
 </section>
 <section id="step-2-ci-cd-deploy-image-to-production-environment">
-<h4><a class="toc-backref" href="#id19" role="doc-backlink">Step 2. CI/CD: Deploy Image to Production Environment</a><a class="headerlink" href="#step-2-ci-cd-deploy-image-to-production-environment" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id18" role="doc-backlink">Step 2. CI/CD: Deploy Image to Production Environment</a><a class="headerlink" href="#step-2-ci-cd-deploy-image-to-production-environment" title="Link to this heading">#</a></h4>
 <p>Basically, the same steps as in the staging environment, but this time the image
 is deployed to the production environment.</p>
 <p>We can have some additional steps such as monitoring and feedback loops.</p>
 <section id="monitoring-and-alerting">
-<h5><a class="toc-backref" href="#id20" role="doc-backlink">Monitoring and Alerting</a><a class="headerlink" href="#monitoring-and-alerting" title="Link to this heading">#</a></h5>
+<h5><a class="toc-backref" href="#id19" role="doc-backlink">Monitoring and Alerting</a><a class="headerlink" href="#monitoring-and-alerting" title="Link to this heading">#</a></h5>
 <p>This step will not be covered in details as it is out of scope for this post,
 but will be discussed in the later stages. Monitoring is a big thing in Machine
 Learning because not only do we monitor for system health, we also monitor for
@@ -1616,15 +1458,16 @@ could impact model performance or other downstream applications.</p></li>
 </ul>
 </section>
 <section id="feedback-loop">
-<h5><a class="toc-backref" href="#id21" role="doc-backlink">Feedback Loop</a><a class="headerlink" href="#feedback-loop" title="Link to this heading">#</a></h5>
+<h5><a class="toc-backref" href="#id20" role="doc-backlink">Feedback Loop</a><a class="headerlink" href="#feedback-loop" title="Link to this heading">#</a></h5>
 <p>This refers to insights from monitoring and any errors encountered in production
 are fed back into the development process, leading to new iterations of
 development, testing, and deployment.</p>
 </section>
 </section>
 </section>
+</section>
 <section id="summary">
-<h3><a class="toc-backref" href="#id22" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h3>
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
 <p>Typically, the movement of data from the staging layer to the production layer
 happens once the data has been cleaned, transformed, validated, and is deemed
 ready for use in downstream applications such as machine learning model
@@ -1646,1144 +1489,8 @@ might have multiple data sources and destinations and even multiple data lakes
 and warehouses. The key is to understand the principles and adapt them to your
 needs.</p>
 </section>
-</section>
-<section id="the-evolution-of-data-engineering-don-t-quote-me-on-this">
-<h2><a class="toc-backref" href="#id23" role="doc-backlink">The Evolution of Data Engineering (Don’t Quote Me On This!)</a><a class="headerlink" href="#the-evolution-of-data-engineering-don-t-quote-me-on-this" title="Link to this heading">#</a></h2>
-<p>With the basic understanding of <strong>Data Engineering</strong> and its essential role in
-<strong>Machine Learning</strong>, it’s important to recognize the evolution of data handling
-practices. Traditional <strong>ETL (Extract, Transform, Load)</strong> methodologies have
-long been the backbone of data pipeline design. They set the stage for
-collecting, processing, and storing data in a structured manner.</p>
-<p>However, the modern era of data-driven applications demands a more agile and
-responsive approach. This is where <strong>DataOps</strong>, encompassing principles of
-<strong>Continuous Integration/Continuous Deployment (CI/CD)</strong>, comes into play. The
-process builds on the ETL framework but now with automation, collaboration,
-monitoring, and quality assurance.</p>
-<p>In traditional ETL or ELT processes, the main focus is on extracting data from
-various sources, transforming it into the required format, and then loading it
-into a target system. These processes are typically batch-oriented and can be
-run on schedules or triggered manually.</p>
-<p>In a CI/CD DataOps pipeline, the focus expands to the entire data lifecycle and
-emphasizes automation, continuous integration, and continuous deployment. This
-means that the process not only includes the basic ETL or ELT steps but also
-involves:</p>
-<ul class="simple">
-<li><p><strong>Continuous Integration</strong>: Automating the process of integrating code
-changes from multiple contributors into a shared repository, often followed
-by automated building and testing.</p></li>
-<li><p><strong>Continuous Deployment</strong>: Automating the process of deploying the
-integrated and tested code to production environments, ensuring that the
-data pipeline remains stable and updated.</p></li>
-<li><p><strong>Monitoring and Alerting</strong>: Keeping track of the performance and health of
-the data pipeline, triggering alerts if anomalies or issues are detected.</p></li>
-<li><p><strong>Testing and Quality Assurance</strong>: Embedding rigorous testing within the
-pipeline to ensure data quality, integrity, and compliance with business
-rules.</p></li>
-</ul>
-</section>
-<section id="the-etl-elt-framework">
-<h2><a class="toc-backref" href="#id24" role="doc-backlink">The ETL/ELT Framework</a><a class="headerlink" href="#the-etl-elt-framework" title="Link to this heading">#</a></h2>
-<section id="etl-extract-transform-load">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink">ETL (Extract, Transform, Load)</a><a class="headerlink" href="#etl-extract-transform-load" title="Link to this heading">#</a></h3>
-<p><strong>ETL</strong> is a process in data handling that involves three main stages:</p>
-<ol class="arabic simple">
-<li><p><strong>Extract</strong>: Gathering data from various sources.</p></li>
-<li><p><strong>Transform</strong>: Processing this data to fit the desired format, usually
-outside the target system. This might include cleaning, aggregating,
-filtering, etc.</p></li>
-<li><p><strong>Load</strong>: Finally, loading the transformed data into the destination data
-warehouse or database.</p></li>
-</ol>
-</section>
-<section id="elt-extract-load-transform">
-<h3><a class="toc-backref" href="#id26" role="doc-backlink">ELT (Extract, Load, Transform)</a><a class="headerlink" href="#elt-extract-load-transform" title="Link to this heading">#</a></h3>
-<p><strong>ELT</strong> is a variant of ETL, but with a different order of operations:</p>
-<ol class="arabic simple">
-<li><p><strong>Extract</strong>: Gathering data from various sources.</p></li>
-<li><p><strong>Load</strong>: Loading the raw data into the destination system.</p></li>
-<li><p><strong>Transform</strong>: Performing transformations within the target system itself,
-utilizing the processing capabilities of modern data warehouses.</p></li>
-</ol>
-</section>
-<section id="eltl-extract-load-transform-load">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink">ELTL (Extract, Load, Transform, Load)</a><a class="headerlink" href="#eltl-extract-load-transform-load" title="Link to this heading">#</a></h3>
-<p>This combination could represent a two-step process:</p>
-<ol class="arabic simple">
-<li><p><strong>Extract</strong>: Gathering data from various sources.</p></li>
-<li><p><strong>Load</strong>: Loading the raw data into a staging area or temporary storage.</p></li>
-<li><p><strong>Transform</strong>: Performing transformations within this temporary storage.</p></li>
-<li><p><strong>Load</strong>: Loading the transformed data into the final destination, such as a
-data warehouse or database.</p></li>
-</ol>
-<p>This approach might be beneficial when working with massive datasets, allowing
-for an initial raw data consolidation, followed by transformation and final
-loading into the target system.</p>
-</section>
-<section id="intuition-on-when-to-use-etl-vs-elt">
-<h3><a class="toc-backref" href="#id28" role="doc-backlink">Intuition on When to Use ETL vs ELT</a><a class="headerlink" href="#intuition-on-when-to-use-etl-vs-elt" title="Link to this heading">#</a></h3>
-<p>In certain scenarios, companies opt for the ELT (Extract, Load, Transform)
-process, particularly when dealing with complex and unstructured data. During
-the <strong>extraction</strong> phase, data is collected from various sources and then
-immediately <strong>loaded</strong> or dumped into a <strong>data lake</strong>, which is a storage
-repository that holds a vast amount of raw data in its native format.</p>
-<p>This approach has the advantage of quickly making the data available, preserving
-its raw state for future use. However, this raw, unstructured data can become
-unwieldy, particularly when dealing with large volumes.</p>
-<p>When it’s time to analyze or utilize the data, it must be <strong>extracted</strong> again
-from the data lake. This is followed by the <strong>transformation</strong> phase, where the
-data is processed and converted into a structured format suitable for analysis.</p>
-<p>While the ELT paradigm allows for greater flexibility and the ability to
-accommodate diverse data types, it can lead to inefficiencies when searching
-through large and unstructured data sets within the data lake. The process of
-extracting and transforming data from the data lake can be time-consuming and
-resource-intensive, particularly if the data needs to be combed through
-extensively.</p>
-<p>In essence, the ELT approach with a data lake can be both a boon and a
-challenge. It enables faster data ingestion and provides a flexible repository
-for raw data, but the subsequent handling and processing of that data might
-require significant effort, especially when dealing with large quantities of
-unstructured information.</p>
-</section>
-<section id="etl-versus-elt">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink">ETL versus ELT</a><a class="headerlink" href="#etl-versus-elt" title="Link to this heading">#</a></h3>
-<p>Here’s a table that breaks down the comparison, advantages, and disadvantages of
-both ETL and ELT.</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Criteria</p></th>
-<th class="head"><p>ETL</p></th>
-<th class="head"><p>ELT</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><strong>Basic Process</strong></p></td>
-<td><p>Extract, Transform, Load</p></td>
-<td><p>Extract, Load, Transform</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Data Latency</strong></p></td>
-<td><p>May introduce delays, affecting real-time analysis; near-real-time possible with tooling</p></td>
-<td><p>Often reduces delays between data collection and availability</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Scalability</strong></p></td>
-<td><p>Can be scalable with proper architecture and parallel processing</p></td>
-<td><p>Typically leverages modern data warehouses for scalability</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Flexibility</strong></p></td>
-<td><p>Less adaptable to changing requirements; can be mitigated with design</p></td>
-<td><p>More adaptable to changes in data structure or requirements</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Pipeline Complexity</strong></p></td>
-<td><p>May involve complex transformations, increasing development and maintenance efforts</p></td>
-<td><p>Might simplify some aspects of the pipeline, depending on tools and requirements</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Accessibility</strong></p></td>
-<td><p>May require specialized skills, limiting accessibility</p></td>
-<td><p>Might allow more team participation, especially with common languages like SQL</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Advantages</strong></p></td>
-<td><p>Suitable for complex transformations with structured data; control over transformation</p></td>
-<td><p>Flexibility, scalability, and potentially reduced latency; useful for unstructured data handling</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Disadvantages</strong></p></td>
-<td><p>Potential bottlenecks; complexity; potential rigidity</p></td>
-<td><p>Might lead to inefficiencies in processing unstructured data; simplicity is context-dependent</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Use Case</strong></p></td>
-<td><p>When precise control over transformations and structured data processing is needed</p></td>
-<td><p>When handling diverse or unstructured data, or when flexibility and scalability are priorities</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="sample-eltl-pipeline">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">Sample ELTL Pipeline</a><a class="headerlink" href="#sample-eltl-pipeline" title="Link to this heading">#</a></h3>
-<section id="extract">
-<h4><a class="toc-backref" href="#id31" role="doc-backlink">Extract</a><a class="headerlink" href="#extract" title="Link to this heading">#</a></h4>
-<p>In the extraction phase, data is pulled from various sources which could be
-structured, semi-structured or unstructured, and could be located in databases,
-data lakes, data warehouses, or external APIs. The key is to capture the
-necessary data without losing or modifying any of the original data during the
-process.</p>
-</section>
-<section id="data-analysis">
-<h4><a class="toc-backref" href="#id32" role="doc-backlink">Data Analysis</a><a class="headerlink" href="#data-analysis" title="Link to this heading">#</a></h4>
-<p>Post extraction, data analysis provides insights into the nature and quality of
-the data. This stage involves examining the distribution of the data,
-identifying potential anomalies or outliers, and assessing the overall data
-quality. Techniques such as descriptive statistics and data visualization are
-commonly used.</p>
-<p>It is important to note that this process is generally applicable and not
-specific to machine learning. The outcome of this stage guides the
-decision-making process for subsequent data cleaning and transformation tasks,
-thereby setting up a solid foundation for downstream tasks such as reporting,
-analytics, or model training.</p>
-</section>
-<section id="validate-raw">
-<h4><a class="toc-backref" href="#id33" role="doc-backlink">Validate Raw</a><a class="headerlink" href="#validate-raw" title="Link to this heading">#</a></h4>
-<p>Validation of raw data ensures that the extracted data meets the requirements
-and constraints for the subsequent stages. It involves checking for data
-completeness, consistency, and accuracy. This stage might include checking if
-all expected data has been extracted, if there are any unexpected null or
-missing values, and if the data aligns with known constraints (like a field that
-should always be positive).</p>
-</section>
-<section id="load">
-<h4><a class="toc-backref" href="#id34" role="doc-backlink">Load</a><a class="headerlink" href="#load" title="Link to this heading">#</a></h4>
-<p>The load stage involves transferring the extracted data into a target system for
-storage. The target system can be a data warehouse, a data lake, or a specific
-database depending on the use case. The focus during this phase is on efficiency
-and reliability, ensuring that all data is accurately loaded without disrupting
-existing data or processes.</p>
-</section>
-<section id="transform">
-<h4><a class="toc-backref" href="#id35" role="doc-backlink">Transform</a><a class="headerlink" href="#transform" title="Link to this heading">#</a></h4>
-<p>The transformation phase involves changing the raw data into a format that is
-suitable for downstream tasks. This may include cleaning operations (like
-handling missing values or outliers), integrating data from different sources,
-aggregating or summarizing data, and converting data types. Additionally,
-feature engineering for machine learning tasks often takes place in this stage.</p>
-</section>
-<section id="validate-transformed">
-<h4><a class="toc-backref" href="#id36" role="doc-backlink">Validate Transformed</a><a class="headerlink" href="#validate-transformed" title="Link to this heading">#</a></h4>
-<p>After transformation, the data needs to be validated again to ensure it meets
-the specific requirements for downstream tasks. This might involve checking the
-data against predefined rules or statistical properties (like a specific
-distribution), checking for unexpected null or missing values after
-transformation, or comparing a sample of the transformed data against the
-expected output.</p>
-</section>
-<section id="load-transformed">
-<h4><a class="toc-backref" href="#id37" role="doc-backlink">Load Transformed</a><a class="headerlink" href="#load-transformed" title="Link to this heading">#</a></h4>
-<p>After the transformed data has been validated, it can be loaded into the target
-system for storage. This might be a data warehouse, a data lake, or a specific
-database depending on the use case.</p>
-</section>
-</section>
-<section id="id1">
-<h3><a class="toc-backref" href="#id38" role="doc-backlink">Summary</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<p>The choice between ETL and ELT depends on various factors like data volume,
-real-time requirements, team skills, technology stack, and the nature of the
-transformations. ETL might be more suitable for complex transformations with
-structured data, while ELT might be preferred for more flexible, scalable
-handling of diverse or unstructured data.</p>
-<p>It’s crucial to acknowledge that both ETL and ELT can be implemented effectively
-or poorly, depending on the specific context, tools, and design principles
-applied. Neither approach is universally superior, and the decision should be
-based on a comprehensive understanding of the project’s unique requirements and
-constraints.</p>
-</section>
-</section>
-<section id="identify-and-scope-the-data-source">
-<h2><a class="toc-backref" href="#id39" role="doc-backlink">Identify and Scope the Data Source</a><a class="headerlink" href="#identify-and-scope-the-data-source" title="Link to this heading">#</a></h2>
-<section id="intuition-what-comes-before-data-extraction">
-<h3><a class="toc-backref" href="#id40" role="doc-backlink">Intuition (What comes before Data Extraction?)</a><a class="headerlink" href="#intuition-what-comes-before-data-extraction" title="Link to this heading">#</a></h3>
-<p>As we have seen in the pipeline and subsequently, the ELT/ETL framework, the
-first step is data extraction. However, before we can extract data, we need to
-first identify the data source and scope it. This is a critical step in the
-pipeline, as it lays the foundation for the rest of the pipeline. If the data
-source is not correctly identified and scoped, it could lead to a lot of wasted
-time and effort down the line.</p>
-<p>In what follows, we will discuss the steps involved in identifying and scoping
-the data source, as well as the tools and methods for extracting data from the
-source.</p>
-<p>Consequently, the correct identification and meticulous scoping of the data
-source form the bedrock of the entire pipeline.</p>
-<p>In what follows, we will discuss the steps involved in identifying and scoping
-the data source.</p>
-</section>
-<section id="steps-to-identify-and-scope-the-data-source">
-<h3><a class="toc-backref" href="#id41" role="doc-backlink">Steps to Identify and Scope the Data Source</a><a class="headerlink" href="#steps-to-identify-and-scope-the-data-source" title="Link to this heading">#</a></h3>
-<section id="a-define-the-type-of-data">
-<h4><a class="toc-backref" href="#id42" role="doc-backlink">A. Define the Type of Data</a><a class="headerlink" href="#a-define-the-type-of-data" title="Link to this heading">#</a></h4>
-<ul class="simple">
-<li><p><strong>Action</strong>: Determine whether the data is numerical, categorical,
-time-series, text-based, images, or audio.</p></li>
-<li><p><strong>Rationale</strong>: Facilitates the formulation of the appropriate strategy for
-data collection.</p></li>
-</ul>
-</section>
-<section id="b-locate-the-data">
-<h4><a class="toc-backref" href="#id43" role="doc-backlink">B. Locate the Data</a><a class="headerlink" href="#b-locate-the-data" title="Link to this heading">#</a></h4>
-<ul class="simple">
-<li><p><strong>Action</strong>: Identify the location, such as databases (SQL or NoSQL), APIs,
-log files, Excel or CSV files, etc.</p></li>
-<li><p><strong>Rationale</strong>: Enables the selection of the suitable tools and methods for
-extraction.</p></li>
-</ul>
-</section>
-<section id="c-assess-accessibility-and-compliance">
-<h4><a class="toc-backref" href="#id44" role="doc-backlink">C. Assess Accessibility and Compliance</a><a class="headerlink" href="#c-assess-accessibility-and-compliance" title="Link to this heading">#</a></h4>
-<ul class="simple">
-<li><p><strong>Action</strong>: Understand permissions, authentication, privacy concerns, and
-restrictions on data extraction.</p></li>
-<li><p><strong>Rationale</strong>: Ensures adherence to legal and organizational policies.</p></li>
-</ul>
-</section>
-<section id="d-gauge-the-data-volume">
-<h4><a class="toc-backref" href="#id45" role="doc-backlink">D. Gauge the Data Volume</a><a class="headerlink" href="#d-gauge-the-data-volume" title="Link to this heading">#</a></h4>
-<ul class="simple">
-<li><p><strong>Action</strong>: Determine the size of the dataset.</p></li>
-<li><p><strong>Rationale</strong>: Influences the choice of tools for extraction and impacts the
-entire ML model design process.</p></li>
-</ul>
-</section>
-<section id="e-understand-data-characteristics">
-<h4><a class="toc-backref" href="#id46" role="doc-backlink">E. Understand Data Characteristics</a><a class="headerlink" href="#e-understand-data-characteristics" title="Link to this heading">#</a></h4>
-<ul class="simple">
-<li><p><strong>Action</strong>: Recognize and address special characteristics, including
-potential malformatting, privacy regulations, etc.</p></li>
-<li><p><strong>Rationale</strong>: Facilitates proper processing, validation, and utilization of
-the data.</p></li>
-</ul>
-</section>
-</section>
-<section id="data-types-in-machine-learning-systems">
-<h3><a class="toc-backref" href="#id47" role="doc-backlink">Data Types in Machine Learning Systems</a><a class="headerlink" href="#data-types-in-machine-learning-systems" title="Link to this heading">#</a></h3>
-<p>Before we scope the data source, a logical question to first ask is, what
-<em>types</em> of data are we dealing with? Knowing the data types will help us
-<strong>understand the nature and structure of information that we need to obtain.</strong>
-This understanding, in turn, informs our choice of <strong>data sources</strong> that are
-best suited to provide this specific type of data.</p>
-<p>For example, if we are working with time-series data, our data sources might be
-sensors, logs, or financial market feeds. If we are dealing with textual data,
-the sources might be documents, websites, or social media platforms. By first
-defining the data types, we align our subsequent exploration and selection of
-data sources with the inherent characteristics of the data we aim to analyze.
-This helps in ensuring compatibility and efficiency in the entire data
-acquisition and preparation process, forming a cohesive link between what type
-of data we need (data types) and where we can find it (data source).</p>
-<p>Here’s a brief overview of the different types of data in the form of a
-graph/tree diagram:</p>
-<div class="highlight-mermaid notranslate"><div class="highlight"><pre><span></span>graph TD
-    Main[&quot;Main Types&quot;]
-    Structured[&quot;Structured Data&quot;]
-    SemiStructured[&quot;Semi-Structured Data&quot;]
-    Unstructured[&quot;Unstructured Data&quot;]
-
-    Main --&gt; Structured
-    Main --&gt; SemiStructured
-    Main --&gt; Unstructured
-
-    Structured --&gt; Numerical[&quot;Numerical Data&quot;]
-    Structured --&gt; Categorical[&quot;Categorical Data&quot;]
-    Structured --&gt; TimeSeries[&quot;Time-Series Data&quot;]
-    Structured --&gt; Geospatial[&quot;Geospatial Data&quot;]
-    Structured --&gt; Boolean[&quot;Boolean Data&quot;]
-
-    SemiStructured --&gt; Multimodal[&quot;Multimodal Data&quot;]
-    SemiStructured --&gt; Graph[&quot;Graph Data&quot;]
-    SemiStructured --&gt; Mixed[&quot;Mixed Data Types&quot;]
-
-    Unstructured --&gt; TextBased[&quot;Text-Based Data&quot;]
-    Unstructured --&gt; Image[&quot;Image Data&quot;]
-    Unstructured --&gt; Audio[&quot;Audio Data&quot;]
-    Unstructured --&gt; Binary[&quot;Binary Data&quot;]
-    Unstructured --&gt; Embeddings[&quot;Embeddings&quot;]
-
-    Numerical --&gt; Continuous[&quot;Continuous Data&quot;]
-    Numerical --&gt; Discrete[&quot;Discrete Data&quot;]
-
-    Categorical --&gt; Nominal[&quot;Nominal Data&quot;]
-    Categorical --&gt; Ordinal[&quot;Ordinal Data&quot;]
-</pre></div>
-</div>
-<p>and the corresponding table:</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Main Type</p></th>
-<th class="head"><p>Subtype</p></th>
-<th class="head"><p>Specific Types</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><strong>Structured Data</strong></p></td>
-<td><p>Numerical</p></td>
-<td><p>Continuous, Discrete</p></td>
-<td><p>Continuous data can take any value, while Discrete data takes specific values.</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Categorical</p></td>
-<td><p>Nominal, Ordinal</p></td>
-<td><p>Nominal data has no inherent order; Ordinal data has a meaningful order.</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Time-Series Data</p></td>
-<td><p></p></td>
-<td><p>Data collected at specific time intervals.</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Geospatial Data</p></td>
-<td><p></p></td>
-<td><p>Information that includes geographical attributes.</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Boolean Data</p></td>
-<td><p></p></td>
-<td><p>True/false or yes/no values.</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Semi-Structured Data</strong></p></td>
-<td><p>Multimodal</p></td>
-<td><p></p></td>
-<td><p>Combines data from multiple sources or types.</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Graph Data</p></td>
-<td><p></p></td>
-<td><p>Represents relationships using nodes and edges.</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Mixed Data Types</p></td>
-<td><p></p></td>
-<td><p>A combination of various data types.</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Unstructured Data</strong></p></td>
-<td><p>Text-Based Data</p></td>
-<td><p></p></td>
-<td><p>Unstructured textual information.</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Image Data</p></td>
-<td><p></p></td>
-<td><p>Visual information in a grid of pixels.</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Audio Data</p></td>
-<td><p></p></td>
-<td><p>Sound or speech data.</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Binary Data</p></td>
-<td><p></p></td>
-<td><p>Data represented in a binary format.</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Embeddings</p></td>
-<td><p></p></td>
-<td><p>Representations of categorical, text, or complex data as continuous vectors</p></td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="data-sources-in-machine-learning-systems">
-<h3><a class="toc-backref" href="#id48" role="doc-backlink">Data Sources in Machine Learning Systems</a><a class="headerlink" href="#data-sources-in-machine-learning-systems" title="Link to this heading">#</a></h3>
-<p>Having identified the <em>types</em> of data that our machine learning system will
-handle, we now turn our attention to the various <strong>sources</strong> from which this
-data can be obtained. Different data types require specific sources, both in
-terms of format compatibility and functional alignment. Here’s an overview of
-various data sources, categorized by their characteristics and aligned with the
-types of data they typically provide:</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p><strong>Category</strong></p></th>
-<th class="head"><p><strong>Type</strong></p></th>
-<th class="head"><p><strong>Examples/Details</strong></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><strong>Databases</strong></p></td>
-<td><p>Relational Databases (SQL)</p></td>
-<td><p><a class="reference external" href="https://www.mysql.com/">MySQL</a>, <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a>, <a class="reference external" href="https://www.microsoft.com/en-us/sql-server/">MS SQL Server</a></p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>NoSQL Databases</p></td>
-<td><p><a class="reference external" href="https://www.mongodb.com/">MongoDB</a>, <a class="reference external" href="https://cassandra.apache.org/">Cassandra</a>, <a class="reference external" href="https://redis.io/">Redis</a></p></td>
-</tr>
-<tr class="row-even"><td><p><strong>File-Based Sources</strong></p></td>
-<td><p>Flat Files</p></td>
-<td><p>CSV, Excel, TSV</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Binary Files</p></td>
-<td><p>Parquet, Avro</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Image and Video Files</p></td>
-<td><p>JPEG, PNG, MP4</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Text Files</p></td>
-<td><p>TXT, PDF, DOC</p></td>
-</tr>
-<tr class="row-even"><td><p><strong>Web Sources</strong></p></td>
-<td><p>Web APIs</p></td>
-<td><p>RESTful APIs, SOAP, <a class="reference external" href="https://graphql.org/">GraphQL</a></p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Web Scraping</p></td>
-<td><p>HTML, XML</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Social Media</p></td>
-<td><p>Twitter, Facebook, Reddit</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Streaming Data Sources</strong></p></td>
-<td><p>Message Brokers</p></td>
-<td><p><a class="reference external" href="https://kafka.apache.org/">Kafka</a>, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a></p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Real-Time Feeds</p></td>
-<td><p>Stock prices, sensor data</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Sensor Data</strong></p></td>
-<td><p>IoT Devices</p></td>
-<td><p>Smart devices, wearable tech</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Industrial Sensors</p></td>
-<td><p>Temperature, pressure, humidity sensors</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Scientific Sources</strong></p></td>
-<td><p>Genomic Data</p></td>
-<td><p>DNA sequences, proteomics</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Meteorological Data</p></td>
-<td><p>Weather stations, satellites</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Financial Data Sources</strong></p></td>
-<td><p>Stock Market Data</p></td>
-<td><p>Exchanges, trading platforms</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Banking Transactions</p></td>
-<td><p>Credit card swipes, ATM transactions</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Healthcare Data Sources</strong></p></td>
-<td><p>Electronic Health Records</p></td>
-<td><p>Patient medical records</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Medical Imaging</p></td>
-<td><p>MRI, CT scans, X-rays</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Government and Public Data</strong></p></td>
-<td><p>Census Data</p></td>
-<td><p>Demographics, economics</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Legislation and Regulations</p></td>
-<td><p>Law documents, policy papers</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Educational Data Sources</strong></p></td>
-<td><p>Academic Databases</p></td>
-<td><p>Research papers, thesis documents</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Learning Management Systems</p></td>
-<td><p>Student grades, course content</p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Human-Generated Data Sources</strong></p></td>
-<td><p>Surveys and Questionnaires</p></td>
-<td><p>Market research, feedback forms</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Crowdsourcing Platforms</p></td>
-<td><p><a class="reference external" href="https://www.mturk.com/">Amazon Mechanical Turk</a></p></td>
-</tr>
-<tr class="row-odd"><td><p><strong>Third-Party Data Providers</strong></p></td>
-<td><p>Commercial Data Providers</p></td>
-<td><p>Market trends, consumer habits</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Open Data Repositories</p></td>
-<td><p><a class="reference external" href="https://www.kaggle.com/">Kaggle</a>, <a class="reference external" href="https://archive.ics.uci.edu/ml/index.php">UCI Machine Learning Repository</a></p></td>
-</tr>
-</tbody>
-</table>
-<p>This categorization of data sources resonates with our prior discussion on data
-types. By recognizing the intricate relationships between <strong>databases</strong>,
-<strong>file-based sources</strong>, <strong>web sources</strong>, <strong>streaming data sources</strong>, and others,
-with the data types we’re interested in, we are better positioned to select the
-optimal sources for our machine learning system. Whether it’s time-series data
-from real-time feeds, textual data from web scraping, or image data from
-specific file formats, our data source selection now aligns with the strategic
-goals and technical requirements of the system.</p>
-</section>
-</section>
-<section id="data-formats-in-machine-learning-systems">
-<h2><a class="toc-backref" href="#id49" role="doc-backlink">Data Formats in Machine Learning Systems</a><a class="headerlink" href="#data-formats-in-machine-learning-systems" title="Link to this heading">#</a></h2>
-<section id="intuition">
-<h3><a class="toc-backref" href="#id50" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Link to this heading">#</a></h3>
-<p>After understanding the various data types within the machine learning system,
-we arrive at the crucial aspect of data formats. Data formats play a vital role
-in determining how data is stored, processed, and communicated within the
-system. They also influence the efficiency of data retrieval and the ease of
-interoperability between different parts of the pipeline. Depending on the
-nature of the data, the chosen format can have a substantial impact on the
-performance and scalability of data-driven applications. In the following
-section, we’ll delve into various data formats and their relevance to machine
-learning systems, highlighting the importance of selecting appropriate formats
-in alignment with specific requirements and constraints.</p>
-<p>In other words, once you scope the data source and data types, and manage to
-extract them, you need to store it in a format that is easy to work with.
-Storing data isn’t straightforward because data can be of different types.</p>
-<p>Some questions to ask when choosing a data format:</p>
-<ul class="simple">
-<li><p>Where do you store the data? In a database? In a file system? In a key-value
-store? We want it to be ideally cheap and fast to retrieve the data.</p></li>
-<li><p>How to store complex models so they can be loaded and run on different
-devices (e.g. mobile phones, web browsers, etc.). In ML, it can be GPU, CPU,
-etc.</p></li>
-</ul>
-</section>
-<section id="example-sharding-in-hugging-face">
-<h3><a class="toc-backref" href="#id51" role="doc-backlink">Example: Sharding in Hugging Face</a><a class="headerlink" href="#example-sharding-in-hugging-face" title="Link to this heading">#</a></h3>
-<p><strong>Sharding</strong> refers to dividing a large dataset into smaller, more manageable
-parts or “shards.” Each shard can be processed independently, allowing for
-parallelism and more efficient utilization of resources. Sharding is
-particularly relevant when working with large-scale models that require
-extensive training data.</p>
-<p>For instance, if you were to train a model using Hugging Face’s Transformers
-library on a vast corpus of text data, you might encounter challenges in loading
-and processing the entire dataset at once. By employing sharding, you could
-break down the corpus into smaller shards, each stored in a specific data format
-like TensorFlow’s TFRecord or PyTorch’s data loader format.</p>
-<p>Here’s how sharding might be implemented in this scenario:</p>
-<ol class="arabic simple">
-<li><p><strong>Divide the Data</strong>: Split the entire corpus into smaller parts, each
-representing a shard. The division could be based on logical segments like
-chapters, documents, or fixed-size chunks.</p></li>
-<li><p><strong>Choose a Data Format</strong>: Select an appropriate data format for the shards.
-TFRecord is a common choice for TensorFlow, while PyTorch users might prefer
-its native data handling.</p></li>
-<li><p><strong>Process Shards Independently</strong>: Each shard can be loaded and processed
-independently, allowing for parallel processing. This enables efficient data
-handling, especially when using distributed computing resources.</p></li>
-<li><p><strong>Assemble Results</strong>: After processing the individual shards, the results can
-be assembled to form the complete dataset or model parameters.</p></li>
-</ol>
-<p>This approach leverages data sharding and specific data formats to provide a
-scalable and flexible method for working with extensive datasets in Hugging
-Face. It’s an illustrative example of how data formats, coupled with effective
-data engineering practices, can profoundly impact the efficiency and scalability
-of machine learning workflows.</p>
-<p>Moral of the story is, you cannot just store data in any format. You need to
-think you multiple aspects of the data and the system before choosing a data
-format. Most of the times, we want <strong>efficient</strong> and <strong>scalable</strong> data formats.</p>
-<p>Certainly! While the initial example provided is a straightforward way to store
-multimodal data (images and text), it may lack some rigor and scalability. In a
-real-world setting, particularly for large-scale e-commerce platforms, a more
-robust approach would be necessary.</p>
-</section>
-<section id="example-multimodal-data-storage-for-e-commerce">
-<h3><a class="toc-backref" href="#id52" role="doc-backlink">Example: Multimodal Data Storage for E-Commerce</a><a class="headerlink" href="#example-multimodal-data-storage-for-e-commerce" title="Link to this heading">#</a></h3>
-<p>In e-commerce platforms, product pages often contain rich multimedia
-information, including images and corresponding textual descriptions. Storing
-and retrieving this information efficiently requires careful design.</p>
-<p>One robust approach might involve:</p>
-<ol class="arabic simple">
-<li><p><strong>Storing Images in a Binary Format</strong>: Rather than embedding the raw image
-tensor within a data structure, it’s often more efficient to store the image
-in a binary format (e.g., JPEG, PNG) and keep a reference to its location
-(e.g., file path or URL).</p></li>
-<li><p><strong>Utilizing a Database for Textual Information</strong>: The textual information,
-including descriptions and metadata, can be stored in a relational database.
-This approach provides scalable storage and efficient query capabilities.</p></li>
-<li><p><strong>Creating a Unified Schema</strong>: A unified schema or data model could
-encapsulate both the image references and the corresponding textual data.
-This schema acts as a bridge between the two data types, allowing them to be
-treated as a cohesive unit.</p></li>
-</ol>
-<p>Here’s an example code snippet that reflects this design:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sample_data_schema</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;product_id&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
-    <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://path/to/image.jpg&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a picture of a cat.&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;additional_metadata&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>  <span class="c1"># Additional textual or numerical information.</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>and in tabular form:</p>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Field Name</p></th>
-<th class="head"><p>Data Type</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">product_id</span></code></p></td>
-<td><p>Integer</p></td>
-<td><p>A unique identifier for the product.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">image_url</span></code></p></td>
-<td><p>String (URL)</p></td>
-<td><p>The URL or file path to the product’s image.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
-<td><p>String (Text)</p></td>
-<td><p>The textual description of the product.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">additional_metadata</span></code></p></td>
-<td><p>Dictionary/JSON</p></td>
-<td><p>Additional textual or numerical information, such as categories, tags, or specifications.</p></td>
-</tr>
-</tbody>
-</table>
-<p>In this approach, the <code class="docutils literal notranslate"><span class="pre">&quot;image_url&quot;</span></code> field stores a reference to the location of
-the image, and the <code class="docutils literal notranslate"><span class="pre">&quot;description&quot;</span></code> field contains the textual description. The
-additional metadata can encapsulate other relevant information, such as
-categories, tags, or product specifications.</p>
-<p>This design offers several advantages:</p>
-<ul class="simple">
-<li><p><strong>Scalability</strong>: By storing images in a binary format and using database
-storage for text, this approach can scale to handle large product catalogs.</p></li>
-<li><p><strong>Efficiency</strong>: Leveraging specialized storage mechanisms for different data
-types ensures that retrieval and updates are efficient.</p></li>
-<li><p><strong>Flexibility</strong>: A unified schema provides a consistent way to represent and
-manipulate text-image pairs, while still allowing for customization and
-extension as needed.</p></li>
-</ul>
-<p>Overall, this example demonstrates a more rigorous and practical approach to
-storing and managing multimodal data in a context such as an e-commerce
-platform. It illustrates the interplay between data formats, storage mechanisms,
-and data modeling in handling complex, multifaceted information.</p>
-</section>
-<section id="data-formats">
-<h3><a class="toc-backref" href="#id53" role="doc-backlink">Data Formats</a><a class="headerlink" href="#data-formats" title="Link to this heading">#</a></h3>
-<p>We will describe a few choices of data formats below.</p>
-<section id="data-serialization-vs-data-deserialization">
-<h4><a class="toc-backref" href="#id54" role="doc-backlink">Data Serialization vs Data Deserialization</a><a class="headerlink" href="#data-serialization-vs-data-deserialization" title="Link to this heading">#</a></h4>
-<p>The process of transforming data structures or object states into a format that
-can be saved (e.g., in a file like JSON) and later rebuilt in the same or a
-different computing environment is known as serialization. The opposite process,
-called deserialization, involves retrieving data from the stored formats. In
-simpler terms, serialization refers to storing data, while deserialization
-refers to accessing data from the saved formats.</p>
-<p>In other words, <strong>storing data</strong> is called <strong>serialization</strong>, and <strong>retrieving
-data from the stored formats</strong> is called <strong>deserialization</strong>.</p>
-</section>
-<section id="json">
-<h4><a class="toc-backref" href="#id55" role="doc-backlink">JSON</a><a class="headerlink" href="#json" title="Link to this heading">#</a></h4>
-<p><a class="reference external" href="https://www.json.org/json-en.html"><strong>JSON</strong></a>, which stands for JavaScript
-Object Notation, is a lightweight data-interchange format that uses a key-value
-pair paradigm. It is human-readable, easy to parse, and simple to generate,
-making it an ideal choice for data exchange between a server and a client in
-machine learning applications. JSON’s structure allows for easy storage in
-databases and can represent a wide variety of data types, including strings,
-numbers, booleans, objects, and arrays.</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;cars&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ford&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Fiesta&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Focus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mustang&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BMW&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;320&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;X3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;X5&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fiat&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;500&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Panda&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
-<span class="w">    </span><span class="p">]</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>While JSON has many advantages, it does have some drawbacks, such as increased
-storage requirements due to its text-based nature. However, its simplicity and
-ease of use have made it one of the most popular data formats in machine
-learning and other applications.</p>
-<p>In addition to the key-value pair structure, JSON also supports nesting of
-objects and arrays, which allows for more complex data representation. This
-makes JSON a versatile choice for a variety of use cases, from simple
-configuration files to complex machine learning model inputs and outputs.</p>
-<p>Furthermore, JSON has extensive support in many programming languages, with
-built-in libraries or third-party packages available for parsing and generating
-JSON data. This widespread support makes it a convenient choice for developers
-working with machine learning systems and data pipelines.</p>
-<p>In summary, JSON’s human-readable format, easy parsing, support for complex data
-structures, and widespread language support make it an excellent choice for data
-exchange and storage in machine learning applications, despite its increased
-storage requirements compared to binary formats.</p>
-</section>
-<section id="row-and-columnar-formats">
-<h4><a class="toc-backref" href="#id56" role="doc-backlink">Row and Columnar Formats</a><a class="headerlink" href="#row-and-columnar-formats" title="Link to this heading">#</a></h4>
-<section id="concept-of-row-major-vs-column-major-order">
-<h5><a class="toc-backref" href="#id57" role="doc-backlink">Concept of Row-major vs Column-major order</a><a class="headerlink" href="#concept-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h5>
-<p>Row-major and column-major order describe two ways to store multi-dimensional
-arrays in linear memory. In row-major order, the elements of a multi-dimensional
-array are stored row by row, whereas in column-major order, the elements are
-stored column by column.</p>
-</section>
-<section id="examples-of-row-major-vs-column-major-order">
-<h5><a class="toc-backref" href="#id58" role="doc-backlink">Examples of Row-major vs Column-major order</a><a class="headerlink" href="#examples-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h5>
-<p>In row-major order, the elements of each row of a matrix are stored together in
-contiguous memory locations, with the elements of successive rows appearing
-consecutively in memory. For example, consider a 3x2 matrix:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-\boldsymbol{A} = \begin{bmatrix}
-    1 &amp; 2 \\
-    3 &amp; 4 \\
-    5 &amp; 6
-\end{bmatrix}
-\end{split}\]</div>
-<p>In row-major order, the elements are stored in memory as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>In contrast, in column-major order, the elements of each column are stored
-together in contiguous memory locations, with the elements of successive columns
-appearing consecutively in memory. For the same matrix, the column-major order
-would be:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>Row-major and column-major order can make a difference in performance when
-accessing multi-dimensional arrays, especially for large arrays. For example,
-when accessing elements of a row in row-major order, consecutive elements are
-likely to be cached together, which can improve access time. Similarly, when
-accessing elements of a column in column-major order, consecutive elements are
-likely to be cached together, which can improve performance.</p>
-</section>
-</section>
-<section id="pros-and-cons-of-row-major-vs-column-major-order">
-<h4><a class="toc-backref" href="#id59" role="doc-backlink">Pros and cons of Row-major vs Column-major order</a><a class="headerlink" href="#pros-and-cons-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h4>
-<section id="row-major-order">
-<h5><a class="toc-backref" href="#id60" role="doc-backlink">Row-major order</a><a class="headerlink" href="#row-major-order" title="Link to this heading">#</a></h5>
-<p><strong>Pros:</strong></p>
-<ul class="simple">
-<li><p>It is the default order used in many programming languages, including C and
-C++.</p></li>
-<li><p>It can be more intuitive for humans to understand, as rows are typically
-used to represent entities (e.g., students, observations) and columns are
-used to represent attributes (e.g., grades, measurements).</p></li>
-<li><p>When iterating over the elements of a matrix row-by-row, row-major order
-ensures that the elements accessed are contiguous in memory, which can
-improve cache locality and reduce the number of cache misses.</p></li>
-<li><p>Many linear algebra libraries, such as BLAS and LAPACK, use row-major order
-by default.</p></li>
-</ul>
-<p><strong>Cons:</strong></p>
-<ul class="simple">
-<li><p>When iterating over the elements of a matrix column-by-column, row-major
-order can lead to poor cache locality and a higher number of cache misses.
-This is because consecutive elements in the same column are not necessarily
-contiguous in memory.</p></li>
-<li><p>When transposing a matrix, row-major order requires copying the entire
-matrix into a new block of memory in column-major order, which can be costly
-for large matrices.</p></li>
-<li><p>Some hardware architectures may be optimized for column-major order, leading
-to lower performance for row-major order.</p></li>
-</ul>
-</section>
-<section id="column-major-order">
-<h5><a class="toc-backref" href="#id61" role="doc-backlink">Column-major order</a><a class="headerlink" href="#column-major-order" title="Link to this heading">#</a></h5>
-<p><strong>Pros:</strong></p>
-<ul class="simple">
-<li><p>Column-major order is used by default in some programming languages, such as
-Fortran.</p></li>
-<li><p>When iterating over the elements of a matrix column-by-column, column-major
-order ensures that the elements accessed are contiguous in memory, which can
-improve cache locality and reduce the number of cache misses.</p></li>
-<li><p>Some hardware architectures, such as GPUs, are optimized for column-major
-order, leading to potentially better performance.</p></li>
-</ul>
-<p><strong>Cons:</strong></p>
-<ul class="simple">
-<li><p>Column-major order can be less intuitive for humans to understand, as it is
-not the standard representation used in many fields.</p></li>
-<li><p>When iterating over the elements of a matrix row-by-row, column-major order
-can lead to poor cache locality and a higher number of cache misses. This is
-because consecutive elements in the same row are not necessarily contiguous
-in memory.</p></li>
-<li><p>Many linear algebra libraries, such as BLAS and LAPACK, use row-major order
-by default, so using column-major order may require additional memory copies
-or transpositions.</p></li>
-</ul>
-<p>Overall, the choice between row-major and column-major order depends on the
-specific use case and hardware architecture. For performance-critical
-applications, it may be worth experimenting with both orders to see which yields
-better results.</p>
-</section>
-</section>
-<section id="modern-row-and-columnar-formats">
-<h4><a class="toc-backref" href="#id62" role="doc-backlink">Modern Row and Columnar Formats</a><a class="headerlink" href="#modern-row-and-columnar-formats" title="Link to this heading">#</a></h4>
-<table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Library</p></th>
-<th class="head"><p>Order for Multidimensional Arrays</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>NumPy</p></td>
-<td><p>Row-Major Order</p></td>
-</tr>
-<tr class="row-odd"><td><p>MATLAB</p></td>
-<td><p>Column-Major Order</p></td>
-</tr>
-<tr class="row-even"><td><p>OpenGL</p></td>
-<td><p>Column-Major Order</p></td>
-</tr>
-<tr class="row-odd"><td><p>CUDA</p></td>
-<td><p>Column-Major Order</p></td>
-</tr>
-<tr class="row-even"><td><p>OpenCV</p></td>
-<td><p>Row-Major Order</p></td>
-</tr>
-<tr class="row-odd"><td><p>Eigen</p></td>
-<td><p>Supports both Row-Major and Column-Major Order</p></td>
-</tr>
-<tr class="row-even"><td><p>CSV</p></td>
-<td><p>Row-Major Order</p></td>
-</tr>
-<tr class="row-odd"><td><p>Parquet</p></td>
-<td><p>Column-Major Order</p></td>
-</tr>
-</tbody>
-</table>
-<p>Column-major formats are better for accessing specific columns of large datasets
-with many features, while row-major formats are better for faster data writes
-when adding new individual examples to data. Row-major formats are better for a
-lot of writes, while column-major formats are better for a lot of column-based
-reads.</p>
-<p>When you have a dataset with many features, storing the data in a column-major
-format is more efficient because it allows for direct access to individual
-columns without having to scan through all the other data in the rows. This
-means that when you need to extract a specific subset of columns from the
-dataset, you can do so more efficiently because the system doesn’t need to read
-through all the other data in the rows to access the desired columns.</p>
-<p>In contrast, with a row-major format, the data for each row is stored together
-in memory, meaning that to access a specific column, you have to read through
-all the other columns in the row before you get to the desired column. This can
-be especially inefficient when dealing with large datasets with many features,
-as the system has to read through a lot of data to extract the desired subset of
-columns.</p>
-<p>For example, consider a dataset of ride-sharing transactions with 1,000
-features, but you only need to extract four specific columns: time, location,
-distance, and price. With a column-major format, you can directly access these
-columns, whereas with a row-major format, you have to read through all the other
-996 columns in each row before getting to the desired four columns. This can be
-slow and inefficient, especially if you need to access the subset of columns
-frequently or if the dataset is very large.</p>
-<p>In summary, storing data in a column-major format is more efficient for datasets
-with many features because it allows for direct access to individual columns,
-which can significantly speed up data retrieval and processing.</p>
-</section>
-<section id="examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">
-<h4><a class="toc-backref" href="#id63" role="doc-backlink">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a><a class="headerlink" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance" title="Link to this heading">#</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">time</span>
-
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Any</span>
-
-<span class="n">F</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
-
-
-<span class="k">def</span> <span class="nf">timer</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">F</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">F</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Timer decorator.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-        <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> took </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds to execute.&quot;</span><span class="p">)</span>
-        <span class="c1"># print(f&quot;{func.__name__} took {elapsed_time / 60:.4f} minutes to execute.&quot;)</span>
-        <span class="c1"># print(f&quot;{func.__name__} took {elapsed_time / 60 / 60:.4f} hours to execute.&quot;)</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">return</span> <span class="n">wrapper</span>
-
-
-<span class="nd">@timer</span>
-<span class="k">def</span> <span class="nf">traverse_dataframe_by_row</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="k">pass</span>
-
-
-<span class="nd">@timer</span>
-<span class="k">def</span> <span class="nf">traverse_dataframe_by_column</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">num_rows</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]:</span>
-            <span class="k">pass</span>
-
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="n">traverse_dataframe_by_row</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-<span class="n">traverse_dataframe_by_column</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-
-
-<span class="c1"># Row-major traversal (C-like order)</span>
-<span class="n">df_np</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
-<span class="n">df_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_np</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>  <span class="c1"># Row-major traversal (C-like order)</span>
-<span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="n">df_np</span><span class="o">.</span><span class="n">shape</span>
-
-
-<span class="nd">@timer</span>
-<span class="k">def</span> <span class="nf">traverse_numpy_by_row</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
-
-
-<span class="nd">@timer</span>
-<span class="k">def</span> <span class="nf">traverse_numpy_by_column</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
-
-
-<span class="n">traverse_numpy_by_row</span><span class="p">(</span><span class="n">df_np</span><span class="p">)</span>
-<span class="n">traverse_numpy_by_column</span><span class="p">(</span><span class="n">df_np</span><span class="p">)</span>
-
-<span class="n">df_np_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_np</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>  <span class="c1"># Column-major traversal (Fortran-like order)</span>
-
-<span class="n">traverse_numpy_by_row</span><span class="p">(</span><span class="n">df_np_col</span><span class="p">)</span>
-<span class="n">traverse_numpy_by_column</span><span class="p">(</span><span class="n">df_np_col</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="text-vs-binary-formats">
-<h3><a class="toc-backref" href="#id64" role="doc-backlink">Text vs Binary Formats</a><a class="headerlink" href="#text-vs-binary-formats" title="Link to this heading">#</a></h3>
-<p>CSV and JSON are text files, while Parquet files are binary files. Text files
-are human-readable, while binary files are only readable by programs that can
-interpret the raw bytes. Binary files contain only 0s and 1s and are more
-compact than text files. Binary files can save space compared to text files; for
-example, storing the number 1000000 requires 7 bytes in a text file and only 4
-bytes in a binary file as int32. Parquet files are more efficient than text
-files in terms of storage and processing speed. For example, AWS recommends
-using the Parquet format because it consumes up to 6x less storage and is up to
-2x faster to unload in Amazon S3 compared to text formats.</p>
-<p>!!! example “Text vs Binary” For example, if you want to store the number
-<span class="math notranslate nohighlight">\(1000000\)</span>, and if you store it in text file it takes 7 characters (1, 0, 0, 0,
-0, 0, 0), taking up 7 bytes of storage if 1 character is 1 byte. But if you
-store it in binary format as <code class="docutils literal notranslate"><span class="pre">int32</span></code>, then it takes 32 bits, which is 4 bytes.</p>
-</section>
-</section>
-<section id="data-storage-in-machine-learning-systems">
-<h2><a class="toc-backref" href="#id65" role="doc-backlink">Data Storage in Machine Learning Systems</a><a class="headerlink" href="#data-storage-in-machine-learning-systems" title="Link to this heading">#</a></h2>
-<p>Once the data source is scoped and well-defined, before we even start extracting
-the data, we need to know what kind of data we are dealing with and <strong>how</strong> and
-<strong>where</strong> we are going to store the extracted data.</p>
-<p>Determining the <strong>storage format</strong> is critical. Will the data be stored in its
-raw form, or does it need to be processed and converted into a different format
-like CSV, JSON, or Parquet? The chosen data format can have significant
-implications on storage costs, access speed, and compatibility with your data
-processing tools.</p>
-<p>The <strong>storage location</strong> is equally important. Depending on the volume of the
-data, your budget, and security requirements, you might opt for on-premises
-servers, cloud storage, or even a hybrid solution. Cloud storage, like Google
-Cloud Storage, Amazon S3, or Azure Blob Storage, offer scalable and secure
-solutions. However, you need to consider data privacy regulations and compliance
-requirements when deciding where to store the data.</p>
-<p>You should also consider how the data will be organized. Will it be stored in a
-structured database like MySQL, a NoSQL database like MongoDB, or a distributed
-file system like Hadoop HDFS? The data’s nature, the need for scalability, and
-the types of queries you’ll be running, all factor into this decision.</p>
-<p>Finally, the choice of <strong>storage technology</strong> also depends on the <strong>data
-operations</strong> you anticipate. For instance, if your data needs frequent updates,
-a database might be more suitable. If your data is largely static but needs to
-be read frequently, a file system might be a better choice.</p>
-<p>Your data storage decisions can greatly impact the efficiency of your data
-operations and the overall success of your machine learning project. Hence,
-careful planning and consideration are required in this stage.</p>
-<section id="data-storage-options">
-<h3><a class="toc-backref" href="#id66" role="doc-backlink">Data Storage Options</a><a class="headerlink" href="#data-storage-options" title="Link to this heading">#</a></h3>
-<p>… list table of different data storage options for different use cases.</p>
-<p>As we see shortly in the next few sections, once the data source is defined,
-before we even start extracting the data, we need to know what kind of data we
-are dealing with and <strong>how</strong> and <strong>where</strong> we are going to store it.</p>
-</section>
-<section id="data-lake">
-<h3><a class="toc-backref" href="#id67" role="doc-backlink">Data Lake</a><a class="headerlink" href="#data-lake" title="Link to this heading">#</a></h3>
-</section>
-<section id="data-warehouse">
-<h3><a class="toc-backref" href="#id68" role="doc-backlink">Data Warehouse</a><a class="headerlink" href="#data-warehouse" title="Link to this heading">#</a></h3>
-</section>
-<section id="data-lakehouse">
-<h3><a class="toc-backref" href="#id69" role="doc-backlink">Data Lakehouse</a><a class="headerlink" href="#data-lakehouse" title="Link to this heading">#</a></h3>
-</section>
-<section id="delta-lake">
-<h3><a class="toc-backref" href="#id70" role="doc-backlink">Delta Lake</a><a class="headerlink" href="#delta-lake" title="Link to this heading">#</a></h3>
-</section>
-<section id="sql-vs-nosql">
-<h3><a class="toc-backref" href="#id71" role="doc-backlink">SQL vs NoSQL</a><a class="headerlink" href="#sql-vs-nosql" title="Link to this heading">#</a></h3>
-</section>
-<section id="vector-database-a-high-dimensional-playground-for-large-language-models">
-<h3><a class="toc-backref" href="#id72" role="doc-backlink">Vector Database (A High-dimensional Playground for Large Language Models)</a><a class="headerlink" href="#vector-database-a-high-dimensional-playground-for-large-language-models" title="Link to this heading">#</a></h3>
-<p><a class="reference external" href="https://learn.microsoft.com/en-us/semantic-kernel/memories/vector-db">see here</a></p>
-<p>A <strong>vector database</strong> is an ingenious data storage system that capitalizes on
-the properties of vectors — mathematical objects that possess magnitude and
-direction. The high-dimensional vectors stored in these databases embody the
-features or attributes of data, which could range from text, images, audio, and
-video to even more complex structures.</p>
-<section id="transformation-and-embeddings">
-<h4><a class="toc-backref" href="#id73" role="doc-backlink">Transformation and Embeddings</a><a class="headerlink" href="#transformation-and-embeddings" title="Link to this heading">#</a></h4>
-<p>The crucial task of converting raw data to their vector representations
-(embeddings) is typically achieved by utilizing machine learning models, word
-embedding algorithms, or feature extraction techniques.</p>
-<p>For instance, a movie review text can be represented as a high-dimensional
-vector via word embedding techniques like Word2Vec or GloVe. Similarly, an image
-can be transformed into a vector representation using deep learning models like
-convolutional neural networks (CNNs).</p>
-</section>
-<section id="the-power-of-similarity-search">
-<h4><a class="toc-backref" href="#id74" role="doc-backlink">The Power of Similarity Search</a><a class="headerlink" href="#the-power-of-similarity-search" title="Link to this heading">#</a></h4>
-<p>Vector databases deviate from the conventional way databases work. Rather than
-retrieving data based on exact matches or predefined criteria, vector databases
-empower users to conduct searches based on vector similarity. This facilitates
-the retrieval of data that bears semantic or contextual similarity to the query
-data, even if they don’t share exact keyword matches.</p>
-<p>Consider this example: Given an image of a cat, a vector database can find
-images that are visually similar (e.g., other images of cats, or perhaps images
-of small, furry animals), even if “cat” isn’t explicitly tagged or described in
-the metadata of those images.</p>
-</section>
-<section id="the-working-mechanism">
-<h4><a class="toc-backref" href="#id75" role="doc-backlink">The Working Mechanism</a><a class="headerlink" href="#the-working-mechanism" title="Link to this heading">#</a></h4>
-<p>Here’s how the magic happens: A query vector, which symbolizes your search
-criterion, is used to scour the database for the most similar vectors. This
-query vector can be either generated from the same data type as the stored
-vectors (image for image, text for text, etc.) or from different types.</p>
-<p>A similarity measure, such as cosine similarity or Euclidean distance, is then
-employed to calculate the proximity between the query vector and stored vectors.
-The result is a ranked list of vectors — and their corresponding raw data — that
-have the highest similarity to the query.</p>
-</section>
-<section id="use-cases-from-nlp-to-recommendation-systems">
-<h4><a class="toc-backref" href="#id76" role="doc-backlink">Use Cases: From NLP to Recommendation Systems</a><a class="headerlink" href="#use-cases-from-nlp-to-recommendation-systems" title="Link to this heading">#</a></h4>
-<p>The potential applications for vector databases are wide-ranging. They can be
-utilized in natural language processing, computer vision, recommendation
-systems, and any domain requiring a deep understanding and matching of data
-semantics.</p>
-<p>For example, a large language model (LLM) like GPT-3 can be complemented with a
-vector database to generate more relevant and coherent text. Let’s say you want
-the LLM to write a blog post about the latest trends in artificial intelligence.
-While the model can generate text based on the prompt, it may lack the most
-recent information or context about the subject matter.</p>
-<p>This is where a vector database comes into play. You could maintain a vector
-database with the latest information, articles, and papers about AI trends. When
-you prompt the LLM to write the blog post, you could use a query to pull the
-most relevant and recent vectors from the database, and feed this information
-into the model along with your prompt. This would guide the model to generate
-text that is not only contextually accurate but also up-to-date with current
-information.</p>
-<p>Keep in mind, though, that building and maintaining such a vector database
-requires careful consideration of your data update strategy, storage
-requirements, and search efficiency, among other things.</p>
-</section>
-<section id="the-new-kid-in-town">
-<h4><a class="toc-backref" href="#id77" role="doc-backlink">The New Kid in Town</a><a class="headerlink" href="#the-new-kid-in-town" title="Link to this heading">#</a></h4>
-<p>As the world of data continues to expand in volume and complexity, the need for
-intelligent and efficient databases becomes more apparent. Vector databases,
-with their high-dimensional storage and similarity-based search capabilities,
-provide a promising solution to manage and make sense of the deluge of data in
-various application areas.</p>
-</section>
-</section>
-</section>
-<section id="batch-processing-vs-stream-processing-todo-as-not-familiar-with-stream-processing">
-<h2><a class="toc-backref" href="#id78" role="doc-backlink">Batch Processing vs. Stream Processing (TODO as not familiar with stream processing)</a><a class="headerlink" href="#batch-processing-vs-stream-processing-todo-as-not-familiar-with-stream-processing" title="Link to this heading">#</a></h2>
-<p>For real-time or near-real-time ML applications, traditional batch processing of
-ETL might not be suitable. Instead, stream processing frameworks like Apache
-Kafka or Apache Flink allow for continuous data processing and may be used as
-alternatives or complements to ETL.</p>
-</section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id79" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Huyen, Chip. “Chapter 3. Data Engineering Fundamentals.” In Designing
 Machine Learning Systems: An Iterative Process for Production-Ready
@@ -2796,6 +1503,8 @@ Designing Data-Intensive Applications. Beijing: O’Reilly, 2017.</p></li>
 <li><p><a class="reference external" href="https://cloud.google.com/architecture/cicd-pipeline-for-data-processing">Google: CI/CD Pipeline for Data Processing</a></p></li>
 </ul>
 </section>
+<div class="toctree-wrapper compound">
+</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -2838,11 +1547,11 @@ Designing Data-Intensive Applications. Beijing: O’Reilly, 2017.</p></li>
       </div>
     </a>
     <a class="right-next"
-       href="../../bibliography.html"
+       href="03_etl.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bibliography</p>
+        <p class="prev-next-title">Stage 3. Extract, Transform, Load (ETL)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -2888,85 +1597,9 @@ Designing Data-Intensive Applications. Beijing: O’Reilly, 2017.</p></li>
 </li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-evolution-of-data-engineering-don-t-quote-me-on-this">The Evolution of Data Engineering (Don’t Quote Me On This!)</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-etl-elt-framework">The ETL/ELT Framework</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl-extract-transform-load">ETL (Extract, Transform, Load)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#elt-extract-load-transform">ELT (Extract, Load, Transform)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eltl-extract-load-transform-load">ELTL (Extract, Load, Transform, Load)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-on-when-to-use-etl-vs-elt">Intuition on When to Use ETL vs ELT</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#etl-versus-elt">ETL versus ELT</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-eltl-pipeline">Sample ELTL Pipeline</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#extract">Extract</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-analysis">Data Analysis</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-raw">Validate Raw</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load">Load</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#transform">Transform</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#validate-transformed">Validate Transformed</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load-transformed">Load Transformed</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Summary</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-and-scope-the-data-source">Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-what-comes-before-data-extraction">Intuition (What comes before Data Extraction?)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-identify-and-scope-the-data-source">Steps to Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a-define-the-type-of-data">A. Define the Type of Data</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b-locate-the-data">B. Locate the Data</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c-assess-accessibility-and-compliance">C. Assess Accessibility and Compliance</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#d-gauge-the-data-volume">D. Gauge the Data Volume</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#e-understand-data-characteristics">E. Understand Data Characteristics</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types-in-machine-learning-systems">Data Types in Machine Learning Systems</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources-in-machine-learning-systems">Data Sources in Machine Learning Systems</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats-in-machine-learning-systems">Data Formats in Machine Learning Systems</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-sharding-in-hugging-face">Example: Sharding in Hugging Face</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-multimodal-data-storage-for-e-commerce">Example: Multimodal Data Storage for E-Commerce</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats">Data Formats</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-serialization-vs-data-deserialization">Data Serialization vs Data Deserialization</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#row-and-columnar-formats">Row and Columnar Formats</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-of-row-major-vs-column-major-order">Concept of Row-major vs Column-major order</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-row-major-vs-column-major-order">Examples of Row-major vs Column-major order</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-row-major-vs-column-major-order">Pros and cons of Row-major vs Column-major order</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#row-major-order">Row-major order</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#column-major-order">Column-major order</a></li>
-</ul>
-</li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modern-row-and-columnar-formats">Modern Row and Columnar Formats</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#text-vs-binary-formats">Text vs Binary Formats</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-storage-in-machine-learning-systems">Data Storage in Machine Learning Systems</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-storage-options">Data Storage Options</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-lake">Data Lake</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-warehouse">Data Warehouse</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-lakehouse">Data Lakehouse</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#delta-lake">Delta Lake</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sql-vs-nosql">SQL vs NoSQL</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-database-a-high-dimensional-playground-for-large-language-models">Vector Database (A High-dimensional Playground for Large Language Models)</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#transformation-and-embeddings">Transformation and Embeddings</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-power-of-similarity-search">The Power of Similarity Search</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-working-mechanism">The Working Mechanism</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases-from-nlp-to-recommendation-systems">Use Cases: From NLP to Recommendation Systems</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-new-kid-in-town">The New Kid in Town</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-processing-vs-stream-processing-todo-as-not-familiar-with-stream-processing">Batch Processing vs. Stream Processing (TODO as not familiar with stream processing)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
