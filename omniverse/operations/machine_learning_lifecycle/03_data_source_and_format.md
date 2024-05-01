@@ -29,59 +29,52 @@ kernelspec:
 
 ## Identify and Scope the Data Source
 
+In this stage, we identify and scope the data source. This involves determining
+the type of data, locating the data, assessing accessibility and compliance,
+gauging the data volume, and understanding data characteristics.
+
 ### Intuition (What comes before Data Extraction?)
 
 As we have seen in the pipeline and subsequently, the ELT/ETL framework, the
 first step is data extraction. However, before we can extract data, we need to
-first identify the data source and scope it. This is a critical step in the
-pipeline, as it lays the foundation for the rest of the pipeline. If the data
-source is not correctly identified and scoped, it could lead to a lot of wasted
-time and effort down the line.
+first identify the data source and scope it.
 
 In what follows, we will discuss the steps involved in identifying and scoping
 the data source, as well as the tools and methods for extracting data from the
 source.
 
-Consequently, the correct identification and meticulous scoping of the data
-source form the bedrock of the entire pipeline.
-
-In what follows, we will discuss the steps involved in identifying and scoping
-the data source.
-
 ### Steps to Identify and Scope the Data Source
 
-#### A. Define the Type of Data
+```{list-table} Table of Steps to Identify and Scope the Data Source
+:header-rows: 1
+:name: ml-lifecycle-03-steps-identify-scope-data-source
 
--   **Action**: Determine whether the data is numerical, categorical,
-    time-series, text-based, images, or audio.
--   **Rationale**: Facilitates the formulation of the appropriate strategy for
-    data collection.
-
-#### B. Locate the Data
-
--   **Action**: Identify the location, such as databases (SQL or NoSQL), APIs,
-    log files, Excel or CSV files, etc.
--   **Rationale**: Enables the selection of the suitable tools and methods for
-    extraction.
-
-#### C. Assess Accessibility and Compliance
-
--   **Action**: Understand permissions, authentication, privacy concerns, and
-    restrictions on data extraction.
--   **Rationale**: Ensures adherence to legal and organizational policies.
-
-#### D. Gauge the Data Volume
-
--   **Action**: Determine the size of the dataset.
--   **Rationale**: Influences the choice of tools for extraction and impacts the
-    entire ML model design process.
-
-#### E. Understand Data Characteristics
-
--   **Action**: Recognize and address special characteristics, including
-    potential malformatting, privacy regulations, etc.
--   **Rationale**: Facilitates proper processing, validation, and utilization of
-    the data.
+-   -   Step
+    -   Action
+    -   Rationale
+-   -   Define the Type of Data
+    -   Determine whether the data is numerical, categorical, time-series,
+        text-based, images, or audio.
+    -   This can affect the model design and the choice of data sources.
+-   -   Locate the Data
+    -   Identify the location, such as databases (SQL or NoSQL), APIs, log
+        files, Excel or CSV files, etc.
+    -   Enables the selection of the suitable tools and methods for extraction.
+-   -   Assess Accessibility and Compliance
+    -   Understand permissions, authentication, privacy concerns, and
+        restrictions on data extraction.
+    -   Ensures adherence to legal and organizational policies.
+-   -   Gauge the Data Volume
+    -   Determine the size of the dataset.
+    -   Influences the choice of tools for extraction and storage. This is
+        important because large dataset need to be stored in a way that is
+        efficient and scalable.
+-   -   Understand Data Characteristics
+    -   Recognize and address special characteristics, for example, if you are
+        collecting images of apples for classification, you need to be sure
+        that the images have say, in RGB format, and not in grayscale.
+    -   Facilitates proper processing, validation, and utilization of the data.
+```
 
 ### Data Types in Machine Learning Systems
 
@@ -93,51 +86,9 @@ best suited to provide this specific type of data.
 
 For example, if we are working with time-series data, our data sources might be
 sensors, logs, or financial market feeds. If we are dealing with textual data,
-the sources might be documents, websites, or social media platforms. By first
-defining the data types, we align our subsequent exploration and selection of
-data sources with the inherent characteristics of the data we aim to analyze.
-This helps in ensuring compatibility and efficiency in the entire data
-acquisition and preparation process, forming a cohesive link between what type
-of data we need (data types) and where we can find it (data source).
+the sources might be documents, websites, or social media platforms.
 
-Here's a brief overview of the different types of data in the form of a
-graph/tree diagram:
-
-```mermaid
-graph TD
-    Main["Main Types"]
-    Structured["Structured Data"]
-    SemiStructured["Semi-Structured Data"]
-    Unstructured["Unstructured Data"]
-
-    Main --> Structured
-    Main --> SemiStructured
-    Main --> Unstructured
-
-    Structured --> Numerical["Numerical Data"]
-    Structured --> Categorical["Categorical Data"]
-    Structured --> TimeSeries["Time-Series Data"]
-    Structured --> Geospatial["Geospatial Data"]
-    Structured --> Boolean["Boolean Data"]
-
-    SemiStructured --> Multimodal["Multimodal Data"]
-    SemiStructured --> Graph["Graph Data"]
-    SemiStructured --> Mixed["Mixed Data Types"]
-
-    Unstructured --> TextBased["Text-Based Data"]
-    Unstructured --> Image["Image Data"]
-    Unstructured --> Audio["Audio Data"]
-    Unstructured --> Binary["Binary Data"]
-    Unstructured --> Embeddings["Embeddings"]
-
-    Numerical --> Continuous["Continuous Data"]
-    Numerical --> Discrete["Discrete Data"]
-
-    Categorical --> Nominal["Nominal Data"]
-    Categorical --> Ordinal["Ordinal Data"]
-```
-
-and the corresponding table:
+Here's a brief overview of the different types of data in the form of a table.
 
 | Main Type                | Subtype          | Specific Types       | Description                                                                    |
 | ------------------------ | ---------------- | -------------------- | ------------------------------------------------------------------------------ |
@@ -194,33 +145,14 @@ types of data they typically provide:
 | **Third-Party Data Providers**   | Commercial Data Providers   | Market trends, consumer habits                                                                                                           |
 |                                  | Open Data Repositories      | [Kaggle](https://www.kaggle.com/), [UCI Machine Learning Repository](https://archive.ics.uci.edu/ml/index.php)                           |
 
-This categorization of data sources resonates with our prior discussion on data
-types. By recognizing the intricate relationships between **databases**,
-**file-based sources**, **web sources**, **streaming data sources**, and others,
-with the data types we're interested in, we are better positioned to select the
-optimal sources for our machine learning system. Whether it's time-series data
-from real-time feeds, textual data from web scraping, or image data from
-specific file formats, our data source selection now aligns with the strategic
-goals and technical requirements of the system.
-
 ## Data Formats in Machine Learning Systems
 
-### Intuition
-
-After understanding the various data types within the machine learning system,
-we arrive at the crucial aspect of data formats. Data formats play a vital role
-in determining how data is stored, processed, and communicated within the
-system. They also influence the efficiency of data retrieval and the ease of
-interoperability between different parts of the pipeline. Depending on the
-nature of the data, the chosen format can have a substantial impact on the
-performance and scalability of data-driven applications. In the following
-section, we'll delve into various data formats and their relevance to machine
-learning systems, highlighting the importance of selecting appropriate formats
-in alignment with specific requirements and constraints.
-
 In other words, once you scope the data source and data types, and manage to
-extract them, you need to store it in a format that is easy to work with.
-Storing data isn't straightforward because data can be of different types.
+extract them, you need to store it in a format that is easy to work with. By
+easy I mean that the data should be easily accessible, scalable, and efficient
+to work with. As such, storing data isn't straightforward because data can be of
+different types and one must be experienced or knowledgeable enough to know what
+storage to use when storing data of a particular type.
 
 Some questions to ask when choosing a data format:
 
@@ -230,59 +162,30 @@ Some questions to ask when choosing a data format:
     devices (e.g. mobile phones, web browsers, etc.). In ML, it can be GPU, CPU,
     etc.
 
-### Example: Sharding in Hugging Face
+### Distributed Data Parallelism And Data Sharding
 
-**Sharding** refers to dividing a large dataset into smaller, more manageable
-parts or "shards." Each shard can be processed independently, allowing for
-parallelism and more efficient utilization of resources. Sharding is
-particularly relevant when working with large-scale models that require
-extensive training data.
+Sometimes data is too large to fit into a single machine's memory. In such
+cases, we can use distributed data parallelism (DDP) and data sharding to
+distribute the data across multiple machines. In DDP the model and trainer are
+replicated across multiple instances/nodes/ranks and each instance processes a
+different subset of the data. In this case, data sharding is often necessary in
+DDP to ensure that each process (or GPU) gets a unique subset of the data during
+each training iteration. Each process needs to handle a different portion of the
+data to ensure diversity in learning across replicas and prevent data
+redundancy, which can skew the learning process.
 
-For instance, if you were to train a model using Hugging Face's Transformers
-library on a vast corpus of text data, you might encounter challenges in loading
-and processing the entire dataset at once. By employing sharding, you could
-break down the corpus into smaller shards, each stored in a specific data format
-like TensorFlow's TFRecord or PyTorch's data loader format.
+In practice, data loaders that are DDP-aware (like those in PyTorch)
+automatically shard the dataset across the available GPUs. For instance, if you
+have a dataset of 1000 samples and 10 GPUs, each GPU might be assigned 100
+unique samples per iteration. This distribution ensures that all the data gets
+utilized without overlap between GPUs (their sampler ensures that each GPU gets
+a unique subset of the data).
 
-Here's how sharding might be implemented in this scenario:
-
-1. **Divide the Data**: Split the entire corpus into smaller parts, each
-   representing a shard. The division could be based on logical segments like
-   chapters, documents, or fixed-size chunks.
-
-2. **Choose a Data Format**: Select an appropriate data format for the shards.
-   TFRecord is a common choice for TensorFlow, while PyTorch users might prefer
-   its native data handling.
-
-3. **Process Shards Independently**: Each shard can be loaded and processed
-   independently, allowing for parallel processing. This enables efficient data
-   handling, especially when using distributed computing resources.
-
-4. **Assemble Results**: After processing the individual shards, the results can
-   be assembled to form the complete dataset or model parameters.
-
-This approach leverages data sharding and specific data formats to provide a
-scalable and flexible method for working with extensive datasets in Hugging
-Face. It's an illustrative example of how data formats, coupled with effective
-data engineering practices, can profoundly impact the efficiency and scalability
-of machine learning workflows.
-
-Moral of the story is, you cannot just store data in any format. You need to
-think you multiple aspects of the data and the system before choosing a data
-format. Most of the times, we want **efficient** and **scalable** data formats.
-
-Certainly! While the initial example provided is a straightforward way to store
-multimodal data (images and text), it may lack some rigor and scalability. In a
-real-world setting, particularly for large-scale e-commerce platforms, a more
-robust approach would be necessary.
-
-### Example: Multimodal Data Storage for E-Commerce
+### An Example on Multimodal Data Storage For E-Commerce
 
 In e-commerce platforms, product pages often contain rich multimedia
 information, including images and corresponding textual descriptions. Storing
-and retrieving this information efficiently requires careful design.
-
-One robust approach might involve:
+and retrieving this information efficiently can involve the following.
 
 1. **Storing Images in a Binary Format**: Rather than embedding the raw image
    tensor within a data structure, it's often more efficient to store the image
@@ -298,7 +201,7 @@ One robust approach might involve:
    This schema acts as a bridge between the two data types, allowing them to be
    treated as a cohesive unit.
 
-Here's an example code snippet that reflects this design:
+Consider the below code snippet:
 
 ```python title="Sample Data Schema Encoding Image and Text"
 sample_data_schema = {
@@ -329,14 +232,6 @@ This design offers several advantages:
     storage for text, this approach can scale to handle large product catalogs.
 -   **Efficiency**: Leveraging specialized storage mechanisms for different data
     types ensures that retrieval and updates are efficient.
--   **Flexibility**: A unified schema provides a consistent way to represent and
-    manipulate text-image pairs, while still allowing for customization and
-    extension as needed.
-
-Overall, this example demonstrates a more rigorous and practical approach to
-storing and managing multimodal data in a context such as an e-commerce
-platform. It illustrates the interplay between data formats, storage mechanisms,
-and data modeling in handling complex, multifaceted information.
 
 ### Data Formats
 
@@ -388,8 +283,7 @@ configuration files to complex machine learning model inputs and outputs.
 
 Furthermore, JSON has extensive support in many programming languages, with
 built-in libraries or third-party packages available for parsing and generating
-JSON data. This widespread support makes it a convenient choice for developers
-working with machine learning systems and data pipelines.
+JSON data.
 
 In summary, JSON's human-readable format, easy parsing, support for complex data
 structures, and widespread language support make it an excellent choice for data
@@ -436,10 +330,10 @@ would be:
 
 Row-major and column-major order can make a difference in performance when
 accessing multi-dimensional arrays, especially for large arrays. For example,
-when accessing elements of a row in row-major order, consecutive elements are
-likely to be cached together, which can improve access time. Similarly, when
-accessing elements of a column in column-major order, consecutive elements are
-likely to be cached together, which can improve performance.
+when accessing elements of a row in row-major order, consecutive elements of the
+row are likely to be cached together, which can improve access time. Similarly,
+when accessing elements of a column in column-major order, consecutive elements
+in the column are likely to be cached together, which can improve performance.
 
 #### Pros and cons of Row-major vs Column-major order
 
@@ -495,9 +389,7 @@ likely to be cached together, which can improve performance.
     or transpositions.
 
 Overall, the choice between row-major and column-major order depends on the
-specific use case and hardware architecture. For performance-critical
-applications, it may be worth experimenting with both orders to see which yields
-better results.
+specific use case and hardware architecture.
 
 #### Modern Row and Columnar Formats
 
@@ -547,27 +439,25 @@ which can significantly speed up data retrieval and processing.
 #### Examples in code (Python) of Row-major vs Column-major order and its effect on performance
 
 ```python
-import numpy as np
+import functools
 import time
+from typing import Any, Callable
 
+import numpy as np
+import numpy.typing as npt
 import pandas as pd
 
-from typing import Callable, TypeVar, Any
 
-F = TypeVar("F", bound=Callable[..., Any])
-
-
-def timer(func: F) -> F:
+def timer(func: Callable[..., Any]) -> Callable[..., Any]:
     """Timer decorator."""
 
+    @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
         elapsed_time = end_time - start_time
         print(f"{func.__name__} took {elapsed_time:.4f} seconds to execute.")
-        # print(f"{func.__name__} took {elapsed_time / 60:.4f} minutes to execute.")
-        # print(f"{func.__name__} took {elapsed_time / 60 / 60:.4f} hours to execute.")
         return result
 
     return wrapper
@@ -602,14 +492,14 @@ n_rows, n_cols = df_np.shape
 
 
 @timer
-def traverse_numpy_by_row(array: np.ndarray) -> None:
+def traverse_numpy_by_row(array: npt.NDArray[Any]) -> None:
     for row_idx in range(n_rows):
         for col_idx in range(n_cols):
             _ = array[row_idx, col_idx]
 
 
 @timer
-def traverse_numpy_by_column(array: np.ndarray) -> None:
+def traverse_numpy_by_column(array: npt.NDArray[Any]) -> None:
     for col_idx in range(n_cols):
         for row_idx in range(n_rows):
             _ = array[row_idx, col_idx]
@@ -636,12 +526,12 @@ files in terms of storage and processing speed. For example, AWS recommends
 using the Parquet format because it consumes up to 6x less storage and is up to
 2x faster to unload in Amazon S3 compared to text formats.
 
-!!! example "Text vs Binary" For example, if you want to store the number
-$1000000$, and if you store it in text file it takes 7 characters (1, 0, 0, 0,
-0, 0, 0), taking up 7 bytes of storage if 1 character is 1 byte. But if you
-store it in binary format as `int32`, then it takes 32 bits, which is 4 bytes.
+For example, if you want to store the number $1000000$, and if you store it in
+text file it takes 7 characters (1, 0, 0, 0, 0, 0, 0), taking up 7 bytes of
+storage if 1 character is 1 byte. But if you store it in binary format as
+`int32`, then it takes 32 bits, which is 4 bytes.
 
-## Data Storage in Machine Learning Systems
+## Workflow
 
 Once the data source is scoped and well-defined, before we even start extracting
 the data, we need to know what kind of data we are dealing with and **how** and
@@ -670,6 +560,10 @@ operations** you anticipate. For instance, if your data needs frequent updates,
 a database might be more suitable. If your data is largely static but needs to
 be read frequently, a file system might be a better choice.
 
-Your data storage decisions can greatly impact the efficiency of your data
-operations and the overall success of your machine learning project. Hence,
-careful planning and consideration are required in this stage.
+## References and Further Readings
+
+-   Huyen, Chip. "Chapter 3. Data Engineering Fundamentals." In Designing
+    Machine Learning Systems: An Iterative Process for Production-Ready
+    Applications, O'Reilly Media, Inc., 2022.
+-   Kleppmann, Martin. "Chapter 2. Data Models and Query Languages." In
+    Designing Data-Intensive Applications. Beijing: O'Reilly, 2017.
