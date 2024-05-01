@@ -44,7 +44,7 @@ refine it below.
 
 1. [Problem Formulation](01_problem_formulation.md)
 2. [Project Scoping](02_project_scoping.md)
-3. [Data Pipeline, Data Engineering and DataOps](03_data_pipeline_data_engineering_and_dataops.md)
+3. [Data Pipeline, Data Engineering and DataOps](03_dataops_pipeline.md)
 4. [Data Extraction](04_data_extraction.md): In this stage, you select and
    integrate the relevant data from various data sources for the ML task. **Data
    extraction** is crucial for ensuring that the AIOps system has access to all

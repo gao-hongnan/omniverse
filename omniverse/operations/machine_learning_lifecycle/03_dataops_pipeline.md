@@ -129,11 +129,9 @@ DataOps Lifecycle.
 [Deepak](https://www.linkedin.com/in/mr-deepak-bhardwaj)
 ```
 
-## Sample Workflow
-
-We will give a grossly simplified example of a data engineering workflow. This
-by no means represent the actual (and often much more complex) workflow in the
-industry, however, it should give you a good idea of the general process.
+We will now give a grossly simplified example of a data engineering workflow.
+This by no means represent the actual (and often much more complex) workflow in
+the industry, however, it should give you a good idea of the general process.
 
 ### Staging/Experiment/Development
 
@@ -462,10 +460,10 @@ specific validation can be done at the BigQuery layer.
     and inference. For example, it might also be used for business reporting,
     exploratory data analysis, or statistical studies.
 
--   By maintaining a general-purpose transformed data layer, the pipeline
-    ensures that a broad array of users and applications can benefit from the
-    data cleaning and transformation efforts, enhancing overall data usability
-    and efficiency within the organization.
+By maintaining a general-purpose transformed data layer, the pipeline ensures
+that a broad array of users and applications can benefit from the data cleaning
+and transformation efforts, enhancing overall data usability and efficiency
+within the organization.
 
 ```python
 class Transformation:
@@ -483,28 +481,24 @@ class Transformation:
 
     def clean_data(self, data: Any) -> Any:
         """Identify and correct errors and inconsistencies in the data."""
-        # Logic for handling missing values, duplicates, outliers, etc.
-        # Modify data as needed
+        self.logger.info("Logic for handling missing values, duplicates, outliers, etc.")
         return data
 
     def join_data(self, data1: Any, data2: Any) -> Any:
         """Combine related data from different sources or tables."""
-        # Logic to join data1 and data2
-        # Modify joined_data as needed
+        self.logger.info("Logic for joining data from multiple sources")
         return joined_data
 
     def aggregate_data(
-        self, data: Any, grouping_variables: list, aggregation_functions: dict
+        self, data: Any, grouping_variables: List[str], aggregation_functions: Dict[Any, Any]
     ) -> Any:
         """Group data and calculate aggregate measures."""
-        # Logic for grouping data by grouping_variables and applying aggregation_functions
-        # Modify aggregated_data as needed
+        self.logger.info("Logic for aggregating data")
         return aggregated_data
 
     def structure_data(self, data: Any) -> Any:
         """Format and organize the data for intended use cases."""
-        # Logic for creating derived variables, transforming data types, reshaping structure, etc.
-        # Modify structured_data as needed
+        self.logger.info("Logic for creating derived variables, transforming data types, reshaping structure, etc.")
         return structured_data
 
     def transform(self, data: Any) -> Any:
@@ -523,13 +517,12 @@ class Transformation:
             is_valid = self.validator.validate(data)
             if not is_valid:
                 self.logger.error("Validation failed for transformed data")
-                # Additional error handling logic...
-                return
+                return # or raise
 
         return data
 ```
 
-#### Step 6. **Data Validation After Transformation**
+#### Step 6. Data Validation After Transformation
 
 In step 5, we have another `validator` instance that validates the transformed
 data. The `validator` instance is passed to the `Transformation` class in the
@@ -540,7 +533,6 @@ if self.validator:
     is_valid = self.validator.validate(data)
     if not is_valid:
         self.logger.error("Validation failed for transformed data")
-        # Additional error handling logic...
         return
 ```
 
@@ -555,9 +547,9 @@ if self.validator:
 By now, we should already be able to tell that the data validation process is an
 integral part of the data pipeline. It's not just a one-time check at the
 beginning of the pipeline, but rather a continuous process that occurs at
-multiple stages throughout the pipeline.
+multiple stages throughout the pipeline. Phew, so much work!
 
-#### Step 7. **Load Transformed Data to Staging GCS and BigQuery**
+#### Step 7. Load Transformed Data to Staging GCS and BigQuery
 
 -   After the data transformation and validation, the resulting data is loaded
     back into the staging environment. This involves both Google Cloud Storage
@@ -585,56 +577,53 @@ multiple stages throughout the pipeline.
 
 We can automate the code without a DAG as well, so why DAG? Here's some reasons.
 
-1. **Scheduling and Automation**: Airflow provides built-in scheduling options.
-   You can define complex schedules in a standard way, allowing tasks to be run
-   at regular intervals, on specific dates, or in response to specific triggers.
-   Managing scheduling in a custom Python script can be more labor-intensive and
-   error-prone.
+```{list-table} Why DAG?
+:header-rows: 1
+:widths: 25 75
+:name: ml-lifecycle-03-why-dag
 
-2. **Parallel Execution and Resource Management**: Airflow allows for parallel
-   execution of tasks that don't depend on each other. It can efficiently manage
-   resources and distribute tasks across different workers, something that can
-   be complex and time-consuming to implement in a custom Python pipeline.
+-   -   Feature
+    -   Description
+-   -   Scheduling and Automation
+    -   Airflow provides built-in scheduling options. You can define complex
+        schedules in a standard way, allowing tasks to be run at regular
+        intervals, on specific dates, or in response to specific triggers.
+        Managing scheduling in a custom Python script can be more
+        labor-intensive and error-prone.
+-   -   Parallel Execution and Resource Management
+    -   Airflow allows for parallel execution of tasks that don't depend on each
+        other. It can efficiently manage resources and distribute tasks across
+        different workers, something that can be complex and time-consuming to
+        implement in a custom Python pipeline.
+-   -   Monitoring and Logging
+    -   Airflow provides a user-friendly web interface that includes detailed
+        logs, visualizations of DAG runs, task status information, and more.
+        Building such comprehensive monitoring and logging capabilities into a
+        custom Python pipeline would require significant development effort.
+-   -   Error Handling and Retries
+    -   Airflow offers standard mechanisms for handling task failures, including
+        retries with backoff, notifications, etc. Implementing similar robust
+        error handling in a custom Python pipeline might require substantial
+        work.
+-   -   Integration with Various Tools
+    -   Airflow has a rich ecosystem of operators that facilitate integration
+        with various data sources, platforms, and tools. Implementing such
+        integrations manually in a custom Python script can be time-consuming
+        and less flexible.
+-   -   Scalability
+    -   Airflow is designed to run on distributed systems, making it easier to
+        scale up as data and processing requirements grow. Building scalability
+        into a custom Python pipeline might require extensive architectural
+        changes.
+```
 
-3. **Monitoring and Logging**: Airflow provides a user-friendly web interface
-   that includes detailed logs, visualizations of DAG runs, task status
-   information, and more. Building such comprehensive monitoring and logging
-   capabilities into a custom Python pipeline would require significant
-   development effort.
+Airflow however is a complex tool, and if the use case is simple, it might be
+overkill - or one can argue if use case is simple, then the underlying DAG might
+be simple as well. One key thing of Airflow is the observability and monitoring
+capabilities it provides, which is crucial. Imagine a cronjob failing and you
+have no idea why, and you have to dig through logs to find out what happened.
 
-4. **Error Handling and Retries**: Airflow offers standard mechanisms for
-   handling task failures, including retries with backoff, notifications, etc.
-   Implementing similar robust error handling in a custom Python pipeline might
-   require substantial work.
-
-5. **Maintainability and Collaboration**: A DAG-based approach promotes
-   modularity and reusability. Tasks are often written as independent units,
-   making the codebase easier to understand, maintain, and collaborate on.
-   Custom Python pipelines might become monolithic and harder to maintain over
-   time.
-
-6. **Dynamic Workflow Creation**: Airflow allows for dynamically creating
-   workflows using conditional operators. Implementing similar dynamic behavior
-   in a custom Python pipeline could be more complex.
-
-7. **Integration with Various Tools**: Airflow has a rich ecosystem of operators
-   that facilitate integration with various data sources, platforms, and tools.
-   Implementing such integrations manually in a custom Python script can be
-   time-consuming and less flexible.
-
-8. **Scalability**: Airflow is designed to run on distributed systems, making it
-   easier to scale up as data and processing requirements grow. Building
-   scalability into a custom Python pipeline might require extensive
-   architectural changes.
-
-In summary, while building a custom Python pipeline provides full control and
-customization, it also means reinventing many wheels that workflow orchestration
-tools like Airflow have already addressed. Adopting a DAG-based approach
-leverages existing solutions for scheduling, monitoring, error handling,
-scalability, and more, which can lead to a more robust, maintainable, and
-efficient pipeline.
-
-#### Step 9. **Containerize the DAG**
+#### Step 9. Containerize the DAG
 
 Once your DAG or python code is ready, we can containerize it and deploy it.
 
@@ -647,7 +636,6 @@ ARG HOME_DIR=/pipeline-dataops
 ARG VENV_DIR=/opt
 ARG VENV_NAME=venv
 
-# Base image
 FROM python:${PYTHON_VERSION}-slim-buster as builder
 
 ARG CONTEXT_DIR
@@ -655,10 +643,8 @@ ARG HOME_DIR
 ARG VENV_DIR
 ARG VENV_NAME
 
-# Set work directory to /pipeline-dataops
 WORKDIR ${HOME_DIR}
 
-# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
@@ -668,7 +654,6 @@ RUN apt-get update && \
 RUN python -m venv ${VENV_DIR}/${VENV_NAME}
 ENV PATH="${VENV_DIR}/${VENV_NAME}/bin:$PATH"
 
-# Copy only requirements, to cache them in docker layer
 ARG REQUIREMENTS=requirements.txt
 ARG REQUIREMENTS_DEV=requirements_dev.txt
 COPY ./${CONTEXT_DIR}/${REQUIREMENTS} .
@@ -696,14 +681,12 @@ COPY --from=builder ${HOME_DIR} ${HOME_DIR}
 # Set the working directory inside the Docker container
 WORKDIR ${HOME_DIR}
 
-# Install jq
 RUN apt-get update && \
     apt-get install -y --no-install-recommends jq && \
     rm -rf /var/lib/apt/lists/*
 
 ENV PATH="${VENV_DIR}/${VENV_NAME}/bin:$PATH"
 
-# set git commit env
 ARG GIT_COMMIT_HASH
 ENV GIT_COMMIT_HASH=${GIT_COMMIT_HASH}
 
@@ -720,114 +703,116 @@ RUN chmod -R +x ${HOME_DIR}/scripts/docker
 CMD ["scripts/docker/entrypoint.sh"]
 ```
 
-#### Step 10. **Deploy the DAG** (Staging Environment)
+#### Step 10. Deploy the DAG (Staging Environment)
 
 After containerizing the DAG, we can deploy it. For instance, we can deploy it
 to a Kubernetes cluster on a `CronJob` resource.
 
-We will not go into the details of how to deploy a DAG to a Kubernetes cluster
-here.
+We will not go into the details of how to deploy a DAG to a somewhere like a
+Kubernetes cluster here - it is out of scope and can be a whole topic on its
+own.
 
-#### Step 11. **Trigger the DAG as part of a CI/CD pipeline**
+#### Step 11. Trigger the DAG as part of a CI/CD pipeline
 
-Suppose our data pipeline, hosted within a repository, needs modifications to
-its transformation logic. These alterations are initiated by the development
-team. Here's a thorough breakdown of the subsequent steps and their rationale:
+```{list-table} CI/CD Pipeline
+:header-rows: 1
+:name: ml-lifecycle-03-ci-cd-pipeline
 
-1. **Version Control**: All code related to data extraction, transformation, and
-   loading (ETL), as well as any related testing code and configuration files,
-   is stored in a version control system like DVC and Git. Any changes to the
-   code are tracked in this system.
-
-    - **Action**: The developer makes and commits the necessary code changes to
-      the version control system, such as Git.
-    - **Rationale**: Facilitates collaboration, versioning, and tracking
-      changes. Ensures that modifications are properly recorded and accessible
-      to other team members.
-
-2. **Trigger CI/CD Pipeline for Development**:
-
-    - **Action**: The commit automatically triggers the development Continuous
-      Integration/Continuous Deployment (CI/CD) pipeline.
-    - **Rationale**: Enables automated building and testing, ensuring that
-      changes are immediately evaluated for compatibility and correctness.
-
-3. **Continuous Integration**:
-
-    - **Action**: When changes are pushed to the version control system, this
-      triggers the Continuous Integration process. Tools such as GitHub Actions
-      can be used to automate this process.
-    - **Rationale**: The new code is merged with the main code base and
-      automated tests are run to ensure that the changes do not break existing
-      functionality.
-
-4. **Continuous Integration: Unit and Integration Tests**:
-
-    - **Action**: The code changes are subjected to unit tests (testing
-      individual components) and integration tests (testing interactions between
-      components).
-    - **Rationale**: Ensures that the code performs as expected at both the
-      component and system levels, minimizing the risk of introducing new bugs.
-
-5. **Continuous Integration: Build Image of the DAG**:
-
-    - **Action**: Once the code level changes passed the unit and integration
-      tests. An image of the updated DAG, containing all necessary dependencies
-      and configurations, is built.
-    - **Rationale**: The image will simplifies deployment and scaling by
-      encapsulating the entire application into a single deployable unit. But at
-      this stage, we want to test run the image to ensure that it works as
-      expected.
-
-6. **Continuous Integration: System Tests**:
-
-    - **Action**: The whole Directed Acyclic Graph (DAG), packaged into an
-      image, is tested to ensure that the entire pipeline, with the updated
-      transformation logic, provides the correct output.
-    - **Rationale**: Validates that the entire system functions correctly,
-      confirming that changes did not inadvertently disrupt other parts of the
-      pipeline.
-
-7. **Continuous Deployment: Push Image to (Staging) Artifacts Registry**:
-
-    - **Action**: The built image is pushed to a designated artifacts registry,
-      such as Docker Hub or a private registry.
-    - **Rationale**: Stores the deployable image in a centralized location,
-      making it easily accessible for subsequent deployment stages. Allows for
-      version control and rollback capabilities of deployed images.
-
-8. **Continuous Deployment: Deploy Image to Staging Environment**:
-
-    - **Action**: The image is deployed to the staging environment, where it is
-      tested to ensure that it functions as expected.
-    - **Rationale**: Validates that the image is deployable and performs as
-      expected in a production-like environment.
-
-9. **Continuous Deployment: Performance Tests**:
-
-    - **Action**: In this stage, the data pipelines are tested under simulated
-      production load.
-    - **Rationale**: The purpose of this testing is to identify any performance
-      bottlenecks or issues that could affect the data pipeline's performance in
-      production.
-
-10. **Trigger Message to Pub/Sub**
-
-    - Once the previous steps passed, and the DAG potentially built and
-      pushed/deployed to the staging area, a message is sent to Pub/Sub. This
-      message triggers the next step in the pipeline, which is moving the data
-      to the production layer.
-    - Next in the pipeline, once the transformed and validated data in the
-      staging layer has been confirmed to be accurate and ready for use, it
-      would then be moved to the production layer.
+-   -   Step
+    -   Description
+    -   Action
+    -   Rationale
+-   -   Version Control
+    -   All code related to data extraction, transformation, and loading (ETL),
+        as well as any related testing code and configuration files, is stored
+        in a version control system like DVC and Git.
+    -   The developer makes and commits the necessary code changes to the
+        version control system, such as Git.
+    -   Facilitates collaboration, versioning, and tracking changes. This is
+        usually the first trigger in the CI/CD pipeline.
+-   -   Trigger CI/CD Pipeline for Development
+    -   The commit automatically triggers the development Continuous
+        Integration/Continuous Deployment (CI/CD) pipeline.
+    -   The commit automatically triggers the development CI/CD pipeline.
+    -   Enables automated building and testing, ensuring that changes are
+        immediately evaluated for compatibility and correctness.
+-   -   Continuous Integration
+    -   When changes are pushed to the version control system, this triggers the
+        Continuous Integration process. Things like linting, type checking, unit
+        tests, etc. are run.
+    -   When changes are pushed to the version control system, this triggers the
+        Continuous Integration process. Tools such as GitHub Actions can be used
+        to automate this process.
+    -   The new code is merged with the main code base and automated tests are
+        run to ensure that the changes do not break existing functionality.
+-   -   Continuous Integration: Unit and Integration Tests
+    -   The code changes are subjected to unit tests and integration tests.
+    -   The code changes are subjected to unit tests (testing individual
+        components) and integration tests (testing interactions between
+        components).
+    -   Ensures that the code performs as expected at both the component and
+        system levels, minimizing the risk of introducing new bugs.
+-   -   Continuous Integration: Build Image of the DAG
+    -   Once the code level changes passed the unit and integration tests. An
+        image of the updated DAG, containing all necessary dependencies and
+        configurations, is built.
+    -   Once the code level changes passed the unit and integration tests, an
+        image of the updated DAG is built.
+    -   The image simplifies deployment and scaling by encapsulating the entire
+        application into a single deployable unit. At this stage, the image is
+        test-run to ensure it works as expected.
+-   -   Continuous Integration: System Tests
+    -   The whole Directed Acyclic Graph (DAG), packaged into an image, is
+        tested to ensure that the entire pipeline, with the updated
+        transformation logic, provides the correct output.
+    -   The whole DAG, packaged into an image, is tested.
+    -   Validates that the entire system functions correctly, confirming that
+        changes did not inadvertently disrupt other parts of the pipeline.
+        We usually do system test separately from unit and integration tests
+        because it might require more resources and time.
+-   -   Continuous Deployment: Push Image to (Staging) Artifacts Registry
+    -   The built image is pushed to a designated artifacts registry, such as
+        Docker Hub or a private registry.
+    -   The built image is pushed to a designated artifacts registry.
+    -   Stores the deployable image in a centralized location, making it easily
+        accessible for subsequent deployment stages. Allows for version control
+        and rollback capabilities of deployed images.
+-   -   Continuous Deployment: Deploy Image to Staging Environment
+    -   The image is deployed to the staging environment, where it is tested to
+        ensure that it functions as expected.
+    -   The image is deployed to the staging environment.
+    -   Validates that the image is deployable and performs as expected in a
+        production-like environment.
+-   -   Continuous Deployment: Performance Tests
+    -   The data pipelines are tested under simulated production load.
+    -   The data pipelines are tested under simulated production load.
+    -   Identifies any performance bottlenecks or issues that could affect the
+        data pipeline's performance in production.
+-   -   Trigger Message to Pub/Sub
+    -   After successful deployment in the staging environment, a
+        message is triggered to a Pub/Sub system to notify other services or
+        systems.
+    -   A message is sent to a designated Pub/Sub service, such as Google Cloud
+        Pub/Sub or Apache Kafka, to signify the completion of deployment or to
+        kick off subsequent processes such as deployment to production
+        environment.
+    -   Ensures downstream systems or services are notified of the pipeline's
+        status, facilitating automated workflows and integrations across
+        different parts of the infrastructure. In our example, the trigger will
+        lead us to deploy the application to the production environment since
+        the data pipeline is well validated and tested in the staging
+        environment.
+```
 
 ### Production Layer
 
-#### 1. **Triggering the Production Deployment Pipeline**
+#### Step 1. Triggering the Production Deployment Pipeline
 
 -   **Action**:
-    -   A success message from the development pipeline is sent to Pub/Sub,
-        triggering the CI/CD pipeline.
+    -   A success message from the development pipeline in the staging
+        environment is sent to Pub/Sub, triggering the CI/CD pipeline. The logic
+        can be as simple as if the staging pipeline is successful, then trigger
+        the production pipeline.
     -   The production deployment pipeline is initiated.
     -   A manual approval process typically confirms the deployment to
         production.
@@ -835,17 +820,19 @@ team. Here's a thorough breakdown of the subsequent steps and their rationale:
     -   Enables automatic transition from development to production stages.
     -   Ensures human oversight and control over what gets deployed.
 
-#### 2. **CI/CD: Deploy Image to Production Environment**
+#### Step 2. CI/CD: Deploy Image to Production Environment
 
 Basically, the same steps as in the staging environment, but this time the image
 is deployed to the production environment.
 
-We can however have some additional steps such as monitoring and feedback loops.
+We can have some additional steps such as monitoring and feedback loops.
 
-#### Monitoring and Alerting
+##### Monitoring and Alerting
 
-This step will not be covered in details, as we will have a dedicated section at
-stage 11/12/13 later.
+This step will not be covered in details as it is out of scope for this post,
+but will be discussed in the later stages. Monitoring is a big thing in Machine
+Learning because not only do we monitor for system health, we also monitor for
+data quality and data drift.
 
 Once deployed, the data pipelines are continuously monitored to ensure they are
 functioning correctly. This can involve tracking metrics such as data quality,
@@ -862,11 +849,11 @@ alerts for immediate response.
 -   Quickly detects and alerts to any changes in the data distribution, which
     could impact model performance or other downstream applications.
 
-#### Feedback Loop
+##### Feedback Loop
 
-**Feedback loop** refers to insights from monitoring and any errors encountered
-in production are fed back into the development process, leading to new
-iterations of development, testing, and deployment.
+This refers to insights from monitoring and any errors encountered in production
+are fed back into the development process, leading to new iterations of
+development, testing, and deployment.
 
 ### Summary
 
@@ -888,7 +875,13 @@ data is extracted, cleaned, and made ready for use in our ML models. Each step
 is designed to ensure the integrity and usability of the data, from extraction
 to querying for model training and inference.
 
-## The Evolution of Data Engineering
+As a reminder, this is highly simplified and the actual process can be much more
+complex. For example, we simply assumed GCS and BigQuery, but in reality, you
+might have multiple data sources and destinations and even multiple data lakes
+and warehouses. The key is to understand the principles and adapt them to your
+needs.
+
+## The Evolution of Data Engineering (Don't Quote Me On This!)
 
 With the basic understanding of **Data Engineering** and its essential role in
 **Machine Learning**, it's important to recognize the evolution of data handling
@@ -899,19 +892,18 @@ collecting, processing, and storing data in a structured manner.
 However, the modern era of data-driven applications demands a more agile and
 responsive approach. This is where **DataOps**, encompassing principles of
 **Continuous Integration/Continuous Deployment (CI/CD)**, comes into play. The
-process builds on the ETL framework but enriches it with automation,
-collaboration, monitoring, and quality assurance, forming a more holistic and
-dynamic system.
+process builds on the ETL framework but now with automation, collaboration,
+monitoring, and quality assurance.
 
 In traditional ETL or ELT processes, the main focus is on extracting data from
 various sources, transforming it into the required format, and then loading it
 into a target system. These processes are typically batch-oriented and can be
-run on schedules.
+run on schedules or triggered manually.
 
-In a CI/CD DataOps pipeline, the focus expands to encompass the entire data
-lifecycle and emphasizes automation, continuous integration, and continuous
-deployment. This means that the process not only includes the basic ETL or ELT
-steps but also involves:
+In a CI/CD DataOps pipeline, the focus expands to the entire data lifecycle and
+emphasizes automation, continuous integration, and continuous deployment. This
+means that the process not only includes the basic ETL or ELT steps but also
+involves:
 
 -   **Continuous Integration**: Automating the process of integrating code
     changes from multiple contributors into a shared repository, often followed
@@ -924,16 +916,6 @@ steps but also involves:
 -   **Testing and Quality Assurance**: Embedding rigorous testing within the
     pipeline to ensure data quality, integrity, and compliance with business
     rules.
--   **Collaboration and Version Control**: Encouraging collaboration between
-    different roles such as data scientists, engineers, and analysts, and using
-    version control to manage changes.
-
-The integration of these additional steps turns the data handling process into a
-more agile, responsive, and reliable system. It aligns more closely with modern
-development practices and the dynamic nature of data-driven applications. Thus,
-a CI/CD DataOps pipeline represents a more holistic approach to data management
-and can be viewed as an ETL or ELT process enriched with contemporary practices
-to cater to today's complex and fast-paced data environments.
 
 ## The ETL/ELT Framework
 
@@ -1848,8 +1830,11 @@ alternatives or complements to ETL.
 
 ## References and Further Readings
 
--   [GAOHN: DataOps Documentation](../dataops/architecture.md)
--   [Data Engineering Fundamentals](../../designing_machine_learning_systems/03_data_engineering_fundamentals.md)
+-   Huyen, Chip. "Chapter 3. Data Engineering Fundamentals." In Designing
+    Machine Learning Systems: An Iterative Process for Production-Ready
+    Applications, O'Reilly Media, Inc., 2022.
+-   Kleppmann, Martin. "Chapter 2. Data Models and Query Languages." In
+    Designing Data-Intensive Applications. Beijing: O'Reilly, 2017.
 -   [Microsoft: What is a Vector DB?](https://learn.microsoft.com/en-us/semantic-kernel/memories/vector-db)
 -   [Machine Learning System Design Interview](https://bytebytego.com/intro/machine-learning-system-design-interview)
 -   [Madewithml: Data Engineering](https://madewithml.com/courses/mlops/data-stack/)
