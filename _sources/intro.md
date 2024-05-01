@@ -4,6 +4,7 @@ Welcome to the Omniverse, a vast expanse of knowledge spanning various domains
 of science, technology, and mathematics. Let's embark on this cosmic journey!
 
 ```{tableofcontents}
+
 ```
 
 ## 🤖 [Machine Learning](https://en.wikipedia.org/wiki/Machine_learning)
@@ -38,9 +39,9 @@ making informed decisions and predictions in various sectors.
 **Probability** is the mathematical study of random events. It provides the
 theoretical foundation for
 **[statistics](https://en.wikipedia.org/wiki/Statistics)**, which in turn is
-essential for fields like data science and machine learning. Delve into the
-world of chance, randomness, and uncertainty, and understand how we can make
-sense of the unpredictable.
+essential for fields like data science and machine learning. Delve (thanks
+ChatGPT) into the world of chance, randomness, and uncertainty, and understand
+how we can make sense of the unpredictable.
 
 ## ➗ [Mathematics](https://en.wikipedia.org/wiki/Mathematics)
 

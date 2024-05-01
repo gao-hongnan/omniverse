@@ -431,7 +431,7 @@ The additional constraints from LeetCode serve the following purposes:
 
 ## Theoretical Best Time/Space Complexity and Space-Time Tradeoff
 
-This section presents a conundrum. Before delving into the algorithmic method,
+This section presents a conundrum. Before looking at the algorithmic method,
 it's often
 [_recommended_](https://www.techinterviewhandbook.org/software-engineering-interview-guide/)
 to have a rough intuition on the optimal time and space complexities and their
