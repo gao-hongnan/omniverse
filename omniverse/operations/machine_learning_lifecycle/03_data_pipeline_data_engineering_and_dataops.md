@@ -1,92 +1,86 @@
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
 # Stage 3. Data Pipeline (Data Engineering and DataOps)
 
-[TOC]
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
+
+```{contents}
+:local:
+```
 
 As we transition from the [**project scoping phase**](./02_project_scoping.md),
 where we framed the problem and identified **key metrics and components**, we
-step into the world of **data**, the backbone of any **AI** or **machine
-learning** solution. **Stage 3**, focusing on **Data Pipeline (Data Engineering
-and DataOps)**, delves into the intricate processes of **collecting**,
-**integrating**, **transforming**, and **managing data**. Here, we identify the
-**data sources**, ensure their **quality**, **preprocess** them for **downstream
-tasks such as machine learning**, and set up the **operations** needed for
-efficient handling. The **orchestration** of these elements enables the
-**seamless flow of data**, laying the foundation for **model training and
-validation**. In what follows, we explore each of these aspects, providing a
-**roadmap** for transforming **raw data** into a **valuable asset**, aligning
-with the **objectives** and **constraints** identified in the previous stages,
-and paving the way for the next stage: **model development**.
+now take a look at the DataOps phase. Even though data engineering and data
+operations are a whole different beast, we can at least look into the basic
+lifecycle of it - so at least when you converse with your precious data
+engineers, you know what they are talking about instead of acting like you know.
 
-## Introduction
+Intuitively and simply put (data engineers don't bash me), the data operations
+phase involves **collecting**, **integrating**, **transforming**, and **managing
+data**. Here, we identify the **data sources**, ensure their **quality**,
+**preprocess** them for **downstream tasks such as machine learning**, and set
+up the **operations** needed for **efficient** handling. Additionally, this
+phase involves setting up sophisticated data pipelines that ensure efficient,
+reliable, and scalable data flow across different stages, from ingestion to
+modeling. This involves leveraging technologies like distributed systems and
+cloud services to manage the vast volumes of data that modern enterprises
+typically handle.
 
-### Overview of Data Engineering
+I won't act as if I know the in-depth details of data engineering (yes my data
+engineers helped me load terabytes of data for pretraining and without them I am
+jobless), but this post is to draw some reference from those who know. So, let's
+dive in.
 
-**Data Engineering** is a vital field that focuses on the practical application
-of data collection and data transformation. It encompasses the **rigorous**
-processes of gathering, cleaning, and organizing data from various
-**[sources](https://en.wikipedia.org/wiki/Data_source)**, preparing it for
-analytical or operational uses. Data Engineers are responsible for constructing
-**[data architectures](https://en.wikipedia.org/wiki/Data_architecture)**,
-**[databases](https://en.wikipedia.org/wiki/Database)**, and
-**[processing systems](https://en.wikipedia.org/wiki/Data_processing)**,
-enabling the **seamless flow** of information through the organization.
+## Data Engineering In Machine Learning
 
-This field serves as the backbone of modern
-**[business intelligence](https://en.wikipedia.org/wiki/Business_intelligence)**,
-providing the raw material for insights and decision-making. It integrates data
-from various domains and ensures that it is accurate, consistent, and available
-to data analysts, data scientists, and other stakeholders.
+**Machine learning models** require require data. And from the GPT-2 paper named
+_Language Models are Unsupervised Multitask Learners_, the authors mentioned
+that one major key to the success of their model is the **quantity** and
+**quality** of the data used for training. They have to preprocess the data
+before feeding it into the model, and imagine the amount of data engineering
+work behind the scenes in order to automate and scale the process.
 
-### Importance in Machine Learning
+From data collection, data preprocessing, feature engineering, data
+transformation, data validation, data versioning, and data pipeline setup, data
+engineering is not just about cleaning the data, you have to ensure that the
+data is accessible easily and efficiently.
 
-In the context of
-**[machine learning](https://en.wikipedia.org/wiki/Machine_learning)**, data
-engineering plays a pivotal role. **Machine learning models** require
-**high-quality data** that reflects the complexity and variability of the real
-world. This necessitates careful
-**[data collection](https://en.wikipedia.org/wiki/Data_collection)**,
-**[data preprocessing](https://en.wikipedia.org/wiki/Data_pre-processing)**,
-**[feature engineering](https://en.wikipedia.org/wiki/Feature_engineering)**,
-and
-**[data transformation](<https://en.wikipedia.org/wiki/Data_transformation_(computing)>)**,
-processes all falling under the purview of data engineering.
+They establish **[data pipelines](https://en.wikipedia.org/wiki/Data_pipeline)**
+that automate the flow of data from source to destination, allowing for
+continuous integration and real-time processing. So yes, not only is MLOps all
+the hype, but DataOps is also a critical part of the machine learning lifecycle.
 
-**Data Engineers** work closely with
-**[Data Scientists](https://en.wikipedia.org/wiki/Data_science)** and
-**[Machine Learning Engineers](https://en.wikipedia.org/wiki/Machine_learning_engineering)**
-to ensure that the data used for model training and validation is relevant,
-clean, and properly formatted. They establish
-**[data pipelines](https://en.wikipedia.org/wiki/Data_pipeline)** that automate
-the flow of data from source to destination, allowing for continuous integration
-and real-time processing. Without the foundational work of data engineering, the
-development and deployment of machine learning models would be hindered,
-impacting the overall efficiency, accuracy, and effectiveness of the system.
+## A Naive DataOps Pipeline
 
-In summary, data engineering acts as the bridge between raw data, whether
-structured or unstructured, and the refined data necessary for
-**[data analysis](https://en.wikipedia.org/wiki/Data_analysis)**,
-**[model training](https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets)**,
-and **[model deployment](https://en.wikipedia.org/wiki/Model_deployment)**. It
-ensures that data is accessible, usable, and valuable, driving the
-**[data-driven decisions](https://en.wikipedia.org/wiki/Data-driven_decision_management)**
-that underpin modern businesses and technological innovations. While structured
-data often plays a significant role, unstructured data is also vital in contexts
-such as natural language processing and LLMs. Data engineering is not just a
-supporting function; it's a critical enabler of machine learning, artificial
-intelligence, and the broader landscape of
-**[data science](https://en.wikipedia.org/wiki/Data_science)**.
+In this section we outline a very naive and simple workflow of a data
+engineering pipeline. This is meant to give you a high-level overview of the
+process, and by no means encapsulates the complexity of a real-world data
+engineering workflow. Things like big data paradigms like Hadoop, Spark, and
+distributed systems are not covered here.
 
-## Workflow
-
-### Overview
-
-Data engineering is a critical process in the data lifecycle that plays a
-foundational role in transforming raw data into valuable insights. This
-iterative process consists of several stages:
+DataOps's iterative process consists of several stages:
 
 1. **[Data Collection](https://en.wikipedia.org/wiki/Data_collection)**:
-   Identifying the relevant data sources and collecting the data, which serves
-   as the starting point of the data journey.
+   Identifying the relevant data sources and collecting the data.
 
 2. **Data Ingestion/Integration**: This stage consists of two major parts:
 
@@ -104,9 +98,7 @@ iterative process consists of several stages:
    data. Validation techniques can be applied in parallel with the data
    transformation stage or immediately after loading the raw data. By performing
    this step, one guarantees that the data adheres to the defined standards and
-   is suitable for further processing and analysis. The validation process can
-   involve checks for completeness, consistency, and accuracy, thus ensuring
-   that the data is both valid and usable.
+   is suitable for further processing and analysis.
 
 5. **CI/CD Integration**: Implementing
    [Continuous Integration/Continuous Deployment (CI/CD)](https://en.wikipedia.org/wiki/CI/CD)
@@ -120,23 +112,24 @@ executed in parallel or series, and the pipeline ensures that data transitions
 smoothly through the stages, maintaining consistency, efficiency, and
 scalability.
 
-In conclusion, the data engineering workflow is a multifaceted process essential
-for handling and preparing data for analysis and machine learning. By including
-processes such as extraction, loading, validation, and integration with CI/CD,
-this workflow transforms raw data into actionable insights, forming the backbone
-of intelligent decision-making in today's data-driven world.
-
 ### Architecture
 
 Here's a high-level overview of the data engineering workflow, in the form of a
 diagram:
 
-<figure markdown style="text-align:center;">
-  ![Image title](../assets/dataops-lifecycle.gif){ width="500" }
-  <figcaption>The iterative process of ML systems. Image Credit: <a href="https://www.linkedin.com/in/mr-deepak-bhardwaj">Deepak Bhardwaj</a>.</figcaption>
-</figure>
+```{figure} ./assets/dataops-lifecycle.gif
+---
+name: ml-lifecycle-03-dataops-lifecycle
+height: 400px
+---
 
-## Sample Workflow (TODO: Add a diagram corresponding to this)
+DataOps Lifecycle.
+
+**Image Credit:**
+[Deepak](https://www.linkedin.com/in/mr-deepak-bhardwaj)
+```
+
+## Sample Workflow
 
 We will give a grossly simplified example of a data engineering workflow. This
 by no means represent the actual (and often much more complex) workflow in the
@@ -153,7 +146,11 @@ industry, however, it should give you a good idea of the general process.
     production use. It is the environment where the code is used by the end
     users.
 
-#### Step 1. **Data Extraction**
+There are many more environments in a typical software development lifecycle,
+like QA, UAT, etc. However, for the sake of simplicity, we will focus on the
+staging and production environments.
+
+#### Step 1. Data Extraction
 
 -   Source data is identified and extracted from various internal and external
     databases and APIs.
@@ -166,6 +163,23 @@ industry, however, it should give you a good idea of the general process.
 A sample python DAG for this step is as follows:
 
 ```python
+from pydantic import BaseModel
+from abc import ABC, abstractmethod
+from typing import Optional, Any
+
+class Config(BaseModel):
+    ...
+
+class Logger(BaseModel):
+    ...
+
+class Connection(BaseModel):
+    ...
+
+class Metadata(BaseModel):
+    ...
+
+
 class Extract:
     def __init__(
         self, cfg: Config, logger: Logger, connection: Connection, metadata: Metadata
@@ -191,7 +205,7 @@ where
 -   `connection` is the connection object that represents the data source. It
     can be API, database, etc.
 
-#### Step 2. **Data Loading to Staging Lake**
+#### Step 2. Data Loading to Staging Lake
 
 Let's assume that we want to extract our data from a remote API and load it to a
 staging layer in Google Cloud Storage (GCS), where the GCS serves as the staging
@@ -202,6 +216,16 @@ Let's have a look a templated DAG for this step.
 First, we define a base class for the load process.
 
 ```python
+class Validator(ABC):
+    @abstractmethod
+    def validate(self, data: Any) -> bool:
+        """Validates the data. Returns True if valid, False otherwise."""
+
+class DVC(ABC):
+    @abstractmethod
+    def commit(self, message: str) -> None:
+        """Commits the changes to the DVC repository."""
+
 class Load(ABC):
     def __init__(
         self,
@@ -265,7 +289,9 @@ class LoadToLake(Load):
     This structure allows for easy tracking of the data's origin and timestamp,
     adhering to the common
     **[partitioning scheme](https://cloud.google.com/bigquery/docs/partitioned-tables)**
-    used in data storage.
+    used in data storage. We can also add commit hash if need be, but as we
+    shall see shortly, if we have a versioning tool like DVC, we can use that to
+    maintain the data's lineage.
 
 -   Even though the data is stored such that we can easily reference the data's
     origin and timestamp, there is a need to maintain a detailed record of the
@@ -299,10 +325,10 @@ What is the rationale in storing the data in GCS?
 -   **Interoperability**: GCS can serve multiple environments and tools, not
     just BigQuery, so it's a general-purpose storage solution.
 
-#### Step 3. **Loading Data to Staging Warehouse**
+#### Step 3. Loading Data to Staging Warehouse
 
 Now, once we have the data in the staging GCS, we can load it to staging
-BigQuery. This is done using the following DAG.
+BigQuery. This is done using the following.
 
 ```python
 class LoadToWarehouse(Load):
@@ -316,7 +342,8 @@ class LoadToWarehouse(Load):
 ```
 
 -   The data in the staging GCS is loaded into Google BigQuery for more advanced
-    processing and analysis.
+    processing and analysis. We are assuming the data is structured and ready
+    for loading into BigQuery.
 -   Data can be loaded using both write and append modes, allowing for
     incremental refreshes.
 -   Metadata such as `created_at` and `updated_at` timestamps are added to
@@ -343,18 +370,7 @@ layer?
     performance, making it suitable for interactive and ad-hoc queries,
     dashboards, and reports.
 
--   **Integration with Other GCP Services**: BigQuery integrates well with other
-    Google Cloud Platform services, allowing for more complex workflows and
-    automation.
-
--   **Access Control & Security**: BigQuery offers granular access controls and
-    strong security measures, suitable for sensitive or regulated data.
-
--   **Real-time Analysis**: If required, BigQuery can support real-time
-    analytics and streaming data, adding another layer of capability that might
-    not be as efficient in GCS.
-
-#### Step 4. **Data Validation After Extraction and Load**
+#### Step 4. Data Validation After Extraction and Load
 
 -   Once the data is extracted and loaded into the staging area in GCS or
     BigQuery, a preliminary data validation process is conducted.
@@ -385,7 +401,7 @@ interface.
 ```python
 class MySpecificValidator(Validator):
     def validate(self, data: Any) -> bool:
-        # Add logic here to check data's correctness, data types, etc.
+        """Add logic here to check data's correctness, data types, etc."""
         return is_valid
 ```
 
@@ -395,8 +411,6 @@ adds a validation step after loading to staging:
 
 ```python
 class Load(ABC):
-    # ... Constructor remains the same ...
-
     def load_to_staging(self) -> None:
         """Load data to staging."""
         # Loading logic here...
@@ -407,23 +421,19 @@ class Load(ABC):
             is_valid = self.validator.validate(data) # assuming data is what you want to validate
             if not is_valid:
                 self.logger.error("Validation failed for staging data")
-                # Additional error handling logic...
+                # Additional error handling logic like raise etc.
                 return
 
         self.logger.info("Load stage to staging complete")
-
-    # ... Other methods remain the same ...
 ```
 
 It's common in the industry to see a hybrid approach where basic validation is
-performed at the staging lake layer (GCS), followed by more intricate validation
-once the data is loaded into staging warehouse layer (BigQuery). This approach
-takes advantage of both layers, ensuring early detection and robust validation
-without over-complicating the process. It also aligns well with the principle of
-incrementally increasing complexity in data validation as data moves through the
-pipeline.
+performed at the staging lake layer (GCS), followed by more validation once the
+data is loaded into staging warehouse layer (BigQuery). For example, some
+obvious bad data can be filtered out at the GCS layer, while more complex and
+specific validation can be done at the BigQuery layer.
 
-#### Step 5. **Data Transformation**
+#### Step 5. Data Transformation
 
 -   In this step, the raw data from the staging area undergoes a series of
     transformation processes to be refined into a format suitable for downstream
@@ -1424,13 +1434,13 @@ numbers, booleans, objects, and arrays.
 
 ```json title="example.json"
 {
-	"name": "John",
-	"age": 30,
-	"cars": [
-		{ "name": "Ford", "models": ["Fiesta", "Focus", "Mustang"] },
-		{ "name": "BMW", "models": ["320", "X3", "X5"] },
-		{ "name": "Fiat", "models": ["500", "Panda"] }
-	]
+    "name": "John",
+    "age": 30,
+    "cars": [
+        { "name": "Ford", "models": ["Fiesta", "Focus", "Mustang"] },
+        { "name": "BMW", "models": ["320", "X3", "X5"] },
+        { "name": "Fiat", "models": ["500", "Panda"] }
+    ]
 }
 ```
 

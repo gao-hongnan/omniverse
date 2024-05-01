@@ -1,0 +1,29 @@
+Region: ap-southeast-1
+DevSettings:
+  Timeouts:
+    HeadNodeBootstrapTimeout: 1800 # default setting: 1800 seconds
+Image:
+  Os: ubuntu2004
+HeadNode:
+  InstanceType: c5.xlarge
+  Networking:
+    SubnetId: subnet-xxxxxxxxxxxxxxxxx
+  Ssh:
+    KeyName: <your-key-name>
+Scheduling:
+  Scheduler: slurm
+  SlurmQueues:
+  - Name: distributed-training
+    ComputeResources:
+    - Name: g4dn12xlarge
+      Instances:
+      - InstanceType: g4dn.12xlarge
+      MinCount: 2
+      MaxCount: 2
+      Efa:
+        Enabled: true
+    Networking:
+      PlacementGroup:
+        Enabled: true
+      SubnetIds:
+      - subnet-xxxxxxxxxxxxxxxxx

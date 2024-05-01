@@ -241,7 +241,7 @@ the right and 2 units down in a two-dimensional space.
 
 The concept of **_basis_** is central to this idea. A basis provides a frame of
 reference for describing vectors. Changing the basis is akin to changing the
-viewpoint but not the vector itself. At this juncture, delving deeply into the
+viewpoint but not the vector itself. At this juncture, diving deeply into the
 concept of basis might be overwhelming, but it's helpful to think of a basis as
 our point of reference. In our discussions, we are considering the origin as
 this reference point.

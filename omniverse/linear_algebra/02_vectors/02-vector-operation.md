@@ -400,7 +400,7 @@ plotter_sub.plot()
 
 ### Vector Addition is Commutative
 
-In the realm of linear algebra, before delving into the formal definition of a
+In the realm of linear algebra, before diving into the formal definition of a
 [**vector space over a field**](https://en.wikipedia.org/wiki/Vector_space),
 it's insightful to note a fundamental property of vector addition within such a
 context. Suppose we have a set of vectors $\mathcal{V}$ defined over a field
