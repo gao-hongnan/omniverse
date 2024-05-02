@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Stage 3. Data Source and Formats
+# Stage 3.1. Data Source and Formats
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -35,9 +35,9 @@ gauging the data volume, and understanding data characteristics.
 
 ### Intuition (What comes before Data Extraction?)
 
-As we have seen in the pipeline and subsequently, the ELT/ETL framework, the
-first step is data extraction. However, before we can extract data, we need to
-first identify the data source and scope it.
+As we have seen in the pipeline and in a later section, the ELT/ETL framework,
+the first step is data extraction. However, before we can extract data, we need
+to first identify the data source and scope it.
 
 In what follows, we will discuss the steps involved in identifying and scoping
 the data source, as well as the tools and methods for extracting data from the
