@@ -50,6 +50,8 @@ def init_process(
     # NOTE: knowing `nnodes`, `node_rank` and `nproc_per_node` is sufficient to derive most of other env.
     nnodes = args.nnodes
     nproc_per_node = args.nproc_per_node  # local_world_size
+
+    # NOTE: all these validations can be done via pydantic but for simplicity we do it here.
     if torch.cuda.is_available():
         assert nproc_per_node == torch.cuda.device_count()
     node_rank = args.node_rank
