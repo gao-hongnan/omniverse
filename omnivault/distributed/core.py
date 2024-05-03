@@ -85,6 +85,7 @@ def get_local_world_size() -> int:
         warnings.warn("CUDA is not available. Returning total number of CPU cores.", stacklevel=2)
         return multiprocessing.cpu_count()
 
+
 def get_global_rank() -> int:
     """
     Return the rank of the current process across all nodes.
@@ -109,6 +110,7 @@ def get_global_rank() -> int:
     distributed_initialized()
     return torch.distributed.get_rank()
 
+
 def get_local_rank() -> int:
     """
     Return the rank of the current process on the current node.
@@ -131,6 +133,7 @@ def get_local_rank() -> int:
     distributed_available()
     distributed_initialized()
     return get_global_rank() % get_local_world_size()
+
 
 def teardown() -> None:
     torch.distributed.destroy_process_group()
