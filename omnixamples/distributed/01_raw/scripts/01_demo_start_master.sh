@@ -6,7 +6,7 @@ export MASTER_PORT=$(comm -23 <(seq 1 65535 | sort) <(ss -Htan | awk '{print $4}
 echo "Master Address: $MASTER_ADDR"
 echo "Master Port: $MASTER_PORT"
 
-echo "${master_addr}:${master_port}" > master_info.txt
+echo "${MASTER_ADDR}:${MASTER_PORT}" > master_info.txt
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 export NNODES=2
