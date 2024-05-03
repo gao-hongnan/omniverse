@@ -1,12 +1,42 @@
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
 # Distributed Training in Deep Learning
+
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
+
+```{contents}
+:local:
+```
 
 ## Notations
 
 To simplify notations, we assume that each node has the same number of GPUs so
 that we can have less indexes to keep track of. In particular, we assume the
-following notations:
+following notations. We can refer to
+[CS336](https://github.com/stanford-cs336/spring2024-assignment2-systems) for
+more information.
 
--   $P$: is the number of processes across the cluster of nodes;
+-   $P$ (Worker/Number of Processes): is the number of processes across the
+    cluster of nodes;
     -   $p$: is the index of a process, $p \in [0, P)$;
     -   A **process** is a program in execution, characterized by a unique
         process ID and its own independent set of system resources. It possesses
@@ -15,14 +45,21 @@ following notations:
         actions (or failures) of one process don't directly affect another. They
         can communicate with each other through various inter-process
         communication mechanisms.
-    -   **In the realm of distributed computing and deep learning, a process
+    -   It is an instance of a program that’s participating in the distributed
+        training. In this assignment, each worker will have a single process, so
+        we’ll use worker, process, and worker process interchangeably. However,
+        a worker may use multiple processes (e.g., to load data for training),
+        so these terms are not always equivalent in practice.
+    -   In the context of distributed computing and deep learning, a process
         typically refers to an instance of a training algorithm running on a
-        computational unit (like a CPU core or GPU).**
--   $N$: is the number of nodes in the cluster;
+        computational unit (like a CPU core or GPU).
+-   $N$ (Number of Nodes): is the number of nodes in the cluster;
     -   $n$: is the index of a node in the cluster, $n \in [0, N)$;
     -   A **node** is a physical machine with its own operating system and
-        system resources. It can have multiple CPUs and GPUs.
--   $G$: is the number of GPUs per node;
+        system resources. It can have multiple CPUs and GPUs. For example,
+        `g4dn.4xlarge` is a node type in AWS EC2 that has 2 GPUs.
+-   $G$ (Local World Size): is the number of GPUs per node or the number of
+    processes per node or **local world size**;
     -   $g$: is the index of a GPU in a node, $g \in [0, G)$;
     -   A **GPU** is a computational unit that can perform parallel computation
         on tensors. It has its own memory space, including code, runtime memory,
@@ -66,10 +103,13 @@ application is launched on two nodes, each of which has four GPUs. We would then
 like each process to span one GPUs each. The mapping of processes to nodes is
 shown in the figure below:
 
-<figure markdown style="text-align:center;">
-  ![Image title](../assets/distributed/distributed-1.png)
-  <figcaption>2 nodes with 4 GPUs each and each process spans 1 GPU.</a>.</figcaption>
-</figure>
+```{figure} ./assets/distributed-1.png
+---
+name: distributed-1
+---
+
+2 nodes with 4 GPUs each and each process spans 1 GPU.
+```
 
 More concretely, we have the following notations:
 
@@ -101,10 +141,13 @@ application is launched on two nodes, each of which has four GPUs. We would then
 like each process to span two GPUs each. The mapping of processes to nodes is
 shown in the figure below:
 
-<figure markdown style="text-align:center;">
-  ![Image title](../assets/distributed/distributed-2.png)
-  <figcaption>2 nodes with 4 GPUs each and each process spans 2 GPUs.</a>.</figcaption>
-</figure>
+```{figure} ./assets/distributed-2.png
+---
+name: distributed-2
+---
+
+2 nodes with 4 GPUs each and each process spans 2 GPUs.
+```
 
 More concretely, for this scenario:
 
@@ -156,10 +199,9 @@ communication within the same node is more efficient than across nodes.
 
 ### References and Further Readings
 
+-   [Definitions of Distributed Training in PyTorch](https://pytorch.org/docs/stable/elastic/run.html#definitions)
 -   [PyTorch: DDP Toy Example](https://github.com/pytorch/examples/blob/main/distributed/ddp/README.md)
 -   [Distributed Computing with PyTorch](https://shivgahlout.github.io/2021-05-18-distributed-computing/)
-
-## Data Parallelism
 
 ## Distributed Data Parallelism
 

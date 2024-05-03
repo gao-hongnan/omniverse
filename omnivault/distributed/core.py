@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 import socket
 import warnings
 
@@ -84,6 +85,56 @@ def get_local_world_size() -> int:
         warnings.warn("CUDA is not available. Returning total number of CPU cores.", stacklevel=2)
         return multiprocessing.cpu_count()
 
+def get_global_rank() -> int:
+    """
+    Return the rank of the current process across all nodes.
+
+    This function determines the global rank of the current process, which
+    represents the index of the current process across all nodes involved in
+    the distributed training.
+
+    Example
+    -------
+    -   If the training is running on a single node with 4 processes, the function
+        will return the rank of the process on that node.
+    -   If the training is running on 2 nodes with 4 processes per node, the
+        function will return the rank of the process across all nodes.
+
+    Note
+    ----
+    If we are using `torchrun`, then we can also obtain the global rank using
+    `os.environ["RANK"]`.
+    """
+    distributed_available()
+    distributed_initialized()
+    return torch.distributed.get_rank()
+
+def get_local_rank() -> int:
+    """
+    Return the rank of the current process on the current node.
+
+    This function determines the local rank of the current process, which
+    represents the index of the current process on the current node.
+
+    Example
+    -------
+    -   If the training is running on a single node with 4 processes, the function
+        will return the rank of the process on that node.
+    -   If the training is running on 2 nodes with 4 processes per node, the
+        function will return the rank of the process on the current node.
+
+    Note
+    ----
+    If we are using `torchrun`, then we can also obtain the local rank using
+    `os.environ["LOCAL_RANK"]`.
+    """
+    distributed_available()
+    distributed_initialized()
+    return get_global_rank() % get_local_world_size()
+
+def teardown() -> None:
+    torch.distributed.destroy_process_group()
+
 
 def is_free_port(port: int) -> bool:
     """Checks if a given port is free on all relevant interfaces.
@@ -115,3 +166,8 @@ def find_free_port() -> int:
 def get_hostname() -> str:
     """Get the hostname of the machine."""
     return socket.gethostname()
+
+
+def get_process_id() -> int:
+    """Get the process id of the current process."""
+    return os.getpid()
