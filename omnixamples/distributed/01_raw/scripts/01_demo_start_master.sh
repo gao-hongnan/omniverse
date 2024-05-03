@@ -10,7 +10,7 @@ echo "${MASTER_ADDR}:${MASTER_PORT}" > master_info.txt
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 export NNODES=2
-export NPROC_PER_NODE=2
+export NPROC_PER_NODE=1
 export NODE_RANK=0
 export WORLD_SIZE=2
 
