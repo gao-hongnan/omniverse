@@ -76,9 +76,6 @@ def get_local_world_size() -> int:
     If we are using `torchrun`, then we can also obtain the local world size using
     `os.environ["LOCAL_WORLD_SIZE"]`.
     """
-    distributed_available()
-    distributed_initialized()
-
     if torch.cuda.is_available():
         return torch.cuda.device_count()
     else:
