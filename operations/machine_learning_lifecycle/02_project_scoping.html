@@ -74,6 +74,8 @@
                 gtag('config', 'G-MYW5YKC2WF');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'operations/machine_learning_lifecycle/02_project_scoping';</script>
     <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/02_project_scoping.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -585,6 +587,10 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-metrics">Online Metrics</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#non-functional-metrics">Non-Functional Metrics</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-cost-objective-and-performance-metrics">Loss, Cost, Objective and Performance Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoupling-objectives">Decoupling Objectives</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identifying-the-type-of-machine-learning-task">Identifying the Type of Machine Learning Task</a><ul class="nav section-nav flex-column">
@@ -628,89 +634,103 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#introduction" id="id1">Introduction</a></p></li>
-<li><p><a class="reference internal" href="#frame-a-business-problem-as-an-machine-learning-task" id="id2">Frame a Business Problem as an Machine Learning Task</a></p>
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#frame-a-business-problem-as-an-machine-learning-task" id="id3">Frame a Business Problem as an Machine Learning Task</a></p>
 <ul>
-<li><p><a class="reference internal" href="#an-example-on-e-commerce-recommendation" id="id3">An Example On E-commerce Recommendation</a></p></li>
-<li><p><a class="reference internal" href="#key-components" id="id4">Key Components</a></p></li>
+<li><p><a class="reference internal" href="#an-example-on-e-commerce-recommendation" id="id4">An Example On E-commerce Recommendation</a></p></li>
+<li><p><a class="reference internal" href="#key-components" id="id5">Key Components</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#features-labels-and-outputs-inputs-outputs" id="id5">Features, Labels and Outputs (Inputs/Outputs)</a></p>
+<li><p><a class="reference internal" href="#features-labels-and-outputs-inputs-outputs" id="id6">Features, Labels and Outputs (Inputs/Outputs)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#labels" id="id6">Labels</a></p></li>
-<li><p><a class="reference internal" href="#features-inputs" id="id7">Features (Inputs)</a></p>
+<li><p><a class="reference internal" href="#labels" id="id7">Labels</a></p></li>
+<li><p><a class="reference internal" href="#features-inputs" id="id8">Features (Inputs)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#types-of-inputs" id="id8">Types of Inputs</a></p></li>
-<li><p><a class="reference internal" href="#an-example-on-medical-diagnosis" id="id9">An Example On Medical Diagnosis</a></p></li>
+<li><p><a class="reference internal" href="#types-of-inputs" id="id9">Types of Inputs</a></p></li>
+<li><p><a class="reference internal" href="#an-example-on-medical-diagnosis" id="id10">An Example On Medical Diagnosis</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#outputs-predictions" id="id10">Outputs (Predictions)</a></p>
+<li><p><a class="reference internal" href="#outputs-predictions" id="id11">Outputs (Predictions)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#relationship-to-business-objectives" id="id11">Relationship to Business Objectives</a></p></li>
+<li><p><a class="reference internal" href="#relationship-to-business-objectives" id="id12">Relationship to Business Objectives</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#example-personal-protective-equipment-ppe-detection" id="id12">Example: Personal Protective Equipment (PPE) Detection</a></p>
+<li><p><a class="reference internal" href="#example-personal-protective-equipment-ppe-detection" id="id13">Example: Personal Protective Equipment (PPE) Detection</a></p>
 <ul>
-<li><p><a class="reference internal" href="#inputs-and-labels" id="id13">Inputs and Labels</a></p></li>
-<li><p><a class="reference internal" href="#outputs" id="id14">Outputs</a></p></li>
-<li><p><a class="reference internal" href="#further-processing" id="id15">Further Processing</a></p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#machine-learning-objective-establishing-metrics" id="id16">Machine Learning Objective (Establishing Metrics)</a></p>
-<ul>
-<li><p><a class="reference internal" href="#offline-metrics" id="id17">Offline Metrics</a></p></li>
-<li><p><a class="reference internal" href="#online-metrics" id="id18">Online Metrics</a></p></li>
-<li><p><a class="reference internal" href="#non-functional-metrics" id="id19">Non-Functional Metrics</a></p></li>
-<li><p><a class="reference internal" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks" id="id20">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#identifying-the-type-of-machine-learning-task" id="id21">Identifying the Type of Machine Learning Task</a></p>
-<ul>
-<li><p><a class="reference internal" href="#machine-learning-tasks" id="id22">Machine Learning Tasks</a></p>
-<ul>
-<li><p><a class="reference internal" href="#examples-of-machine-learning-tasks" id="id23">Examples of Machine Learning Tasks</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#deep-learning-tasks" id="id24">Deep Learning Tasks</a></p>
-<ul>
-<li><p><a class="reference internal" href="#examples-of-deep-learning-tasks" id="id25">Examples of Deep Learning Tasks</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#combination-of-machine-learning-and-deep-learning-tasks" id="id26">Combination of Machine Learning and Deep Learning Tasks</a></p></li>
-<li><p><a class="reference internal" href="#multimodal-deep-learning-yes-chatgpt-is-multimodal" id="id27">Multimodal Deep Learning (Yes ChatGPT Is Multimodal)</a></p>
-<ul>
-<li><p><a class="reference internal" href="#early-fusion" id="id28">Early Fusion</a></p></li>
-<li><p><a class="reference internal" href="#late-fusion" id="id29">Late Fusion</a></p></li>
-<li><p><a class="reference internal" href="#hybrid-fusion" id="id30">Hybrid Fusion</a></p></li>
-<li><p><a class="reference internal" href="#choosing-the-right-fusion-strategy" id="id31">Choosing the Right Fusion Strategy</a></p></li>
+<li><p><a class="reference internal" href="#inputs-and-labels" id="id14">Inputs and Labels</a></p></li>
+<li><p><a class="reference internal" href="#outputs" id="id15">Outputs</a></p></li>
+<li><p><a class="reference internal" href="#further-processing" id="id16">Further Processing</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#minimum-viable-product-mvp" id="id32">Minimum Viable Product (MVP)</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id33">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#machine-learning-objective-establishing-metrics" id="id17">Machine Learning Objective (Establishing Metrics)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#offline-metrics" id="id18">Offline Metrics</a></p></li>
+<li><p><a class="reference internal" href="#online-metrics" id="id19">Online Metrics</a></p></li>
+<li><p><a class="reference internal" href="#non-functional-metrics" id="id20">Non-Functional Metrics</a></p></li>
+<li><p><a class="reference internal" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks" id="id21">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a></p></li>
+<li><p><a class="reference internal" href="#loss-cost-objective-and-performance-metrics" id="id22">Loss, Cost, Objective and Performance Metrics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#decoupling-objectives" id="id23">Decoupling Objectives</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#identifying-the-type-of-machine-learning-task" id="id24">Identifying the Type of Machine Learning Task</a></p>
+<ul>
+<li><p><a class="reference internal" href="#machine-learning-tasks" id="id25">Machine Learning Tasks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#examples-of-machine-learning-tasks" id="id26">Examples of Machine Learning Tasks</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#deep-learning-tasks" id="id27">Deep Learning Tasks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#examples-of-deep-learning-tasks" id="id28">Examples of Deep Learning Tasks</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#combination-of-machine-learning-and-deep-learning-tasks" id="id29">Combination of Machine Learning and Deep Learning Tasks</a></p></li>
+<li><p><a class="reference internal" href="#multimodal-deep-learning-yes-chatgpt-is-multimodal" id="id30">Multimodal Deep Learning (Yes ChatGPT Is Multimodal)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#early-fusion" id="id31">Early Fusion</a></p></li>
+<li><p><a class="reference internal" href="#late-fusion" id="id32">Late Fusion</a></p></li>
+<li><p><a class="reference internal" href="#hybrid-fusion" id="id33">Hybrid Fusion</a></p></li>
+<li><p><a class="reference internal" href="#choosing-the-right-fusion-strategy" id="id34">Choosing the Right Fusion Strategy</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#minimum-viable-product-mvp" id="id35">Minimum Viable Product (MVP)</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id36">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <section id="introduction">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Introduction</a><a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
 <p>After defining the problem statement from a business point of view, the next
 step is to scope the project and frame the problem in the context of machine
 learning (that is if the problem warrants a machine learning solution in the
 first place). This involves identifying the inputs, outputs, objective function,
 and the type of machine learning task that best suits the problem.</p>
+<p>Without going too deep into the details, we can treat a machine learning problem
+as a triplet - (data, model, objective function). We can then scope out things
+like what input/features/labels/outputs we need as a first cut for baseline/MVP,
+and on the model side one would envision choosing a suitable architecture/task
+(i.e. classification/regression) - but don’t be restricted to one as complex use
+case can involve multi-stage tasks, or multi-modalities (think ChatGPT). We
+would also need to establish metrics/loss/objective functions and remember
+ultimately the metrics you optimize should necessarily correlate with the
+business metrics.</p>
 <p>The following sections we will go deeper into the process of framing real-world
 problems as machine learning tasks, knowing how to define inputs and outputs,
 identifying objective functions, and recognizing the specific machine learning
 tasks that best suit different types of problems.</p>
 </section>
 <section id="frame-a-business-problem-as-an-machine-learning-task">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Frame a Business Problem as an Machine Learning Task</a><a class="headerlink" href="#frame-a-business-problem-as-an-machine-learning-task" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Frame a Business Problem as an Machine Learning Task</a><a class="headerlink" href="#frame-a-business-problem-as-an-machine-learning-task" title="Link to this heading">#</a></h2>
 <p>In the first section, we discuss a simplified example taken from Chip Huyen’s
 book <em>Design Machine Learning Systems</em>.</p>
 <section id="an-example-on-e-commerce-recommendation">
-<h3><a class="toc-backref" href="#id3" role="doc-backlink">An Example On E-commerce Recommendation</a><a class="headerlink" href="#an-example-on-e-commerce-recommendation" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">An Example On E-commerce Recommendation</a><a class="headerlink" href="#an-example-on-e-commerce-recommendation" title="Link to this heading">#</a></h3>
 <p>Let’s take the example of a popular online e-commerce platform. They are looking
 to increase the user engagement on their website, which in turn will lead to
 increased purchases, thereby raising the company’s overall profits.</p>
@@ -740,7 +760,7 @@ user. This would increase user engagement and eventually lead to an increase in
 purchases.</p>
 </section>
 <section id="key-components">
-<h3><a class="toc-backref" href="#id4" role="doc-backlink">Key Components</a><a class="headerlink" href="#key-components" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Key Components</a><a class="headerlink" href="#key-components" title="Link to this heading">#</a></h3>
 <p>The process of framing the problem can be systematically broken down into four
 key components, each playing a critical role in defining the
 <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Machine_learning">machine learning task</a></strong>.</p>
@@ -785,7 +805,7 @@ selection of appropriate algorithms, techniques, and evaluation metrics.</p></td
 </section>
 </section>
 <section id="features-labels-and-outputs-inputs-outputs">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Features, Labels and Outputs (Inputs/Outputs)</a><a class="headerlink" href="#features-labels-and-outputs-inputs-outputs" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Features, Labels and Outputs (Inputs/Outputs)</a><a class="headerlink" href="#features-labels-and-outputs-inputs-outputs" title="Link to this heading">#</a></h2>
 <p>Understanding the nature of the inputs and outputs for your machine learning or
 deep learning task is crucial as it directly influences your data collection
 strategy, the selection and design of the model architecture, and even the
@@ -794,7 +814,7 @@ classification task, the input data would be the text documents, and the output
 would be the predicted class labels along with the confidence scores (or
 logits).</p>
 <section id="labels">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Labels</a><a class="headerlink" href="#labels" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Labels</a><a class="headerlink" href="#labels" title="Link to this heading">#</a></h3>
 <p>The terms “features” and “labels” are frequently used in the context of
 supervised learning. The features represent the input data, which can take a
 multitude of forms including numerical data, categorical data, text, images,
@@ -812,11 +832,11 @@ without explicit labels, learning to predict the next word in a sentence where
 we use the model’s input as the label.</p>
 </section>
 <section id="features-inputs">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Features (Inputs)</a><a class="headerlink" href="#features-inputs" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Features (Inputs)</a><a class="headerlink" href="#features-inputs" title="Link to this heading">#</a></h3>
 <p><strong>Inputs</strong> (features) represent the raw data or features that the algorithm will
 process to generate predictions or decisions.</p>
 <section id="types-of-inputs">
-<h4><a class="toc-backref" href="#id8" role="doc-backlink">Types of Inputs</a><a class="headerlink" href="#types-of-inputs" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Types of Inputs</a><a class="headerlink" href="#types-of-inputs" title="Link to this heading">#</a></h4>
 <p>In <a class="reference internal" href="#ml-lifecycle-02-types-of-data-inputs"><span class="std std-ref">the table below</span></a>, we outline the
 different types of data inputs that machine learning models can process. These
 include numerical data, categorical data, text data, and multimedia data.</p>
@@ -858,7 +878,7 @@ or <a class="reference external" href="https://en.wikipedia.org/wiki/Social_medi
 these data types as inputs.</p>
 </section>
 <section id="an-example-on-medical-diagnosis">
-<h4><a class="toc-backref" href="#id9" role="doc-backlink">An Example On Medical Diagnosis</a><a class="headerlink" href="#an-example-on-medical-diagnosis" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">An Example On Medical Diagnosis</a><a class="headerlink" href="#an-example-on-medical-diagnosis" title="Link to this heading">#</a></h4>
 <p>In the context of a medical diagnosis on cancer, inputs might include patient
 <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Medical_history">medical history</a></strong>,
 <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Symptom">symptoms</a></strong>,
@@ -871,11 +891,11 @@ text inputs and medical images (like X-rays or MRIs) as image inputs.</p>
 </section>
 </section>
 <section id="outputs-predictions">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Outputs (Predictions)</a><a class="headerlink" href="#outputs-predictions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Outputs (Predictions)</a><a class="headerlink" href="#outputs-predictions" title="Link to this heading">#</a></h3>
 <p><strong>Outputs</strong> refer to the predictions, decisions, or insights that a machine
 learning model generates based on the defined inputs.</p>
 <section id="relationship-to-business-objectives">
-<h4><a class="toc-backref" href="#id11" role="doc-backlink">Relationship to Business Objectives</a><a class="headerlink" href="#relationship-to-business-objectives" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Relationship to Business Objectives</a><a class="headerlink" href="#relationship-to-business-objectives" title="Link to this heading">#</a></h4>
 <p>Outputs must be carefully crafted to reflect the ultimate goals and success
 metrics of the organization. Whether it’s predicting
 <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Customer_attrition">customer churn</a></strong>,
@@ -894,9 +914,9 @@ time.</p>
 </section>
 </section>
 <section id="example-personal-protective-equipment-ppe-detection">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Example: Personal Protective Equipment (PPE) Detection</a><a class="headerlink" href="#example-personal-protective-equipment-ppe-detection" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Example: Personal Protective Equipment (PPE) Detection</a><a class="headerlink" href="#example-personal-protective-equipment-ppe-detection" title="Link to this heading">#</a></h3>
 <section id="inputs-and-labels">
-<h4><a class="toc-backref" href="#id13" role="doc-backlink">Inputs and Labels</a><a class="headerlink" href="#inputs-and-labels" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Inputs and Labels</a><a class="headerlink" href="#inputs-and-labels" title="Link to this heading">#</a></h4>
 <p>For instance, suppose we want to develop a model to detect Personal Protective
 Equipment (PPE) in construction sites and although we have abundance of input
 images (inputs) but we do not have enough bounding box labels.</p>
@@ -924,7 +944,7 @@ you might consider using a database like MongoDB or PostgreSQL or even those
 optimized data lake/data warehouse solutions like AWS S3 or Google BigQuery.</p>
 </section>
 <section id="outputs">
-<h4><a class="toc-backref" href="#id14" role="doc-backlink">Outputs</a><a class="headerlink" href="#outputs" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Outputs</a><a class="headerlink" href="#outputs" title="Link to this heading">#</a></h4>
 <p>The outputs of the model will be the bounding boxes and class labels of detected
 PPE gear in each image or video frame. Each detected object (helmet, mask, vest,
 etc.) would have a bounding box (indicating its location and size in the image)
@@ -933,7 +953,7 @@ confidence score showing the model’s certainty about the detected object’s
 class.</p>
 </section>
 <section id="further-processing">
-<h4><a class="toc-backref" href="#id15" role="doc-backlink">Further Processing</a><a class="headerlink" href="#further-processing" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">Further Processing</a><a class="headerlink" href="#further-processing" title="Link to this heading">#</a></h4>
 <p>These raw outputs can be processed further to generate more useful information,
 such as:</p>
 <ul class="simple">
@@ -950,7 +970,7 @@ concept drift.</p>
 </section>
 </section>
 <section id="machine-learning-objective-establishing-metrics">
-<h2><a class="toc-backref" href="#id16" role="doc-backlink">Machine Learning Objective (Establishing Metrics)</a><a class="headerlink" href="#machine-learning-objective-establishing-metrics" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Machine Learning Objective (Establishing Metrics)</a><a class="headerlink" href="#machine-learning-objective-establishing-metrics" title="Link to this heading">#</a></h2>
 <p>One of the key steps in formulating a machine learning problem is defining the
 business objectives and then translating them into quantifiable and measureable
 metrics. Business objectives could range from increasing revenue and viewership
@@ -1009,7 +1029,7 @@ environment).</p>
   </tr>
 </table>
 <section id="offline-metrics">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Offline Metrics</a><a class="headerlink" href="#offline-metrics" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Offline Metrics</a><a class="headerlink" href="#offline-metrics" title="Link to this heading">#</a></h3>
 <p>Offline metrics are used during the model development and validation phases. For
 instance, in a classification problem where we are trying to detect if an email
 is spam or not, we might use metrics such as precision, recall, F1 score, and
@@ -1025,7 +1045,7 @@ problems, metrics like
 used.</p>
 </section>
 <section id="online-metrics">
-<h3><a class="toc-backref" href="#id18" role="doc-backlink">Online Metrics</a><a class="headerlink" href="#online-metrics" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Online Metrics</a><a class="headerlink" href="#online-metrics" title="Link to this heading">#</a></h3>
 <p>When the model is in a production environment, online metrics become important.
 For web applications, metrics such as
 <strong><a class="reference external" href="https://en.wikipedia.org/wiki/Click-through_rate">Click-through Rate (CTR)</a></strong>
@@ -1046,7 +1066,7 @@ fail and revert to manual data entry. This metric helps gauge the app’s
 performance and user experience.</p>
 </section>
 <section id="non-functional-metrics">
-<h3><a class="toc-backref" href="#id19" role="doc-backlink">Non-Functional Metrics</a><a class="headerlink" href="#non-functional-metrics" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Non-Functional Metrics</a><a class="headerlink" href="#non-functional-metrics" title="Link to this heading">#</a></h3>
 <p>Lastly, don’t forget to consider <strong>non-functional metrics</strong> like training speed
 and resource utilization to evaluate the system’s efficiency. For example, in
 the pretraining of Large Scale Deep Learning models, we are often interested in
@@ -1057,7 +1077,7 @@ these, so you may be able to compare the model’s training speed against these
 benchmarks.</p>
 </section>
 <section id="understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks">
-<h3><a class="toc-backref" href="#id20" role="doc-backlink">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a><a class="headerlink" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a><a class="headerlink" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks" title="Link to this heading">#</a></h3>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Case Study</p></th>
@@ -1105,9 +1125,153 @@ machine learning objective. The idea is to show the connection between the
 business objectives and the corresponding machine learning tasks - what metrics
 to use will depend on the specific context and the nature of the problem.</p>
 </section>
+<section id="loss-cost-objective-and-performance-metrics">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Loss, Cost, Objective and Performance Metrics</a><a class="headerlink" href="#loss-cost-objective-and-performance-metrics" title="Link to this heading">#</a></h3>
+<p>Every machine learning problem has a few key components:</p>
+<ul>
+<li><p>The model itself, meaning choosing a hypothesis space and a learning
+algorithm.</p>
+<div class="math notranslate nohighlight">
+\[
+    h \in \mathcal{H} \quad \text{and} \quad \mathcal{A}
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> is the hypothesis space and <span class="math notranslate nohighlight">\(\mathcal{A}\)</span> is the
+learning algorithm.</p>
+</li>
+<li><p>The objective function, which is a function that measures how well the model
+performs on the data. Therefore, we need a loss and cost function as such:</p>
+<div class="math notranslate nohighlight">
+\[
+    \mathcal{L}(h, \mathcal{S}) \quad \text{and} \quad \mathcal{J}(h, \mathcal{S})
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is the training data.</p>
+</li>
+</ul>
+<p>Defining the loss/cost/objective is quite straightforward. We try the most
+common ones first (RMSE, MAE, Cross-Entropy, etc.) and if the need arises,
+design your own objective function (i.e. Focal Loss). The ease of choosing a
+loss function is because there are already many common and well defined loss
+functions that are used in practice. To come up with your own requires knowledge
+spanning calculus, optimization, and statistics so if you are lost, read some
+papers on a similar use case, and try to understand the loss functions they use
+and experiment with it.</p>
+<section id="decoupling-objectives">
+<h4><a class="toc-backref" href="#id23" role="doc-backlink">Decoupling Objectives</a><a class="headerlink" href="#decoupling-objectives" title="Link to this heading">#</a></h4>
+<p>Let’s have an example from chapter 2 of Chip’s book <em>Design Machine Learning
+Systems</em> and elaborate to understand this section, consider the following
+problem:</p>
+<div class="proof example admonition" id="ml-lifecycle-02-ranking-items-newsfeed">
+<p class="admonition-title"><span class="caption-number">Example 13 </span> (Ranking items on a newsfeed)</p>
+<section class="example-content" id="proof-content">
+<p>“Ranking items on a newsfeed” means determining the order in which items such as
+posts, articles, or other types of content appear on a social media or news
+platform’s feed. The goal of ranking is typically to prioritize content that is
+most likely to be of interest to the user and encourage engagement with that
+content.</p>
+<p>For example, consider a social media platform like Facebook or Instagram. When
+you open the app, you are presented with a feed of posts from your friends and
+accounts you follow. The order in which these posts appear on your feed is
+determined by a ranking algorithm, which takes into account a variety of factors
+to determine which posts are most likely to be relevant and engaging to you.
+These factors may include:</p>
+<ul class="simple">
+<li><p>The recency of the post</p></li>
+<li><p>The relevance of the post to your interests, based on past behavior such as
+likes and comments</p></li>
+<li><p>The engagement level of the post, such as the number of likes, comments, or
+shares it has received</p></li>
+<li><p>The identity of the poster, such as whether the post is from a close friend
+or family member</p></li>
+<li><p>The ranking algorithm uses these factors, and potentially many more, to
+determine the order in which posts appear on your feed. The goal is to show
+you the most interesting and engaging content at the top of your feed, while
+filtering out irrelevant or unwanted content.</p></li>
+</ul>
+</section>
+</div><p>In this scenario, you are tasked with building a machine learning system that
+ranks items on a newsfeed in a way that maximizes user engagement. To accomplish
+this goal, you have identified three key objectives that the system needs to
+optimize:</p>
+<ol class="arabic simple">
+<li><p>Filter out spam: The system should be able to identify and filter out
+irrelevant or unwanted content that is considered spam.</p></li>
+<li><p>Filter out NSFW content: The system should be able to identify and filter out
+content that is not safe for work (NSFW), such as explicit or offensive
+material.</p></li>
+<li><p>Rank posts by engagement: The system should be able to predict how likely
+users are to engage with each post, such as by clicking on it, sharing it, or
+commenting on it. The system can then use this information to rank the posts
+in order of predicted engagement.</p></li>
+</ol>
+<p>By achieving these objectives, the system can create a more engaging and
+personalized newsfeed for users, while also filtering out unwanted content. Now,
+what’s the problem here?</p>
+<p>However, you quickly learned that optimizing for users’ engagement alone can
+lead to questionable ethical concerns. Because extreme posts tend to get more
+engagements, your algorithm learned to prioritize extreme content. You want to
+create a more wholesome newsfeed<a class="footnote-reference brackets" href="#chip-1" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>With more power comes more responsibility. Ethical concern is also a very
+important aspect of making Machine Learning more mainstream.</p>
+<p>Consequently, we have a new goal, described below.</p>
+<p>So a “new Goal” <strong>Maximize</strong> users’ engagement while <strong>minimizing</strong> the spread
+of extreme views and misinformation</p>
+<p>To obtain this goal, you add two new objectives to your original plan:</p>
+<ul class="simple">
+<li><p>Filter out spam</p></li>
+<li><p>Filter out NSFW content</p></li>
+<li><p><strong>Filter out misinformation</strong></p></li>
+<li><p><strong>Rank posts by quality</strong></p></li>
+<li><p>Rank posts by engagement: how likely users will click on it</p></li>
+</ul>
+<p>The problem is that the objectives are <strong>conflicting</strong> sometimes. For example,
+if a post carries radical views but is also very engaging (many users click on
+it), then should the system filter it out or rank it higher for users?</p>
+<p>We can solve this problem by decoupling the objectives. This means that we can
+optimize multiple objectives at the same time. This usually requires you to
+design your own loss function. For example if you want to optimize two
+objectives:</p>
+<ul>
+<li><p>This usually requires you to design your own loss function. For example if
+you want to optimize two objectives:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+    \begin{aligned}
+    \mathcal{L} &amp;= \alpha \mathcal{L}_1 + \beta \mathcal{L}_2 \\
+    &amp;= \alpha \text{quality_loss} + \beta \text{engagement_loss} \\
+    \end{aligned}
+    \end{split}\]</div>
+</li>
+</ul>
+<p>But this requires you to tune the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> and you
+may need to constantly retrain the models to find the best hyperparameters. One
+can read up on
+<a class="reference external" href="https://en.wikipedia.org/wiki/Pareto_efficiency">Pareto Optimality</a> to
+understand more on how to tune the hyperparameters systematically.</p>
+<p>You can also train 2 models, one for each objective, and then combine the
+predictions of the two models.</p>
+<ol class="arabic simple">
+<li><p>Model 1 (<span class="math notranslate nohighlight">\(h_1\)</span>): Minimizes the <code class="docutils literal notranslate"><span class="pre">quality_loss</span></code> and predicts the quality of the
+post.</p></li>
+<li><p>Model 2 (<span class="math notranslate nohighlight">\(h_2\)</span>): Minimizes the <code class="docutils literal notranslate"><span class="pre">engagement_loss</span></code> and predicts the engagement
+of the post (number of clicks for each post).</p></li>
+</ol>
+<p>Then, you can combine the predictions of the two models to get the final
+prediction.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\hat{y} &amp;= \alpha h_1(x) + \beta h_2(x) \\
+&amp;= \alpha \text{quality_prediction} + \beta \text{engagement_prediction}
+\end{aligned}
+\end{split}\]</div>
+<p>Then you can freely tweak the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> to achieve
+the desired trade-off between the two objectives without having to retrain the
+models.</p>
+</section>
+</section>
 </section>
 <section id="identifying-the-type-of-machine-learning-task">
-<h2><a class="toc-backref" href="#id21" role="doc-backlink">Identifying the Type of Machine Learning Task</a><a class="headerlink" href="#identifying-the-type-of-machine-learning-task" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Identifying the Type of Machine Learning Task</a><a class="headerlink" href="#identifying-the-type-of-machine-learning-task" title="Link to this heading">#</a></h2>
 <p>We need to identify the type of machine learning task that best suits the
 problem at hand. This involves categorizing the problem into a specific
 paradigm, such as classification, regression, clustering, recommendation, NLP or
@@ -1120,7 +1284,7 @@ have to use a combination of computer vision and natural language processing
 techniques.</p>
 </div>
 <section id="machine-learning-tasks">
-<h3><a class="toc-backref" href="#id22" role="doc-backlink">Machine Learning Tasks</a><a class="headerlink" href="#machine-learning-tasks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Machine Learning Tasks</a><a class="headerlink" href="#machine-learning-tasks" title="Link to this heading">#</a></h3>
 <figure class="align-default" id="ml-life-cycle-02-ml-tasks">
 <img alt="../../_images/mermaid-diagram-2024-05-01-173743.svg" src="../../_images/mermaid-diagram-2024-05-01-173743.svg" /><figcaption>
 <p><span class="caption-number">Fig. 24 </span><span class="caption-text">Mermaid Diagram Of Machine Learning Tasks.</span><a class="headerlink" href="#ml-life-cycle-02-ml-tasks" title="Link to this image">#</a></p>
@@ -1157,7 +1321,7 @@ classification task under supervised learning can be further differentiated into
 Binary Classification, Multi-Class Classification, and Multi-Label
 Classification.</p>
 <section id="examples-of-machine-learning-tasks">
-<h4><a class="toc-backref" href="#id23" role="doc-backlink">Examples of Machine Learning Tasks</a><a class="headerlink" href="#examples-of-machine-learning-tasks" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">Examples of Machine Learning Tasks</a><a class="headerlink" href="#examples-of-machine-learning-tasks" title="Link to this heading">#</a></h4>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Machine Learning Task</p></th>
@@ -1207,7 +1371,7 @@ Classification.</p>
 </section>
 </section>
 <section id="deep-learning-tasks">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink">Deep Learning Tasks</a><a class="headerlink" href="#deep-learning-tasks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Deep Learning Tasks</a><a class="headerlink" href="#deep-learning-tasks" title="Link to this heading">#</a></h3>
 <figure class="align-default" id="ml-life-cycle-02-deep-learning-tasks">
 <img alt="../../_images/mermaid-diagram-2024-05-01-174201.svg" src="../../_images/mermaid-diagram-2024-05-01-174201.svg" /><figcaption>
 <p><span class="caption-number">Fig. 25 </span><span class="caption-text">Mermaid Diagram Of Deep Learning Tasks.</span><a class="headerlink" href="#ml-life-cycle-02-deep-learning-tasks" title="Link to this image">#</a></p>
@@ -1237,7 +1401,7 @@ list of tasks.</p>
 </div>
 </div>
 <section id="examples-of-deep-learning-tasks">
-<h4><a class="toc-backref" href="#id25" role="doc-backlink">Examples of Deep Learning Tasks</a><a class="headerlink" href="#examples-of-deep-learning-tasks" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id28" role="doc-backlink">Examples of Deep Learning Tasks</a><a class="headerlink" href="#examples-of-deep-learning-tasks" title="Link to this heading">#</a></h4>
 <table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Deep Learning Task</p></th>
@@ -1275,7 +1439,7 @@ list of tasks.</p>
 </section>
 </section>
 <section id="combination-of-machine-learning-and-deep-learning-tasks">
-<h3><a class="toc-backref" href="#id26" role="doc-backlink">Combination of Machine Learning and Deep Learning Tasks</a><a class="headerlink" href="#combination-of-machine-learning-and-deep-learning-tasks" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Combination of Machine Learning and Deep Learning Tasks</a><a class="headerlink" href="#combination-of-machine-learning-and-deep-learning-tasks" title="Link to this heading">#</a></h3>
 <p>The integration of traditional machine learning methods with deep learning
 techniques are very common in practice. We list very simple and naive examples.</p>
 <ol class="arabic simple">
@@ -1297,7 +1461,7 @@ like <strong><a class="reference external" href="https://en.wikipedia.org/wiki/S
 </ol>
 </section>
 <section id="multimodal-deep-learning-yes-chatgpt-is-multimodal">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink">Multimodal Deep Learning (Yes ChatGPT Is Multimodal)</a><a class="headerlink" href="#multimodal-deep-learning-yes-chatgpt-is-multimodal" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Multimodal Deep Learning (Yes ChatGPT Is Multimodal)</a><a class="headerlink" href="#multimodal-deep-learning-yes-chatgpt-is-multimodal" title="Link to this heading">#</a></h3>
 <p><strong><a class="reference external" href="https://en.wikipedia.org/wiki/Multimodal_learning">Multimodal deep learning</a></strong>
 fuses data from various formats like text, images, and audio, leading to richer
 data representations. By integrating information from different modalities,
@@ -1312,7 +1476,7 @@ modalities. Techniques such as early fusion (concatenating all modalities at the
 input level), late fusion (combining the outputs of separate models for each
 modality), and hybrid fusion (a mix of early and late fusion) are commonly used.</p>
 <section id="early-fusion">
-<h4><a class="toc-backref" href="#id28" role="doc-backlink">Early Fusion</a><a class="headerlink" href="#early-fusion" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id31" role="doc-backlink">Early Fusion</a><a class="headerlink" href="#early-fusion" title="Link to this heading">#</a></h4>
 <p>Early fusion is the simplest form of fusion, where all the different types of
 data are concatenated at the input level before going through the model. The
 model is then trained on this combined data.</p>
@@ -1331,7 +1495,7 @@ data into spectrograms and then concatenating them with text data, or better,
 using speech-to-text to convert audio data into text data.</p>
 </section>
 <section id="late-fusion">
-<h4><a class="toc-backref" href="#id29" role="doc-backlink">Late Fusion</a><a class="headerlink" href="#late-fusion" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id32" role="doc-backlink">Late Fusion</a><a class="headerlink" href="#late-fusion" title="Link to this heading">#</a></h4>
 <p>Late fusion trains individual models on each data modality, later combining
 their outputs for the final decision. For example medical diagnosis of cancer
 might have image data passing through a typical Convolutional Neural Network
@@ -1345,7 +1509,7 @@ the models can learn the best representations (i.e. embeddings for each
 modality) for each modality and then combine them at the end.</p>
 </section>
 <section id="hybrid-fusion">
-<h4><a class="toc-backref" href="#id30" role="doc-backlink">Hybrid Fusion</a><a class="headerlink" href="#hybrid-fusion" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id33" role="doc-backlink">Hybrid Fusion</a><a class="headerlink" href="#hybrid-fusion" title="Link to this heading">#</a></h4>
 <p>Hybrid fusion combines the strengths of both early and late fusion. It involves
 fusing data both at the input level and at the model output level.</p>
 <p>A healthcare monitoring system could use hybrid fusion for patient monitoring.
@@ -1360,7 +1524,7 @@ interrelated (justifying early fusion), while others might have unique patterns
 that are best captured separately (justifying late fusion).</p>
 </section>
 <section id="choosing-the-right-fusion-strategy">
-<h4><a class="toc-backref" href="#id31" role="doc-backlink">Choosing the Right Fusion Strategy</a><a class="headerlink" href="#choosing-the-right-fusion-strategy" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id34" role="doc-backlink">Choosing the Right Fusion Strategy</a><a class="headerlink" href="#choosing-the-right-fusion-strategy" title="Link to this heading">#</a></h4>
 <p>How does one choose the right fusion strategy? Honestly, this is not a trivial
 matter and often requires experimentation. However, there are some factors to
 consider from the book
@@ -1382,7 +1546,7 @@ applications). This might favor simpler, more transparent methods.</p>
 </section>
 </section>
 <section id="minimum-viable-product-mvp">
-<h2><a class="toc-backref" href="#id32" role="doc-backlink">Minimum Viable Product (MVP)</a><a class="headerlink" href="#minimum-viable-product-mvp" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id35" role="doc-backlink">Minimum Viable Product (MVP)</a><a class="headerlink" href="#minimum-viable-product-mvp" title="Link to this heading">#</a></h2>
 <p>Lastly, at this stage, you likely have an idea of the business problem you want
 to solve. Consequently, it is not uncommon to start thinking about a Minimum
 Viable Product (MVP) that can be used to solve the problem. I won’t go into
@@ -1391,7 +1555,7 @@ is to have a basic version of the product that can be shown as a proof of
 concept.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id33" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id36" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Huyen, Chip. “Chapter 2. Introduction to Machine Learning Systems Design.”
 In Designing Machine Learning Systems: An Iterative Process for
@@ -1402,6 +1566,15 @@ Media, Inc., 2022.</p></li>
 <li><p><a class="reference external" href="https://bytebytego.com/intro/machine-learning-system-design-interview">Machine Learning System Design Interview - Ali Aminian</a></p></li>
 <li><p><a class="reference external" href="https://huggingface.co/tasks">HuggingFace Tasks</a></p></li>
 </ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="chip-1" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Huyen, Chip. “Chapter 2. Introduction to Machine Learning Systems Design.”
+In Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -1499,6 +1672,10 @@ Media, Inc., 2022.</p></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#online-metrics">Online Metrics</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#non-functional-metrics">Non-Functional Metrics</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-the-connection-business-goals-and-corresponding-machine-learning-tasks">Understanding the Connection: Business Goals and Corresponding Machine Learning Tasks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-cost-objective-and-performance-metrics">Loss, Cost, Objective and Performance Metrics</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoupling-objectives">Decoupling Objectives</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identifying-the-type-of-machine-learning-task">Identifying the Type of Machine Learning Task</a><ul class="nav section-nav flex-column">

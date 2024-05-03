@@ -35,6 +35,16 @@ learning (that is if the problem warrants a machine learning solution in the
 first place). This involves identifying the inputs, outputs, objective function,
 and the type of machine learning task that best suits the problem.
 
+Without going too deep into the details, we can treat a machine learning problem
+as a triplet - (data, model, objective function). We can then scope out things
+like what input/features/labels/outputs we need as a first cut for baseline/MVP,
+and on the model side one would envision choosing a suitable architecture/task
+(i.e. classification/regression) - but don't be restricted to one as complex use
+case can involve multi-stage tasks, or multi-modalities (think ChatGPT). We
+would also need to establish metrics/loss/objective functions and remember
+ultimately the metrics you optimize should necessarily correlate with the
+business metrics.
+
 The following sections we will go deeper into the process of framing real-world
 problems as machine learning tasks, knowing how to define inputs and outputs,
 identifying objective functions, and recognizing the specific machine learning
@@ -416,6 +426,162 @@ machine learning objective. The idea is to show the connection between the
 business objectives and the corresponding machine learning tasks - what metrics
 to use will depend on the specific context and the nature of the problem.
 
+### Loss, Cost, Objective and Performance Metrics
+
+Every machine learning problem has a few key components:
+
+-   The model itself, meaning choosing a hypothesis space and a learning
+    algorithm.
+
+    $$
+    h \in \mathcal{H} \quad \text{and} \quad \mathcal{A}
+    $$
+
+    where $\mathcal{H}$ is the hypothesis space and $\mathcal{A}$ is the
+    learning algorithm.
+
+-   The objective function, which is a function that measures how well the model
+    performs on the data. Therefore, we need a loss and cost function as such:
+
+    $$
+    \mathcal{L}(h, \mathcal{S}) \quad \text{and} \quad \mathcal{J}(h, \mathcal{S})
+    $$
+
+    where $\mathcal{S}$ is the training data.
+
+Defining the loss/cost/objective is quite straightforward. We try the most
+common ones first (RMSE, MAE, Cross-Entropy, etc.) and if the need arises,
+design your own objective function (i.e. Focal Loss). The ease of choosing a
+loss function is because there are already many common and well defined loss
+functions that are used in practice. To come up with your own requires knowledge
+spanning calculus, optimization, and statistics so if you are lost, read some
+papers on a similar use case, and try to understand the loss functions they use
+and experiment with it.
+
+#### Decoupling Objectives
+
+Let's have an example from chapter 2 of Chip's book _Design Machine Learning
+Systems_ and elaborate to understand this section, consider the following
+problem:
+
+```{prf:example} Ranking items on a newsfeed
+:label: ml-lifecycle-02-ranking-items-newsfeed
+
+"Ranking items on a newsfeed" means determining the order in which items such as
+posts, articles, or other types of content appear on a social media or news
+platform's feed. The goal of ranking is typically to prioritize content that is
+most likely to be of interest to the user and encourage engagement with that
+content.
+
+For example, consider a social media platform like Facebook or Instagram. When
+you open the app, you are presented with a feed of posts from your friends and
+accounts you follow. The order in which these posts appear on your feed is
+determined by a ranking algorithm, which takes into account a variety of factors
+to determine which posts are most likely to be relevant and engaging to you.
+These factors may include:
+
+-   The recency of the post
+-   The relevance of the post to your interests, based on past behavior such as
+    likes and comments
+-   The engagement level of the post, such as the number of likes, comments, or
+    shares it has received
+-   The identity of the poster, such as whether the post is from a close friend
+    or family member
+-   The ranking algorithm uses these factors, and potentially many more, to
+    determine the order in which posts appear on your feed. The goal is to show
+    you the most interesting and engaging content at the top of your feed, while
+    filtering out irrelevant or unwanted content.
+```
+
+In this scenario, you are tasked with building a machine learning system that
+ranks items on a newsfeed in a way that maximizes user engagement. To accomplish
+this goal, you have identified three key objectives that the system needs to
+optimize:
+
+1. Filter out spam: The system should be able to identify and filter out
+   irrelevant or unwanted content that is considered spam.
+
+2. Filter out NSFW content: The system should be able to identify and filter out
+   content that is not safe for work (NSFW), such as explicit or offensive
+   material.
+
+3. Rank posts by engagement: The system should be able to predict how likely
+   users are to engage with each post, such as by clicking on it, sharing it, or
+   commenting on it. The system can then use this information to rank the posts
+   in order of predicted engagement.
+
+By achieving these objectives, the system can create a more engaging and
+personalized newsfeed for users, while also filtering out unwanted content. Now,
+what's the problem here?
+
+However, you quickly learned that optimizing for users’ engagement alone can
+lead to questionable ethical concerns. Because extreme posts tend to get more
+engagements, your algorithm learned to prioritize extreme content. You want to
+create a more wholesome newsfeed[^chip-1].
+
+With more power comes more responsibility. Ethical concern is also a very
+important aspect of making Machine Learning more mainstream.
+
+Consequently, we have a new goal, described below.
+
+So a "new Goal" **Maximize** users’ engagement while **minimizing** the spread
+of extreme views and misinformation
+
+To obtain this goal, you add two new objectives to your original plan:
+
+-   Filter out spam
+-   Filter out NSFW content
+-   **Filter out misinformation**
+-   **Rank posts by quality**
+-   Rank posts by engagement: how likely users will click on it
+
+The problem is that the objectives are **conflicting** sometimes. For example,
+if a post carries radical views but is also very engaging (many users click on
+it), then should the system filter it out or rank it higher for users?
+
+We can solve this problem by decoupling the objectives. This means that we can
+optimize multiple objectives at the same time. This usually requires you to
+design your own loss function. For example if you want to optimize two
+objectives:
+
+-   This usually requires you to design your own loss function. For example if
+    you want to optimize two objectives:
+
+    $$
+    \begin{aligned}
+    \mathcal{L} &= \alpha \mathcal{L}_1 + \beta \mathcal{L}_2 \\
+    &= \alpha \text{quality_loss} + \beta \text{engagement_loss} \\
+    \end{aligned}
+    $$
+
+But this requires you to tune the hyperparameters $\alpha$ and $\beta$ and you
+may need to constantly retrain the models to find the best hyperparameters. One
+can read up on
+[Pareto Optimality](https://en.wikipedia.org/wiki/Pareto_efficiency) to
+understand more on how to tune the hyperparameters systematically.
+
+You can also train 2 models, one for each objective, and then combine the
+predictions of the two models.
+
+1. Model 1 ($h_1$): Minimizes the `quality_loss` and predicts the quality of the
+   post.
+2. Model 2 ($h_2$): Minimizes the `engagement_loss` and predicts the engagement
+   of the post (number of clicks for each post).
+
+Then, you can combine the predictions of the two models to get the final
+prediction.
+
+$$
+\begin{aligned}
+\hat{y} &= \alpha h_1(x) + \beta h_2(x) \\
+&= \alpha \text{quality_prediction} + \beta \text{engagement_prediction}
+\end{aligned}
+$$
+
+Then you can freely tweak the hyperparameters $\alpha$ and $\beta$ to achieve
+the desired trade-off between the two objectives without having to retrain the
+models.
+
 ## Identifying the Type of Machine Learning Task
 
 We need to identify the type of machine learning task that best suits the
@@ -672,3 +838,8 @@ concept.
     Media, Inc., 2022.
 -   [Machine Learning System Design Interview - Ali Aminian](https://bytebytego.com/intro/machine-learning-system-design-interview)
 -   [HuggingFace Tasks](https://huggingface.co/tasks)
+
+[^chip-1]:
+    Huyen, Chip. "Chapter 2. Introduction to Machine Learning Systems Design."
+    In Designing Machine Learning Systems: An Iterative Process for
+    Production-Ready Applications, O'Reilly Media, Inc., 2022.
