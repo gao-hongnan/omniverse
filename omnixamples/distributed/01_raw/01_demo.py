@@ -1,4 +1,7 @@
-"""
+"""Pretty sure there's mistakes and redundancy in this code, but for learning,
+it should serve as a starting point - without torchrun or torch.distributed.launch
+or slurm to set the environment variables etc.
+
 ```bash
 python omnixamples/distributed/01_raw/01_demo.py \
     --master_addr=localhost \
@@ -27,13 +30,7 @@ from rich.logging import RichHandler
 from rich.pretty import pprint
 from torch._C._distributed_c10d import ReduceOp
 
-from omnivault.distributed.core import (
-    find_free_port,
-    get_global_rank,
-    get_local_rank,
-    get_local_world_size,
-    is_free_port,
-)
+from omnivault.distributed.core import find_free_port, get_hostname, get_process_id, is_free_port
 from omnivault.distributed.dist_info import DistInfoPerProcess
 from omnivault.distributed.logger import configure_logger
 from omnivault.utils.reproducibility.seed import seed_all
@@ -65,6 +62,9 @@ def init_process(
     global_rank = local_rank + node_rank * nproc_per_node
     assert local_rank == global_rank % nproc_per_node
 
+    hostname = get_hostname()
+    process_id = get_process_id()
+
     dist_info_per_process = DistInfoPerProcess(
         master_addr=os.environ["MASTER_ADDR"],
         master_port=os.environ["MASTER_PORT"],
@@ -77,6 +77,8 @@ def init_process(
         global_rank=global_rank,
         local_rank=local_rank,
         local_world_size=nproc_per_node,
+        hostname=hostname,
+        process_id=process_id,
     )
 
     if logger is None:
@@ -91,8 +93,15 @@ def init_process(
         world_size=dist_info_per_process.world_size,
         init_method=args.init_method,
     )
-    torch.distributed.barrier()  # safety net, sync all processes before proceeding
-    # NOTE: set device should be for local rank
+
+    # NOTE: safety net, sync all processes before proceeding - for example in
+    # `configure_logger` there is an create directory operation which maybe should be
+    # done by only master rank. Nevertheless, consider the fact that you don't
+    # sync barrier, then you might run into problem of another rank process wanting
+    # to write to the same directory before it is created by master rank.
+    torch.distributed.barrier()
+    # NOTE: set device should be for local rank, not global rank, else you run
+    # into ordinal out of device error.
     torch.cuda.set_device(dist_info_per_process.local_rank) if torch.cuda.is_available() else None
     return logger, dist_info_per_process
 
@@ -149,20 +158,15 @@ if __name__ == "__main__":
     # MANUAL/RAW NO TORCHRUN OR SLURM OR TORCH DISTRIBUTED LAUNCHER
     # torchrun --nnodes=1 --nproc-per-node=4 --rdzv-backend=c10d --rdzv-endpoint=localhost:29500 sandbox.py
 
-    args = get_args_parser().parse_args()
-    pprint(args)
-
-    nnodes = args.nnodes
-    nproc_per_node = args.nproc_per_node
-    node_rank = args.node_rank
-    world_size = args.world_size
-
     # NOTE: if you use torchrun then a lot of env variables are auto
     # set when you pass in the command line arguments to torchrun.
 
+    args = get_args_parser().parse_args()
+    pprint(args)
+
     master_addr, master_port = args.master_addr, args.master_port
-    # if not is_free_port(int(master_port)):
-    #     master_port = find_free_port()
+    if not is_free_port(int(master_port)):
+        master_port = find_free_port()
 
     os.environ["MASTER_ADDR"] = str(master_addr)
     os.environ["MASTER_PORT"] = str(master_port)
@@ -170,7 +174,7 @@ if __name__ == "__main__":
     mp.spawn(
         fn=run,
         args=(args,),
-        nprocs=nproc_per_node,
+        nprocs=args.nproc_per_node,
         join=True,
         daemon=False,
         start_method="spawn",
