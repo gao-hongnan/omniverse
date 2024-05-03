@@ -1,9 +1,9 @@
 import multiprocessing
+import socket
 import warnings
 
 import torch
 import torch.distributed
-import socket
 
 
 def distributed_available() -> None:
@@ -99,6 +99,7 @@ def is_free_port(port: int) -> bool:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return all(sock.connect_ex((ip, port)) != 0 for ip in ips)
 
+
 def find_free_port() -> int:
     """Finds a free port by binding to port 0 and then checking if it's truly free."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -110,7 +111,7 @@ def find_free_port() -> int:
         else:
             return find_free_port()  # Recursively search if the first found port is not free
 
+
 def get_hostname() -> str:
     """Get the hostname of the machine."""
     return socket.gethostname()
-
