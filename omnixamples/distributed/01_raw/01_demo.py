@@ -20,13 +20,11 @@ from __future__ import annotations
 import argparse
 import logging
 import os
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Tuple
 
 import torch
 import torch.distributed
 import torch.multiprocessing as mp
-from rich.logging import RichHandler
 from rich.pretty import pprint
 from torch._C._distributed_c10d import ReduceOp
 
