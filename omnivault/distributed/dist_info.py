@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from rich.pretty import pprint
 
 
 class DistInfoPerProcess(BaseModel):
@@ -75,3 +76,6 @@ class DistInfoPerProcess(BaseModel):
         ...,
         description="Process ID of the current process.",
     )
+
+    def pretty_print(self) -> None:
+        pprint(self)

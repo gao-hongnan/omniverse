@@ -1,5 +1,7 @@
 from torch import nn
 
+__all__ = ["total_trainable_parameters", "total_parameters"]
+
 
 def total_trainable_parameters(module: nn.Module) -> int:
     """Returns the number of trainable parameters in the model."""

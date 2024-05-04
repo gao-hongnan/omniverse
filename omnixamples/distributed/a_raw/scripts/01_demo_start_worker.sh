@@ -11,7 +11,7 @@ export NPROC_PER_NODE=1
 export NODE_RANK=1
 export WORLD_SIZE=2
 
-python omnixamples/distributed/01_raw/01_demo.py \
+python omnixamples/distributed/a_raw/b_demo.py \
     --master_addr=$MASTER_ADDR \
     --master_port=$MASTER_PORT \
     --nnodes=$NNODES \
