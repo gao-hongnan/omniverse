@@ -3,7 +3,7 @@ from typing import Dict, List
 import numpy as np
 
 
-def calculate_statistics(data: List[float]) -> Dict[str, float]:
+def calculate_statistics(data: List[float], suffix: str = "") -> Dict[str, float]:
     """
     Calculate statistics for a list of data.
 
@@ -29,11 +29,11 @@ def calculate_statistics(data: List[float]) -> Dict[str, float]:
     total = sum(data)
 
     return {
-        "mean": mean,
-        "median": median,
-        "variance": variance,
-        "standard_deviation": standard_deviation,
-        "min": min_value,
-        "max": max_value,
-        "total": total,
+        "mean" + suffix: mean,
+        "median" + suffix: median,
+        "variance" + suffix: variance,
+        "standard_deviation" + suffix: standard_deviation,
+        "min" + suffix: min_value,
+        "max" + suffix: max_value,
+        "total" + suffix: total,
     }

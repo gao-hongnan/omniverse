@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import argparse
 import os
-import torch
+
 import torch.multiprocessing as mp
 from rich.pretty import pprint
 
