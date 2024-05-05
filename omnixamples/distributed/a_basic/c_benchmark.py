@@ -10,7 +10,7 @@ Note
      tensor size = M * N * bytes_per_element.
 
 ```bash
-python omnixamples/distributed/a_raw/c_benchmark.py \
+python omnixamples/distributed/a_basic/c_benchmark.py \
     --master_addr=localhost \
     --master_port=29500 \
     --nnodes=1 \
@@ -45,8 +45,8 @@ from omnivault.benchmark.statistics import calculate_statistics
 from omnivault.constants.memory import MemoryUnit
 from omnivault.distributed.core import find_free_port, is_free_port, is_master_rank, synchronize_and_barrier
 from omnivault.utils.reproducibility.seed import seed_all
-from omnixamples.distributed.a_raw.a_setup import init_process
-from omnixamples.distributed.a_raw.config import get_args_parser
+from omnixamples.distributed.a_basic.a_setup import init_process
+from omnixamples.distributed.a_basic.config import get_args_parser
 
 VRAM_SIZES_IN_BYTES = {
     "512KB": 512 * MemoryUnit.KB,  # 512_000

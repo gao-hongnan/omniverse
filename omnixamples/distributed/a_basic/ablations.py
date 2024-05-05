@@ -1,5 +1,5 @@
 """
-python omnixamples/distributed/a_raw/ablations.py \
+python omnixamples/distributed/a_basic/ablations.py \
     --master_addr=localhost \
     --master_port=29500 \
     --nnodes=1 \
@@ -20,8 +20,8 @@ import torch.multiprocessing as mp
 from rich.pretty import pprint
 
 from omnivault.distributed.core import find_free_port, is_free_port
-from omnixamples.distributed.a_raw.a_setup import init_process
-from omnixamples.distributed.a_raw.config import get_args_parser
+from omnixamples.distributed.a_basic.a_setup import init_process
+from omnixamples.distributed.a_basic.config import get_args_parser
 
 
 def run_with_no_barrier(local_rank: int, args: argparse.Namespace) -> None:

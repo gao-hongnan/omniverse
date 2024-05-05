@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Distributed Training in Deep Learning
+# Notations
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -26,8 +26,6 @@ kernelspec:
 ```{contents}
 :local:
 ```
-
-## Notations
 
 To simplify notations, we assume that each node has the same number of GPUs so
 that we can have less indexes to keep track of. In particular, we assume the
@@ -197,7 +195,7 @@ the same node. Such a configuration can be useful for models that are too large
 to fit in the memory of a single GPU or for scenarios where inter-GPU
 communication within the same node is more efficient than across nodes.
 
-### References and Further Readings
+## References and Further Readings
 
 -   [Definitions of Distributed Training in PyTorch](https://pytorch.org/docs/stable/elastic/run.html#definitions)
 -   [PyTorch: DDP Toy Example](https://github.com/pytorch/examples/blob/main/distributed/ddp/README.md)

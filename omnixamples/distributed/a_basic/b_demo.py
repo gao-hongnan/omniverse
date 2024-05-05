@@ -3,7 +3,7 @@ it should serve as a starting point - without torchrun or torch.distributed.laun
 or slurm to set the environment variables etc.
 
 ```bash
-python omnixamples/distributed/a_raw/b_demo.py \
+python omnixamples/distributed/a_basic/b_demo.py \
     --master_addr=localhost \
     --master_port=29500 \
     --nnodes=1 \
@@ -28,8 +28,8 @@ from torch._C._distributed_c10d import ReduceOp
 
 from omnivault.distributed.core import find_free_port, is_free_port
 from omnivault.utils.reproducibility.seed import seed_all
-from omnixamples.distributed.a_raw.a_setup import init_process
-from omnixamples.distributed.a_raw.config import get_args_parser
+from omnixamples.distributed.a_basic.a_setup import init_process
+from omnixamples.distributed.a_basic.config import get_args_parser
 
 
 def run(local_rank: int, args: argparse.Namespace) -> None:

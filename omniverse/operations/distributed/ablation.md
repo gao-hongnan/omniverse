@@ -7,7 +7,7 @@ No money, so can only do a few ablations to learn about distributed systems.
 If you run:
 
 ```bash
-python omnixamples/distributed/a_raw/ablations.py \
+python omnixamples/distributed/a_basic/ablations.py \
     --master_addr=localhost \
     --master_port=29500 \
     --nnodes=1 \
