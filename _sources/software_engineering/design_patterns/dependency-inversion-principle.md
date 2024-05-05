@@ -17,6 +17,12 @@ kernelspec:
 
 # Dependency Inversion Principle
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/tree/e96d19fc2cc5d4a1f9311fe91aced78ab5f4a910/omnixamples/software_engineering/design_patterns/dii)
+
 ```{contents}
 :local:
 ```
