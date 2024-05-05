@@ -67,7 +67,7 @@ class DistInfoPerProcess(BaseModel):
         description="Rank of the current process/gpu in the local node.",
     )
 
-    # system info
+    # 5. System info
     hostname: str = Field(
         ...,
         description="Hostname of the current node.",

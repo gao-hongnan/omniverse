@@ -1,3 +1,19 @@
+"""Setup for distributed training.
+
+In DDP just imagine all your function is replicated across all processes.
+1. init_process(1)
+2. init_process(2)
+3. init_process(3)
+4. init_process(4)
+```
+
+For safety net, sync all processes before proceeding - for example in
+`configure_logger` there is an create directory operation which maybe should be
+done by only master rank. Nevertheless, consider the fact that you don't
+sync barrier, then you might run into problem of another rank process wanting
+to write to the same directory before it is created by master rank.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -13,11 +29,6 @@ from omnivault.distributed.dist_info import DistInfoPerProcess
 from omnivault.distributed.logger import configure_logger
 
 
-# NOTE: In DDP just imagine all your function is replicated across all processes.
-# 1. init_process(1)
-# 2. init_process(2)
-# 3. init_process(3)
-# 4. init_process(4) ...
 def init_process(
     local_rank: int, args: argparse.Namespace, logger: logging.Logger | None = None
 ) -> Tuple[logging.Logger, DistInfoPerProcess]:
@@ -69,11 +80,6 @@ def init_process(
         init_method=args.init_method,
     )
 
-    # NOTE: safety net, sync all processes before proceeding - for example in
-    # `configure_logger` there is an create directory operation which maybe should be
-    # done by only master rank. Nevertheless, consider the fact that you don't
-    # sync barrier, then you might run into problem of another rank process wanting
-    # to write to the same directory before it is created by master rank.
     torch.distributed.barrier()
     # NOTE: set device should be for local rank, not global rank, else you run
     # into ordinal out of device error.
