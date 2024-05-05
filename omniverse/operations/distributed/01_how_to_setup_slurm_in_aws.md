@@ -107,7 +107,7 @@ Run the following command to create the cluster. Replace `cluster-name` with
 your desired name for the cluster:
 
 ```bash
-pcluster create-cluster --cluster-configuration config.yaml --cluster-name <cluster-name> --region ap-southeast-1
+❯ pcluster create-cluster --cluster-configuration config.yaml --cluster-name <YOUR-CLUSTER-NAME> --region <REGION>
 ```
 
 This command specifies the cluster configuration file (`config.yaml`), the name
@@ -119,24 +119,78 @@ The cluster creation process may take some time. You can monitor the progress by
 running the following command:
 
 ```bash
-pcluster describe-cluster --cluster-name <cluster-name> --region ap-southeast-1
+❯ pcluster describe-cluster --cluster-name <YOUR-CLUSTER-NAME> --region ap-southeast-1
 ```
+
+## Shared File System
+
+Put your code or data in the shared file system, if not your compute nodes will
+not be able to access them and have a copy of what you installed in the head
+node. This means if you need to write or read data from the compute nodes, you
+need to put them in the shared file system.
+
+Thinks like FSx, EFS, or S3 can be used as shared file system but for a poor
+man's way and lazy way we can use `/home` as shared file system. Do not do this
+in production. Remember to change to something like `777` for the shared
+directory so that all nodes can access it.
+
+```bash
+❯ sudo chmod -R 777 /home/multi_gpu_training
+```
+
+Alternatively, you can also mount an EFS volume to the head node and then share
+it with the compute nodes. For example, you can add the below configuration to
+the `config.yaml` file:
+
+```yaml
+SharedStorage:
+    - MountDir: /shared
+      Name: my-efs
+      StorageType: Efs
+      EfsSettings:
+          PerformanceMode: generalPurpose
+          ThroughputMode: bursting
+```
+
+EFS is cheap and can be used as a shared file system but if you want things like
+FSx, which is for high performance computing, you can refer to a sample
+[template from PyTorch](https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template).
 
 ## Logging into the Head Node
 
+During creation of the cluster, you can ssh into the head node using the
+following command:
+
 ```bash
-pcluster ssh --cluster-name <cluster-name> -i <path-to-your-key.pem> --region ap-southeast-1
+❯ pcluster ssh --cluster-name <YOUR-CLUSTER-NAME> -i <path-to-your-key.pem> --region <REGION>
 ```
+
+Alternatively you can use normal ssh to login into the head node as well which
+is useful if you are using vscode remote to login. First, get the public DNS of
+the head node:
+
+```bash
+❯ aws ec2 describe-instances --instance-ids <INSTANCE-ID> --query "Reservations[*].Instances[*].PublicDnsName" --output text
+```
+
+where the output of the previous command is the `<public-dns>`.
+
+Then the ssh command is:
+
+```bash
+❯ ssh -i </path/to/your-key.pem> <username>@<public-dns>
+```
+
+For `username` it defaults to `ubuntu` for Ubuntu AMIs.
 
 ### Compute Node
 
 Due to quota limit, our compute node is `g4dn.xlarge` and has only 1 GPU per
-node. If we want 2 GPUs per node, we can use `g4dn.2xlarge` but we need to
-request a limit increase.
+node.
 
 ### SLURM Status
 
-And we can check status of the slurm cluster:
+We can check status of the slurm cluster:
 
 ```bash
 ❯ sinfo
@@ -246,28 +300,91 @@ srun python simple_dpp.py
 You can check the logs in the compute nodes. For example, you can ssh into the
 compute node and check the logs.
 
-## Remember to Use Shared File System
+## Delete Cluster
 
-Put your code or data in the shared file system, if not your compute nodes will
-not be able to access them and have a copy of what you installed in the head
-node.
-
-Thinks like FSx, EFS, or S3 can be used as shared file system but for a poor
-man's way and lazy way we can use `/home` as shared file system. Do not do this
-in production. Remember to change to something like `777` for the shared
-directory so that all nodes can access it.
+### Delete ParallelCluster
 
 ```bash
-sudo chmod -R 777 /home/multi_gpu_training
+pcluster delete-cluster --cluster-name <YOUR-CLUSTER-NAME> --region <REGION>
 ```
 
-You can use this template to get FSx
-(https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template).
-
-## Powering Down
+and verify deletion:
 
 ```bash
-aws ec2 stop-instances --instance-ids i-1234567890abcdef0 i-abcdef1234567890
+pcluster list-clusters --region <REGION>
+```
+
+### Delete Network Resources
+
+You also need to delete your lingering VPCs, subnets etc. First, we idenfity all
+the network resources associated with the cluster including VPC, subnets etc. Go
+[here](https://ap-southeast-1.console.aws.amazon.com/vpcconsole/home?region=ap-southeast-1#Home:)
+to see existing resources.
+
+First get your subnet id from `config.yaml`.
+
+Now we first delete NAT.
+
+```bash
+aws ec2 describe-subnets --subnet-ids <subnet-XXX> --query 'Subnets[0].VpcId' --output text # get the VPC ID
+aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=<vpc-XXX>" # get nat id in the form of nat-xxx
+aws ec2 delete-nat-gateway --nat-gateway-id <nat-XXX> # delete the nat gateway
+aws ec2 describe-nat-gateways --nat-gateway-ids <nat-XXX> # check if it is deleted
+```
+
+Then we detach and delete network interfaces.
+
+```bash
+# Detach network interfaces
+aws ec2 describe-network-interfaces \
+    --filters "Name=vpc-id,Values=<vpc-XXX>" \
+    --query 'NetworkInterfaces[*].[NetworkInterfaceId,Attachment.AttachmentId]' \
+    --output text | while read -r interface_id attachment_id; do
+      if [ ! -z "$attachment_id" ]; then
+        aws ec2 detach-network-interface --attachment-id $attachment_id
+      fi
+    done
+
+# Delete network interfaces
+aws ec2 describe-network-interfaces \
+    --filters "Name=vpc-id,Values=<vpc-XXX>" \
+    --query 'NetworkInterfaces[*].NetworkInterfaceId' \
+    --output text | xargs -I {} aws ec2 delete-network-interface --network-interface-id {}
+
+# Run again to see if deleted or not
+aws ec2 describe-network-interfaces --filters "Name=vpc-id,Values=<vpc-XXX>"
+```
+
+Next, delete subnets
+
+```bash
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=<vpc-XXX>" --query 'Subnets[*].SubnetId' --output text | xargs -n 1 -I {} aws ec2 delete-subnet --subnet-id {}
+# Check if deleted
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=<vpc-XXX>" --query 'Subnets[*].SubnetId' --output text
+```
+
+Next, delete route tables
+
+```bash
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=<vpc-XXX>" --query 'RouteTables[?Associations==`[]`].RouteTableId' --output text | xargs -n 1 -I {} aws ec2 delete-route-table --route-table-id {}
+```
+
+Now delete the internet gateway
+
+```bash
+# list the internet gateways
+aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=<vpc-XXX>" --query 'InternetGateways[*].InternetGatewayId' --output text
+
+aws ec2 detach-internet-gateway --internet-gateway-id <igw-XXX> --vpc-id <vpc-XXX>
+aws ec2 delete-internet-gateway --internet-gateway-id <igw-XXX>
+```
+
+Lastly, delete the VPC
+
+```bash
+aws ec2 delete-vpc --vpc-id <vpc-XXX>
+# check if deleted
+aws ec2 describe-vpcs --vpc-ids <vpc-XXX>
 ```
 
 ## Troubleshooting
@@ -292,6 +409,9 @@ on troubleshooting.
     cat /var/log/cloud-init.log
     cat /var/log/cloud-init-output.log
     cat /var/log/cfn-init.log
+    cat /var/log/chef-client.log
+    cat slurmctld.log
+    cat parallelcluster/clusterstatusmgtd
     ```
 
 See a sample log that an user reported
@@ -302,7 +422,15 @@ See a sample log that an user reported
 For example, I faced the
 `failureCode is HeadNodeBootstrapFailure with failureReason Cluster creation timed out`
 but AWS has good guide to troubleshoot
-[here](https://docs.aws.amazon.com/parallelcluster/latest/ug/troubleshooting-fc-v3-create-cluster.html#create-cluster-head-node-bootstrap-timeout-failure-v3)
+[here](https://docs.aws.amazon.com/parallelcluster/latest/ug/troubleshooting-fc-v3-create-cluster.html#create-cluster-head-node-bootstrap-timeout-failure-v3).
+
+Sometimes it is simply because your AWS account has not enough quotas. For me
+the concrete error for this can be found in
+`sudo cat /var/log/parallelcluster/clustermgtd.events`.
+
+```bash
+{"datetime": "2024-05-05T07:59:58.279+00:00", "version": 0, "scheduler": "slurm", "cluster-name": "distributed-training", "node-role": "HeadNode", "component": "clustermgtd", "level": "WARNING", "instance-id": "i-08d41f68bf12ca54b", "event-type": "node-launch-failure-count", "message": "Number of static nodes that failed to launch a backing instance after node maintenance", "detail": {"failure-type": "vcpu-limit-failures", "count": 1, "error-details": {"VcpuLimitExceeded": {"count": 1, "nodes": [{"name": "distributed-queue-st-g4dn12xlarge-2"}]}}}}
+```
 
 ## Some Useful Commands
 
@@ -326,27 +454,6 @@ scontrol show nodes # show more detailed information about nodes
 sinfo -N -o "%N %G" # show the number of GPUs
 ```
 
-### Delete Cluster
-
-Assuming no other things like FSx, EFS, or S3 are attached to the cluster, you
-can run:
-
-```bash
-pcluster delete-cluster --cluster-name <cluster-name> --region ap-southeast-1
-```
-
-and verify deletion:
-
-```bash
-pcluster list-clusters --region ap-southeast-1
-```
-
-You also need to delete your lingering VPCs, subnets etc:
-
-```bash
-aws ec2 delete-vpc --vpc-id [VPC-ID] --region ap-southeast-1
-```
-
 ### Find the Instance ID
 
 ```bash
@@ -356,19 +463,11 @@ aws ec2 describe-instances --query "Reservations[*].Instances[*].{InstanceID: In
 If `table` format gives error like `list index out of range`, you can replace
 `table` with `json` to slowly filter out.
 
-### Find the Public DNS
+### Stop EC2 Instances
 
 ```bash
-aws ec2 describe-instances --instance-ids <instance-id> --query "Reservations[*].Instances[*].PublicDnsName" --output text
+aws ec2 stop-instances --instance-ids i-1234567890abcdef0 i-abcdef1234567890
 ```
-
-where the output of the previous command is the `<public-dns>`.
-
-```bash
-ssh -i </path/to/your-key.pem> <username>@<public-dns>
-```
-
-For `username` it is default to `ubuntu` for Ubuntu AMIs.
 
 ## References
 

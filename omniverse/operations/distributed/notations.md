@@ -239,11 +239,5 @@ For optimal use of DDP:
 -   [PyTorch: Distributed Data Parallel Tutorial](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)
 -   <https://pytorch.org/tutorials/beginner/dist_overview.html#torch-nn-parallel-distributeddataparallel>
 
-### Data Parallelism versus Distributed Data Parallelism
-
-## Distributed Model Parallelism
-
--   https://github.com/hkproj/pytorch-transformer-distributed
-
 [^pytorch-distributed-data-parallel-tutorial]:
     [PyTorch: Distributed Data Parallel Tutorial](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html)

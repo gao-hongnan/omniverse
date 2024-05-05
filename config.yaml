@@ -1,6 +1,13 @@
 Region: ap-southeast-1
 Image:
   Os: ubuntu2004
+SharedStorage:
+  - MountDir: /shared
+    Name: my-efs
+    StorageType: Efs
+    EfsSettings:
+      PerformanceMode: generalPurpose
+      ThroughputMode: bursting
 HeadNode:
   InstanceType: t2.small
   Networking:
@@ -12,9 +19,9 @@ Scheduling:
   SlurmQueues:
   - Name: distributed-queue
     ComputeResources:
-    - Name: g4dnxlarge
+    - Name: g4dn12xlarge
       Instances:
-      - InstanceType: g4dn.xlarge
+      - InstanceType: g4dn.12xlarge
       MinCount: 2
       MaxCount: 2
     Networking:
