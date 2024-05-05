@@ -43,8 +43,8 @@ def run(local_rank: int, args: argparse.Namespace) -> None:
 
     if torch.cuda.is_available():
         torch.cuda.synchronize()
-
     torch.distributed.barrier()
+
     logger.info(f"rank {dist_info_per_process.global_rank} data (before all-reduce): {data} with device {data.device}.")
     torch.distributed.all_reduce(data, op=ReduceOp.SUM, async_op=False)  # in-place
     logger.info(f"rank {dist_info_per_process.global_rank} data (after all-reduce): {data} with device {data.device}.")

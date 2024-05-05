@@ -1,8 +1,36 @@
+"""Note that for even more robust benchmarks, one can define a configurable
+parameter `num_trials` and run the benchmark multiple times to get a
+better estimate of the statitisics.
+
+Note
+----
+1.   Can use torch's profiler for better cuda event measuring and better accuracy.
+2.   If want to benchmark real matrices or tensors, then write function to generate
+     tensor vram size based on tensor dimensions. If tensor is MxN = 100 x 200, then
+     tensor size = M * N * bytes_per_element.
+
+```bash
+python omnixamples/distributed/a_raw/c_benchmark.py \
+    --master_addr=localhost \
+    --master_port=29500 \
+    --nnodes=1 \
+    --nproc_per_node=4 \
+    --node_rank=0 \
+    --world_size=4 \
+    --backend=gloo \
+    --init_method="env://" \
+    --num_trials=5 \
+    --warmup_trials=1
+```
+"""
+
 from __future__ import annotations
 
 import argparse
+import copy
 import os
 import timeit
+from typing import List, Tuple
 
 import torch
 import torch.distributed
@@ -10,9 +38,10 @@ import torch.multiprocessing as mp
 from rich.pretty import pprint
 from torch._C._distributed_c10d import ReduceOp
 
-from omnivault.constants.dtype import TorchDtype
+from omnivault.benchmark.create_tensor_of_size import create_tensor_of_vram_size
+from omnivault.benchmark.statistics import calculate_statistics
 from omnivault.constants.memory import MemoryUnit
-from omnivault.distributed.core import find_free_port, is_free_port
+from omnivault.distributed.core import find_free_port, is_free_port, is_master_rank, synchronize_and_barrier
 from omnivault.utils.reproducibility.seed import seed_all
 from omnixamples.distributed.a_raw.a_setup import init_process
 from omnixamples.distributed.a_raw.config import get_args_parser
@@ -20,41 +49,30 @@ from omnixamples.distributed.a_raw.config import get_args_parser
 VRAM_SIZES_IN_BYTES = {
     "512KB": 512 * MemoryUnit.KB,  # 512_000
     "1MB": 1 * MemoryUnit.MB,  # 1_000_000
-    "10MB": 10 * MemoryUnit.MB,
+    # "10MB": 10 * MemoryUnit.MB,
     # "50MB": 50 * MemoryUnit.MB,
     # "100MB": 100 * MemoryUnit.MB,
     # "1GB": 1 * MemoryUnit.GB,
 }
 
-DTYPES = [torch.float32]  # 4bytes
+DTYPES = [  # note that float32 is 4 bytes per element so a 1D fp32 tensor with 10 elements will consume 40 bytes
+    torch.float32
+]
 
 
-def create_tensor_of_vram_size(dtype: torch.dtype, vram_size_in_bytes: int) -> torch.Tensor:
-    """Create a tensor of the specified dtype that fits in the VRAM size."""
+def time_all_reduce(tensor: torch.Tensor, world_size: int) -> Tuple[float, List[float]]:
+    synchronize_and_barrier()  # blocks host cpu calls until all CUDA kernels have completed execution, here we just want to wait for the tensor creation to complete on ALL ranks
 
-    # 1. For example, if `dtype` is `torch.float32` then `bytes_per_element` is 4.
-    #    It returns the bytes needed to store a single element of the tensor.
-    if dtype.is_floating_point:
-        bytes_per_element = torch.finfo(dtype).bits // MemoryUnit.BYTE
-        assert (
-            bytes_per_element == torch.tensor([], dtype=dtype).element_size()
-        )  # TODO: may be inefficient adding this assertion
-    else:
-        bytes_per_element = torch.iinfo(dtype).bits // MemoryUnit.BYTE
+    start_time = timeit.default_timer()
+    torch.distributed.all_reduce(tensor, op=ReduceOp.SUM, async_op=False)
+    synchronize_and_barrier()
+    end_time = timeit.default_timer()
 
-    # 2. Simple math, we need to find the number of elements required to
-    #    "consume" the target vram. For example, if we want to consume 10MB of
-    #    vram and each element is 4 bytes (float32), then we need ~2.5 million
-    #    elements derived from 10MB / 4 bytes per element.
-    total_elements_needed = int(vram_size_in_bytes / bytes_per_element)
+    time_on_this_rank: float = end_time - start_time  # time taken for all-reduce on this rank
 
-    # 3. Create 1D tensor with the required number of elements.
-    tensor = torch.empty(total_elements_needed, dtype=dtype)
-    assert tensor.size() == (
-        total_elements_needed,
-    ), f"Expected tensor size {total_elements_needed} but got {tensor.size()}."
-
-    return tensor
+    time_on_all_ranks = [0.0] * world_size
+    torch.distributed.all_gather_object(object_list=time_on_all_ranks, obj=time_on_this_rank)
+    return time_on_this_rank, time_on_all_ranks
 
 
 def run_benchmarks(local_rank: int, args: argparse.Namespace) -> None:
@@ -65,37 +83,47 @@ def run_benchmarks(local_rank: int, args: argparse.Namespace) -> None:
 
     device = f"cuda:{local_rank}" if torch.cuda.is_available() else "cpu"
 
+    trials_results = []
+
     for vram_size_name, vram_size_in_bytes in VRAM_SIZES_IN_BYTES.items():
-        logger.info(f"Running benchmark for VRAM size: {vram_size_name} ({vram_size_in_bytes} bytes).")
         for dtype in DTYPES:
             tensor = create_tensor_of_vram_size(dtype=dtype, vram_size_in_bytes=vram_size_in_bytes).to(device)
-            logger.info(f"Created tensor of dtype {dtype} with size {tensor.size()} and device {tensor.device}.")
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()  # blocks host cpu calls until all CUDA kernels have completed execution, here we just want to wait for the tensor creation to complete on ALL ranks
+            if is_master_rank():
+                logger.info(f"Running benchmark for VRAM size: {vram_size_name} ({vram_size_in_bytes} bytes).")
+                logger.info(f"Created tensor of dtype {dtype} with size {tensor.size()} and device {tensor.device}.")
+
+            if args.warmup_trials > 0:
+                for _ in range(args.warmup_trials):
+                    time_all_reduce(tensor=copy.deepcopy(tensor), world_size=dist_info_per_process.world_size)
+
+            # NOTE: The real benchmark starts after the warmup trials.
+            time_on_this_rank, time_on_all_ranks = time_all_reduce(
+                tensor=tensor, world_size=dist_info_per_process.world_size
+            )
+
+            average_time_per_rank = sum(time_on_all_ranks) / dist_info_per_process.world_size
+
+            statistics = calculate_statistics(data=time_on_all_ranks)
+            if is_master_rank():  # only master rank will print this cause all ranks will have the same list
+                logger.info(f"Time taken for all-reduce on all ranks: {time_on_all_ranks}.")
+                logger.info(f"Average time taken for all-reduce on all ranks: {average_time_per_rank:.6f} seconds.")
+                logger.info(f"Statistics for time taken for all-reduce on all ranks: {statistics}.\n")
+
             torch.distributed.barrier()
-
-            start_time = timeit.default_timer()
-            torch.distributed.all_reduce(tensor, op=ReduceOp.SUM, async_op=False)
-
-            if torch.cuda.is_available():
-                torch.cuda.synchronize()
-            torch.distributed.barrier()
-
-            end_time = timeit.default_timer()
-
-            time_on_this_rank = end_time - start_time
-
-            # torch.distributed.all_gather_object(time_on_this_rank, time_on_this_rank)
-
-
-
-    if torch.cuda.is_available():
-        torch.cuda.synchronize()
-
-    torch.distributed.barrier()
-    logger.info(f"rank {dist_info_per_process.global_rank} data (before all-reduce): {data} with device {data.device}.")
-    torch.distributed.all_reduce(data, op=ReduceOp.SUM, async_op=False)  # in-place
-    logger.info(f"rank {dist_info_per_process.global_rank} data (after all-reduce): {data} with device {data.device}.")
+            # you want append results across all ranks
+            trials_results.append(
+                {
+                    "global_rank": dist_info_per_process.global_rank,
+                    "vram_size_name": vram_size_name,
+                    "vram_size_in_bytes": vram_size_in_bytes,
+                    "dtype": dtype,
+                    "time_on_this_rank": time_on_this_rank,
+                    "time_on_all_ranks": time_on_all_ranks,
+                    "average_time_per_rank": average_time_per_rank,
+                    "aggregated_statistics_across_all_ranks": statistics,
+                }
+            )
+            pprint(trials_results)
 
 
 if __name__ == "__main__":
@@ -105,7 +133,11 @@ if __name__ == "__main__":
     # NOTE: if you use torchrun then a lot of env variables are auto
     # set when you pass in the command line arguments to torchrun.
 
-    args = get_args_parser().parse_args()
+    parser = get_args_parser()
+    parser.add_argument("--num_trials", type=int, default=1, help="Number of trials to run the benchmark.")
+    parser.add_argument("--warmup_trials", type=int, default=0, help="Number of warmup trials to run the benchmark.")
+
+    args = parser.parse_args()
     pprint(args)
 
     master_addr, master_port = args.master_addr, args.master_port
@@ -116,7 +148,7 @@ if __name__ == "__main__":
     os.environ["MASTER_PORT"] = str(master_port)
 
     mp.spawn(
-        fn=run,
+        fn=run_benchmarks,
         args=(args,),
         nprocs=args.nproc_per_node,
         join=True,

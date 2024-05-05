@@ -132,6 +132,22 @@ def get_local_rank() -> int:
     return get_global_rank() % get_local_world_size()
 
 
+def is_master_rank() -> bool:
+    """
+    Check if the current process is the master process.
+
+    The master process is the process with rank 0 across all nodes involved
+    in the distributed training.
+    """
+    return get_global_rank() == 0
+
+
+def synchronize_and_barrier() -> None:
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    torch.distributed.barrier()
+
+
 def teardown() -> None:
     torch.distributed.destroy_process_group()
 
@@ -144,7 +160,10 @@ def is_free_port(port: int) -> bool:
     -   https://github.com/serend1p1ty/core-pytorch-utils
     """
     ips = ["localhost", "127.0.0.1"]
-    ips.extend(socket.gethostbyname_ex(socket.gethostname())[-1])
+    try:
+        ips.extend(socket.gethostbyname_ex(socket.gethostname())[-1])
+    except socket.gaierror:
+        warnings.warn("Failed to get all IPs for the current host. Only using localhost", stacklevel=2)
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
