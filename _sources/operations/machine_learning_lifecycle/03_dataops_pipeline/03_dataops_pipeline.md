@@ -27,7 +27,7 @@ kernelspec:
 :local:
 ```
 
-As we transition from the [**project scoping phase**](./02_project_scoping.md),
+As we transition from the [**project scoping phase**](../02_project_scoping.md),
 where we framed the problem and identified **key metrics and components**, we
 now take a look at the DataOps phase. Even though data engineering and data
 operations are a whole different beast, we can at least look into the basic
@@ -117,7 +117,7 @@ scalability.
 Here's a high-level overview of the data engineering workflow, in the form of a
 diagram:
 
-```{figure} ./assets/dataops-lifecycle.gif
+```{figure} ../assets/dataops-lifecycle.gif
 ---
 name: ml-lifecycle-03-dataops-lifecycle
 height: 400px

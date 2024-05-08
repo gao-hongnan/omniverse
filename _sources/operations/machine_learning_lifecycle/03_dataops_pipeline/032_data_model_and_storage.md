@@ -460,7 +460,7 @@ hops between country and person—there are three hops between Zhenzhong Xu and
 USA while there are only two hops between Chloe He and USA. Similarly, there’d
 be no easy way for this type of query with a document database[^chip-1].
 
-```{figure} ./assets/chip_fig3.5.png
+```{figure} ../assets/chip_fig3.5.png
 ---
 width: 400px
 name: ml-lifecycle-032-graph-model
