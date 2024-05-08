@@ -115,6 +115,10 @@ bias) the data. By using bootstrapping, it simulates the scenario of having
 multiple different samples from the population and provides an estimate of how
 the model's predictions would vary across these different samples.
 
+## Model Calibration
+
+See chip
+
 ## References and Further Readings
 
 -   [Fast.ai](https://www.fast.ai/)
