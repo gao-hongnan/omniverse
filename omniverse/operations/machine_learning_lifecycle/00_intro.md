@@ -44,14 +44,14 @@ refine it below.
 
 1. [Problem Formulation](01_problem_formulation.md)
 2. [Project Scoping](02_project_scoping.md)
-3. [Data Pipeline, Data Engineering and DataOps](03_dataops_pipeline.md)
+3. [Data Pipeline, Data Engineering and DataOps](./03_dataops_pipeline/03_dataops_pipeline.md)
 4. [Data Extraction, Analysis and Preparation](04_mlops_data_pipeline.md)
-5. [Model Development, Selection and Training](07_model_development_selection_and_training.md):
+5. [Model Development, Selection and Training](./05_model_development_selection_and_training/05_ml_training_pipeline.md):
    The data scientist implements different algorithms with the prepared data to
    train various ML models. In addition, you subject the implemented algorithms
    to **hyperparameter tuning** to get the best performing ML model. The output
    of this step is a **trained model**.
-6. [Model Evaluation](08_model_evaluation.md): The model is evaluated on a
+6. [Model Evaluation](06_model_evaluation.md): The model is evaluated on a
    [**holdout test set**](https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets#Holdout_dataset)
    to evaluate the model quality. The output of this step is a set of
    **metrics** to assess the quality of the model.

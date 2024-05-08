@@ -255,8 +255,7 @@ Analysis phase are operationalized. We are essentially **executing the data
 analysis decisions** and package it into a pipeline to adhere to the MLOps,
 DataOps and DevOps principles.
 
-At this juncture, we prime the data for machine learning models through the
-following activities:
+To reiterate, we have some common steps in the data preparation stage:
 
 -   **Data Cleaning**: Execute decided strategies for handling missing values,
     outliers, or incorrect data.
