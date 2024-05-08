@@ -36,51 +36,51 @@ process and provide a quantitative measure of the model's quality.
 The appropriate metric depends on the type of machine learning task, the data,
 and the specific requirements of the project:
 
--   **Classification**: Here, we're predicting categorical outcomes. Common
-    metrics include Accuracy (percentage of correct predictions), Precision
-    (proportion of true positive predictions out of all positive predictions),
-    Recall (proportion of true positive predictions out of all actual
-    positives), F1-Score (harmonic mean of precision and recall), and AUC-ROC
-    (area under the Receiver Operating Characteristic curve, representing the
-    model's ability to distinguish between classes).
+### Classification
 
-    Do be aware of the differences of threshold invariant and scale invariant
-    metrics, for instance, AUC-ROC is threshold invariant and scale invariant,
-    an ideal metric when looking at the model's ability to distinguish between
-    classes.
+Here, we're predicting categorical outcomes. Common metrics include Accuracy
+(percentage of correct predictions), Precision (proportion of true positive
+predictions out of all positive predictions), Recall (proportion of true
+positive predictions out of all actual positives), F1-Score (harmonic mean of
+precision and recall), and AUC-ROC (area under the Receiver Operating
+Characteristic curve, representing the model's ability to distinguish between
+classes).
 
-    A last point is some metrics can be misleading, for instance, accuracy can
-    be misleading when the classes are imbalanced, and including PR-AUC may be a
-    better choice.
+### Regression
 
--   **Regression**: In regression problems, we're predicting continuous values.
-    Metrics like Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean
-    Squared Error (RMSE), and R-squared are typically used.
+In regression problems, we're predicting continuous values. Metrics like Mean
+Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared Error (RMSE),
+and R-squared are typically used.
 
-    MAE measures the average magnitude of errors in a set of predictions,
-    without considering their direction. MSE and RMSE are similar to MAE but
-    amplify the impact of large errors. R-squared (coefficient of determination)
-    explains how much of the dependent variable's variation is explained by the
-    independent variable(s).
+MAE measures the average magnitude of errors in a set of predictions, without
+considering their direction. MSE and RMSE are similar to MAE but amplify the
+impact of large errors. R-squared (coefficient of determination) explains how
+much of the dependent variable's variation is explained by the independent
+variable(s).
 
--   **Ranking**: In ranking problems, we're interested in the order of
-    predictions. The Normalized Discounted Cumulative Gain (NDCG) measures the
-    quality of a ranking, taking into account the positions of the relevant
-    items. Precision at K is another commonly used metric, providing the
-    proportion of relevant items among the top K items.
+### Clustering
+
+In clustering problems we typically see Adjusted Mutual Information Score (AMI),
+Adjusted Rand Index (ARI), Completeness Score, Homogeneity Score, and Silhouette
+Score. These metrics evaluate the quality of the clustering results by comparing
+the predicted clusters to the true clusters.
+
+### Ranking, Detection, Pairwise, Retrieval And Other Metrics
+
+There are many many more different types of metrics, for a comprehensive list,
+you can see
+[TorchMetrics](https://lightning.ai/docs/torchmetrics/stable/all-metrics.html)
+or
+[Scikit-Learn](https://scikit-learn.org/stable/modules/model_evaluation.html).
+
+### Choosing The Right Metric
 
 Remember that the choice of a metric should align with the business objective.
 For instance, if false positives and false negatives have a different cost, you
 might want to optimize for Precision or Recall rather than overall Accuracy.
 
-Another thing to consider is whether you are more interested in the ranking of
-predictions (which prediction is ranked highest) or in the absolute values of
-predictions (predicting the exact value). Depending on this, you might choose to
-optimize for AUC-ROC or Log Loss for a classification problem, or for RMSE or
-Mean Absolute Percentage Error (MAPE) for a regression problem.
-
-Finally, when comparing different models, it's important to use the same metric
-for a fair comparison. If one model is optimized for Accuracy and another for
+When comparing different models, it's important to use the same metric for a
+fair comparison. If one model is optimized for Accuracy and another for
 F1-Score, they might perform differently when evaluated using a single, common
 metric.
 
@@ -90,7 +90,31 @@ in a binary classification problem, accuracy might not be a good metric if the
 classes are imbalanced; precision and recall or the F1-score might be more
 informative.
 
-### Benefit Structure
+## Choose Your Metrics Wisely
+
+If you choose a misleading metric, you might end up with a model that performs
+well on paper but fails in practice simply because it reports a misleading and
+optimistic performance whereas it is not doing well.
+
+Consider a training dataset consisting of 1000 patients where we want to train a
+classifier to "accurately" classify whether a patient has cancer (positive
+class 1) or no cancer (negative class 0). The dataset is dichotimized by 950
+benign patients and the remaining 50, cancerous.
+
+The ZeroR classifier (baseline classification model) predicts only the majority
+class. And in our case, the in-sample training set accuracy will be $0.95\%$
+since it predicts all sample to be benign; for completeness, we also assume a
+validation set with 1000 patients (990 benign and 10 cancerous), it follows that
+our validation set's accuracy will be $0.99\%$.
+
+Euphoria is at all time high over this result, surprised that a baseline model
+can perform so well, you then happily reported this result to your boss, and
+gets fired immediately. You drown in tears and googled "Is accuracy a bad
+metric?", only to learn a valuable lesson: since the model you trained will
+predict benign no matter the input, this means it completely missed out every
+single cancerous patient even though you get a 99 percent accuracy.
+
+## Benefit Structure
 
 The "benefit structure" or "cost-benefit analysis" is an approach to model
 evaluation that goes beyond standard metrics like accuracy, precision, and
@@ -151,7 +175,7 @@ error. This type of analysis is particularly relevant in critical
 decision-making contexts, such as medical diagnosis, credit scoring, or fraud
 detection.
 
-### Calibration
+## Calibration
 
 Calibration in the context of machine learning models refers to how well the
 model's predicted probabilities of outcomes match the actual outcomes'
@@ -167,7 +191,7 @@ of 100 similar days with that prediction.
 - [Why model calibration matters and how to achieve it](https://www.unofficialgoogledatascience.com/2021/04/why-model-calibration-matters-and-how.html).
 ```
 
-#### Why Does Calibration Matter?
+### Why Does Calibration Matter?
 
 The output of classification models can often be interpreted as the probability
 that a given instance belongs to the positive class. For example, in binary
@@ -189,7 +213,7 @@ is particularly important in cases where the predicted probabilities are used to
 make decisions that depend not just on the class labels, but also on the
 certainty of the prediction.
 
-#### Example
+### Example
 
 Let's consider a model that predicts whether a patient has a certain disease
 (the positive class) or not (the negative class) based on some diagnostic tests.
@@ -230,7 +254,7 @@ x-axis represents the predicted probabilities and the y-axis represents the
 actual positive rates. A well-calibrated model would lie along the line y = x,
 while deviations from this line indicate miscalibration.
 
-#### Calibrating Models
+### Calibrating Models
 
 There are several methods to calibrate a model after it has been trained. One of
 the most popular methods is Platt Scaling, which fits a logistic regression
@@ -245,7 +269,7 @@ the model's scores.
 -   [1.16. Probability calibration (Scikit-Learn)](https://scikit-learn.org/stable/modules/calibration.html)
 ```
 
-#### Calibration and Evaluation (Brier + AUROC combo)
+### Calibration and Evaluation (Brier + AUROC combo)
 
 Once a model is calibrated, we need a way to evaluate how well-calibrated it is.
 This can be done using calibration plots, also known as reliability diagrams. In
@@ -280,3 +304,17 @@ using the Brier score and the AUROC together can provide a more complete
 evaluation of a model's performance. By optimizing these two metrics
 simultaneously, we can obtain a model that not only discriminates well between
 classes, but also provides accurate predicted probabilities.
+
+-   [TorchMetrics](https://lightning.ai/docs/torchmetrics/stable/all-metrics.html)
+-   [Scikit-Learn](https://scikit-learn.org/stable/modules/model_evaluation.html).
+-   [Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning](https://sebastianraschka.com/pdf/manuscripts/model-eval.pdf)
+-   Huyen, Chip. "Chapter 6. Model Development and Offline Evaluation." In
+    Designing Machine Learning Systems: An Iterative Process for
+    Production-Ready Applications, O'Reilly Media, Inc., 2022.
+-   [Scikit-Learn: Probability Calibration](https://scikit-learn.org/stable/modules/calibration.html)
+-   [Google: Why model calibration matters and how?](https://www.unofficialgoogledatascience.com/2021/04/why-model-calibration-matters-and-how.html)
+
+[^chip-chapter6]:
+    Huyen, Chip. "Chapter 6. Model Development and Offline Evaluation." In
+    Designing Machine Learning Systems: An Iterative Process for
+    Production-Ready Applications, O'Reilly Media, Inc., 2022.

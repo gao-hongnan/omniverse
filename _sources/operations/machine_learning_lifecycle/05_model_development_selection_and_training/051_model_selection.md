@@ -46,58 +46,149 @@ problem.
 
 [^chip-chapter6]
 
-```{list-table} Factors to Consider in Model Selection
-:header-rows: 1
-:name: ml-lifecycle-model-selection-factors
+### Independent and Identically Distributed (IID)
 
--   -   Consideration
-    -   Description
--   -   Dataset size
-    -   Some algorithms, like deep learning models, perform better with a large
-        amount of data. Conversely, simpler models like linear regression or
-        decision trees may be more appropriate for smaller datasets.
--   -   Feature characteristics
-    -   The nature of your features also impacts model choice. For instance,
-        decision trees and random forests are less affected by feature scaling
-        and can handle mixtures of features (binary, categorical, numerical),
-        whereas logistic regression or support vector machines usually require
-        feature scaling for high performance.
--   -   Non-linearity
-    -   If your data isn't linearly separable or the relationship between
-        features is non-linear, linear models like Linear Regression or Logistic
-        Regression may not be the best choice. You may need non-linear models
-        like Neural Networks, Support Vector Machines with non-linear kernels,
-        or Tree-Based models.
--   -   Dimensionality
-    -   If you have a high-dimensional dataset, some models may suffer from the
-        curse of dimensionality, such as k-nearest neighbors (k-NN). In such
-        scenarios, dimensionality reduction techniques or models less prone to
-        this issue like Random Forests or Gradient Boosting Machines could be
-        beneficial.
--   -   Interpretability vs. Accuracy
-    -   Depending on the use case, you may prioritize interpretability over
-        prediction accuracy or vice versa. Models like Linear Regression,
-        Logistic Regression, and Decision Trees are highly interpretable, while
-        Neural Networks, SVMs, and Ensemble methods trade-off interpretability
-        for higher accuracy.
+Consider an underlying distribution $\mathcal{D}$ from which the training and
+test data are drawn. The IID assumption states that the examples in the dataset
+are independently drawn from the same distribution without influence from each
+other.
 
-        However, there are many cases where a more complex model is necessary to
-        achieve the desired performance. For example, in image classification, a
-        classical model might failed spectacularly, but a deep learning model
-        like a Convolutional Neural Network (CNN) might be able to achieve much
-        better performance. There are indeed tools such as Grad-CAM to help with
-        the interpretability of deep learning models.
+Consider the case of classification problem, a (sample) dataset
+$\mathcal{S}=\left\{\mathbf{z}^{(1)}, \ldots, \mathbf{z}^{(N)}\right\}$ is a
+list of individual data points $\mathbf{z}^{(n)}$, for $n=1, \ldots, N$.
 
--   -   Real-time prediction
-    -   If you need to make real-time predictions, consider models that are not
-        only fast at prediction time but also have a smaller memory footprint.
-        Simpler models like Logistic Regression, Decision Trees, or k-NNs
-        (provided that the dataset is not too large) could be good choices here.
--   -   Computation resources
-    -   Training models like deep learning or large ensembles can be
-        resource-intensive. If you have computational resource constraints, you
-        might prefer simpler or more efficient models.
-```
+$$
+\mathcal{S} \overset{\mathrm{iid}}{\sim} \mathcal{D} = \left \{ \left(\mathrm{X}^{(n)}, Y^{(n)} \right) \right \}_{n=1}^N = \left \{ \left(\mathrm{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^N \in \left(\mathcal{X}, \mathcal{Y} \right)^N
+$$
+
+This means that $\mathcal{S}$ is a collection of samples drawn $\textbf{i.i.d.}$
+from an unknown distribution $\mathcal{D}$ over the joint distribution of the
+input and the label space $\mathcal{X} \times \mathcal{Y}$.
+
+-   The i.i.d. assumption is foundational in statistical modeling because it
+    simplifies the process significantly. For example, it allows us to
+    [**_express joint probability distributions_**](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables)
+    as the product of marginal distributions.
+-   Furthermore, evaluation techniques such as **_resampling_** and
+    **_cross-validation_** with a holdout set rely on the assumption that the
+    training and test data are drawn from the same distribution.
+
+However one needs to understand that this assumption doesn't often hold in real
+world scenarios and assuming that the test set is drawn from the same
+distribution as the training set is a simplification that may not always be
+true.
+
+### Smoothness (Chaoticity)
+
+One of the goal of imposing smoothness constraints on a machine learning model
+is indeed to avoid chaotic behavior in the model's predictions. A chaotic
+system, in mathematical terms, is highly sensitive to initial conditions, where
+small changes can lead to drastically different outcomes. So to enable stability
+we often impose smoothness constraints on the model.
+
+The concept of smoothness in machine learning and mathematical contexts often
+pertains to the continuity and differentiability of functions. When talking
+about models in machine learning, the smoothness assumption suggests that the
+function mapping inputs to outputs should not have abrupt changes.
+
+1. **Lipschitz Continuity**: A function $f: \mathbb{R}^n \rightarrow \mathbb{R}$
+   is said to be Lipschitz continuous if there exists a constant $L \geq 0$ such
+   that for all $x, y \in \mathbb{R}^n$,
+
+    $$
+    |f(x) - f(y)| \leq L \|x - y\|
+    $$
+
+    where $\|x - y\|$ is a norm (typically Euclidean) on $\mathbb{R}^n$. The
+    constant $L$ is known as the Lipschitz constant. This definition ensures
+    that the function does not change more rapidly than a linear function scaled
+    by $L$, providing a bound on the rate of change of the function.
+
+2. **Hölder Continuity**: A generalization of Lipschitz continuity, a function
+   is Hölder continuous if there exists a constant $C \geq 0$ and an exponent
+   $\alpha$ (0 < $\alpha$ ≤ 1) such that
+
+    $$
+    |f(x) - f(y)| \leq C \|x - y\|^\alpha
+    $$
+
+    for all $x, y$. When $\alpha = 1$, Hölder continuity reduces to Lipschitz
+    continuity. Hölder continuity allows for functions that are less regular
+    than those required by Lipschitz continuity but still have controlled
+    variations.
+
+3. **Differentiability**: A function $f: \mathbb{R}^n \rightarrow \mathbb{R}$ is
+   differentiable at a point $x$ if there exists a linear map $J_f(x)$ (the
+   Jacobian matrix at $x$) such that
+
+    $$
+    \lim_{h \rightarrow 0} \frac{|f(x+h) - f(x) - J_f(x)h|}{\|h\|} = 0
+    $$
+
+    This definition implies that the function can be locally approximated by a
+    linear map, ensuring smooth transitions between values. A function is
+    continuously differentiable (class $C^1$) if it is differentiable everywhere
+    and the derivative is continuous.
+
+4. **Twice Differentiability and Beyond**: Higher degrees of smoothness can be
+   defined by requiring higher derivatives to exist and be continuous. For
+   example, a function $f$ is of class $C^2$ if it is twice differentiable and
+   its second derivative is continuous.
+
+### Boundaries (Linearity)
+
+If your data isn't linearly separable or the relationship between features is
+non-linear, linear models like Linear Regression or Logistic Regression may not
+be the best choice. You may need non-linear models like Neural Networks, Support
+Vector Machines with non-linear kernels, or Tree-Based models.
+
+### Dimensionality
+
+If you have a high-dimensional dataset, some models may suffer from the curse of
+dimensionality, such as k-nearest neighbors (k-NN). In such scenarios,
+dimensionality reduction techniques or models less prone to this issue can be
+used.
+
+### Interpretability vs. Accuracy
+
+Depending on the use case, you may prioritize interpretability over prediction
+accuracy or vice versa. Models like Linear Regression, Logistic Regression, and
+Decision Trees are highly interpretable, while Neural Networks, SVMs, and
+Ensemble methods trade-off interpretability for higher accuracy.
+
+However, there are many cases where a more complex model is necessary to achieve
+the desired performance. For example, in image classification, a classical model
+might failed spectacularly, but a deep learning model like a Convolutional
+Neural Network (CNN) might be able to achieve much better performance. There are
+indeed tools such as Grad-CAM to help with the interpretability of deep learning
+models.
+
+### Tractability
+
+Let $X$ be the input and $Z$ be the latent representation of $X$. Every
+generative model makes the assumption that it’s tractable to compute the
+probability $P(Z \mid X)$[^chip-chapter6].
+
+### Feature Characteristics
+
+The nature of your features also impacts model choice. For instance, decision
+trees and random forests are less affected by feature scaling and can handle
+mixtures of features (binary, categorical, numerical), whereas logistic
+regression or support vector machines usually require feature scaling for high
+performance.
+
+### Real-Time Prediction And Computational Resources
+
+If you need to make real-time predictions, consider models that are not only
+fast at prediction time but also have a smaller memory footprint. Simpler models
+like Logistic Regression, Decision Trees, or k-NNs (provided that the dataset is
+not too large) could be good choices here.
+
+Training models like deep learning or large ensembles can be resource-intensive.
+If you have computational resource constraints, you might prefer simpler or more
+efficient models.
+
+### No Free Lunch Theorem
 
 Remember, there's rarely a one-size-fits-all model for any given problem.
 Typically, you'll experiment with multiple models and choose the one that

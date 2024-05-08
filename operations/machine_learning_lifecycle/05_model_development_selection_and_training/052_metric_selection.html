@@ -568,14 +568,20 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metric-selection">Metric Selection</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#benefit-structure">Benefit Structure</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-calibration-matter">Why Does Calibration Matter?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrating-models">Calibrating Models</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-and-evaluation-brier-auroc-combo">Calibration and Evaluation (Brier + AUROC combo)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clustering">Clustering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking-detection-pairwise-retrieval-and-other-metrics">Ranking, Detection, Pairwise, Retrieval And Other Metrics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-the-right-metric">Choosing The Right Metric</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-metrics-wisely">Choose Your Metrics Wisely</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benefit-structure">Benefit Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-calibration-matter">Why Does Calibration Matter?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrating-models">Calibrating Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-and-evaluation-brier-auroc-combo">Calibration and Evaluation (Brier + AUROC combo)</a></li>
 </ul>
 </li>
 </ul>
@@ -600,15 +606,21 @@ document.write(`
 <ul class="simple">
 <li><p><a class="reference internal" href="#metric-selection" id="id1">Metric Selection</a></p>
 <ul>
-<li><p><a class="reference internal" href="#benefit-structure" id="id2">Benefit Structure</a></p></li>
-<li><p><a class="reference internal" href="#calibration" id="id3">Calibration</a></p>
-<ul>
-<li><p><a class="reference internal" href="#why-does-calibration-matter" id="id4">Why Does Calibration Matter?</a></p></li>
-<li><p><a class="reference internal" href="#example" id="id5">Example</a></p></li>
-<li><p><a class="reference internal" href="#calibrating-models" id="id6">Calibrating Models</a></p></li>
-<li><p><a class="reference internal" href="#calibration-and-evaluation-brier-auroc-combo" id="id7">Calibration and Evaluation (Brier + AUROC combo)</a></p></li>
+<li><p><a class="reference internal" href="#classification" id="id2">Classification</a></p></li>
+<li><p><a class="reference internal" href="#regression" id="id3">Regression</a></p></li>
+<li><p><a class="reference internal" href="#clustering" id="id4">Clustering</a></p></li>
+<li><p><a class="reference internal" href="#ranking-detection-pairwise-retrieval-and-other-metrics" id="id5">Ranking, Detection, Pairwise, Retrieval And Other Metrics</a></p></li>
+<li><p><a class="reference internal" href="#choosing-the-right-metric" id="id6">Choosing The Right Metric</a></p></li>
 </ul>
 </li>
+<li><p><a class="reference internal" href="#choose-your-metrics-wisely" id="id7">Choose Your Metrics Wisely</a></p></li>
+<li><p><a class="reference internal" href="#benefit-structure" id="id8">Benefit Structure</a></p></li>
+<li><p><a class="reference internal" href="#calibration" id="id9">Calibration</a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-does-calibration-matter" id="id10">Why Does Calibration Matter?</a></p></li>
+<li><p><a class="reference internal" href="#example" id="id11">Example</a></p></li>
+<li><p><a class="reference internal" href="#calibrating-models" id="id12">Calibrating Models</a></p></li>
+<li><p><a class="reference internal" href="#calibration-and-evaluation-brier-auroc-combo" id="id13">Calibration and Evaluation (Brier + AUROC combo)</a></p></li>
 </ul>
 </li>
 </ul>
@@ -620,47 +632,49 @@ model’s performance will be evaluated. These metrics will guide the optimizati
 process and provide a quantitative measure of the model’s quality.</p>
 <p>The appropriate metric depends on the type of machine learning task, the data,
 and the specific requirements of the project:</p>
-<ul>
-<li><p><strong>Classification</strong>: Here, we’re predicting categorical outcomes. Common
-metrics include Accuracy (percentage of correct predictions), Precision
-(proportion of true positive predictions out of all positive predictions),
-Recall (proportion of true positive predictions out of all actual
-positives), F1-Score (harmonic mean of precision and recall), and AUC-ROC
-(area under the Receiver Operating Characteristic curve, representing the
-model’s ability to distinguish between classes).</p>
-<p>Do be aware of the differences of threshold invariant and scale invariant
-metrics, for instance, AUC-ROC is threshold invariant and scale invariant,
-an ideal metric when looking at the model’s ability to distinguish between
-classes.</p>
-<p>A last point is some metrics can be misleading, for instance, accuracy can
-be misleading when the classes are imbalanced, and including PR-AUC may be a
-better choice.</p>
-</li>
-<li><p><strong>Regression</strong>: In regression problems, we’re predicting continuous values.
-Metrics like Mean Absolute Error (MAE), Mean Squared Error (MSE), Root Mean
-Squared Error (RMSE), and R-squared are typically used.</p>
-<p>MAE measures the average magnitude of errors in a set of predictions,
-without considering their direction. MSE and RMSE are similar to MAE but
-amplify the impact of large errors. R-squared (coefficient of determination)
-explains how much of the dependent variable’s variation is explained by the
-independent variable(s).</p>
-</li>
-<li><p><strong>Ranking</strong>: In ranking problems, we’re interested in the order of
-predictions. The Normalized Discounted Cumulative Gain (NDCG) measures the
-quality of a ranking, taking into account the positions of the relevant
-items. Precision at K is another commonly used metric, providing the
-proportion of relevant items among the top K items.</p></li>
-</ul>
+<section id="classification">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Classification</a><a class="headerlink" href="#classification" title="Link to this heading">#</a></h3>
+<p>Here, we’re predicting categorical outcomes. Common metrics include Accuracy
+(percentage of correct predictions), Precision (proportion of true positive
+predictions out of all positive predictions), Recall (proportion of true
+positive predictions out of all actual positives), F1-Score (harmonic mean of
+precision and recall), and AUC-ROC (area under the Receiver Operating
+Characteristic curve, representing the model’s ability to distinguish between
+classes).</p>
+</section>
+<section id="regression">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Regression</a><a class="headerlink" href="#regression" title="Link to this heading">#</a></h3>
+<p>In regression problems, we’re predicting continuous values. Metrics like Mean
+Absolute Error (MAE), Mean Squared Error (MSE), Root Mean Squared Error (RMSE),
+and R-squared are typically used.</p>
+<p>MAE measures the average magnitude of errors in a set of predictions, without
+considering their direction. MSE and RMSE are similar to MAE but amplify the
+impact of large errors. R-squared (coefficient of determination) explains how
+much of the dependent variable’s variation is explained by the independent
+variable(s).</p>
+</section>
+<section id="clustering">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Clustering</a><a class="headerlink" href="#clustering" title="Link to this heading">#</a></h3>
+<p>In clustering problems we typically see Adjusted Mutual Information Score (AMI),
+Adjusted Rand Index (ARI), Completeness Score, Homogeneity Score, and Silhouette
+Score. These metrics evaluate the quality of the clustering results by comparing
+the predicted clusters to the true clusters.</p>
+</section>
+<section id="ranking-detection-pairwise-retrieval-and-other-metrics">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Ranking, Detection, Pairwise, Retrieval And Other Metrics</a><a class="headerlink" href="#ranking-detection-pairwise-retrieval-and-other-metrics" title="Link to this heading">#</a></h3>
+<p>There are many many more different types of metrics, for a comprehensive list,
+you can see
+<a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/all-metrics.html">TorchMetrics</a>
+or
+<a class="reference external" href="https://scikit-learn.org/stable/modules/model_evaluation.html">Scikit-Learn</a>.</p>
+</section>
+<section id="choosing-the-right-metric">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Choosing The Right Metric</a><a class="headerlink" href="#choosing-the-right-metric" title="Link to this heading">#</a></h3>
 <p>Remember that the choice of a metric should align with the business objective.
 For instance, if false positives and false negatives have a different cost, you
 might want to optimize for Precision or Recall rather than overall Accuracy.</p>
-<p>Another thing to consider is whether you are more interested in the ranking of
-predictions (which prediction is ranked highest) or in the absolute values of
-predictions (predicting the exact value). Depending on this, you might choose to
-optimize for AUC-ROC or Log Loss for a classification problem, or for RMSE or
-Mean Absolute Percentage Error (MAPE) for a regression problem.</p>
-<p>Finally, when comparing different models, it’s important to use the same metric
-for a fair comparison. If one model is optimized for Accuracy and another for
+<p>When comparing different models, it’s important to use the same metric for a
+fair comparison. If one model is optimized for Accuracy and another for
 F1-Score, they might perform differently when evaluated using a single, common
 metric.</p>
 <p>It’s not uncommon to use multiple metrics to evaluate a model’s performance, as
@@ -668,8 +682,31 @@ they can each highlight different aspects of the model’s behavior. For instanc
 in a binary classification problem, accuracy might not be a good metric if the
 classes are imbalanced; precision and recall or the F1-score might be more
 informative.</p>
+</section>
+</section>
+<section id="choose-your-metrics-wisely">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Choose Your Metrics Wisely</a><a class="headerlink" href="#choose-your-metrics-wisely" title="Link to this heading">#</a></h2>
+<p>If you choose a misleading metric, you might end up with a model that performs
+well on paper but fails in practice simply because it reports a misleading and
+optimistic performance whereas it is not doing well.</p>
+<p>Consider a training dataset consisting of 1000 patients where we want to train a
+classifier to “accurately” classify whether a patient has cancer (positive
+class 1) or no cancer (negative class 0). The dataset is dichotimized by 950
+benign patients and the remaining 50, cancerous.</p>
+<p>The ZeroR classifier (baseline classification model) predicts only the majority
+class. And in our case, the in-sample training set accuracy will be <span class="math notranslate nohighlight">\(0.95\%\)</span>
+since it predicts all sample to be benign; for completeness, we also assume a
+validation set with 1000 patients (990 benign and 10 cancerous), it follows that
+our validation set’s accuracy will be <span class="math notranslate nohighlight">\(0.99\%\)</span>.</p>
+<p>Euphoria is at all time high over this result, surprised that a baseline model
+can perform so well, you then happily reported this result to your boss, and
+gets fired immediately. You drown in tears and googled “Is accuracy a bad
+metric?”, only to learn a valuable lesson: since the model you trained will
+predict benign no matter the input, this means it completely missed out every
+single cancerous patient even though you get a 99 percent accuracy.</p>
+</section>
 <section id="benefit-structure">
-<h3><a class="toc-backref" href="#id2" role="doc-backlink">Benefit Structure</a><a class="headerlink" href="#benefit-structure" title="Link to this heading">#</a></h3>
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Benefit Structure</a><a class="headerlink" href="#benefit-structure" title="Link to this heading">#</a></h2>
 <p>The “benefit structure” or “cost-benefit analysis” is an approach to model
 evaluation that goes beyond standard metrics like accuracy, precision, and
 recall. It involves assigning specific costs and benefits to different types of
@@ -735,7 +772,7 @@ decision-making contexts, such as medical diagnosis, credit scoring, or fraud
 detection.</p>
 </section>
 <section id="calibration">
-<h3><a class="toc-backref" href="#id3" role="doc-backlink">Calibration</a><a class="headerlink" href="#calibration" title="Link to this heading">#</a></h3>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Calibration</a><a class="headerlink" href="#calibration" title="Link to this heading">#</a></h2>
 <p>Calibration in the context of machine learning models refers to how well the
 model’s predicted probabilities of outcomes match the actual outcomes’
 frequencies in the real world. A well-calibrated model means that if the model
@@ -750,7 +787,7 @@ of 100 similar days with that prediction.</p>
 </ul>
 </div>
 <section id="why-does-calibration-matter">
-<h4><a class="toc-backref" href="#id4" role="doc-backlink">Why Does Calibration Matter?</a><a class="headerlink" href="#why-does-calibration-matter" title="Link to this heading">#</a></h4>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Why Does Calibration Matter?</a><a class="headerlink" href="#why-does-calibration-matter" title="Link to this heading">#</a></h3>
 <p>The output of classification models can often be interpreted as the probability
 that a given instance belongs to the positive class. For example, in binary
 classification, a model might predict a value of 0.7 for a certain instance,
@@ -770,7 +807,7 @@ make decisions that depend not just on the class labels, but also on the
 certainty of the prediction.</p>
 </section>
 <section id="example">
-<h4><a class="toc-backref" href="#id5" role="doc-backlink">Example</a><a class="headerlink" href="#example" title="Link to this heading">#</a></h4>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Example</a><a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
 <p>Let’s consider a model that predicts whether a patient has a certain disease
 (the positive class) or not (the negative class) based on some diagnostic tests.
 Let’s assume we have a set of 1000 patients and the model makes predictions on
@@ -840,7 +877,7 @@ actual positive rates. A well-calibrated model would lie along the line y = x,
 while deviations from this line indicate miscalibration.</p>
 </section>
 <section id="calibrating-models">
-<h4><a class="toc-backref" href="#id6" role="doc-backlink">Calibrating Models</a><a class="headerlink" href="#calibrating-models" title="Link to this heading">#</a></h4>
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Calibrating Models</a><a class="headerlink" href="#calibrating-models" title="Link to this heading">#</a></h3>
 <p>There are several methods to calibrate a model after it has been trained. One of
 the most popular methods is Platt Scaling, which fits a logistic regression
 model to the model’s scores. This logistic regression model can adjust the
@@ -855,7 +892,7 @@ the model’s scores.</p>
 </div>
 </section>
 <section id="calibration-and-evaluation-brier-auroc-combo">
-<h4><a class="toc-backref" href="#id7" role="doc-backlink">Calibration and Evaluation (Brier + AUROC combo)</a><a class="headerlink" href="#calibration-and-evaluation-brier-auroc-combo" title="Link to this heading">#</a></h4>
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Calibration and Evaluation (Brier + AUROC combo)</a><a class="headerlink" href="#calibration-and-evaluation-brier-auroc-combo" title="Link to this heading">#</a></h3>
 <p>Once a model is calibrated, we need a way to evaluate how well-calibrated it is.
 This can be done using calibration plots, also known as reliability diagrams. In
 a calibration plot, the x-axis represents the predicted probabilities and the
@@ -886,7 +923,16 @@ using the Brier score and the AUROC together can provide a more complete
 evaluation of a model’s performance. By optimizing these two metrics
 simultaneously, we can obtain a model that not only discriminates well between
 classes, but also provides accurate predicted probabilities.</p>
-</section>
+<ul class="simple">
+<li><p><a class="reference external" href="https://lightning.ai/docs/torchmetrics/stable/all-metrics.html">TorchMetrics</a></p></li>
+<li><p><a class="reference external" href="https://scikit-learn.org/stable/modules/model_evaluation.html">Scikit-Learn</a>.</p></li>
+<li><p><a class="reference external" href="https://sebastianraschka.com/pdf/manuscripts/model-eval.pdf">Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning</a></p></li>
+<li><p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p><a class="reference external" href="https://scikit-learn.org/stable/modules/calibration.html">Scikit-Learn: Probability Calibration</a></p></li>
+<li><p><a class="reference external" href="https://www.unofficialgoogledatascience.com/2021/04/why-model-calibration-matters-and-how.html">Google: Why model calibration matters and how?</a></p></li>
+</ul>
 </section>
 </section>
 </section>
@@ -956,14 +1002,20 @@ classes, but also provides accurate predicted probabilities.</p>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metric-selection">Metric Selection</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#benefit-structure">Benefit Structure</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-calibration-matter">Why Does Calibration Matter?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrating-models">Calibrating Models</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-and-evaluation-brier-auroc-combo">Calibration and Evaluation (Brier + AUROC combo)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classification">Classification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#regression">Regression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clustering">Clustering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ranking-detection-pairwise-retrieval-and-other-metrics">Ranking, Detection, Pairwise, Retrieval And Other Metrics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-the-right-metric">Choosing The Right Metric</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choose-your-metrics-wisely">Choose Your Metrics Wisely</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benefit-structure">Benefit Structure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration">Calibration</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-does-calibration-matter">Why Does Calibration Matter?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibrating-models">Calibrating Models</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-and-evaluation-brier-auroc-combo">Calibration and Evaluation (Brier + AUROC combo)</a></li>
 </ul>
 </li>
 </ul>

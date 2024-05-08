@@ -567,7 +567,18 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-model-and-data-assumptions">Understanding Model And Data Assumptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-model-and-data-assumptions">Understanding Model And Data Assumptions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-and-identically-distributed-iid">Independent and Identically Distributed (IID)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothness-chaoticity">Smoothness (Chaoticity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boundaries-linearity">Boundaries (Linearity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensionality">Dimensionality</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretability-vs-accuracy">Interpretability vs. Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tractability">Tractability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-characteristics">Feature Characteristics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-time-prediction-and-computational-resources">Real-Time Prediction And Computational Resources</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#no-free-lunch-theorem">No Free Lunch Theorem</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline">Baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-selection-revisited">Model Selection Revisited</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
@@ -591,10 +602,22 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#understanding-model-and-data-assumptions" id="id2">Understanding Model And Data Assumptions</a></p></li>
-<li><p><a class="reference internal" href="#baseline" id="id3">Baseline</a></p></li>
-<li><p><a class="reference internal" href="#model-selection-revisited" id="id4">Model Selection Revisited</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id5">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#understanding-model-and-data-assumptions" id="id3">Understanding Model And Data Assumptions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#independent-and-identically-distributed-iid" id="id4">Independent and Identically Distributed (IID)</a></p></li>
+<li><p><a class="reference internal" href="#smoothness-chaoticity" id="id5">Smoothness (Chaoticity)</a></p></li>
+<li><p><a class="reference internal" href="#boundaries-linearity" id="id6">Boundaries (Linearity)</a></p></li>
+<li><p><a class="reference internal" href="#dimensionality" id="id7">Dimensionality</a></p></li>
+<li><p><a class="reference internal" href="#interpretability-vs-accuracy" id="id8">Interpretability vs. Accuracy</a></p></li>
+<li><p><a class="reference internal" href="#tractability" id="id9">Tractability</a></p></li>
+<li><p><a class="reference internal" href="#feature-characteristics" id="id10">Feature Characteristics</a></p></li>
+<li><p><a class="reference internal" href="#real-time-prediction-and-computational-resources" id="id11">Real-Time Prediction And Computational Resources</a></p></li>
+<li><p><a class="reference internal" href="#no-free-lunch-theorem" id="id12">No Free Lunch Theorem</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#baseline" id="id13">Baseline</a></p></li>
+<li><p><a class="reference internal" href="#model-selection-revisited" id="id14">Model Selection Revisited</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id15">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>“Just use gradient boosting”, or “Just use the biggest Transformer model” are
@@ -605,7 +628,7 @@ different models and choose the one that best fits your problem. On top of that,
 having a solid understanding of the assumptions and limitations of the model is
 crucial for making an informed decision.</p>
 <section id="understanding-model-and-data-assumptions">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Understanding Model And Data Assumptions</a><a class="headerlink" href="#understanding-model-and-data-assumptions" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Understanding Model And Data Assumptions</a><a class="headerlink" href="#understanding-model-and-data-assumptions" title="Link to this heading">#</a></h2>
 <p>Before selecting a model, it’s important to understand the assumptions and
 limitations of the model. Different models make different assumptions about the
 data, and these assumptions can impact the model’s performance. We would take
@@ -613,67 +636,143 @@ examples from Chip Huyen’s book <em>Designing Machine Learning Systems</em> as
 provided us with some useful points to consider when selecting a model for your
 problem.</p>
 <p><a class="footnote-reference brackets" href="#chip-chapter6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
-<table class="table" id="ml-lifecycle-model-selection-factors">
-<caption><span class="caption-number">Table 40 </span><span class="caption-text">Factors to Consider in Model Selection</span><a class="headerlink" href="#ml-lifecycle-model-selection-factors" title="Link to this table">#</a></caption>
-<thead>
-<tr class="row-odd"><th class="head"><p>Consideration</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Dataset size</p></td>
-<td><p>Some algorithms, like deep learning models, perform better with a large
-amount of data. Conversely, simpler models like linear regression or
-decision trees may be more appropriate for smaller datasets.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Feature characteristics</p></td>
-<td><p>The nature of your features also impacts model choice. For instance,
-decision trees and random forests are less affected by feature scaling
-and can handle mixtures of features (binary, categorical, numerical),
-whereas logistic regression or support vector machines usually require
-feature scaling for high performance.</p></td>
-</tr>
-<tr class="row-even"><td><p>Non-linearity</p></td>
-<td><p>If your data isn’t linearly separable or the relationship between
-features is non-linear, linear models like Linear Regression or Logistic
-Regression may not be the best choice. You may need non-linear models
-like Neural Networks, Support Vector Machines with non-linear kernels,
-or Tree-Based models.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Dimensionality</p></td>
-<td><p>If you have a high-dimensional dataset, some models may suffer from the
-curse of dimensionality, such as k-nearest neighbors (k-NN). In such
-scenarios, dimensionality reduction techniques or models less prone to
-this issue like Random Forests or Gradient Boosting Machines could be
-beneficial.</p></td>
-</tr>
-<tr class="row-even"><td><p>Interpretability vs. Accuracy</p></td>
-<td><p>Depending on the use case, you may prioritize interpretability over
-prediction accuracy or vice versa. Models like Linear Regression,
-Logistic Regression, and Decision Trees are highly interpretable, while
-Neural Networks, SVMs, and Ensemble methods trade-off interpretability
-for higher accuracy.</p>
-<p>However, there are many cases where a more complex model is necessary to
-achieve the desired performance. For example, in image classification, a
-classical model might failed spectacularly, but a deep learning model
-like a Convolutional Neural Network (CNN) might be able to achieve much
-better performance. There are indeed tools such as Grad-CAM to help with
-the interpretability of deep learning models.</p>
-</td>
-</tr>
-<tr class="row-odd"><td><p>Real-time prediction</p></td>
-<td><p>If you need to make real-time predictions, consider models that are not
-only fast at prediction time but also have a smaller memory footprint.
-Simpler models like Logistic Regression, Decision Trees, or k-NNs
-(provided that the dataset is not too large) could be good choices here.</p></td>
-</tr>
-<tr class="row-even"><td><p>Computation resources</p></td>
-<td><p>Training models like deep learning or large ensembles can be
-resource-intensive. If you have computational resource constraints, you
-might prefer simpler or more efficient models.</p></td>
-</tr>
-</tbody>
-</table>
+<section id="independent-and-identically-distributed-iid">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Independent and Identically Distributed (IID)</a><a class="headerlink" href="#independent-and-identically-distributed-iid" title="Link to this heading">#</a></h3>
+<p>Consider an underlying distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> from which the training and
+test data are drawn. The IID assumption states that the examples in the dataset
+are independently drawn from the same distribution without influence from each
+other.</p>
+<p>Consider the case of classification problem, a (sample) dataset
+<span class="math notranslate nohighlight">\(\mathcal{S}=\left\{\mathbf{z}^{(1)}, \ldots, \mathbf{z}^{(N)}\right\}\)</span> is a
+list of individual data points <span class="math notranslate nohighlight">\(\mathbf{z}^{(n)}\)</span>, for <span class="math notranslate nohighlight">\(n=1, \ldots, N\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{S} \overset{\mathrm{iid}}{\sim} \mathcal{D} = \left \{ \left(\mathrm{X}^{(n)}, Y^{(n)} \right) \right \}_{n=1}^N = \left \{ \left(\mathrm{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^N \in \left(\mathcal{X}, \mathcal{Y} \right)^N
+\]</div>
+<p>This means that <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is a collection of samples drawn <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span>
+from an unknown distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> over the joint distribution of the
+input and the label space <span class="math notranslate nohighlight">\(\mathcal{X} \times \mathcal{Y}\)</span>.</p>
+<ul class="simple">
+<li><p>The i.i.d. assumption is foundational in statistical modeling because it
+simplifies the process significantly. For example, it allows us to
+<a class="reference external" href="https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables"><strong><em>express joint probability distributions</em></strong></a>
+as the product of marginal distributions.</p></li>
+<li><p>Furthermore, evaluation techniques such as <strong><em>resampling</em></strong> and
+<strong><em>cross-validation</em></strong> with a holdout set rely on the assumption that the
+training and test data are drawn from the same distribution.</p></li>
+</ul>
+<p>However one needs to understand that this assumption doesn’t often hold in real
+world scenarios and assuming that the test set is drawn from the same
+distribution as the training set is a simplification that may not always be
+true.</p>
+</section>
+<section id="smoothness-chaoticity">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Smoothness (Chaoticity)</a><a class="headerlink" href="#smoothness-chaoticity" title="Link to this heading">#</a></h3>
+<p>One of the goal of imposing smoothness constraints on a machine learning model
+is indeed to avoid chaotic behavior in the model’s predictions. A chaotic
+system, in mathematical terms, is highly sensitive to initial conditions, where
+small changes can lead to drastically different outcomes. So to enable stability
+we often impose smoothness constraints on the model.</p>
+<p>The concept of smoothness in machine learning and mathematical contexts often
+pertains to the continuity and differentiability of functions. When talking
+about models in machine learning, the smoothness assumption suggests that the
+function mapping inputs to outputs should not have abrupt changes.</p>
+<ol class="arabic">
+<li><p><strong>Lipschitz Continuity</strong>: A function <span class="math notranslate nohighlight">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>
+is said to be Lipschitz continuous if there exists a constant <span class="math notranslate nohighlight">\(L \geq 0\)</span> such
+that for all <span class="math notranslate nohighlight">\(x, y \in \mathbb{R}^n\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+    |f(x) - f(y)| \leq L \|x - y\|
+    \]</div>
+<p>where <span class="math notranslate nohighlight">\(\|x - y\|\)</span> is a norm (typically Euclidean) on <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span>. The
+constant <span class="math notranslate nohighlight">\(L\)</span> is known as the Lipschitz constant. This definition ensures
+that the function does not change more rapidly than a linear function scaled
+by <span class="math notranslate nohighlight">\(L\)</span>, providing a bound on the rate of change of the function.</p>
+</li>
+<li><p><strong>Hölder Continuity</strong>: A generalization of Lipschitz continuity, a function
+is Hölder continuous if there exists a constant <span class="math notranslate nohighlight">\(C \geq 0\)</span> and an exponent
+<span class="math notranslate nohighlight">\(\alpha\)</span> (0 &lt; <span class="math notranslate nohighlight">\(\alpha\)</span> ≤ 1) such that</p>
+<div class="math notranslate nohighlight">
+\[
+    |f(x) - f(y)| \leq C \|x - y\|^\alpha
+    \]</div>
+<p>for all <span class="math notranslate nohighlight">\(x, y\)</span>. When <span class="math notranslate nohighlight">\(\alpha = 1\)</span>, Hölder continuity reduces to Lipschitz
+continuity. Hölder continuity allows for functions that are less regular
+than those required by Lipschitz continuity but still have controlled
+variations.</p>
+</li>
+<li><p><strong>Differentiability</strong>: A function <span class="math notranslate nohighlight">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span> is
+differentiable at a point <span class="math notranslate nohighlight">\(x\)</span> if there exists a linear map <span class="math notranslate nohighlight">\(J_f(x)\)</span> (the
+Jacobian matrix at <span class="math notranslate nohighlight">\(x\)</span>) such that</p>
+<div class="math notranslate nohighlight">
+\[
+    \lim_{h \rightarrow 0} \frac{|f(x+h) - f(x) - J_f(x)h|}{\|h\|} = 0
+    \]</div>
+<p>This definition implies that the function can be locally approximated by a
+linear map, ensuring smooth transitions between values. A function is
+continuously differentiable (class <span class="math notranslate nohighlight">\(C^1\)</span>) if it is differentiable everywhere
+and the derivative is continuous.</p>
+</li>
+<li><p><strong>Twice Differentiability and Beyond</strong>: Higher degrees of smoothness can be
+defined by requiring higher derivatives to exist and be continuous. For
+example, a function <span class="math notranslate nohighlight">\(f\)</span> is of class <span class="math notranslate nohighlight">\(C^2\)</span> if it is twice differentiable and
+its second derivative is continuous.</p></li>
+</ol>
+</section>
+<section id="boundaries-linearity">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Boundaries (Linearity)</a><a class="headerlink" href="#boundaries-linearity" title="Link to this heading">#</a></h3>
+<p>If your data isn’t linearly separable or the relationship between features is
+non-linear, linear models like Linear Regression or Logistic Regression may not
+be the best choice. You may need non-linear models like Neural Networks, Support
+Vector Machines with non-linear kernels, or Tree-Based models.</p>
+</section>
+<section id="dimensionality">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Dimensionality</a><a class="headerlink" href="#dimensionality" title="Link to this heading">#</a></h3>
+<p>If you have a high-dimensional dataset, some models may suffer from the curse of
+dimensionality, such as k-nearest neighbors (k-NN). In such scenarios,
+dimensionality reduction techniques or models less prone to this issue can be
+used.</p>
+</section>
+<section id="interpretability-vs-accuracy">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Interpretability vs. Accuracy</a><a class="headerlink" href="#interpretability-vs-accuracy" title="Link to this heading">#</a></h3>
+<p>Depending on the use case, you may prioritize interpretability over prediction
+accuracy or vice versa. Models like Linear Regression, Logistic Regression, and
+Decision Trees are highly interpretable, while Neural Networks, SVMs, and
+Ensemble methods trade-off interpretability for higher accuracy.</p>
+<p>However, there are many cases where a more complex model is necessary to achieve
+the desired performance. For example, in image classification, a classical model
+might failed spectacularly, but a deep learning model like a Convolutional
+Neural Network (CNN) might be able to achieve much better performance. There are
+indeed tools such as Grad-CAM to help with the interpretability of deep learning
+models.</p>
+</section>
+<section id="tractability">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Tractability</a><a class="headerlink" href="#tractability" title="Link to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(X\)</span> be the input and <span class="math notranslate nohighlight">\(Z\)</span> be the latent representation of <span class="math notranslate nohighlight">\(X\)</span>. Every
+generative model makes the assumption that it’s tractable to compute the
+probability <span class="math notranslate nohighlight">\(P(Z \mid X)\)</span><a class="footnote-reference brackets" href="#chip-chapter6" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="feature-characteristics">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Feature Characteristics</a><a class="headerlink" href="#feature-characteristics" title="Link to this heading">#</a></h3>
+<p>The nature of your features also impacts model choice. For instance, decision
+trees and random forests are less affected by feature scaling and can handle
+mixtures of features (binary, categorical, numerical), whereas logistic
+regression or support vector machines usually require feature scaling for high
+performance.</p>
+</section>
+<section id="real-time-prediction-and-computational-resources">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Real-Time Prediction And Computational Resources</a><a class="headerlink" href="#real-time-prediction-and-computational-resources" title="Link to this heading">#</a></h3>
+<p>If you need to make real-time predictions, consider models that are not only
+fast at prediction time but also have a smaller memory footprint. Simpler models
+like Logistic Regression, Decision Trees, or k-NNs (provided that the dataset is
+not too large) could be good choices here.</p>
+<p>Training models like deep learning or large ensembles can be resource-intensive.
+If you have computational resource constraints, you might prefer simpler or more
+efficient models.</p>
+</section>
+<section id="no-free-lunch-theorem">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">No Free Lunch Theorem</a><a class="headerlink" href="#no-free-lunch-theorem" title="Link to this heading">#</a></h3>
 <p>Remember, there’s rarely a one-size-fits-all model for any given problem.
 Typically, you’ll experiment with multiple models and choose the one that
 performs the best on your validation data and aligns with your project
@@ -684,8 +783,9 @@ Therefore, after knowing what limitations that the models may impose for your
 specific problem, you should then experiment with a few models to see which one
 is doing well.</p>
 </section>
+</section>
 <section id="baseline">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Baseline</a><a class="headerlink" href="#baseline" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Baseline</a><a class="headerlink" href="#baseline" title="Link to this heading">#</a></h2>
 <p>Before proceeding with the selection of more complex models, it is beneficial to
 establish a baseline model. The baseline model is typically simple, or even
 naive, serving as the minimum benchmark for model performance.</p>
@@ -709,7 +809,7 @@ models. Any sophisticated model we train should perform significantly better
 than this baseline.</p>
 </section>
 <section id="model-selection-revisited">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Model Selection Revisited</a><a class="headerlink" href="#model-selection-revisited" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Model Selection Revisited</a><a class="headerlink" href="#model-selection-revisited" title="Link to this heading">#</a></h2>
 <p>Following the baseline model, the next step is model selection. Here, you
 identify potential algorithms that could be used for solving the given problem.</p>
 <p>The difference here is you are actually running a few model classes from
@@ -735,7 +835,7 @@ quantize large models, prune models, or even distill models to serve powerful
 models in a reasonable latency.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://sebastianraschka.com/pdf/manuscripts/model-eval.pdf">Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning</a></p></li>
 <li><p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
@@ -745,7 +845,8 @@ Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="chip-chapter6" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
 <p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
 Designing Machine Learning Systems: An Iterative Process for
 Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
@@ -818,7 +919,18 @@ Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-model-and-data-assumptions">Understanding Model And Data Assumptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-model-and-data-assumptions">Understanding Model And Data Assumptions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#independent-and-identically-distributed-iid">Independent and Identically Distributed (IID)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#smoothness-chaoticity">Smoothness (Chaoticity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#boundaries-linearity">Boundaries (Linearity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensionality">Dimensionality</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpretability-vs-accuracy">Interpretability vs. Accuracy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tractability">Tractability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#feature-characteristics">Feature Characteristics</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-time-prediction-and-computational-resources">Real-Time Prediction And Computational Resources</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#no-free-lunch-theorem">No Free Lunch Theorem</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#baseline">Baseline</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-selection-revisited">Model Selection Revisited</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
