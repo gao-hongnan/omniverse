@@ -22,6 +22,7 @@ kernelspec:
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/tree/4c886c6735b3164325bf9ebbd360ef42bbd71769/omnixamples/software_engineering/config_management)
 
 ```{contents}
 :local:

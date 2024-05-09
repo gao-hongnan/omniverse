@@ -107,74 +107,11 @@ and additional metadata. The inspiration for `State` comes from
 been beneficial in the context of pretraining Language Models (LLMs) and is also
 the library that me and my team adopted for our LLM pretraining project.
 
-![Adder State](./assets/state.png)
-
 Here is a snippet of the `State` object when I was training a GPT model for fun.
 Note this is a very naive and bare version and does not include many features
 that Composer's `State` object has.
 
-```python
-State(
-│   model=GPTDecoder(
-  (tok_embed): Embedding(18, 128)
-  (decoder_blocks): ModuleList(
-│   (0-1): 2 x GPTDecoderBlock(
-│     (masked_self_attention_mha): MultiHeadedAttention(
-│   │   (W_Q): Linear(in_features=128, out_features=128, bias=False)
-│   │   (W_K): Linear(in_features=128, out_features=128, bias=False)
-│   │   (W_V): Linear(in_features=128, out_features=128, bias=False)
-│   │   (W_O): Linear(in_features=128, out_features=128, bias=False)
-│   │   (attention): ScaledDotProductAttention(
-│   │     (dropout): Dropout(p=0.0, inplace=False)
-│   │   )
-│   │   (dropout): Dropout(p=0.1, inplace=False)
-│     )
-│     (feed_forward): PositionwiseFeedForward(
-│   │   (ffn): ModuleDict(
-│   │     (context_fc): Linear(in_features=128, out_features=256, bias=True)
-│   │     (activation): GELU(approximate='tanh')
-│   │     (context_projection): Linear(in_features=256, out_features=128, bias=True)
-│   │     (dropout): Dropout(p=0.1, inplace=False)
-│   │   )
-│     )
-│     (add_norm_1): AddNorm(
-│   │   (dropout): Dropout(p=0.1, inplace=False)
-│   │   (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
-│     )
-│     (add_norm_2): AddNorm(
-│   │   (dropout): Dropout(p=0.1, inplace=False)
-│   │   (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
-│     )
-│   )
-  )
-  (dropout): Dropout(p=0.1, inplace=False)
-  (layer_norm): LayerNorm((128,), eps=1e-05, elementwise_affine=True)
-  (head): Linear(in_features=128, out_features=18, bias=True)
-),
-│   criterion=CrossEntropyLoss(),
-│   optimizer=Adam (
-Parameter Group 0
-│   amsgrad: False
-│   betas: (0.9, 0.98)
-│   capturable: False
-│   differentiable: False
-│   eps: 1e-09
-│   foreach: None
-│   fused: None
-│   initial_lr: 0.2
-│   lr: 1.0497284228847895e-06
-│   maximize: False
-│   weight_decay: 0.0
-),
-│   scheduler=<torch.optim.lr_scheduler.LambdaLR object at 0x1652552e0>,
-│   epoch_index=0,
-│   train_batch_index=0,
-│   step_index=0,
-│   history={},
-│   vocabulary=<omnivault.transformer.core.vocabulary.AdderVocabulary object at 0x16522ea00>,
-│   tokenizer=<omnivault.transformer.core.tokenizer.AdderTokenizer object at 0x16522ea60>
-)
-```
+![Adder State](./assets/state.png)
 
 Why is `State` useful? It allows me to easily access the model, optimizer,
 criterion, scheduler, and other metadata from any part of the codebase. I can
