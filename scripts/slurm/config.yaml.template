@@ -1,26 +1,23 @@
 Region: ap-southeast-1
-DevSettings:
-  Timeouts:
-    HeadNodeBootstrapTimeout: 1800 # default setting: 1800 seconds
+Image:
+  Os: ubuntu2004
 SharedStorage:
   - MountDir: /shared
-    Name: my-efs
+    Name: gaohn-efs
     StorageType: Efs
     EfsSettings:
       PerformanceMode: generalPurpose
       ThroughputMode: bursting
-Image:
-  Os: ubuntu2004
 HeadNode:
-  InstanceType: c5.xlarge
+  InstanceType: t2.micro
   Networking:
     SubnetId: subnet-xxxxxxxxxxxxxxxxx
   Ssh:
-    KeyName: <your-key-name>
+    KeyName: awsec2
 Scheduling:
   Scheduler: slurm
   SlurmQueues:
-  - Name: distributed-training
+  - Name: distributed-queue
     ComputeResources:
     - Name: g4dn12xlarge
       Instances:
@@ -32,5 +29,6 @@ Scheduling:
     Networking:
       PlacementGroup:
         Enabled: true
+    Networking:
       SubnetIds:
       - subnet-xxxxxxxxxxxxxxxxx

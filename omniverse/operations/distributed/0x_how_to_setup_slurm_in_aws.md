@@ -11,7 +11,7 @@
 ```
 
 This guide will help you set up your AWS environment and install AWS CLI and AWS
-ParallelCluster
+ParallelCluster.
 
 ## Setting Up Identity and Access Management (IAM) Role
 
@@ -167,7 +167,8 @@ following command:
 
 Alternatively you can use normal ssh to login into the head node as well which
 is useful if you are using vscode remote to login. First, get the public DNS of
-the head node:
+the head node (you can just get the instance id from the AWS console and then
+get the public DNS):
 
 ```bash
 ❯ aws ec2 describe-instances --instance-ids <INSTANCE-ID> --query "Reservations[*].Instances[*].PublicDnsName" --output text
@@ -387,6 +388,70 @@ aws ec2 delete-vpc --vpc-id <vpc-XXX>
 aws ec2 describe-vpcs --vpc-ids <vpc-XXX>
 ```
 
+### Consolidated Script
+
+```bash
+#!/bin/bash
+
+# Set variables
+CLUSTER_NAME="<YOUR-CLUSTER-NAME>"
+REGION="<REGION>"
+VPC_ID="<vpc-XXX>"
+SUBNET_ID="<subnet-XXX>"
+
+# Delete ParallelCluster
+echo "Deleting AWS ParallelCluster..."
+pcluster delete-cluster --cluster-name $CLUSTER_NAME --region $REGION
+
+# Wait and verify deletion
+echo "Listing all clusters to verify deletion..."
+pcluster list-clusters --region $REGION
+
+# Describe NAT Gateway
+echo "Fetching NAT Gateway ID..."
+NAT_ID=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query 'NatGateways[0].NatGatewayId' --output text)
+echo "Deleting NAT Gateway..."
+aws ec2 delete-nat-gateway --nat-gateway-id $NAT_ID
+echo "Verifying NAT Gateway deletion..."
+aws ec2 describe-nat-gateways --nat-gateway-ids $NAT_ID
+
+# Detach and delete network interfaces
+echo "Detaching and deleting network interfaces..."
+aws ec2 describe-network-interfaces \
+    --filters "Name=vpc-id,Values=$VPC_ID" \
+    --query 'NetworkInterfaces[*].[NetworkInterfaceId,Attachment.AttachmentId]' \
+    --output text | while read -r interface_id attachment_id; do
+      if [ ! -z "$attachment_id" ]; then
+        aws ec2 detach-network-interface --attachment-id $attachment_id
+      fi
+      aws ec2 delete-network-interface --network-interface-id $interface_id
+    done
+
+# Delete subnets
+echo "Deleting subnets..."
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[*].SubnetId' --output text | xargs -n 1 -I {} aws ec2 delete-subnet --subnet-id {}
+echo "Verifying subnet deletion..."
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID"
+
+# Delete route tables
+echo "Deleting route tables..."
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" --query 'RouteTables[?Associations==`[]`].RouteTableId' --output text | xargs -n 1 -I {} aws ec2 delete-route-table --route-table-id {}
+
+# Delete internet gateway
+echo "Deleting internet gateway..."
+IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=attachment.vpc-id,Values=$VPC_ID" --query 'InternetGateways[*].InternetGatewayId' --output text)
+aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
+
+# Delete the VPC
+echo "Deleting VPC..."
+aws ec2 delete-vpc --vpc-id $VPC_ID
+echo "Verifying VPC deletion..."
+aws ec2 describe-vpcs --vpc-ids $VPC_ID
+
+echo "All resources have been deleted successfully."
+```
+
 ## Troubleshooting
 
 Usually at this stage if you face slurm creation failure, we need to inspect the
@@ -471,8 +536,10 @@ aws ec2 stop-instances --instance-ids i-1234567890abcdef0 i-abcdef1234567890
 
 ## References
 
--   https://www.hpcworkshops.com/index.html
+-   https://www.hpcworkshops.com/
 -   https://qywu.github.io/2020/12/09/aws-slumr-pytorch.html
 -   https://aws-parallelcluster.readthedocs.io/en/latest/configuration.html
 -   https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template
 -   https://github.com/PrincetonUniversity/multi_gpu_training/tree/main
+-   https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/setup_pcluster_slurm.md
+-   https://aws.amazon.com/blogs/opensource/aws-parallelcluster/

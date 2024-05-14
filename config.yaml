@@ -3,15 +3,15 @@ Image:
   Os: ubuntu2004
 SharedStorage:
   - MountDir: /shared
-    Name: my-efs
+    Name: gaohn-efs
     StorageType: Efs
     EfsSettings:
       PerformanceMode: generalPurpose
       ThroughputMode: bursting
 HeadNode:
-  InstanceType: t2.small
+  InstanceType: t2.micro
   Networking:
-    SubnetId: subnet-0a0808f3709d18152
+    SubnetId: subnet-05ab9ae67f02740ec
   Ssh:
     KeyName: awsec2
 Scheduling:
@@ -24,6 +24,10 @@ Scheduling:
       - InstanceType: g4dn.12xlarge
       MinCount: 2
       MaxCount: 2
+      Efa:
+        Enabled: true
     Networking:
+      PlacementGroup:
+        Enabled: true
       SubnetIds:
-      - subnet-063a7f685a5bbc0ef
+      - subnet-05d06e972d89bf83a
