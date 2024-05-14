@@ -6,6 +6,7 @@
     -   [Change Log](#change-log)
         -   [4th April, 2024: `3d613c0`](#4th-april-2024-3d613c0)
         -   [29th March, 2024: `ffd2392`](#29th-march-2024-ffd2392)
+        -   [14th May, 2024: `ad0fd6a`](#14th-may-2024-ad0fd6a)
             -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
             -   [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
             -   [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
@@ -301,6 +302,10 @@ configuration handling, but I decided to keep them separate for clarity.
 -   Fixed a bunch of problems in
     [Issue 72](https://github.com/gao-hongnan/omniverse/issues/72).
 -   Commit Hash `ffd2392`
+
+### 14th May, 2024: `ad0fd6a`
+
+-   Breaking changes to callback, considering reverting if things go wrong.
 
 #### Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler
 
