@@ -174,8 +174,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         logger=logger,
         device=device,  # type: ignore[arg-type]
     )
-    trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, evaluate_generate_on_train_batch_end)
-    trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, save_state)
+    trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END, evaluate_generate_on_train_batch_end)
+    trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END, save_state)
 
     _trained_state = trainer.fit(train_loader=train_loader)
     history = _trained_state.history

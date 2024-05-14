@@ -308,7 +308,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         device=device,  # type: ignore[arg-type]
     )
     trainer.add_callback(
-        TrainerEvent.ON_VALID_EPOCH_END.value,
+        TrainerEvent.ON_VALID_EPOCH_END,
         lambda trainer: evaluate_and_generate_on_valid_epoch_end(trainer, num_batches_to_eval=None),
     )
     _trained_state = trainer.fit(train_loader=train_loader, valid_loader=valid_loader, test_loader=test_loader)

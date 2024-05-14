@@ -5,10 +5,11 @@ import inspect
 import logging
 import warnings
 from collections import defaultdict
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Any, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
 
 import torch
+from rich.pretty import pprint
 from torch import nn
 from torch.utils.data import DataLoader
 from torchmetrics.text import Perplexity
@@ -37,7 +38,7 @@ class TrainerCallback(Protocol):
         ...
 
 
-class TrainerEvent(Enum):
+class TrainerEvent(str, Enum):
     """Callback events for the trainer."""
 
     ON_TRAIN_EPOCH_START = "on_train_epoch_start"
@@ -51,13 +52,44 @@ class TrainerEvent(Enum):
     ON_FIT_START = "on_fit_start"
     ON_FIT_END = "on_fit_end"
 
+    def __str__(self) -> str:
+        return str.__str__(self)
 
-class TrainerPhase(Enum):
+
+class TrainerPhase(str, Enum):
     """Phase of training."""
 
     TRAIN = "train"
     VALID = "valid"
     TEST = "test"
+
+    def __str__(self) -> str:
+        return str.__str__(self)
+
+
+class CallbackPriority(IntEnum):
+    HIGHEST = 1
+    HIGH = 2
+    NORMAL = 3
+    LOW = 4
+    LOWEST = 5
+
+
+class MetricNames(str, Enum):
+    """Metric names for the trainer."""
+
+    TRAIN_THIS_BATCH_AVERAGE_LOSS = "train_this_batch_average_loss"
+    TRAIN_THIS_BATCH_AVERAGE_PERPLEXITY = "train_this_batch_average_perplexity"
+    TRAIN_THIS_EPOCH_AVERAGE_LOSS = "train_this_epoch_average_loss"
+    TRAIN_THIS_EPOCH_AVERAGE_PERPLEXITY = "train_this_epoch_average_perplexity"
+
+    VALID_THIS_BATCH_AVERAGE_LOSS = "valid_this_batch_average_loss"
+    VALID_THIS_BATCH_AVERAGE_PERPLEXITY = "valid_this_batch_average_perplexity"
+    VALID_THIS_EPOCH_AVERAGE_LOSS = "valid_this_epoch_average_loss"
+    VALID_THIS_EPOCH_AVERAGE_PERPLEXITY = "valid_this_epoch_average_perplexity"
+
+    def __str__(self) -> str:
+        return str.__str__(self)
 
 
 @no_type_check
@@ -171,41 +203,46 @@ class Trainer:
         self.train_batch_index = 0
         self.step_index = 0
         self.tokens_per_step = composer.data.train_loader["batch_size"] * composer.data.context_length # see nanogpt
-        self.callbacks: Dict[str, List[TrainerCallback]] = defaultdict(list)
+        self.callbacks: Dict[TrainerEvent, List[Tuple[TrainerCallback, CallbackPriority]]] = defaultdict(list)
 
         # additional metrics, ideally metrics is implemented as callback and injected into trainer
         self.perplexity = Perplexity(ignore_index=state.criterion.ignore_index).to(device=self.device)
-
         # fmt: on
-        self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, save_state)
-        self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, update_state)
-        self.add_callback(TrainerEvent.ON_FIT_START.value, log_on_fit_start)
-        self.add_callback(TrainerEvent.ON_TRAIN_BATCH_END.value, log_every_n_steps_on_batch_end)
-        self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_START.value, log_on_train_epoch_start)
-        self.add_callback(TrainerEvent.ON_VALID_EPOCH_START.value, log_on_train_epoch_start)
-        self.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END.value, log_on_epoch_end)
-        self.add_callback(TrainerEvent.ON_VALID_EPOCH_END.value, log_on_epoch_end)
+        self.register_default_callbacks()
 
-    def add_callback(self, event: str, callback: TrainerCallback) -> None:
-        """Adds a callback to the list for a given event."""
-        self.callbacks[event].append(callback)
+    def register_default_callbacks(self) -> None:
+        default_callbacks = [
+            (TrainerEvent.ON_VALID_EPOCH_END, save_state, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_TRAIN_EPOCH_END, update_state, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_FIT_START, log_on_fit_start, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_TRAIN_BATCH_END, log_every_n_steps_on_batch_end, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_TRAIN_EPOCH_START, log_on_train_epoch_start, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_VALID_EPOCH_START, log_on_train_epoch_start, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_TRAIN_EPOCH_END, log_on_epoch_end, CallbackPriority.NORMAL),
+            (TrainerEvent.ON_VALID_EPOCH_END, log_on_epoch_end, CallbackPriority.NORMAL),
+        ]
+        for event, callback, priority in default_callbacks:
+            self.add_callback(event, callback, priority) # type: ignore[arg-type]
 
-    def set_callback(self, event: str, callback: TrainerCallback) -> None:
-        """Sets a callback to the list for a given event."""
-        self.callbacks[event] = [callback]
+    def add_callback(
+        self, event: TrainerEvent, callback: TrainerCallback, priority: CallbackPriority = CallbackPriority.NORMAL
+    ) -> None:
+        self.callbacks[event].append((callback, priority))
 
-    def remove_callback(self, event: str, callback: TrainerCallback) -> None:
+    def set_callback(self, event: TrainerEvent, callback: TrainerCallback, priority: CallbackPriority) -> None:
+        """Sets a callback to the list for a given event with the specified priority."""
+        self.callbacks[event] = [(callback, priority)]
+
+    def remove_callback(self, event: TrainerEvent, callback: TrainerCallback) -> None:
         """Removes a callback from the list for a given event."""
-        self.callbacks[event].remove(callback)
+        self.callbacks[event] = [(cb, prio) for cb, prio in self.callbacks[event] if cb != callback]
 
-    def trigger_callbacks(self, event: str, *args: Any, **kwargs: Any) -> None:
-        """Triggers all callbacks associated with a given event."""
-        for callback in self.callbacks[event]:
-            params = inspect.signature(callback).parameters
-            if all(param in params for param in kwargs):
-                callback(self, *args, **kwargs)
-            else:
-                callback(self)
+    def trigger_callbacks(self, event: TrainerEvent, *args: Any, **kwargs: Any) -> None:
+        callbacks = sorted(self.callbacks[event], key=lambda x: x[1].value)  # Sort by priority
+        for callback, _ in callbacks:
+            sig = inspect.signature(callback)
+            filtered_kwargs = {k: v for k, v in kwargs.items() if k in sig.parameters}
+            callback(self, *args, **filtered_kwargs)
 
     def update_metrics_and_history(
         self, metric_name_or_names: str | List[str], metric_value_or_values: float | List[float]
@@ -220,7 +257,7 @@ class Trainer:
             self.history[metric_name].append(metric_value)
 
     def _train_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
-        self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_START.value)
+        self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_START)
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
         batch_size = inputs.size(0)
 
@@ -259,14 +296,23 @@ class Trainer:
         self.step_index += 1
 
         self.update_metrics_and_history(
-            metric_name_or_names=["train_this_batch_average_loss", "train_this_batch_average_perplexity"],
+            metric_name_or_names=[
+                MetricNames.TRAIN_THIS_BATCH_AVERAGE_LOSS,
+                MetricNames.TRAIN_THIS_BATCH_AVERAGE_PERPLEXITY,
+            ],
             metric_value_or_values=[this_batch_average_loss, this_batch_average_perplexity],
         )
-        self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_END.value)
+        self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_END)
         return this_batch_average_loss, this_batch_total_loss, this_batch_average_perplexity
 
     def train_one_epoch(self, dataloader: DataLoader[DatasetYield]) -> Loss:
-        """
+        """Train the model for one epoch on the given dataloader.
+
+        Parameters
+        ----------
+        dataloader : DataLoader
+            The DataLoader containing the dataset.
+
         Variables
         ---------
         inputs: This is the input sequence (the EOS token is removed).
@@ -280,31 +326,8 @@ class Trainer:
         logits:
             shape: [B, S or T, V]
             shape: [B, V, S or T] when passed in to loss as pytorch enforces the 2nd dim to be class/vocab.
-
-        Parameters
-        ----------
-        model : nn.Module
-            The model to be evaluated.
-        dataloader : DataLoader
-            The DataLoader containing the validation dataset.
-        criterion : nn.Module
-            The loss function used for evaluation.
-        optimizer : Optimizer
-            The optimizer used for training.
-        scheduler : LRScheduler | None, optional
-            The learning rate scheduler used for training, by default None.
-        grad_norm_clip : float, optional
-            The gradient norm clipping value, by default 1.0.
-        device : torch.device
-            The device to run the training on. We restrict to only accept
-            torch.device instead of the overloaded variants such as str or int.
-
-        Returns
-        -------
-        Loss
-            The average loss over the training dataset.
         """
-        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_START.value, phase=TrainerPhase.TRAIN.value)
+        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_START, phase=TrainerPhase.TRAIN)
         self.model.train()
 
         total_samples: int = 0
@@ -339,15 +362,18 @@ class Trainer:
         this_epoch_average_perplexity = torch.exp(torch.tensor(this_epoch_average_loss)).item()
 
         self.update_metrics_and_history(
-            metric_name_or_names=["train_this_epoch_average_loss", "train_this_epoch_average_perplexity"],
+            metric_name_or_names=[
+                MetricNames.TRAIN_THIS_EPOCH_AVERAGE_LOSS,
+                MetricNames.TRAIN_THIS_EPOCH_AVERAGE_PERPLEXITY,
+            ],
             metric_value_or_values=[this_epoch_average_loss, this_epoch_average_perplexity],
         )
-        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_END.value, phase=TrainerPhase.TRAIN.value)
+        self.trigger_callbacks(TrainerEvent.ON_TRAIN_EPOCH_END, phase=TrainerPhase.TRAIN)
         return this_epoch_average_loss
 
     @torch.no_grad()
     def _valid_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
-        self.trigger_callbacks(TrainerEvent.ON_VALID_BATCH_START.value)
+        self.trigger_callbacks(TrainerEvent.ON_VALID_BATCH_START)
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
         batch_size = inputs.size(0)
 
@@ -365,10 +391,13 @@ class Trainer:
         this_batch_average_perplexity: float = self.perplexity(logits, targets).item()
 
         self.update_metrics_and_history(
-            metric_name_or_names=["valid_this_batch_average_loss", "valid_this_batch_average_perplexity"],
+            metric_name_or_names=[
+                MetricNames.VALID_THIS_BATCH_AVERAGE_LOSS,
+                MetricNames.VALID_THIS_BATCH_AVERAGE_PERPLEXITY,
+            ],
             metric_value_or_values=[this_batch_average_loss, this_batch_average_perplexity],
         )
-        self.trigger_callbacks(TrainerEvent.ON_VALID_BATCH_END.value)
+        self.trigger_callbacks(TrainerEvent.ON_VALID_BATCH_END)
         return this_batch_average_loss, this_batch_total_loss, this_batch_average_perplexity
 
     def valid_one_epoch(self, dataloader: DataLoader[DatasetYield]) -> Loss:
@@ -391,7 +420,7 @@ class Trainer:
         Loss
             The average loss over the validation dataset.
         """
-        self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_START.value, phase=TrainerPhase.VALID.value)
+        self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_START, phase=TrainerPhase.VALID)
         self.model.eval()
 
         total_samples: int = 0
@@ -419,10 +448,13 @@ class Trainer:
         this_epoch_average_perplexity = torch.exp(torch.tensor(this_epoch_average_loss)).item()
 
         self.update_metrics_and_history(
-            metric_name_or_names=["valid_this_epoch_average_loss", "valid_this_epoch_average_perplexity"],
+            metric_name_or_names=[
+                MetricNames.VALID_THIS_EPOCH_AVERAGE_LOSS,
+                MetricNames.VALID_THIS_EPOCH_AVERAGE_PERPLEXITY,
+            ],
             metric_value_or_values=[this_epoch_average_loss, this_epoch_average_perplexity],
         )
-        self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_END.value, phase=TrainerPhase.VALID.value)
+        self.trigger_callbacks(TrainerEvent.ON_VALID_EPOCH_END, phase=TrainerPhase.VALID)
         return this_epoch_average_loss
 
     def test_one_epoch(self, dataloader: DataLoader[DatasetYield]) -> Loss:
@@ -453,7 +485,7 @@ class Trainer:
         self.test_loader = test_loader
 
         # put callback here because depends on dataloader
-        self.trigger_callbacks(TrainerEvent.ON_FIT_START.value)
+        self.trigger_callbacks(TrainerEvent.ON_FIT_START)
 
         for _ in range(1, self.max_epochs + 1):
             # fmt: off
@@ -475,5 +507,5 @@ class Trainer:
                     self.logger.warning(err)
 
         self.state.history = self.history
-        self.trigger_callbacks(TrainerEvent.ON_FIT_END.value)
+        self.trigger_callbacks(TrainerEvent.ON_FIT_END)
         return self.state
