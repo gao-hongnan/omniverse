@@ -182,8 +182,10 @@ def set_dataloader_epoch_for_ddp_on_epoch_start(trainer: Trainer, phase: Literal
     if phase == "train":
         data_loader = trainer.train_loader
     elif phase == "valid":
+        assert trainer.valid_loader is not None
         data_loader = trainer.valid_loader
     else:
+        assert trainer.test_loader is not None
         data_loader = trainer.test_loader
 
     if hasattr(data_loader.sampler, "set_epoch"):

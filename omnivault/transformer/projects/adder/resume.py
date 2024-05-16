@@ -6,12 +6,9 @@ import time
 import warnings
 from pathlib import Path
 
-import pandas as pd
-import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from tqdm import tqdm
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
@@ -186,8 +183,12 @@ def main(cfg: DictConfig | ListConfig) -> None:
     resume_from_rng_state_path = (
         f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
     )
-    resume_from_state_path = "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/model_checkpoint_epoch_8.pt"
-    resume_from_rng_state_path = "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
+    resume_from_state_path = (
+        "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/model_checkpoint_epoch_8.pt"
+    )
+    resume_from_rng_state_path = (
+        "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
+    )
 
     loaded_state = State.load_snapshots(
         filepath=resume_from_state_path,

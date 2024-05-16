@@ -3,10 +3,8 @@ from __future__ import annotations
 
 import inspect
 import logging
-import warnings
 from collections import defaultdict
-from enum import Enum
-from typing import Any, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
+from typing import Any, Dict, List, Tuple
 
 import torch
 from torch import nn
@@ -28,103 +26,10 @@ from omnivault.transformer.core.callbacks import (
 )
 from omnivault.transformer.core.dataset import DatasetYield
 from omnivault.transformer.core.state import State
+from omnivault.transformer.core.trainer import MetricNames, TrainerCallback, TrainerEvent, TrainerPhase, move_to_device
 from omnivault.transformer.utils.format import format_lr
 from omnivault.transformer.utils.general_utils import get_default_logger
 from omnivault.utils.reproducibility.rng import load_and_set_rng_state
-
-
-@runtime_checkable
-class TrainerCallback(Protocol):
-    def __call__(self, trainer: Trainer, *args: Any, **kwargs: Any) -> None:
-        ...
-
-
-class TrainerEvent(str, Enum):
-    """Callback events for the trainer."""
-
-    ON_TRAIN_EPOCH_START = "on_train_epoch_start"
-    ON_TRAIN_EPOCH_END = "on_train_epoch_end"
-    ON_VALID_EPOCH_START = "on_valid_epoch_start"
-    ON_VALID_EPOCH_END = "on_valid_epoch_end"
-    ON_TRAIN_BATCH_START = "on_train_batch_start"
-    ON_TRAIN_BATCH_END = "on_train_batch_end"
-    ON_VALID_BATCH_START = "on_valid_batch_start"
-    ON_VALID_BATCH_END = "on_valid_batch_end"
-    ON_FIT_START = "on_fit_start"
-    ON_FIT_END = "on_fit_end"
-
-    def __str__(self) -> str:
-        return str.__str__(self)
-
-
-class TrainerPhase(str, Enum):
-    """Phase of training."""
-
-    TRAIN = "train"
-    VALID = "valid"
-    TEST = "test"
-
-    def __str__(self) -> str:
-        return str.__str__(self)
-
-
-class MetricNames(str, Enum):
-    """Metric names for the trainer."""
-
-    TRAIN_THIS_BATCH_AVERAGE_LOSS = "train_this_batch_average_loss"
-    TRAIN_THIS_BATCH_AVERAGE_PERPLEXITY = "train_this_batch_average_perplexity"
-    TRAIN_THIS_EPOCH_AVERAGE_LOSS = "train_this_epoch_average_loss"
-    TRAIN_THIS_EPOCH_AVERAGE_PERPLEXITY = "train_this_epoch_average_perplexity"
-
-    VALID_THIS_BATCH_AVERAGE_LOSS = "valid_this_batch_average_loss"
-    VALID_THIS_BATCH_AVERAGE_PERPLEXITY = "valid_this_batch_average_perplexity"
-    VALID_THIS_EPOCH_AVERAGE_LOSS = "valid_this_epoch_average_loss"
-    VALID_THIS_EPOCH_AVERAGE_PERPLEXITY = "valid_this_epoch_average_perplexity"
-
-    def __str__(self) -> str:
-        return str.__str__(self)
-
-
-@no_type_check
-def move_to_device(batch: DatasetYield, device: torch.device) -> DatasetYield:
-    """
-    Moves the elements of a batch to the specified device.
-
-    Parameters
-    ----------
-    batch : tuple
-        A tuple containing the elements of the batch.
-        Expected format: (inputs, targets, target_padding_masks, future_masks)
-
-    device : torch.device or str
-        The target device to move the batch elements to.
-
-    Returns
-    -------
-    Tuple[torch.Tensor, ...]
-        The batch with all elements moved to the specified device.
-
-    Note
-    ----
-    1. We usually set `pin_memory=True` and `non_blocking=True` together.
-       This allows us to move them to GPU asynchronously.
-    2. `mps` seems to be buggy with `non_blocking=True` so we set it to False.
-    3. `cpu` we set to False too because it is not asynchronous?
-    """
-    if device.type in ["cpu", "mps"]:
-        return tuple(tensor.to(device) for tensor in batch)
-    else:
-        batch_on_device = []
-        for tensor in batch:
-            try:
-                if tensor.is_pinned():
-                    batch_on_device.append(tensor.to(device, non_blocking=True))
-                else:
-                    batch_on_device.append(tensor.to(device))
-            except RuntimeError as err:  # noqa: PERF203
-                warnings.warn(err, stacklevel=2)
-                batch_on_device.append(tensor.to(device))
-        return tuple(batch_on_device)
 
 
 class Trainer:
@@ -282,6 +187,7 @@ class Trainer:
             logits: torch.FloatTensor = self.model(
                 inputs, target_padding_masks=target_padding_masks, future_masks=future_masks
             )
+            # TODO: I want to change the permute to flattening instead for readability
             loss: torch.Tensor = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
             loss: torch.Tensor = loss / self.gradient_accumulation_steps  # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
 
