@@ -1564,6 +1564,8 @@ python omnivault/transformer/projects/adder/main_distributed.py \
     trainer.autocast_config.enabled=False \
     trainer.scaler_config.enabled=False \
     trainer.device='cpu' \
+    distributed.master_addr="localhost" \
+    distributed.master_port="29500" \
     distributed.nnodes=1 \
     distributed.nproc_per_node=4\
     distributed.node_rank=0 \
