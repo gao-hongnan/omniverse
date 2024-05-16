@@ -262,8 +262,15 @@ set root /home/ubuntu/miniconda3
 prepend-path PATH $root/bin
 ```
 
+And if you don't use it in script, you can just do the following.
+
 ```bash
+source /etc/profile.d/modules.sh
 module use /usr/share/modules/modulefiles
+module load miniconda3
+conda create -n ddp python=3.9
+conda init
+conda activate ddp
 ```
 
 ## Sample Run

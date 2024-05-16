@@ -43,6 +43,8 @@
         - [KerasNLP Example](#kerasnlp-example)
         - [Training](#training)
     - [DDP](#ddp)
+        - [DDP CPU Mode](#ddp-cpu-mode)
+        - [DDP Multi Node GPU](#ddp-multi-node-gpu)
 
 ## Overview
 
@@ -1548,3 +1550,76 @@ For one I need to ensure the below:
 
 -   Single GPU training and resuming works fine with new DDP logic added. This
     is confirmed!
+
+### DDP CPU Mode
+
+```bash
+python omnivault/transformer/projects/adder/main_distributed.py \
+    omnivault/transformer/projects/adder/config_distributed.yaml \
+    data.train_loader.batch_size=32 \
+    data.train_loader.shuffle=False \
+    data.valid_loader.batch_size=32 \
+    trainer.max_epochs=10 \
+    trainer.use_amp=False \
+    trainer.autocast_config.enabled=False \
+    trainer.scaler_config.enabled=False \
+    trainer.device='cpu' \
+    distributed.nnodes=1 \
+    distributed.nproc_per_node=4\
+    distributed.node_rank=0 \
+    distributed.world_size=4 \
+    distributed.backend=gloo \
+    distributed.init_method="env://"
+```
+
+All validation loss/accuracy should be same across all processes but the
+training loss/accuracy will be different. This is because the training data is
+split across the processes but not the validation data!
+
+### DDP Multi Node GPU
+
+To run DDP on adder on 2 nodes, 1 GPU each.
+
+```bash
+cd /shared
+git clone ...
+```
+
+```bash
+#!/usr/bin/env sh
+
+# Get master address and port
+export MASTER_ADDR=$(hostname -i)
+export MASTER_PORT=$(comm -23 <(seq 1 65535 | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
+echo "Master Address: $MASTER_ADDR"
+echo "Master Port: $MASTER_PORT"
+
+echo "${MASTER_ADDR}:${MASTER_PORT}" > master_info.txt
+
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+export NNODES=2
+export NPROC_PER_NODE=1
+export NODE_RANK=0
+export WORLD_SIZE=2
+
+python omnivault/transformer/projects/adder/main_distributed.py \
+    omnivault/transformer/projects/adder/config_distributed.yaml \
+    data.train_loader.batch_size=256 \
+    data.valid_loader.batch_size=256 \
+    optimizer.lr=0.2 \
+    trainer.gradient_accumulation_steps=1 \
+    trainer.max_epochs=12 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda' \
+    distributed.master_addr=$MASTER_ADDR \
+    distributed.master_port=$MASTER_PORT \
+    distributed.nnodes=$NNODES \
+    distributed.nproc_per_node=$NPROC_PER_NODE \
+    distributed.node_rank=$NODE_RANK \
+    distributed.world_size=$WORLD_SIZE \
+    distributed.backend=gloo \
+    distributed.init_method="env://"
+```
