@@ -33,6 +33,8 @@ following notations. We can refer to
 [CS336](https://github.com/stanford-cs336/spring2024-assignment2-systems) for
 more information.
 
+## Process
+
 -   $P$ (Worker/Number of Processes): is the number of processes across the
     cluster of nodes;
     -   $p$: is the index of a process, $p \in [0, P)$;
@@ -51,18 +53,26 @@ more information.
     -   In the context of distributed computing and deep learning, a process
         typically refers to an instance of a training algorithm running on a
         computational unit (like a CPU core or GPU).
+
+## Nodes
+
 -   $N$ (Number of Nodes): is the number of nodes in the cluster;
     -   $n$: is the index of a node in the cluster, $n \in [0, N)$;
     -   A **node** is a physical machine with its own operating system and
         system resources. It can have multiple CPUs and GPUs. For example,
         `g4dn.4xlarge` is a node type in AWS EC2 that has 2 GPUs.
+
+## Local And Global World Size
+
 -   $G$ (Local World Size): is the number of GPUs per node or the number of
     processes per node or **local world size**;
+
     -   $g$: is the index of a GPU in a node, $g \in [0, G)$;
     -   A **GPU** is a computational unit that can perform parallel computation
         on tensors. It has its own memory space, including code, runtime memory,
         and system resources. **_Consequently, we often collapse the notion of a
         GPU and a process together, and use the two terms interchangeably_**.
+
 -   $W$: is the world size;
 
     -   The **world size** refers to the total number of application
@@ -76,8 +86,11 @@ more information.
         W = N \times G
         $$
 
+## Local And Global Rank
+
 -   Global Rank (often denoted just as Rank) $R_g \in [0, W-1]$: is the global
     rank of a process across the cluster of nodes;
+
     -   $R_g = n \times G + g$ where $n$ is the index of a node and $g$ is the
         index of a GPU in that particular node $n$;
     -   The global rank $R_g$ is the unique identifier of a process across the
@@ -86,6 +99,7 @@ more information.
     -   In the context of distributed deep learning training, the global rank
         $R_g$ is the unique identifier of a GPU across the cluster of nodes. It
         is used to identify a GPU in the collective communication operations.
+
 -   Local Rank $R_{l} \in [0, L-1]$: is the local rank of a process within a
     node;
     -   $R_{l} = g$;
@@ -95,6 +109,8 @@ more information.
     -   In the context of distributed deep learning training, the local rank
         $R_l$ is the unique identifier of a GPU within a node. It is used to
         identify a GPU in the intra-node collective communication operations.
+
+## An Example To Illustrate The Notations
 
 To illustrate the terminology defined above, consider the case where a DDP
 application is launched on two nodes, each of which has four GPUs. We would then
