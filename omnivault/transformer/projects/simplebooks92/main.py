@@ -409,7 +409,9 @@ if __name__ == "__main__":
         trainer=trainer_config,
         generator=generator_config,
     )
-    model = GPTDecoder(model_config).to(composer.trainer.device)
+    model = GPTDecoder(model_config)
+    model = model.to(device=composer.trainer.device, dtype=next(model.parameters()).dtype, non_blocking=True)
+
     optimizer = optimizer_pydantic_config.build(params=model.parameters())
     criterion = criterion_pydantic_config.create_instance()
 

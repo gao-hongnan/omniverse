@@ -149,7 +149,6 @@ class Trainer:
         self.composer         = composer
 
         self.model            = state.model
-        self.model.to(device=device, dtype=next(state.model.parameters()).dtype, non_blocking=True)
 
         self.criterion        = state.criterion
         self.optimizer        = state.optimizer
@@ -279,6 +278,7 @@ class Trainer:
             logits: torch.FloatTensor = self.model(
                 inputs, target_padding_masks=target_padding_masks, future_masks=future_masks
             )
+            # TODO: I want to change the permute to flattening instead for readability
             loss: torch.Tensor = self.criterion(logits.permute(0, 2, 1).contiguous(), targets.contiguous())
             loss: torch.Tensor = loss / self.gradient_accumulation_steps  # type: ignore[no-redef] # NOTE: no ops if gradient_accumulation_steps=1
 

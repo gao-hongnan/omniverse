@@ -135,7 +135,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         )
 
     # Create model
-    model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)
+    model = GPTDecoder(model_pydantic_config)
+    model = model.to(device=composer.trainer.device, dtype=next(model.parameters()).dtype, non_blocking=True)
 
     # Create optimizer based on model parameters
     if composer.trainer.apply_weight_decay_to_different_param_groups:
@@ -182,12 +183,6 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
     resume_from_rng_state_path = (
         f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
-    )
-    resume_from_state_path = (
-        "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/model_checkpoint_epoch_8.pt"
-    )
-    resume_from_rng_state_path = (
-        "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
     )
 
     loaded_state = State.load_snapshots(

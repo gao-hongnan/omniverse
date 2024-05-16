@@ -13,6 +13,15 @@
 This guide will help you set up your AWS environment and install AWS CLI and AWS
 ParallelCluster.
 
+Note that the version of AWS that works as of writing is below:
+
+```bash
+awscli                              1.32.93
+aws-parallelcluster                 3.9.1
+```
+
+Some breaking updates may render current commands invalid.
+
 ## Setting Up Identity and Access Management (IAM) Role
 
 Before deploying AWS ParallelCluster, it's essential to configure an IAM role
@@ -209,7 +218,10 @@ nodes are working:
 
 ### Setup Python Environment
 
+#### Virtual Environment
+
 ```bash
+#!/usr/bin/env sh
 sudo apt-get update
 sudo apt-get install -y python3-venv
 python3 -m venv /shared/venv/
@@ -217,6 +229,8 @@ source /shared/venv/bin/activate
 pip install wheel
 echo 'source /shared/venv/bin/activate' >> ~/.bashrc
 ```
+
+#### Miniconda
 
 or with conda:
 

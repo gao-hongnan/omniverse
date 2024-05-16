@@ -65,7 +65,7 @@ def evaluate_and_generate_on_valid_epoch_end(
     EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
     EOS = vocabulary.token_to_index[vocabulary.EOS]
 
-    model = trainer.model
+    model = trainer.model_or_module
     model.eval()
 
     dataloader = trainer.test_loader
@@ -248,7 +248,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         )
 
     # Create model
-    model = GPTDecoder(model_pydantic_config).to(composer.trainer.device)
+    model = GPTDecoder(model_pydantic_config)
+    model = model.to(device=composer.trainer.device, dtype=next(model.parameters()).dtype, non_blocking=True)
 
     # Create optimizer based on model parameters
     if composer.trainer.apply_weight_decay_to_different_param_groups:
