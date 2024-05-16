@@ -1,37 +1,3 @@
-# mypy: disable-error-code="no-untyped-call"
-from __future__ import annotations
-
-import inspect
-import logging
-from collections import defaultdict
-from typing import Any, Dict, List, Tuple
-
-import torch
-from torch import nn
-from torch.nn.parallel import DistributedDataParallel
-from torch.utils.data import DataLoader
-from torchmetrics.text import Perplexity
-from tqdm import tqdm
-
-from omnivault._types._alias import Loss
-from omnivault.transformer.config.composer import Composer
-from omnivault.transformer.core.callbacks import (
-    CallbackPriority,
-    log_every_n_steps_on_batch_end,
-    log_on_epoch_end,
-    log_on_fit_start,
-    log_on_train_epoch_start,
-    save_state,
-    update_state,
-)
-from omnivault.transformer.core.dataset import DatasetYield
-from omnivault.transformer.core.state import State
-from omnivault.transformer.core.trainer import MetricNames, TrainerCallback, TrainerEvent, TrainerPhase, move_to_device
-from omnivault.transformer.utils.format import format_lr
-from omnivault.transformer.utils.general_utils import get_default_logger
-from omnivault.utils.reproducibility.rng import load_and_set_rng_state
-
-
 class Trainer:
     def __init__(
         self,
