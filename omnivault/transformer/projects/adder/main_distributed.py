@@ -39,7 +39,7 @@ from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer_distributed import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.utils.general_utils import create_directory, validate_and_cleanup
+from omnivault.transformer.utils.general_utils import create_directory, validate_and_cleanup, download_file
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
 from omnivault.utils.reproducibility.seed import seed_all
@@ -72,7 +72,7 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     generator_config = GeneratorConfig(**cfg.generator)
 
     create_directory(data.dataset_dir)
-    # download_file(url=data.dataset_url, output_path=data.dataset_path)
+    download_file(url=data.dataset_url, output_path=data.dataset_path)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)

@@ -1606,8 +1606,8 @@ export WORLD_SIZE=2
 
 python omnivault/transformer/projects/adder/main_distributed.py \
     omnivault/transformer/projects/adder/config_distributed.yaml \
-    data.train_loader.batch_size=256 \
-    data.valid_loader.batch_size=256 \
+    data.train_loader.batch_size=128 \
+    data.valid_loader.batch_size=128 \
     optimizer.lr=0.2 \
     trainer.gradient_accumulation_steps=1 \
     trainer.max_epochs=12 \
@@ -1623,5 +1623,50 @@ python omnivault/transformer/projects/adder/main_distributed.py \
     distributed.node_rank=$NODE_RANK \
     distributed.world_size=$WORLD_SIZE \
     distributed.backend=gloo \
+    distributed.init_method="env://"
+```
+
+```
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+python omnivault/transformer/projects/adder/main_distributed.py \
+    omnivault/transformer/projects/adder/config_distributed.yaml \
+    data.train_loader.batch_size=128 \
+    data.valid_loader.batch_size=128 \
+    optimizer.lr=0.2 \
+    trainer.gradient_accumulation_steps=1 \
+    trainer.max_epochs=12 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda' \
+    distributed.master_addr=10.0.20.1 \
+    distributed.master_port=2665 \
+    distributed.nnodes=2 \
+    distributed.nproc_per_node=1 \
+    distributed.node_rank=0 \
+    distributed.world_size=2 \
+    distributed.backend=nccl \
+    distributed.init_method="env://"
+
+python omnivault/transformer/projects/adder/main_distributed.py \
+    omnivault/transformer/projects/adder/config_distributed.yaml \
+    data.train_loader.batch_size=128 \
+    data.valid_loader.batch_size=128 \
+    optimizer.lr=0.2 \
+    trainer.gradient_accumulation_steps=1 \
+    trainer.max_epochs=12 \
+    trainer.use_amp=True \
+    trainer.autocast_config.enabled=True \
+    trainer.autocast_config.dtype=float16 \
+    trainer.scaler_config.enabled=True \
+    trainer.device='cuda' \
+    distributed.master_addr=10.0.20.1 \
+    distributed.master_port=2665 \
+    distributed.nnodes=2 \
+    distributed.nproc_per_node=1 \
+    distributed.node_rank=1 \
+    distributed.world_size=2 \
+    distributed.backend=nccl \
     distributed.init_method="env://"
 ```
