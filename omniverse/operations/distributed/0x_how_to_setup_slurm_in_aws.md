@@ -200,9 +200,6 @@ node.
 
 ### SLURM Status
 
-Note we must run `sudo apt-get update` first to update the package list for
-slurm to be installed.
-
 We can check status of the slurm cluster:
 
 ```bash

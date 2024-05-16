@@ -154,7 +154,7 @@ class Trainer:
         for callback, _ in callbacks:
             sig = inspect.signature(callback)
             filtered_kwargs = {k: v for k, v in kwargs.items() if k in sig.parameters}
-            callback(self, *args, **filtered_kwargs)
+            callback(self, *args, **filtered_kwargs)  # type: ignore[arg-type]
 
     @property
     def model_or_module(self) -> nn.Module:

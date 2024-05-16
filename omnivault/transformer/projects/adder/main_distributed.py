@@ -7,7 +7,6 @@ import sys
 import time
 import warnings
 
-import pandas as pd
 import torch
 import torch.multiprocessing as mp
 from hydra.utils import instantiate
@@ -16,7 +15,6 @@ from omegaconf import OmegaConf as om
 from torch.distributed import destroy_process_group
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler
-from tqdm import tqdm
 
 from omnivault.distributed.core import find_free_port, is_free_port
 from omnivault.transformer.config.composer import Composer, DataConfig
@@ -39,15 +37,14 @@ from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer_distributed import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
-from omnivault.transformer.utils.general_utils import create_directory, validate_and_cleanup, download_file
+from omnivault.transformer.projects.adder.main import evaluate_and_generate_on_valid_epoch_end
+from omnivault.transformer.utils.general_utils import create_directory, download_file, validate_and_cleanup
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
 from omnivault.utils.reproducibility.seed import seed_all
 from omnixamples.distributed.a_basic.a_setup import init_process
-from omnivault.transformer.projects.adder.main import evaluate_and_generate_on_valid_epoch_end
 
 warnings.filterwarnings("ignore", category=UserWarning)  # usually related to deterministic behavior of pytorch
-
 
 
 # NOTE: we are not using composer.trainer.device and in favor of device created
