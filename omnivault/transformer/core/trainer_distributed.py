@@ -41,14 +41,11 @@ class Trainer:
         logger: logging.Logger | None = None,
         device: torch.device | None = None,
         resume_from_rng_path: str | None = None,
-        ddp: bool = False,  # TODO: place it in config
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
         not all scenarios demand such code."""
         # fmt: off
-        self.ddp = ddp
-
         self.resume_from_rng_path = resume_from_rng_path # resume from rng state
         if resume_from_rng_path:
             self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path) # set RNG globally first
