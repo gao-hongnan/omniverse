@@ -5,8 +5,18 @@ from typing import TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from omnivault.transformer.core.trainer import Trainer
 
+from enum import IntEnum
+
 from omnivault.transformer.utils.format import format_lr
 from omnivault.utils.reproducibility.rng import save_rng_state
+
+
+class CallbackPriority(IntEnum):
+    HIGHEST = 1
+    HIGH = 2
+    NORMAL = 3
+    LOW = 4
+    LOWEST = 5
 
 
 def update_state(trainer: Trainer) -> None:
@@ -20,6 +30,7 @@ def update_state(trainer: Trainer) -> None:
         "train_batch_index",
         "step_index",
         "history",
+        "tokens_per_iter",
     ]
     trainer.state.__dict__.update({attr: getattr(trainer, attr) for attr in relevant_attrs})
 
@@ -64,20 +75,15 @@ def save_state(trainer: Trainer) -> None:
 
 def log_on_fit_start(trainer: Trainer) -> None:
     # TODO: add torchinfo's summary
-    total_params = trainer.model.total_parameters
-    trainable_params = trainer.model.total_trainable_parameters
+    model_or_module = trainer.model_or_module
+    total_params = model_or_module.total_parameters
+    trainable_params = model_or_module.total_trainable_parameters
 
     vocab_size = trainer.composer.model.vocab_size  # type: ignore[union-attr]
     context_length = trainer.composer.model.context_length  # type: ignore[union-attr]
     device = trainer.device
 
-    ddp_world_size = trainer.ddp_world_size if hasattr(trainer, "ddp_world_size") else 1
-    tokens_per_iter = (
-        trainer.gradient_accumulation_steps
-        * trainer.composer.data.train_loader["batch_size"]
-        * context_length
-        * ddp_world_size
-    )
+    tokens_per_iter = trainer.tokens_per_iter
     total_tokens = tokens_per_iter * trainer.max_epochs * len(trainer.composer.data.train_loader)
 
     initial_lr_or_lrs = trainer._get_current_lr_or_lrs()
@@ -167,3 +173,18 @@ def log_on_epoch_end(trainer: Trainer, phase: Literal["train", "valid", "test"])
     trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Loss:", average_loss)
     trainer.logger.info(f"%-{max_width}s %.5f", f"Average Epoch {phase_capitalized} Perplexity:", average_perplexity)
     trainer.logger.info("\n")
+
+
+def set_dataloader_epoch_for_ddp_on_epoch_start(trainer: Trainer, phase: Literal["train", "valid", "test"]) -> None:
+    """Call :meth:`DistributedSampler.set_epoch` before each epoch. See
+    core pytorch utils."""
+
+    if phase == "train":
+        data_loader = trainer.train_loader
+    elif phase == "valid":
+        data_loader = trainer.valid_loader
+    else:
+        data_loader = trainer.test_loader
+
+    if hasattr(data_loader.sampler, "set_epoch"):
+        data_loader.sampler.set_epoch(trainer.epoch_index)

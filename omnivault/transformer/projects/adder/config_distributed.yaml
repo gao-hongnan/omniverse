@@ -1,0 +1,159 @@
+constants:
+    NUM_DIGITS: 2
+    TOKENS:
+        - "0"
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
+        - "7"
+        - "8"
+        - "9"
+        - "+"
+        - "*"
+        - "-"
+        - "="
+        - "<BOS>"
+        - "<EOS>"
+        - "<PAD>"
+        - "<UNK>"
+logger:
+    log_file: "decoder.log"
+    module_name: null
+    propagate: false
+    log_root_dir: "./data/adder/logs"
+    rich_handler_config:
+        level: "INFO"
+        show_level: true
+        show_path: true
+        show_time: true
+        rich_tracebacks: true
+        markup: true
+        log_time_format: "[%Y-%m-%d %H:%M:%S]"
+global_:
+    seed: 42
+    debug: false
+    debug_samples: null
+data:
+    context_length: 11
+    dataset_name: adder_dataset
+    dataset_size: 10000
+    dataset_path: ./data/adder/adder_dataset.txt
+    dataset_dir: ./data/adder
+    dataset_url: https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/omnivault/transformer/projects/adder/assets/adder_dataset.txt
+    split:
+        - 0.7
+        - 0.2
+        - 0.1
+    collate_fn: # The collate function config.
+        batch_first: true
+        pad_token_id: 16 # TODO: `pad_token_id` should be interpolated from `MaybeConstant`.
+    train_loader:
+        batch_size: 32
+        shuffle: true
+        num_workers: 0
+        pin_memory: false
+        drop_last: false
+    valid_loader:
+        batch_size: 32
+        shuffle: false
+        num_workers: 0
+        pin_memory: false
+        drop_last: false
+    test_loader:
+        batch_size: 128
+        shuffle: false
+        num_workers: 0
+        pin_memory: false
+        drop_last: false
+model:
+    d_model: 128
+    vocab_size: ??? # MISSING so need fill up later
+    context_length: ${data.context_length}
+    num_decoder_blocks: 2
+    dropout: 0.1
+    decoder_block:
+        masked_self_attention_mha:
+            attention:
+                _target_: omnivault.transformer.modules.attention.core.ScaledDotProductAttention
+            d_model: ${model.d_model}
+            H: 4
+            dropout: 0.1
+        feed_forward:
+            d_model: ${model.d_model}
+            d_ff: 256
+            activation:
+                _target_: torch.nn.GELU
+                approximate: "tanh"
+            dropout: 0.1
+            bias: true
+        add_norm_1:
+            feature_dim: ${model.d_model}
+            dropout: 0.1
+        add_norm_2:
+            feature_dim: ${model.d_model}
+            dropout: 0.1
+optimizer:
+    name: "torch.optim.Adam"
+    lr: 0.2
+    betas:
+        - 0.9
+        - 0.98
+    eps: 1e-9
+    weight_decay: 0.0
+criterion:
+    name: "torch.nn.CrossEntropyLoss"
+    ignore_index: 16
+    reduction: "mean"
+scheduler:
+    name: "torch.optim.lr_scheduler.LambdaLR"
+trainer:
+    device: "auto"
+    max_epochs: 2
+    log_every_n_steps: 100
+    eval_every_n_steps: 4
+    step_scheduler_on_batch_or_epoch: "epoch"
+    use_amp: false
+    autocast_config:
+        enabled: false
+        dtype: null
+        cache_enabled: null
+    scaler_config:
+        enabled: false
+        init_scale: 65536.0
+        growth_factor: 2.0
+        backoff_factor: 0.5
+        growth_interval: 2000
+    gradient_accumulation_steps: 1
+    clip_grad_norm:
+        {
+            max_norm: 1.0,
+            norm_type: 2.0,
+            error_if_nonfinite: false,
+            "foreach": null,
+        }
+    apply_weight_decay_to_different_param_groups: false
+    save_dir: ./data/adder/checkpoints
+    save_every_epoch: false
+    save_best_only: true
+    monitor: "valid_this_epoch_average_loss"
+    mode: "min"
+generator:
+    max_tokens: 4
+    temperature: 1.0
+    greedy: true
+    top_k: null
+    top_p: null
+distributed:
+    log_dir: "logs_distributed"
+    log_on_master_or_all: True
+    master_addr: "localhost"
+    master_port: "29500"
+    nnodes: 1
+    nproc_per_node: 4
+    node_rank: 0
+    world_size: 4
+    backend: "gloo"
+    init_method: "env://"

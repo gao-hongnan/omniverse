@@ -7,6 +7,7 @@ import torch
 from pydantic import BaseModel, Field
 from rich.pretty import pprint
 from torch import nn
+from torch.nn.parallel import DistributedDataParallel
 
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
@@ -57,6 +58,8 @@ class State(BaseModel):
     vocabulary: Any = Field(default=None, description="Vocabulary.")
     tokenizer: Any = Field(default=None, description="Tokenizer.")
 
+    tokens_per_iter: int = Field(default=None, description="Tokens per iter/step.")
+
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""
         assert isinstance(other, State), "Can only compare State instances."
@@ -81,6 +84,13 @@ class State(BaseModel):
 
         arbitrary_types_allowed = True
 
+    @property
+    def model_or_module(self) -> nn.Module:
+        """The model not wrapped by :class:`DistributedDataParallel`."""
+        if isinstance(self.model, DistributedDataParallel):
+            return self.model.module  # type: ignore[no-any-return]
+        return self.model
+
     def pretty_print(self) -> None:
         """Pretty print the config."""
         pprint(self)
@@ -88,7 +98,7 @@ class State(BaseModel):
     def save_snapshots(self, filepath: str) -> None:
         """Save the state dictionaries of the components to a file."""
         state = {
-            "model": self.model.state_dict() if self.model else None,
+            "model": self.model_or_module.state_dict() if self.model_or_module else None,
             "criterion": self.criterion.state_dict() if self.criterion else None,
             "optimizer": self.optimizer.state_dict() if self.optimizer else None,
             "scheduler": self.scheduler.state_dict() if self.scheduler else None,
@@ -138,7 +148,7 @@ class State(BaseModel):
 
         # Load state dicts into the model, criterion, etc., if they exist
         if new_state.model and "model" in state:
-            new_state.model.load_state_dict(state["model"])
+            new_state.model_or_module.load_state_dict(state["model"])
         if new_state.criterion and "criterion" in state:
             new_state.criterion.load_state_dict(state["criterion"])
         if new_state.optimizer and "optimizer" in state:

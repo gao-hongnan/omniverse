@@ -34,6 +34,7 @@ from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.core.vocabulary import AdderVocabulary
 from omnivault.transformer.decoder.core import GPTDecoder
+from omnivault.transformer.projects.adder.main import evaluate_and_generate_on_valid_epoch_end
 from omnivault.transformer.utils.general_utils import create_directory, download_file
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
@@ -44,118 +45,6 @@ warnings.filterwarnings("ignore", category=UserWarning)  # usually related to de
 
 # TODO: I have a callable instead of _target_ field for me to use importlib to parse.
 # so maybe consider using my own code base
-
-
-@torch.no_grad()
-def evaluate_and_generate_on_valid_epoch_end(
-    trainer: Trainer,
-    num_batches_to_eval: int | None = None,
-) -> None:
-    generator_config = trainer.composer.generator
-    assert (
-        generator_config.max_tokens == trainer.composer.constants.NUM_DIGITS + 1 + 1  # type: ignore[attr-defined]
-    ), "In this dataset, the max tokens to generate is fixed and derived from the number of digits. If we add two 2-digits together, it does not make sense for us to keep generating since the max digits for answer is 3 digits, with an optional `<EOS>` token if it is in our vocabulary."
-    assert generator_config.greedy is True, "We should use greedy generation for this task in particular."
-
-    vocabulary = trainer.state.vocabulary
-    assert isinstance(vocabulary, AdderVocabulary)
-
-    tokenizer = trainer.state.tokenizer
-    assert isinstance(tokenizer, AdderTokenizer)
-
-    EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
-    EOS = vocabulary.token_to_index[vocabulary.EOS]
-
-    model = trainer.model
-    model.eval()
-
-    dataloader = trainer.test_loader
-    assert dataloader is not None
-    total_samples = 0
-    num_batches = len(dataloader)
-
-    total_correct_across_samples = 0
-    progress_bar = tqdm(
-        enumerate(dataloader, start=1), total=num_batches, desc="Evaluating and Generation.", leave=False
-    )
-
-    all_predictions = []
-    for _batch_index, batch in progress_bar:
-        inputs, _, _, _ = batch
-        inputs = inputs.to(trainer.device)
-
-        # example of 1 batch with 1 sample:
-        # inputs:   [14, 9, 8, 10, 9, 9, 13, 1, 9, 7]
-        # targets:  [    9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
-        # equation: [14, 9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
-        # equal_index: 6'th position
-        # starting_tokens: [14, 9, 8, 10, 9, 9, 13] -> <BOS>98+99=
-        # generated_tokens: [14, 9, 8, 10, 9, 9, 13, 1, 9, 7, 15]
-        # generated_tokens_decoded: 98+99=197
-
-        batch_correct_predictions = 0
-        batch_size = inputs.size(0)
-
-        # [batch_size, 1]
-        # [[15], [15], ...]
-        eos_tokens_batch = torch.full((batch_size, 1), EOS, dtype=torch.long, device=trainer.device)
-
-        # [batch_size, context_length] = [batch_size, 11] including <BOS> and <EOS>
-        # [[14,  1,  3, 10,  4,  8, 13,  0,  6,  1, 15], [14,  1,  6, 10,  5,  5, 13,  0,  7,  1, 15]]
-        equations = torch.cat((inputs, eos_tokens_batch), dim=1)  # this is the full equation with answer
-        equations_decoded = tokenizer.decode_batch(encoded_sequences=equations, remove_special_tokens=True)
-
-        # [batch_size,] = [6, 6, ...]
-        equal_indices = torch.where(equations == EQUAL)[1]  # .view(batch_size, -1)[:, 0]
-
-        # [batch_size, 7] because each starting token is <BOS>AB+CD=
-        starting_tokens_batch = torch.zeros(
-            batch_size, int(equal_indices[0].item()) + 1, dtype=torch.long, device=trainer.device
-        )
-        for i in range(batch_size):
-            starting_tokens_batch[i] = equations[i, : equal_indices[i] + 1]
-
-        # [batch_size, context_length] = [batch_size, 11] including <BOS> and <EOS>
-        generated_tokens_batch = model.generate(
-            starting_tokens=starting_tokens_batch,
-            **generator_config.model_dump(mode="python"),
-        )
-        generated_tokens_decoded = tokenizer.decode_batch(
-            encoded_sequences=generated_tokens_batch, remove_special_tokens=True
-        )
-        is_correct_batch = torch.all(torch.eq(generated_tokens_batch, equations), dim=1)
-
-        batch_correct_predictions = torch.sum(is_correct_batch).item()  # type: ignore[assignment]
-        total_correct_across_samples += batch_correct_predictions
-        batch_accuracy = batch_correct_predictions / batch_size
-        progress_bar.set_postfix_str(f"accuracy: {batch_accuracy:.4f}")
-
-        for _sample_index in range(batch_size):
-            total_samples += 1
-            is_correct = is_correct_batch[_sample_index]
-            all_predictions.append(
-                {
-                    "epoch": trainer.epoch_index,
-                    "batch_index": _batch_index,
-                    "sample_index": _sample_index,
-                    "equation": equations_decoded[_sample_index],
-                    "generated": generated_tokens_decoded[_sample_index],
-                    "correct": is_correct.item(),
-                }
-            )
-
-        if num_batches_to_eval and _batch_index >= num_batches_to_eval:
-            trainer.logger.info("Early stopping evaluation.")
-            break
-
-    accuracy = total_correct_across_samples / total_samples
-    df = pd.DataFrame(all_predictions)
-
-    trainer.logger.info("%-32s %d/%d", "Correct/Total Samples:", total_correct_across_samples, total_samples)
-    trainer.logger.info("%-32s %s", "Eval Accuracy:", accuracy)
-
-    df_str = df.to_string(index=False)
-    trainer.logger.info("\n%s", df_str)
 
 
 def main(cfg: DictConfig | ListConfig) -> None:
@@ -292,11 +181,13 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     root_dir = find_root_dir(current_path=Path(__file__), marker="omnivault")
     resume_from_state_path = (
-        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-04-04_20-07-43/model_checkpoint_epoch_8.pt"
+        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-05-16_13-48-32/model_checkpoint_epoch_8.pt"
     )
     resume_from_rng_state_path = (
-        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-04-04_20-07-43/rng_state_epoch_8.pt"
+        f"{root_dir}/omnivault/transformer/projects/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
     )
+    resume_from_state_path = "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/model_checkpoint_epoch_8.pt"
+    resume_from_rng_state_path = "/Users/gaohn/gaohn/omniverse/data/adder/checkpoints/2024-05-16_13-48-32/rng_state_epoch_8.pt"
 
     loaded_state = State.load_snapshots(
         filepath=resume_from_state_path,

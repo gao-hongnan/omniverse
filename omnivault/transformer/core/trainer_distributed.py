@@ -136,11 +136,14 @@ class Trainer:
         logger: logging.Logger | None = None,
         device: torch.device | None = None,
         resume_from_rng_path: str | None = None,
+        ddp: bool = False,  # TODO: place it in config
     ) -> None:
         """Super unsatisfying trainer class. If it was old me I would
         spend time to make it extremely modular...but I have learnt that
         not all scenarios demand such code."""
         # fmt: off
+        self.ddp = ddp
+
         self.resume_from_rng_path = resume_from_rng_path # resume from rng state
         if resume_from_rng_path:
             self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path) # set RNG globally first
@@ -149,7 +152,6 @@ class Trainer:
         self.composer         = composer
 
         self.model            = state.model
-        self.model.to(device=device, dtype=next(state.model.parameters()).dtype, non_blocking=True)
 
         self.criterion        = state.criterion
         self.optimizer        = state.optimizer
@@ -169,6 +171,7 @@ class Trainer:
         # mixed precision training
         self.use_amp = composer.trainer.use_amp
         self.autocast_config = composer.trainer.autocast_config
+
         self.context_manager = torch.autocast(device_type=self.device.type, **self.autocast_config) # no ops if not enabled
         self.scaler_config = composer.trainer.scaler_config
         self.scaler = torch.cuda.amp.GradScaler(**self.scaler_config)
