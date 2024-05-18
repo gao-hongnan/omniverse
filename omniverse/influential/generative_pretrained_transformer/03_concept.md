@@ -1162,9 +1162,8 @@ capacity and the optimization algorithm is appropriate {cite}`math11112451`.
 
 Furthermore, the proposition that the conditional entropy
 $H\left(X_t \mid X_{<t}\right)$ of the true data-generating process is upper
-bounded by the by the logarithm of the size of the vocabulary $\mathcal{V}$,
-i.e., $H\left(X_t \mid X_{<t}\right) \leq \log |\mathcal{V}|$
-{cite}`math11112451`.
+bounded by the logarithm of the size of the vocabulary $\mathcal{V}$, i.e.,
+$H\left(X_t \mid X_{<t}\right) \leq \log |\mathcal{V}|$ {cite}`math11112451`.
 
 The proposition that the conditional entropy has an upper limit, carries
 significant implications for optimizing autoregressive self-supervised learning
