@@ -80,7 +80,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/operations/distributed/02_basics.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Training Chronicles" href="../../deep_learning/training_chronicles/intro.html" />
+    <link rel="next" title="How to Setup SLURM and ParallelCluster in AWS" href="03_how_to_setup_slurm_in_aws.html" />
     <link rel="prev" title="Notations" href="01_notations.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -240,6 +240,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Distributed Systems</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01_notations.html">Notations</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
 </ul>
 </li>
 </ul>
@@ -526,7 +527,7 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-code">The Code</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments">Command Line Arguments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments-cpu-and-gloo-backend">Command Line Arguments (CPU And Gloo Backend)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#process-group-initialization">Process Group Initialization</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-port-and-master-address">Master Port and Master Address</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#backend">Backend</a></li>
@@ -537,7 +538,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-information">Distributed Information</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-node-setup">Multi-Node Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-node-setup-with-cuda">Multi-Node Setup With CUDA</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -562,7 +563,7 @@ document.write(`
 <li><p><a class="reference internal" href="#setting-up" id="id4">Setting Up</a></p>
 <ul>
 <li><p><a class="reference internal" href="#the-code" id="id5">The Code</a></p></li>
-<li><p><a class="reference internal" href="#command-line-arguments" id="id6">Command Line Arguments</a></p></li>
+<li><p><a class="reference internal" href="#command-line-arguments-cpu-and-gloo-backend" id="id6">Command Line Arguments (CPU And Gloo Backend)</a></p></li>
 <li><p><a class="reference internal" href="#process-group-initialization" id="id7">Process Group Initialization</a></p>
 <ul>
 <li><p><a class="reference internal" href="#master-port-and-master-address" id="id8">Master Port and Master Address</a></p></li>
@@ -574,7 +575,7 @@ document.write(`
 <li><p><a class="reference internal" href="#distributed-information" id="id12">Distributed Information</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#multi-node-setup" id="id13">Multi-Node Setup</a></p></li>
+<li><p><a class="reference internal" href="#multi-node-setup-with-cuda" id="id13">Multi-Node Setup With CUDA</a></p></li>
 <li><p><a class="reference internal" href="#references-and-further-readings" id="id14">References and Further Readings</a></p></li>
 </ul>
 </nav>
@@ -899,11 +900,11 @@ a must in a multi-node setup.</p>
 </div>
 </div>
 </section>
-<section id="command-line-arguments">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Command Line Arguments</a><a class="headerlink" href="#command-line-arguments" title="Link to this heading">#</a></h3>
+<section id="command-line-arguments-cpu-and-gloo-backend">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Command Line Arguments (CPU And Gloo Backend)</a><a class="headerlink" href="#command-line-arguments-cpu-and-gloo-backend" title="Link to this heading">#</a></h3>
 <p>There’s quite a fair bit of command line arguments, but most of them are simple
-and will be understood shortly. To run the script you can do (for a single
-node):</p>
+and will be understood shortly. To run the script you can do (for a single node)
+and with CPU and backend <code class="docutils literal notranslate"><span class="pre">gloo</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>omnixamples/distributed/a_basic/b_demo.py<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--master_addr<span class="o">=</span>localhost<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--master_port<span class="o">=</span><span class="m">29500</span><span class="w"> </span><span class="se">\</span>
@@ -1054,11 +1055,237 @@ device<a class="footnote-reference brackets" href="#cs336-spring2024-assignment2
 setup. This class will be immutable and will only perform data validation. The
 purpose of this class is after creation of distributed setup, we can inject this
 object to other classes or functions to use the distributed information.</p>
+<p>If you click on the tab named <code class="docutils literal notranslate"><span class="pre">dist_info.py</span></code> above, you will see the code - and
+after running the above command, you will see 4 outputs, from each process,
+holding the below info:</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--1-input--1" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--1">Process 0</label><div class="tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DistInfoPerProcess</span><span class="p">(</span>
+    <span class="n">master_addr</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">master_port</span><span class="o">=</span><span class="s1">&#39;29500&#39;</span><span class="p">,</span>
+    <span class="n">nnodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nproc_per_node</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">node_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;gloo&#39;</span><span class="p">,</span>
+    <span class="n">init_method</span><span class="o">=</span><span class="s1">&#39;env://&#39;</span><span class="p">,</span>
+    <span class="n">global_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">local_world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">local_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;Hongnans-Mac-mini.local&#39;</span><span class="p">,</span>
+    <span class="n">process_id</span><span class="o">=</span><span class="mi">72041</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--2" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--2">Process 1</label><div class="tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DistInfoPerProcess</span><span class="p">(</span>
+    <span class="n">master_addr</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">master_port</span><span class="o">=</span><span class="s1">&#39;29500&#39;</span><span class="p">,</span>
+    <span class="n">nnodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nproc_per_node</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">node_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;gloo&#39;</span><span class="p">,</span>
+    <span class="n">init_method</span><span class="o">=</span><span class="s1">&#39;env://&#39;</span><span class="p">,</span>
+    <span class="n">global_rank</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">local_world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">local_rank</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;Hongnans-Mac-mini.local&#39;</span><span class="p">,</span>
+    <span class="n">process_id</span><span class="o">=</span><span class="mi">72042</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--3" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--3">Process 2</label><div class="tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DistInfoPerProcess</span><span class="p">(</span>
+    <span class="n">master_addr</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">master_port</span><span class="o">=</span><span class="s1">&#39;29500&#39;</span><span class="p">,</span>
+    <span class="n">nnodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nproc_per_node</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">node_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;gloo&#39;</span><span class="p">,</span>
+    <span class="n">init_method</span><span class="o">=</span><span class="s1">&#39;env://&#39;</span><span class="p">,</span>
+    <span class="n">global_rank</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">local_world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">local_rank</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;Hongnans-Mac-mini.local&#39;</span><span class="p">,</span>
+    <span class="n">process_id</span><span class="o">=</span><span class="mi">72043</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--1-input--4" name="tab-set--1" type="radio"><label class="tab-label" for="tab-set--1-input--4">Process 3</label><div class="tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">DistInfoPerProcess</span><span class="p">(</span>
+    <span class="n">master_addr</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+    <span class="n">master_port</span><span class="o">=</span><span class="s1">&#39;29500&#39;</span><span class="p">,</span>
+    <span class="n">nnodes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">nproc_per_node</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">node_rank</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;gloo&#39;</span><span class="p">,</span>
+    <span class="n">init_method</span><span class="o">=</span><span class="s1">&#39;env://&#39;</span><span class="p">,</span>
+    <span class="n">global_rank</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">local_world_size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">local_rank</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">hostname</span><span class="o">=</span><span class="s1">&#39;Hongnans-Mac-mini.local&#39;</span><span class="p">,</span>
+    <span class="n">process_id</span><span class="o">=</span><span class="mi">72044</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Of course it is difficult to log pydantic objects into log file, so you can just
+<code class="docutils literal notranslate"><span class="pre">model_dump_json(indent=4)</span></code> to get a json string and log that.</p>
 </section>
 </section>
-<section id="multi-node-setup">
-<h2><a class="toc-backref" href="#id13" role="doc-backlink">Multi-Node Setup</a><a class="headerlink" href="#multi-node-setup" title="Link to this heading">#</a></h2>
-<p>… to be continued.</p>
+<section id="multi-node-setup-with-cuda">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Multi-Node Setup With CUDA</a><a class="headerlink" href="#multi-node-setup-with-cuda" title="Link to this heading">#</a></h2>
+<p>Now consider the case where we have 2 nodes, and 1 GPU on each node. Let’s see
+if our setup works!</p>
+<p>We first have two nodes, so we need two scripts - one for the master and one for
+the worker. The master script will write the <code class="docutils literal notranslate"><span class="pre">MASTER_ADDR</span></code> and <code class="docutils literal notranslate"><span class="pre">MASTER_PORT</span></code> to
+a file, and the worker script will read from this file. The master script will
+start the process group and the worker script will join the process group.</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--2-input--1" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--1"><strong>01_demo_start_master.sh</strong></label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env sh</span>
+
+<span class="c1"># Get master address and port</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_ADDR</span><span class="o">=</span><span class="k">$(</span>hostname<span class="w"> </span>-i<span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_PORT</span><span class="o">=</span><span class="k">$(</span>comm<span class="w"> </span>-23<span class="w"> </span>&lt;<span class="o">(</span>seq<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">65535</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="k">)</span><span class="w"> </span>&lt;<span class="o">(</span>ss<span class="w"> </span>-Htan<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $4}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39;:&#39;</span><span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-u<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>shuf<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="o">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Master Address: </span><span class="nv">$MASTER_ADDR</span><span class="s2">&quot;</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Master Port: </span><span class="nv">$MASTER_PORT</span><span class="s2">&quot;</span>
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">MASTER_ADDR</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="nv">MASTER_PORT</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>master_info.txt
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span>:<span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NNODES</span><span class="o">=</span><span class="m">2</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NPROC_PER_NODE</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NODE_RANK</span><span class="o">=</span><span class="m">0</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WORLD_SIZE</span><span class="o">=</span><span class="m">2</span>
+
+python<span class="w"> </span>omnixamples/distributed/a_basic/b_demo.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--master_addr<span class="o">=</span><span class="nv">$MASTER_ADDR</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--master_port<span class="o">=</span><span class="nv">$MASTER_PORT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nnodes<span class="o">=</span><span class="nv">$NNODES</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nproc_per_node<span class="o">=</span><span class="nv">$NPROC_PER_NODE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--node_rank<span class="o">=</span><span class="nv">$NODE_RANK</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--world_size<span class="o">=</span><span class="nv">$WORLD_SIZE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--backend<span class="o">=</span>gloo<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--init_method<span class="o">=</span><span class="s2">&quot;env://&quot;</span>
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--2-input--2" name="tab-set--2" type="radio"><label class="tab-label" for="tab-set--2-input--2"><strong>01_demo_start_worker.sh</strong></label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env sh</span>
+
+<span class="c1"># Read master address and port from the shared file</span>
+<span class="nv">master_info</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>master_info.txt<span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_ADDR</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$master_info</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39;:&#39;</span><span class="w"> </span>-f1<span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">MASTER_PORT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="nv">$master_info</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39;:&#39;</span><span class="w"> </span>-f2<span class="k">)</span>
+
+<span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span>:<span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NNODES</span><span class="o">=</span><span class="m">2</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NPROC_PER_NODE</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">NODE_RANK</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WORLD_SIZE</span><span class="o">=</span><span class="m">2</span>
+
+python<span class="w"> </span>omnixamples/distributed/a_basic/b_demo.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--master_addr<span class="o">=</span><span class="nv">$MASTER_ADDR</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--master_port<span class="o">=</span><span class="nv">$MASTER_PORT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nnodes<span class="o">=</span><span class="nv">$NNODES</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--nproc_per_node<span class="o">=</span><span class="nv">$NPROC_PER_NODE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--node_rank<span class="o">=</span><span class="nv">$NODE_RANK</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--world_size<span class="o">=</span><span class="nv">$WORLD_SIZE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--backend<span class="o">=</span>gloo<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--init_method<span class="o">=</span><span class="s2">&quot;env://&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Running them shows the output logs below for <code class="docutils literal notranslate"><span class="pre">process_0</span></code> and <code class="docutils literal notranslate"><span class="pre">process_1</span></code>:</p>
+<div class="tab-set docutils">
+<input checked="True" class="tab-input" id="tab-set--3-input--1" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--1">Process 0</label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Namespace<span class="o">(</span>
+<span class="w">    </span><span class="nv">log_dir</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span>,
+<span class="w">    </span><span class="nv">log_level</span><span class="o">=</span><span class="m">20</span>,
+<span class="w">    </span><span class="nv">log_on_master_or_all</span><span class="o">=</span>False,
+<span class="w">    </span><span class="nv">master_addr</span><span class="o">=</span><span class="s2">&quot;10.0.23.218&quot;</span>,
+<span class="w">    </span><span class="nv">master_port</span><span class="o">=</span><span class="s2">&quot;1775&quot;</span>,
+<span class="w">    </span><span class="nv">nnodes</span><span class="o">=</span><span class="m">2</span>,
+<span class="w">    </span><span class="nv">nproc_per_node</span><span class="o">=</span><span class="m">1</span>,
+<span class="w">    </span><span class="nv">node_rank</span><span class="o">=</span><span class="m">0</span>,
+<span class="w">    </span><span class="nv">world_size</span><span class="o">=</span><span class="m">2</span>,
+<span class="w">    </span><span class="nv">backend</span><span class="o">=</span><span class="s2">&quot;gloo&quot;</span>,
+<span class="w">    </span><span class="nv">init_method</span><span class="o">=</span><span class="s2">&quot;env://&quot;</span>,
+<span class="o">)</span>
+
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:47<span class="w"> </span>INFO<span class="w">     </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:47<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w"> </span><span class="o">{</span><span class="w">                                                           </span>b_demo.py:37
+<span class="w">                                 </span><span class="s2">&quot;master_addr&quot;</span>:<span class="w"> </span><span class="s2">&quot;10.0.23.218&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;master_port&quot;</span>:<span class="w"> </span><span class="s2">&quot;1775&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;nnodes&quot;</span>:<span class="w"> </span><span class="m">2</span>,
+<span class="w">                                 </span><span class="s2">&quot;nproc_per_node&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;node_rank&quot;</span>:<span class="w"> </span><span class="m">0</span>,
+<span class="w">                                 </span><span class="s2">&quot;world_size&quot;</span>:<span class="w"> </span><span class="m">2</span>,
+<span class="w">                                 </span><span class="s2">&quot;backend&quot;</span>:<span class="w"> </span><span class="s2">&quot;gloo&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;init_method&quot;</span>:<span class="w"> </span><span class="s2">&quot;env://&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;global_rank&quot;</span>:<span class="w"> </span><span class="m">0</span>,
+<span class="w">                                 </span><span class="s2">&quot;local_world_size&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;local_rank&quot;</span>:<span class="w"> </span><span class="m">0</span>,
+<span class="w">                                 </span><span class="s2">&quot;hostname&quot;</span>:<span class="w"> </span><span class="s2">&quot;distributed-queue-st-g4dn2xlarge-1&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;process_id&quot;</span>:<span class="w"> </span><span class="m">4598</span>
+<span class="w">                             </span><span class="o">}</span>
+
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span>INFO<span class="w"> </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w"> </span>rank<span class="w"> </span><span class="m">0</span><span class="w"> </span>data<span class="w"> </span><span class="o">(</span>before<span class="w"> </span>all-reduce<span class="o">)</span>:<span class="w"> </span>tensor<span class="o">([</span><span class="m">4</span>,<span class="w"> </span><span class="m">9</span>,<span class="w"> </span><span class="m">3</span><span class="o">]</span>,<span class="w"> </span><span class="nv">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="o">)</span><span class="w"> </span>with<span class="w"> </span>device<span class="w"> </span>cuda:0.
+b_demo.py:48
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span>INFO<span class="w"> </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w"> </span>rank<span class="w"> </span><span class="m">0</span><span class="w"> </span>data<span class="w"> </span><span class="o">(</span>after<span class="w"> </span>all-reduce<span class="o">)</span>:<span class="w"> </span>tensor<span class="o">([</span><span class="m">9</span>,<span class="w"> </span><span class="m">18</span>,<span class="w"> </span><span class="m">7</span><span class="o">]</span>,<span class="w"> </span><span class="nv">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="o">)</span><span class="w"> </span>with<span class="w"> </span>device<span class="w"> </span>cuda:0.
+b_demo.py:50
+</pre></div>
+</div>
+</div>
+<input class="tab-input" id="tab-set--3-input--2" name="tab-set--3" type="radio"><label class="tab-label" for="tab-set--3-input--2">Process 1</label><div class="tab-content docutils">
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Namespace<span class="o">(</span>
+<span class="w">    </span><span class="nv">log_dir</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span>,
+<span class="w">    </span><span class="nv">log_level</span><span class="o">=</span><span class="m">20</span>,
+<span class="w">    </span><span class="nv">log_on_master_or_all</span><span class="o">=</span>False,
+<span class="w">    </span><span class="nv">master_addr</span><span class="o">=</span><span class="s2">&quot;10.0.23.218&quot;</span>,
+<span class="w">    </span><span class="nv">master_port</span><span class="o">=</span><span class="s2">&quot;1775&quot;</span>,
+<span class="w">    </span><span class="nv">nnodes</span><span class="o">=</span><span class="m">2</span>,
+<span class="w">    </span><span class="nv">nproc_per_node</span><span class="o">=</span><span class="m">1</span>,
+<span class="w">    </span><span class="nv">node_rank</span><span class="o">=</span><span class="m">1</span>,
+<span class="w">    </span><span class="nv">world_size</span><span class="o">=</span><span class="m">2</span>,
+<span class="w">    </span><span class="nv">backend</span><span class="o">=</span><span class="s2">&quot;gloo&quot;</span>,
+<span class="w">    </span><span class="nv">init_method</span><span class="o">=</span><span class="s2">&quot;env://&quot;</span>,
+<span class="o">)</span>
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:47<span class="w"> </span>INFO<span class="w">     </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:47<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w">  </span>b_demo.py:37
+<span class="w">                             </span><span class="o">{</span>
+<span class="w">                                 </span><span class="s2">&quot;master_addr&quot;</span>:
+<span class="w">                             </span><span class="s2">&quot;10.0.23.218&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;master_port&quot;</span>:<span class="w"> </span><span class="s2">&quot;1775&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;nnodes&quot;</span>:<span class="w"> </span><span class="m">2</span>,
+<span class="w">                                 </span><span class="s2">&quot;nproc_per_node&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;node_rank&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;world_size&quot;</span>:<span class="w"> </span><span class="m">2</span>,
+<span class="w">                                 </span><span class="s2">&quot;backend&quot;</span>:<span class="w"> </span><span class="s2">&quot;gloo&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;init_method&quot;</span>:<span class="w"> </span><span class="s2">&quot;env://&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;global_rank&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;local_world_size&quot;</span>:<span class="w"> </span><span class="m">1</span>,
+<span class="w">                                 </span><span class="s2">&quot;local_rank&quot;</span>:<span class="w"> </span><span class="m">0</span>,
+<span class="w">                                 </span><span class="s2">&quot;hostname&quot;</span>:
+<span class="w">                             </span><span class="s2">&quot;distributed-queue-st-g4dn2x</span>
+<span class="s2">                             large-2&quot;</span>,
+<span class="w">                                 </span><span class="s2">&quot;process_id&quot;</span>:<span class="w"> </span><span class="m">4620</span>
+<span class="w">                             </span><span class="o">}</span>
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span>INFO<span class="w"> </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w"> </span>rank<span class="w"> </span><span class="m">1</span><span class="w"> </span>data<span class="w"> </span><span class="o">(</span>before<span class="w"> </span>all-reduce<span class="o">)</span>:<span class="w"> </span>tensor<span class="o">([</span><span class="m">5</span>,<span class="w"> </span><span class="m">9</span>,<span class="w"> </span><span class="m">4</span><span class="o">]</span>,<span class="w"> </span><span class="nv">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="o">)</span><span class="w"> </span>with<span class="w"> </span>device<span class="w"> </span>cuda:0.
+b_demo.py:48
+<span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span>INFO<span class="w"> </span><span class="m">2024</span>-05-18<span class="w"> </span><span class="m">10</span>:03:48<span class="w"> </span><span class="o">[</span>INFO<span class="o">]</span>:<span class="w"> </span>rank<span class="w"> </span><span class="m">1</span><span class="w"> </span>data<span class="w"> </span><span class="o">(</span>after<span class="w"> </span>all-reduce<span class="o">)</span>:<span class="w"> </span>tensor<span class="o">([</span><span class="m">9</span>,<span class="w"> </span><span class="m">18</span>,<span class="w"> </span><span class="m">7</span><span class="o">]</span>,<span class="w"> </span><span class="nv">device</span><span class="o">=</span><span class="s1">&#39;cuda:0&#39;</span><span class="o">)</span><span class="w"> </span>with<span class="w"> </span>device<span class="w"> </span>cuda:0.
+b_demo.py:50
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="references-and-further-readings">
 <h2><a class="toc-backref" href="#id14" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
@@ -1122,11 +1349,11 @@ object to other classes or functions to use the distributed information.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../deep_learning/training_chronicles/intro.html"
+       href="03_how_to_setup_slurm_in_aws.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Training Chronicles</p>
+        <p class="prev-next-title">How to Setup SLURM and ParallelCluster in AWS</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1148,7 +1375,7 @@ object to other classes or functions to use the distributed information.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-code">The Code</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments">Command Line Arguments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments-cpu-and-gloo-backend">Command Line Arguments (CPU And Gloo Backend)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#process-group-initialization">Process Group Initialization</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-port-and-master-address">Master Port and Master Address</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#backend">Backend</a></li>
@@ -1159,7 +1386,7 @@ object to other classes or functions to use the distributed information.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-information">Distributed Information</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-node-setup">Multi-Node Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-node-setup-with-cuda">Multi-Node Setup With CUDA</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
