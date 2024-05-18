@@ -1,50 +1,51 @@
 # Decoder
 
-- [Decoder](#decoder)
-    - [Overview](#overview)
-    - [A Word On Reproducibility](#a-word-on-reproducibility)
-    - [Change Log](#change-log)
-        - [4th April, 2024: `3d613c0`](#4th-april-2024-3d613c0)
-        - [29th March, 2024: `ffd2392`](#29th-march-2024-ffd2392)
-        - [14th May, 2024: `ad0fd6a`](#14th-may-2024-ad0fd6a)
-            - [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
-            - [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
-            - [Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#tiny-shakespeare-character-token-level-run-1-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
-    - [Setup and Installation](#setup-and-installation)
-        - [Step 1: Clone the Repository](#step-1-clone-the-repository)
-        - [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
-        - [Step 3: Install Dependencies](#step-3-install-dependencies)
-    - [Typed but not Typed](#typed-but-not-typed)
-    - [Training Techniques](#training-techniques)
-        - [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
-        - [Improving Performance](#improving-performance)
-    - [Adder](#adder)
-        - [Commit Hash](#commit-hash)
-        - [Composer (Configuration)](#composer-configuration)
-        - [State](#state)
-        - [Some Quirks of the Adder Project](#some-quirks-of-the-adder-project)
-        - [Experiments](#experiments)
-            - [Run 1. CPU Bound 3 Epochs (Debug)](#run-1-cpu-bound-3-epochs-debug)
-            - [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
-            - [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
-            - [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-            - [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
-        - [Generalization](#generalization)
-    - [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
-        - [Commit Hash](#commit-hash-1)
-        - [Experiments](#experiments-1)
-            - [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
-            - [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
-    - [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level-1)
-        - [Commit Hash](#commit-hash-2)
-        - [KerasNLP Example](#kerasnlp-example)
-        - [Training](#training)
-    - [DDP](#ddp)
-        - [DDP CPU Mode](#ddp-cpu-mode)
-        - [DDP Multi Node GPU](#ddp-multi-node-gpu)
+-   [Decoder](#decoder)
+    -   [Overview](#overview)
+    -   [A Word On Reproducibility](#a-word-on-reproducibility)
+    -   [Change Log](#change-log)
+        -   [4th April, 2024: `3d613c0`](#4th-april-2024-3d613c0)
+        -   [29th March, 2024: `ffd2392`](#29th-march-2024-ffd2392)
+        -   [14th May, 2024: `ad0fd6a`](#14th-may-2024-ad0fd6a)
+            -   [Adder Run 1. GPU Bound 15 Epochs with Automatic Mixed Precision and Gradient Scaler](#adder-run-1-gpu-bound-15-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Adder Run 2. GPU Bound 15 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#adder-run-2-gpu-bound-15-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+            -   [Adder Run 3. CPU Bound 3 Epochs (Debug)](#adder-run-3-cpu-bound-3-epochs-debug)
+            -   [Tiny Shakespeare (Character Token Level) Run 1. GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#tiny-shakespeare-character-token-level-run-1-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level)
+    -   [Setup and Installation](#setup-and-installation)
+        -   [Step 1: Clone the Repository](#step-1-clone-the-repository)
+        -   [Step 2: Create Virtual Environment](#step-2-create-virtual-environment)
+        -   [Step 3: Install Dependencies](#step-3-install-dependencies)
+    -   [Typed but not Typed](#typed-but-not-typed)
+    -   [Training Techniques](#training-techniques)
+        -   [Mixed Precision, Gradient Scaling and Gradient Accumulation](#mixed-precision-gradient-scaling-and-gradient-accumulation)
+        -   [Improving Performance](#improving-performance)
+    -   [Adder](#adder)
+        -   [Commit Hash](#commit-hash)
+        -   [Composer (Configuration)](#composer-configuration)
+        -   [State](#state)
+        -   [Some Quirks of the Adder Project](#some-quirks-of-the-adder-project)
+        -   [Experiments](#experiments)
+            -   [Run 1. CPU Bound 3 Epochs (Debug)](#run-1-cpu-bound-3-epochs-debug)
+            -   [Run 2. CPU Bound 20 Epochs](#run-2-cpu-bound-20-epochs)
+            -   [Run 3. CPU Bound 20 Epochs with Automatic Mixed Precision](#run-3-cpu-bound-20-epochs-with-automatic-mixed-precision)
+            -   [Run 4. CPU Bound 20 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-4-cpu-bound-20-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Run 5. GPU Bound 30 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-5-gpu-bound-30-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+            -   [Run 6: GPU Bound 30 Epochs with Automatic Mixed Precision, Gradient Scaler and Gradient Accumulation](#run-6-gpu-bound-30-epochs-with-automatic-mixed-precision-gradient-scaler-and-gradient-accumulation)
+        -   [Generalization](#generalization)
+    -   [Tiny Shakespeare (Character Token Level)](#tiny-shakespeare-character-token-level)
+        -   [Commit Hash](#commit-hash-1)
+        -   [Experiments](#experiments-1)
+            -   [Run 1: CPU Bound 5 Epochs using Debug Mode](#run-1-cpu-bound-5-epochs-using-debug-mode)
+            -   [Run 2: GPU Bound 5 Epochs with Automatic Mixed Precision and Gradient Scaler](#run-2-gpu-bound-5-epochs-with-automatic-mixed-precision-and-gradient-scaler)
+    -   [SimpleBooks-92 (Word Token Level)](#simplebooks-92-word-token-level-1)
+        -   [Commit Hash](#commit-hash-2)
+        -   [KerasNLP Example](#kerasnlp-example)
+        -   [Training](#training)
+    -   [DDP](#ddp)
+        -   [DDP CPU Mode](#ddp-cpu-mode)
+        -   [DDP Multi Node GPU No Torchrun](#ddp-multi-node-gpu-no-torchrun)
+        -   [DDP Multi Node GPU With Torchrun](#ddp-multi-node-gpu-with-torchrun)
 
 ## Overview
 
@@ -1578,7 +1579,7 @@ All validation loss/accuracy should be same across all processes but the
 training loss/accuracy will be different. This is because the training data is
 split across the processes but not the validation data!
 
-### DDP Multi Node GPU
+### DDP Multi Node GPU No Torchrun
 
 To run DDP on adder on 2 nodes, 1 GPU each.
 
@@ -1587,7 +1588,8 @@ cd /shared
 git clone ...
 ```
 
-We have a master script for the master node.
+We have a master script for the master node where you place the script in a file
+called `master.sh`.
 
 ```bash
 #!/usr/bin/env sh
@@ -1628,7 +1630,7 @@ python omnivault/transformer/projects/adder/main_distributed.py \
     distributed.init_method="env://"
 ```
 
-And a worker script for the worker node.
+And a worker script for the worker node where we name the file `worker_1.sh`.
 
 ```bash
 #!/usr/bin/env sh
@@ -1664,4 +1666,28 @@ python omnivault/transformer/projects/adder/main_distributed.py \
     distributed.world_size=$WORLD_SIZE \
     distributed.backend=gloo \
     distributed.init_method="env://"
+```
+
+Then on each node, you run the scripts as follows:
+
+```bash
+# On the master node
+bash master.sh
+
+# On the worker node
+bash worker_1.sh
+```
+
+### DDP Multi Node GPU With Torchrun
+
+Note that the code written is not compatible with torchrun, because `torchrun`
+will allow us to have these variables derived from the environment variables.
+However for learning purposes, I derive them from the command line arguments. In
+other words given `nnodes`, `nproc_per_node`, `node_rank` we can derive
+`world_size`, `local_world_size`, `local_rank` and `global_rank`.h
+
+```python
+ddp_global_rank = int(os.environ['RANK'])
+ddp_local_rank = int(os.environ['LOCAL_RANK'])
+ddp_world_size = int(os.environ['WORLD_SIZE'])
 ```

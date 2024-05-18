@@ -97,6 +97,45 @@ use the `pcluster` command.
 ❯ pcluster configure --config config.yaml
 ```
 
+Then you would have some configuration like below:
+
+```yaml
+Region: ap-southeast-1
+Image:
+  Os: ubuntu2004
+SharedStorage:
+  - MountDir: /shared
+    Name: gaohn-efs
+    StorageType: Efs
+    EfsSettings:
+      PerformanceMode: generalPurpose
+      ThroughputMode: bursting
+HeadNode:
+  InstanceType: t2.small
+  Networking:
+    SubnetId: subnet-xxxxxxxxxxxxxxxxx
+  Ssh:
+    KeyName: awsec2
+Scheduling:
+  Scheduler: slurm
+  SlurmQueues:
+  - Name: distributed-queue
+    ComputeResources:
+    - Name: g4dn12xlarge
+      Instances:
+      - InstanceType: g4dn.12xlarge
+      MinCount: 2
+      MaxCount: 2
+      Efa:
+        Enabled: true
+    Networking:
+      PlacementGroup:
+        Enabled: true
+    Networking:
+      SubnetIds:
+      - subnet-xxxxxxxxxxxxxxxxx
+```
+
 ### 1. Review the Configuration File
 
 Before proceeding, it’s a good idea to double-check your `config.yaml` file.
@@ -104,11 +143,6 @@ Make sure that all settings such as instance types, network configurations,
 placement groups, and other parameters accurately meet your needs. Adjust any
 settings if necessary. For example, I expected the `HeadNode` to be `t2.small`
 and indeed it was.
-
-```yaml
-HeadNode:
-    InstanceType: t2.small
-```
 
 ### 2. Create the Cluster
 
@@ -128,7 +162,7 @@ The cluster creation process may take some time. You can monitor the progress by
 running the following command:
 
 ```bash
-❯ pcluster describe-cluster --cluster-name <YOUR-CLUSTER-NAME> --region ap-southeast-1
+❯ pcluster describe-cluster --cluster-name <YOUR-CLUSTER-NAME> --region <REGION>
 ```
 
 ## Shared File System
@@ -164,6 +198,8 @@ SharedStorage:
 EFS is cheap and can be used as a shared file system but if you want things like
 FSx, which is for high performance computing, you can refer to a sample
 [template from PyTorch](https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template).
+So you will now have access to a `/shared` directory in the head node and all
+compute nodes.
 
 ## Logging into the Head Node
 
@@ -195,8 +231,11 @@ For `username` it defaults to `ubuntu` for Ubuntu AMIs.
 
 ### Compute Node
 
-Due to quota limit, our compute node is `g4dn.xlarge` and has only 1 GPU per
-node.
+The compute nodes are what you will use to run your distributed training. You
+set it to `g4dn.12xlarge` earlier, and with `MinCount` and `MaxCount` - these
+fields specify the minimum and maximum number of instances of this type that can
+be launched. Both `MinCount` and `MaxCount` are set to 2. This means that
+exactly 2 instances of `g4dn.12xlarge` will be used.
 
 ### SLURM Status
 
@@ -206,19 +245,24 @@ We can check status of the slurm cluster:
 ❯ sinfo
 
 PARTITION          AVAIL  TIMELIMIT  NODES  STATE NODELIST
-distributed-queue*    up   infinite      2   idle distributed-queue-st-g4dnxlarge-[1-2]
+distributed-queue*    up   infinite      2   idle distributed-queue-st-g4dn2xlarge-[1-2]
 ```
 
 And we can see the nodes are up and running. We can use `srun` to see if the
 nodes are working:
 
 ```bash
+❯ export NUM_NODES=2
 ❯ srun -N${NUM_NODES} hostname
+distributed-queue-st-g4dn2xlarge-1
+distributed-queue-st-g4dn2xlarge-2
 ```
 
 ### Setup Python Environment
 
 #### Virtual Environment
+
+We can do so via virtual environment:
 
 ```bash
 #!/usr/bin/env sh
@@ -232,7 +276,7 @@ echo 'source /shared/venv/bin/activate' >> ~/.bashrc
 
 #### Miniconda
 
-or with conda:
+Or with conda:
 
 ```bash
 sudo wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
@@ -250,7 +294,7 @@ cd /usr/share/modules/modulefiles
 sudo nano miniconda3
 ```
 
-Add these to nano
+Add these into the file:
 
 ```bash
 #%Module1.0
@@ -269,58 +313,69 @@ source /etc/profile.d/modules.sh
 module use /usr/share/modules/modulefiles
 module load miniconda3
 conda create -n ddp python=3.9
-conda init
+source ~/.bashrc # so no need conda init
 conda activate ddp
 ```
 
 ## Sample Run
 
-```bash
-conda create -n ddp python=3.8
-pip install torch torchvision numpy
-```
+We use the example from PyTorch's examples. But note very carefully you likely
+need to use their `config` template and not the one I provided as they have
+things like FSx and other things that are not in the default `config.yaml`.
 
 ```bash
-cd /
-sudo mkdir shared
-sudo git clone https://github.com/PrincetonUniversity/multi_gpu_training.git
+git clone https://github.com/pytorch/examples.git
+cd /shared/examples/distributed/minGPT-ddp/mingpt/slurm
+nano sbatch_run.sh
 ```
 
-```slurm
+We want to modify some things.
+
+```{code-block} bash
+---
+linenos: true
+emphasize-lines: 8,9,11,12,28
+---
 #!/bin/bash
-#SBATCH --job-name=ddp-torch     # create a short name for your job
-#SBATCH --nodes=2                # node count
-#SBATCH --ntasks-per-node=1      # total number of tasks per node
-#SBATCH --cpus-per-task=4        # cpu-cores per task (>1 if multi-threaded tasks)
-#SBATCH --mem=15G                # total memory per node (match to the instance type)
-#SBATCH --gres=gpu:1             # number of allocated GPUs per node
-#SBATCH --time=00:01:00          # total run time limit (HH:MM:SS)
-#SBATCH --output=job_%j.out      # Specify the file name for standard output
-#SBATCH --error=job_%j.err       # Specify the file name for standard error
 
-# Find a free port
-export MASTER_PORT=$(shuf -i 6000-9999 -n 1)
-export WORLD_SIZE=$(($SLURM_NNODES * $SLURM_NTASKS_PER_NODE))
-echo "WORLD_SIZE="$WORLD_SIZE
+#SBATCH --job-name=multinode-example
+#SBATCH --nodes=2
+#SBATCH --ntasks=2
+#SBATCH --gpus-per-task=1
+#SBATCH --cpus-per-task=4
+#SBATCH --output=train_gpt_%j.out
+#SBATCH --error=train_gpt_%j.err
 
-# Define master address
-master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
-export MASTER_ADDR=$master_addr
-echo "MASTER_ADDR="$MASTER_ADDR
-
-# Load modules and activate environment
-module purge
-module load miniconda3
+source $(conda info --base)/etc/profile.d/conda.sh
 conda activate ddp
 
-# Run the distributed PyTorch program
-srun python simple_dpp.py
+nodes=( $( scontrol show hostnames $SLURM_JOB_NODELIST ) )
+nodes_array=($nodes)
+head_node=${nodes_array[0]}
+head_node_ip=$(srun --nodes=1 --ntasks=1 -w "$head_node" hostname --ip-address)
+
+echo Node IP: $head_node_ip
+export LOGLEVEL=INFO
+
+srun torchrun \
+--nnodes 2 \
+--nproc_per_node 1 \
+--rdzv_id $RANDOM \
+--rdzv_backend c10d \
+--rdzv_endpoint $head_node_ip:29500 \
+/shared/examples/distributed/minGPT-ddp/mingpt/main.py
 ```
 
-## Remember The Logs Are In Compute Nodes
+We change the last line from `/shared/examples/mingpt/main.py` to
+`/shared/examples/distributed/minGPT-ddp/mingpt/main.py`. For the rest, is some
+additional info like activating the conda environment.
 
-You can check the logs in the compute nodes. For example, you can ssh into the
-compute node and check the logs.
+Also now you can do the `sbatch` command to submit the job, and is typically
+done in the head node.
+
+```bash
+❯ sbatch sbatch_run.sh
+```
 
 ## Delete Cluster
 
@@ -415,10 +470,10 @@ aws ec2 describe-vpcs --vpc-ids <vpc-XXX>
 #!/bin/bash
 
 # Set variables
-CLUSTER_NAME="<YOUR-CLUSTER-NAME>"
-REGION="<REGION>"
-VPC_ID="<vpc-XXX>"
-SUBNET_ID="<subnet-XXX>"
+CLUSTER_NAME="distributed-training"
+REGION="ap-southeast-1"
+SUBNET_ID="subnet-02cc9a3a21eecdc77" # find from config.yaml
+VPC_ID="vpc-00635da5926ac5242" # aws ec2 describe-subnets --subnet-ids "subnet-02cc9a3a21eecdc77" --query 'Subnets[0].VpcId' --output text # get the VPC ID
 
 # Delete ParallelCluster
 echo "Deleting AWS ParallelCluster..."
@@ -433,6 +488,8 @@ echo "Fetching NAT Gateway ID..."
 NAT_ID=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query 'NatGateways[0].NatGatewayId' --output text)
 echo "Deleting NAT Gateway..."
 aws ec2 delete-nat-gateway --nat-gateway-id $NAT_ID
+sleep 20
+
 echo "Verifying NAT Gateway deletion..."
 aws ec2 describe-nat-gateways --nat-gateway-ids $NAT_ID
 
@@ -451,12 +508,15 @@ aws ec2 describe-network-interfaces \
 # Delete subnets
 echo "Deleting subnets..."
 aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID" --query 'Subnets[*].SubnetId' --output text | xargs -n 1 -I {} aws ec2 delete-subnet --subnet-id {}
+sleep 20
+
 echo "Verifying subnet deletion..."
 aws ec2 describe-subnets --filters "Name=vpc-id,Values=$VPC_ID"
 
 # Delete route tables
 echo "Deleting route tables..."
 aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" --query 'RouteTables[?Associations==`[]`].RouteTableId' --output text | xargs -n 1 -I {} aws ec2 delete-route-table --route-table-id {}
+sleep 10
 
 # Delete internet gateway
 echo "Deleting internet gateway..."
@@ -467,6 +527,7 @@ aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
 # Delete the VPC
 echo "Deleting VPC..."
 aws ec2 delete-vpc --vpc-id $VPC_ID
+sleep 20
 echo "Verifying VPC deletion..."
 aws ec2 describe-vpcs --vpc-ids $VPC_ID
 

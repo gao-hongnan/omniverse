@@ -335,11 +335,11 @@ class DistInfoPerProcess(BaseModel):
 ```
 ````
 
-### Command Line Arguments
+### Command Line Arguments (CPU And Gloo Backend)
 
 There's quite a fair bit of command line arguments, but most of them are simple
-and will be understood shortly. To run the script you can do (for a single
-node):
+and will be understood shortly. To run the script you can do (for a single node)
+and with CPU and backend `gloo`:
 
 ```bash
 python omnixamples/distributed/a_basic/b_demo.py \
@@ -502,9 +502,242 @@ setup. This class will be immutable and will only perform data validation. The
 purpose of this class is after creation of distributed setup, we can inject this
 object to other classes or functions to use the distributed information.
 
-## Multi-Node Setup
+If you click on the tab named `dist_info.py` above, you will see the code - and
+after running the above command, you will see 4 outputs, from each process,
+holding the below info:
 
-... to be continued.
+````{tab} Process 0
+```python
+DistInfoPerProcess(
+    master_addr='localhost',
+    master_port='29500',
+    nnodes=1,
+    nproc_per_node=4,
+    node_rank=0,
+    world_size=4,
+    backend='gloo',
+    init_method='env://',
+    global_rank=0,
+    local_world_size=4,
+    local_rank=0,
+    hostname='Hongnans-Mac-mini.local',
+    process_id=72041
+)
+```
+````
+
+````{tab} Process 1
+```python
+DistInfoPerProcess(
+    master_addr='localhost',
+    master_port='29500',
+    nnodes=1,
+    nproc_per_node=4,
+    node_rank=0,
+    world_size=4,
+    backend='gloo',
+    init_method='env://',
+    global_rank=1,
+    local_world_size=4,
+    local_rank=1,
+    hostname='Hongnans-Mac-mini.local',
+    process_id=72042
+)
+```
+````
+
+````{tab} Process 2
+```python
+DistInfoPerProcess(
+    master_addr='localhost',
+    master_port='29500',
+    nnodes=1,
+    nproc_per_node=4,
+    node_rank=0,
+    world_size=4,
+    backend='gloo',
+    init_method='env://',
+    global_rank=2,
+    local_world_size=4,
+    local_rank=2,
+    hostname='Hongnans-Mac-mini.local',
+    process_id=72043
+)
+```
+````
+
+````{tab} Process 3
+```python
+DistInfoPerProcess(
+    master_addr='localhost',
+    master_port='29500',
+    nnodes=1,
+    nproc_per_node=4,
+    node_rank=0,
+    world_size=4,
+    backend='gloo',
+    init_method='env://',
+    global_rank=3,
+    local_world_size=4,
+    local_rank=3,
+    hostname='Hongnans-Mac-mini.local',
+    process_id=72044
+)
+```
+````
+
+Of course it is difficult to log pydantic objects into log file, so you can just
+`model_dump_json(indent=4)` to get a json string and log that.
+
+## Multi-Node Setup With CUDA
+
+Now consider the case where we have 2 nodes, and 1 GPU on each node. Let's see
+if our setup works!
+
+We first have two nodes, so we need two scripts - one for the master and one for
+the worker. The master script will write the `MASTER_ADDR` and `MASTER_PORT` to
+a file, and the worker script will read from this file. The master script will
+start the process group and the worker script will join the process group.
+
+````{tab} **01_demo_start_master.sh**
+```bash
+#!/usr/bin/env sh
+
+# Get master address and port
+export MASTER_ADDR=$(hostname -i)
+export MASTER_PORT=$(comm -23 <(seq 1 65535 | sort) <(ss -Htan | awk '{print $4}' | cut -d':' -f2 | sort -u) | shuf | head -n 1)
+echo "Master Address: $MASTER_ADDR"
+echo "Master Port: $MASTER_PORT"
+
+echo "${MASTER_ADDR}:${MASTER_PORT}" > master_info.txt
+
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+export NNODES=2
+export NPROC_PER_NODE=1
+export NODE_RANK=0
+export WORLD_SIZE=2
+
+python omnixamples/distributed/a_basic/b_demo.py \
+    --master_addr=$MASTER_ADDR \
+    --master_port=$MASTER_PORT \
+    --nnodes=$NNODES \
+    --nproc_per_node=$NPROC_PER_NODE \
+    --node_rank=$NODE_RANK \
+    --world_size=$WORLD_SIZE \
+    --backend=gloo \
+    --init_method="env://"
+```
+````
+
+````{tab} **01_demo_start_worker.sh**
+```bash
+#!/usr/bin/env sh
+
+# Read master address and port from the shared file
+master_info=$(cat master_info.txt)
+export MASTER_ADDR=$(echo $master_info | cut -d':' -f1)
+export MASTER_PORT=$(echo $master_info | cut -d':' -f2)
+
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+export NNODES=2
+export NPROC_PER_NODE=1
+export NODE_RANK=1
+export WORLD_SIZE=2
+
+python omnixamples/distributed/a_basic/b_demo.py \
+    --master_addr=$MASTER_ADDR \
+    --master_port=$MASTER_PORT \
+    --nnodes=$NNODES \
+    --nproc_per_node=$NPROC_PER_NODE \
+    --node_rank=$NODE_RANK \
+    --world_size=$WORLD_SIZE \
+    --backend=gloo \
+    --init_method="env://"
+```
+````
+
+Running them shows the output logs below for `process_0` and `process_1`:
+
+````{tab} Process 0
+```bash
+Namespace(
+    log_dir="logs",
+    log_level=20,
+    log_on_master_or_all=False,
+    master_addr="10.0.23.218",
+    master_port="1775",
+    nnodes=2,
+    nproc_per_node=1,
+    node_rank=0,
+    world_size=2,
+    backend="gloo",
+    init_method="env://",
+)
+
+2024-05-18 10:03:47 INFO     2024-05-18 10:03:47 [INFO]: {                                                           b_demo.py:37
+                                 "master_addr": "10.0.23.218",
+                                 "master_port": "1775",
+                                 "nnodes": 2,
+                                 "nproc_per_node": 1,
+                                 "node_rank": 0,
+                                 "world_size": 2,
+                                 "backend": "gloo",
+                                 "init_method": "env://",
+                                 "global_rank": 0,
+                                 "local_world_size": 1,
+                                 "local_rank": 0,
+                                 "hostname": "distributed-queue-st-g4dn2xlarge-1",
+                                 "process_id": 4598
+                             }
+
+2024-05-18 10:03:48 INFO 2024-05-18 10:03:48 [INFO]: rank 0 data (before all-reduce): tensor([4, 9, 3], device='cuda:0') with device cuda:0.
+b_demo.py:48
+2024-05-18 10:03:48 INFO 2024-05-18 10:03:48 [INFO]: rank 0 data (after all-reduce): tensor([9, 18, 7], device='cuda:0') with device cuda:0.
+b_demo.py:50
+```
+````
+
+````{tab} Process 1
+
+```bash
+Namespace(
+    log_dir="logs",
+    log_level=20,
+    log_on_master_or_all=False,
+    master_addr="10.0.23.218",
+    master_port="1775",
+    nnodes=2,
+    nproc_per_node=1,
+    node_rank=1,
+    world_size=2,
+    backend="gloo",
+    init_method="env://",
+)
+2024-05-18 10:03:47 INFO     2024-05-18 10:03:47 [INFO]:  b_demo.py:37
+                             {
+                                 "master_addr":
+                             "10.0.23.218",
+                                 "master_port": "1775",
+                                 "nnodes": 2,
+                                 "nproc_per_node": 1,
+                                 "node_rank": 1,
+                                 "world_size": 2,
+                                 "backend": "gloo",
+                                 "init_method": "env://",
+                                 "global_rank": 1,
+                                 "local_world_size": 1,
+                                 "local_rank": 0,
+                                 "hostname":
+                             "distributed-queue-st-g4dn2x
+                             large-2",
+                                 "process_id": 4620
+                             }
+2024-05-18 10:03:48 INFO 2024-05-18 10:03:48 [INFO]: rank 1 data (before all-reduce): tensor([5, 9, 4], device='cuda:0') with device cuda:0.
+b_demo.py:48
+2024-05-18 10:03:48 INFO 2024-05-18 10:03:48 [INFO]: rank 1 data (after all-reduce): tensor([9, 18, 7], device='cuda:0') with device cuda:0.
+b_demo.py:50
+```
+````
 
 ## References and Further Readings
 

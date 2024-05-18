@@ -1,4 +1,4 @@
-"""Setup for distributed training.
+"""Setup for distributed training. Init process without torchrun or slurm info.
 
 In DDP just imagine all your function is replicated across all processes.
 1. init_process(1)
