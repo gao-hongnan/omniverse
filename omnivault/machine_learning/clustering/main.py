@@ -1,6 +1,7 @@
 """Main script to run the K-Means algorithm."""
 from __future__ import annotations
 
+import time
 from typing import Any, Tuple
 
 import numpy as np
@@ -14,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from omnivault.machine_learning.clustering.kmeans import KMeansLloyd, elbow_method, plot_kmeans
 from omnivault.machine_learning.metrics.clustering.supervised import contingency_matrix, purity_score
 
-import time
+
 # from sklearn.metrics.cluster import contingency_matrix
 def plot_kmeans_clusters_and_elbow(K: int = 3, **kmeans_kwargs: Any) -> None:
     """Sanity check for K-Means implementation with diagram on 2D data."""
@@ -121,6 +122,7 @@ def perform_kmeans_on_iris() -> Tuple[Any, Any]:
     purity = purity_score(y_train, y_preds)
     pprint(purity)
     purity_per_cluster = purity_score(y_train, y_preds, per_cluster=True)
+    print("Purity per cluster: -------------------")
     pprint(purity_per_cluster)
 
     sk_kmeans = KMeans(
@@ -141,10 +143,11 @@ def perform_kmeans_on_iris() -> Tuple[Any, Any]:
     pprint(contingency_matrix_)
 
     purity = purity_score(y_train, y_preds)
+    print("Purity Score: -------------------")
     pprint(purity)
 
 
-def perform_kmeans_on_mnist():
+def perform_kmeans_on_mnist() -> None:
     X, y = load_digits(return_X_y=True)
     (n_samples, n_features), n_digits = X.shape, np.unique(y).size
 
@@ -154,9 +157,7 @@ def perform_kmeans_on_mnist():
     X_train = X_train / 255.0
     X_test = X_test / 255.0
 
-    kmeans = KMeansLloyd(
-        num_clusters=n_digits, init="random", max_iter=50000, random_state=42
-    )
+    kmeans = KMeansLloyd(num_clusters=n_digits, init="random", max_iter=50000, random_state=42)
     kmeans.fit(X_train)
     pprint(kmeans.labels)
     pprint(kmeans.inertia)
@@ -187,7 +188,7 @@ def perform_kmeans_on_mnist():
 
 if __name__ == "__main__":
     plot_kmeans_clusters_and_elbow(K=3, init="random", max_iter=500, random_state=1992)
-    time.sleep(500)
+    # time.sleep(500)
     # sklearn example
     X = np.array(
         [
@@ -204,9 +205,7 @@ if __name__ == "__main__":
 
     y_preds = kmeans.predict([[0, 0], [12, 3]])
 
-    sk_kmeans = KMeans(
-        n_clusters=2, random_state=1992, n_init="auto", algorithm="lloyd", max_iter=500
-    )
+    sk_kmeans = KMeans(n_clusters=2, random_state=1992, n_init="auto", algorithm="lloyd", max_iter=500)
     sk_kmeans.fit(X)
 
     y_preds = kmeans.predict([[0, 0], [12, 3]])

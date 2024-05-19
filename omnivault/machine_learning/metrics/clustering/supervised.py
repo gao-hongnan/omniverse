@@ -1,5 +1,8 @@
+# NOTE: unit-tested
 """Utilities to evaluate the clustering performance of models."""
 from __future__ import annotations
+
+from typing import Any, Literal, overload
 
 import numpy as np
 import pandas as pd
@@ -7,13 +10,52 @@ from numpy.typing import NDArray
 
 
 def contingency_matrix(
-    y_trues: NDArray[np.int64 | np.int32 | np.int16], y_preds: NDArray[np.int64 | np.int32 | np.int16], as_dataframe: bool = False
-) -> pd.DataFrame | NDArray[np.int64 | np.int32 | np.int16]:
-    """Contingency matrix for clustering. Similar to confusion matrix for classification.
+    y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], as_dataframe: bool = False
+) -> pd.DataFrame | NDArray[np.integer[Any]]:
+    """
+    Generate a contingency matrix for clustering, analogous to a confusion matrix in
+    classification.
 
-    Note:
-        One immediate problem is it does not ensure that each predicted cluster
-        label is assigned only once to a true label.
+    This matrix counts the number of times each unique element of the true dataset
+    (rows) occurs together with each unique element of the predicted dataset
+    (columns). This function is particularly useful for evaluating clustering by
+    comparing the true labels and predicted labels.
+
+    Parameters
+    ----------
+    y_trues : NDArray[np.integer[Any]]
+        An array of ground truth (true) labels.
+    y_preds : NDArray[np.integer[Any]]
+        An array of predicted labels, typically from clustering.
+    as_dataframe : bool, optional
+        If True, returns the contingency matrix as a pandas DataFrame with labeled rows and columns;
+        otherwise, returns it as a NumPy array.
+
+    Returns
+    -------
+    Union[pd.DataFrame, NDArray[np.integer[Any]]]
+        The contingency matrix as either a pandas DataFrame or a NumPy array, depending on the
+        value of `as_dataframe`.
+
+    Notes
+    -----
+    The contingency matrix does not ensure that each predicted cluster label is
+    assigned only once to a true label. This might lead to potential ambiguities in
+    cluster labeling, especially when the number of predicted clusters does not
+    match the number of true classes.
+
+    Examples
+    --------
+    >>> y_trues = np.array([1, 2, 1, 2, 1])
+    >>> y_preds = np.array([0, 0, 1, 1, 1])
+    >>> print(contingency_matrix(y_trues, y_preds))
+    [[0 3]
+     [2 1]]
+
+    >>> print(contingency_matrix(y_trues, y_preds, as_dataframe=True))
+           pred=0  pred=1
+    true=1      0       3
+    true=2      2       1
     """
     # fmt: off
     classes, class_idx        = np.unique(y_trues, return_inverse=True)     # get the unique classes and their indices
@@ -53,14 +95,58 @@ def contingency_matrix(
     return contingency_matrix
 
 
+@overload
 def purity_score(
-    y_trues: np.ndarray, y_preds: np.ndarray, per_cluster: bool = False
-) -> float:
-    """Computes the purity score for clustering.
+    y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], per_cluster: Literal[True]
+) -> NDArray[np.floating[Any]]:
+    ...
 
-    Note:
-        Potentially misleading score just like accuracy.
-        Imbalanced datasets will give high scores.
+
+@overload
+def purity_score(
+    y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], per_cluster: Literal[False] = False
+) -> float:
+    ...
+
+
+def purity_score(
+    y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], per_cluster: bool = False
+) -> float | NDArray[np.floating[Any]]:
+    """
+    Compute the purity score for clustering evaluation.
+
+    Purity is an external evaluation metric of clustering
+    quality. It is the measure of the largest fraction of
+    true labels in each cluster. The overall purity is the
+    sum of purities of all clusters divided by the total
+    number of samples.
+
+    Parameters
+    ----------
+    y_trues : NDArray[np.integer[Any]]
+        Array of ground truth (true) labels.
+    y_preds : NDArray[np.integer[Any]]
+        Array of predicted labels from clustering.
+    per_cluster : bool, optional
+        If True, returns the purity for each cluster
+        instead of the overall purity score.
+
+    Returns
+    -------
+    Union[float, NDArray[np.floating[Any]]]
+        If `per_cluster` is False, returns a single float
+        value representing the overall purity of the
+        clustering. If True, returns an array of purity
+        scores for each cluster.
+
+    Notes
+    -----
+    - Purity can be misleading in cases where cluster size
+      varies significantly. A large cluster that is only
+      moderately pure can disproportionately influence the
+      overall purity score.
+    - Purity does not penalize having many clusters, so
+      it should not be used in isolation.
     """
     # compute contingency matrix (also called confusion matrix)
     contingency_matrix_ = contingency_matrix(y_trues, y_preds, as_dataframe=False)
@@ -72,8 +158,6 @@ def purity_score(
     # if per_cluster is True, we return the purity for each cluster
     # this means instead of sum up all clusters, we return the purity for each cluster.
     if per_cluster:
-        return np.amax(contingency_matrix_, axis=0) / np.sum(
-            contingency_matrix_, axis=0
-        )
+        return np.amax(contingency_matrix_, axis=0) / np.sum(contingency_matrix_, axis=0)  # type: ignore[no-any-return]
     # return purity which is the sum of the max values in each column divided by the sum of the matrix
-    return np.sum(np.amax(contingency_matrix_, axis=0)) / np.sum(contingency_matrix_)
+    return float(np.sum(np.amax(contingency_matrix_, axis=0)) / np.sum(contingency_matrix_))

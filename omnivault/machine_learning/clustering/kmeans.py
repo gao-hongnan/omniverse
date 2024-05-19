@@ -7,7 +7,7 @@ References:
 from __future__ import annotations
 
 from functools import partial
-from typing import Dict, Tuple, Callable, Literal, List
+from typing import Any, Callable, Dict, List, Literal, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,10 +74,10 @@ class KMeansLloyd(BaseEstimator):
         self._N: int
         self._D: int
         self.t: int  # iteration counter
-        self._labels: NDArray[np.float64 | np.float32 | np.float16]  # N labels np.zeros(shape=(self._N))
-        self._centroids: NDArray[np.float64 | np.float32 | np.float16]  # np.zeros(shape=(self._K, self.num_features)) KxD matrix
-        self._inertia: NDArray[np.float64 | np.float32 | np.float16]
-        self._inertias: NDArray[np.float64 | np.float32 | np.float16]  # np.zeros(shape=(self._N)) N inertias
+        self._labels: NDArray[np.floating[Any]]  # N labels np.zeros(shape=(self._N))
+        self._centroids: NDArray[np.floating[Any]]  # np.zeros(shape=(self._K, self.num_features)) KxD matrix
+        self._inertia: NDArray[np.floating[Any]]
+        self._inertias: NDArray[np.floating[Any]]  # np.zeros(shape=(self._N)) N inertias
 
     @property
     def num_clusters(self) -> int:
@@ -100,23 +100,23 @@ class KMeansLloyd(BaseEstimator):
         return self._C
 
     @property
-    def labels(self) -> NDArray[np.float64 | np.float32 | np.float16]:
+    def labels(self) -> NDArray[np.floating[Any]]:
         """Property to get the labels of the samples."""
         return self._labels.astype(int)
 
     @property
-    def centroids(self) -> NDArray[np.float64 | np.float32 | np.float16]:
+    def centroids(self) -> NDArray[np.floating[Any]]:
         """Property to get the centroids."""
         return self._centroids
 
     @property
-    def inertia(self) -> NDArray[np.float64 | np.float32 | np.float16]:
+    def inertia(self) -> NDArray[np.floating[Any]]:
         """Property to get the inertia."""
         return self._inertia
 
     def _reset_clusters(self) -> None:
         """Reset clusters."""
-        self._C = {k: [] for k in range(self._K)} # type: ignore[misc]
+        self._C = {k: [] for k in range(self._K)}  # type: ignore[misc]
 
     def _reset_inertias(self) -> None:
         """Reset inertias.
@@ -130,7 +130,7 @@ class KMeansLloyd(BaseEstimator):
         """Reset labels."""
         self._labels = np.zeros(self._N)  # reset mechanism so don't accumulate
 
-    def _init_centroids(self, X: NDArray[np.float64 | np.float32 | np.float16]) -> None:
+    def _init_centroids(self, X: NDArray[np.floating[Any]]) -> None:
         self._centroids = np.zeros(shape=(self._K, self._D))  # KxD matrix
         if self.init == "random":
             for k in range(self._K):
@@ -141,14 +141,16 @@ class KMeansLloyd(BaseEstimator):
         else:
             raise ValueError(f"{self.init} is not supported.")
 
-    def _get_distance_metric(self) -> Callable[[NDArray[np.float64 | np.float32 | np.float16], NDArray[np.float64 | np.float32 | np.float16]], float]:
+    def _get_distance_metric(self) -> Callable[[NDArray[np.floating[Any]], NDArray[np.floating[Any]]], float]:
         if self.metric == "euclidean":
             return partial(euclidean_distance, squared=False)
         if self.metric == "manhattan":
             return manhattan_distance
         raise ValueError(f"{self.metric} is not supported. The metric must be 'euclidean' or 'manhattan'.")
 
-    def _compute_argmin_assignment(self, x: NDArray[np.float64 | np.float32 | np.float16], centroids: NDArray[np.float64 | np.float32 | np.float16]) -> Tuple[int, float]:
+    def _compute_argmin_assignment(
+        self, x: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]
+    ) -> Tuple[int, float]:
         """Compute the argmin assignment for a single sample x.
 
         In other words, for a single sample x, compute the distance between x and
@@ -160,7 +162,7 @@ class KMeansLloyd(BaseEstimator):
         where D is the number of features, so it can be argued that this step has
         O(KD) complexity.
         """
-        min_index = -100 # some random number
+        min_index = -100  # some random number
         min_distance = np.inf
         for k, centroid in enumerate(centroids):
             distance = self.distance(x, centroid)
@@ -170,7 +172,7 @@ class KMeansLloyd(BaseEstimator):
                 min_distance = distance
         return min_index, min_distance
 
-    def _assign_samples(self, X: NDArray[np.float64 | np.float32 | np.float16], centroids: NDArray[np.float64 | np.float32 | np.float16]) -> None:
+    def _assign_samples(self, X: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]) -> None:
         """Assignment step: assigns samples to clusters.
 
         This step has O(NK) complexity since we are looping over
@@ -186,20 +188,22 @@ class KMeansLloyd(BaseEstimator):
             self._labels[sample_index] = int(min_index)  # the label of the sample x
             # fmt: on
 
-    def _update_centroids(self, centroids: NDArray[np.float64 | np.float32 | np.float16]) -> NDArray[np.float64 | np.float32 | np.float16]:
+    def _update_centroids(self, centroids: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Update step: update the centroid with new cluster mean."""
         for k, cluster in self._C.items():  # for k and the corresponding cluster C_k
             mu_k = np.mean(cluster, axis=0)  # compute the mean of the cluster
             centroids[k] = mu_k  # update the centroid mu_k
         return centroids
 
-    def _has_converged(self, old_centroids: NDArray[np.float64 | np.float32 | np.float16], updated_centroids: NDArray[np.float64 | np.float32 | np.float16]) -> bool:
+    def _has_converged(
+        self, old_centroids: NDArray[np.floating[Any]], updated_centroids: NDArray[np.floating[Any]]
+    ) -> bool:
         """Checks for convergence.
         If the centroids are the same, then the algorithm has converged.
         You can also check convergence by comparing the SSE."""
         return np.allclose(updated_centroids, old_centroids, atol=self.tol)
 
-    def fit(self, X: NDArray[np.float64 | np.float32 | np.float16]) -> KMeansLloyd:
+    def fit(self, X: NDArray[np.floating[Any]]) -> KMeansLloyd:
         """Fits K-Means to the data, after which the model will have
         centroids and labels."""
         # fmt: off
@@ -241,13 +245,13 @@ class KMeansLloyd(BaseEstimator):
         # fmt: on
         return self
 
-    def predict(self, X: NDArray[np.float64 | np.float32 | np.float16]) -> NDArray[np.float64 | np.float32 | np.float16]:
+    def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict cluster labels for samples in X where X can be new data or training data."""
         y_preds = np.array([self._compute_argmin_assignment(x, self._centroids)[0] for x in X])
         return y_preds
 
 
-def elbow_method(X: NDArray[np.float64 | np.float32 | np.float16], min_clusters: int = 1, max_clusters: int = 10) -> None:
+def elbow_method(X: NDArray[np.floating[Any]], min_clusters: int = 1, max_clusters: int = 10) -> None:
     """Elbow method to find the optimal number of clusters.
     The optimal number of clusters is where the elbow occurs.
     The elbow is where the SSE starts to decrease in a linear fashion."""
@@ -265,7 +269,9 @@ def elbow_method(X: NDArray[np.float64 | np.float32 | np.float16], min_clusters:
     plt.show()
 
 
-def plot_kmeans(X: NDArray[np.float64 | np.float32 | np.float16], cluster_assignments: NDArray[np.float64 | np.float32 | np.float16], centroids: NDArray[np.float64 | np.float32 | np.float16]) -> None:
+def plot_kmeans(
+    X: NDArray[np.floating[Any]], cluster_assignments: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]
+) -> None:
     """
     Plot the K-Means clustering results using seaborn and matplotlib.
 
@@ -310,7 +316,9 @@ def plot_kmeans(X: NDArray[np.float64 | np.float32 | np.float16], cluster_assign
     plt.show()
 
 
-def kmeans_vectorized(X: NDArray[np.float64 | np.float32 | np.float16], num_clusters: int, max_iter: int = 500) -> NDArray[np.float64 | np.float32 | np.float16]:
+def kmeans_vectorized(
+    X: NDArray[np.floating[Any]], num_clusters: int, max_iter: int = 500
+) -> NDArray[np.floating[Any]]:
     """Implement K-Means using vectorized operations."""
     indices = np.random.choice(X.shape[0], num_clusters, replace=False)
     centroids = X[indices]
@@ -329,4 +337,4 @@ def kmeans_vectorized(X: NDArray[np.float64 | np.float32 | np.float16], num_clus
 
         centroids = new_centroids
 
-    return centroids # type: ignore[no-any-return]
+    return centroids  # type: ignore[no-any-return]

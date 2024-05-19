@@ -1,4 +1,4 @@
-# NOTE: unit tested.
+# NOTE: unit-tested
 """Even though the module is called pairwise, the functions are not pairwise.
 This will be implemented in due time, so for now it just expects two 1D arrays."""
 from typing import Any
@@ -7,7 +7,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def manhattan_distance(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
+def manhattan_distance(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[Any]]) -> float:
     r"""
     Calculate the Manhattan Distance between two data points.
 
@@ -31,9 +31,9 @@ def manhattan_distance(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
 
     Parameters
     ----------
-    x_1 : NDArray[Any]
+    x_1 : NDArray[np.floating[Any]]
         A numpy array representing the first data point.
-    x_2 : NDArray[Any]
+    x_2 : NDArray[np.floating[Any]]
         A numpy array representing the second data point.
 
     Returns
@@ -52,7 +52,7 @@ def manhattan_distance(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
     return float(_manhattan_distance)
 
 
-def euclidean_distance(x_1: NDArray[Any], x_2: NDArray[Any], squared: bool = False) -> float:
+def euclidean_distance(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[Any]], squared: bool = False) -> float:
     r"""
     Euclidean Distance measures the length of the line segment bewteen two points
     in the Euclidean space. This is also referred to as L2 distance or L2 vector norm.
@@ -73,9 +73,9 @@ def euclidean_distance(x_1: NDArray[Any], x_2: NDArray[Any], squared: bool = Fal
 
     Parameters
     ----------
-    x_1 : NDArray[Any]
+    x_1 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the first data point.
-    x_2 : NDArray[Any]
+    x_2 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the second data point.
     squared : bool, optional
         If True, return the squared Euclidean distance.
@@ -99,7 +99,7 @@ def euclidean_distance(x_1: NDArray[Any], x_2: NDArray[Any], squared: bool = Fal
     return float(_euclidean_distance)
 
 
-def cosine_similarity(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
+def cosine_similarity(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[Any]]) -> float:
     r"""
     Calculate the cosine similarity between two vectors.
 
@@ -116,9 +116,9 @@ def cosine_similarity(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
 
     Parameters
     ----------
-    x_1 : NDArray[Any]
+    x_1 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the first vector.
-    x_2 : NDArray[Any]
+    x_2 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the second vector.
 
     Returns
@@ -156,7 +156,7 @@ def cosine_similarity(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
     return float(_cosine_similarity)
 
 
-def cosine_distance(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
+def cosine_distance(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[Any]]) -> float:
     r"""
     Calculate the cosine distance between two vectors.
 
@@ -168,9 +168,9 @@ def cosine_distance(x_1: NDArray[Any], x_2: NDArray[Any]) -> float:
 
     Parameters
     ----------
-    x_1 : NDArray[Any]
+    x_1 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the first vector.
-    x_2 : NDArray[Any]
+    x_2 : NDArray[np.floating[Any]]
         An N-dimensional numpy array representing the second vector.
 
     Returns

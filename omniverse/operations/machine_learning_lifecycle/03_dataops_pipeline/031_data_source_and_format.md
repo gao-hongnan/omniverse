@@ -492,14 +492,14 @@ n_rows, n_cols = df_np.shape
 
 
 @timer
-def traverse_numpy_by_row(array: npt.NDArray[Any]) -> None:
+def traverse_numpy_by_row(array: npt.NDArray[np.floating[Any]]) -> None:
     for row_idx in range(n_rows):
         for col_idx in range(n_cols):
             _ = array[row_idx, col_idx]
 
 
 @timer
-def traverse_numpy_by_column(array: npt.NDArray[Any]) -> None:
+def traverse_numpy_by_column(array: npt.NDArray[np.floating[Any]]) -> None:
     for col_idx in range(n_cols):
         for row_idx in range(n_rows):
             _ = array[row_idx, col_idx]
