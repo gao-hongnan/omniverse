@@ -1,4 +1,6 @@
-from typing import TypeVar
+from typing import Any, Generic, TypeVar
+
+from numpy.typing import NDArray
 
 from omnivault.linear_algebra.vector import Vector
 
@@ -14,3 +16,17 @@ Complex      = TypeVar("Complex", int, float, complex, covariant=False, contrava
 Vec          = TypeVar("Vec", bound=Vector, covariant=False, contravariant=False)
 DynamicClass = TypeVar("DynamicClass", covariant=False, contravariant=False) # bound=object?
 # fmt: on
+
+Shape = TypeVar("Shape")
+DType = TypeVar("DType")
+
+
+class Array(NDArray[Any], Generic[Shape, DType]):
+    """
+    Use this to type-annotate numpy arrays, e.g.
+        image: Array['H,W,3', np.uint8]
+        xy_points: Array['N,2', float]
+        nd_mask: Array['...', bool]
+
+    Reference: https://stackoverflow.com/questions/35673895/type-hinting-annotation-pep-484-for-numpy-ndarray
+    """
