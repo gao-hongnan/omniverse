@@ -1,0 +1,1453 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Application: Image Compression and Segmentation &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'influential/kmeans/04_image_segmentation';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/influential/kmeans/04_image_segmentation.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="How to Calculate the Number of FLOPs in GPT-2" href="../../playbook/how_to_calculate_flops_in_gpt2.html" />
+    <link rel="prev" title="Concept" href="02_concept.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">K-Means</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="02_concept.html">Concept</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Application: Image Compression and Segmentation</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_calculate_flops_in_gpt2.html">How to Calculate the Number of FLOPs in GPT-2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/concept.html">Continuous Integration (CI) Workflow</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/testing.html">Testing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/serving/restful_api/intro.html">RESTful API</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../api/reproducibility.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/influential/kmeans/04_image_segmentation.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Finfluential/kmeans/04_image_segmentation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/influential/kmeans/04_image_segmentation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Application: Image Compression and Segmentation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-means">K-Means</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-quantization">Vector Quantization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1">Step 1.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2">Step 2.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3">Step 3.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-primer-on-binary-digits-bits-and-8-bit-unsigned-integers">A Primer on Binary Digits (Bits) and 8-bit Unsigned Integers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-bits-needed-for-a-positive-integer">Number of Bits needed for a Positive Integer</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-compression-with-k-means">Image Compression with K-Means</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-statement">Problem Statement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-compress-an-image">Steps to Compress an Image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-by-step-code-implementation">Step-By-Step Code Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load-and-read-the-image">Load and Read the Image</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#size-of-the-image">Size of the Image</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-compression-via-k-means">Applying Compression via K-Means</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reconstruction">Reconstruction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-segmentation">Image Segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="application-image-compression-and-segmentation">
+<h1>Application: Image Compression and Segmentation<a class="headerlink" href="#application-image-compression-and-segmentation" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#k-means" id="id2">K-Means</a></p></li>
+<li><p><a class="reference internal" href="#vector-quantization" id="id3">Vector Quantization</a></p>
+<ul>
+<li><p><a class="reference internal" href="#step-1" id="id4">Step 1.</a></p></li>
+<li><p><a class="reference internal" href="#step-2" id="id5">Step 2.</a></p></li>
+<li><p><a class="reference internal" href="#step-3" id="id6">Step 3.</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#a-primer-on-binary-digits-bits-and-8-bit-unsigned-integers" id="id7">A Primer on Binary Digits (Bits) and 8-bit Unsigned Integers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#number-of-bits-needed-for-a-positive-integer" id="id8">Number of Bits needed for a Positive Integer</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#image-compression-with-k-means" id="id9">Image Compression with K-Means</a></p>
+<ul>
+<li><p><a class="reference internal" href="#problem-statement" id="id10">Problem Statement</a></p></li>
+<li><p><a class="reference internal" href="#steps-to-compress-an-image" id="id11">Steps to Compress an Image</a></p></li>
+<li><p><a class="reference internal" href="#example" id="id12">Example</a></p></li>
+<li><p><a class="reference internal" href="#step-by-step-code-implementation" id="id13">Step-By-Step Code Implementation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#load-and-read-the-image" id="id14">Load and Read the Image</a></p></li>
+<li><p><a class="reference internal" href="#size-of-the-image" id="id15">Size of the Image</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#applying-compression-via-k-means" id="id16">Applying Compression via K-Means</a></p></li>
+<li><p><a class="reference internal" href="#reconstruction" id="id17">Reconstruction</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#image-segmentation" id="id18">Image Segmentation</a></p></li>
+<li><p><a class="reference internal" href="#conclusion" id="id19">Conclusion</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id20">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p>Image compression is the process of reducing the size of an image file while maintaining its quality.</p>
+<p>This is important because images take up a lot of memory and bandwidth, and therefore, compressing them can save time, space, and money.</p>
+<p>A frequently used technique for image compression is vector quantization, which maps each pixel in an image to a more limited set of representative colors. One method to accomplish this is through K-Means clustering, where the image is divided into <span class="math notranslate nohighlight">\(K\)</span> clusters and each pixel’s color is replaced by the average color of its cluster. This results in the image being represented by <span class="math notranslate nohighlight">\(K\)</span> distinct colors, which significantly reduces its size.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="k">def</span> <span class="nf">find_root_dir</span><span class="p">(</span><span class="n">current_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.git&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the root directory by searching for a directory or file that serves as a</span>
+<span class="sd">    marker.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    current_path : Path | None</span>
+<span class="sd">        The starting path to search from. If None, the current working directory</span>
+<span class="sd">        `Path.cwd()` is used.</span>
+<span class="sd">    marker : str</span>
+<span class="sd">        The name of the file or directory that signifies the root.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Path | None</span>
+<span class="sd">        The path to the root directory. Returns None if the marker is not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_path</span><span class="p">:</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+    <span class="n">current_path</span> <span class="o">=</span> <span class="n">current_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">[</span><span class="n">current_path</span><span class="p">,</span> <span class="o">*</span><span class="n">current_path</span><span class="o">.</span><span class="n">parents</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">parent</span> <span class="o">/</span> <span class="n">marker</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">parent</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+<span class="n">root_dir</span> <span class="o">=</span> <span class="n">find_root_dir</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;omnivault&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">root_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">root_dir</span><span class="p">))</span>
+    <span class="kn">from</span> <span class="nn">omnivault.utils.visualization.style</span> <span class="kn">import</span> <span class="n">use_svg_display</span>
+    <span class="kn">from</span> <span class="nn">omnivault.machine_learning.clustering.kmeans</span> <span class="kn">import</span> <span class="n">KMeansLloyd</span>
+    <span class="kn">from</span> <span class="nn">omnivault.utils.visualization.style</span> <span class="kn">import</span> <span class="n">use_svg_display</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Root directory not found.&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">PIL</span>
+<span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">color</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">tabulate</span> <span class="kn">import</span> <span class="n">tabulate</span>
+
+<span class="n">use_svg_display</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+<span class="n">assets_dir</span> <span class="o">=</span> <span class="n">cwd</span> <span class="o">/</span> <span class="s2">&quot;assets&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="k-means">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">K-Means</a><a class="headerlink" href="#k-means" title="Link to this heading">#</a></h2>
+<p>Before we proceed, ensure that you have a grasp on what K-Means is and how it works. If you need a refresher, you can read the <a class="reference internal" href="#concept.md"><span class="xref myst">K-Means concept</span></a> page.</p>
+</section>
+<section id="vector-quantization">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Vector Quantization</a><a class="headerlink" href="#vector-quantization" title="Link to this heading">#</a></h2>
+<p>Recall that we mentioned that vector quantization is a technique used in image compression to reduce the amount of data needed to represent an image, and that K-Means is a method of vector quantization. We shall see below that they are of equivalent form. Below is an adaptation from “Chapter 21.3. K-Means Clustering.” In Probabilistic Machine Learning: An Introduction, written by Murphy, Kevin P.</p>
+<p>Given a sequence of real-valued vector <span class="math notranslate nohighlight">\(\left\{\mathbf{x}^{(n)}\right\}_{n=1}^N\)</span> where each <span class="math notranslate nohighlight">\(\mathbf{x}^{(n)} \in \mathbb{R}^{D}\)</span>, we can use vector quantization to perform a lossy compression as follows:</p>
+<section id="step-1">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Step 1.</a><a class="headerlink" href="#step-1" title="Link to this heading">#</a></h3>
+<p>First, we replace each real-valued vector <span class="math notranslate nohighlight">\(\mathbf{x}^{(n)} \in \mathbb{R}^D\)</span> with a discrete symbol <span class="math notranslate nohighlight">\(\mathbf{z}^{(n)} \in \{1, \ldots , K\}\)</span>.</p>
+</section>
+<section id="step-2">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Step 2.</a><a class="headerlink" href="#step-2" title="Link to this heading">#</a></h3>
+<p>Then, we define a codebook of <span class="math notranslate nohighlight">\(K\)</span> prototypes <span class="math notranslate nohighlight">\(\left\{\boldsymbol{\mu}_k\right\}_{k=1}^K \in \mathbb{R}^D\)</span>. Since each real-valued vector <span class="math notranslate nohighlight">\(\mathbf{x}^{(n)} \in \mathbb{R}^D\)</span> is replaced with a discrete symbol <span class="math notranslate nohighlight">\(\mathbf{z}^{(n)} \in \{1, \ldots , K\}\)</span>, we can think of the codebook as a lookup table that maps each symbol to a prototype.</p>
+</section>
+<section id="step-3">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Step 3.</a><a class="headerlink" href="#step-3" title="Link to this heading">#</a></h3>
+<p>Finally, we encode each real-valued vector <span class="math notranslate nohighlight">\(\mathbf{x}^{(n)} \in \mathbb{R}^D\)</span> by identifying the prototype that is most similar to it, using Euclidean distance as a measure of similarity:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation} \text{encode}\left(\mathbf{x}^{(n)}\right) = \arg \min_{k} \left|\mathbf{x}^{(n)} - \boldsymbol{\mu}_k \right|^2 \end{equation}
+\]</div>
+<p>The quality of a codebook can be assessed by determining the reconstruction error or the amount of distortion it causes, as expressed by the following equation:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{equation} \mathcal{J} = \frac{1}{N} \sum_{n=1}^N |\mathbf{x}^{(n)} - \text{decode}\left(\text{encode}\left(\mathbf{x}^{(n)}\right)\right)|^2 = \frac{1}{N} \sum_{n=1}^N \left\|\mathbf{x}^{(n)} - \boldsymbol{\mu}_{\mathbf{z}^{(n)}}\right\|^2 \end{equation}
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\text{decode}(k) = \boldsymbol{\mu}_k\)</span>.</p>
+<p>We see that the compression error has the same form as the K-Means cost function. And therefore we can use K-Means to perform vector quantization, and thereby achieving compression.</p>
+</section>
+</section>
+<section id="a-primer-on-binary-digits-bits-and-8-bit-unsigned-integers">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">A Primer on Binary Digits (Bits) and 8-bit Unsigned Integers</a><a class="headerlink" href="#a-primer-on-binary-digits-bits-and-8-bit-unsigned-integers" title="Link to this heading">#</a></h2>
+<p>To better appreciate how image compression work, it is important to understand how images (and any information) are stored in computers.</p>
+<p>Information is stored in computers as a series of bits, the smallest units of information used in a computer. They have binary values, meaning they can either be 0 or 1. A series of bits are used to represent data and constitute the backbone of all digital information.</p>
+<p>Images are often stored in 8-bit precision, which means they are represented as 8-bit unsigned integers. An 8-bit unsigned integer is a type of integer data type that can store a positive value between 0 and 255, inclusive, without a sign bit. Each bit in an 8-bit unsigned integer requires one memory space and can only have a value of 0 or 1.</p>
+<p>For example, let’s say a pixel value is 100. It can be represented in 8-bit binary form as <span class="math notranslate nohighlight">\(01100100\)</span>. In an 8-bit unsigned integer representation, the most significant bit (leftmost bit) represents the value <span class="math notranslate nohighlight">\(2^{7}=128\)</span>, the second most significant bit represents <span class="math notranslate nohighlight">\(2^6=64\)</span>, the third most significant bit represents <span class="math notranslate nohighlight">\(2^5=32\)</span>, and all the way till the least significant bit (rightmost bit) represents <span class="math notranslate nohighlight">\(2^0=1\)</span>.</p>
+<p>This is why most images range from 0 to 255, as they are stored as 8-bit unsigned integers.</p>
+<p>The number of bits needed to store an image depends on the size of the image, the number of color channels, and the number of bits used to represent each color channel.</p>
+<section id="number-of-bits-needed-for-a-positive-integer">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Number of Bits needed for a Positive Integer</a><a class="headerlink" href="#number-of-bits-needed-for-a-positive-integer" title="Link to this heading">#</a></h3>
+<p>Given a positive integer <span class="math notranslate nohighlight">\(K\)</span>, the number of bits needed to represent it is:</p>
+<div class="math notranslate nohighlight">
+\[
+n_{bits} = \lceil \log_2 K \rceil
+\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(n_{bits}\)</span> is the number of bits required;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\lceil \cdot \rceil\)</span> is the ceiling function, which rounds up to the nearest integer.</p></li>
+</ul>
+<div class="proof example admonition" id="prf:example-bits">
+<p class="admonition-title"><span class="caption-number">Example 4 </span> (Example)</p>
+<section class="example-content" id="proof-content">
+<p>For example, if <span class="math notranslate nohighlight">\(K = 16\)</span>, then <span class="math notranslate nohighlight">\(n_{bits} = \lceil \log_2 16 \rceil = \lceil 4 \rceil = 4\)</span>.</p>
+<p>More concretely, there are a total of <span class="math notranslate nohighlight">\(16\)</span> numbers from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(15\)</span>, so the least number of bits required to represent these numbers is <span class="math notranslate nohighlight">\(4\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(0 \to 0000\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(1 \to 0001\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(10 \to 1010 = 1 \times 2^3 + 0 \times 2^2 + 1 \times 2^1 + 0 \times 2^0 = 8 + 2 = 10\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(15 \to 1111\)</span></p></li>
+</ul>
+<p>Thus, with <span class="math notranslate nohighlight">\(4\)</span> bits, you can represent <span class="math notranslate nohighlight">\(16\)</span> different values (<span class="math notranslate nohighlight">\(0000, 0001, 0010, ..., 1111\)</span>), which is enough to represent the <span class="math notranslate nohighlight">\(16\)</span> different numbers from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(15\)</span>.</p>
+</section>
+</div><p>With this formula, we can write a simple function that takes in a NumPy array and calculate the number of bits needed to store it. This function does not take into account negative numbers and many other things as it is only meant for educational purposes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_num_bits</span><span class="p">(</span><span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">max_int</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the number of bits required to store a NumPy array.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">        arr (np.ndarray): A NumPy array.</span>
+<span class="sd">        max_int (int): The maximum integer value allowed in this number system.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        num_bits (int): The number of bits required to store each value.</span>
+<span class="sd">        total_bits (int): The number of bits required to store the array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># number of bits required to store each value</span>
+    <span class="n">num_bits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">max_int</span><span class="p">)))</span>
+    <span class="n">total_bits</span> <span class="o">=</span> <span class="n">num_bits</span> <span class="o">*</span> <span class="n">arr</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">return</span> <span class="n">num_bits</span><span class="p">,</span> <span class="n">total_bits</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calculate_num_bits</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">]),</span> <span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 20)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="image-compression-with-k-means">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Image Compression with K-Means</a><a class="headerlink" href="#image-compression-with-k-means" title="Link to this heading">#</a></h2>
+<p>In image compression, we use K-Means to group similar pixels into <span class="math notranslate nohighlight">\(K\)</span> clusters. Each cluster centroid represents a representative color for the pixels in the cluster, and we can map each pixel to the closest centroid. This reduces the number of colors required to represent the image, and thus the size of the image data. The mapping of each pixel to a cluster centroid can be stored using a smaller number of bits compared to the original 24-bit RGB values.</p>
+<p>Where did this 24-bit come from? Let’s define the problem statement and find out!</p>
+<section id="problem-statement">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Problem Statement</a><a class="headerlink" href="#problem-statement" title="Link to this heading">#</a></h3>
+<p>Let an image be denoted by <span class="math notranslate nohighlight">\(\mathbf{I} \in \mathbb{R}^{m \times n \times 3}\)</span>, where <span class="math notranslate nohighlight">\(m\)</span> is the width of the image, <span class="math notranslate nohighlight">\(n\)</span> is the height of the image, and 3 is the number of color channels representing the red, green, and blue colors.</p>
+<p>We have the following properties:</p>
+<ul class="simple">
+<li><p>There are a total of <span class="math notranslate nohighlight">\(N = m \times n\)</span> pixels in the image <span class="math notranslate nohighlight">\(\mathbf{I}\)</span>.</p></li>
+<li><p>Each pixel <span class="math notranslate nohighlight">\(\mathbf{x} = \begin{bmatrix} r &amp; g &amp; b \end{bmatrix}^T \in \mathbb{Z}_{rgb}^3\)</span> on the image <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> is a 3-dimensional (3-D) tuple residing in the 3-D integer space comprising the intensities of the red, green and blue channels.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{Z}_{rgb}\)</span> represents all integers from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(255\)</span>. Therefore, each color channel in the pixel is of the range <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(255\)</span>, and is assumed to be an 8-bit unsigned integer.</p></li>
+</ul>
+<p>Based on our earlier discussion of bits, we require 8 bits to represent numbers from <span class="math notranslate nohighlight">\(0\)</span> to <span class="math notranslate nohighlight">\(255\)</span>. It follows that each pixel contains <span class="math notranslate nohighlight">\(3 \times 8 = 24\)</span> bits of information. Consequently, the total number of bits required to represent the image is <span class="math notranslate nohighlight">\(24 \times N = 24N\)</span> bits.</p>
+<p>Our aim is to find a compression map <span class="math notranslate nohighlight">\(h: \mathbb{R}^{N} \rightarrow \mathbb{R}^{M}\)</span>, where <span class="math notranslate nohighlight">\(M &lt; N\)</span>, such that the number of bits required to represent the compressed image is less than the number of bits required to represent the original image.</p>
+<p>The compressed output <span class="math notranslate nohighlight">\(\mathbf{z} = h(\mathbf{x})\)</span> is therefore called a code (compressed representation) of the input <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> (original representation).</p>
+<p>We can then reconstruct the original image <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> from the compressed image <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> by a reconstruction map <span class="math notranslate nohighlight">\(r: \mathbb{R}^{M} \rightarrow \mathbb{R}^{N}\)</span>, such that <span class="math notranslate nohighlight">\(\hat{\mathbf{x}} = r(\mathbf{z}) = r(h(\mathbf{x}))\)</span>. Note that <span class="math notranslate nohighlight">\(\hat{\mathbf{x}}\)</span> is the reconstructed representation of <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and may or may not be the same as <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>. If they are not the same, then the compression is lossy.</p>
+</section>
+<section id="steps-to-compress-an-image">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Steps to Compress an Image</a><a class="headerlink" href="#steps-to-compress-an-image" title="Link to this heading">#</a></h3>
+<p>Here is a step-by-step guide of using K-Means for image compression, we will later
+solidify this with code implementation.</p>
+<ul class="simple">
+<li><p><strong>Read the image</strong>: Load the image <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> into memory. Typically <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> will be converted to a numpy array of shape <span class="math notranslate nohighlight">\(m \times n \times 3\)</span>.</p></li>
+<li><p><strong>Reshape the image data</strong>: Reshape the image matrix <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> into a 2D array of size <span class="math notranslate nohighlight">\(N \times 3\)</span>, where <span class="math notranslate nohighlight">\(N = m \times n\)</span> is the total number of pixels in the image. Each row of the array represents a pixel in the image. This step is necessary because K-Means expects a 2D array as input. One can now think of <span class="math notranslate nohighlight">\(N \times 3\)</span> as a dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N\)</span> data points, with <span class="math notranslate nohighlight">\(D=3\)</span> features.</p></li>
+<li><p><strong>Apply K-Means clustering</strong>: Apply K-Means clustering to the reshaped image data, using a user-defined number of clusters, <span class="math notranslate nohighlight">\(K\)</span>. This will group similar pixels into <span class="math notranslate nohighlight">\(K\)</span> clusters and calculate the cluster centroids <span class="math notranslate nohighlight">\(\boldsymbol{\mu}_1, \boldsymbol{\mu}_2, \ldots, \boldsymbol{\mu}_K\)</span>. Each centroid is a 3-dimensional vector representing the RGB values of the representative color for the cluster.</p></li>
+<li><p><strong>Compress the image</strong>: For each pixel in the image, find the closest cluster centroid <span class="math notranslate nohighlight">\(\boldsymbol{\mu}_k\)</span> and replace the pixel with the index <span class="math notranslate nohighlight">\(\hat{y}^{(n)}\)</span> of the centroid.</p></li>
+<li><p><strong>Store the compressed image</strong>: Store the compressed image, which includes the cluster centroids and the mapping of each pixel to a centroid, to disk.</p></li>
+</ul>
+</section>
+<section id="example">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Example</a><a class="headerlink" href="#example" title="Link to this heading">#</a></h3>
+<p>To put things into perspective, let’s consider a simple example.</p>
+<div class="proof example admonition" id="example-pixels">
+<p class="admonition-title"><span class="caption-number">Example 5 </span> (Example)</p>
+<section class="example-content" id="proof-content">
+<p>Let us consider an image of size <span class="math notranslate nohighlight">\(100 \times 100 \times 3\)</span> pixels.</p>
+<p>Then there are <span class="math notranslate nohighlight">\(N = 100 \times 100 = 10,000\)</span> pixels in the image, and each pixel is represented by a 3-dimensional vector.</p>
+<p>Then assuming that each value in the RGB tuple is stored with 8 bits of precision,
+then the total number of bits required to represent the image is</p>
+<div class="math notranslate nohighlight">
+\[
+24N = 24 \times 100 \times 100 = 240,000 \text{ bits}
+\]</div>
+<p>Then suppose we run K-Means with <span class="math notranslate nohighlight">\(K=16\)</span> clusters. We will get <span class="math notranslate nohighlight">\(16\)</span> cluster centroids, each of which is a <span class="math notranslate nohighlight">\(3\)</span>-dimensional vector.
+This requires us to store <span class="math notranslate nohighlight">\(16 \times 3 = 48\)</span> numbers, each of which is represented with 8 bits of precision. This leads
+to a total of <span class="math notranslate nohighlight">\(16 \times 3 \times 8 = 384\)</span> bits to store the cluster centroids.</p>
+<p>Next we also need to store the mapping of each pixel in the image to a cluster centroid. This is an <span class="math notranslate nohighlight">\(N \times 1\)</span> vector,
+and for each pixel, we are only storing a single number ranging from 0 to 15.
+This means that we will need <span class="math notranslate nohighlight">\(\lceil \log_2 16 \rceil = 4\)</span> bits to represent the index of the cluster centroid to which a pixel is assigned.
+This amounts to a total of <span class="math notranslate nohighlight">\(10,000 \times 4 = 40,000\)</span> bits to store the mapping of each pixel to a cluster centroid.</p>
+<p>Thus, the total number of bits required to store the compressed image is</p>
+<div class="math notranslate nohighlight">
+\[
+40,000 + 384 = 40,384 \text{ bits}
+\]</div>
+<p>compared to the original image size of <span class="math notranslate nohighlight">\(240,000\)</span> bits. This results in a compression ratio of</p>
+<div class="math notranslate nohighlight">
+\[
+40,384 / 240,000 = 16.8\%
+\]</div>
+</section>
+</div></section>
+<section id="step-by-step-code-implementation">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Step-By-Step Code Implementation</a><a class="headerlink" href="#step-by-step-code-implementation" title="Link to this heading">#</a></h3>
+<p>In this section, we will go through the process of applying K-Means for compressing images. Specifically, we will use a hestain<a class="footnote-reference brackets" href="#reference-hestain" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> image, a type of tissue image stained with hematoxylin and eosin (H&amp;E). Pathologists utilize this staining technique to differentiate between tissue types that are colored blue-purple and pink.</p>
+<section id="load-and-read-the-image">
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">Load and Read the Image</a><a class="headerlink" href="#load-and-read-the-image" title="Link to this heading">#</a></h4>
+<p>Let’s load the image into memory first.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_path</span> <span class="o">=</span> <span class="s2">&quot;https://storage.googleapis.com/reighns/images/hestain.png&quot;</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">urlopen</span><span class="p">(</span><span class="n">image_path</span><span class="p">))</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span>
+<span class="n">image_shape</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image shape: </span><span class="si">{</span><span class="n">image_shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image dtype: </span><span class="si">{</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># to make sure it&#39;s uint8</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Image shape: (227, 303, 3)
+Image dtype: uint8
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here are the steps for the code:</p>
+<ul class="simple">
+<li><p>Define the image path as a URL, <code class="docutils literal notranslate"><span class="pre">&quot;https://storage.googleapis.com/reighns/images/hestain.png&quot;</span></code></p></li>
+<li><p>Convert the image into a numpy array using the <code class="docutils literal notranslate"><span class="pre">PIL</span></code> library, by opening the image using <code class="docutils literal notranslate"><span class="pre">PIL.Image.open</span></code> method and converting it into an RGB format using the <code class="docutils literal notranslate"><span class="pre">convert</span></code> method.</p></li>
+<li><p>Store the shape of the image as a tuple in the variable <code class="docutils literal notranslate"><span class="pre">image_shape</span></code>.</p></li>
+<li><p>We print out the shape and data type of the image array.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assets_dir</span><span class="si">}</span><span class="s2">/hestain.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/08f5ff8639eb16153ef028b3d9130704d6cdee063eeb59895bc1dfe7accf493f.svg" src="../../_images/08f5ff8639eb16153ef028b3d9130704d6cdee063eeb59895bc1dfe7accf493f.svg" /></div>
+</div>
+</section>
+<section id="size-of-the-image">
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Size of the Image</a><a class="headerlink" href="#size-of-the-image" title="Link to this heading">#</a></h4>
+<p>We use the function <code class="docutils literal notranslate"><span class="pre">calculate_num_bits</span></code> defined earlier to calculate how many bits this image takes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">image_size_in_bits</span> <span class="o">=</span> <span class="n">calculate_num_bits</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Image size in bits: </span><span class="si">{</span><span class="n">image_size_in_bits</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Image size in bits: 1650744
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can verify this number via the formula earlier: <span class="math notranslate nohighlight">\(227 \times 303 \times 24 = 1,650,744\)</span>.</p>
+</section>
+</section>
+<section id="applying-compression-via-k-means">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Applying Compression via K-Means</a><a class="headerlink" href="#applying-compression-via-k-means" title="Link to this heading">#</a></h3>
+<p>In what follows, we will write a function <code class="docutils literal notranslate"><span class="pre">compress_image</span></code> that takes in an image represented as a numpy array <code class="docutils literal notranslate"><span class="pre">image</span></code> and other optional parameters as a dictionary <code class="docutils literal notranslate"><span class="pre">kmeans_kwargs,</span></code> which are passed to the K-Means algorithm.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compress_image</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="o">**</span><span class="n">kmeans_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="n">pixels</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="o">**</span><span class="n">kmeans_kwargs</span><span class="p">)</span>
+    <span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+
+    <span class="n">compressed_image</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels_</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="c1"># y_preds and convert to uint8</span>
+    <span class="n">centroids</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span> <span class="c1"># total bits = 3 * 8 * K</span>
+
+    <span class="k">return</span> <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The function performs the following steps:</p>
+<ul class="simple">
+<li><p>Reshapes the image from <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width,</span> <span class="pre">depth)</span></code> to <code class="docutils literal notranslate"><span class="pre">(height</span> <span class="pre">*</span> <span class="pre">width,</span> <span class="pre">depth)</span></code> to convert it into a 2D array, where each row is a pixel represented by its RGB values. We assign the reshaped image as a variable named <code class="docutils literal notranslate"><span class="pre">pixels</span></code>.</p></li>
+<li><p>Instantiate the K-Means algorithm with the given <code class="docutils literal notranslate"><span class="pre">kmeans_kwargs</span></code> and fit the K-Means model on the pixel data.</p></li>
+<li><p>Extract the predicted cluster labels for each pixel and name it <code class="docutils literal notranslate"><span class="pre">compressed_image</span></code>.</p></li>
+<li><p>Extract the predicted centroids (mean values) of each cluster and name it <code class="docutils literal notranslate"><span class="pre">centroids</span></code>.</p></li>
+<li><p>Return <code class="docutils literal notranslate"><span class="pre">compressed_image</span></code> and <code class="docutils literal notranslate"><span class="pre">centroids</span></code>. The former has the shape of <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">1)</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of pixels in the image, and the latter has the shape of <code class="docutils literal notranslate"><span class="pre">(K,</span> <span class="pre">3)</span></code>, where <code class="docutils literal notranslate"><span class="pre">K</span></code> is the number of clusters. Note that compressed_image is nothing but a 1D array of cluster labels and centroids is a 2D array of RGB values of the cluster centroids (the mean of each cluster).</p></li>
+</ul>
+<p>Let’s run the code with <code class="docutils literal notranslate"><span class="pre">K=2</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compress_image</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">centroids</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[[135.37943855  83.3237948  191.4217562 ]
+ [205.89585889 141.42604197 238.6400553 ]]
+</pre></div>
+</div>
+</div>
+</div>
+<p>The function <code class="docutils literal notranslate"><span class="pre">get_image_compression_ratio_for_kmeans</span></code> takes in four arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">image</span></code>: a NumPy array representing the original image</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compressed_image</span></code>: a NumPy array representing the compressed imag obtained using the K-Means algorithm</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">centroids</span></code>: a NumPy array representing the centroids (mean values) o each cluster obtained using the K-Means algorithm</p></li>
+<li><p><span class="math notranslate nohighlight">\(k\)</span> `: an integer representing the number of clusters used for the K-Mean algorithm</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">display</span></code>: a boolean indicating whether to display the compression ratic or not. This parameter is optional and defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<p>The function then calculates the original size, compressed image size, and centroids size in bits by calling the <code class="docutils literal notranslate"><span class="pre">calculate_num_bits</span></code> function with the appropriate arguments. The <code class="docutils literal notranslate"><span class="pre">calculate_num_bits</span></code> function calculates the number of bits required to represent the input data based on the maximum value that can be stored for that data type. For example, for an image with pixel values ranging from 0 to 255 , each pixel value can be represented using 8 bits.</p>
+<p>Next, the function calculates the total compressed size by adding the compressed image size and centroids size. The compression ratio is then calculated by dividing the compressed size by the original size.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">display</span></code> parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the function prints the table containing the original size, compressed size, and compression ratio.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># def get_image_compression_ratio(</span>
+<span class="c1">#     image: np.ndarray, compressed_image: np.ndarray, centroids: np.ndarray</span>
+<span class="c1"># ) -&gt; float:</span>
+<span class="c1">#     original_size = sys.getsizeof(image.tobytes()) * 8 # in bits</span>
+<span class="c1">#     compressed_image_size = sys.getsizeof(compressed_image.tobytes()) * 8 # in bits</span>
+<span class="c1">#     centroids_size = sys.getsizeof(centroids.tobytes()) * 8 # in bits</span>
+<span class="c1">#     compressed_size = compressed_image_size + centroids_size</span>
+<span class="c1">#     compression_ratio = original_size / compressed_size</span>
+<span class="c1">#     print(f&quot;Original size: {original_size}\nCompressed Image size: {compressed_image_size}\nCentroids size: {centroids_size}\nCompressed size: {compressed_size}\nCompression ratio: {compression_ratio}&quot;)</span>
+<span class="c1">#     return compression_ratio</span>
+
+<span class="k">def</span> <span class="nf">get_image_compression_ratio_for_kmeans</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">compressed_image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">display</span><span class="p">:</span><span class="nb">bool</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">original_size</span> <span class="o">=</span> <span class="n">calculate_num_bits</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># in bits</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">compressed_image_size</span> <span class="o">=</span> <span class="n">calculate_num_bits</span><span class="p">(</span><span class="n">compressed_image</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>  <span class="c1"># in bits</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">centroids_size</span> <span class="o">=</span> <span class="n">calculate_num_bits</span><span class="p">(</span><span class="n">centroids</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># in bits</span>
+    <span class="n">compressed_size</span> <span class="o">=</span> <span class="n">compressed_image_size</span> <span class="o">+</span> <span class="n">centroids_size</span>
+    <span class="n">compression_ratio</span> <span class="o">=</span> <span class="n">compressed_size</span> <span class="o">/</span> <span class="n">original_size</span>
+
+    <span class="k">if</span> <span class="n">display</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;Original size&quot;</span><span class="p">,</span> <span class="n">original_size</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Compressed Image size&quot;</span><span class="p">,</span> <span class="n">compressed_image_size</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Centroids size&quot;</span><span class="p">,</span> <span class="n">centroids_size</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Compressed size&quot;</span><span class="p">,</span> <span class="n">compressed_size</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;Compression ratio&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">compression_ratio</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">table</span> <span class="o">=</span> <span class="n">tabulate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Metric&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span> <span class="n">tablefmt</span><span class="o">=</span><span class="s2">&quot;pretty&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">compression_ratio</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compressed_ratio</span> <span class="o">=</span> <span class="n">get_image_compression_ratio_for_kmeans</span><span class="p">(</span>
+    <span class="n">image</span><span class="p">,</span> <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">K</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 1650744 |
+| Compressed Image size |  68781  |
+|    Centroids size     |   48    |
+|    Compressed size    |  68829  |
+|   Compression ratio   |  0.04   |
++-----------------------+---------+
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="reconstruction">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Reconstruction</a><a class="headerlink" href="#reconstruction" title="Link to this heading">#</a></h3>
+<p>In this section, we will write a function <code class="docutils literal notranslate"><span class="pre">reconstruct_image</span></code> that takes in the compressed image represented as a NumPy array <code class="docutils literal notranslate"><span class="pre">compressed_image</span></code>, the <code class="docutils literal notranslate"><span class="pre">centroids</span></code> that was learned from the K-Means algorithm, and <code class="docutils literal notranslate"><span class="pre">original_shape</span></code>, which is the shape of the original image.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">reconstruct_image</span><span class="p">(</span>
+    <span class="n">compressed_image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">centroids</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">original_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="n">reconstructed_image</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">compressed_image</span><span class="p">]</span>
+    <span class="n">reconstructed_image</span> <span class="o">=</span> <span class="n">reconstructed_image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">original_shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reconstructed_image</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s see what the arguments represent:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">compressed_image</span></code>: A NumPy array of shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">1)</span></code> representing the compressed image, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of pixels in the original image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">centroids</span></code>: A NumPy array of shape <code class="docutils literal notranslate"><span class="pre">(K,</span> <span class="pre">3)</span></code> representing the cluster centroids obtained after performing K-Means on the original image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">original_shape</span></code>: A tuple representing the shape of the original image, in the format <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width,</span> <span class="pre">depth)</span></code>.</p></li>
+</ul>
+<p>The function performs the following steps to reconstruct the original image from the compressed form:</p>
+<ol class="arabic simple">
+<li><p>It uses the <code class="docutils literal notranslate"><span class="pre">compressed_image</span></code> array to index into the <code class="docutils literal notranslate"><span class="pre">centroids</span></code> array, effectively replacing each pixel value in <code class="docutils literal notranslate"><span class="pre">compressed_image</span></code> with its corresponding cluster centroid.</p></li>
+<li><p>It then reshapes the resulting array to match the original shape of the image.</p></li>
+<li><p>Finally, it returns the reconstructed image as a NumPy array of unsigned 8-bit integers.
+In summary, the reconstruct_image function takes a compressed image represented as a 1D array of cluster labels and the RGB values of the cluster centroids and returns the original image in its 3D NumPy array representation.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reconstructed_image</span> <span class="o">=</span> <span class="n">reconstruct_image</span><span class="p">(</span><span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># fig = plt.figure(figsize=(8, 4))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstructed_image</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assets_dir</span><span class="si">}</span><span class="s2">/reconstructed_image.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/702fdd1a61812600c2110a7c5f62f951f76cfdb409aec0c73e0a4d2d69d84a62.svg" src="../../_images/702fdd1a61812600c2110a7c5f62f951f76cfdb409aec0c73e0a4d2d69d84a62.svg" /></div>
+</div>
+<p>To make the colors more distinct, we can use <code class="docutils literal notranslate"><span class="pre">skimage.color</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">colored_image</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">label2rgb</span><span class="p">(</span><span class="n">compressed_image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]),</span> <span class="n">image</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">colored_image</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/5b1039d03291ceec6226ad0d7433ade2af278b7cee1e9ad2ac986ed43b2057ba.svg" src="../../_images/5b1039d03291ceec6226ad0d7433ade2af278b7cee1e9ad2ac986ed43b2057ba.svg" /></div>
+</div>
+<p>We can clearly see that with <span class="math notranslate nohighlight">\(K=2\)</span> clusters, the image is dichotomized into two distinct segments. This is quite a coarse representation of the original image.</p>
+<p>Let’s run the compression technique a few more times, this time with <span class="math notranslate nohighlight">\(K=2, 3, 6\)</span> and <span class="math notranslate nohighlight">\(16\)</span> and observe the results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original image&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="c1"># so centroids row 1 is the centroid for cluster 1</span>
+<span class="c1"># etc</span>
+<span class="c1"># and so for the original image, mask each pixel</span>
+<span class="c1"># with the centroid&#39;s cluster, in other words</span>
+<span class="c1"># each pixel becomes the centroid</span>
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compress_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">compression_ratio</span> <span class="o">=</span> <span class="n">get_image_compression_ratio_for_kmeans</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">reconstructed_image</span> <span class="o">=</span> <span class="n">reconstruct_image</span><span class="p">(</span><span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;K = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, compression ratio = </span><span class="si">{</span><span class="n">compression_ratio</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstructed_image</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assets_dir</span><span class="si">}</span><span class="s2">/kmeans_compression.png&quot;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 1650744 |
+| Compressed Image size |  68781  |
+|    Centroids size     |   48    |
+|    Compressed size    |  68829  |
+|   Compression ratio   |  0.04   |
++-----------------------+---------+
++-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 1650744 |
+| Compressed Image size | 137562  |
+|    Centroids size     |   72    |
+|    Compressed size    | 137634  |
+|   Compression ratio   |  0.08   |
++-----------------------+---------+
++-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 1650744 |
+| Compressed Image size | 206343  |
+|    Centroids size     |   144   |
+|    Compressed size    | 206487  |
+|   Compression ratio   |  0.13   |
++-----------------------+---------+
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 1650744 |
+| Compressed Image size | 275124  |
+|    Centroids size     |   384   |
+|    Compressed size    | 275508  |
+|   Compression ratio   |  0.17   |
++-----------------------+---------+
+</pre></div>
+</div>
+<img alt="../../_images/f5576106d924b64af0e9e1708a4df6eb1a1c7de707d2ae957ae2f69d28894b74.svg" src="../../_images/f5576106d924b64af0e9e1708a4df6eb1a1c7de707d2ae957ae2f69d28894b74.svg" /></div>
+</div>
+<p>As we can see, the quality of the compressed image will depend on the number of clusters used. In general, a larger number of clusters will result in higher image quality, but at the expense of a larger file size.</p>
+<p>We can also use our own implementation of K-Means to perform image compression, we see that the results are the same.
+However, ours is very slow since not every operation is vectorized.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pixels</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeansLloyd</span><span class="p">(</span><span class="n">num_clusters</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">2023</span><span class="p">)</span>
+
+<span class="n">kmeans</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">pixels</span><span class="p">)</span>
+<span class="n">y_preds</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">labels</span>
+<span class="n">centroids</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">centroids</span>
+<span class="c1"># print(centroids)</span>
+<span class="n">segmented_image</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">y_preds</span><span class="p">]</span>
+
+<span class="n">segmented_image</span> <span class="o">=</span> <span class="n">segmented_image</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># reshape back</span>
+
+<span class="n">segmented_image</span> <span class="o">=</span> <span class="n">segmented_image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="c1"># make int</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">segmented_image</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Converged at iteration 18
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x7fb2f43b0280&gt;
+</pre></div>
+</div>
+<img alt="../../_images/8384e0b96e43f25dfae3bb961bca0a9aa040bf0b0e166fc82462d4e2214dd4ae.svg" src="../../_images/8384e0b96e43f25dfae3bb961bca0a9aa040bf0b0e166fc82462d4e2214dd4ae.svg" /></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">image_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">assets_dir</span> <span class="o">/</span> <span class="s2">&quot;football.bmp&quot;</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Original image&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span> <span class="o">=</span> <span class="n">compress_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">compression_ratio</span> <span class="o">=</span> <span class="n">get_image_compression_ratio_for_kmeans</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">reconstructed_image</span> <span class="o">=</span> <span class="n">reconstruct_image</span><span class="p">(</span><span class="n">compressed_image</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;K = </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">, compression ratio = </span><span class="si">{</span><span class="n">compression_ratio</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">reconstructed_image</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 6130560 |
+| Compressed Image size | 255440  |
+|    Centroids size     |   48    |
+|    Compressed size    | 255488  |
+|   Compression ratio   |  0.04   |
++-----------------------+---------+
++-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 6130560 |
+| Compressed Image size | 510880  |
+|    Centroids size     |   72    |
+|    Compressed size    | 510952  |
+|   Compression ratio   |  0.08   |
++-----------------------+---------+
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>+-----------------------+---------+
+|        Metric         |  Value  |
++-----------------------+---------+
+|     Original size     | 6130560 |
+| Compressed Image size | 766320  |
+|    Centroids size     |   144   |
+|    Compressed size    | 766464  |
+|   Compression ratio   |  0.13   |
++-----------------------+---------+
+</pre></div>
+</div>
+<img alt="../../_images/79071935b079caaa86f288752f53a090b3e49427546847f16d21229906426406.svg" src="../../_images/79071935b079caaa86f288752f53a090b3e49427546847f16d21229906426406.svg" /></div>
+</div>
+<p>It is important to note that while K-Means can provide significant size reductions for some images, it may not always be the best method for image compression. K-Means is a lossy compression method, meaning that the quality of the compressed image will be lower than the original image. This means that while it can provide significant size reductions, it may not always be the best method for image compression (i.e. if you are seeking for lossless compression).</p>
+<p>The quality of the compressed image will depend on the number of clusters used and the similarity of the pixels in the image. In general, a larger number of clusters will result in higher image quality, but also a larger file size. Experimentation is often necessary to find the optimal number of clusters for a given image.</p>
+</section>
+</section>
+<section id="image-segmentation">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Image Segmentation</a><a class="headerlink" href="#image-segmentation" title="Link to this heading">#</a></h2>
+<p>Image compression using K-Means can be viewed as a form of image segmentation in the RGB space. Why is that the case? Let’s first look at the definition of image segmentation.</p>
+<blockquote>
+<div><p>Image segmentation is the process of partitioning a digital image into multiple segments or regions, each of which corresponds to a separate object or part of the image. (Extracted from Wikipedia, Image Segmentation.)</p>
+</div></blockquote>
+<p>Looking back at our K-Means algorithm, it divides the image into segments based on the similarities of the colors of the pixels in the image. In other words, this coincides with partitioning the image into <span class="math notranslate nohighlight">\(K\)</span> colors, defined by each centroid.</p>
+<p>Consequently, this results in segmentation of the image via the color (RGB) space.</p>
+<p>One should however note that this method of segmentation <strong>does not</strong> take into account the spatial geometry of neighboring pixels, and thus result in a less meaningful representation of images. Let’s see why.</p>
+<p>Although K-Means does not assume any underlying probability distribution (unless you view it as Gaussian Mixture Model), we can still view the clustering method as treating each pixel as an independent data point and grouping them together solely based on their color values. As a result, neighboring pixels with different colors may be assigned to different clusters or segments, leading to a loss of spatial coherence in the resulting segmentation or compression. Therefore, if you think that segmenting an image based on the color space is not the aim, you might need to explore other methods. Modern deep learning tends to handle it better with more fine-grained segments.</p>
+</section>
+<section id="conclusion">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">Conclusion</a><a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>In this article, we covered how we can utilize K-Means as a way to compress images through the concept of vector quantization. We further link how the images can be segmented into different color spaces as a consequence of performing the clustering algorithm.</p>
+<p>K-Means has many other applications, for example, in the context of Natural Language Processing (NLP), you can use it to <a class="reference external" href="https://scikit-learn.org/stable/auto_examples/text/plot_document_clustering.html">cluster documents</a> as well.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id20" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Murphy, Kevin P. “Chapter 21.3. K-Means Clustering.” In Probabilistic Machine Learning: An Introduction. MIT Press, 2022.</p></li>
+<li><p>Bishop, Christopher M. “Chapter 9.1.1. Image Segmentation and Compression.” In Pattern Recognition and Machine Learning. New York: Springer-Verlag, 2016.</p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="reference-hestain" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://www.mathworks.com/help/images/color-based-segmentation-using-k-means-clustering.html">https://www.mathworks.com/help/images/color-based-segmentation-using-k-means-clustering.html</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./influential/kmeans"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_concept.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Concept</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../playbook/how_to_calculate_flops_in_gpt2.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">How to Calculate the Number of FLOPs in GPT-2</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#k-means">K-Means</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vector-quantization">Vector Quantization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1">Step 1.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2">Step 2.</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3">Step 3.</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-primer-on-binary-digits-bits-and-8-bit-unsigned-integers">A Primer on Binary Digits (Bits) and 8-bit Unsigned Integers</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#number-of-bits-needed-for-a-positive-integer">Number of Bits needed for a Positive Integer</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-compression-with-k-means">Image Compression with K-Means</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-statement">Problem Statement</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-compress-an-image">Steps to Compress an Image</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-by-step-code-implementation">Step-By-Step Code Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#load-and-read-the-image">Load and Read the Image</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#size-of-the-image">Size of the Image</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#applying-compression-via-k-means">Applying Compression via K-Means</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reconstruction">Reconstruction</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#image-segmentation">Image Segmentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
