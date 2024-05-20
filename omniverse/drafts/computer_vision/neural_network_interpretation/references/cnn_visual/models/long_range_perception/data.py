@@ -1,14 +1,14 @@
 import h5py
 import torch
-
 from torch.utils.data import Dataset
+
 
 class PerceptionDataset(Dataset):
     def __init__(self, group, h5_path, transform=None, test=False):
-        h5f = h5py.File(h5_path, 'r')
+        h5f = h5py.File(h5_path, "r")
 
-        self.Xs = {i: h5f['bag' + str(i) + '_x'] for i in group}
-        self.Ys = {i: h5f['bag' + str(i) + '_y'] for i in group}
+        self.Xs = {i: h5f["bag" + str(i) + "_x"] for i in group}
+        self.Ys = {i: h5f["bag" + str(i) + "_y"] for i in group}
         self.lengths = {i: self.Xs[i].shape[0] for i in group}
         self.counts = {i: 0 for i in group}
         self.transform = transform
@@ -36,7 +36,6 @@ class PerceptionDataset(Dataset):
 
         if self.transform is not None:
             x = self.transform(x)
-
 
         y[y > 0] = 1.0
 

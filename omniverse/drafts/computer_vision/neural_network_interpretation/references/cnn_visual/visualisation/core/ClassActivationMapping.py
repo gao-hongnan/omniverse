@@ -1,13 +1,10 @@
 import torch
-
+import torch.nn.functional as F
 from torch.nn import AvgPool2d, Conv2d, Linear, ReLU
 from torch.nn.functional import softmax
 
 from .Base import Base
-
-from .utils import module2traced, imshow, tensor2cam
-
-import torch.nn.functional as F
+from .utils import imshow, module2traced, tensor2cam
 
 
 class ClassActivationMapping(Base):
@@ -37,7 +34,8 @@ class ClassActivationMapping(Base):
 
         predictions = self.module(inputs)
 
-        if target_class == None: _, target_class = torch.max(predictions, dim=1)
+        if target_class == None:
+            _, target_class = torch.max(predictions, dim=1)
         _, c, h, w = self.conv_outputs.shape
         # get the weights relative to the target class
         fc_weights_class = last_linear.weight.data[target_class]
@@ -49,4 +47,4 @@ class ClassActivationMapping(Base):
         with torch.no_grad():
             image_with_heatmap = tensor2cam(postprocessing(inputs.cpu().squeeze()), cam)
 
-        return image_with_heatmap.unsqueeze(0), { 'prediction': target_class }
+        return image_with_heatmap.unsqueeze(0), {"prediction": target_class}

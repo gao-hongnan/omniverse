@@ -1,11 +1,10 @@
-import torch
 from typing import *
+
 import numpy as np
+import torch
 
 
-def voc2coco(
-    bboxes: Union[np.ndarray, torch.Tensor]
-) -> Union[np.ndarray, torch.Tensor]:
+def voc2coco(bboxes: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
     """Convert pascal_voc to coco format.
 
     voc  => [xmin, ymin, xmax, ymax]
@@ -24,9 +23,7 @@ def voc2coco(
     return bboxes
 
 
-def coco2voc(
-    bboxes: Union[np.ndarray, torch.Tensor]
-) -> Union[np.ndarray, torch.Tensor]:
+def coco2voc(bboxes: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
     """Convert coco to pascal_voc format.
 
     coco => [xmin, ymin, w, h]

@@ -1,11 +1,11 @@
 import torch
 import torchvision.transforms.functional as TF
-
+from PIL import Image, ImageChops, ImageFilter
 from torch.autograd import Variable
-from PIL import Image, ImageFilter, ImageChops
+
 from .Base import Base
-from .utils import image_net_postprocessing, \
-    image_net_preprocessing
+from .utils import image_net_postprocessing, image_net_preprocessing
+
 
 class DeepDream(Base):
     def __init__(self, *args, **kwargs):
@@ -13,7 +13,8 @@ class DeepDream(Base):
         self.handle = None
 
     def register_hooks(self):
-        if self.handle: self.handle.remove()
+        if self.handle:
+            self.handle.remove()
 
         def hook(module, input, output):
             if module == self.layer:
@@ -24,12 +25,11 @@ class DeepDream(Base):
                 loss.backward()
                 self.optimizer.step()
 
-                raise Exception('Layer found!')
+                raise Exception("Layer found!")
 
         return self.layer.register_forward_hook(hook)
 
     def step(self, image, steps=5, save=False):
-
         self.module.zero_grad()
         image_pre = image_net_preprocessing(image.squeeze().cpu()).to(self.device).unsqueeze(0)
         self.image_var = Variable(image_pre, requires_grad=True).to(self.device)
@@ -81,9 +81,7 @@ class DeepDream(Base):
         self.handle = self.register_hooks()
         self.module.zero_grad()
 
-        dd = self.deep_dream(inputs, octaves,
-                             top=octaves,
-                             scale_factor=scale_factor)
+        dd = self.deep_dream(inputs, octaves, top=octaves, scale_factor=scale_factor)
         self.handle.remove()
 
         return dd.unsqueeze(0), {}

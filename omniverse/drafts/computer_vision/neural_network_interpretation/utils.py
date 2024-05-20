@@ -1,11 +1,11 @@
-import matplotlib.pyplot as plt
-import torch
+import logging
 import os
 import random
-import logging
 from logging import INFO, FileHandler, Formatter, StreamHandler, getLogger
 
+import matplotlib.pyplot as plt
 import numpy as np
+import torch
 import torchvision
 
 # pylint: disable=missing-module-docstring
@@ -34,9 +34,7 @@ def seed_all(seed: int = 1992) -> None:
     """Seed all random number generators."""
     print(f"Using Seed Number {seed}")
 
-    os.environ["PYTHONHASHSEED"] = str(
-        seed
-    )  # set PYTHONHASHSEED env var at fixed value
+    os.environ["PYTHONHASHSEED"] = str(seed)  # set PYTHONHASHSEED env var at fixed value
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     torch.cuda.manual_seed(seed)  # pytorch (both CPU and CUDA)
@@ -50,7 +48,7 @@ def seed_all(seed: int = 1992) -> None:
 
 def seed_worker(_worker_id) -> None:
     """Seed a worker with the given ID."""
-    worker_seed = torch.initial_seed() % 2 ** 32
+    worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
     random.seed(worker_seed)
 
@@ -69,13 +67,9 @@ def init_logger(log_file: str = "info.log") -> logging.Logger:
     logger = getLogger(__name__)
     logger.setLevel(INFO)
     stream_handler = StreamHandler()
-    stream_handler.setFormatter(
-        Formatter("%(asctime)s: %(message)s", "%Y-%m-%d %H:%M:%S")
-    )
+    stream_handler.setFormatter(Formatter("%(asctime)s: %(message)s", "%Y-%m-%d %H:%M:%S"))
     file_handler = FileHandler(filename=log_file)
-    file_handler.setFormatter(
-        Formatter("%(asctime)s: %(message)s", "%Y-%m-%d %H:%M:%S")
-    )
+    file_handler.setFormatter(Formatter("%(asctime)s: %(message)s", "%Y-%m-%d %H:%M:%S"))
     logger.addHandler(stream_handler)
     logger.addHandler(file_handler)
 

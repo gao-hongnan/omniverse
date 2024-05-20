@@ -1,17 +1,12 @@
 import h5py
-import tqdm
-
 import numpy as np
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-
-from torchvision.transforms import *
 import torchvision.transforms.functional as TF
+import tqdm
 from sklearn.metrics import roc_auc_score, roc_curve
-
+from torchvision.transforms import *
 
 from .model import SimpleCNN
 from .utils import *
@@ -28,7 +23,6 @@ for epoch in range(EPOCHES):
     bar = tqdm.tqdm(enumerate(train_dl))
 
     for n_batch, (x, y) in bar:
-
         optimizer.zero_grad()
 
         x, y = x.to(device), y.to(device)
@@ -47,7 +41,6 @@ for epoch in range(EPOCHES):
         with torch.no_grad():
             tot_loss += loss
 
-        bar.set_description('epoch={}, loss={:.4f}'.format(epoch, (tot_loss / (n_batch + 1)).cpu().item()))
+        bar.set_description("epoch={}, loss={:.4f}".format(epoch, (tot_loss / (n_batch + 1)).cpu().item()))
 
-torch.save(model, './model.pt')
-
+torch.save(model, "./model.pt")

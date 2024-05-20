@@ -1,11 +1,10 @@
+from typing import List, Tuple, Union
+
 import numpy as np
 import torch
-from typing import List, Union, Tuple
 
 
-def linear_combination_vectors(
-    weights: List[float], *args: np.ndarray
-) -> np.ndarray:
+def linear_combination_vectors(weights: List[float], *args: np.ndarray) -> np.ndarray:
     """Computes the linear combination of vectors.
 
     Args:
@@ -201,8 +200,8 @@ def np_matmul_column_wise(A: np.ndarray, B: np.ndarray) -> np.ndarray:
 
 
 import matplotlib.pyplot as plt
-import numpy as np
 import numpy
+import numpy as np
 
 
 def linearCombo(a, b, c):
@@ -290,9 +289,7 @@ def linearCombo(a, b, c):
     ax.set_ylabel("y-axis", size=18)
     ax.set_zlabel("z-axis", size=18)
 
-    ax.set_title(
-        "Vector $(%0.d, %0.d, %.0d)$ Visualization" % (a, b, c), size=20
-    )
+    ax.set_title("Vector $(%0.d, %0.d, %.0d)$ Visualization" % (a, b, c), size=20)
 
     ax.view_init(elev=20.0, azim=15)
 
@@ -633,24 +630,21 @@ def linearComboNonStd(a, b, c, vec1, vec2, vec3):
         x=avec1[0, 3],
         y=avec1[0, 4],
         z=avec1[0, 5],
-        s=" $%.0d v_1 =(%0.d, %0.d, %.0d)$"
-        % (a, avec1[0, 3], avec1[0, 4], avec1[0, 4]),
+        s=" $%.0d v_1 =(%0.d, %0.d, %.0d)$" % (a, avec1[0, 3], avec1[0, 4], avec1[0, 4]),
         size=8,
     )
     ax.text(
         x=bvec2[0, 3],
         y=bvec2[0, 4],
         z=bvec2[0, 5],
-        s=" $%.0d v_2 =(%0.d, %0.d, %.0d)$"
-        % (b, bvec2[0, 3], bvec2[0, 4], bvec2[0, 4]),
+        s=" $%.0d v_2 =(%0.d, %0.d, %.0d)$" % (b, bvec2[0, 3], bvec2[0, 4], bvec2[0, 4]),
         size=8,
     )
     ax.text(
         x=cvec3[0, 3],
         y=cvec3[0, 4],
         z=cvec3[0, 5],
-        s=" $%.0d v_3= (%0.d, %0.d, %.0d)$"
-        % (c, cvec3[0, 3], cvec3[0, 4], cvec3[0, 4]),
+        s=" $%.0d v_3= (%0.d, %0.d, %.0d)$" % (c, cvec3[0, 3], cvec3[0, 4], cvec3[0, 4]),
         size=8,
     )
     #     ax.text(x = 0, y = b, z = 0, s= ' $%0.d e_2 = (0, %0.d, 0)$'% (b, b), size = 15)

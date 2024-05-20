@@ -1,8 +1,9 @@
-import pandas as pd
-import numpy as np
 import os
-import matplotlib.pyplot as plt
 from typing import List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 
@@ -27,12 +28,8 @@ class ForwardEnsemble:
         self.weight_interval = weight_interval
         self.patience = patience
         self.min_increase = min_increase
-        self.target_column_names = (
-            target_column_names  # target_cols = oof[0].iloc[:, 1:12].columns.tolist()
-        )
-        self.pred_column_names = (
-            pred_column_names  # pred_cols = oof[0].iloc[:, 15:].columns.tolist()
-        )
+        self.target_column_names = target_column_names  # target_cols = oof[0].iloc[:, 1:12].columns.tolist()
+        self.pred_column_names = pred_column_names  # pred_cols = oof[0].iloc[:, 15:].columns.tolist()
 
         self.col_len = len(target_column_names)
 
@@ -41,16 +38,16 @@ class ForwardEnsemble:
         # get ground truth
         self.y_true = oof[0][target_column_names].values
 
-        self.all_oof_preds = np.zeros(
-            (self.num_test_images, self.num_oofs * self.col_len)
-        )
+        self.all_oof_preds = np.zeros((self.num_test_images, self.num_oofs * self.col_len))
 
         # append all oof preds to all_oof_preds: for example - k=0 -> all_oof_preds[:,0:11] = self.oof[0][['ETT - Abnormal OOF', etc]].values
         for k in range(self.num_oofs):
             self.all_oof_preds[
                 :,
                 int(k * self.col_len) : int((k + 1) * self.col_len),
-            ] = oof[k][pred_column_names].values
+            ] = oof[
+                k
+            ][pred_column_names].values
 
         self.model_i_score, self.model_i_index, self.model_i_weight = 0, 0, 0
 
@@ -60,7 +57,7 @@ class ForwardEnsemble:
         )  # get number of prediction columns, in multi-label, should have more than 1 column, while in binary, there is only 1
 
     def macro_multilabel_auc(self, label, pred):
-        """ Also works for binary AUC like Melanoma"""
+        """Also works for binary AUC like Melanoma"""
         aucs = []
         for i in range(self.col_len):
             aucs.append(roc_auc_score(label[:, i], pred[:, i]))
@@ -71,9 +68,7 @@ class ForwardEnsemble:
         for k in range(self.num_oofs):
             auc = self.macro_multilabel_auc(
                 self.y_true,
-                self.all_oof_preds[
-                    :, int(k * self.col_len) : int((k + 1) * self.col_len)
-                ],
+                self.all_oof_preds[:, int(k * self.col_len) : int((k + 1) * self.col_len)],
             )
             _all.append(auc)
             print("Model %i has OOF AUC = %.4f" % (k, auc))
@@ -88,17 +83,12 @@ class ForwardEnsemble:
         for oof_index in range(self.num_oofs):
             curr_model = self.all_oof_preds[
                 :,
-                int(best_oof_index * self.col_len) : int(
-                    (best_oof_index + 1) * self.col_len
-                ),
+                int(best_oof_index * self.col_len) : int((best_oof_index + 1) * self.col_len),
             ]
             for i, k in enumerate(chosen_model[1:]):
                 # this step is confusing because it overwrites curr_model in the previous step. basically curr_model is reset to the best oof model initially, and then loop through to get the best oof
                 curr_model = (
-                    optimal_weights[i]
-                    * self.all_oof_preds[
-                        :, int(k * self.col_len) : int((k + 1) * self.col_len)
-                    ]
+                    optimal_weights[i] * self.all_oof_preds[:, int(k * self.col_len) : int((k + 1) * self.col_len)]
                     + (1 - optimal_weights[i]) * curr_model
                 )
 
@@ -208,16 +198,11 @@ if __name__ == "__main__":
 
     y = np.zeros((len(SUB_CSV[0]), len(SUB) * len(pred_cols)))
     for k in range(len(SUB)):
-        y[:, int(k * len(pred_cols)) : int((k + 1) * len(pred_cols))] = SUB_CSV[k][
-            target_cols
-        ].values
+        y[:, int(k * len(pred_cols)) : int((k + 1) * len(pred_cols))] = SUB_CSV[k][target_cols].values
 
     md2 = y[:, int(m[0] * len(pred_cols)) : int((m[0] + 1) * len(pred_cols))]
     for i, k in enumerate(m[1:]):
-        md2 = (
-            w[i] * y[:, int(k * len(pred_cols)) : int((k + 1) * len(pred_cols))]
-            + (1 - w[i]) * md2
-        )
+        md2 = w[i] * y[:, int(k * len(pred_cols)) : int((k + 1) * len(pred_cols))] + (1 - w[i]) * md2
     plt.hist(md2, bins=100)
     plt.show()
 

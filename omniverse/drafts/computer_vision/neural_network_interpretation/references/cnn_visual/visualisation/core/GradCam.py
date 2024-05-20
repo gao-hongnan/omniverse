@@ -1,14 +1,12 @@
 import cv2
 import numpy as np
 import torch
-
-from torch.nn import ReLU
-from torch.autograd import Variable
-from .Base import Base
-from torch.nn import AvgPool2d, Conv2d, Linear, ReLU, MaxPool2d, BatchNorm2d
 import torch.nn.functional as F
+from torch.autograd import Variable
+from torch.nn import AvgPool2d, BatchNorm2d, Conv2d, Linear, MaxPool2d, ReLU
 
-from .utils import tensor2cam, module2traced, imshow
+from .Base import Base
+from .utils import imshow, module2traced, tensor2cam
 
 
 class GradCam(Base):
@@ -77,13 +75,9 @@ class GradCam(Base):
 
         with torch.no_grad():
             avg_channel_grad = F.adaptive_avg_pool2d(self.gradients.data, 1)
-            self.cam = F.relu(
-                torch.sum(self.conv_outputs[0] * avg_channel_grad[0], dim=0)
-            )
-            
-            image_with_heatmap = tensor2cam(
-                postprocessing(input_image.squeeze().cpu()), self.cam
-            )
+            self.cam = F.relu(torch.sum(self.conv_outputs[0] * avg_channel_grad[0], dim=0))
+
+            image_with_heatmap = tensor2cam(postprocessing(input_image.squeeze().cpu()), self.cam)
 
         self.clean()
 

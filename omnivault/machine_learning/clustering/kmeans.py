@@ -51,7 +51,7 @@ class KMeansLloyd(BaseEstimator):
     def __init__(
         self,
         num_clusters: int = 3,
-        init: str = "random",
+        init: Literal["random", "k-means++"] = "random",
         max_iter: int = 100,
         metric: Literal["euclidean", "manhattan"] = "euclidean",
         tol: float = 1e-8,
@@ -119,18 +119,42 @@ class KMeansLloyd(BaseEstimator):
         self._C = {k: [] for k in range(self._K)}  # type: ignore[misc]
 
     def _reset_inertias(self) -> None:
-        """Reset inertias.
+        """
+        Reset the inertias to zero for each sample.
 
-        This initializes self._inertias, and has shape N as it is the outer summation
-        of our cost function J. We sum over all samples N to get self._inertia.
+        This method initializes `self._inertias`, a numpy array with
+        shape (N,), to zero. It is used in the assignment step to store
+        the minimum distances from each sample to its assigned centroid,
+        which contributes to the cost function J, summed over all samples.
         """
         self._inertias = np.zeros(self._N)  # reset mechanism so don't accumulate
 
     def _reset_labels(self) -> None:
-        """Reset labels."""
+        """
+        Reset the labels to zero for each sample.
+
+        This method reinitializes `self._labels`, a numpy array with
+        shape (N,), to zero, clearing previous cluster assignments.
+        """
         self._labels = np.zeros(self._N)  # reset mechanism so don't accumulate
 
     def _init_centroids(self, X: NDArray[np.floating[Any]]) -> None:
+        """
+        Initialize the centroids for K-Means clustering.
+
+        The method sets initial values for `self._centroids` based on the
+        specified initialization strategy ('random' or 'k-means++').
+
+        Parameters
+        ----------
+        X : NDArray[np.floating[Any]]
+            A 2D array where each row is a data point.
+
+        Raises
+        ------
+        ValueError
+            If the `init` attribute is set to an unsupported value.
+        """
         self._centroids = np.zeros(shape=(self._K, self._D))  # KxD matrix
         if self.init == "random":
             for k in range(self._K):
@@ -142,6 +166,13 @@ class KMeansLloyd(BaseEstimator):
             raise ValueError(f"{self.init} is not supported.")
 
     def _get_distance_metric(self) -> Callable[[NDArray[np.floating[Any]], NDArray[np.floating[Any]]], float]:
+        """Get the distance metric based on the metric attribute.
+
+        Returns
+        -------
+        Callable[[NDArray[np.floating[Any]], NDArray[np.floating[Any]]], float]
+            The distance metric function.
+        """
         if self.metric == "euclidean":
             return partial(euclidean_distance, squared=False)
         if self.metric == "manhattan":
@@ -161,6 +192,18 @@ class KMeansLloyd(BaseEstimator):
         to be more pedantic, the self.distance also has O(D) complexity,
         where D is the number of features, so it can be argued that this step has
         O(KD) complexity.
+
+        Parameters
+        ----------
+        x : NDArray[np.floating[Any]]
+            A single data point.
+        centroids : NDArray[np.floating[Any]]
+            Current centroids of the clusters.
+
+        Returns
+        -------
+        Tuple[int, float]
+            The index of the closest centroid and the distance to it.
         """
         min_index = -100  # some random number
         min_distance = np.inf
@@ -177,7 +220,15 @@ class KMeansLloyd(BaseEstimator):
 
         This step has O(NK) complexity since we are looping over
         N samples, and for each sample, _compute_argmin_assignment requires
-        O(K) complexity."""
+        O(K) complexity.
+
+        Parameters
+        ----------
+        X : NDArray[np.floating[Any]]
+            A 2D array where each row is a data point.
+        centroids : NDArray[np.floating[Any]]
+            Current centroids of the clusters.
+        """
         self._reset_inertias()  # reset the inertias to [0, 0, ..., 0]
         self._reset_labels()  # reset the labels to [0, 0, ..., 0]
         for sample_index, x in enumerate(X):
@@ -189,7 +240,18 @@ class KMeansLloyd(BaseEstimator):
             # fmt: on
 
     def _update_centroids(self, centroids: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
-        """Update step: update the centroid with new cluster mean."""
+        """Update step: update the centroid with new cluster mean.
+
+        Parameters
+        ----------
+        centroids : NDArray[np.floating[Any]]
+            Current centroids of the clusters.
+
+        Returns
+        -------
+        NDArray[np.floating[Any]]
+            Updated centroids of the clusters.
+        """
         for k, cluster in self._C.items():  # for k and the corresponding cluster C_k
             mu_k = np.mean(cluster, axis=0)  # compute the mean of the cluster
             centroids[k] = mu_k  # update the centroid mu_k
@@ -200,12 +262,40 @@ class KMeansLloyd(BaseEstimator):
     ) -> bool:
         """Checks for convergence.
         If the centroids are the same, then the algorithm has converged.
-        You can also check convergence by comparing the SSE."""
+        You can also check convergence by comparing the SSE.
+
+        Parameters
+        ----------
+        old_centroids : NDArray[np.floating[Any]]
+            Old centroids of the clusters.
+        updated_centroids : NDArray[np.floating[Any]]
+            Updated centroids of the clusters.
+
+        Returns
+        -------
+        bool
+            True if the centroids have converged, False otherwise.
+        """
         return np.allclose(updated_centroids, old_centroids, atol=self.tol)
 
     def fit(self, X: NDArray[np.floating[Any]]) -> KMeansLloyd:
-        """Fits K-Means to the data, after which the model will have
-        centroids and labels."""
+        """
+        Fit the K-Means clustering model to the data.
+
+        This function iteratively assigns samples to clusters and updates
+        centroids based on those assignments until the centroids do not
+        change significantly or a maximum number of iterations is reached.
+
+        Parameters
+        ----------
+        X : NDArray[np.floating[Any]]
+            Data points to cluster.
+
+        Returns
+        -------
+        KMeansLloyd
+            The instance itself.
+        """
         # fmt: off
         self._N, self._D = X.shape  # N=num_samples, D=num_features
 
@@ -273,15 +363,27 @@ def plot_kmeans(
     X: NDArray[np.floating[Any]], cluster_assignments: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]
 ) -> None:
     """
-    Plot the K-Means clustering results using seaborn and matplotlib.
+    Plot the K-Means clustering results using matplotlib and seaborn.
 
-    Args:
-        data_points (numpy.ndarray): A 2D array with shape (N, D) containing
-            the data points.
-        cluster_assignments (numpy.ndarray): A 1D array with shape (N,)
-            containing the cluster assignments.
-        centroids (numpy.ndarray): A 2D array with shape (K, D)
-            containing the final cluster centroids.
+    This function visualizes the clustering output of a K-Means algorithm,
+    displaying both the data points and the centroids on a scatter plot. Each
+    cluster is colored differently, and centroids are marked distinctly to
+    highlight their position relative to the data points.
+
+    Parameters
+    ----------
+    X : NDArray[np.floating[Any]]
+        A 2D array with shape (N, D) where N is the number of data points
+        and D is the dimensionality of each data point. This array contains
+        the coordinates of the data points.
+    cluster_assignments : NDArray[np.floating[Any]]
+        A 1D array with shape (N,) that contains the cluster index to which
+        each data point is assigned. Each element in this array should be
+        an integer representing the cluster index.
+    centroids : NDArray[np.floating[Any]]
+        A 2D array with shape (K, D) where K is the number of clusters and
+        D is the dimensionality of the centroids. This array contains the
+        coordinates of the centroids.
     """
     # Ensure that seaborn is set to its default theme.
     sns.set_theme()
@@ -319,7 +421,30 @@ def plot_kmeans(
 def kmeans_vectorized(
     X: NDArray[np.floating[Any]], num_clusters: int, max_iter: int = 500
 ) -> NDArray[np.floating[Any]]:
-    """Implement K-Means using vectorized operations."""
+    """
+    Perform K-Means clustering using vectorized operations.
+
+    This function clusters data into a specified number of
+    clusters using a vectorized implementation of the K-Means
+    algorithm, which is generally more efficient than the
+    iterative approach.
+
+    Parameters
+    ----------
+    X : NDArray[np.floating[Any]]
+        A 2D array where each row represents a data point
+        and each column represents a dimension.
+    num_clusters : int
+        The number of clusters to form.
+    max_iter : int, optional
+        The maximum number of iterations of the K-Means
+        clustering algorithm (default is 500).
+
+    Returns
+    -------
+    NDArray[np.floating[Any]]
+        A 2D array where each row is a cluster center.
+    """
     indices = np.random.choice(X.shape[0], num_clusters, replace=False)
     centroids = X[indices]
 
