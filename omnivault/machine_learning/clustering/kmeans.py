@@ -6,17 +6,22 @@ References:
 """
 from __future__ import annotations
 
+import logging
 from functools import partial
 from typing import Any, Callable, Dict, List, Literal, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
+import sklearn.cluster
 from numpy.typing import NDArray
 
 from omnivault.machine_learning.estimator import BaseEstimator
 from omnivault.machine_learning.metrics.pairwise.distance import euclidean_distance, manhattan_distance
 from omnivault.utils.reproducibility.seed import seed_all
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 class KMeansLloyd(BaseEstimator):
@@ -160,7 +165,6 @@ class KMeansLloyd(BaseEstimator):
             for k in range(self._K):
                 self._centroids[k] = X[np.random.choice(range(self._N))]
         elif self.init == "k-means++":
-            # You can implement k-means++ initialization here.
             raise NotImplementedError("k-means++ initialization is not implemented.")
         else:
             raise ValueError(f"{self.init} is not supported.")
@@ -341,13 +345,16 @@ class KMeansLloyd(BaseEstimator):
         return y_preds
 
 
-def elbow_method(X: NDArray[np.floating[Any]], min_clusters: int = 1, max_clusters: int = 10) -> None:
+def elbow_method(
+    X: NDArray[np.floating[Any]], min_clusters: int = 1, max_clusters: int = 10, verbose: bool = True
+) -> None:
     """Elbow method to find the optimal number of clusters.
     The optimal number of clusters is where the elbow occurs.
     The elbow is where the SSE starts to decrease in a linear fashion."""
     inertias = []
     for k in range(min_clusters, max_clusters + 1):
-        print(f"Running K-Means with {k} clusters")
+        if verbose:
+            logging.info(f"Running KMeans with {k} clusters")
         kmeans = KMeansLloyd(num_clusters=k, init="random", max_iter=500, random_state=1992)
         kmeans.fit(X)
         inertias.append(kmeans.inertia)
@@ -391,7 +398,7 @@ def plot_kmeans(
     # Create a figure with two subplots.
     _fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
-    axes[0].scatter(X[:, 0], X[:, 1], cmap="viridis", s=50, alpha=0.6)
+    axes[0].scatter(X[:, 0], X[:, 1], s=50, alpha=0.6)
     axes[0].set_xlabel("Feature 1")
     axes[0].set_ylabel("Feature 2")
     axes[0].set_title("Original Scatter Plot")
@@ -463,3 +470,64 @@ def kmeans_vectorized(
         centroids = new_centroids
 
     return centroids  # type: ignore[no-any-return]
+
+
+def display_results(
+    kmeans: KMeansLloyd,
+    sk_kmeans: sklearn.cluster.KMeans,
+    X: NDArray[np.floating[Any]],
+    y_preds: NDArray[np.integer[Any]],
+    sk_y_preds: NDArray[np.integer[Any]],
+) -> pd.DataFrame:
+    """Display the results of the custom KMeansLloyd and scikit-learn's KMeans.
+
+    Parameters
+    ----------
+    kmeans : KMeansLloyd
+        The custom KMeansLloyd instance.
+    sk_kmeans : sklearn.cluster.KMeans
+        The scikit-learn KMeans instance.
+    X : NDArray[np.floating[Any]]
+        The input data.
+    y_preds : NDArray[np.integer[Any]]
+        The predicted labels from the custom KMeansLloyd.
+    sk_y_preds : NDArray[np.integer[Any]]
+        The predicted labels from scikit-learn's KMeans.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the results of the custom KMeansLloyd and
+        scikit-learn's KMeans.
+    """
+    # Derive clusters for sklearn
+    sk_clusters = {i: X[sk_kmeans.labels_ == i] for i in range(sk_kmeans.n_clusters)}
+
+    result_dict = {
+        "Attribute": [
+            "Number of Clusters",
+            "Centroids",
+            "Labels",
+            "Inertia",
+            "Clusters",
+            "Predicted Labels for New Data",
+        ],
+        "Mine": [
+            kmeans.num_clusters,
+            kmeans.centroids,
+            kmeans.labels,
+            kmeans.inertia,
+            kmeans.clusters,
+            y_preds,
+        ],
+        "Sklearn": [
+            sk_kmeans.n_clusters,
+            sk_kmeans.cluster_centers_,
+            sk_kmeans.labels_,
+            sk_kmeans.inertia_,
+            sk_clusters,
+            sk_y_preds,
+        ],
+    }
+    df = pd.DataFrame(result_dict)
+    return df

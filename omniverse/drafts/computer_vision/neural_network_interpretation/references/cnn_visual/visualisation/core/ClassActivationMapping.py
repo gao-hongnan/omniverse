@@ -1,10 +1,8 @@
 import torch
-import torch.nn.functional as F
-from torch.nn import AvgPool2d, Conv2d, Linear, ReLU
-from torch.nn.functional import softmax
+from torch.nn import AvgPool2d, Conv2d, Linear
 
 from .Base import Base
-from .utils import imshow, module2traced, tensor2cam
+from .utils import module2traced, tensor2cam
 
 
 class ClassActivationMapping(Base):

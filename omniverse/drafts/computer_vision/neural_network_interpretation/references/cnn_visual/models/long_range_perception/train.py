@@ -1,11 +1,8 @@
-import h5py
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.transforms.functional as TF
 import tqdm
-from sklearn.metrics import roc_auc_score, roc_curve
 from torchvision.transforms import *
 
 from .model import SimpleCNN
@@ -41,6 +38,6 @@ for epoch in range(EPOCHES):
         with torch.no_grad():
             tot_loss += loss
 
-        bar.set_description("epoch={}, loss={:.4f}".format(epoch, (tot_loss / (n_batch + 1)).cpu().item()))
+        bar.set_description(f"epoch={epoch}, loss={(tot_loss / (n_batch + 1)).cpu().item():.4f}")
 
 torch.save(model, "./model.pt")

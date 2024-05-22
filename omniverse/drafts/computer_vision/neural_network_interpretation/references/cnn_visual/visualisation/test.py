@@ -3,7 +3,7 @@ import torch
 from core import *
 from core.utils import image_net_postprocessing, image_net_preprocessing
 from PIL import Image
-from torchvision.models import alexnet, resnet18, resnet152, vgg16
+from torchvision.models import resnet152
 from torchvision.transforms import Compose, Resize, ToTensor
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

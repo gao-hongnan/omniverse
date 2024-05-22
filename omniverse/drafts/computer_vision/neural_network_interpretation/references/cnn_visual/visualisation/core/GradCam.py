@@ -1,12 +1,10 @@
-import cv2
-import numpy as np
 import torch
 import torch.nn.functional as F
 from torch.autograd import Variable
-from torch.nn import AvgPool2d, BatchNorm2d, Conv2d, Linear, MaxPool2d, ReLU
+from torch.nn import Conv2d, ReLU
 
 from .Base import Base
-from .utils import imshow, module2traced, tensor2cam
+from .utils import module2traced, tensor2cam
 
 
 class GradCam(Base):

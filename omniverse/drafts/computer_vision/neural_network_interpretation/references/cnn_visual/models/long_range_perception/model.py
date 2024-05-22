@@ -1,6 +1,4 @@
-import torch
 import torch.nn as nn
-import torch.optim as optim
 
 
 def conv_act_max(act="relu", *args, **kwargs):

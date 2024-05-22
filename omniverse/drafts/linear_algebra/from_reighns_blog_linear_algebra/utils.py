@@ -1,7 +1,6 @@
 from typing import List, Tuple, Union
 
 import numpy as np
-import torch
 
 
 def linear_combination_vectors(weights: List[float], *args: np.ndarray) -> np.ndarray:
@@ -200,7 +199,6 @@ def np_matmul_column_wise(A: np.ndarray, B: np.ndarray) -> np.ndarray:
 
 
 import matplotlib.pyplot as plt
-import numpy
 import numpy as np
 
 

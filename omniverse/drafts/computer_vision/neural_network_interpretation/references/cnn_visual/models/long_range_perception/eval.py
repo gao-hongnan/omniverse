@@ -4,7 +4,7 @@ import seaborn as sns
 import torch
 import torch.nn as nn
 import tqdm
-from sklearn.metrics import roc_auc_score, roc_curve
+from sklearn.metrics import roc_auc_score
 
 from .model import SimpleCNN
 from .utils import *
@@ -47,7 +47,7 @@ def eval():
         with torch.no_grad():
             tot_loss += loss
 
-        bar.set_description("loss={:.4f}".format((tot_loss / (n_batch + 1)).cpu().item()))
+        bar.set_description(f"loss={(tot_loss / (n_batch + 1)).cpu().item():.4f}")
 
     print((tot_loss / (n_batch + 1)).cpu().item())
 
@@ -97,7 +97,7 @@ def make_auc_map():
                         yc1, yc_1 = yc1.tolist()[0], yc_1.tolist()[0]
                         auc = roc_auc_score(yc1, yc_1)
                         print(auc, "ddddd")
-                    except ValueError as e:
+                    except ValueError:
                         auc = 0.5
                     aucs[n_dist - 1 - i, j] = auc
                 break
