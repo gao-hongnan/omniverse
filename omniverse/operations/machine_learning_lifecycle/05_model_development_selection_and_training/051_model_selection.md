@@ -42,9 +42,7 @@ limitations of the model. Different models make different assumptions about the
 data, and these assumptions can impact the model's performance. We would take
 examples from Chip Huyen's book _Designing Machine Learning Systems_ as she
 provided us with some useful points to consider when selecting a model for your
-problem.
-
-[^chip-chapter6]
+problem[^chip-chapter6].
 
 ### Independent and Identically Distributed (IID)
 
@@ -224,7 +222,7 @@ The baseline model provides a point of comparison for future, more complex
 models. Any sophisticated model we train should perform significantly better
 than this baseline.
 
-## Model Selection Revisited
+## Model Selection
 
 Following the baseline model, the next step is model selection. Here, you
 identify potential algorithms that could be used for solving the given problem.
@@ -247,15 +245,27 @@ In some cases, a simpler model might be preferred if it offers similar
 performance to a more complex model but is easier to interpret and explain.
 
 Remember, no one model fits all scenarios. A good practice is to try multiple
-models and see which one performs best on your specific dataset.
+models and see which one performs best on your specific dataset. Sometimes using
+the biggest model do yield the best results but if your latency is too high for
+inference and usable by the end-user, then it's not a good model - and that's
+why many current research directions emphasize on how to quantize large models,
+prune models, or even distill models to serve powerful models in a reasonable
+latency.
 
----
+## Ensembling
 
-Sometimes using the biggest model do yield the best results but if your latency
-is too high for inference and usable by the end-user, then it's not a good
-model - and that's why many current research directions emphasize on how to
-quantize large models, prune models, or even distill models to serve powerful
-models in a reasonable latency.
+Ensembling is a technique where multiple models are combined to improve
+performance. We can usually categorize this technique into three types, namely
+bagging, boosting, and stacking.
+
+It is a huge topic of its own and we will not cover it here as it is beyond the
+scope of this notebook. Have a read at Microsoft Rearch Blog
+[Three mysteries in deep learning: Ensemble, knowledge distillation, and self-distillation](https://www.microsoft.com/en-us/research/blog/three-mysteries-in-deep-learning-ensemble-knowledge-distillation-and-self-distillation/)
+for some brief insights. Chip also mentioned in Chapter 6 of her book on this
+topic and provides intuition on how ensembling works and why it is effective.
+
+Notably, ensembling is used in many Kaggle competitions to achieve top scores,
+constrained by the inference time and memory usage.
 
 ## References and Further Readings
 

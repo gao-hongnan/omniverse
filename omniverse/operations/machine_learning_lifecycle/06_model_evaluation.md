@@ -128,4 +128,3 @@ See chip
     Designing Machine Learning Systems: An Iterative Process for
     Production-Ready Applications, O'Reilly Media, Inc., 2022.
 -   [Madewithml](https://madewithml.com/)
--   Training pipeline by me
