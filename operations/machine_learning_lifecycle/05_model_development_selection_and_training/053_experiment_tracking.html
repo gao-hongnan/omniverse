@@ -36,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=bb35926c" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -56,7 +56,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
     <script>
                 window.dataLayer = window.dataLayer || [];
@@ -78,7 +78,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Distributed Systems" href="../../distributed/intro.html" />
+    <link rel="next" title="Stage 5.4. Model Testing" href="054_model_testing.html" />
     <link rel="prev" title="Stage 5.2. Metric Selection" href="052_metric_selection.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -237,6 +237,7 @@
 <li class="toctree-l3"><a class="reference internal" href="051_model_selection.html">Stage 5.1. Model Selection</a></li>
 <li class="toctree-l3"><a class="reference internal" href="052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="054_model_testing.html">Stage 5.4. Model Testing</a></li>
 </ul>
 </li>
 </ul>
@@ -582,6 +583,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seeding">Seeding</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -603,21 +605,22 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#experiment-tracking" id="id2">Experiment Tracking</a></p></li>
-<li><p><a class="reference internal" href="#reproducibility" id="id3">Reproducibility</a></p>
+<li><p><a class="reference internal" href="#experiment-tracking" id="id3">Experiment Tracking</a></p></li>
+<li><p><a class="reference internal" href="#reproducibility" id="id4">Reproducibility</a></p>
 <ul>
-<li><p><a class="reference internal" href="#model-versioning-code-versioning-and-data-versioning" id="id4">Model Versioning, Code Versioning, and Data Versioning</a></p>
+<li><p><a class="reference internal" href="#model-versioning-code-versioning-and-data-versioning" id="id5">Model Versioning, Code Versioning, and Data Versioning</a></p>
 <ul>
-<li><p><a class="reference internal" href="#code-versioning" id="id5">1. Code versioning</a></p></li>
-<li><p><a class="reference internal" href="#data-versioning" id="id6">2. Data versioning</a></p></li>
-<li><p><a class="reference internal" href="#model-artifacts-and-metadata" id="id7">3. Model artifacts and metadata</a></p></li>
-<li><p><a class="reference internal" href="#recovering-a-run" id="id8">Recovering a run</a></p></li>
+<li><p><a class="reference internal" href="#code-versioning" id="id6">1. Code versioning</a></p></li>
+<li><p><a class="reference internal" href="#data-versioning" id="id7">2. Data versioning</a></p></li>
+<li><p><a class="reference internal" href="#model-artifacts-and-metadata" id="id8">3. Model artifacts and metadata</a></p></li>
+<li><p><a class="reference internal" href="#recovering-a-run" id="id9">Recovering a run</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#seeding" id="id9">Seeding</a></p></li>
+<li><p><a class="reference internal" href="#seeding" id="id10">Seeding</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id10">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#hyperparameter-tuning" id="id11">Hyperparameter Tuning</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>During the iterative process of model development and training, keeping track of
@@ -629,7 +632,7 @@ data scientists can easily compare the results of different models,
 configurations, hyperparameters, and even completely different approaches. Also
 it enables error analysis, debugging, and model improvement.</p>
 <section id="experiment-tracking">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Experiment Tracking</a><a class="headerlink" href="#experiment-tracking" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Experiment Tracking</a><a class="headerlink" href="#experiment-tracking" title="Link to this heading">#</a></h2>
 <p>What do we track then? Can we track everything? Well if you can, that’s great,
 but it’s often better and more concise to track things that matter the most for
 monitoring and <strong><em>debugging</em></strong>. Here are some common metrics to track in
@@ -679,7 +682,7 @@ way to help debug model issues (i.e. why is model diverging at the 100th step)
 and memory leak issues (i.e. why is the CUDA memory usage increasing over time).</p>
 </section>
 <section id="reproducibility">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h2>
 <p>To ensure that your machine learning experiments are reproducible, you should
 keep track of the following components:</p>
 <ol class="arabic simple">
@@ -690,7 +693,7 @@ keep track of the following components:</p>
 <li><p><strong>Seeding</strong></p></li>
 </ol>
 <section id="model-versioning-code-versioning-and-data-versioning">
-<h3><a class="toc-backref" href="#id4" role="doc-backlink">Model Versioning, Code Versioning, and Data Versioning</a><a class="headerlink" href="#model-versioning-code-versioning-and-data-versioning" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Model Versioning, Code Versioning, and Data Versioning</a><a class="headerlink" href="#model-versioning-code-versioning-and-data-versioning" title="Link to this heading">#</a></h3>
 <p>In addition to tracking experiments, it’s also important to version the models,
 code, and data used in those experiments. This ensures that the results of an
 experiment can be reproduced at a later time, even if the code, data, or
@@ -703,7 +706,7 @@ DVC.</p>
 <p>Below we see some pseudo code on how to track the code, data, and model
 artifacts.</p>
 <section id="code-versioning">
-<h4><a class="toc-backref" href="#id5" role="doc-backlink">1. Code versioning</a><a class="headerlink" href="#code-versioning" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id6" role="doc-backlink">1. Code versioning</a><a class="headerlink" href="#code-versioning" title="Link to this heading">#</a></h4>
 <p>Use a version control system like <strong>Git</strong> to keep track of your codebase. Git
 allows you to track changes in your code over time and manage different
 versions. To log the exact commit hash of your codebase when logging your MLflow
@@ -720,7 +723,7 @@ run, you can use the following code snippet:</p>
 the code used for a specific run, ensuring reproducibility.</p>
 </section>
 <section id="data-versioning">
-<h4><a class="toc-backref" href="#id6" role="doc-backlink">2. Data versioning</a><a class="headerlink" href="#data-versioning" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">2. Data versioning</a><a class="headerlink" href="#data-versioning" title="Link to this heading">#</a></h4>
 <p>For data versioning, you can use a tool like <strong>DVC (Data Version Control)</strong>. DVC
 is designed to handle large data files, models, and metrics, and it integrates
 well with Git. DVC helps you track changes in your data files and manage
@@ -757,14 +760,14 @@ dvc<span class="w"> </span>pull
 </div>
 </section>
 <section id="model-artifacts-and-metadata">
-<h4><a class="toc-backref" href="#id7" role="doc-backlink">3. Model artifacts and metadata</a><a class="headerlink" href="#model-artifacts-and-metadata" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">3. Model artifacts and metadata</a><a class="headerlink" href="#model-artifacts-and-metadata" title="Link to this heading">#</a></h4>
 <p>You have already logged the artifacts (model, vectorizer, config, log files)
 using <code class="docutils literal notranslate"><span class="pre">mlflow.log_artifact()</span></code>. You can also log additional metadata related to
 the artifacts as you have done with additional_metadata. This should be
 sufficient for keeping track of the artifacts associated with each run.</p>
 </section>
 <section id="recovering-a-run">
-<h4><a class="toc-backref" href="#id8" role="doc-backlink">Recovering a run</a><a class="headerlink" href="#recovering-a-run" title="Link to this heading">#</a></h4>
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Recovering a run</a><a class="headerlink" href="#recovering-a-run" title="Link to this heading">#</a></h4>
 <ol class="arabic simple">
 <li><p>Check the commit hashes for the code and data used in the run.</p></li>
 <li><p>Checkout the code and data versions using the commit hashes.</p></li>
@@ -785,7 +788,7 @@ section.</p>
 </section>
 </section>
 <section id="seeding">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Seeding</a><a class="headerlink" href="#seeding" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Seeding</a><a class="headerlink" href="#seeding" title="Link to this heading">#</a></h3>
 <p>I won’t go into too much on this, but beyond versioning, one must ensure
 aggresive seeding in their code base, especially in non-deterministic operations
 like training deep learning models. This is however not so simple, even with
@@ -840,12 +843,34 @@ reproducible training, one must not only ensure good versioning practices, but
 also ensure the seeding mechanism is in place.</p>
 </section>
 </section>
+<section id="hyperparameter-tuning">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Hyperparameter Tuning</a><a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading">#</a></h2>
+<p>When training machine learning models, each combination of dataset and model
+requires a unique set of hyperparameters, which act as configurable variables.
+Determining the optimal hyperparameters involves conducting multiple experiments
+where different sets are tested with the model, a process known as
+hyperparameter tuning. Essentially, this involves training the model repeatedly,
+each time with a different configuration of hyperparameters. This tuning can be
+performed manually or through automated methods<a class="footnote-reference brackets" href="#aws-hyperparameter-tuning" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<p>Regardless of the chosen method, it’s crucial to systematically record the
+outcomes of these experiments. This typically involves using statistical
+measures, like the loss function, to evaluate and identify which hyperparameters
+yield the most effective results. Hyperparameter tuning is a critical component
+of model development and requires significant computational resources.</p>
+<p>There’s many methods, for example, random search, grid search, Bayesian
+optimization, and more recently, evolutionary algorithms. The choice of method
+really depends on many factors, such as the size of the search space, the
+computational resources available, and the time constraints. What is important
+is that the hyperparameters obey the same rules as the training phase, and no
+data leakage should occur.</p>
+</section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
 Designing Machine Learning Systems: An Iterative Process for
 Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p><a class="reference external" href="https://aws.amazon.com/what-is/hyperparameter-tuning/">What is Hyperparameter Tuning?</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
@@ -854,6 +879,10 @@ Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
 <p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
 Designing Machine Learning Systems: An Iterative Process for
 Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
+</aside>
+<aside class="footnote brackets" id="aws-hyperparameter-tuning" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://aws.amazon.com/what-is/hyperparameter-tuning/">What is Hyperparameter Tuning?</a></p>
 </aside>
 </aside>
 </section>
@@ -899,11 +928,11 @@ Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../distributed/intro.html"
+       href="054_model_testing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Distributed Systems</p>
+        <p class="prev-next-title">Stage 5.4. Model Testing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -935,6 +964,7 @@ Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seeding">Seeding</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>

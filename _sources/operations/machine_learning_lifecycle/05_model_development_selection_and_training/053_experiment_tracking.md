@@ -254,13 +254,40 @@ And seeding in distributed training is much more complex, so to fully ensure a
 reproducible training, one must not only ensure good versioning practices, but
 also ensure the seeding mechanism is in place.
 
+## Hyperparameter Tuning
+
+When training machine learning models, each combination of dataset and model
+requires a unique set of hyperparameters, which act as configurable variables.
+Determining the optimal hyperparameters involves conducting multiple experiments
+where different sets are tested with the model, a process known as
+hyperparameter tuning. Essentially, this involves training the model repeatedly,
+each time with a different configuration of hyperparameters. This tuning can be
+performed manually or through automated methods[^aws-hyperparameter-tuning].
+
+Regardless of the chosen method, it's crucial to systematically record the
+outcomes of these experiments. This typically involves using statistical
+measures, like the loss function, to evaluate and identify which hyperparameters
+yield the most effective results. Hyperparameter tuning is a critical component
+of model development and requires significant computational resources.
+
+There's many methods, for example, random search, grid search, Bayesian
+optimization, and more recently, evolutionary algorithms. The choice of method
+really depends on many factors, such as the size of the search space, the
+computational resources available, and the time constraints. What is important
+is that the hyperparameters obey the same rules as the training phase, and no
+data leakage should occur.
+
 ## References and Further Readings
 
 -   Huyen, Chip. "Chapter 6. Model Development and Offline Evaluation." In
     Designing Machine Learning Systems: An Iterative Process for
     Production-Ready Applications, O'Reilly Media, Inc., 2022.
+-   [What is Hyperparameter Tuning?](https://aws.amazon.com/what-is/hyperparameter-tuning/)
 
 [^chip-chapter6]:
     Huyen, Chip. "Chapter 6. Model Development and Offline Evaluation." In
     Designing Machine Learning Systems: An Iterative Process for
     Production-Ready Applications, O'Reilly Media, Inc., 2022.
+
+[^aws-hyperparameter-tuning]:
+    [What is Hyperparameter Tuning?](https://aws.amazon.com/what-is/hyperparameter-tuning/)
