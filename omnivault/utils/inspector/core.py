@@ -67,10 +67,10 @@ def get_field_annotations(func_or_method: Callable[..., Any]) -> Tuple[List[Tupl
     return fields, annotations
 
 
-# TODO: Tuple[str, Any, Any] should be Tuple[str, Any, ellipsis]
+# TODO: Tuple[str, str, Any, Any] should be Tuple[str, str, Any, ellipsis]
 def get_constructor_field_annotations(
     cls: Type[Any], include_bases: bool = True
-) -> Tuple[List[Tuple[str, Any, Any]], Dict[str, Any]]:
+) -> Tuple[List[Tuple[str, str, Any, Any]], Dict[str, Any]]:
     fields = []
     annotations = {}
 
@@ -81,9 +81,10 @@ def get_constructor_field_annotations(
             class_fields, class_annotations = get_field_annotations(c.__init__)
             # Update fields and annotations with those from the current class,
             # avoiding duplicates.
-            for field in class_fields:
-                if field[0] not in annotations:
-                    fields.append(field)  # noqa: PERF401
-            annotations.update(class_annotations)
+            class_name = f"{c.__module__}.{c.__name__}"
+            annotations[class_name] = class_annotations
+
+            for name, type_hint, default in class_fields:
+                fields.append((class_name, name, type_hint, default))
 
     return fields, annotations
