@@ -5,26 +5,26 @@
 [![LinkedIn](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![Continuous Integration Checks on Omnivault.](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml/badge.svg)](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml)
 
-- [Omniverse](#omniverse)
-    - [Blogs](#blogs)
-    - [Implementation of Decoder](#implementation-of-decoder)
-    - [Building and Running NVIDIA Docker Image](#building-and-running-nvidia-docker-image)
-    - [Building and Running Jupyter Book Docker Image](#building-and-running-jupyter-book-docker-image)
-        - [Building the Docker Image](#building-the-docker-image)
-        - [Running the Docker Container](#running-the-docker-container)
-        - [Stopping the Docker Container](#stopping-the-docker-container)
-        - [Further Enhancements](#further-enhancements)
-        - [References and Further Readings](#references-and-further-readings)
-    - [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
-        - [Semantic Versioning](#semantic-versioning)
-            - [Format](#format)
-            - [Example Versioning](#example-versioning)
-            - [Pre-release and Build Metadata](#pre-release-and-build-metadata)
-        - [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
-        - [Example Workflow](#example-workflow)
-    - [Custom Domain for GitHub Pages](#custom-domain-for-github-pages)
-    - [How to Index Jupyter Book?](#how-to-index-jupyter-book)
-        - [References and Further Readings](#references-and-further-readings-1)
+-   [Omniverse](#omniverse)
+    -   [Blogs](#blogs)
+    -   [Implementation of Decoder](#implementation-of-decoder)
+    -   [Building and Running NVIDIA Docker Image](#building-and-running-nvidia-docker-image)
+    -   [Building and Running Jupyter Book Docker Image](#building-and-running-jupyter-book-docker-image)
+        -   [Building the Docker Image](#building-the-docker-image)
+        -   [Running the Docker Container](#running-the-docker-container)
+        -   [Stopping the Docker Container](#stopping-the-docker-container)
+        -   [Further Enhancements](#further-enhancements)
+        -   [References and Further Readings](#references-and-further-readings)
+    -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
+        -   [Semantic Versioning](#semantic-versioning)
+            -   [Format](#format)
+            -   [Example Versioning](#example-versioning)
+            -   [Pre-release and Build Metadata](#pre-release-and-build-metadata)
+        -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
+        -   [Example Workflow](#example-workflow)
+    -   [Custom Domain for GitHub Pages](#custom-domain-for-github-pages)
+    -   [How to Index Jupyter Book?](#how-to-index-jupyter-book)
+        -   [References and Further Readings](#references-and-further-readings-1)
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
 science, math, and software engineering explorations. Dive into the universe of
@@ -229,9 +229,9 @@ the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-git commit -am "cicd: bump version to 0.0.32 #38."
-git tag -a v0.0.32 -m "Release version 0.0.32"
-git push && git push origin v0.0.32
+git commit -am "cicd: bump version to 0.0.33 #38."
+git tag -a v0.0.33 -m "Release version 0.0.33"
+git push && git push origin v0.0.33
 ```
 
 Then the workflow will be triggered, and the package will be published to PyPI.
