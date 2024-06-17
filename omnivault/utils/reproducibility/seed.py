@@ -91,7 +91,7 @@ def seed_all(
     """
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
-    np.random.default_rng(seed)                    # numpy pseudo-random generator
+    np.random.seed(seed)                           # numpy pseudo-random generator
     random.seed(seed)                              # python's built-in pseudo-random generator
 
     if seed_torch:

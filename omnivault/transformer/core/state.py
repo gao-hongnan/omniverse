@@ -9,27 +9,7 @@ from rich.pretty import pprint
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
 
-
-def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
-    """
-    Compare two PyTorch models to check if they have identical parameters.
-
-    Parameters
-    ----------
-    model_a : nn.Module
-        The first model to compare.
-    model_b : nn.Module
-        The second model to compare.
-
-    Returns
-    -------
-    bool
-        Returns True if both models have identical parameters, False otherwise.
-    """
-    return all(
-        torch.equal(param_a[1], param_b[1])
-        for param_a, param_b in zip(model_a.state_dict().items(), model_b.state_dict().items())
-    )
+from omnivault.utils.torch_utils.model_utils import compare_models
 
 
 class State(BaseModel):
