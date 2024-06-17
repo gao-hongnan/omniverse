@@ -33,7 +33,20 @@ import numpy as np
 import torch
 import torch.backends.cudnn
 
-__all__ = ["seed_all", "seed_worker", "configure_deterministic_mode"]
+__all__ = [
+    "seed_all",
+    "seed_worker",
+    "configure_deterministic_mode",
+    "raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer",
+]
+
+max_seed_value = np.iinfo(np.uint32).max
+min_seed_value = np.iinfo(np.uint32).min
+
+
+def raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer(value: int) -> None:
+    if not (min_seed_value <= value <= max_seed_value):
+        raise ValueError(f"Seed must be within the range [{min_seed_value}, {max_seed_value}]")
 
 
 def configure_deterministic_mode() -> None:
@@ -89,6 +102,8 @@ def seed_all(
     seed : int
         The seed number used for reproducibility.
     """
+    raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer(seed)
+
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
     np.random.seed(seed)                           # numpy pseudo-random generator
@@ -97,8 +112,8 @@ def seed_all(
     if seed_torch:
         torch.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)           # pytorch (both CPU and CUDA)
-        torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.enabled = False
 
         if set_torch_deterministic:
