@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["check_git_status", "get_git_commit_hash", "commit_changes", "push_changes"]
 
+
 def check_git_status(working_dir: str | None = None) -> bool:
     """
     Check the Git status of the working directory. If there are untracked or
