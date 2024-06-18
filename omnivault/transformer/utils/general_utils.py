@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-import gc
 import logging
 import os
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, Generator, List, Literal
+from typing import Generator, List, Literal
 
 import requests
 import torch
@@ -15,6 +14,7 @@ from rich.console import Console
 from rich.logging import RichHandler
 
 from omnivault.transformer.core.state import State
+from omnivault.utils.torch_utils.cleanup import purge_global_scope
 
 PYTORCH_DTYPE_MAP = {"float32": torch.float32, "bfloat16": torch.bfloat16, "float16": torch.float16}
 
@@ -75,28 +75,8 @@ def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str, N
         shutil.rmtree(temp_dir)
 
 
-def cleanup(object_or_objects: Any | List[Any]) -> None:
-    """
-    Deletes the provided objects and performs cleanup.
-
-    Parameters
-    ----------
-    objects: List[Any]
-        The list of objects to be deleted.
-    """
-    if isinstance(object_or_objects, list):
-        for obj in object_or_objects:
-            del obj
-    else:
-        del object_or_objects
-
-    gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-
-
 def validate_and_cleanup(
-    state_1: State, state_2: State, objects: List[Any], logger: logging.Logger | None = None
+    state_1: State, state_2: State, objects: List[str], logger: logging.Logger | None = None
 ) -> None:
     """
     Validates the equality of two State instances and performs cleanup by deleting
@@ -142,7 +122,7 @@ def validate_and_cleanup(
     except AssertionError as err:
         logger.exception(err)
     finally:
-        cleanup(objects)
+        purge_global_scope(objects)
 
 
 def create_directory(path: str) -> None:

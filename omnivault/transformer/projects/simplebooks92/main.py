@@ -39,9 +39,9 @@ from omnivault.transformer.core.state import State
 from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
-from omnivault.transformer.utils.general_utils import cleanup
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.reproducibility.seed import seed_all
+from omnivault.utils.torch_utils.cleanup import purge_global_scope
 
 seed_all(set_torch_deterministic=False)  # set to False since it may cause a slight increase in memory usage
 tf.random.set_seed(1992)
@@ -443,4 +443,4 @@ if __name__ == "__main__":
     history = _trained_state.history
     _ = save_plot_history(history, plot=False, save_path=f"{composer.trainer.save_dir}/history.png")
 
-    cleanup([optimizer, state, trainer])
+    purge_global_scope(["optimizer", "state", "trainer"])

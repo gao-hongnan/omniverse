@@ -329,7 +329,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
     validate_and_cleanup(
         state_1=_trained_state,
         state_2=loaded_state,
-        objects=[model, criterion, optimizer, scheduler, tokenizer, vocabulary, trainer],
+        objects=["model", "criterion", "optimizer", "scheduler", "tokenizer", "vocabulary", "trainer"],
         logger=None,
     )
 
