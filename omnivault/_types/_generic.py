@@ -6,7 +6,9 @@ from omnivault.linear_algebra.vector import Vector
 
 # fmt: off
 T            = TypeVar("T", covariant=False, contravariant=False)
+_T           = TypeVar("_T", covariant=False, contravariant=False) # noqa: PYI018
 T_co         = TypeVar('T_co', covariant=True)
+T_obj        = TypeVar('T_obj', bound=object, covariant=False, contravariant=False)
 K            = TypeVar("K", covariant=False, contravariant=False)
 V            = TypeVar("V", covariant=False, contravariant=False)
 K_co         = TypeVar("K_co", covariant=True)

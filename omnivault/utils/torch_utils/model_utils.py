@@ -36,12 +36,64 @@ def get_named_modules(model: nn.Module, **kwargs: Any) -> List[Dict[str, str]]:
     -------
     List[Dict[str, str]]
         A list of dictionaries containing the name and type of each module in the model.
+
+    Examples
+    --------
+    >>> from torchvision.models import resnet18, ResNet18_Weights
+    >>> backbone = resnet18(weights=ResNet18_Weights.DEFAULT)
+    >>> named_modules = get_named_modules(backbone)
     """
     named_modules = []
     for module in model.named_modules(**kwargs):
         module_name, module_type = module
         named_modules.append({str(module_name): str(module_type)})
     return named_modules
+
+
+def gather_weight_stats(model: nn.Module, **kwargs: Any) -> Dict[str, Dict[str, float]]:
+    """Return the mean and standard deviation of weights and biases in the model. Sanity
+    check to ensure that the weights and biases are initialized correctly.
+
+    Parameters
+    ----------
+    model : nn.Module
+        The model to extract weight statistics from.
+    **kwargs : Any
+        Additional keyword arguments to pass to the `named_modules` method.
+
+    Returns
+    -------
+    Dict[str, Dict[str, float]]
+        A dictionary containing the mean and standard deviation of weights and biases in the model.
+
+    Examples
+    --------
+    >>> from torchvision.models import resnet18, ResNet18_Weights
+    >>> backbone = resnet18(weights=ResNet18_Weights.DEFAULT)
+    >>> stats = gather_weight_stats(backbone)
+    """
+    stats = {}
+    for module in model.named_modules(**kwargs):
+        module_name, module_type = module
+        assert isinstance(module_type, nn.Module)
+        if (
+            hasattr(module_type, "weight")
+            and isinstance(module_type.weight, torch.nn.Parameter)
+            and module_type.weight is not None
+        ):
+            weight = module_type.weight.data
+            weight_key = f"{module_name}+{str(module_type)}_weight"
+            stats[weight_key] = {"w_mean": weight.mean().item(), "w_std": weight.std().item()}
+
+        if (
+            hasattr(module_type, "bias")
+            and isinstance(module_type.bias, torch.nn.Parameter)
+            and module_type.bias is not None
+        ):
+            bias = module_type.bias.data
+            bias_key = f"{module_name}+{str(module_type)}_bias"
+            stats[bias_key] = {"b_mean": bias.mean().item(), "b_std": bias.std().item()}
+    return stats
 
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:

@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.theme import Theme
 
-from omnivault._types._sentinel import MISSING
+from omnivault._types._sentinel import MISSING, Singleton
 
 DEFAULT_CONSOLE = Console(
     theme=Theme(
@@ -41,8 +41,8 @@ class CustomFormatter(logging.Formatter):
 
 
 # NOTE: quirks = https://github.com/Textualize/rich/issues/459
-@dataclass
-class RichLogger:
+@dataclass(frozen=False)
+class RichLogger(metaclass=Singleton):
     """
     Class for logger. Consider using singleton design to maintain only one
     instance of logger (i.e., shared logger).
@@ -139,15 +139,17 @@ class RichLogger:
     session_log_dir: str | Path | None = field(default=None, init=False)
     logger: logging.Logger = field(init=False)
 
-    def __post_init__(self) -> None:
-        # consider if bool(self.log_file) != bool(self.log_root_dir) is better
-        assert (self.log_file is None and self.log_root_dir is None) or (
-            self.log_file is not None and self.log_root_dir is not None
-        ), "Both log_file and log_root_dir must be provided, or neither should be provided."
+    _initialized: bool = field(init=False)
 
-        if not self.rich_handler_config.get("console") or self.rich_handler_config["console"] is MISSING:
-            self.rich_handler_config["console"] = DEFAULT_CONSOLE
-        self.logger = self._init_logger()
+    def __post_init__(self) -> None:
+        if bool(self.log_file) != bool(self.log_root_dir):
+            raise AssertionError("Both log_file and log_root_dir must be provided, or neither should be provided.")
+
+        if not hasattr(self, "_initialized"):  # no-ops if `_initialized`.
+            self._initialized = True
+            if not self.rich_handler_config.get("console") or self.rich_handler_config["console"] is MISSING:
+                self.rich_handler_config["console"] = DEFAULT_CONSOLE
+            self.logger = self._init_logger()
 
     def _create_log_output_dir(self) -> Path:
         try:
@@ -179,6 +181,7 @@ class RichLogger:
 
     def _create_file_handler(self, log_file_path: Path) -> logging.FileHandler:
         file_handler = logging.FileHandler(filename=str(log_file_path))
+        file_handler.setLevel(level=logging.DEBUG)
         file_handler.setFormatter(
             CustomFormatter(
                 "%(asctime)s [%(levelname)s] %(pathname)s %(funcName)s L%(lineno)d: %(message)s",
@@ -190,8 +193,8 @@ class RichLogger:
     def _init_logger(self) -> logging.Logger:
         # get module name, useful for multi-module logging
         logger = logging.getLogger(self.module_name or __name__)
+        logger.setLevel(self.rich_handler_config["level"])  # set root level
 
-        logger.setLevel(self.rich_handler_config["level"])
         logger.addHandler(self._create_stream_handler())
 
         log_file_path = self._get_log_file_path()
