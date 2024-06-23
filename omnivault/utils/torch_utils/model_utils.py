@@ -1,5 +1,10 @@
+from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple
 
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
 import torch
 from torch import nn
 
@@ -71,6 +76,9 @@ def gather_weight_stats(model: nn.Module, **kwargs: Any) -> Dict[str, Dict[str, 
     >>> from torchvision.models import resnet18, ResNet18_Weights
     >>> backbone = resnet18(weights=ResNet18_Weights.DEFAULT)
     >>> stats = gather_weight_stats(backbone)
+    >>> stats_df = prepare_stats_dataframe(stats)
+    >>> plot_distribution_stats(stats_df)
+    >>> plot_distribution_stats(stats_df, layer_type="Conv2d")
     """
     stats = {}
     for module in model.named_modules(**kwargs):
@@ -82,7 +90,7 @@ def gather_weight_stats(model: nn.Module, **kwargs: Any) -> Dict[str, Dict[str, 
             and module_type.weight is not None
         ):
             weight = module_type.weight.data
-            weight_key = f"{module_name}+{str(module_type)}_weight"
+            weight_key = f"{module_name}+{str(module_type.__class__.__name__)}_weight"
             stats[weight_key] = {"w_mean": weight.mean().item(), "w_std": weight.std().item()}
 
         if (
@@ -91,9 +99,51 @@ def gather_weight_stats(model: nn.Module, **kwargs: Any) -> Dict[str, Dict[str, 
             and module_type.bias is not None
         ):
             bias = module_type.bias.data
-            bias_key = f"{module_name}+{str(module_type)}_bias"
+            bias_key = f"{module_name}+{str(module_type.__class__.__name__)}_bias"
             stats[bias_key] = {"b_mean": bias.mean().item(), "b_std": bias.std().item()}
     return stats
+
+
+def prepare_stats_dataframe(stats_dict: Dict[str, Dict[str, float]]) -> pd.DataFrame:
+    """Use in conjunction with the `gather_weight_stats` function to prepare a DataFrame
+    for visualization of weight and bias statistics."""
+    data = []
+    for key, values in stats_dict.items():
+        layer_name, layer_type = key.rsplit("+", 1)
+        layer_name = "+".join(layer_name.split("+")[:-1])
+        layer_type = layer_type.replace("_weight", "").replace("_bias", "")
+
+        data.append(
+            {
+                "layer_name": layer_name,
+                "layer_type": layer_type,
+                "parameter_type": "Weight" if "weight" in key else "Bias",
+                "mean": values["w_mean"] if "weight" in key else values["b_mean"],
+                "std": values["w_std"] if "weight" in key else values["b_std"],
+            }
+        )
+    return pd.DataFrame(data)
+
+
+def plot_distribution_stats(df: pd.DataFrame, layer_type: str | None = None) -> None:
+    """Use in conjunction with the `prepare_stats_dataframe` function to visualize the
+    distribution of weight and bias statistics."""
+    if layer_type:
+        df = df[df["layer_type"] == layer_type]
+
+    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    sns.histplot(df[df["parameter_type"] == "Weight"], x="mean", kde=True, color="blue", ax=axes[0, 0])
+    axes[0, 0].set_title("Distribution of Weights Means")
+    sns.histplot(df[df["parameter_type"] == "Weight"], x="std", kde=True, color="blue", ax=axes[0, 1])
+    axes[0, 1].set_title("Distribution of Weights Standard Deviations")
+
+    sns.histplot(df[df["parameter_type"] == "Bias"], x="mean", kde=True, color="red", ax=axes[1, 0])
+    axes[1, 0].set_title("Distribution of Biases Means")
+    sns.histplot(df[df["parameter_type"] == "Bias"], x="std", kde=True, color="red", ax=axes[1, 1])
+    axes[1, 1].set_title("Distribution of Biases Standard Deviations")
+
+    plt.tight_layout()
+    plt.show()
 
 
 def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
