@@ -14,6 +14,9 @@ __all__ = [
     "compare_models",
     "compare_models_and_report_differences",
     "get_named_modules",
+    "gather_weight_stats",
+    "prepare_stats_dataframe",
+    "plot_distribution_stats",
 ]
 
 
@@ -182,8 +185,9 @@ def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module
     Returns
     -------
     Tuple[bool, Any]
-        Returns a tuple with the first element as a boolean indicating if the models are identical.
-        The second element is a dictionary containing the differences between the models if they are not identical.
+        Returns a tuple with the first element as a boolean indicating if the
+        models are identical. The second element is a dictionary containing the
+        differences between the models if they are not identical.
     """
     model_a_dict = model_a.state_dict()
     model_b_dict = model_b.state_dict()
