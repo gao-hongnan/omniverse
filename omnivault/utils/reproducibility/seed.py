@@ -37,14 +37,14 @@ __all__ = [
     "seed_all",
     "seed_worker",
     "configure_deterministic_mode",
-    "raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer",
+    "raise_error_if_seed_is_negative_or_outside_32_bit_unsigned_integer",
 ]
 
 max_seed_value = np.iinfo(np.uint32).max
 min_seed_value = np.iinfo(np.uint32).min
 
 
-def raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer(value: int) -> None:
+def raise_error_if_seed_is_negative_or_outside_32_bit_unsigned_integer(value: int) -> None:
     if not (min_seed_value <= value <= max_seed_value):
         raise ValueError(f"Seed must be within the range [{min_seed_value}, {max_seed_value}]")
 
@@ -102,7 +102,7 @@ def seed_all(
     seed : int
         The seed number used for reproducibility.
     """
-    raise_error_if_seed_non_negative_and_within_32_bit_unsigned_integer(seed)
+    raise_error_if_seed_is_negative_or_outside_32_bit_unsigned_integer(seed)
 
     # fmt: off
     os.environ["PYTHONHASHSEED"] = str(seed)       # set PYTHONHASHSEED env var at fixed value
