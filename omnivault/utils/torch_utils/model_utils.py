@@ -412,12 +412,13 @@ class Freezer:
 
     def update_freezing_status(self) -> None:
         """
-        Update the freezing status of all parameters in the model.
+        Update the freezing status of all parameters in the model. So `True` means
+        the parameter is frozen, and `False` means it is trainable.
         """
         for name, param in self.model.named_parameters():
             self.frozen_status[name] = not param.requires_grad
 
-    def freeze_by_index(self, indices: List[int]) -> None:
+    def freeze_by_index(self, indices: List[int], submodule_path: str | None = None) -> None:
         """
         Freeze layers based on their index in the ordered list of model's children.
 
@@ -425,7 +426,17 @@ class Freezer:
         ----------
         indices : List[int]
             List of indices of the layers to freeze.
+        submodule_path : str, optional
+            The path to the submodule to freeze in the model. For example, if the model
+            has a submodule `backbone` with a Conv2d layer at index 0, then the path
+            would be `backbone`.
         """
+
+        target = self.model
+        if submodule_path:
+            for attr in submodule_path.split("."):
+                target = getattr(target, attr)
+
         for idx, child in enumerate(self.model.children()):
             if idx in indices:
                 for param in child.parameters():
@@ -445,6 +456,19 @@ class Freezer:
         for name, param in self.model.named_parameters():
             if any(n in name for n in names):
                 param.requires_grad = False
+        self.update_freezing_status()
+
+    def freeze_by_module(self, module: nn.Module) -> None:
+        """
+        Freeze all parameters in the specified module.
+
+        Parameters
+        ----------
+        module : nn.Module
+            The module to freeze the parameters in.
+        """
+        for param in module.parameters():
+            param.requires_grad = False
         self.update_freezing_status()
 
     def report_freezing(self) -> Dict[str, bool]:
