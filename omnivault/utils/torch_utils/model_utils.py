@@ -437,7 +437,7 @@ class Freezer:
             for attr in submodule_path.split("."):
                 target = getattr(target, attr)
 
-        for idx, child in enumerate(self.model.children()):
+        for idx, child in enumerate(target.children()):
             if idx in indices:
                 for param in child.parameters():
                     param.requires_grad = False
