@@ -1,6 +1,7 @@
 import json
 from typing import Any
 
+
 def dump_json(data: Any, filepath: str, **kwargs: Any) -> None:
     """
     Dumps data to a JSON file.
@@ -14,9 +15,8 @@ def dump_json(data: Any, filepath: str, **kwargs: Any) -> None:
     kwargs: Any
         Additional keyword arguments for `json.dump()`.
     """
-    with open(filepath, 'w') as file:
+    with open(filepath, "w") as file:
         json.dump(data, file, **kwargs)
-
 
 
 def load_json(filepath: str, **kwargs: Any) -> Any:
@@ -35,6 +35,5 @@ def load_json(filepath: str, **kwargs: Any) -> Any:
     Any
         The Python data loaded from the JSON file.
     """
-    with open(filepath, 'r') as file:
+    with open(filepath, "r") as file:
         return json.load(file, **kwargs)
-
