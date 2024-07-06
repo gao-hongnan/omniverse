@@ -46,7 +46,9 @@ def log_message_if_working_dir_is_none(working_dir: str | None = None) -> None:
     logger.info(f"Working directory: {working_dir}")
 
 
-def get_git_commit_hash(working_dir: str | None = None, are_there_untracked_or_uncommitted: bool = False) -> str:
+def get_git_commit_hash(
+    working_dir: str | None = None, are_there_untracked_or_uncommitted: bool = False, short: bool = True
+) -> str:
     """
     Get the current Git commit hash.
 
@@ -61,6 +63,9 @@ def get_git_commit_hash(working_dir: str | None = None, are_there_untracked_or_u
     are_there_untracked_or_uncommitted : Literal[True, False], optional
         Whether to check if there are untracked or uncommitted changes in the
         working directory, by default False.
+    short : bool
+        Whether to return the short commit hash (7 characters) or the full hash,
+        by default True.
 
     Returns
     -------
@@ -70,7 +75,7 @@ def get_git_commit_hash(working_dir: str | None = None, are_there_untracked_or_u
     """
     log_message_if_working_dir_is_none(working_dir)
 
-    git_command = ["git", "rev-parse", "HEAD"]
+    git_command = ["git", "rev-parse", "--short", "HEAD"] if short else ["git", "rev-parse", "HEAD"]
 
     try:
         if are_there_untracked_or_uncommitted and not check_git_status(working_dir):
