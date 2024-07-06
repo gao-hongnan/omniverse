@@ -1,4 +1,5 @@
 import json
+import pickle
 from typing import Any
 
 
@@ -37,3 +38,36 @@ def load_json(filepath: str, **kwargs: Any) -> Any:
     """
     with open(filepath, "r") as file:
         return json.load(file, **kwargs)
+
+
+def pickle_dump(obj: Any, filepath: str) -> None:
+    """
+    Serializes an object to a binary file using pickle.
+
+    Parameters
+    ----------
+    obj : Any
+        The object to serialize.
+    filepath : str
+        The path to the file where the object will be stored.
+    """
+    with open(filepath, "wb") as file:
+        pickle.dump(obj, file)
+
+
+def pickle_load(filepath: str) -> Any:
+    """
+    Deserializes an object from a binary file using pickle.
+
+    Parameters
+    ----------
+    filepath : str
+        The path to the file from which the object will be loaded.
+
+    Returns
+    -------
+    Any
+        The deserialized Python object.
+    """
+    with open(filepath, "rb") as file:
+        return pickle.load(file)
