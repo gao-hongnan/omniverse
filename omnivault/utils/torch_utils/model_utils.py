@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 import torch
+import torch.optim as optim
 from torch import nn
 
 __all__ = [
@@ -17,6 +18,10 @@ __all__ = [
     "gather_weight_stats",
     "prepare_stats_dataframe",
     "plot_distribution_stats",
+    "get_named_parameters",
+    "Freezer",
+    "freeze_layers",
+    "check_optimizer_coverage",
 ]
 
 
@@ -580,3 +585,36 @@ def freeze_layers(module: nn.Module) -> None:
     """
     for parameter in module.parameters():
         parameter.requires_grad = False
+
+
+def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> Dict[str, nn.Parameter]:
+    """
+    Checks if all parameters in the given model are covered by the optimizer's
+    parameter groups.
+
+    Parameters
+    ----------
+    model: nn.Module
+        The model for which the optimizer is used.
+    optimizer: optim.Optimizer
+        The optimizer that should be checked.
+
+    Returns
+    -------
+    uncovered_params: Dict[str, nn.Parameter]
+        A dictionary containing all model parameters that are not covered by the
+        optimizer's parameter groups. The keys are the parameter names and the
+        values are the corresponding parameter tensors.
+    """
+    # 1. we gather all model parameters with names
+    model_params: Dict[str, nn.Parameter] = dict(model.named_parameters())
+
+    # 2. we gather all optimizer parameters
+    optimizer_params: Set[nn.Parameter] = {param for group in optimizer.param_groups for param in group["params"]}
+
+    # 3. we check if all parameters are covered
+    uncovered_params: Dict[str, nn.Parameter] = {
+        name: param for name, param in model_params.items() if param not in optimizer_params
+    }
+
+    return uncovered_params
