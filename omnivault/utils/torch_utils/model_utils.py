@@ -367,6 +367,92 @@ def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module
         return True, None
 
 
+def _init_weights(module: nn.Module, **kwargs: Any) -> None:
+    """Initialize the weights. This is a helper function to initialize the weights
+    of a torch model.
+
+    Parameters
+    ----------
+    module : nn.Module
+        The module to initialize the weights. It can be the model itself, or
+        a sub-module of the model such as `nn.Linear`, `nn.Embedding`, `nn.LayerNorm`.
+    kwargs : Any
+        Additional keyword arguments to pass to the initialization method.
+        This is like a _universal_ way to accept configuration.
+
+    Examples
+    --------
+    >>> from torch import nn
+    >>> model = nn.Sequential(
+    ...     nn.Linear(10, 10),
+    ...     nn.ReLU(),
+    ...     nn.Embedding(10, 10),
+    ...     nn.LayerNorm(10),
+    ... )
+    >>> model.apply(lambda module: _init_weights(module, init_method="xavier_uniform", gain=10.0))
+    """
+    # std = self.config.initializer_range
+    init_method = kwargs.get("init_method", "normal")
+
+    if isinstance(module, nn.Linear):
+        if init_method == "normal":
+            module.weight.data.normal_(mean=kwargs.get("mean", 0.0), std=kwargs.get("std", 0.02))
+        elif init_method == "xavier_uniform":
+            module.weight.data = nn.init.xavier_uniform_(module.weight.data, gain=kwargs.get("gain", 1.0))
+        elif init_method == "xavier_normal":
+            module.weight.data = nn.init.xavier_normal_(module.weight.data, gain=kwargs.get("gain", 1.0))
+        elif init_method == "kaiming_uniform":
+            module.weight.data = nn.init.kaiming_uniform_(
+                module.weight.data,
+                kwargs.get("a", 0),
+                kwargs.get("mode", "fan_in"),
+                kwargs.get("nonlinearity", "leaky_relu"),
+            )
+        elif init_method == "kaiming_normal":
+            module.weight.data = nn.init.kaiming_normal_(
+                module.weight.data,
+                kwargs.get("a", 0),
+                kwargs.get("mode", "fan_in"),
+                kwargs.get("nonlinearity", "leaky_relu"),
+            )
+        elif init_method == "orthogonal":
+            module.weight.data = nn.init.orthogonal_(module.weight.data, kwargs.get("gain", 1.0))
+
+        if module.bias is not None:
+            module.bias.data.zero_()
+
+    elif isinstance(module, nn.Embedding):
+        if init_method == "normal":
+            module.weight.data.normal_(mean=kwargs.get("mean", 0.0), std=kwargs.get("std", 0.02))
+        elif init_method == "xavier_uniform":
+            module.weight.data = nn.init.xavier_uniform_(module.weight.data, gain=kwargs.get("gain", 1.0))
+        elif init_method == "xavier_normal":
+            module.weight.data = nn.init.xavier_normal_(module.weight.data, gain=kwargs.get("gain", 1.0))
+        elif init_method == "kaiming_uniform":
+            module.weight.data = nn.init.kaiming_uniform_(
+                module.weight.data,
+                kwargs.get("a", 0),
+                kwargs.get("mode", "fan_in"),
+                kwargs.get("nonlinearity", "leaky_relu"),
+            )
+        elif init_method == "kaiming_normal":
+            module.weight.data = nn.init.kaiming_normal_(
+                module.weight.data,
+                kwargs.get("a", 0),
+                kwargs.get("mode", "fan_in"),
+                kwargs.get("nonlinearity", "leaky_relu"),
+            )
+        elif init_method == "orthogonal":
+            module.weight.data = nn.init.orthogonal_(module.weight.data, kwargs.get("gain", 1.0))
+
+        if module.padding_idx is not None:
+            module.weight.data[module.padding_idx].zero_()
+
+    elif isinstance(module, nn.LayerNorm):
+        module.bias.data.zero_()
+        module.weight.data.fill_(1.0)
+
+
 class Freezer:
     """A utility class for freezing and unfreezing parameters in a PyTorch model.
 
