@@ -618,3 +618,23 @@ def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> Di
     }
 
     return uncovered_params
+
+
+def check_model_layer_dtype_and_trainable(model: nn.Module) -> Dict[str, Tuple[str, bool]]:
+    """
+    Check the dtype and whether the layer is trainable or not.
+
+    Parameters
+    ----------
+    model: nn.Module
+        The model to check the dtype and trainable status.
+
+    Returns
+    -------
+    Dict[str, Tuple[str, bool]]
+        A dictionary containing the dtype and trainable status of each layer in the model.
+    """
+    layer_dtype_trainable_status: Dict[str, Tuple[str, bool]] = {}
+    for name, param in model.named_parameters():
+        layer_dtype_trainable_status[name] = (str(param.dtype), param.requires_grad)
+    return layer_dtype_trainable_status
