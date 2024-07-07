@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Tuple, Type
+from typing import Dict, List, Sequence, Tuple, Type
 
 from torch import nn
 
@@ -8,9 +8,11 @@ ALL_LAYERNORM_LAYERS = [nn.LayerNorm]
 BLACKLISTED: List[str] = ["bias", "LayerNorm.weight", "LayerNorm.bias"]  # CHANGE AS YOU WISH
 
 
-def get_parameter_names(model: nn.Module, forbidden_layer_types: List[Type[nn.Module]]) -> List[str]:
+def get_parameter_names(model: nn.Module, forbidden_layer_types: Sequence[Type[nn.Module]]) -> List[str]:
     """
     Returns the names of the model parameters that are not inside a forbidden layer.
+
+    Source: Huggingface
     """
     result = []
     for name, child in model.named_children():
@@ -24,14 +26,17 @@ def get_parameter_names(model: nn.Module, forbidden_layer_types: List[Type[nn.Mo
     return result
 
 
-def get_decay_parameter_names(model: nn.Module) -> List[str]:
+def get_decay_parameter_names(model: nn.Module, blacklisted: Sequence[Type[nn.Module]] | None = None) -> List[str]:
     """
     Get all parameter names that weight decay will be applied to
 
     Note that some models implement their own layernorm instead of calling nn.LayerNorm, weight decay could still
-    apply to those modules since this function only filter out instance of nn.LayerNorm
+    apply to those modules since this function only filter out instance of nn.LayerNorm.
+
+    Source: Huggingface
     """
-    decay_parameters = get_parameter_names(model, ALL_LAYERNORM_LAYERS)
+    blacklisted = blacklisted or ALL_LAYERNORM_LAYERS
+    decay_parameters = get_parameter_names(model, blacklisted)
     decay_parameters = [name for name in decay_parameters if "bias" not in name]
     return decay_parameters
 
