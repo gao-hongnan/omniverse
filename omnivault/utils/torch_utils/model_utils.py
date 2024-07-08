@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Set, Tuple, TypedDict
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -22,6 +22,7 @@ __all__ = [
     "Freezer",
     "freeze_layers",
     "check_optimizer_coverage",
+    "get_model_layer_info",
 ]
 
 
@@ -213,8 +214,8 @@ def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.
     """
     named_parameters = []
     for _parameter in module.named_parameters(**kwargs):
-        parameter_name, parameter_type = _parameter
-        named_parameters.append({str(parameter_name): parameter_type})
+        parameter_name, parameter = _parameter
+        named_parameters.append({str(parameter_name): parameter})
     return named_parameters
 
 
@@ -616,13 +617,19 @@ def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> Di
     uncovered_params: Dict[str, nn.Parameter] = {
         name: param for name, param in model_params.items() if param not in optimizer_params
     }
-
     return uncovered_params
 
 
-def check_model_layer_dtype_and_trainable(model: nn.Module) -> Dict[str, Tuple[str, bool]]:
+class LayerInfo(TypedDict):
+    layer_name: str
+    layer_parameters: int
+    dtype: str
+    trainable: bool
+
+
+def get_model_layer_info(model: nn.Module) -> List[LayerInfo]:
     """
-    Check the dtype and whether the layer is trainable or not.
+    A utility function to get information about the layers in a PyTorch model.
 
     Parameters
     ----------
@@ -631,10 +638,25 @@ def check_model_layer_dtype_and_trainable(model: nn.Module) -> Dict[str, Tuple[s
 
     Returns
     -------
-    Dict[str, Tuple[str, bool]]
-        A dictionary containing the dtype and trainable status of each layer in the model.
+    List[LayerInfo]
+        A list of dictionaries containing the layer name, number of parameters,
+        dtype, and whether the layer is trainable or not.
+
+    Examples
+    --------
+    >>> from transformers import AutoModelForSequenceClassification
+    >>> model = AutoModelForSequenceClassification.from_pretrained("microsoft/deberta-v3-small")
+    >>> model_layers_info = get_model_layer_info(model)
     """
-    layer_dtype_trainable_status: Dict[str, Tuple[str, bool]] = {}
-    for name, param in model.named_parameters():
-        layer_dtype_trainable_status[name] = (str(param.dtype), param.requires_grad)
-    return layer_dtype_trainable_status
+    model_layers_info: List[LayerInfo] = []
+    for parameter_name, parameter in model.named_parameters():
+        this_layer_num_parameters = int(torch.prod(torch.tensor(parameter.size())))
+        model_layers_info.append(
+            {
+                "layer_name": parameter_name,
+                "layer_parameters": this_layer_num_parameters,
+                "dtype": str(parameter.data.dtype),
+                "trainable": bool(parameter.requires_grad),
+            }
+        )
+    return model_layers_info
