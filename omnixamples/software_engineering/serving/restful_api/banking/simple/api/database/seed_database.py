@@ -21,7 +21,7 @@ from pathlib import Path
 from api.models import Base
 from api.models.account import Account
 from api.models.transaction import Transaction
-from common_utils.core.common import seed_all
+from omnivault.utils.reproducibility.seed import seed_all
 from faker import Faker
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
