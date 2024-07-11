@@ -690,7 +690,7 @@ for a more comprehensive walkthrough of the GPT-2 model architecture, annotated
 with code.
 ```
 
-## Autoregressive Self-Supervised Learning Paradigm
+## The Autoregressive Self-Supervised Learning Paradigm
 
 Let $\mathcal{D}$ be the true but unknown distribution of the natural language
 space. In the context of unsupervised learning with self-supervision, such as

@@ -4,10 +4,10 @@
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 
-The realm of **natural language processing** (NLP) has been transformed by the
-advent of **decoder-based transformers**, a cornerstone in the latest
-breakthroughs in AI language models. These architectures, which diverge from the
-traditional **encoder-decoder** framework of the pioneering
+**Natural language processing** (NLP) has been transformed by the rise of
+**decoder-based transformers**, a cornerstone in the latest breakthroughs in AI
+language models. These architectures, which diverge from the traditional
+**encoder-decoder** framework of the pioneering
 [_Attention Is All You Need_](https://arxiv.org/abs/1706.03762) paper, are
 exclusively focused on the generative aspects of language processing. This
 singular focus has propelled them to the forefront of tasks like **text
