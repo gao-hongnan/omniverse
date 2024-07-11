@@ -1230,14 +1230,22 @@ trainable.</p></li>
 <p>One of the matrices must be zero at initialization to ensure that the
 initial state of the adaptation <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> does not alter the
 pre-trained weights <span class="math notranslate nohighlight">\(\mathbf{W}\)</span>, allowing the training process to start
-from the original pre-trained state. As to why
-<span class="math notranslate nohighlight">\(\mathbf{A} \sim \mathcal{N}(0, \sigma^2)\)</span>, this is a common initialization
-strategy for neural networks to break the symmetry and ensure that the
-gradients are not too small or too large at the beginning of training. Just
-remember, vanishing and exploding gradients are bad, and we want to avoid
-them. How to avoid them is to make sure your initial conditions are good,
-what it means by good is say each layer weights has similar distribution
-(mean and variance) and so pertubations won’t be too large or too small.</p>
+from the original pre-trained state. In simpler words, your first forward
+pass of the model should be from the original pre-trained weights
+<span class="math notranslate nohighlight">\(\mathbf{W}\)</span>, and not from some random lora weights.</p>
+<p>As to why <span class="math notranslate nohighlight">\(\mathbf{A} \sim \mathcal{N}(0, \sigma^2)\)</span>, this is a common
+initialization strategy for neural networks to break the symmetry and ensure
+that the gradients are not too small or too large at the beginning of
+training. Just remember, vanishing and exploding gradients are bad, and we
+want to avoid them. How to avoid them is to make sure your initial
+conditions are good, what it means by good is say each layer weights has
+similar distribution (mean and variance) and so pertubations won’t be too
+large or too small. If you ask “if <span class="math notranslate nohighlight">\(\mathbf{B} \mathbf{A}\)</span> is zero, why
+don’t we just initialize <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> to zero as well?” - I think one needs
+to know that the backpropagation process update both weights <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>
+and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> <em>separately</em> and we want stable gradient flow, so
+<span class="math notranslate nohighlight">\(\mathbf{A}\)</span> breaks the symmetry! Remember if both are zero then you can
+intuitively understand that the gradients will be zero as well.</p>
 </li>
 <li><p>They have a scaling factor, where they scale <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> by
 <span class="math notranslate nohighlight">\(\frac{\alpha}{r}\)</span>. In LoRA paper, <span class="math notranslate nohighlight">\(\alpha\)</span> is constant in <span class="math notranslate nohighlight">\(r\)</span> means that if
@@ -1245,8 +1253,10 @@ once you fix a value of <span class="math notranslate nohighlight">\(r\)</span> 
 <span class="math notranslate nohighlight">\(\alpha\)</span> constant for all future experiments with different values of <span class="math notranslate nohighlight">\(r\)</span> -
 because you can tune the learning rate scheduler’s <span class="math notranslate nohighlight">\(\eta\)</span> instead because yes
 both <span class="math notranslate nohighlight">\(\alpha\)</span> is pretty similar in <em>scaling the gradients
-<span class="math notranslate nohighlight">\(\nabla \mathbf{W}\)</span></em>. Note for less confusion, we use <span class="math notranslate nohighlight">\(\eta\)</span> for the learning
-rate in the optimizer and <span class="math notranslate nohighlight">\(\alpha\)</span> for the scaling factor in LoRA.</p>
+<span class="math notranslate nohighlight">\(\nabla \mathbf{W}\)</span></em> because by the chain rule, any scaling of the weights
+will proportionally affect the gradients! Note for less confusion, we use
+<span class="math notranslate nohighlight">\(\eta\)</span> for the learning rate in the optimizer and <span class="math notranslate nohighlight">\(\alpha\)</span> for the scaling
+factor in LoRA.</p>
 <div class="math notranslate nohighlight">
 \[
      \begin{aligned}

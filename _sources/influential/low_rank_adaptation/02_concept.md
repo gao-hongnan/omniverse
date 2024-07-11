@@ -679,14 +679,23 @@ However, three nuances here:
     One of the matrices must be zero at initialization to ensure that the
     initial state of the adaptation $\Delta \mathbf{W}$ does not alter the
     pre-trained weights $\mathbf{W}$, allowing the training process to start
-    from the original pre-trained state. As to why
-    $\mathbf{A} \sim \mathcal{N}(0, \sigma^2)$, this is a common initialization
-    strategy for neural networks to break the symmetry and ensure that the
-    gradients are not too small or too large at the beginning of training. Just
-    remember, vanishing and exploding gradients are bad, and we want to avoid
-    them. How to avoid them is to make sure your initial conditions are good,
-    what it means by good is say each layer weights has similar distribution
-    (mean and variance) and so pertubations won't be too large or too small.
+    from the original pre-trained state. In simpler words, your first forward
+    pass of the model should be from the original pre-trained weights
+    $\mathbf{W}$, and not from some random lora weights.
+
+    As to why $\mathbf{A} \sim \mathcal{N}(0, \sigma^2)$, this is a common
+    initialization strategy for neural networks to break the symmetry and ensure
+    that the gradients are not too small or too large at the beginning of
+    training. Just remember, vanishing and exploding gradients are bad, and we
+    want to avoid them. How to avoid them is to make sure your initial
+    conditions are good, what it means by good is say each layer weights has
+    similar distribution (mean and variance) and so pertubations won't be too
+    large or too small. If you ask "if $\mathbf{B} \mathbf{A}$ is zero, why
+    don't we just initialize $\mathbf{A}$ to zero as well?" - I think one needs
+    to know that the backpropagation process update both weights $\mathbf{A}$
+    and $\mathbf{B}$ _separately_ and we want stable gradient flow, so
+    $\mathbf{A}$ breaks the symmetry! Remember if both are zero then you can
+    intuitively understand that the gradients will be zero as well.
 
 3. They have a scaling factor, where they scale $\Delta \mathbf{W}$ by
    $\frac{\alpha}{r}$. In LoRA paper, $\alpha$ is constant in $r$ means that if
@@ -694,8 +703,10 @@ However, three nuances here:
    $\alpha$ constant for all future experiments with different values of $r$ -
    because you can tune the learning rate scheduler's $\eta$ instead because yes
    both $\alpha$ is pretty similar in _scaling the gradients
-   $\nabla \mathbf{W}$_. Note for less confusion, we use $\eta$ for the learning
-   rate in the optimizer and $\alpha$ for the scaling factor in LoRA.
+   $\nabla \mathbf{W}$_ because by the chain rule, any scaling of the weights
+   will proportionally affect the gradients! Note for less confusion, we use
+   $\eta$ for the learning rate in the optimizer and $\alpha$ for the scaling
+   factor in LoRA.
 
     $$
      \begin{aligned}
