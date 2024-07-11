@@ -581,9 +581,7 @@ $\mathcal{P}$, then the low-rank decomposition may not be able to capture the
 necessary information for the adaptation and the model may not perform well - so
 here we recommend increasing the rank $r$ where appropriate.
 
-## Algo
-
-### Mathematical Representation of `LoRALinear`
+## The Low-Rank Adaptation (LoRA) Algorithm
 
 Let $\mathcal{M}$ be our model with some linear layer with weights
 $\mathbf{W} \in \mathbb{R}^{d \times k}$, where $d$ is the output dimension and
@@ -694,8 +692,12 @@ However, three nuances here:
     don't we just initialize $\mathbf{A}$ to zero as well?" - I think one needs
     to know that the backpropagation process update both weights $\mathbf{A}$
     and $\mathbf{B}$ _separately_ and we want stable gradient flow, so
-    $\mathbf{A}$ breaks the symmetry! Remember if both are zero then you can
-    intuitively understand that the gradients will be zero as well.
+    $\mathbf{A}$ breaks the symmetry! If you initialize all weights with zeros
+    then every hidden unit will get zero independent of the input. So, when all
+    the hidden neurons start with the zero weights, then all of them will follow
+    the same gradient and for this reason "it affects only the scale of the
+    weight vector, not the direction". See
+    [this very useful thread on the whys](https://datascience.stackexchange.com/questions/26134/initialize-perceptron-weights-with-zero).
 
 3. They have a scaling factor, where they scale $\Delta \mathbf{W}$ by
    $\frac{\alpha}{r}$. In LoRA paper, $\alpha$ is constant in $r$ means that if
@@ -713,6 +715,10 @@ However, three nuances here:
      \mathbf{y} &= \mathbf{y}_{\text{frozen}} + \frac{\alpha}{r} \mathbf{x} @ \left(\mathbf{B} \mathbf{A}\right)^T
      \end{aligned}
     $$
+
+    Note that $\alpha$ is generally understood as an amplification factor - and
+    if $\alpha$ is large, it amplifies the contribution of the LoRA weights to
+    the final output of the adapter layer.
 
     Now some quick and rough (read: non-rigorous) math here, suppose we keep
     rank $r$ fixed, and we increase $\alpha$ (LoRA) by a factor of $c$:
@@ -776,3 +782,7 @@ matrices $\mathbf{A}$ and $\mathbf{B}$.
 
 Image Credit: [LoRA Paper](https://arxiv.org/pdf/2106.09685)
 ```
+
+## References And Further Readings
+
+-   [Initialize perceptron weights with zero](https://datascience.stackexchange.com/questions/26134/initialize-perceptron-weights-with-zero)

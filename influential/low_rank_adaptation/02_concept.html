@@ -586,11 +586,9 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-specific-fine-tuning">Task Specific Fine-Tuning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-reduction-in-lora">Parameters Reduction In LoRA</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algo">Algo</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-representation-of-loralinear">Mathematical Representation of <code class="docutils literal notranslate"><span class="pre">LoRALinear</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-low-rank-adaptation-lora-algorithm">The Low-Rank Adaptation (LoRA) Algorithm</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-additional-inference-latency">No Additional Inference Latency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
             </nav>
         </div>
@@ -616,12 +614,9 @@ document.write(`
 <li><p><a class="reference internal" href="#task-specific-fine-tuning" id="id6">Task Specific Fine-Tuning</a></p></li>
 <li><p><a class="reference internal" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" id="id7">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></p></li>
 <li><p><a class="reference internal" href="#parameters-reduction-in-lora" id="id8">Parameters Reduction In LoRA</a></p></li>
-<li><p><a class="reference internal" href="#algo" id="id9">Algo</a></p>
-<ul>
-<li><p><a class="reference internal" href="#mathematical-representation-of-loralinear" id="id10">Mathematical Representation of <code class="docutils literal notranslate"><span class="pre">LoRALinear</span></code></a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#no-additional-inference-latency" id="id11">No Additional Inference Latency</a></p></li>
+<li><p><a class="reference internal" href="#the-low-rank-adaptation-lora-algorithm" id="id9">The Low-Rank Adaptation (LoRA) Algorithm</a></p></li>
+<li><p><a class="reference internal" href="#no-additional-inference-latency" id="id10">No Additional Inference Latency</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id11">References And Further Readings</a></p></li>
 </ul>
 </nav>
 <div class="cell tag_hide-input docutils container">
@@ -1142,10 +1137,8 @@ This brings to our second point, if the target domain specific task
 necessary information for the adaptation and the model may not perform well - so
 here we recommend increasing the rank <span class="math notranslate nohighlight">\(r\)</span> where appropriate.</p>
 </section>
-<section id="algo">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">Algo</a><a class="headerlink" href="#algo" title="Link to this heading">#</a></h2>
-<section id="mathematical-representation-of-loralinear">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Mathematical Representation of <code class="docutils literal notranslate"><span class="pre">LoRALinear</span></code></a><a class="headerlink" href="#mathematical-representation-of-loralinear" title="Link to this heading">#</a></h3>
+<section id="the-low-rank-adaptation-lora-algorithm">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">The Low-Rank Adaptation (LoRA) Algorithm</a><a class="headerlink" href="#the-low-rank-adaptation-lora-algorithm" title="Link to this heading">#</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> be our model with some linear layer with weights
 <span class="math notranslate nohighlight">\(\mathbf{W} \in \mathbb{R}^{d \times k}\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is the output dimension and
 <span class="math notranslate nohighlight">\(k\)</span> is the input dimension (get used to this notation with PyTorch). In
@@ -1244,8 +1237,12 @@ large or too small. If you ask “if <span class="math notranslate nohighlight">
 don’t we just initialize <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> to zero as well?” - I think one needs
 to know that the backpropagation process update both weights <span class="math notranslate nohighlight">\(\mathbf{A}\)</span>
 and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> <em>separately</em> and we want stable gradient flow, so
-<span class="math notranslate nohighlight">\(\mathbf{A}\)</span> breaks the symmetry! Remember if both are zero then you can
-intuitively understand that the gradients will be zero as well.</p>
+<span class="math notranslate nohighlight">\(\mathbf{A}\)</span> breaks the symmetry! If you initialize all weights with zeros
+then every hidden unit will get zero independent of the input. So, when all
+the hidden neurons start with the zero weights, then all of them will follow
+the same gradient and for this reason “it affects only the scale of the
+weight vector, not the direction”. See
+<a class="reference external" href="https://datascience.stackexchange.com/questions/26134/initialize-perceptron-weights-with-zero">this very useful thread on the whys</a>.</p>
 </li>
 <li><p>They have a scaling factor, where they scale <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> by
 <span class="math notranslate nohighlight">\(\frac{\alpha}{r}\)</span>. In LoRA paper, <span class="math notranslate nohighlight">\(\alpha\)</span> is constant in <span class="math notranslate nohighlight">\(r\)</span> means that if
@@ -1263,6 +1260,9 @@ factor in LoRA.</p>
      \mathbf{y} &amp;= \mathbf{y}_{\text{frozen}} + \frac{\alpha}{r} \mathbf{x} &#64; \left(\mathbf{B} \mathbf{A}\right)^T
      \end{aligned}
     \]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\alpha\)</span> is generally understood as an amplification factor - and
+if <span class="math notranslate nohighlight">\(\alpha\)</span> is large, it amplifies the contribution of the LoRA weights to
+the final output of the adapter layer.</p>
 <p>Now some quick and rough (read: non-rigorous) math here, suppose we keep
 rank <span class="math notranslate nohighlight">\(r\)</span> fixed, and we increase <span class="math notranslate nohighlight">\(\alpha\)</span> (LoRA) by a factor of <span class="math notranslate nohighlight">\(c\)</span>:</p>
 <div class="math notranslate nohighlight">
@@ -1286,9 +1286,8 @@ thread on this
 </li>
 </ol>
 </section>
-</section>
 <section id="no-additional-inference-latency">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">No Additional Inference Latency</a><a class="headerlink" href="#no-additional-inference-latency" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">No Additional Inference Latency</a><a class="headerlink" href="#no-additional-inference-latency" title="Link to this heading">#</a></h2>
 <p>The distributive law of matrix multiplication we saw earlier ensures that the
 update weights <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> can be applied on the fly during inference
 without too much over memory overhead, and therefore not much additional
@@ -1325,6 +1324,12 @@ matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <s
 </div>
 </figcaption>
 </figure>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">References And Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://datascience.stackexchange.com/questions/26134/initialize-perceptron-weights-with-zero">Initialize perceptron weights with zero</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -1398,11 +1403,9 @@ matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <s
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#task-specific-fine-tuning">Task Specific Fine-Tuning</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-reduction-in-lora">Parameters Reduction In LoRA</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#algo">Algo</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-representation-of-loralinear">Mathematical Representation of <code class="docutils literal notranslate"><span class="pre">LoRALinear</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-low-rank-adaptation-lora-algorithm">The Low-Rank Adaptation (LoRA) Algorithm</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-additional-inference-latency">No Additional Inference Latency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
   </nav></div>
 
