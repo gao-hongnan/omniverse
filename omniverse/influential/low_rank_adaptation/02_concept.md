@@ -725,9 +725,43 @@ However, three nuances here:
     thread on this
     [here](https://civitai.com/articles/2125/what-lora-alpha-actually-does-in-theory).
 
+## No Additional Inference Latency
+
+The distributive law of matrix multiplication we saw earlier ensures that the
+update weights $\Delta \mathbf{W}$ can be applied on the fly during inference
+without too much over memory overhead, and therefore not much additional
+latency. Recall the equation below:
+
+$$
+\begin{aligned}
+\mathbf{y}  &= \mathbf{x} @ \left(\mathbf{W}^T + \Delta \mathbf{W}^T\right) \\
+            &= \mathbf{x} @ \left(\mathbf{W}^T + (\mathbf{B} \mathbf{A})^T\right) \\
+            &= \mathbf{x} @ \mathbf{W}^T + \mathbf{x} @ \left(\mathbf{B} \mathbf{A}\right)^T \\
+\end{aligned}
+$$
+
+We easily see that once we obtain the trained low-rank matrices $\mathbf{A}$ and
+$\mathbf{B}$, we can apply the update weights $\Delta \mathbf{W}$ on the fly
+during inference without having to store the original pre-trained weights by
+just doing an element-wise addition of the frozen output
+$\mathbf{y}_{\text{frozen}}$ and the update
+$\mathbf{x} @ \left(\mathbf{B} \mathbf{A}\right)^T$.
+
+$$
+\mathbf{y} = \mathbf{x} @ \mathbf{W}^T \oplus \mathbf{x} @ \left(\mathbf{B} \mathbf{A}\right)^T
+$$
+
+Again, we are reminded that this is a huge advantage because we need not store
+$N$ instances of the updated weights $\Delta \mathbf{W}$ for $N$ different
+tasks, but only the low-rank matrices $\mathbf{A}$ and $\mathbf{B}$. During
+inference, just apply the low-rank matrices on the fly and you are good to go.
+
 ```{figure} ./assets/lora_weights_visual.png
 ---
 name: lora-weights-visual-paper
 ---
-sss
+LoRA update weights $\Delta \mathbf{W}$ as a low-rank decomposition of two
+matrices $\mathbf{A}$ and $\mathbf{B}$.
+
+Image Credit: [LoRA Paper](https://arxiv.org/pdf/2106.09685)
 ```
