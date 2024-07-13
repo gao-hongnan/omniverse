@@ -785,4 +785,14 @@ Image Credit: [LoRA Paper](https://arxiv.org/pdf/2106.09685)
 
 ## References And Further Readings
 
+-   [1] E. J. Hu, Y. Shen, P. Wallis, Z. Allen-Zhu, Y. Li, S. Wang, L. Wang, and
+    W. Chen, "LoRA: Low-Rank Adaptation of Large Language Models," _arXiv
+    preprint arXiv:2106.09685_, submitted Jun. 17, 2021, revised Oct. 16, 2021.
+    [Online]. Available: https://arxiv.org/abs/2106.09685
+-   [2] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez,
+    Ł. Kaiser, and I. Polosukhin.
+    ["Attention is all you need"](https://arxiv.org/abs/1706.03762). In Advances
+    in Neural Information Processing Systems, pp. 5998–6008, 2017.
+-   [Low Rank Approximation - Wikipedia](https://en.wikipedia.org/wiki/Low-rank_approximation)
+-   [Rank (Linear Algebra) - Wikipedia](<https://en.wikipedia.org/wiki/Rank_(linear_algebra)>)
 -   [Initialize perceptron weights with zero](https://datascience.stackexchange.com/questions/26134/initialize-perceptron-weights-with-zero)
