@@ -545,9 +545,9 @@ class Freezer:
             List of substrings to match in the parameter names for freezing.
             This name can be obtained by calling `model.named_parameters()`.
         """
-        for name, param in self.model.named_parameters():
-            if any(n in name for n in names):
-                param.requires_grad = False
+        for parameter_name, parameter in self.model.named_parameters():
+            if any(n in parameter_name for n in names):
+                parameter.requires_grad = False
         self.update_freezing_status()
 
     def freeze_by_module(self, module: nn.Module) -> None:
