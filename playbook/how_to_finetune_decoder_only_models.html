@@ -873,7 +873,7 @@ given 0, we predict 2, and so on.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f821cda598ebd503cfa4464017f01aaa327fc94184bfc835063e898a98c6735b.png" src="../_images/f821cda598ebd503cfa4464017f01aaa327fc94184bfc835063e898a98c6735b.png" />
+<img alt="../_images/bbda69edbd03e1582fbb4b41a1434a89c431a956ad84bea1182a6cb48fda3c96.png" src="../_images/bbda69edbd03e1582fbb4b41a1434a89c431a956ad84bea1182a6cb48fda3c96.png" />
 </div>
 </div>
 <p>You see that first row the first token 6 can only attend to itself, and the
@@ -1054,14 +1054,6 @@ a classifier.</p>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DecoderConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="c1"># fmt: off</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span>       <span class="p">:</span> <span class="nb">int</span>           <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tok_embed</span>     <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span>     <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">context_length</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decoder_blocks</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">GPTDecoderBlock</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">num_decoder_blocks</span><span class="p">)])</span> <span class="c1"># PyTorch did not make ModuleList a proper container, maybe open a PR to make it inherit Generic[T]???</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span>       <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span>    <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dropout</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span>    <span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span>  <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">),</span>
             <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">d_model</span><span class="p">),</span>
@@ -1361,7 +1353,7 @@ then you might want to initialize the weights of the head layer separately. Also
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">gradient_accumulation_steps</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">clip_grad_norm</span>=<span style="font-weight: bold">{</span><span style="color: #008000; text-decoration-color: #008000">'max_norm'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0</span>, <span style="color: #008000; text-decoration-color: #008000">'norm_type'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2.0</span>, <span style="color: #008000; text-decoration-color: #008000">'error_if_nonfinite'</span>: <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #008000; text-decoration-color: #008000">'foreach'</span>: <span style="color: #800080; text-decoration-color: #800080; font-style: italic">None</span><span style="font-weight: bold">}</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">apply_weight_decay_to_different_param_groups</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_dir</span>=<span style="color: #008000; text-decoration-color: #008000">'./data/reversal/checkpoints/2024-07-13_18-47-10'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_dir</span>=<span style="color: #008000; text-decoration-color: #008000">'./data/reversal/checkpoints/2024-07-17_18-47-03'</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_every_epoch</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_best_only</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">monitor</span>=<span style="color: #008000; text-decoration-color: #008000">'valid_this_epoch_average_loss'</span>,
@@ -1483,7 +1475,7 @@ Number of heads: 1
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/f36c50e436550426e0f16cf8e8a5063629b9fce68069a4d99b76d6ec00fa3b58.png" src="../_images/f36c50e436550426e0f16cf8e8a5063629b9fce68069a4d99b76d6ec00fa3b58.png" />
+<img alt="../_images/7c596111a998d368cfdd295093e61c1f9122e881180654f7117429740655eb8c.png" src="../_images/7c596111a998d368cfdd295093e61c1f9122e881180654f7117429740655eb8c.png" />
 </div>
 </div>
 <p>The heatmap diagonal is correct because in the above image, we can
@@ -1666,7 +1658,7 @@ Target Padding Masks: torch.Size([128, 1, 16, 16])
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">gradient_accumulation_steps</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">clip_grad_norm</span>=<span style="font-weight: bold">{</span><span style="color: #008000; text-decoration-color: #008000">'max_norm'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0</span>, <span style="color: #008000; text-decoration-color: #008000">'norm_type'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2.0</span>, <span style="color: #008000; text-decoration-color: #008000">'error_if_nonfinite'</span>: <span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>, <span style="color: #008000; text-decoration-color: #008000">'foreach'</span>: <span style="color: #800080; text-decoration-color: #800080; font-style: italic">None</span><span style="font-weight: bold">}</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">apply_weight_decay_to_different_param_groups</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_dir</span>=<span style="color: #008000; text-decoration-color: #008000">'./data/reversal/checkpoints/2024-07-13_18-47-10'</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_dir</span>=<span style="color: #008000; text-decoration-color: #008000">'./data/reversal/checkpoints/2024-07-17_18-47-03'</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_every_epoch</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">save_best_only</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="color: #808000; text-decoration-color: #808000">monitor</span>=<span style="color: #008000; text-decoration-color: #008000">'valid_this_epoch_average_loss'</span>,
@@ -1706,7 +1698,7 @@ Target Padding Masks: torch.Size([128, 1, 16, 16])
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accuracies=[0.550275].
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Accuracies=[0.5502625].
 </pre></div>
 </div>
 </div>
@@ -1786,7 +1778,7 @@ Number of heads: 1
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/361d281b98be331681d1e6d7a063668983e6a2df75a2345145da72c565738731.png" src="../_images/361d281b98be331681d1e6d7a063668983e6a2df75a2345145da72c565738731.png" />
+<img alt="../_images/d3e35a1578eb9a52dbe7966d703ed6bf56851cc30f1adbd8fc67fecbae499333.png" src="../_images/d3e35a1578eb9a52dbe7966d703ed6bf56851cc30f1adbd8fc67fecbae499333.png" />
 </div>
 </div>
 <p>Recall that earlier the accuracy is 55 percent, one can also tell the attention
