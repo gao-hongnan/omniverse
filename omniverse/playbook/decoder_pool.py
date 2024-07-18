@@ -93,7 +93,7 @@ class GPTForSequenceClassification(GPTDecoder):
                 std_dev = 0.02 / torch.sqrt(torch.tensor(2 * config.num_decoder_blocks, dtype=torch.float))
                 torch.nn.init.normal_(parameter, mean=mean, std=std_dev)
 
-    def forward( # type: ignore[override]
+    def forward(  # type: ignore[override]
         self,
         input_tokens: torch.LongTensor,
         *,  # force keyword only arguments to prevent errors
