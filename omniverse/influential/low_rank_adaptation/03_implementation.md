@@ -33,5 +33,4 @@ class LoRALinear(nn.Module):
         # Finally, scale by the alpha parameter (normalized by rank)
         # and add to the original model's outputs
         return frozen_out + (self.alpha / self.rank) * lora_out
-
 ```
