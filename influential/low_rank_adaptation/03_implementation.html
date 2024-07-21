@@ -1,0 +1,1970 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Implementation &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'influential/low_rank_adaptation/03_implementation';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/influential/low_rank_adaptation/03_implementation.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="K-Means" href="../kmeans_clustering/01_intro.html" />
+    <link rel="prev" title="Concept" href="02_concept.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="02_concept.html">Concept</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../kmeans_clustering/01_intro.html">K-Means</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/concept.html">Continuous Integration (CI) Workflow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/styling.html">Styling, Formatting, and Linting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/devops/continuous-integration/testing.html">Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/serving/restful_api/intro.html">RESTful API</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/serving/restful_api/application_banking.html">Application: Designing a RESTful Banking API with FastAPI and SQLAlchemy</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../api/reproducibility.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/influential/low_rank_adaptation/03_implementation.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Finfluential/low_rank_adaptation/03_implementation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/influential/low_rank_adaptation/03_implementation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Implementation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-and-quantize">Merge And Quantize</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-preparation">Dataset Preparation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#base-model">Base Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics">Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-with-pretrained-model">Evaluate With Pretrained Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-implementation">LoRA Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-lora">Train LoRA</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="implementation">
+<h1>Implementation<a class="headerlink" href="#implementation" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" />
+<a class="reference external" href="https://github.com/gao-hongnan/omniverse/tree/main/omnivault/modules/lora.py"><img alt="Code" src="https://img.shields.io/badge/View-Code-blue?style=flat-square&amp;logo=github" /></a></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#merge-and-quantize" id="id1">Merge And Quantize</a></p></li>
+<li><p><a class="reference internal" href="#dependencies" id="id2">Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#setting-up" id="id3">Setting Up</a></p></li>
+<li><p><a class="reference internal" href="#dataset-preparation" id="id4">Dataset Preparation</a></p></li>
+<li><p><a class="reference internal" href="#base-model" id="id5">Base Model</a></p></li>
+<li><p><a class="reference internal" href="#metrics" id="id6">Metrics</a></p></li>
+<li><p><a class="reference internal" href="#evaluate-with-pretrained-model" id="id7">Evaluate With Pretrained Model</a></p></li>
+<li><p><a class="reference internal" href="#lora-implementation" id="id8">LoRA Implementation</a></p></li>
+<li><p><a class="reference internal" href="#train-lora" id="id9">Train LoRA</a></p></li>
+</ul>
+</nav>
+<section id="merge-and-quantize">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Merge And Quantize</a><a class="headerlink" href="#merge-and-quantize" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %pip install -U omniverse</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dependencies">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Dependencies</a><a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">psutil</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">datasets</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">softmax</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">accuracy_score</span><span class="p">,</span>
+    <span class="n">auc</span><span class="p">,</span>
+    <span class="n">average_precision_score</span><span class="p">,</span>
+    <span class="n">brier_score_loss</span><span class="p">,</span>
+    <span class="n">confusion_matrix</span><span class="p">,</span>
+    <span class="n">f1_score</span><span class="p">,</span>
+    <span class="n">log_loss</span><span class="p">,</span>
+    <span class="n">precision_recall_curve</span><span class="p">,</span>
+    <span class="n">precision_score</span><span class="p">,</span>
+    <span class="n">recall_score</span><span class="p">,</span>
+    <span class="n">roc_auc_score</span><span class="p">,</span>
+    <span class="n">roc_curve</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">transformers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DataCollatorWithPadding</span><span class="p">,</span>
+    <span class="n">Qwen2ForSequenceClassification</span><span class="p">,</span>
+    <span class="n">Qwen2Tokenizer</span><span class="p">,</span>
+    <span class="n">Trainer</span><span class="p">,</span>
+    <span class="n">TrainingArguments</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">transformers.trainer_utils</span> <span class="kn">import</span> <span class="n">EvalPrediction</span>
+
+<span class="kn">from</span> <span class="nn">omnivault.utils.reproducibility.seed</span> <span class="kn">import</span> <span class="n">seed_all</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setting-up">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Setting Up</a><a class="headerlink" href="#setting-up" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seed_all</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+
+<span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">PADDING</span> <span class="o">=</span> <span class="s2">&quot;longest&quot;</span>
+<span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="n">TRUNCATION</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">RETURN_TENSORS</span> <span class="o">=</span> <span class="s2">&quot;pt&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="dataset-preparation">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Dataset Preparation</a><a class="headerlink" href="#dataset-preparation" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Batch</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">sentence</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">TokenizedBatch</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">input_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Qwen2Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;Qwen/Qwen1.5-0.5B&quot;</span><span class="p">,</span> <span class="n">padding_side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">preprocess_function</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TokenizedBatch</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;financial_phrasebank&quot;</span><span class="p">,</span> <span class="s2">&quot;sentences_allagree&quot;</span><span class="p">,</span> <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
+
+<span class="n">train_valid_split</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stratify_by_column</span><span class="o">=</span><span class="s2">&quot;labels&quot;</span><span class="p">)</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
+
+<span class="n">tokenized_train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">preprocess_function</span><span class="p">,</span>
+    <span class="n">fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;truncation&quot;</span><span class="p">:</span> <span class="n">TRUNCATION</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="n">PADDING</span><span class="p">,</span> <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="n">MAX_LENGTH</span><span class="p">},</span>
+    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="n">psutil</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(</span><span class="n">logical</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s2">&quot;sentence&quot;</span><span class="p">])</span>
+
+<span class="n">tokenized_valid_dataset</span> <span class="o">=</span> <span class="n">valid_dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">preprocess_function</span><span class="p">,</span>
+    <span class="n">fn_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;truncation&quot;</span><span class="p">:</span> <span class="n">TRUNCATION</span><span class="p">,</span> <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="n">PADDING</span><span class="p">,</span> <span class="s2">&quot;max_length&quot;</span><span class="p">:</span> <span class="n">MAX_LENGTH</span><span class="p">},</span>
+    <span class="n">batched</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_proc</span><span class="o">=</span><span class="n">psutil</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">(</span><span class="n">logical</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s2">&quot;sentence&quot;</span><span class="p">])</span>
+
+<span class="n">data_collator</span> <span class="o">=</span> <span class="n">DataCollatorWithPadding</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">)</span>
+
+<span class="n">id2label</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;negative&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;positive&quot;</span><span class="p">}</span>
+<span class="n">label2id</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;negative&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;positive&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="n">num_labels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">id2label</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c843d6f8361243c5ad049faae3842dde", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "a9f5d0c9b8ff49df95465f3cd2ff2c5a", "version_major": 2, "version_minor": 0}</script></div>
+</div>
+</section>
+<section id="base-model">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Base Model</a><a class="headerlink" href="#base-model" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model</span> <span class="o">=</span> <span class="n">Qwen2ForSequenceClassification</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="s2">&quot;Qwen/Qwen1.5-0.5B&quot;</span><span class="p">,</span>
+    <span class="n">id2label</span><span class="o">=</span><span class="n">id2label</span><span class="p">,</span>
+    <span class="n">label2id</span><span class="o">=</span><span class="n">label2id</span><span class="p">,</span>
+    <span class="n">num_labels</span><span class="o">=</span><span class="n">num_labels</span><span class="p">,</span>
+    <span class="n">problem_type</span><span class="o">=</span><span class="s2">&quot;single_label_classification&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">base_model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pad_token_id</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token_id</span>
+
+<span class="n">base_model</span> <span class="o">=</span> <span class="n">base_model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Some weights of Qwen2ForSequenceClassification were not initialized from the model checkpoint at Qwen/Qwen1.5-0.5B and are newly initialized: [&#39;score.weight&#39;]
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+</pre></div>
+</div>
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2ForSequenceClassification</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>model<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2Model</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>embed_tokens<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Embedding</span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">151936</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>layers<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ModuleList</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>-<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">23</span><span style="font-weight: bold">)</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">24</span> x <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2DecoderLayer</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>self_attn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2Attention</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>q_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>k_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>v_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>o_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>rotary_emb<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RotaryEmbedding</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>mlp<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2MLP</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>gate_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>up_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>down_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>act_fn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">SiLU</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>input_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>post_attention_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>norm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>score<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">total_trainable_parameters</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the number of trainable parameters in the model.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">total_parameters</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the total number of parameters in the model, including non-trainable.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+<span class="n">base_model_total_trainable</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total trainable parameters before LoRA: </span><span class="si">{</span><span class="n">base_model_total_trainable</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total trainable parameters before LoRA: 463,990,784
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="metrics">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Metrics</a><a class="headerlink" href="#metrics" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics_for_single_label_classification</span><span class="p">(</span><span class="n">eval_prediction</span><span class="p">:</span> <span class="n">EvalPrediction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+    <span class="n">logits</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">label_ids</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;eval_log_loss&quot;</span><span class="p">:</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">),</span>
+        <span class="s2">&quot;eval_accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">),</span>
+        <span class="s2">&quot;eval_precision_macro&quot;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_recall_macro&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_f1_score_macro&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_precision_micro&quot;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_recall_micro&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_f1_score_micro&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_confusion_matrix&quot;</span><span class="p">:</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">&quot;eval_roc_auc&quot;</span><span class="p">:</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">multi_class</span><span class="o">=</span><span class="s2">&quot;ovr&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;eval_pr_auc&quot;</span><span class="p">:</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;eval_brier_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">brier_score_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">brier_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">brier_score_loss</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)]</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;eval_brier_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">brier_scores</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">class_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
+            <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">class_index</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">])</span>
+            <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
+            <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">class_index</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">])</span>
+            <span class="n">pr_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">recall</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_roc_auc_class_</span><span class="si">{</span><span class="n">class_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_pr_auc_class_</span><span class="si">{</span><span class="n">class_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pr_auc</span>
+
+    <span class="k">return</span> <span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="evaluate-with-pretrained-model">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Evaluate With Pretrained Model</a><a class="headerlink" href="#evaluate-with-pretrained-model" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">tokenized_train_dataset</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">tokenized_valid_dataset</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics_for_single_label_classification</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">tokenized_valid_dataset</span><span class="p">,</span> <span class="n">metric_key_prefix</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">valid_metrics</span><span class="o">.</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/site-packages/accelerate/accelerator.py:432: FutureWarning: Passing the following arguments to `Accelerator` is deprecated and will be removed in version 1.0 of Accelerate: dict_keys([&#39;dispatch_batches&#39;, &#39;split_batches&#39;, &#39;even_batches&#39;, &#39;use_seedable_sampler&#39;]). Please pass an `accelerate.DataLoaderConfiguration` instead: 
+dataloader_config = DataLoaderConfiguration(dispatch_batches=None, split_batches=False, even_batches=True, use_seedable_sampler=True)
+  warnings.warn(
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "f54e397a08b4424c81321ea96fb2510d", "version_major": 2, "version_minor": 0}</script><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">{</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_log_loss'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7.401785679417559</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_accuracy'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.14096916299559473</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_precision_macro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3000285877644368</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_recall_macro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3223057644110276</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_f1_score_macro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.11305118925439782</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_precision_micro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.14096916299559473</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_recall_micro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.14096916299559473</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_f1_score_micro'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.14096916299559473</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_confusion_matrix'</span>: <span style="font-weight: bold">[[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">27</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span><span style="font-weight: bold">]</span>, <span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">132</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span><span style="font-weight: bold">]</span>, <span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">53</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span><span style="font-weight: bold">]]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_roc_auc'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5319817168701279</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_pr_auc'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.3596197342614926</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_brier_score'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5561022597522776</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_roc_auc_class_0'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.4730964467005076</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_pr_auc_class_0'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.12580756501576662</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_roc_auc_class_1'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5628899835796387</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_pr_auc_class_1'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.6492525648321494</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_roc_auc_class_2'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5599587203302373</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_pr_auc_class_2'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2816445108714582</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_loss'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7.431046962738037</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_runtime'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7.0382</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_samples_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">32.252</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_steps_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4.12</span>
+<span style="font-weight: bold">}</span>
+</pre>
+</div></div>
+</div>
+</section>
+<section id="lora-implementation">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">LoRA Implementation</a><a class="headerlink" href="#lora-implementation" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LoraConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Lora attention dimension (the &#39;rank&#39;).&quot;</span><span class="p">)</span>
+    <span class="n">lora_alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alpha parameter for Lora scaling.&quot;</span><span class="p">)</span>
+    <span class="n">lora_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The dropout probability for Lora layers.&quot;</span><span class="p">)</span>
+    <span class="n">target_modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;The names of the modules to apply the adapter to. If specified, only the modules with the specified &quot;</span>
+            <span class="s2">&quot;names will be replaced. When passing a string, a regex match will be performed. When passing a list of &quot;</span>
+            <span class="s2">&quot;strings, either an exact match will be performed or it is checked if the name of the module ends with any &quot;</span>
+            <span class="s2">&quot;of the passed strings. If specified as &#39;all-linear&#39;, all linear/Conv1D modules are chosen, excluding the &quot;</span>
+            <span class="s2">&quot;output layer. If not specified, modules are chosen according to the model architecture. If the architecture &quot;</span>
+            <span class="s2">&quot;is unknown, an error will be raised—manual specification of target modules is required in such cases.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">linear_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;To include linear bias or not.&quot;</span><span class="p">)</span>
+    <span class="n">modules_to_save</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;List of modules apart from adapter layers to be set as</span>
+<span class="sd">               trainable and saved in the final checkpoint.&quot;&quot;&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lora_config</span> <span class="o">=</span> <span class="n">LoraConfig</span><span class="p">(</span>
+    <span class="n">r</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">lora_alpha</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">lora_dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">target_modules</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;q_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;k_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;v_proj&quot;</span><span class="p">],</span> <span class="n">modules_to_save</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">lora_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoraConfig</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">r</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">lora_alpha</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">8</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">lora_dropout</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">target_modules</span>=<span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'q_proj'</span>, <span style="color: #008000; text-decoration-color: #008000">'k_proj'</span>, <span style="color: #008000; text-decoration-color: #008000">'v_proj'</span><span style="font-weight: bold">]</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">linear_bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #808000; text-decoration-color: #808000">modules_to_save</span>=<span style="font-weight: bold">[</span><span style="color: #008000; text-decoration-color: #008000">'score'</span><span style="font-weight: bold">]</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+<p>We print out the target modules below. For simplicity, we target only the <code class="docutils literal notranslate"><span class="pre">q</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code> layers for now.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_module</span> <span class="ow">in</span> <span class="n">base_model</span><span class="o">.</span><span class="n">named_modules</span><span class="p">():</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">target_module</span> <span class="ow">in</span> <span class="n">module_name</span> <span class="k">for</span> <span class="n">target_module</span> <span class="ow">in</span> <span class="n">lora_config</span><span class="o">.</span><span class="n">target_modules</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>model.layers.0.self_attn.q_proj
+model.layers.0.self_attn.k_proj
+model.layers.0.self_attn.v_proj
+model.layers.1.self_attn.q_proj
+model.layers.1.self_attn.k_proj
+model.layers.1.self_attn.v_proj
+model.layers.2.self_attn.q_proj
+model.layers.2.self_attn.k_proj
+model.layers.2.self_attn.v_proj
+model.layers.3.self_attn.q_proj
+model.layers.3.self_attn.k_proj
+model.layers.3.self_attn.v_proj
+model.layers.4.self_attn.q_proj
+model.layers.4.self_attn.k_proj
+model.layers.4.self_attn.v_proj
+model.layers.5.self_attn.q_proj
+model.layers.5.self_attn.k_proj
+model.layers.5.self_attn.v_proj
+model.layers.6.self_attn.q_proj
+model.layers.6.self_attn.k_proj
+model.layers.6.self_attn.v_proj
+model.layers.7.self_attn.q_proj
+model.layers.7.self_attn.k_proj
+model.layers.7.self_attn.v_proj
+model.layers.8.self_attn.q_proj
+model.layers.8.self_attn.k_proj
+model.layers.8.self_attn.v_proj
+model.layers.9.self_attn.q_proj
+model.layers.9.self_attn.k_proj
+model.layers.9.self_attn.v_proj
+model.layers.10.self_attn.q_proj
+model.layers.10.self_attn.k_proj
+model.layers.10.self_attn.v_proj
+model.layers.11.self_attn.q_proj
+model.layers.11.self_attn.k_proj
+model.layers.11.self_attn.v_proj
+model.layers.12.self_attn.q_proj
+model.layers.12.self_attn.k_proj
+model.layers.12.self_attn.v_proj
+model.layers.13.self_attn.q_proj
+model.layers.13.self_attn.k_proj
+model.layers.13.self_attn.v_proj
+model.layers.14.self_attn.q_proj
+model.layers.14.self_attn.k_proj
+model.layers.14.self_attn.v_proj
+model.layers.15.self_attn.q_proj
+model.layers.15.self_attn.k_proj
+model.layers.15.self_attn.v_proj
+model.layers.16.self_attn.q_proj
+model.layers.16.self_attn.k_proj
+model.layers.16.self_attn.v_proj
+model.layers.17.self_attn.q_proj
+model.layers.17.self_attn.k_proj
+model.layers.17.self_attn.v_proj
+model.layers.18.self_attn.q_proj
+model.layers.18.self_attn.k_proj
+model.layers.18.self_attn.v_proj
+model.layers.19.self_attn.q_proj
+model.layers.19.self_attn.k_proj
+model.layers.19.self_attn.v_proj
+model.layers.20.self_attn.q_proj
+model.layers.20.self_attn.k_proj
+model.layers.20.self_attn.v_proj
+model.layers.21.self_attn.q_proj
+model.layers.21.self_attn.k_proj
+model.layers.21.self_attn.v_proj
+model.layers.22.self_attn.q_proj
+model.layers.22.self_attn.k_proj
+model.layers.22.self_attn.v_proj
+model.layers.23.self_attn.q_proj
+model.layers.23.self_attn.k_proj
+model.layers.23.self_attn.v_proj
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;LoRA: Low-Rank Adaptation of Large Language Models.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">[1] https://pytorch.org/torchtune/stable/tutorials/lora_finetune.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+
+<span class="k">def</span> <span class="nf">_lora_a_init_params</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize LoRA A weight to Kaiming uniform.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">kaiming_uniform_</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_lora_b_init_params</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize LoRA B weight to zeros.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">zeros_</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LoRALinear</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># These are the weights from the original pretrained model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>  <span class="c1"># weight shape=[out_dim, in_dim]</span>
+
+        <span class="c1"># These are the new LoRA params. In general rank &lt;&lt; in_dim, out_dim - do not put bias here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># weight shape=[rank, in_dim]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># weight shape=[out_dim, rank]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">dropout</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_weights</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_init_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;See https://github.com/microsoft/LoRA/blob/4c0333854cb905966f8cc4e9a74068c1e507c7b7/loralib/layers.py#L119.&quot;&quot;&quot;</span>
+
+        <span class="n">_lora_a_init_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="p">)</span>
+        <span class="n">_lora_b_init_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="c1"># This would be the output of the original model</span>
+        <span class="n">frozen_out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">frozen_out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">bias</span>
+
+        <span class="c1"># lora_a projects inputs down to the much smaller self.rank,</span>
+        <span class="c1"># then lora_b projects back up to the output dimension</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">lora_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1"># Finally, scale by the alpha parameter (normalized by rank)</span>
+        <span class="c1"># and add to the original model&#39;s outputs</span>
+        <span class="k">return</span> <span class="n">frozen_out</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span> <span class="o">*</span> <span class="n">lora_out</span>
+
+
+<span class="k">def</span> <span class="nf">apply_lora_to_base_model</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">target_modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers.&quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_children</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">target_modules</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">target</span> <span class="ow">in</span> <span class="n">module_name</span> <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">target_modules</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span>
+                    <span class="n">model</span><span class="p">,</span>
+                    <span class="n">module_name</span><span class="p">,</span>
+                    <span class="n">LoRALinear</span><span class="p">(</span>
+                        <span class="n">in_dim</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span>
+                        <span class="n">out_dim</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span>
+                        <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span>
+                        <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                        <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
+                        <span class="n">bias</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Recursively apply LoRA to children modules</span>
+            <span class="n">apply_lora_to_base_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">target_modules</span><span class="o">=</span><span class="n">target_modules</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We apply recursively the <code class="docutils literal notranslate"><span class="pre">LoRA</span></code> module to the <code class="docutils literal notranslate"><span class="pre">q</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code> layers
+via <code class="docutils literal notranslate"><span class="pre">apply_lora_to_base_model</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">apply_lora_to_base_model</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model_with_adapter</span><span class="p">,</span>
+    <span class="n">rank</span><span class="o">=</span><span class="n">lora_config</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="n">lora_config</span><span class="o">.</span><span class="n">lora_alpha</span><span class="p">,</span>
+    <span class="n">dropout</span><span class="o">=</span><span class="n">lora_config</span><span class="o">.</span><span class="n">lora_dropout</span><span class="p">,</span>
+    <span class="n">target_modules</span><span class="o">=</span><span class="n">lora_config</span><span class="o">.</span><span class="n">target_modules</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter_total_trainable</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total trainable parameters after LoRA before freezing: </span><span class="si">{</span><span class="n">base_model_with_adapter_total_trainable</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total trainable parameters after LoRA before freezing: 464,580,608
+</pre></div>
+</div>
+</div>
+</div>
+<p>First <code class="docutils literal notranslate"><span class="pre">bias</span></code> is default to <code class="docutils literal notranslate"><span class="pre">True</span></code> in original model, but in LoRA we need to have it as <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+You also see that currently the total trainable parameters are more than base model. Why?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter_total_trainable</span> <span class="o">-</span> <span class="n">base_model_total_trainable</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>589824
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dim</span> <span class="o">=</span> <span class="n">base_model_with_adapter</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">q_proj</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">layers</span> <span class="o">=</span> <span class="n">base_model_with_adapter</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+<span class="n">rank</span> <span class="o">=</span> <span class="n">lora_config</span><span class="o">.</span><span class="n">r</span>
+<span class="n">num_target_modules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lora_config</span><span class="o">.</span><span class="n">target_modules</span><span class="p">)</span>
+
+<span class="n">qkv_lora_weight_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">dim</span> <span class="o">*</span> <span class="n">rank</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">layers</span> <span class="o">*</span> <span class="n">num_target_modules</span> <span class="c1"># 2 is the AB 1 each</span>
+
+<span class="n">base_model_with_adapter_total_trainable</span> <span class="o">-</span> <span class="n">base_model_total_trainable</span> <span class="o">==</span>  <span class="n">qkv_lora_weight_params</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<p>The additional parameters is basically because we apply to <code class="docutils literal notranslate"><span class="pre">qkv</span></code> where each <code class="docutils literal notranslate"><span class="pre">qkv</span></code> has 24 layers each, so for each layer, say <code class="docutils literal notranslate"><span class="pre">q_proj</span></code> we would have an additional
+of <code class="docutils literal notranslate"><span class="pre">1024</span> <span class="pre">*</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">2</span></code> because matrix A and B are mirrored to version of <code class="docutils literal notranslate"><span class="pre">[dim,</span> <span class="pre">rank]</span></code>.</p>
+<p>Now of course the next step is to freeze the base pretrained weights.
+Note we DO NOT want to freeze the <code class="docutils literal notranslate"><span class="pre">score</span></code> module as that is our classification head.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">parameter_name</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">base_model_with_adapter</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+    <span class="c1"># We will set requires_grad to False if &#39;lora_&#39; is not in the parameter name AND the parameter name does not contain any of the module names specified in modules_to_save</span>
+    <span class="k">if</span> <span class="s2">&quot;lora_&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parameter_name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">module_name</span> <span class="ow">in</span> <span class="n">parameter_name</span> <span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">lora_config</span><span class="o">.</span><span class="n">modules_to_save</span>
+    <span class="p">):</span>
+        <span class="n">parameter</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Safeguard here parameters that are part of LoRA or specified modules are trainable</span>
+        <span class="n">parameter</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter_total_trainable</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total trainable parameters after LoRA after freezing: </span><span class="si">{</span><span class="n">base_model_with_adapter_total_trainable</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total trainable parameters after LoRA after freezing: 592,896
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">base_model_with_adapter_total_trainable</span> <span class="o">/</span> <span class="n">base_model_total_trainable</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.1277818483567122
+</pre></div>
+</div>
+</div>
+</div>
+<p>We are only training on <code class="docutils literal notranslate"><span class="pre">~0.1277%</span></code> of the total parameters.</p>
+</section>
+<section id="train-lora">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Train LoRA</a><a class="headerlink" href="#train-lora" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lora_config</span> <span class="o">=</span> <span class="n">LoraConfig</span><span class="p">(</span>
+    <span class="n">r</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+    <span class="n">lora_alpha</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">lora_dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">target_modules</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;q_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;k_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;v_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;o_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;gate_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;up_proj&quot;</span><span class="p">,</span> <span class="s2">&quot;down_proj&quot;</span><span class="p">],</span>
+    <span class="n">modules_to_save</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">lora_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">training_args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
+    <span class="n">do_eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">do_predict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">do_train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">warmup_ratio</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">6e-4</span><span class="p">,</span>
+    <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">report_to</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./artifacts&quot;</span><span class="p">,</span>
+    <span class="n">overwrite_output_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">gradient_accumulation_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">logging_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span>
+    <span class="n">eval_steps</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span>
+    <span class="n">save_steps</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span>
+    <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
+    <span class="n">lr_scheduler_type</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
+    <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">data_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">half_precision_backend</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="n">optim</span><span class="o">=</span><span class="s2">&quot;adamw_torch&quot;</span><span class="p">,</span>
+    <span class="n">label_smoothing_factor</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model_with_adapter</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">tokenized_train_dataset</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">tokenized_valid_dataset</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics_for_single_label_classification</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+    <div>
+      
+      <progress value='640' max='640' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [640/640 04:26, Epoch 10/10]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+ <tr style="text-align: left;">
+      <th>Step</th>
+      <th>Training Loss</th>
+      <th>Validation Loss</th>
+      <th>Log Loss</th>
+      <th>Accuracy</th>
+      <th>Precision Macro</th>
+      <th>Recall Macro</th>
+      <th>F1 Score Macro</th>
+      <th>Precision Micro</th>
+      <th>Recall Micro</th>
+      <th>F1 Score Micro</th>
+      <th>Confusion Matrix</th>
+      <th>Roc Auc</th>
+      <th>Pr Auc</th>
+      <th>Brier Score</th>
+      <th>Roc Auc Class 0</th>
+      <th>Pr Auc Class 0</th>
+      <th>Roc Auc Class 1</th>
+      <th>Pr Auc Class 1</th>
+      <th>Roc Auc Class 2</th>
+      <th>Pr Auc Class 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>32</td>
+      <td>3.492000</td>
+      <td>1.867992</td>
+      <td>1.867991</td>
+      <td>0.436123</td>
+      <td>0.429408</td>
+      <td>0.397243</td>
+      <td>0.374103</td>
+      <td>0.436123</td>
+      <td>0.436123</td>
+      <td>0.436123</td>
+      <td>[[5, 9, 16], [4, 60, 76], [7, 16, 34]]</td>
+      <td>0.597633</td>
+      <td>0.434514</td>
+      <td>0.284848</td>
+      <td>0.537902</td>
+      <td>0.181680</td>
+      <td>0.668309</td>
+      <td>0.717904</td>
+      <td>0.586687</td>
+      <td>0.380112</td>
+    </tr>
+    <tr>
+      <td>64</td>
+      <td>1.396700</td>
+      <td>1.043167</td>
+      <td>1.043167</td>
+      <td>0.590308</td>
+      <td>0.419821</td>
+      <td>0.488931</td>
+      <td>0.413872</td>
+      <td>0.590308</td>
+      <td>0.590308</td>
+      <td>0.590308</td>
+      <td>[[0, 3, 27], [0, 85, 55], [0, 8, 49]]</td>
+      <td>0.780956</td>
+      <td>0.545472</td>
+      <td>0.195950</td>
+      <td>0.700677</td>
+      <td>0.241000</td>
+      <td>0.865928</td>
+      <td>0.894582</td>
+      <td>0.776264</td>
+      <td>0.482198</td>
+    </tr>
+    <tr>
+      <td>96</td>
+      <td>1.063500</td>
+      <td>0.784113</td>
+      <td>0.784113</td>
+      <td>0.757709</td>
+      <td>0.808035</td>
+      <td>0.553718</td>
+      <td>0.575001</td>
+      <td>0.757709</td>
+      <td>0.757709</td>
+      <td>0.757709</td>
+      <td>[[5, 11, 14], [0, 138, 2], [0, 28, 29]]</td>
+      <td>0.848063</td>
+      <td>0.663932</td>
+      <td>0.131309</td>
+      <td>0.814890</td>
+      <td>0.475911</td>
+      <td>0.905255</td>
+      <td>0.913337</td>
+      <td>0.824045</td>
+      <td>0.588326</td>
+    </tr>
+    <tr>
+      <td>128</td>
+      <td>0.734300</td>
+      <td>1.009085</td>
+      <td>1.009085</td>
+      <td>0.731278</td>
+      <td>0.881481</td>
+      <td>0.532749</td>
+      <td>0.579467</td>
+      <td>0.731278</td>
+      <td>0.731278</td>
+      <td>0.731278</td>
+      <td>[[9, 20, 1], [0, 140, 0], [0, 40, 17]]</td>
+      <td>0.895576</td>
+      <td>0.791378</td>
+      <td>0.148736</td>
+      <td>0.867513</td>
+      <td>0.659774</td>
+      <td>0.940887</td>
+      <td>0.956902</td>
+      <td>0.878328</td>
+      <td>0.751395</td>
+    </tr>
+    <tr>
+      <td>160</td>
+      <td>0.502600</td>
+      <td>1.525477</td>
+      <td>1.525477</td>
+      <td>0.585903</td>
+      <td>0.397773</td>
+      <td>0.569841</td>
+      <td>0.408853</td>
+      <td>0.585903</td>
+      <td>0.585903</td>
+      <td>0.585903</td>
+      <td>[[29, 1, 0], [36, 104, 0], [52, 5, 0]]</td>
+      <td>0.893914</td>
+      <td>0.804567</td>
+      <td>0.219748</td>
+      <td>0.906430</td>
+      <td>0.707196</td>
+      <td>0.933826</td>
+      <td>0.958734</td>
+      <td>0.841486</td>
+      <td>0.742477</td>
+    </tr>
+    <tr>
+      <td>192</td>
+      <td>0.888100</td>
+      <td>0.520843</td>
+      <td>0.520843</td>
+      <td>0.828194</td>
+      <td>0.790419</td>
+      <td>0.766291</td>
+      <td>0.758882</td>
+      <td>0.828194</td>
+      <td>0.828194</td>
+      <td>0.828194</td>
+      <td>[[23, 5, 2], [9, 131, 0], [10, 13, 34]]</td>
+      <td>0.933432</td>
+      <td>0.861995</td>
+      <td>0.088546</td>
+      <td>0.917090</td>
+      <td>0.735546</td>
+      <td>0.943268</td>
+      <td>0.957575</td>
+      <td>0.939938</td>
+      <td>0.888554</td>
+    </tr>
+    <tr>
+      <td>224</td>
+      <td>0.567000</td>
+      <td>0.563086</td>
+      <td>0.563086</td>
+      <td>0.784141</td>
+      <td>0.730080</td>
+      <td>0.794486</td>
+      <td>0.747735</td>
+      <td>0.784141</td>
+      <td>0.784141</td>
+      <td>0.784141</td>
+      <td>[[23, 0, 7], [10, 106, 24], [5, 3, 49]]</td>
+      <td>0.941179</td>
+      <td>0.882236</td>
+      <td>0.099551</td>
+      <td>0.948393</td>
+      <td>0.822162</td>
+      <td>0.967816</td>
+      <td>0.965795</td>
+      <td>0.907327</td>
+      <td>0.855146</td>
+    </tr>
+    <tr>
+      <td>256</td>
+      <td>0.487300</td>
+      <td>0.777104</td>
+      <td>0.777104</td>
+      <td>0.779736</td>
+      <td>0.779006</td>
+      <td>0.691688</td>
+      <td>0.646585</td>
+      <td>0.779736</td>
+      <td>0.779736</td>
+      <td>0.779736</td>
+      <td>[[25, 5, 0], [3, 137, 0], [24, 18, 15]]</td>
+      <td>0.932729</td>
+      <td>0.866700</td>
+      <td>0.110960</td>
+      <td>0.935195</td>
+      <td>0.808896</td>
+      <td>0.966913</td>
+      <td>0.973352</td>
+      <td>0.896078</td>
+      <td>0.814109</td>
+    </tr>
+    <tr>
+      <td>288</td>
+      <td>0.301500</td>
+      <td>0.518010</td>
+      <td>0.518011</td>
+      <td>0.881057</td>
+      <td>0.832276</td>
+      <td>0.789348</td>
+      <td>0.806632</td>
+      <td>0.881057</td>
+      <td>0.881057</td>
+      <td>0.881057</td>
+      <td>[[18, 2, 10], [0, 137, 3], [5, 7, 45]]</td>
+      <td>0.960663</td>
+      <td>0.891463</td>
+      <td>0.066480</td>
+      <td>0.954653</td>
+      <td>0.788685</td>
+      <td>0.980172</td>
+      <td>0.983320</td>
+      <td>0.947162</td>
+      <td>0.898182</td>
+    </tr>
+    <tr>
+      <td>320</td>
+      <td>0.276500</td>
+      <td>0.517759</td>
+      <td>0.517759</td>
+      <td>0.859031</td>
+      <td>0.815993</td>
+      <td>0.774102</td>
+      <td>0.792039</td>
+      <td>0.859031</td>
+      <td>0.859031</td>
+      <td>0.859031</td>
+      <td>[[20, 4, 6], [1, 136, 3], [6, 12, 39]]</td>
+      <td>0.950659</td>
+      <td>0.884996</td>
+      <td>0.072842</td>
+      <td>0.946701</td>
+      <td>0.812426</td>
+      <td>0.971429</td>
+      <td>0.976206</td>
+      <td>0.933849</td>
+      <td>0.862842</td>
+    </tr>
+    <tr>
+      <td>352</td>
+      <td>0.148300</td>
+      <td>0.556958</td>
+      <td>0.556958</td>
+      <td>0.867841</td>
+      <td>0.812477</td>
+      <td>0.827652</td>
+      <td>0.818891</td>
+      <td>0.867841</td>
+      <td>0.867841</td>
+      <td>0.867841</td>
+      <td>[[24, 1, 5], [4, 130, 6], [6, 8, 43]]</td>
+      <td>0.947634</td>
+      <td>0.881595</td>
+      <td>0.072743</td>
+      <td>0.959898</td>
+      <td>0.819215</td>
+      <td>0.964532</td>
+      <td>0.975784</td>
+      <td>0.918473</td>
+      <td>0.845316</td>
+    </tr>
+    <tr>
+      <td>384</td>
+      <td>0.164200</td>
+      <td>1.004750</td>
+      <td>0.958535</td>
+      <td>0.845815</td>
+      <td>0.859036</td>
+      <td>0.733835</td>
+      <td>0.778149</td>
+      <td>0.845815</td>
+      <td>0.845815</td>
+      <td>0.845815</td>
+      <td>[[17, 8, 5], [0, 138, 2], [2, 18, 37]]</td>
+      <td>0.955712</td>
+      <td>0.899185</td>
+      <td>0.085987</td>
+      <td>0.958206</td>
+      <td>0.836613</td>
+      <td>0.971880</td>
+      <td>0.979499</td>
+      <td>0.937049</td>
+      <td>0.882014</td>
+    </tr>
+    <tr>
+      <td>416</td>
+      <td>0.103600</td>
+      <td>0.576214</td>
+      <td>0.555393</td>
+      <td>0.903084</td>
+      <td>0.864440</td>
+      <td>0.825647</td>
+      <td>0.842744</td>
+      <td>0.903084</td>
+      <td>0.903084</td>
+      <td>0.903084</td>
+      <td>[[20, 4, 6], [0, 138, 2], [5, 5, 47]]</td>
+      <td>0.969390</td>
+      <td>0.925581</td>
+      <td>0.053763</td>
+      <td>0.968020</td>
+      <td>0.869500</td>
+      <td>0.980501</td>
+      <td>0.980907</td>
+      <td>0.959649</td>
+      <td>0.927190</td>
+    </tr>
+    <tr>
+      <td>448</td>
+      <td>0.134100</td>
+      <td>0.630044</td>
+      <td>0.630045</td>
+      <td>0.863436</td>
+      <td>0.791531</td>
+      <td>0.800877</td>
+      <td>0.792307</td>
+      <td>0.863436</td>
+      <td>0.863436</td>
+      <td>0.863436</td>
+      <td>[[22, 2, 6], [5, 133, 2], [10, 6, 41]]</td>
+      <td>0.956208</td>
+      <td>0.893957</td>
+      <td>0.075615</td>
+      <td>0.956937</td>
+      <td>0.823854</td>
+      <td>0.977011</td>
+      <td>0.974442</td>
+      <td>0.934675</td>
+      <td>0.882540</td>
+    </tr>
+    <tr>
+      <td>480</td>
+      <td>0.022200</td>
+      <td>0.858376</td>
+      <td>0.832104</td>
+      <td>0.889868</td>
+      <td>0.854262</td>
+      <td>0.795781</td>
+      <td>0.817613</td>
+      <td>0.889868</td>
+      <td>0.889868</td>
+      <td>0.889868</td>
+      <td>[[17, 6, 7], [0, 137, 3], [4, 5, 48]]</td>
+      <td>0.964955</td>
+      <td>0.915977</td>
+      <td>0.066761</td>
+      <td>0.967343</td>
+      <td>0.853372</td>
+      <td>0.974425</td>
+      <td>0.976990</td>
+      <td>0.953096</td>
+      <td>0.918129</td>
+    </tr>
+    <tr>
+      <td>512</td>
+      <td>0.043100</td>
+      <td>0.694719</td>
+      <td>0.655884</td>
+      <td>0.898678</td>
+      <td>0.853911</td>
+      <td>0.823266</td>
+      <td>0.836484</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>[[20, 2, 8], [0, 137, 3], [5, 5, 47]]</td>
+      <td>0.966060</td>
+      <td>0.919359</td>
+      <td>0.061878</td>
+      <td>0.965144</td>
+      <td>0.858776</td>
+      <td>0.979269</td>
+      <td>0.981300</td>
+      <td>0.953767</td>
+      <td>0.918822</td>
+    </tr>
+    <tr>
+      <td>544</td>
+      <td>0.047100</td>
+      <td>0.742118</td>
+      <td>0.700290</td>
+      <td>0.903084</td>
+      <td>0.881214</td>
+      <td>0.829114</td>
+      <td>0.850509</td>
+      <td>0.903084</td>
+      <td>0.903084</td>
+      <td>0.903084</td>
+      <td>[[20, 4, 6], [0, 137, 3], [3, 6, 48]]</td>
+      <td>0.969409</td>
+      <td>0.927101</td>
+      <td>0.061708</td>
+      <td>0.969543</td>
+      <td>0.873595</td>
+      <td>0.980788</td>
+      <td>0.984931</td>
+      <td>0.957895</td>
+      <td>0.923976</td>
+    </tr>
+    <tr>
+      <td>576</td>
+      <td>0.014200</td>
+      <td>0.823952</td>
+      <td>0.765865</td>
+      <td>0.898678</td>
+      <td>0.877139</td>
+      <td>0.818003</td>
+      <td>0.841421</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>[[19, 5, 6], [0, 137, 3], [3, 6, 48]]</td>
+      <td>0.968208</td>
+      <td>0.923295</td>
+      <td>0.062997</td>
+      <td>0.968190</td>
+      <td>0.862989</td>
+      <td>0.980296</td>
+      <td>0.985568</td>
+      <td>0.956140</td>
+      <td>0.922566</td>
+    </tr>
+    <tr>
+      <td>608</td>
+      <td>0.009600</td>
+      <td>0.814503</td>
+      <td>0.754467</td>
+      <td>0.898678</td>
+      <td>0.868936</td>
+      <td>0.814536</td>
+      <td>0.837095</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>[[19, 5, 6], [0, 138, 2], [4, 6, 47]]</td>
+      <td>0.967228</td>
+      <td>0.920084</td>
+      <td>0.062920</td>
+      <td>0.968697</td>
+      <td>0.860490</td>
+      <td>0.976847</td>
+      <td>0.982438</td>
+      <td>0.956140</td>
+      <td>0.921672</td>
+    </tr>
+    <tr>
+      <td>640</td>
+      <td>0.006300</td>
+      <td>0.811079</td>
+      <td>0.751328</td>
+      <td>0.898678</td>
+      <td>0.868936</td>
+      <td>0.814536</td>
+      <td>0.837095</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>0.898678</td>
+      <td>[[19, 5, 6], [0, 138, 2], [4, 6, 47]]</td>
+      <td>0.967069</td>
+      <td>0.919679</td>
+      <td>0.062797</td>
+      <td>0.968528</td>
+      <td>0.860226</td>
+      <td>0.976847</td>
+      <td>0.982438</td>
+      <td>0.955831</td>
+      <td>0.920710</td>
+    </tr>
+  </tbody>
+</table><p></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TrainOutput(global_step=640, training_loss=0.47741791264852507, metrics={&#39;train_runtime&#39;: 267.3562, &#39;train_samples_per_second&#39;: 76.19, &#39;train_steps_per_second&#39;: 2.394, &#39;total_flos&#39;: 1235801533317120.0, &#39;train_loss&#39;: 0.47741791264852507, &#39;epoch&#39;: 10.0})
+</pre></div>
+</div>
+</div>
+</div>
+<p>The accuracy hits around <span class="math notranslate nohighlight">\(90\%\)</span> after 10 epochs. This is a far cry from what
+an encoder like Deberta can achieve. But this is a good start and shows that
+the implementation is working.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./influential/low_rank_adaptation"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="02_concept.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Concept</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../kmeans_clustering/01_intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">K-Means</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-and-quantize">Merge And Quantize</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-preparation">Dataset Preparation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#base-model">Base Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metrics">Metrics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-with-pretrained-model">Evaluate With Pretrained Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-implementation">LoRA Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-lora">Train LoRA</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
