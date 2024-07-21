@@ -31,7 +31,6 @@ class LoraConfig(BaseModel):
             "is unknown, an error will be raised—manual specification of target modules is required in such cases."
         ),
     )
-    linear_bias: bool = Field(default=True, description="To include linear bias or not.")
     modules_to_save: List[str] = Field(
         default=None,
         description=(
