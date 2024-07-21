@@ -52,7 +52,7 @@ def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int
 
 
 def plot_learning_rates(
-    lrs: List[float], title: str, marker: str = "o", ax: plt.Axes | None = None, **kwargs: Any
+    lrs: List[float], title: str = "LR", marker: str = "o", ax: plt.Axes | None = None, **kwargs: Any
 ) -> None:
     """
     Plot learning rates on either a given Axes object or the current axes.

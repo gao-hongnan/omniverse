@@ -5,6 +5,8 @@ from typing import overload
 import torch
 from torch import nn
 
+__all__ = ["LastTokenPooling"]
+
 
 class LastTokenPooling(nn.Module):
     """Last token pooling layer - specifically for decoder only models to do

@@ -46,9 +46,11 @@ from rich.pretty import pprint
 from torch import nn
 ```
 
-```{code-cell} ipython3
-:tags: [hide-input]
+## Reproducibility
 
+We first set the seed for reproducibility.
+
+```{code-cell} ipython3
 from __future__ import annotations
 
 import os
