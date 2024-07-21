@@ -19,25 +19,19 @@ from __future__ import annotations
 
 import logging
 from collections import Counter, OrderedDict
-from functools import partial
-from typing import Any, Dict, List, Literal, Tuple, cast, overload
+from typing import Any, Dict, List, Tuple, TypedDict, overload
 
-import evaluate
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import psutil
-import seaborn as sns
 import torch
-from datasets import Dataset, load_dataset
-from IPython.display import clear_output
+from datasets import load_dataset
 from rich.pretty import pprint
 from scipy.special import softmax
 from sklearn.metrics import (
     accuracy_score,
     auc,
     average_precision_score,
-    classification_report,
     confusion_matrix,
     f1_score,
     log_loss,
@@ -49,26 +43,14 @@ from sklearn.metrics import (
 )
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
-from torchinfo import summary
 from tqdm.notebook import tqdm  # Use notebook version for better UI in notebooks
 from transformers import (
-    AutoModelForMaskedLM,
-    AutoModelForSequenceClassification,
-    AutoTokenizer,
     DataCollatorWithPadding,
-    DistilBertTokenizer,
     EvalPrediction,
-    GPT2Tokenizer,
-    LlamaForSequenceClassification,
-    PreTrainedModel,
-    PreTrainedTokenizer,
-    Qwen2ForSequenceClassification,
-    Qwen2Tokenizer,
-    RobertaConfig,
-    RobertaModel,
-    Trainer,
-    TrainingArguments,
     GPT2ForSequenceClassification,
+    GPT2Tokenizer,
+    PreTrainedTokenizer,
+    TrainingArguments,
 )
 
 from omnivault.transformer.config.decoder import (
@@ -82,28 +64,29 @@ from omnivault.transformer.modules.attention.core import MultiHeadedAttention, S
 from omnivault.transformer.modules.layers.addnorm import AddNorm
 from omnivault.transformer.modules.layers.mlp import PositionwiseFeedForward
 from omnivault.utils.reproducibility.seed import seed_all
+
 ------------------
 
 
 [0;31m---------------------------------------------------------------------------[0m
 [0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Cell [0;32mIn[1], line 57[0m
-[1;32m     36[0m [38;5;28;01mfrom[39;00m [38;5;21;01mtqdm[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnotebook[39;00m [38;5;28;01mimport[39;00m tqdm  [38;5;66;03m# Use notebook version for better UI in notebooks[39;00m
-[1;32m     37[0m [38;5;28;01mfrom[39;00m [38;5;21;01mtransformers[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     38[0m     AutoModelForMaskedLM,
-[1;32m     39[0m     AutoModelForSequenceClassification,
+Cell [0;32mIn[1], line 39[0m
+[1;32m     29[0m [38;5;28;01mfrom[39;00m [38;5;21;01mtqdm[39;00m[38;5;21;01m.[39;00m[38;5;21;01mnotebook[39;00m [38;5;28;01mimport[39;00m tqdm  [38;5;66;03m# Use notebook version for better UI in notebooks[39;00m
+[1;32m     30[0m [38;5;28;01mfrom[39;00m [38;5;21;01mtransformers[39;00m [38;5;28;01mimport[39;00m (
+[1;32m     31[0m     DataCollatorWithPadding,
+[1;32m     32[0m     EvalPrediction,
 [0;32m   (...)[0m
-[1;32m     54[0m     GPT2ForSequenceClassification,
-[1;32m     55[0m )
-[0;32m---> 57[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mconfig[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdecoder[39;00m [38;5;28;01mimport[39;00m (
-[1;32m     58[0m     AddNormConfig,
-[1;32m     59[0m     DecoderBlockConfig,
-[1;32m     60[0m     DecoderConfig,
-[1;32m     61[0m     MultiHeadedAttentionConfig,
-[1;32m     62[0m     PositionwiseFeedForwardConfig,
-[1;32m     63[0m )
-[1;32m     64[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodules[39;00m[38;5;21;01m.[39;00m[38;5;21;01mattention[39;00m[38;5;21;01m.[39;00m[38;5;21;01mcore[39;00m [38;5;28;01mimport[39;00m MultiHeadedAttention, ScaledDotProductAttention
-[1;32m     65[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodules[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlayers[39;00m[38;5;21;01m.[39;00m[38;5;21;01maddnorm[39;00m [38;5;28;01mimport[39;00m AddNorm
+[1;32m     36[0m     TrainingArguments,
+[1;32m     37[0m )
+[0;32m---> 39[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mconfig[39;00m[38;5;21;01m.[39;00m[38;5;21;01mdecoder[39;00m [38;5;28;01mimport[39;00m (
+[1;32m     40[0m     AddNormConfig,
+[1;32m     41[0m     DecoderBlockConfig,
+[1;32m     42[0m     DecoderConfig,
+[1;32m     43[0m     MultiHeadedAttentionConfig,
+[1;32m     44[0m     PositionwiseFeedForwardConfig,
+[1;32m     45[0m )
+[1;32m     46[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodules[39;00m[38;5;21;01m.[39;00m[38;5;21;01mattention[39;00m[38;5;21;01m.[39;00m[38;5;21;01mcore[39;00m [38;5;28;01mimport[39;00m MultiHeadedAttention, ScaledDotProductAttention
+[1;32m     47[0m [38;5;28;01mfrom[39;00m [38;5;21;01momnivault[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransformer[39;00m[38;5;21;01m.[39;00m[38;5;21;01mmodules[39;00m[38;5;21;01m.[39;00m[38;5;21;01mlayers[39;00m[38;5;21;01m.[39;00m[38;5;21;01maddnorm[39;00m [38;5;28;01mimport[39;00m AddNorm
 
 [0;31mModuleNotFoundError[0m: No module named 'omnivault'
 

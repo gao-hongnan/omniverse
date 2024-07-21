@@ -582,6 +582,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank-and-low-rank-decomposition-via-matrix-factorization">Rank And Low-Rank Decomposition Via Matrix Factorization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-autoregressive-self-supervised-learning-paradigm">The Autoregressive Self-Supervised Learning Paradigm</a></li>
@@ -610,23 +611,22 @@ document.write(`
 <img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#motivation" id="id3">Motivation</a></p></li>
-<li><p><a class="reference internal" href="#rank-and-low-rank-decomposition-via-matrix-factorization" id="id4">Rank And Low-Rank Decomposition Via Matrix Factorization</a></p></li>
-<li><p><a class="reference internal" href="#the-autoregressive-self-supervised-learning-paradigm" id="id5">The Autoregressive Self-Supervised Learning Paradigm</a></p></li>
-<li><p><a class="reference internal" href="#task-specific-fine-tuning" id="id6">Task Specific Fine-Tuning</a></p></li>
-<li><p><a class="reference internal" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" id="id7">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></p></li>
-<li><p><a class="reference internal" href="#parameters-reduction-in-lora" id="id8">Parameters Reduction In LoRA</a></p></li>
-<li><p><a class="reference internal" href="#the-low-rank-adaptation-lora-algorithm" id="id9">The Low-Rank Adaptation (LoRA) Algorithm</a></p></li>
-<li><p><a class="reference internal" href="#no-additional-inference-latency" id="id10">No Additional Inference Latency</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id11">References And Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#reproducibility" id="id3">Reproducibility</a></p></li>
+<li><p><a class="reference internal" href="#motivation" id="id4">Motivation</a></p></li>
+<li><p><a class="reference internal" href="#rank-and-low-rank-decomposition-via-matrix-factorization" id="id5">Rank And Low-Rank Decomposition Via Matrix Factorization</a></p></li>
+<li><p><a class="reference internal" href="#the-autoregressive-self-supervised-learning-paradigm" id="id6">The Autoregressive Self-Supervised Learning Paradigm</a></p></li>
+<li><p><a class="reference internal" href="#task-specific-fine-tuning" id="id7">Task Specific Fine-Tuning</a></p></li>
+<li><p><a class="reference internal" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" id="id8">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></p></li>
+<li><p><a class="reference internal" href="#parameters-reduction-in-lora" id="id9">Parameters Reduction In LoRA</a></p></li>
+<li><p><a class="reference internal" href="#the-low-rank-adaptation-lora-algorithm" id="id10">The Low-Rank Adaptation (LoRA) Algorithm</a></p></li>
+<li><p><a class="reference internal" href="#no-additional-inference-latency" id="id11">No Additional Inference Latency</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References And Further Readings</a></p></li>
 </ul>
 </nav>
-<div class="cell tag_hide-input docutils container">
-<details class="hide above-input">
-<summary aria-label="Toggle hidden content">
-<span class="collapsed">Show code cell source</span>
-<span class="expanded">Hide code cell source</span>
-</summary>
+<section id="reproducibility">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h2>
+<p>We first set the seed for reproducibility.</p>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="linenos"> 2</span>
@@ -728,10 +728,10 @@ document.write(`
 </pre></div>
 </div>
 </div>
-</details>
 </div>
+</section>
 <section id="motivation">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Motivation</a><a class="headerlink" href="#motivation" title="Link to this heading">#</a></h2>
 <p>Consider that you have access to an open source large language model that is of
 175 billion parameters, and you want to fine-tune it for your domain specific
 task for your company. Let’s say you succeed in fine-tuning the model and it
@@ -758,7 +758,7 @@ second moments of the gradients) and LoRA can reduce the trainable parameters by
 performance with suitable hyperparameters.</p>
 </section>
 <section id="rank-and-low-rank-decomposition-via-matrix-factorization">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Rank And Low-Rank Decomposition Via Matrix Factorization</a><a class="headerlink" href="#rank-and-low-rank-decomposition-via-matrix-factorization" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Rank And Low-Rank Decomposition Via Matrix Factorization</a><a class="headerlink" href="#rank-and-low-rank-decomposition-via-matrix-factorization" title="Link to this heading">#</a></h2>
 <p>Firstly, we assume that the reader has a basic understanding of the
 <a class="reference external" href="https://arxiv.org/abs/1706.03762">transformer-based models</a> and how they work,
 as well as the definition of
@@ -807,7 +807,7 @@ our LoRA case, <span class="math notranslate nohighlight">\(r \ll \min (d, k)\)<
 than <span class="math notranslate nohighlight">\(\min (d, k)\)</span>).</p>
 </section>
 <section id="the-autoregressive-self-supervised-learning-paradigm">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">The Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#the-autoregressive-self-supervised-learning-paradigm" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">The Autoregressive Self-Supervised Learning Paradigm</a><a class="headerlink" href="#the-autoregressive-self-supervised-learning-paradigm" title="Link to this heading">#</a></h2>
 <p>The authors in LoRA mentioned that while our proposal is agnostic to training
 objective, they focus on language modeling as our motivating use case. So we
 detail a brief description of the language modeling problem.</p>
@@ -918,7 +918,7 @@ we can do so by estimating the joint probability distribution via the
 conditional probability distributions.</p>
 </section>
 <section id="task-specific-fine-tuning">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Task Specific Fine-Tuning</a><a class="headerlink" href="#task-specific-fine-tuning" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Task Specific Fine-Tuning</a><a class="headerlink" href="#task-specific-fine-tuning" title="Link to this heading">#</a></h2>
 <p>We can now look at what the authors define next which is the maximization of
 conditional probabilities given a task-specific prompt.</p>
 <p>Suppose we are given a pre-trained autoregressive language model
@@ -964,7 +964,7 @@ can visualize the <span class="math notranslate nohighlight">\(\Delta \Theta(\Ph
 update weights <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> in the fine-tuning process.</p>
 </section>
 <section id="the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a><a class="headerlink" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a><a class="headerlink" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" title="Link to this heading">#</a></h2>
 <p>We describe the author’s first big idea in this section, where they hypothesize
 (with empirical evidence) that the update weights of a large language model
 during fine-tuning reside in a low-dimensional subspace.</p>
@@ -1071,7 +1071,7 @@ and <span class="math notranslate nohighlight">\(\mathbf{B} \in \mathbb{R}^{d \t
 \]</div>
 </section>
 <section id="parameters-reduction-in-lora">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">Parameters Reduction In LoRA</a><a class="headerlink" href="#parameters-reduction-in-lora" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Parameters Reduction In LoRA</a><a class="headerlink" href="#parameters-reduction-in-lora" title="Link to this heading">#</a></h2>
 <p>Now, let’s do some quick math. Earlier we said our model is of size
 <span class="math notranslate nohighlight">\(\| \Theta_{\mathcal{M}} \| = 175,000,000,000\)</span> parameters. Then for simplicity
 case we assume our weight <span class="math notranslate nohighlight">\(\mathbf{W} \in \mathbb{R}^{d \times k}\)</span> of the
@@ -1140,7 +1140,7 @@ necessary information for the adaptation and the model may not perform well - so
 here we recommend increasing the rank <span class="math notranslate nohighlight">\(r\)</span> where appropriate.</p>
 </section>
 <section id="the-low-rank-adaptation-lora-algorithm">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">The Low-Rank Adaptation (LoRA) Algorithm</a><a class="headerlink" href="#the-low-rank-adaptation-lora-algorithm" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">The Low-Rank Adaptation (LoRA) Algorithm</a><a class="headerlink" href="#the-low-rank-adaptation-lora-algorithm" title="Link to this heading">#</a></h2>
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> be our model with some linear layer with weights
 <span class="math notranslate nohighlight">\(\mathbf{W} \in \mathbb{R}^{d \times k}\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is the output dimension and
 <span class="math notranslate nohighlight">\(k\)</span> is the input dimension (get used to this notation with PyTorch). In
@@ -1289,7 +1289,7 @@ thread on this
 </ol>
 </section>
 <section id="no-additional-inference-latency">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">No Additional Inference Latency</a><a class="headerlink" href="#no-additional-inference-latency" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">No Additional Inference Latency</a><a class="headerlink" href="#no-additional-inference-latency" title="Link to this heading">#</a></h2>
 <p>The distributive law of matrix multiplication we saw earlier ensures that the
 update weights <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> can be applied on the fly during inference
 without too much over memory overhead, and therefore not much additional
@@ -1328,7 +1328,7 @@ matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <s
 </figure>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">References And Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References And Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>[1] E. J. Hu, Y. Shen, P. Wallis, Z. Allen-Zhu, Y. Li, S. Wang, L. Wang, and
 W. Chen, “LoRA: Low-Rank Adaptation of Large Language Models,” <em>arXiv
@@ -1409,6 +1409,7 @@ in Neural Information Processing Systems, pp. 5998–6008, 2017.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation">Motivation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank-and-low-rank-decomposition-via-matrix-factorization">Rank And Low-Rank Decomposition Via Matrix Factorization</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-autoregressive-self-supervised-learning-paradigm">The Autoregressive Self-Supervised Learning Paradigm</a></li>
