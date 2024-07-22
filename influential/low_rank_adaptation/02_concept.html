@@ -591,7 +591,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-reduction-in-lora">Parameters Reduction In LoRA</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-low-rank-adaptation-lora-algorithm">The Low-Rank Adaptation (LoRA) Algorithm</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-additional-inference-latency">No Additional Inference Latency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-no-additional-inference-latency">Merge - No Additional Inference Latency</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
             </nav>
@@ -620,7 +620,7 @@ document.write(`
 <li><p><a class="reference internal" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank" id="id8">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></p></li>
 <li><p><a class="reference internal" href="#parameters-reduction-in-lora" id="id9">Parameters Reduction In LoRA</a></p></li>
 <li><p><a class="reference internal" href="#the-low-rank-adaptation-lora-algorithm" id="id10">The Low-Rank Adaptation (LoRA) Algorithm</a></p></li>
-<li><p><a class="reference internal" href="#no-additional-inference-latency" id="id11">No Additional Inference Latency</a></p></li>
+<li><p><a class="reference internal" href="#merge-no-additional-inference-latency" id="id11">Merge - No Additional Inference Latency</a></p></li>
 <li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References And Further Readings</a></p></li>
 </ul>
 </nav>
@@ -1289,8 +1289,8 @@ thread on this
 </li>
 </ol>
 </section>
-<section id="no-additional-inference-latency">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">No Additional Inference Latency</a><a class="headerlink" href="#no-additional-inference-latency" title="Link to this heading">#</a></h2>
+<section id="merge-no-additional-inference-latency">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Merge - No Additional Inference Latency</a><a class="headerlink" href="#merge-no-additional-inference-latency" title="Link to this heading">#</a></h2>
 <p>The distributive law of matrix multiplication we saw earlier ensures that the
 update weights <span class="math notranslate nohighlight">\(\Delta \mathbf{W}\)</span> can be applied on the fly during inference
 without too much over memory overhead, and therefore not much additional
@@ -1327,6 +1327,36 @@ matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <s
 </div>
 </figcaption>
 </figure>
+<p>In practice, it is common to <em>merge and unload</em> the adapter layer after training
+into the original pretrained base model. This merge operation is done by
+updating the original pretrained weights <span class="math notranslate nohighlight">\(\mathbf{W}\)</span> with the low-rank
+decomposition matrices <span class="math notranslate nohighlight">\(\mathbf{A}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{B}\)</span> to obtain the merged
+weights <span class="math notranslate nohighlight">\(\mathbf{W}_{'}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mathbf{W}^{'} &amp;= \mathbf{W} \oplus \mathbf{B} \mathbf{A}
+\end{aligned}
+\]</div>
+<p>This way, during inference, given an input <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>, we can compute the
+output <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> by applying the merged weights <span class="math notranslate nohighlight">\(\mathbf{W}^{'}\)</span> on the input
+<span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}
+\mathbf{y} &amp;= \mathbf{x} &#64; \left(\mathbf{W}^{'}\right)^T
+\end{aligned}
+\]</div>
+<p>This requires only a single matrix multiplication operation. In total, we can
+loosely say that if <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is a <span class="math notranslate nohighlight">\(1 \times k\)</span> vector, and
+<span class="math notranslate nohighlight">\(\mathbf{W}^{'} \in \mathbb{R}^{d \times k}\)</span>, then doing
+<span class="math notranslate nohighlight">\(\mathbf{x} &#64; \left(\mathbf{W}^{'}\right)^T\)</span> costs <span class="math notranslate nohighlight">\(2 \times d \times k\)</span>
+multiplications and <span class="math notranslate nohighlight">\(d \times k\)</span> additions. But if you do not merge, and keep
+the weights separate, you get
+<span class="math notranslate nohighlight">\(\mathbf{x} &#64; \left(\mathbf{W}^T\right) + \mathbf{x} &#64; \left(\mathbf{B} \mathbf{A}\right)^T\)</span>
+which costs <span class="math notranslate nohighlight">\(2 \times d \times k\)</span> multiplications and <span class="math notranslate nohighlight">\(2 \times d \times k\)</span>
+additions. So, in terms of computational complexity, even though they are on the
+same order, the merged weights are slightly more efficient.</p>
 </section>
 <section id="references-and-further-readings">
 <h2><a class="toc-backref" href="#id12" role="doc-backlink">References And Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
@@ -1418,7 +1448,7 @@ in Neural Information Processing Systems, pp. 5998–6008, 2017.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-update-weights-of-fine-tuning-has-a-low-intrinsic-rank">The Update Weights Of Fine-Tuning Has A Low Intrinsic Rank</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-reduction-in-lora">Parameters Reduction In LoRA</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-low-rank-adaptation-lora-algorithm">The Low-Rank Adaptation (LoRA) Algorithm</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#no-additional-inference-latency">No Additional Inference Latency</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-no-additional-inference-latency">Merge - No Additional Inference Latency</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
   </nav></div>

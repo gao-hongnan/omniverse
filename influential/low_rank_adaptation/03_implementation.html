@@ -575,6 +575,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-with-pretrained-model">Evaluate With Pretrained Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-implementation">LoRA Implementation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-lora">Train LoRA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-and-unload">Merge And Unload</a></li>
 </ul>
             </nav>
         </div>
@@ -605,13 +606,14 @@ document.write(`
 <li><p><a class="reference internal" href="#evaluate-with-pretrained-model" id="id7">Evaluate With Pretrained Model</a></p></li>
 <li><p><a class="reference internal" href="#lora-implementation" id="id8">LoRA Implementation</a></p></li>
 <li><p><a class="reference internal" href="#train-lora" id="id9">Train LoRA</a></p></li>
+<li><p><a class="reference internal" href="#merge-and-unload" id="id10">Merge And Unload</a></p></li>
 </ul>
 </nav>
 <section id="merge-and-quantize">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Merge And Quantize</a><a class="headerlink" href="#merge-and-quantize" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">pip</span> install -U -q omniverse==0.0.57
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %pip install -U -q omniverse==0.0.57</span>
 </pre></div>
 </div>
 </div>
@@ -663,9 +665,9 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-21 15:14:01.842773: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-2024-07-21 15:14:01.842888: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
-2024-07-21 15:14:01.974065: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-07-22 12:01:06.064411: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-07-22 12:01:06.064466: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-07-22 12:01:06.065888: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
 </pre></div>
 </div>
 </div>
@@ -741,14 +743,10 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "f5d6824c2c3247bfa4daf0cebb010f84"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "a2a12dbf7b074e62a93f13ff48740a70"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "1a233d6aa7bf4ad297a73597f5da3143"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "9d23805490ad4571aa3dd8a62be9d80c"}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
 </pre></div>
 </div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "e170eadc8ade483791857f61f77df8f3"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "35fdffa4accb4cdf879345f3f436fb35"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "8b7f16d9751b4afbb74d354ce34a2ba9"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "06be5b9116fc4fa997d0e74091522e33"}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/conda/lib/python3.10/site-packages/multiprocess/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.
-  self.pid = os.fork()
-</pre></div>
 </div>
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "726836c53a0d4009be317c4917543d60"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "94f78e68cad34cf2bad9af109bcf1360"}</script></div>
 </div>
 </section>
 <section id="base-model">
@@ -770,7 +768,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "4e40b0d48677485fa2434e976fad792d"}</script><script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "598002b1c85149d8bfb547da1029641e"}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Some weights of Qwen2ForSequenceClassification were not initialized from the model checkpoint at Qwen/Qwen1.5-0.5B and are newly initialized: [&#39;score.weight&#39;]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Some weights of Qwen2ForSequenceClassification were not initialized from the model checkpoint at Qwen/Qwen1.5-0.5B and are newly initialized: [&#39;score.weight&#39;]
 You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
 </pre></div>
 </div>
@@ -914,9 +912,9 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_roc_auc_class_2'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.5599587203302373</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_pr_auc_class_2'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.2816445108714582</span>,
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_loss'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7.431046962738037</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_runtime'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2.7974</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_samples_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">81.146</span>,
-<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_steps_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">10.367</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_runtime'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.8501</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_samples_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">122.698</span>,
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'eval_steps_per_second'</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">15.675</span>
 <span style="font-weight: bold">}</span>
 </pre>
 </div></div>
@@ -1074,7 +1072,32 @@ model.layers.23.self_attn.v_proj
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+
+
+<span class="k">class</span> <span class="nc">LoraConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Lora attention dimension (the &#39;rank&#39;).&quot;</span><span class="p">)</span>
+    <span class="n">lora_alpha</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The alpha parameter for Lora scaling.&quot;</span><span class="p">)</span>
+    <span class="n">lora_dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The dropout probability for Lora layers.&quot;</span><span class="p">)</span>
+    <span class="n">target_modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;The names of the modules to apply the adapter to. If specified, only the modules with the specified &quot;</span>
+            <span class="s2">&quot;names will be replaced. When passing a string, a regex match will be performed. When passing a list of &quot;</span>
+            <span class="s2">&quot;strings, either an exact match will be performed or it is checked if the name of the module ends with any &quot;</span>
+            <span class="s2">&quot;of the passed strings. If specified as &#39;all-linear&#39;, all linear/Conv1D modules are chosen, excluding the &quot;</span>
+            <span class="s2">&quot;output layer. If not specified, modules are chosen according to the model architecture. If the architecture &quot;</span>
+            <span class="s2">&quot;is unknown, an error will be raised—manual specification of target modules is required in such cases.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">modules_to_save</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;List of modules apart from adapter layers to be set as</span>
+<span class="sd">               trainable and saved in the final checkpoint.&quot;&quot;&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_lora_a_init_params</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1092,11 +1115,29 @@ model.layers.23.self_attn.v_proj
 
 
 <span class="k">class</span> <span class="nc">LoRALinear</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;LoRA Linear layer.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_linear</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the `LoRALinear` layer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        original_linear : nn.Linear</span>
+<span class="sd">            The original linear layer from the pretrained</span>
+<span class="sd">        rank : int</span>
+<span class="sd">            The rank of the LoRA layer.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            The alpha parameter for LoRA scaling.</span>
+<span class="sd">        dropout : float</span>
+<span class="sd">            The dropout probability for the LoRA layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="c1"># These are the weights from the original pretrained model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">)</span>  <span class="c1"># weight shape=[out_dim, in_dim]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span> <span class="o">=</span> <span class="n">original_linear</span>  <span class="c1"># weight shape=[out_dim, in_dim]</span>
+
+        <span class="n">in_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">in_features</span>
+        <span class="n">out_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">out_features</span>
 
         <span class="c1"># These are the new LoRA params. In general rank &lt;&lt; in_dim, out_dim - do not put bias here</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># weight shape=[rank, in_dim]</span>
@@ -1115,25 +1156,60 @@ model.layers.23.self_attn.v_proj
         <span class="n">_lora_b_init_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="c1"># This would be the output of the original model</span>
-        <span class="n">frozen_out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass of the `LoRALinear` layer.&quot;&quot;&quot;</span>
+        <span class="n">frozen_out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># This would be the output of the original model</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">frozen_out</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">bias</span>
 
         <span class="c1"># lora_a projects inputs down to the much smaller self.rank,</span>
         <span class="c1"># then lora_b projects back up to the output dimension</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">lora_out</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">lora_out</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1"># [B, T, D1] @ [D1, R] @ [R, D2] = [D1, D2]</span>
         <span class="c1"># Finally, scale by the alpha parameter (normalized by rank)</span>
         <span class="c1"># and add to the original model&#39;s outputs</span>
         <span class="k">return</span> <span class="n">frozen_out</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span> <span class="o">*</span> <span class="n">lora_out</span>
 
+    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge the LoRA layers to the original linear layer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># (gate_proj): Linear(in_features=1024, out_features=2816, bias=False) -&gt; weight = [2816, 1024]</span>
+        <span class="c1"># [1024, R] @ [R, 2816]</span>
+        <span class="c1"># torch.Size([1024, 2816]) torch.Size([2816, 1024])</span>
+
+        <span class="n">lora_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="c1"># [D1, R] @ [R, D2] = [D1, D2]</span>
+        <span class="n">lora_weight</span> <span class="o">=</span> <span class="n">lora_weight</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span> <span class="o">*</span> <span class="n">lora_weight</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span>
+
+
+<span class="k">def</span> <span class="nf">merge_and_unload_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively merge LoRA layers back into the original Linear layers in</span>
+<span class="sd">    the model and unload LoRA parameters.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_children</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">LoRALinear</span><span class="p">):</span>
+            <span class="n">merged_linear</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">_merge</span><span class="p">()</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">merged_linear</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merge_and_unload_model</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
 
 <span class="k">def</span> <span class="nf">apply_lora_to_base_model</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">target_modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers.</span>
 
+<span class="sd">    In the `if` condition, we first check if the module is an instance of</span>
+<span class="sd">    `nn.Linear`. If it is, we then check if the `target_modules` is specified</span>
+<span class="sd">    by user, if it is not, then `if target_modules is None` will return `True`</span>
+<span class="sd">    and we apply LoRA to the module because we assume that the user wants to</span>
+<span class="sd">    apply LoRA to all `nn.Linear` layers. If the `target_modules` is specified,</span>
+<span class="sd">    then `if target_modules is None` will return `False` and we will check the</span>
+<span class="sd">    second condition `any(target in module_name for target in target_modules)`</span>
+<span class="sd">    which will return `True` if any of the target modules are in the module name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_children</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">target_modules</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">any</span><span class="p">(</span><span class="n">target</span> <span class="ow">in</span> <span class="n">module_name</span> <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">target_modules</span><span class="p">):</span>
@@ -1141,21 +1217,25 @@ model.layers.23.self_attn.v_proj
                     <span class="n">model</span><span class="p">,</span>
                     <span class="n">module_name</span><span class="p">,</span>
                     <span class="n">LoRALinear</span><span class="p">(</span>
-                        <span class="n">in_dim</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span>
-                        <span class="n">out_dim</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span>
+                        <span class="n">original_linear</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
                         <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span>
                         <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
                         <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span>
-                        <span class="n">bias</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="p">),</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Recursively apply LoRA to children modules</span>
-            <span class="n">apply_lora_to_base_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">target_modules</span><span class="o">=</span><span class="n">target_modules</span><span class="p">)</span>
+            <span class="n">apply_lora_to_base_model</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">,</span> <span class="n">target_modules</span><span class="o">=</span><span class="n">target_modules</span>
+            <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>Note that originally there’s a mistake to “re-create” <code class="docutils literal notranslate"><span class="pre">self.linear</span> <span class="pre">=</span> <span class="pre">original_linear</span>&#160; <span class="pre">#</span> <span class="pre">weight</span> <span class="pre">shape=[out_dim,</span> <span class="pre">in_dim]</span></code> as
+<code class="docutils literal notranslate"><span class="pre">self.linear</span> <span class="pre">=</span> <span class="pre">nn.Linear(...)</span></code> which is wrong because you do not inherit the original pre-trained weights. How I figured out is that
+during training the initial loss/metrics are unstable and looks off, a revisit to the implementation quickly reveal this issue.</p>
+<p>We do a deep copy on the <code class="docutils literal notranslate"><span class="pre">base_model</span></code> to avoid mutation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
@@ -1180,6 +1260,83 @@ via <code class="docutils literal notranslate"><span class="pre">apply_lora_to_b
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2ForSequenceClassification</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>model<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2Model</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>embed_tokens<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Embedding</span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">151936</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>layers<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ModuleList</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>-<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">23</span><span style="font-weight: bold">)</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">24</span> x <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2DecoderLayer</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>self_attn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2SdpaAttention</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>q_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>k_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>v_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>o_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>rotary_emb<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RotaryEmbedding</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>mlp<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2MLP</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>gate_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>up_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>down_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>act_fn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">SiLU</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>input_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>post_attention_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>norm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>score<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+<p>Pay attention here to the architecture, each <code class="docutils literal notranslate"><span class="pre">q</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">v</span></code> (our chosen target modules) originally has the following name for their layer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">q_proj</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">(</span><span class="n">k_proj</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">(</span><span class="n">v_proj</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And after the replacement, the <code class="docutils literal notranslate"><span class="pre">Linear</span></code> layer is <em><strong>replaced</strong></em> with a <code class="docutils literal notranslate"><span class="pre">LoRALinear</span></code> which also wraps the original <code class="docutils literal notranslate"><span class="pre">Linear</span></code> layer along with additional <code class="docutils literal notranslate"><span class="pre">lora_a</span></code> and <code class="docutils literal notranslate"><span class="pre">lora_b</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">q_proj</span><span class="p">):</span> <span class="n">LoRALinear</span><span class="p">(</span>
+ <span class="p">(</span><span class="n">linear</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_a</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_b</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">dropout</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="n">k_proj</span><span class="p">):</span> <span class="n">LoRALinear</span><span class="p">(</span>
+ <span class="p">(</span><span class="n">linear</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_a</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_b</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">dropout</span><span class="p">):</span> <span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="p">(</span><span class="n">v_proj</span><span class="p">):</span> <span class="n">LoRALinear</span><span class="p">(</span>
+ <span class="p">(</span><span class="n">linear</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_a</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+ <span class="p">(</span><span class="n">lora_b</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">1024</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_with_adapter_total_trainable</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total trainable parameters after LoRA before freezing: </span><span class="si">{</span><span class="n">base_model_with_adapter_total_trainable</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1191,7 +1348,7 @@ via <code class="docutils literal notranslate"><span class="pre">apply_lora_to_b
 </div>
 </div>
 </div>
-<p>First <code class="docutils literal notranslate"><span class="pre">bias</span></code> is default to <code class="docutils literal notranslate"><span class="pre">True</span></code> in original model, but in LoRA we need to have it as <code class="docutils literal notranslate"><span class="pre">False</span></code>.
+<p>Note that <code class="docutils literal notranslate"><span class="pre">bias</span></code> is default to <code class="docutils literal notranslate"><span class="pre">True</span></code> in original model, but in LoRA we need to have it as <code class="docutils literal notranslate"><span class="pre">False</span></code>.
 You also see that currently the total trainable parameters are more than base model. Why?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1205,6 +1362,7 @@ You also see that currently the total trainable parameters are more than base mo
 </div>
 </div>
 </div>
+<p>Where does the additional <span class="math notranslate nohighlight">\(589824\)</span> parameters come from, let’s find out below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dim</span> <span class="o">=</span> <span class="n">base_model_with_adapter</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">self_attn</span><span class="o">.</span><span class="n">q_proj</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1274,6 +1432,21 @@ Note we DO NOT want to freeze the <code class="docutils literal notranslate"><sp
 <h2><a class="toc-backref" href="#id9" role="doc-backlink">Train LoRA</a><a class="headerlink" href="#train-lora" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">break</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+    <span class="k">break</span>
+    <span class="o">^</span>
+<span class="ne">SyntaxError</span>: &#39;break&#39; outside loop
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seed_all</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="n">lora_config</span> <span class="o">=</span> <span class="n">LoraConfig</span><span class="p">(</span>
@@ -1320,6 +1493,77 @@ Note we DO NOT want to freeze the <code class="docutils literal notranslate"><sp
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2ForSequenceClassification</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>model<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2Model</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>embed_tokens<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Embedding</span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">151936</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>layers<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ModuleList</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>-<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">23</span><span style="font-weight: bold">)</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">24</span> x <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2DecoderLayer</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>self_attn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2SdpaAttention</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>q_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>k_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>v_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>o_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>rotary_emb<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RotaryEmbedding</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>mlp<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2MLP</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>gate_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>up_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>down_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">LoRALinear</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>linear<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_a<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>lora_b<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">16</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   │   </span><span style="font-weight: bold">(</span>dropout<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Dropout</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">p</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0.1</span>, <span style="color: #808000; text-decoration-color: #808000">inplace</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>act_fn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">SiLU</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>input_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>post_attention_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>norm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>score<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">training_args</span> <span class="o">=</span> <span class="n">TrainingArguments</span><span class="p">(</span>
     <span class="n">do_eval</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">do_predict</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -1328,7 +1572,7 @@ Note we DO NOT want to freeze the <code class="docutils literal notranslate"><sp
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">6e-4</span><span class="p">,</span>
     <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
     <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
-    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">report_to</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./artifacts&quot;</span><span class="p">,</span>
     <span class="n">overwrite_output_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1384,8 +1628,8 @@ Note we DO NOT want to freeze the <code class="docutils literal notranslate"><sp
 <div class="output text_html">
     <div>
       
-      <progress value='640' max='640' style='width:300px; height:20px; vertical-align: middle;'></progress>
-      [640/640 04:25, Epoch 10/10]
+      <progress value='192' max='192' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [192/192 02:15, Epoch 3/3]
     </div>
     <table border="1" class="dataframe">
   <thead>
@@ -1416,473 +1660,275 @@ Note we DO NOT want to freeze the <code class="docutils literal notranslate"><sp
   <tbody>
     <tr>
       <td>32</td>
-      <td>2.532300</td>
-      <td>1.149722</td>
-      <td>1.149722</td>
-      <td>0.466960</td>
-      <td>0.456524</td>
-      <td>0.454219</td>
-      <td>0.424775</td>
-      <td>0.466960</td>
-      <td>0.466960</td>
-      <td>0.466960</td>
-      <td>[[12, 3, 15], [14, 66, 60], [18, 11, 28]]</td>
-      <td>0.624885</td>
-      <td>0.426832</td>
-      <td>0.226024</td>
-      <td>0.578849</td>
-      <td>0.201540</td>
-      <td>0.738013</td>
-      <td>0.764325</td>
-      <td>0.557792</td>
-      <td>0.288986</td>
+      <td>1.313600</td>
+      <td>0.428587</td>
+      <td>0.428587</td>
+      <td>0.845815</td>
+      <td>0.867180</td>
+      <td>0.702005</td>
+      <td>0.695558</td>
+      <td>0.845815</td>
+      <td>0.845815</td>
+      <td>0.845815</td>
+      <td>[[7, 0, 23], [0, 132, 8], [0, 4, 53]]</td>
+      <td>0.970182</td>
+      <td>0.913684</td>
+      <td>0.080725</td>
+      <td>0.967851</td>
+      <td>0.848750</td>
+      <td>0.990476</td>
+      <td>0.993630</td>
+      <td>0.952219</td>
+      <td>0.895753</td>
     </tr>
     <tr>
       <td>64</td>
-      <td>1.411900</td>
-      <td>0.881590</td>
-      <td>0.881590</td>
-      <td>0.629956</td>
-      <td>0.367942</td>
-      <td>0.541270</td>
-      <td>0.418140</td>
-      <td>0.629956</td>
-      <td>0.629956</td>
-      <td>0.629956</td>
-      <td>[[23, 7, 0], [20, 120, 0], [37, 20, 0]]</td>
-      <td>0.778497</td>
-      <td>0.544018</td>
-      <td>0.171648</td>
-      <td>0.771404</td>
-      <td>0.335984</td>
-      <td>0.851806</td>
-      <td>0.888730</td>
-      <td>0.712281</td>
-      <td>0.383698</td>
+      <td>0.411400</td>
+      <td>0.181376</td>
+      <td>0.181376</td>
+      <td>0.942731</td>
+      <td>0.920626</td>
+      <td>0.909733</td>
+      <td>0.912348</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>[[24, 0, 6], [1, 135, 4], [1, 1, 55]]</td>
+      <td>0.992234</td>
+      <td>0.975164</td>
+      <td>0.030542</td>
+      <td>0.990863</td>
+      <td>0.954921</td>
+      <td>0.996470</td>
+      <td>0.997859</td>
+      <td>0.989370</td>
+      <td>0.971857</td>
     </tr>
     <tr>
       <td>96</td>
-      <td>1.193600</td>
-      <td>1.172019</td>
-      <td>1.172019</td>
-      <td>0.656388</td>
-      <td>0.509725</td>
-      <td>0.421011</td>
-      <td>0.399458</td>
-      <td>0.656388</td>
-      <td>0.656388</td>
-      <td>0.656388</td>
-      <td>[[6, 20, 4], [0, 139, 1], [9, 44, 4]]</td>
-      <td>0.820734</td>
-      <td>0.592243</td>
-      <td>0.186765</td>
-      <td>0.820474</td>
-      <td>0.385348</td>
-      <td>0.874959</td>
-      <td>0.918497</td>
-      <td>0.766770</td>
-      <td>0.446123</td>
+      <td>0.164500</td>
+      <td>0.136885</td>
+      <td>0.136885</td>
+      <td>0.947137</td>
+      <td>0.941042</td>
+      <td>0.910443</td>
+      <td>0.924157</td>
+      <td>0.947137</td>
+      <td>0.947137</td>
+      <td>0.947137</td>
+      <td>[[25, 1, 4], [0, 138, 2], [1, 4, 52]]</td>
+      <td>0.994777</td>
+      <td>0.984542</td>
+      <td>0.026965</td>
+      <td>0.996616</td>
+      <td>0.977963</td>
+      <td>0.996798</td>
+      <td>0.997951</td>
+      <td>0.990918</td>
+      <td>0.977165</td>
     </tr>
     <tr>
       <td>128</td>
-      <td>0.906400</td>
-      <td>0.915803</td>
-      <td>0.915803</td>
-      <td>0.696035</td>
-      <td>0.739316</td>
-      <td>0.512281</td>
-      <td>0.483242</td>
-      <td>0.696035</td>
-      <td>0.696035</td>
-      <td>0.696035</td>
-      <td>[[14, 16, 0], [0, 140, 0], [14, 39, 4]]</td>
-      <td>0.874193</td>
-      <td>0.721981</td>
-      <td>0.151727</td>
-      <td>0.828765</td>
-      <td>0.506458</td>
-      <td>0.932102</td>
-      <td>0.949205</td>
-      <td>0.861713</td>
-      <td>0.700514</td>
+      <td>0.096400</td>
+      <td>0.139018</td>
+      <td>0.139018</td>
+      <td>0.960352</td>
+      <td>0.941155</td>
+      <td>0.931579</td>
+      <td>0.936106</td>
+      <td>0.960352</td>
+      <td>0.960352</td>
+      <td>0.960352</td>
+      <td>[[27, 0, 3], [0, 140, 0], [3, 3, 51]]</td>
+      <td>0.995570</td>
+      <td>0.985105</td>
+      <td>0.021838</td>
+      <td>0.995431</td>
+      <td>0.974730</td>
+      <td>0.998194</td>
+      <td>0.998862</td>
+      <td>0.993086</td>
+      <td>0.981205</td>
     </tr>
     <tr>
       <td>160</td>
-      <td>1.006300</td>
-      <td>0.916757</td>
-      <td>0.916757</td>
-      <td>0.691630</td>
-      <td>0.405074</td>
-      <td>0.592063</td>
-      <td>0.457581</td>
-      <td>0.691630</td>
-      <td>0.691630</td>
-      <td>0.691630</td>
-      <td>[[25, 5, 0], [8, 132, 0], [49, 8, 0]]</td>
-      <td>0.853698</td>
-      <td>0.718629</td>
-      <td>0.160593</td>
-      <td>0.890525</td>
-      <td>0.696728</td>
-      <td>0.959113</td>
-      <td>0.966931</td>
-      <td>0.711455</td>
-      <td>0.481235</td>
+      <td>0.027700</td>
+      <td>0.134256</td>
+      <td>0.134256</td>
+      <td>0.955947</td>
+      <td>0.934282</td>
+      <td>0.920468</td>
+      <td>0.927157</td>
+      <td>0.955947</td>
+      <td>0.955947</td>
+      <td>0.955947</td>
+      <td>[[26, 0, 4], [0, 140, 0], [3, 3, 51]]</td>
+      <td>0.996782</td>
+      <td>0.989355</td>
+      <td>0.022951</td>
+      <td>0.997293</td>
+      <td>0.983136</td>
+      <td>0.998522</td>
+      <td>0.999064</td>
+      <td>0.994530</td>
+      <td>0.985478</td>
     </tr>
     <tr>
       <td>192</td>
-      <td>0.646600</td>
-      <td>0.556572</td>
-      <td>0.556572</td>
-      <td>0.801762</td>
-      <td>0.758897</td>
-      <td>0.677151</td>
-      <td>0.697156</td>
-      <td>0.801762</td>
-      <td>0.801762</td>
-      <td>0.801762</td>
-      <td>[[18, 6, 6], [1, 139, 0], [9, 23, 25]]</td>
-      <td>0.926962</td>
-      <td>0.826036</td>
-      <td>0.097159</td>
-      <td>0.925381</td>
-      <td>0.750799</td>
-      <td>0.958292</td>
-      <td>0.962526</td>
-      <td>0.897214</td>
-      <td>0.758678</td>
-    </tr>
-    <tr>
-      <td>224</td>
-      <td>0.414200</td>
-      <td>0.781973</td>
-      <td>0.781973</td>
-      <td>0.775330</td>
-      <td>0.740313</td>
-      <td>0.765706</td>
-      <td>0.708334</td>
-      <td>0.775330</td>
-      <td>0.775330</td>
-      <td>0.775330</td>
-      <td>[[27, 1, 2], [20, 117, 3], [21, 4, 32]]</td>
-      <td>0.917313</td>
-      <td>0.834643</td>
-      <td>0.117436</td>
-      <td>0.933164</td>
-      <td>0.774185</td>
-      <td>0.953038</td>
-      <td>0.944113</td>
-      <td>0.865738</td>
-      <td>0.780279</td>
-    </tr>
-    <tr>
-      <td>256</td>
-      <td>0.672900</td>
-      <td>0.377145</td>
-      <td>0.377146</td>
-      <td>0.885463</td>
-      <td>0.849421</td>
-      <td>0.839098</td>
-      <td>0.824764</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>[[27, 2, 1], [2, 138, 0], [13, 8, 36]]</td>
-      <td>0.962969</td>
-      <td>0.921311</td>
-      <td>0.060094</td>
-      <td>0.969543</td>
-      <td>0.870216</td>
-      <td>0.977258</td>
-      <td>0.980682</td>
-      <td>0.942105</td>
-      <td>0.910672</td>
-    </tr>
-    <tr>
-      <td>288</td>
-      <td>0.393100</td>
-      <td>0.400418</td>
-      <td>0.400418</td>
-      <td>0.863436</td>
-      <td>0.825215</td>
-      <td>0.792272</td>
-      <td>0.797615</td>
-      <td>0.863436</td>
-      <td>0.863436</td>
-      <td>0.863436</td>
-      <td>[[23, 4, 3], [3, 137, 0], [9, 12, 36]]</td>
-      <td>0.955590</td>
-      <td>0.896320</td>
-      <td>0.067456</td>
-      <td>0.961929</td>
-      <td>0.833168</td>
-      <td>0.968309</td>
-      <td>0.970140</td>
-      <td>0.936533</td>
-      <td>0.882264</td>
-    </tr>
-    <tr>
-      <td>320</td>
-      <td>0.299400</td>
-      <td>0.417757</td>
-      <td>0.417757</td>
-      <td>0.885463</td>
-      <td>0.873151</td>
-      <td>0.810986</td>
-      <td>0.837477</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>[[21, 3, 6], [1, 137, 2], [2, 12, 43]]</td>
-      <td>0.962225</td>
-      <td>0.911811</td>
-      <td>0.058212</td>
-      <td>0.963113</td>
-      <td>0.855440</td>
-      <td>0.975780</td>
-      <td>0.977580</td>
-      <td>0.947781</td>
-      <td>0.899633</td>
-    </tr>
-    <tr>
-      <td>352</td>
-      <td>0.212100</td>
-      <td>0.631729</td>
-      <td>0.631729</td>
-      <td>0.845815</td>
-      <td>0.826256</td>
-      <td>0.749248</td>
-      <td>0.762732</td>
-      <td>0.845815</td>
-      <td>0.845815</td>
-      <td>0.845815</td>
-      <td>[[14, 2, 14], [0, 129, 11], [2, 6, 49]]</td>
-      <td>0.937036</td>
-      <td>0.864003</td>
-      <td>0.078483</td>
-      <td>0.898308</td>
-      <td>0.746999</td>
-      <td>0.977094</td>
-      <td>0.984696</td>
-      <td>0.935707</td>
-      <td>0.855737</td>
-    </tr>
-    <tr>
-      <td>384</td>
-      <td>0.215800</td>
-      <td>0.920309</td>
-      <td>0.914577</td>
-      <td>0.841410</td>
-      <td>0.865780</td>
-      <td>0.726316</td>
-      <td>0.772929</td>
-      <td>0.841410</td>
-      <td>0.841410</td>
-      <td>0.841410</td>
-      <td>[[18, 9, 3], [0, 140, 0], [3, 21, 33]]</td>
-      <td>0.957390</td>
-      <td>0.893919</td>
-      <td>0.091860</td>
-      <td>0.955499</td>
-      <td>0.825081</td>
-      <td>0.975082</td>
-      <td>0.974151</td>
-      <td>0.941589</td>
-      <td>0.881868</td>
-    </tr>
-    <tr>
-      <td>416</td>
-      <td>0.159000</td>
-      <td>0.735958</td>
-      <td>0.733248</td>
-      <td>0.876652</td>
-      <td>0.860057</td>
-      <td>0.780033</td>
-      <td>0.811216</td>
-      <td>0.876652</td>
-      <td>0.876652</td>
-      <td>0.876652</td>
-      <td>[[18, 5, 7], [0, 138, 2], [3, 11, 43]]</td>
-      <td>0.963676</td>
-      <td>0.912504</td>
-      <td>0.073555</td>
-      <td>0.971743</td>
-      <td>0.866606</td>
-      <td>0.976149</td>
-      <td>0.980248</td>
-      <td>0.943137</td>
-      <td>0.889004</td>
-    </tr>
-    <tr>
-      <td>448</td>
-      <td>0.201800</td>
-      <td>0.503680</td>
-      <td>0.503680</td>
-      <td>0.876652</td>
-      <td>0.818909</td>
-      <td>0.800961</td>
-      <td>0.809249</td>
-      <td>0.876652</td>
-      <td>0.876652</td>
-      <td>0.876652</td>
-      <td>[[20, 2, 8], [0, 135, 5], [7, 6, 44]]</td>
-      <td>0.959737</td>
-      <td>0.901048</td>
-      <td>0.066298</td>
-      <td>0.952453</td>
-      <td>0.831085</td>
-      <td>0.979803</td>
-      <td>0.982069</td>
-      <td>0.946956</td>
-      <td>0.887234</td>
-    </tr>
-    <tr>
-      <td>480</td>
-      <td>0.026200</td>
-      <td>0.855887</td>
-      <td>0.827394</td>
-      <td>0.885463</td>
-      <td>0.851778</td>
-      <td>0.800459</td>
-      <td>0.821610</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>[[19, 3, 8], [0, 137, 3], [4, 8, 45]]</td>
-      <td>0.957381</td>
-      <td>0.899668</td>
-      <td>0.072127</td>
-      <td>0.963283</td>
-      <td>0.844908</td>
-      <td>0.969540</td>
-      <td>0.972841</td>
-      <td>0.939319</td>
-      <td>0.884628</td>
-    </tr>
-    <tr>
-      <td>512</td>
-      <td>0.066600</td>
-      <td>0.686846</td>
-      <td>0.658125</td>
-      <td>0.894273</td>
-      <td>0.858992</td>
-      <td>0.827945</td>
-      <td>0.842211</td>
-      <td>0.894273</td>
-      <td>0.894273</td>
-      <td>0.894273</td>
-      <td>[[22, 2, 6], [0, 137, 3], [5, 8, 44]]</td>
-      <td>0.961652</td>
-      <td>0.909252</td>
-      <td>0.063930</td>
-      <td>0.965990</td>
-      <td>0.860553</td>
-      <td>0.974179</td>
-      <td>0.977094</td>
-      <td>0.944788</td>
-      <td>0.894197</td>
-    </tr>
-    <tr>
-      <td>544</td>
-      <td>0.014200</td>
-      <td>0.711445</td>
-      <td>0.689413</td>
-      <td>0.898678</td>
-      <td>0.860229</td>
-      <td>0.837260</td>
-      <td>0.847945</td>
-      <td>0.898678</td>
-      <td>0.898678</td>
-      <td>0.898678</td>
-      <td>[[22, 2, 6], [0, 136, 4], [5, 6, 46]]</td>
-      <td>0.961123</td>
-      <td>0.906223</td>
-      <td>0.061705</td>
-      <td>0.963113</td>
-      <td>0.848701</td>
-      <td>0.976190</td>
-      <td>0.979598</td>
-      <td>0.944066</td>
-      <td>0.891514</td>
-    </tr>
-    <tr>
-      <td>576</td>
-      <td>0.017400</td>
-      <td>0.785417</td>
-      <td>0.744421</td>
-      <td>0.889868</td>
-      <td>0.863217</td>
-      <td>0.816834</td>
-      <td>0.837244</td>
-      <td>0.889868</td>
-      <td>0.889868</td>
-      <td>0.889868</td>
-      <td>[[21, 3, 6], [0, 137, 3], [4, 9, 44]]</td>
-      <td>0.961103</td>
-      <td>0.905028</td>
-      <td>0.065667</td>
-      <td>0.963790</td>
-      <td>0.848383</td>
-      <td>0.975452</td>
-      <td>0.980741</td>
-      <td>0.944066</td>
-      <td>0.889986</td>
-    </tr>
-    <tr>
-      <td>608</td>
-      <td>0.012200</td>
-      <td>0.797757</td>
-      <td>0.755783</td>
-      <td>0.889868</td>
-      <td>0.869070</td>
-      <td>0.811571</td>
-      <td>0.835462</td>
-      <td>0.889868</td>
-      <td>0.889868</td>
-      <td>0.889868</td>
-      <td>[[20, 3, 7], [0, 137, 3], [3, 9, 45]]</td>
-      <td>0.960987</td>
-      <td>0.904637</td>
-      <td>0.066113</td>
-      <td>0.963959</td>
-      <td>0.848363</td>
-      <td>0.975452</td>
-      <td>0.981116</td>
-      <td>0.943550</td>
-      <td>0.888471</td>
-    </tr>
-    <tr>
-      <td>640</td>
-      <td>0.000900</td>
-      <td>0.795754</td>
-      <td>0.753513</td>
-      <td>0.885463</td>
-      <td>0.855870</td>
-      <td>0.805723</td>
-      <td>0.827210</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>0.885463</td>
-      <td>[[20, 3, 7], [0, 137, 3], [4, 9, 44]]</td>
-      <td>0.961160</td>
-      <td>0.904855</td>
-      <td>0.066205</td>
-      <td>0.964129</td>
-      <td>0.848551</td>
-      <td>0.975698</td>
-      <td>0.981358</td>
-      <td>0.943653</td>
-      <td>0.888699</td>
+      <td>0.030300</td>
+      <td>0.160583</td>
+      <td>0.160583</td>
+      <td>0.955947</td>
+      <td>0.934282</td>
+      <td>0.920468</td>
+      <td>0.927157</td>
+      <td>0.955947</td>
+      <td>0.955947</td>
+      <td>0.955947</td>
+      <td>[[26, 0, 4], [0, 140, 0], [3, 3, 51]]</td>
+      <td>0.996349</td>
+      <td>0.988262</td>
+      <td>0.024319</td>
+      <td>0.997293</td>
+      <td>0.983136</td>
+      <td>0.998358</td>
+      <td>0.998957</td>
+      <td>0.993395</td>
+      <td>0.982279</td>
     </tr>
   </tbody>
-</table><p></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TrainOutput(global_step=640, training_loss=0.4735630032751942, metrics={&#39;train_runtime&#39;: 266.377, &#39;train_samples_per_second&#39;: 76.471, &#39;train_steps_per_second&#39;: 2.403, &#39;total_flos&#39;: 1235801533317120.0, &#39;train_loss&#39;: 0.4735630032751942, &#39;epoch&#39;: 10.0})
+</table><p></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TrainOutput(global_step=192, training_loss=0.280302738926063, metrics={&#39;train_runtime&#39;: 136.3488, &#39;train_samples_per_second&#39;: 44.819, &#39;train_steps_per_second&#39;: 1.408, &#39;total_flos&#39;: 370740459995136.0, &#39;train_loss&#39;: 0.280302738926063, &#39;epoch&#39;: 3.0})
 </pre></div>
 </div>
 </div>
 </div>
-<p>The accuracy hits around <span class="math notranslate nohighlight">\(90\%\)</span> after 10 epochs. This is a far cry from what
+<p>The accuracy hits around <span class="math notranslate nohighlight">\(95\%\)</span> after 10 epochs. This is a far cry from what
 an encoder like Deberta can achieve. But this is a good start and shows that
 the implementation is working.</p>
+</section>
+<section id="merge-and-unload">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Merge And Unload</a><a class="headerlink" href="#merge-and-unload" title="Link to this heading">#</a></h2>
+<p>We do a sanity check on the trained model’s predictions and ensure later when we do the merge and unload, the results
+may not differ much. It may still differ due to floating points operations but should be minimum.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">tokenized_valid_dataset</span><span class="p">)</span><span class="o">.</span><span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;test_loss&#39;: 0.13901817798614502,
+ &#39;test_eval_log_loss&#39;: 0.13901824007066116,
+ &#39;test_eval_accuracy&#39;: 0.960352422907489,
+ &#39;test_eval_precision_macro&#39;: 0.9411551411551411,
+ &#39;test_eval_recall_macro&#39;: 0.9315789473684211,
+ &#39;test_eval_f1_score_macro&#39;: 0.936106070735046,
+ &#39;test_eval_precision_micro&#39;: 0.960352422907489,
+ &#39;test_eval_recall_micro&#39;: 0.960352422907489,
+ &#39;test_eval_f1_score_micro&#39;: 0.960352422907489,
+ &#39;test_eval_confusion_matrix&#39;: [[27, 0, 3], [0, 140, 0], [3, 3, 51]],
+ &#39;test_eval_roc_auc&#39;: 0.9955702958862339,
+ &#39;test_eval_pr_auc&#39;: 0.9851052470652112,
+ &#39;test_eval_brier_score&#39;: 0.021837805972314456,
+ &#39;test_eval_roc_auc_class_0&#39;: 0.9954314720812182,
+ &#39;test_eval_pr_auc_class_0&#39;: 0.9747298715068023,
+ &#39;test_eval_roc_auc_class_1&#39;: 0.9981937602627258,
+ &#39;test_eval_pr_auc_class_1&#39;: 0.9988615953476088,
+ &#39;test_eval_roc_auc_class_2&#39;: 0.9930856553147576,
+ &#39;test_eval_pr_auc_class_2&#39;: 0.9812046605398257,
+ &#39;test_runtime&#39;: 1.7167,
+ &#39;test_samples_per_second&#39;: 132.231,
+ &#39;test_steps_per_second&#39;: 4.66}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_model_merged_and_unloaded</span> <span class="o">=</span> <span class="n">merge_and_unload_model</span><span class="p">(</span><span class="n">base_model_with_adapter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">base_model_merged_and_unloaded</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2ForSequenceClassification</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>model<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2Model</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>embed_tokens<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Embedding</span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">151936</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>layers<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">ModuleList</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">0</span>-<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">23</span><span style="font-weight: bold">)</span>: <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">24</span> x <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2DecoderLayer</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>self_attn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2SdpaAttention</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>q_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>k_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>v_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #00ff00; text-decoration-color: #00ff00; font-style: italic">True</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>o_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>rotary_emb<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RotaryEmbedding</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>mlp<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2MLP</span><span style="font-weight: bold">(</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>gate_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>up_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>down_proj<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2816</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │     </span><span style="font-weight: bold">(</span>act_fn<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">SiLU</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>input_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   │   </span><span style="font-weight: bold">(</span>post_attention_layernorm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│     </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="font-weight: bold">(</span>norm<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Qwen2RMSNorm</span><span style="font-weight: bold">()</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">)</span>
+<span style="color: #7fbf7f; text-decoration-color: #7fbf7f">  </span><span style="font-weight: bold">(</span>score<span style="font-weight: bold">)</span>: <span style="color: #800080; text-decoration-color: #800080; font-weight: bold">Linear</span><span style="font-weight: bold">(</span><span style="color: #808000; text-decoration-color: #808000">in_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1024</span>, <span style="color: #808000; text-decoration-color: #808000">out_features</span>=<span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #808000; text-decoration-color: #808000">bias</span>=<span style="color: #ff0000; text-decoration-color: #ff0000; font-style: italic">False</span><span style="font-weight: bold">)</span>
+<span style="font-weight: bold">)</span>
+</pre>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model_merged_and_unloaded</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">tokenized_train_dataset</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">tokenized_valid_dataset</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics_for_single_label_classification</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">trainer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">tokenized_valid_dataset</span><span class="p">)</span><span class="o">.</span><span class="n">metrics</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;test_loss&#39;: 0.139018252491951,
+ &#39;test_eval_log_loss&#39;: 0.13901830174555815,
+ &#39;test_eval_accuracy&#39;: 0.960352422907489,
+ &#39;test_eval_precision_macro&#39;: 0.9411551411551411,
+ &#39;test_eval_recall_macro&#39;: 0.9315789473684211,
+ &#39;test_eval_f1_score_macro&#39;: 0.936106070735046,
+ &#39;test_eval_precision_micro&#39;: 0.960352422907489,
+ &#39;test_eval_recall_micro&#39;: 0.960352422907489,
+ &#39;test_eval_f1_score_micro&#39;: 0.960352422907489,
+ &#39;test_eval_confusion_matrix&#39;: [[27, 0, 3], [0, 140, 0], [3, 3, 51]],
+ &#39;test_eval_roc_auc&#39;: 0.9955702958862339,
+ &#39;test_eval_pr_auc&#39;: 0.9851052470652112,
+ &#39;test_eval_brier_score&#39;: 0.021837813003862862,
+ &#39;test_eval_roc_auc_class_0&#39;: 0.9954314720812182,
+ &#39;test_eval_pr_auc_class_0&#39;: 0.9747298715068023,
+ &#39;test_eval_roc_auc_class_1&#39;: 0.9981937602627258,
+ &#39;test_eval_pr_auc_class_1&#39;: 0.9988615953476088,
+ &#39;test_eval_roc_auc_class_2&#39;: 0.9930856553147576,
+ &#39;test_eval_pr_auc_class_2&#39;: 0.9812046605398257,
+ &#39;test_runtime&#39;: 0.9137,
+ &#39;test_samples_per_second&#39;: 248.448,
+ &#39;test_steps_per_second&#39;: 8.756}
+</pre></div>
+</div>
+</div>
+</div>
+<p>See <a class="reference external" href="https://huggingface.co/docs/peft/main/en/developer_guides/lora#merge-lora-weights-into-the-base-model">HuggingFace’s <code class="docutils literal notranslate"><span class="pre">merge_and_unload</span></code></a>.</p>
 </section>
 </section>
 
@@ -1959,6 +2005,7 @@ the implementation is working.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluate-with-pretrained-model">Evaluate With Pretrained Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora-implementation">LoRA Implementation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-lora">Train LoRA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merge-and-unload">Merge And Unload</a></li>
 </ul>
   </nav></div>
 
