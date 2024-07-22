@@ -55,11 +55,29 @@ def _lora_b_init_params(x: nn.Linear) -> None:
 
 
 class LoRALinear(nn.Module):
-    def __init__(self, in_dim: int, out_dim: int, bias: bool, rank: int, alpha: float, dropout: float) -> None:
+    """LoRA Linear layer."""
+
+    def __init__(self, original_linear: nn.Linear, rank: int, alpha: float, dropout: float) -> None:
+        """Initialize the `LoRALinear` layer.
+
+        Parameters
+        ----------
+        original_linear : nn.Linear
+            The original linear layer from the pretrained
+        rank : int
+            The rank of the LoRA layer.
+        alpha : float
+            The alpha parameter for LoRA scaling.
+        dropout : float
+            The dropout probability for the LoRA layer.
+        """
         super().__init__()
 
         # These are the weights from the original pretrained model
-        self.linear = nn.Linear(in_dim, out_dim, bias=bias)  # weight shape=[out_dim, in_dim]
+        self.linear = original_linear  # weight shape=[out_dim, in_dim]
+
+        in_dim = self.linear.in_features
+        out_dim = self.linear.out_features
 
         # These are the new LoRA params. In general rank << in_dim, out_dim - do not put bias here
         self.lora_a = nn.Linear(in_features=in_dim, out_features=rank, bias=False)  # weight shape=[rank, in_dim]
@@ -78,8 +96,8 @@ class LoRALinear(nn.Module):
         _lora_b_init_params(self.lora_b)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # This would be the output of the original model
-        frozen_out = x @ self.linear.weight.T
+        """Forward pass of the `LoRALinear` layer."""
+        frozen_out = x @ self.linear.weight.T  # This would be the output of the original model
         if self.linear.bias is not None:
             frozen_out += self.linear.bias
 
@@ -91,12 +109,42 @@ class LoRALinear(nn.Module):
         # and add to the original model's outputs
         return frozen_out + (self.alpha / self.rank) * lora_out
 
+    @torch.no_grad()
+    def _merge(self) -> nn.Linear:
+        """
+        Merge the LoRA layers to the original linear layer.
+        """
+        lora_weight = self.lora_b.weight @ self.lora_a.weight # [D, R] @ [R, D] = [D, D]
+        self.linear.weight += (self.alpha / self.rank) * lora_weight.T
+        return self.linear
+
+
+def merge_and_unload_model(model: nn.Module) -> nn.Module:
+    """Recursively merge LoRA layers back into the original Linear layers in
+    the model and unload LoRA parameters."""
+    for module_name, module in model.named_children():
+        if isinstance(module, LoRALinear):
+            merged_linear = module._merge()
+            setattr(model, module_name, merged_linear)
+        else:
+            merge_and_unload_model(module)
+    return model
+
 
 def apply_lora_to_base_model(
     model: nn.Module, rank: int, alpha: float, dropout: float, target_modules: List[str] | None = None
 ) -> None:
-    """Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers."""
+    """Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers.
 
+    In the `if` condition, we first check if the module is an instance of
+    `nn.Linear`. If it is, we then check if the `target_modules` is specified
+    by user, if it is not, then `if target_modules is None` will return `True`
+    and we apply LoRA to the module because we assume that the user wants to
+    apply LoRA to all `nn.Linear` layers. If the `target_modules` is specified,
+    then `if target_modules is None` will return `False` and we will check the
+    second condition `any(target in module_name for target in target_modules)`
+    which will return `True` if any of the target modules are in the module name.
+    """
     for module_name, module in model.named_children():
         if isinstance(module, nn.Linear):
             if target_modules is None or any(target in module_name for target in target_modules):
@@ -104,12 +152,10 @@ def apply_lora_to_base_model(
                     model,
                     module_name,
                     LoRALinear(
-                        in_dim=module.in_features,
-                        out_dim=module.out_features,
+                        original_linear=module,
                         rank=rank,
                         alpha=alpha,
                         dropout=dropout,
-                        bias=module.bias is not None,
                     ),
                 )
         else:
