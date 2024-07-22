@@ -744,7 +744,7 @@ However, three nuances here:
     thread on this
     [here](https://civitai.com/articles/2125/what-lora-alpha-actually-does-in-theory).
 
-## No Additional Inference Latency
+## Merge - No Additional Inference Latency
 
 The distributive law of matrix multiplication we saw earlier ensures that the
 update weights $\Delta \mathbf{W}$ can be applied on the fly during inference
@@ -784,6 +784,39 @@ matrices $\mathbf{A}$ and $\mathbf{B}$.
 
 Image Credit: [LoRA Paper](https://arxiv.org/pdf/2106.09685)
 ```
+
+In practice, it is common to _merge and unload_ the adapter layer after training
+into the original pretrained base model. This merge operation is done by
+updating the original pretrained weights $\mathbf{W}$ with the low-rank
+decomposition matrices $\mathbf{A}$ and $\mathbf{B}$ to obtain the merged
+weights $\mathbf{W}_{'}$.
+
+$$
+\begin{aligned}
+\mathbf{W}^{'} &= \mathbf{W} \oplus \mathbf{B} \mathbf{A}
+\end{aligned}
+$$
+
+This way, during inference, given an input $\mathbf{x}$, we can compute the
+output $\mathbf{y}$ by applying the merged weights $\mathbf{W}^{'}$ on the input
+$\mathbf{x}$.
+
+$$
+\begin{aligned}
+\mathbf{y} &= \mathbf{x} @ \left(\mathbf{W}^{'}\right)^T
+\end{aligned}
+$$
+
+This requires only a single matrix multiplication operation. In total, we can
+loosely say that if $\mathbf{x}$ is a $1 \times k$ vector, and
+$\mathbf{W}^{'} \in \mathbb{R}^{d \times k}$, then doing
+$\mathbf{x} @ \left(\mathbf{W}^{'}\right)^T$ costs $2 \times d \times k$
+multiplications and $d \times k$ additions. But if you do not merge, and keep
+the weights separate, you get
+$\mathbf{x} @ \left(\mathbf{W}^T\right) + \mathbf{x} @ \left(\mathbf{B} \mathbf{A}\right)^T$
+which costs $2 \times d \times k$ multiplications and $2 \times d \times k$
+additions. So, in terms of computational complexity, even though they are on the
+same order, the merged weights are slightly more efficient.
 
 ## References And Further Readings
 

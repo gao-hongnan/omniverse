@@ -104,7 +104,7 @@ class LoRALinear(nn.Module):
         # lora_a projects inputs down to the much smaller self.rank,
         # then lora_b projects back up to the output dimension
         x = self.dropout(x)
-        lora_out = (x @ self.lora_a.weight.T) @ self.lora_b.weight.T  # x @ lora_a @ lora_b
+        lora_out = x @ (self.lora_a.weight.T @ self.lora_b.weight.T)  # [B, T, D1] @ [D1, R] @ [R, D2] = [D1, D2]
         # Finally, scale by the alpha parameter (normalized by rank)
         # and add to the original model's outputs
         return frozen_out + (self.alpha / self.rank) * lora_out
@@ -114,7 +114,13 @@ class LoRALinear(nn.Module):
         """
         Merge the LoRA layers to the original linear layer.
         """
-        lora_weight = self.lora_b.weight @ self.lora_a.weight # [D, R] @ [R, D] = [D, D]
+
+        # (gate_proj): Linear(in_features=1024, out_features=2816, bias=False) -> weight = [2816, 1024]
+        # [1024, R] @ [R, 2816]
+        # torch.Size([1024, 2816]) torch.Size([2816, 1024])
+
+        lora_weight = self.lora_a.weight.T @ self.lora_b.weight.T  # [D1, R] @ [R, D2] = [D1, D2]
+        lora_weight = lora_weight.to(self.linear.weight.device)
         self.linear.weight += (self.alpha / self.rank) * lora_weight.T
         return self.linear
 
