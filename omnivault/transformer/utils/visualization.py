@@ -105,7 +105,7 @@ def show_attention_heatmaps(
             f"Length of yticks must match the number of queries. Expected {num_queries}, but got {len(yticks)}."
         )
 
-    attention_weights = attention_weights.cpu().detach().numpy() # type: ignore[assignment]
+    attention_weights = attention_weights.cpu().detach().numpy()  # type: ignore[assignment]
 
     figure_kwargs = figure_kwargs or {"figsize": (15, 15), "sharex": True, "sharey": True, "squeeze": False}
     fig, axes = plt.subplots(B, H, **figure_kwargs)
