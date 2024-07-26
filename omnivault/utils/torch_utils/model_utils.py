@@ -44,9 +44,9 @@ def get_named_modules(module: nn.Module, **kwargs: Any) -> List[Dict[str, str]]:
 
     Parameters
     ----------
-    module : nn.Module
+    module: nn.Module
         The model to extract named modules from.
-    **kwargs : Any
+    **kwargs: Any
         Additional keyword arguments to pass to the `named_modules` method.
 
     Returns
@@ -121,9 +121,9 @@ def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.
 
     Parameters
     ----------
-    module : nn.Module
+    module: nn.Module
         The model to extract named parameters from.
-    **kwargs : Any
+    **kwargs: Any
         Additional keyword arguments to pass to the `named_parameters` method.
 
     Returns
@@ -219,15 +219,19 @@ def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.
     return named_parameters
 
 
-def gather_weight_stats(module: nn.Module, **kwargs: Any) -> Dict[str, Dict[str, float]]:
+def gather_weight_stats(module: nn.Module, lp: int = 2, epsilon: float = 1e-5, **kwargs: Any) -> Dict[str, Any]:
     """Return the mean and standard deviation of weights and biases in the model. Sanity
     check to ensure that the weights and biases are initialized correctly.
 
     Parameters
     ----------
-    module : nn.Module
+    module: nn.Module
         The model to extract weight statistics from.
-    **kwargs : Any
+    lp: int
+        The lp norm to calculate the weights. Default is 2.
+    epsilon: float
+        A small value to check if the weights are near zero.
+    **kwargs: Any
         Additional keyword arguments to pass to the `named_modules` method.
 
     Returns
@@ -247,6 +251,9 @@ def gather_weight_stats(module: nn.Module, **kwargs: Any) -> Dict[str, Dict[str,
     stats = {}
     for _module in module.named_modules(**kwargs):
         module_name, module_type = _module
+
+        module_stats = {"type": module_type.__class__.__name__}
+
         assert isinstance(module_type, nn.Module)
         if (
             hasattr(module_type, "weight")
@@ -254,38 +261,75 @@ def gather_weight_stats(module: nn.Module, **kwargs: Any) -> Dict[str, Dict[str,
             and module_type.weight is not None
         ):
             weight = module_type.weight.data
-            weight_key = f"{module_name}+{str(module_type.__class__.__name__)}_weight"
-            stats[weight_key] = {"w_mean": weight.mean().item(), "w_std": weight.std().item()}
-
+            module_stats["weights"] = {
+                "mean": weight.mean().item(),
+                "std": weight.std().item(),
+                "min": weight.min().item(),
+                "max": weight.max().item(),
+                "norm": torch.norm(weight, p=lp).item(),
+                "zeros": (weight == 0).sum().item(),
+                "near_zeros": (weight.abs() < epsilon).sum().item(),
+                "count": weight.numel(),
+            }
         if (
             hasattr(module_type, "bias")
             and isinstance(module_type.bias, torch.nn.Parameter)
             and module_type.bias is not None
         ):
             bias = module_type.bias.data
-            bias_key = f"{module_name}+{str(module_type.__class__.__name__)}_bias"
-            stats[bias_key] = {"b_mean": bias.mean().item(), "b_std": bias.std().item()}
+            module_stats["biases"] = {
+                "mean": bias.mean().item(),
+                "std": bias.std().item(),
+                "min": bias.min().item(),
+                "max": bias.max().item(),
+                "zeros": (bias == 0).sum().item(),
+                "near_zeros": (bias.abs() < epsilon).sum().item(),
+                "count": bias.numel(),
+            }
+
+        if len(module_stats) > 1:  # We only add to stats if we added more information than just the type
+            stats[module_name] = module_stats
+
     return stats
 
 
-def prepare_stats_dataframe(stats_dict: Dict[str, Dict[str, float]]) -> pd.DataFrame:
+def prepare_stats_dataframe(stats_dict: Dict[str, Any]) -> pd.DataFrame:
     """Use in conjunction with the `gather_weight_stats` function to prepare a DataFrame
     for visualization of weight and bias statistics."""
     data = []
-    for key, values in stats_dict.items():
-        layer_name, layer_type = key.rsplit("+", 1)
-        layer_name = "+".join(layer_name.split("+")[:-1])
-        layer_type = layer_type.replace("_weight", "").replace("_bias", "")
-
-        data.append(
-            {
-                "layer_name": layer_name,
-                "layer_type": layer_type,
-                "parameter_type": "Weight" if "weight" in key else "Bias",
-                "mean": values["w_mean"] if "weight" in key else values["b_mean"],
-                "std": values["w_std"] if "weight" in key else values["b_std"],
-            }
-        )
+    for layer_name, layer_info in stats_dict.items():
+        layer_type = layer_info["type"]
+        if "weights" in layer_info:
+            data.append(
+                {
+                    "layer_name": layer_name,
+                    "layer_type": layer_type,
+                    "parameter_type": "Weight",
+                    "mean": layer_info["weights"]["mean"],
+                    "std": layer_info["weights"]["std"],
+                    "min": layer_info["weights"]["min"],
+                    "max": layer_info["weights"]["max"],
+                    "norm": layer_info["weights"]["norm"],
+                    "zeros": layer_info["weights"]["zeros"],
+                    "near_zeros": layer_info["weights"]["near_zeros"],
+                    "count": layer_info["weights"]["count"],
+                }
+            )
+        if "biases" in layer_info:
+            data.append(
+                {
+                    "layer_name": layer_name,
+                    "layer_type": layer_type,
+                    "parameter_type": "Bias",
+                    "mean": layer_info["biases"]["mean"],
+                    "std": layer_info["biases"]["std"],
+                    "min": layer_info["biases"]["min"],
+                    "max": layer_info["biases"]["max"],
+                    "zeros": layer_info["biases"]["zeros"],
+                    "near_zeros": layer_info["biases"]["near_zeros"],
+                    "count": layer_info["biases"]["count"],
+                }
+            )
     return pd.DataFrame(data)
 
 
@@ -316,9 +360,9 @@ def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
 
     Parameters
     ----------
-    model_a : nn.Module
+    model_a: nn.Module
         The first model to compare.
-    model_b : nn.Module
+    model_b: nn.Module
         The second model to compare.
 
     Returns
@@ -338,9 +382,9 @@ def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module
 
     Parameters
     ----------
-    model_a : nn.Module
+    model_a: nn.Module
         The first model to compare.
-    model_b : nn.Module
+    model_b: nn.Module
         The second model to compare.
 
     Returns
@@ -379,10 +423,10 @@ def _init_weights(module: nn.Module, **kwargs: Any) -> None:
 
     Parameters
     ----------
-    module : nn.Module
+    module: nn.Module
         The module to initialize the weights. It can be the model itself, or
         a sub-module of the model such as `nn.Linear`, `nn.Embedding`, `nn.LayerNorm`.
-    kwargs : Any
+    kwargs: Any
         Additional keyword arguments to pass to the initialization method.
         This is like a _universal_ way to accept configuration.
 
@@ -516,9 +560,9 @@ class Freezer:
 
         Parameters
         ----------
-        indices : List[int]
+        indices: List[int]
             List of indices of the layers to freeze.
-        submodule_path : str, optional
+        submodule_path: str, optional
             The path to the submodule to freeze in the model. For example, if the model
             has a submodule `backbone` with a Conv2d layer at index 0, then the path
             would be `backbone`.
@@ -541,7 +585,7 @@ class Freezer:
 
         Parameters
         ----------
-        names : List[str]
+        names: List[str]
             List of substrings to match in the parameter names for freezing.
             This name can be obtained by calling `model.named_parameters()`.
         """
@@ -556,7 +600,7 @@ class Freezer:
 
         Parameters
         ----------
-        module : nn.Module
+        module: nn.Module
             The module to freeze the parameters in.
         """
         for param in module.parameters():
@@ -581,7 +625,7 @@ def freeze_layers(module: nn.Module) -> None:
 
     Parameters
     ----------
-    module : nn.Module
+    module: nn.Module
         The model to freeze the layers in.
     """
     for parameter in module.parameters():

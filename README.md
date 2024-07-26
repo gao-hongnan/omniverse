@@ -229,7 +229,7 @@ the changes to the `main` branch (or any other branch that satisfies the
 `on.push.branches` condition in the workflow).
 
 ```bash
-VERSION="0.0.59"
+VERSION="0.0.60"
 git commit -am "cicd: bump version to #$VERSION [#38]." && \
 git tag -a v$VERSION  -m "Release version $VERSION" && \
 git push && \
