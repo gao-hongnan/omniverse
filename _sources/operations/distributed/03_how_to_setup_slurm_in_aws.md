@@ -616,12 +616,18 @@ If `table` format gives error like `list index out of range`, you can replace
 aws ec2 stop-instances --instance-ids i-1234567890abcdef0 i-abcdef1234567890
 ```
 
+## Singularity
+
+To learn how to set up Singularity in an HPC environment using SLURM for
+distributed training, refer to
+[this guide](https://qywu.github.io/2020/12/09/aws-slumr-pytorch.html).
+
 ## References
 
--   https://www.hpcworkshops.com/
--   https://qywu.github.io/2020/12/09/aws-slumr-pytorch.html
--   https://aws-parallelcluster.readthedocs.io/en/latest/configuration.html
--   https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template
--   https://github.com/PrincetonUniversity/multi_gpu_training/tree/main
--   https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/setup_pcluster_slurm.md
--   https://aws.amazon.com/blogs/opensource/aws-parallelcluster/
+-   [HPC Workshops](https://www.hpcworkshops.com/)
+-   [AWS SLURM PyTorch](https://qywu.github.io/2020/12/09/aws-slumr-pytorch.html)
+-   [AWS ParallelCluster Documentation](https://aws-parallelcluster.readthedocs.io/en/latest/configuration.html)
+-   [PyTorch Examples - minGPT DDP Config Template](https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/config.yaml.template)
+-   [Princeton University Multi GPU Training](https://github.com/PrincetonUniversity/multi_gpu_training/tree/main)
+-   [PyTorch Examples - minGPT DDP SLURM Setup](https://github.com/pytorch/examples/blob/main/distributed/minGPT-ddp/mingpt/slurm/setup_pcluster_slurm.md)
+-   [AWS Blog - AWS ParallelCluster](https://aws.amazon.com/blogs/opensource/aws-parallelcluster/)
