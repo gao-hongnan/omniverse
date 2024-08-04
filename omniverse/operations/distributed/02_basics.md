@@ -58,7 +58,11 @@ rank can be derived from these three. Additionally, you would need the
 the rendezvous point for the processes to communicate with each other - which is
 a must in a multi-node setup.
 
-### The Code
+### Demo Code
+
+Note that if you are using say, 1 node, and 8 GPUs, but you only want to use 4
+GPUs, then you can set `CUDA_VISIBLE_DEVICES` to `0,1,2,3` and then run the
+script. The script will then only use the first 4 GPUs.
 
 ````{tab} **b_demo.py**
 ```python

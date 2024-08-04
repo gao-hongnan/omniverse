@@ -48,7 +48,6 @@ def run_with_no_barrier(local_rank: int, args: argparse.Namespace) -> None:
 
     # NOTE: add `torch.distributed.barrier()` here if you want to synchronize all processes
     results.append([1, 2, 3])
-
     logger.info(f"Results: {results}")
 
 
@@ -66,7 +65,6 @@ def run_with_barrier(local_rank: int, args: argparse.Namespace) -> None:
     torch.distributed.barrier()
 
     results.append([1, 2, 3])
-
     logger.info(f"Results: {results}")
 
 

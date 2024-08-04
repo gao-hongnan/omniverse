@@ -5,7 +5,7 @@
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
-[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/88e2c1743a4ea01c1756eb3fa44639f98d77ac83/omnixamples/distributed/a_basic/d_ablation.py)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/aceb4aa24f2fd03c459d9903608205cbe4d84f7d/omnixamples/distributed/a_basic/d_ablations.py)
 
 ```{contents}
 :local:
@@ -38,7 +38,6 @@ def run_with_no_barrier(local_rank: int, args: argparse.Namespace) -> None:
 
     # NOTE: add `torch.distributed.barrier()` here if you want to synchronize all processes
     results.append([1, 2, 3])
-
     logger.info(f"Results: {results}")
 
 
@@ -56,7 +55,6 @@ def run_with_barrier(local_rank: int, args: argparse.Namespace) -> None:
     torch.distributed.barrier()
 
     results.append([1, 2, 3])
-
     logger.info(f"Results: {results}")
 
 
