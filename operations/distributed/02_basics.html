@@ -258,6 +258,7 @@
 <li class="toctree-l2"><a class="reference internal" href="01_notations.html">Notations</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Basics Of Distributed Data Parallelism</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_ablation.html">Ablations</a></li>
 </ul>
 </details></li>
 </ul>
@@ -536,7 +537,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-code">The Code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-code">Demo Code</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments-cpu-and-gloo-backend">Command Line Arguments (CPU And Gloo Backend)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#process-group-initialization">Process Group Initialization</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-port-and-master-address">Master Port and Master Address</a></li>
@@ -573,7 +574,7 @@ document.write(`
 <ul class="simple">
 <li><p><a class="reference internal" href="#setting-up" id="id4">Setting Up</a></p>
 <ul>
-<li><p><a class="reference internal" href="#the-code" id="id5">The Code</a></p></li>
+<li><p><a class="reference internal" href="#demo-code" id="id5">Demo Code</a></p></li>
 <li><p><a class="reference internal" href="#command-line-arguments-cpu-and-gloo-backend" id="id6">Command Line Arguments (CPU And Gloo Backend)</a></p></li>
 <li><p><a class="reference internal" href="#process-group-initialization" id="id7">Process Group Initialization</a></p>
 <ul>
@@ -634,8 +635,11 @@ rank can be derived from these three. Additionally, you would need the
 <code class="docutils literal notranslate"><span class="pre">MASTER_ADDR</span></code> and <code class="docutils literal notranslate"><span class="pre">MASTER_PORT</span></code> environment variables. These are used to set up
 the rendezvous point for the processes to communicate with each other - which is
 a must in a multi-node setup.</p>
-<section id="the-code">
-<h3><a class="toc-backref" href="#id5" role="doc-backlink">The Code</a><a class="headerlink" href="#the-code" title="Link to this heading">#</a></h3>
+<section id="demo-code">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Demo Code</a><a class="headerlink" href="#demo-code" title="Link to this heading">#</a></h3>
+<p>Note that if you are using say, 1 node, and 8 GPUs, but you only want to use 4
+GPUs, then you can set <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> to <code class="docutils literal notranslate"><span class="pre">0,1,2,3</span></code> and then run the
+script. The script will then only use the first 4 GPUs.</p>
 <div class="tab-set docutils">
 <input checked="True" class="tab-input" id="tab-set--0-input--1" name="tab-set--0" type="radio"><label class="tab-label" for="tab-set--0-input--1"><strong>b_demo.py</strong></label><div class="tab-content docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
@@ -1387,7 +1391,7 @@ b_demo.py:50
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up">Setting Up</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-code">The Code</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#demo-code">Demo Code</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-line-arguments-cpu-and-gloo-backend">Command Line Arguments (CPU And Gloo Backend)</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#process-group-initialization">Process Group Initialization</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#master-port-and-master-address">Master Port and Master Address</a></li>
