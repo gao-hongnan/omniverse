@@ -11,3 +11,7 @@ bash omnixamples/distributed/01_raw/scripts/01_demo_start_master.sh
 ```bash
 bash omnixamples/distributed/01_raw/scripts/01_demo_start_worker.sh
 ```
+
+For more information, please refer to the
+[distributed](https://www.gaohongnan.com/operations/distributed/02_basics.html)
+page.

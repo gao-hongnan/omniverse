@@ -3,6 +3,7 @@ it should serve as a starting point - without torchrun or torch.distributed.laun
 or slurm to set the environment variables etc.
 
 ```bash
+# With CPU
 python omnixamples/distributed/a_basic/b_demo.py \
     --master_addr=localhost \
     --master_port=29500 \
@@ -12,7 +13,20 @@ python omnixamples/distributed/a_basic/b_demo.py \
     --world_size=4 \
     --backend=gloo \
     --init_method="env://"
+
+# With CUDA
+python omnixamples/distributed/a_basic/b_demo.py \
+    --master_addr=localhost \
+    --master_port=29500 \
+    --nnodes=1 \
+    --nproc_per_node=4 \
+    --node_rank=0 \
+    --world_size=4 \
+    --backend=nccl \
+    --init_method="env://"
 ```
+
+For 2 nodes, 2 processes per node, refer to `./scripts` folder for the bash scripts.
 """
 
 from __future__ import annotations

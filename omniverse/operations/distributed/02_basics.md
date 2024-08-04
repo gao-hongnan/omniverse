@@ -5,6 +5,7 @@
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
+[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/88e2c1743a4ea01c1756eb3fa44639f98d77ac83/omnixamples/distributed/a_basic/b_demo.py)
 
 ```{contents}
 :local:
@@ -592,7 +593,9 @@ Of course it is difficult to log pydantic objects into log file, so you can just
 ## Multi-Node Setup With CUDA
 
 Now consider the case where we have 2 nodes, and 1 GPU on each node. Let's see
-if our setup works!
+if our setup works! Note that we use backend as `gloo` but in practice you would
+use `nccl` for CUDA as it is faster (?) and includes more modes of
+communication.
 
 We first have two nodes, so we need two scripts - one for the master and one for
 the worker. The master script will write the `MASTER_ADDR` and `MASTER_PORT` to
