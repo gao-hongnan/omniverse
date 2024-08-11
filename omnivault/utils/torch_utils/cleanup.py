@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import gc
+import sys
 from typing import List
 
 import torch
@@ -32,14 +33,19 @@ def purge_global_scope(variable_name_or_names: str | List[str]) -> None:
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
     ```
+
+    Secondly, this code is now working if I call it from another script, if you
+    replace `caller_globals` with `globals()` it won't work if this function
+    is called from another script.
     """
     if isinstance(variable_name_or_names, str):
         variable_name_or_names = [variable_name_or_names]
 
-    global_vars = globals()
+    caller_globals = sys._getframe(1).f_globals
+
     for name in variable_name_or_names:
-        if name in global_vars:
-            del global_vars[name]
+        if name in caller_globals:
+            del caller_globals[name]
 
     gc.collect()
     if torch.cuda.is_available():

@@ -103,7 +103,7 @@ python omnixamples/distributed/a_basic/d_ablations.py \
 
 Which is invokes `run_with_no_barrier`, we would sometimes see the below:
 
-```python
+```text
 2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
 2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
 2024-05-05 13:29:55 [INFO]: Results: [[1, 2, 3]]                                          ablations.py:36
@@ -188,7 +188,7 @@ python omnixamples/distributed/a_basic/d_ablations.py \
 
 You would then see, the order of the messages are guaranteed:
 
-```python
+```text
 INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
 INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
 INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
