@@ -6,6 +6,8 @@
 
 ```
 
+## References and Further Readings
+
 -   [PyTorch Benchmarking Tutorial](https://pytorch.org/tutorials/recipes/recipes/benchmark.html)
 -   [CUDA Mode Notes - Lecture 001 by Christian J. Mills](https://christianjmills.com/posts/cuda-mode-notes/lecture-001/)
 -   [GitHub Repository: Spring2024 Assignment2 Systems by Marcel Roed](https://github.com/marcelroed/spring2024-assignment2-systems/tree/master)
