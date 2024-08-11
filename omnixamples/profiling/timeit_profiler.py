@@ -19,7 +19,6 @@ from omnivault.utils.reproducibility.seed import seed_all
 from omnivault.utils.torch_utils.cleanup import purge_global_scope
 from omnixamples.profiling.common import GPT, General, GPTConfig, ProfilerConfig, device, get_random_batch
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
