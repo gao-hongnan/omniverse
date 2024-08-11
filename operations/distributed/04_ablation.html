@@ -78,7 +78,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/operations/distributed/04_ablation.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Configuration Management" href="../../software_engineering/config_management/concept.html" />
+    <link rel="next" title="The Lifecycle of an AIOps System" href="../machine_learning_lifecycle/00_intro.html" />
     <link rel="prev" title="How to Setup SLURM and ParallelCluster in AWS" href="03_how_to_setup_slurm_in_aws.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -233,6 +233,13 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
 <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Distributed Systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Ablations</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
@@ -250,13 +257,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
 </ul>
 </details></li>
-</ul>
-</details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Distributed Systems</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01_notations.html">Notations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02_basics.html">Basics Of Distributed Data Parallelism</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Ablations</a></li>
 </ul>
 </details></li>
 </ul>
@@ -656,29 +656,29 @@ document.write(`
 </pre></div>
 </div>
 <p>Which is invokes <code class="docutils literal notranslate"><span class="pre">run_with_no_barrier</span></code>, we would sometimes see the below:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">NO</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span>                                       <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">32</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">NO</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span>                                       <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">32</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                          <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">36</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">NO</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span>                                       <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">32</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                          <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">36</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="p">{</span>
-    <span class="s2">&quot;master_addr&quot;</span><span class="p">:</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;master_port&quot;</span><span class="p">:</span> <span class="s2">&quot;29500&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;nnodes&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;nproc_per_node&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;node_rank&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;world_size&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;gloo&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;init_method&quot;</span><span class="p">:</span> <span class="s2">&quot;env://&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;global_rank&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;local_world_size&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-    <span class="s2">&quot;local_rank&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    <span class="s2">&quot;hostname&quot;</span><span class="p">:</span> <span class="s2">&quot;Hongnans-Mac-mini.local&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;process_id&quot;</span><span class="p">:</span> <span class="mi">20647</span>
-<span class="p">}</span>                                                                                         <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">28</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                          <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">36</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">NO</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span>                                       <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">32</span>
-<span class="mi">2024</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">05</span> <span class="mi">13</span><span class="p">:</span><span class="mi">29</span><span class="p">:</span><span class="mi">55</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                          <span class="n">ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">36</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
+2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
+2024-05-05 13:29:55 [INFO]: Results: [[1, 2, 3]]                                          ablations.py:36
+2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
+2024-05-05 13:29:55 [INFO]: Results: [[1, 2, 3]]                                          ablations.py:36
+2024-05-05 13:29:55 [INFO]: {
+    &quot;master_addr&quot;: &quot;localhost&quot;,
+    &quot;master_port&quot;: &quot;29500&quot;,
+    &quot;nnodes&quot;: 1,
+    &quot;nproc_per_node&quot;: 4,
+    &quot;node_rank&quot;: 0,
+    &quot;world_size&quot;: 4,
+    &quot;backend&quot;: &quot;gloo&quot;,
+    &quot;init_method&quot;: &quot;env://&quot;,
+    &quot;global_rank&quot;: 3,
+    &quot;local_world_size&quot;: 4,
+    &quot;local_rank&quot;: 3,
+    &quot;hostname&quot;: &quot;Hongnans-Mac-mini.local&quot;,
+    &quot;process_id&quot;: 20647
+}                                                                                         ablations.py:28
+2024-05-05 13:29:55 [INFO]: Results: [[1, 2, 3]]                                          ablations.py:36
+2024-05-05 13:29:55 [INFO]: I HAVE NO BARRIER DUDE!                                       ablations.py:32
+2024-05-05 13:29:55 [INFO]: Results: [[1, 2, 3]]                                          ablations.py:36
 </pre></div>
 </div>
 <p>You see that even when printing the <code class="docutils literal notranslate"><span class="pre">results</span></code> is after the
@@ -733,14 +733,14 @@ to continue to the next block of code.</p>
 </pre></div>
 </div>
 <p>You would then see, the order of the messages are guaranteed:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span> <span class="n">WAITING</span> <span class="n">FOR</span> <span class="n">ALL</span> <span class="n">PROCESSES</span> <span class="n">TO</span> <span class="n">SYNCHRONIZE</span><span class="o">...</span>                                                   <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">65</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span> <span class="n">WAITING</span> <span class="n">FOR</span> <span class="n">ALL</span> <span class="n">PROCESSES</span> <span class="n">TO</span> <span class="n">SYNCHRONIZE</span><span class="o">...</span>                                                   <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">65</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span> <span class="n">WAITING</span> <span class="n">FOR</span> <span class="n">ALL</span> <span class="n">PROCESSES</span> <span class="n">TO</span> <span class="n">SYNCHRONIZE</span><span class="o">...</span>                                                   <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">65</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">I</span> <span class="n">HAVE</span> <span class="n">BARRIER</span> <span class="n">DUDE</span><span class="err">!</span> <span class="n">WAITING</span> <span class="n">FOR</span> <span class="n">ALL</span> <span class="n">PROCESSES</span> <span class="n">TO</span> <span class="n">SYNCHRONIZE</span><span class="o">...</span>                                                   <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">65</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                                                                               <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">70</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                                                                               <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">70</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                                                                               <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">70</span>
-<span class="n">INFO</span>     <span class="mi">2024</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">04</span> <span class="mi">16</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span><span class="mi">34</span> <span class="p">[</span><span class="n">INFO</span><span class="p">]:</span> <span class="n">Results</span><span class="p">:</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>                                                                                               <span class="n">d_ablations</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">70</span>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
+INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
+INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
+INFO     2024-08-04 16:45:34 [INFO]: I HAVE BARRIER DUDE! WAITING FOR ALL PROCESSES TO SYNCHRONIZE...                                                   d_ablations.py:65
+INFO     2024-08-04 16:45:34 [INFO]: Results: [[1, 2, 3]]                                                                                               d_ablations.py:70
+INFO     2024-08-04 16:45:34 [INFO]: Results: [[1, 2, 3]]                                                                                               d_ablations.py:70
+INFO     2024-08-04 16:45:34 [INFO]: Results: [[1, 2, 3]]                                                                                               d_ablations.py:70
+INFO     2024-08-04 16:45:34 [INFO]: Results: [[1, 2, 3]]                                                                                               d_ablations.py:70
 </pre></div>
 </div>
 </section>
@@ -787,11 +787,11 @@ to continue to the next block of code.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../software_engineering/config_management/concept.html"
+       href="../machine_learning_lifecycle/00_intro.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Configuration Management</p>
+        <p class="prev-next-title">The Lifecycle of an AIOps System</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

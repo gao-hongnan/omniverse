@@ -12,8 +12,8 @@
 ```
 
 **DistributedDataParallel (DDP)** provides module-level data parallelism that's
-scalable across multiple machines. For effective
-use[^pytorch-distributed-data-parallel-tutorial]:
+scalable across multiple machines. For effective use, we quote pytorch's
+documentation[^pytorch-distributed-data-parallel-tutorial]:
 
 1. Launch multiple processes, initializing one DDP instance for each.
 2. DDP leverages collective communications via the
