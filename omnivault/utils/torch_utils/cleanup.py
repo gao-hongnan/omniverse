@@ -7,6 +7,7 @@ from typing import List
 import torch
 
 
+# FIXME: this does not work actually because local scope is not deleted.
 def purge_global_scope(variable_name_or_names: str | List[str]) -> None:
     """
     Deletes the provided objects and performs cleanup.
@@ -41,10 +42,14 @@ def purge_global_scope(variable_name_or_names: str | List[str]) -> None:
     if isinstance(variable_name_or_names, str):
         variable_name_or_names = [variable_name_or_names]
 
-    caller_globals = sys._getframe(1).f_globals
+    caller_frame = sys._getframe(1)
+    caller_locals = caller_frame.f_locals
+    caller_globals = caller_frame.f_globals
 
     for name in variable_name_or_names:
-        if name in caller_globals:
+        if name in caller_locals:
+            del caller_locals[name]
+        elif name in caller_globals:
             del caller_globals[name]
 
     gc.collect()

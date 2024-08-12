@@ -1,34 +1,22 @@
 from __future__ import annotations
 
-import itertools
 import logging
+import socket
 import sys
 from contextlib import nullcontext
-from timeit import default_timer
-from typing import Any, Dict, Iterable, List, Tuple
+from datetime import datetime
+from typing import Any, Iterable, Tuple
 
-import numpy as np
-import pandas as pd
 import torch
-from pydantic import BaseModel, Field
-from rich.pretty import pprint
 from torch import nn
 from torch._C._profiler import _ExperimentalConfig
 from torch.profiler import ProfilerActivity, profile, record_function
-from tqdm import tqdm
 
 from omnivault.modules.loss import CrossEntropyLoss
 from omnivault.utils.reproducibility.seed import seed_all
+from omnixamples.profiling.common import GPT, General, GPTConfig, device, get_random_batch
 
-seed_all(42)
-
-import logging
-import sys
-from typing import Callable
-
-import torch
-
-F = Callable[[torch.Tensor], torch.Tensor]
+seed_all(42, True, False)
 
 
 logging.basicConfig(
@@ -38,31 +26,7 @@ logging.basicConfig(
     force=True,
 )
 logger = logging.getLogger(__name__)
-
-
-def square_by_multiplication(a: torch.Tensor) -> torch.Tensor:
-    return a * a
-
-
-def square_by_exponentiation(a: torch.Tensor) -> torch.Tensor:
-    return a**2  # type: ignore[no-any-return]
-
-
-def profile_with_event(func: F, input: torch.Tensor, warmup_steps: int = 5) -> float:
-    start = torch.cuda.Event(enable_timing=True)  # Create a start event
-    end = torch.cuda.Event(enable_timing=True)  # Create an end event
-
-    logger.info(f"Warmup for {warmup_steps} steps to warm up the GPU")
-    for _ in range(warmup_steps):
-        func(input)
-
-    start.record()
-    func(input)
-    end.record()
-    torch.cuda.synchronize()  # Synchronize the GPU
-
-    time_spent: float = start.elapsed_time(end)
-    return time_spent
+TIME_FORMAT_STR: str = "%b_%d_%H_%M_%S"
 
 
 def profile_one_step(
@@ -105,6 +69,20 @@ def run_warmup(
     torch.cuda.synchronize()
 
 
+def trace_handler(prof: torch.profiler.profile) -> None:
+    # Prefix for file names.
+    host_name = socket.gethostname()
+    timestamp = datetime.now().strftime(TIME_FORMAT_STR)
+    file_prefix = f"{host_name}_{timestamp}"
+
+    # Construct the trace file.
+    prof.export_chrome_trace(f"{file_prefix}.json.gz")
+
+    # Construct the memory timeline file.
+    prof.export_memory_timeline(f"{file_prefix}.html", device="cuda:0")
+    prof.export_stacks("lm_profiler_stacks.txt", "self_cuda_time_total")
+
+
 def run_profiler(
     model: nn.Module,
     batch: Tuple[torch.Tensor, torch.Tensor],
@@ -134,6 +112,9 @@ def run_profiler(
     # experimental config is needed to export stacks: see https://github.com/pytorch/pytorch/issues/100253
     experimental_config = _ExperimentalConfig(verbose=True) if with_stack else None
 
+    if profile_memory:
+        torch.cuda.memory._record_memory_history(max_entries=1_000_000)
+
     with profile(
         activities=activities,  # [torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA]
         experimental_config=experimental_config,
@@ -155,12 +136,51 @@ def run_profiler(
             )
             prof.step()
 
-    prof.export_stacks("lm_profiler_stacks.txt", "self_cuda_time_total")
-    print(prof.key_averages().table(max_name_column_width=120, sort_by="cpu_time_total", row_limit=50))
-    print(prof.key_averages().table(max_name_column_width=300, sort_by="cuda_time_total", row_limit=50))
+    if profile_memory:
+        torch.cuda.memory._dump_snapshot("memory_snapshot.pickle")
+        torch.cuda.memory._record_memory_history(enabled=None)
+    return prof  # type: ignore[no-any-return]
 
-    return prof
 
+if __name__ == "__main__":
+    gpt_small_config = GPTConfig(
+        context_length=128,
+        vocab_size=10_000,
+        d_model=768,
+        num_blocks=12,
+        num_heads=12,
+    )
+    general = General()
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
-criterion = CrossEntropyLoss()
+    seed_all(general.seed, True, False)
+
+    batch = get_random_batch(
+        batch_size=general.batch_size,
+        context_length=gpt_small_config.context_length,
+        vocab_size=gpt_small_config.vocab_size,
+    )
+
+    model = GPT(gpt_small_config).to(device)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
+    criterion = CrossEntropyLoss()
+
+    run_warmup(model=model, batch=batch, optimizer=optimizer, criterion=criterion)
+
+    profiled = run_profiler(
+        model=model,
+        batch=batch,
+        optimizer=optimizer,
+        criterion=criterion,
+        enable_backward=True,
+        enable_optimizer=True,
+        mixed_precision=False,
+        profile_steps=5,
+        activities=[torch.profiler.ProfilerActivity.CPU, torch.profiler.ProfilerActivity.CUDA],
+        profile_memory=True,
+        with_stack=True,
+        record_shapes=True,
+        with_flops=False,
+        schedule=torch.profiler.schedule(wait=0, warmup=0, active=1, repeat=3),
+        on_trace_ready=trace_handler,
+    )
