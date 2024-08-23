@@ -55,10 +55,10 @@ refine it below.
    [**holdout test set**](https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets#Holdout_dataset)
    to evaluate the model quality. The output of this step is a set of
    **metrics** to assess the quality of the model.
-7. [Model Validation, Registry and Pushing Model to Production](09_model_validation_registry_and_pushing_model_to_production.md):
+7. [Model Validation, Registry and Pushing Model to Production](07_model_validation_registry_and_pushing_model_to_production.md):
    The model is confirmed to be adequate for deployment—that its **predictive
    performance** is better than a certain baseline.
-8. [Model Deployment and Serving](10_model_deployment_and_serving.md): The
+8. [Model Deployment and Serving](08_model_deployment_and_serving.md): The
    validated model is deployed to a target environment to serve predictions.
    This deployment can be one of the following:
 
@@ -66,7 +66,7 @@ refine it below.
     - An **embedded model** to an edge or mobile device.
     - Part of a **batch prediction system**.
 
-9. [Model Monitoring](11_model_monitoring.md): The model is monitored to ensure
+9. [Model Monitoring](09_model_monitoring.md): The model is monitored to ensure
    that it continues to perform as expected. This monitoring can be one of the
    following:
 
@@ -74,8 +74,8 @@ refine it below.
     - **Drift detection** to detect changes in the data distribution.
     - **Performance monitoring** to detect changes in the model performance.
 
-10. [Continuous Integration, Deployment, Learning and Training](12_continuous_integration_deployment_learning_and_training.md)
-11. [Infrastructure and Tooling for MLOps](13_infrastructure_and_tooling_for_mlops.md)
+10. [Continuous Integration, Deployment, Learning and Training](010_continuous_integration_deployment_learning_and_training.md)
+11. [Infrastructure and Tooling for MLOps](011_infrastructure_and_tooling_for_mlops.md)
 
 The lifecycle gif below by
 [Deepak](https://www.linkedin.com/in/mr-deepak-bhardwaj/) captures a
