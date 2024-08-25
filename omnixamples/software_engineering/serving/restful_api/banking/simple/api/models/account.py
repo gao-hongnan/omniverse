@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-class Account(Base):
+class Account(Base):  # type: ignore[misc]
     """Account Model."""
 
     __tablename__ = "accounts"

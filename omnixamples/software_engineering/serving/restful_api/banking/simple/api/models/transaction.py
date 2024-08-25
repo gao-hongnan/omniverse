@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from . import Base
 
 
-class Transaction(Base):
+class Transaction(Base):  # type: ignore[misc]
     """Transaction Model."""
 
     __tablename__ = "transactions"

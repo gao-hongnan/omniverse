@@ -1,17 +1,35 @@
-from typing import Dict, List, Union
+from __future__ import annotations
+
+from typing import Dict, List, TypedDict
 
 from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
-# This list of dictionaries will act as our "database"
-accounts = [
+
+class AccountDict(TypedDict):
+    id: int
+    name: str
+    email: str
+    balance: float
+
+
+class TransactionDict(TypedDict):
+    id: int
+    account_id: int
+    amount: float
+    type: str
+    timestamp: str
+
+
+# This list of dictionaries will act as our "database" for accounts
+accounts: List[AccountDict] = [
     {"id": 1, "name": "John Doe", "email": "johndoe@gmail.com", "balance": 100.0},
     {"id": 2, "name": "Jane Doe", "email": "janedoe@gmail.com", "balance": 200.0},
 ]
 
-# This list of dictionaries will act as our "database"
-transactions = [
+# This list of dictionaries will act as our "database" for transactions
+transactions: List[TransactionDict] = [
     {
         "id": 1,
         "account_id": 1,
@@ -29,30 +47,30 @@ transactions = [
 ]
 
 
-def get_transaction_by_id(transaction_id: int) -> Dict[str, Union[int, str, float]]:
+def get_transaction_by_id(transaction_id: int) -> TransactionDict | None:
     """Return the transaction with the given id."""
     for transaction in transactions:
         if transaction["id"] == transaction_id:
             return transaction
-    return {}  # Return an empty dict if no transaction was found
+    return None
 
 
-def get_account_by_id(account_id: int) -> Dict[str, Union[int, str, float]]:
+def get_account_by_id(account_id: int) -> AccountDict | None:
     """Return the account with the given id."""
     for account in accounts:
         if account["id"] == account_id:
             return account
-    return {}  # Return an empty dict if no account was found
+    return None
 
 
 @app.get("/accounts")
-async def get_accounts() -> List[Dict[str, Union[int, str, float]]]:
+async def get_accounts() -> List[AccountDict]:
     """Return all accounts."""
     return accounts
 
 
 @app.get("/accounts/{account_id}")
-async def get_account(account_id: int) -> Dict[str, Union[int, str, float]]:
+async def get_account(account_id: int) -> AccountDict:
     """Return the account with the given id."""
     account = get_account_by_id(account_id)
     if not account:
@@ -61,13 +79,13 @@ async def get_account(account_id: int) -> Dict[str, Union[int, str, float]]:
 
 
 @app.get("/transactions")
-async def get_transactions() -> List[Dict[str, Union[int, str, float]]]:
+async def get_transactions() -> List[TransactionDict]:
     """Return all transactions."""
     return transactions
 
 
 @app.get("/transactions/{transaction_id}")
-async def get_transaction(transaction_id: int) -> Dict[str, Union[int, str, float]]:
+async def get_transaction(transaction_id: int) -> TransactionDict:
     """Return the transaction with the given id."""
     transaction = get_transaction_by_id(transaction_id)
     if not transaction:
@@ -76,7 +94,7 @@ async def get_transaction(transaction_id: int) -> Dict[str, Union[int, str, floa
 
 
 @app.post("/accounts")
-async def create_account(account: Dict[str, Union[str, float]]) -> Dict[str, Union[int, str, float]]:
+async def create_account(account: AccountDict) -> AccountDict:
     """Create a new account with the given details."""
     # Here we're just adding the account to our list
     # In a real application, you would save the account to your database
@@ -87,9 +105,7 @@ async def create_account(account: Dict[str, Union[str, float]]) -> Dict[str, Uni
 
 
 @app.put("/accounts/{account_id}")
-async def update_account(
-    account_id: int, account_data: Dict[str, Union[str, float]]
-) -> Dict[str, Union[int, str, float]]:
+async def update_account(account_id: int, account_data: AccountDict) -> AccountDict:
     """Update an existing account with the given details."""
     # Find the account to update
     for account in accounts:
@@ -120,7 +136,7 @@ async def delete_account(account_id: int) -> Dict[str, str]:
 @app.get("/accounts/{account_id}/filter")
 async def filter_accounts(
     min_balance: float,
-) -> List[Dict[str, Union[int, str, float]]]:
+) -> List[AccountDict]:
     """Return accounts with balance greater than the specified amount."""
     filtered_accounts = [account for account in accounts if account["balance"] > min_balance]
     return filtered_accounts

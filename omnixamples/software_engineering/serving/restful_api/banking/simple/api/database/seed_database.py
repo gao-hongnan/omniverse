@@ -18,15 +18,15 @@ import os
 import random
 from pathlib import Path
 
-from api.models import Base
-from api.models.account import Account
-from api.models.transaction import Transaction
 from faker import Faker
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from omnivault.utils.reproducibility.seed import seed_all
+from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models import Base
+from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models.account import Account
+from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models.transaction import Transaction
 
 seed_all(42, seed_torch=False)
 
@@ -79,7 +79,7 @@ def seed_database(num_accounts: int = 50, min_transactions: int = 1, max_transac
 
                 # Create a few random transactions for the account
                 for _ in range(random.randint(min_transactions, max_transactions)):
-                    new_transaction = create_fake_transaction(new_account.id)
+                    new_transaction = create_fake_transaction(int(new_account.id))
                     session.add(new_transaction)
 
                 session.commit()
