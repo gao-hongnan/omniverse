@@ -23,18 +23,10 @@ attention.
 So in a way the key idea is **switching**, **_non-blocking_** and **_utilizing
 waiting time_**.
 
----
-
-Absolutely! Let's delve into the conceptual workings of asynchronous programming
-in Python, particularly focusing on how `asyncio` works under the hood. We'll
-then use an analogy to help solidify the understanding.
-
-### Deep Conceptual Explanation
-
-#### Event Loop
+### Event Loop
 
 The core of `asyncio` is the event loop, which is responsible for managing and
-scheduling asynchronous tasks. Here’s how it works step-by-step:
+scheduling asynchronous tasks.
 
 1. **Task Management**: The event loop keeps track of all the tasks that need to
    run. Each task represents an asynchronous operation.
@@ -46,7 +38,7 @@ scheduling asynchronous tasks. Here’s how it works step-by-step:
    started or has completed). It switches between tasks, executing them in small
    chunks.
 
-#### Coroutines and Tasks
+### Coroutines and Tasks
 
 Coroutines are the fundamental units of asynchronous code in Python, defined
 using `async def`. Here’s their role:
@@ -59,7 +51,7 @@ using `async def`. Here’s their role:
     condition (like an I/O operation) is completed. Please run other tasks in
     the meantime.”
 
-#### Concurrency with `asyncio.gather()`
+### Concurrency with `asyncio.gather()`
 
 `asyncio.gather()` is used for managing multiple coroutines concurrently:
 
@@ -105,11 +97,7 @@ This analogy shows how `asyncio` manages tasks—keeping busy and productive by
 switching tasks based on readiness and external conditions, ensuring that time
 is utilized effectively without idle waiting.
 
-By understanding these mechanics and the restaurant analogy, you can better
-appreciate how asynchronous programming in Python allows for efficient handling
-of I/O-bound tasks, maximizing productivity (like our chef) and responsiveness.
-
-#### **Setting**: A Busy Restaurant Kitchen
+### More Concrete: A Busy Restaurant Kitchen
 
 The chef (event loop) is tasked with preparing a large dinner order consisting
 of various dishes that require different preparation and cooking times.
@@ -167,14 +155,6 @@ of various dishes that require different preparation and cooking times.
     preparations, like setting the tables or garnishing dishes, maximizing the
     use of time.
 
-#### **Completing the Tasks**
-
--   **Sequential Finishing**: As each dish completes its cooking or waiting
-    time, the chef finalizes them. The salad is taken out, tossed with the final
-    ingredients, and the dessert is decorated. Everything is timed to ensure
-    dishes are ready to serve hot and fresh, maximizing the quality of the
-    output.
-
 ## References
 
 -   [Next-Level Concurrent Programming In Python With Asyncio - ArjanCodes](https://www.youtube.com/watch?v=GpqAQxH1Afc&t=276s)
@@ -182,3 +162,5 @@ of various dishes that require different preparation and cooking times.
 -   https://realpython.com/async-io-python/
 -   https://stackoverflow.com/questions/553704/what-is-a-coroutine
 -   https://dev.to/thibmaek/explain-coroutines-like-im-five-2d9
+-   Effective Python: 90 Specific Ways to Write Better Python Concurrency and
+    Parallelism

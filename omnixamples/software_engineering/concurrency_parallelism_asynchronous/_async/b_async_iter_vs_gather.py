@@ -14,6 +14,8 @@ from rich.pretty import pprint
 from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.config import parser
 from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.req_http import ahttp_get, http_get
 
+__metadata__ = "Credits: https://github.com/ArjanCodes/2022-asyncio/tree/main"
+
 logging.basicConfig(
     stream=sys.stdout,
     level=logging.INFO,

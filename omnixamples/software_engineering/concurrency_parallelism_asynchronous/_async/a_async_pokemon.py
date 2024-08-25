@@ -13,6 +13,8 @@ from omnixamples.software_engineering.concurrency_parallelism_asynchronous._asyn
     http_get,
 )
 
+__metadata__ = "Credits: https://github.com/ArjanCodes/2022-asyncio/tree/main"
+
 logging.basicConfig(
     stream=sys.stdout,
     level=logging.INFO,
