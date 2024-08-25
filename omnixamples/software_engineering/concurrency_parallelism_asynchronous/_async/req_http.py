@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Dict, List, Union, Any
+from typing import Any, Dict
 
 import requests
 

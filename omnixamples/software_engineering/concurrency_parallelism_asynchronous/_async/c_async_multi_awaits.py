@@ -44,7 +44,7 @@ async def fetch_pokemon_color(pokemon_id: int) -> str:
     return cast(str, color)
 
 
-async def get_pokemon_data() -> None:
+async def aget_pokemon_data() -> None:
     pokemon_id = randint(1, MAX_POKEMON)
     details_task = fetch_pokemon_detail(pokemon_id)
     capture_rate_task = fetch_pokemon_capture_rate(pokemon_id)
@@ -52,14 +52,25 @@ async def get_pokemon_data() -> None:
 
     pokemon_details, capture_rate, color = await asyncio.gather(details_task, capture_rate_task, color_task)
 
-    logger.info("Pokemon Details: %s", pokemon_details["name"])
-    logger.info("Pokemon Stats: %s", capture_rate)
-    logger.info("Pokemon Abilities: %s", color)
+    logger.info("Pokemon Name: %s || Capture Rate: %s || Color: %s", pokemon_details["name"], capture_rate, color)
+
+
+async def aget_pokemon_datas(n: int) -> None:
+    gathered_details_tasks = []
+    gathered_capture_rate_tasks = []
+    gathered_color_tasks = []
+    for _ in range(n):
+        pokemon_id = randint(1, MAX_POKEMON)
+        details_task = fetch_pokemon_detail(pokemon_id)
+        capture_rate_task = fetch_pokemon_capture_rate(pokemon_id)
+        color_task = fetch_pokemon_color(pokemon_id)
+        gathered_details_tasks.append(details_task)
+        gathered_capture_rate_tasks.append(capture_rate_task)
+        gathered_color_tasks.append(color_task)
 
 
 async def main() -> None:
-    # Asynchronous call
-    await get_pokemon_data()
+    await aget_pokemon_data()
 
 
 if __name__ == "__main__":

@@ -7,9 +7,11 @@ import sys
 import timeit
 import types
 from random import randint
-from typing import cast, List
-from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.config import parser
+from typing import List, cast
+
 from rich.pretty import pprint
+
+from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.config import parser
 from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.req_http import ahttp_get, http_get
 
 logging.basicConfig(
