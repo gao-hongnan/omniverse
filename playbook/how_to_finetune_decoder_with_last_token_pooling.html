@@ -594,8 +594,15 @@ please have a read first to establish some basic understand on what a
 decoder-only model entails.</p>
 <section id="dependencies">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Dependencies</a><a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>omniverse
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span><span class="nv">omniverse</span><span class="o">==</span><span class="m">0</span>.0.63
 </pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># %pip install omniverse</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -616,6 +623,7 @@ decoder-only model entails.</p>
     <span class="n">accuracy_score</span><span class="p">,</span>
     <span class="n">auc</span><span class="p">,</span>
     <span class="n">average_precision_score</span><span class="p">,</span>
+    <span class="n">brier_score_loss</span><span class="p">,</span>
     <span class="n">confusion_matrix</span><span class="p">,</span>
     <span class="n">f1_score</span><span class="p">,</span>
     <span class="n">log_loss</span><span class="p">,</span>
@@ -633,9 +641,14 @@ decoder-only model entails.</p>
     <span class="n">EvalPrediction</span><span class="p">,</span>
     <span class="n">GPT2ForSequenceClassification</span><span class="p">,</span>
     <span class="n">GPT2Tokenizer</span><span class="p">,</span>
+    <span class="n">PreTrainedModel</span><span class="p">,</span>
     <span class="n">PreTrainedTokenizer</span><span class="p">,</span>
+    <span class="n">PreTrainedTokenizerBase</span><span class="p">,</span>
+    <span class="n">PreTrainedTokenizerFast</span><span class="p">,</span>
+    <span class="n">Trainer</span><span class="p">,</span>
     <span class="n">TrainingArguments</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">transformers.trainer_utils</span> <span class="kn">import</span> <span class="n">EvalPrediction</span>
 
 <span class="kn">from</span> <span class="nn">omnivault.transformer.config.decoder</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AddNormConfig</span><span class="p">,</span>
@@ -648,6 +661,7 @@ decoder-only model entails.</p>
 <span class="kn">from</span> <span class="nn">omnivault.transformer.modules.layers.addnorm</span> <span class="kn">import</span> <span class="n">AddNorm</span>
 <span class="kn">from</span> <span class="nn">omnivault.transformer.modules.layers.mlp</span> <span class="kn">import</span> <span class="n">PositionwiseFeedForward</span>
 <span class="kn">from</span> <span class="nn">omnivault.utils.reproducibility.seed</span> <span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span> <span class="nn">omnivault.utils.torch_utils.model_utils</span> <span class="kn">import</span> <span class="n">total_trainable_parameters</span>
 </pre></div>
 </div>
 </div>
@@ -1579,7 +1593,13 @@ decoder only models need some experimentation.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<script type="application/vnd.jupyter.widget-view+json">{"model_id": "cbfdc47e748d466f81c84841ea49aee1", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "a958e21072b24d8a8aa6594e305ece00", "version_major": 2, "version_minor": 0}</script></div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "01da28b3e3d74e64954e7c08304d79c9", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "c49ca662c73644d3ad452c099d797f0b", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "37644b38c94a4f2a90f5ff14508dd3f2", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "4dd213efcb9e4290b47462dbbfcae4d7", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "c5572d562d114e0eafe3e1dc875e0df6", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "ad981c03f579492abeb9078a19493fde", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "e62d46f63b0a45dd87d32d93ed7ed599", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "5911c80c1ca44b20b108c04c8525408a", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "678bea5492544e71942cb1d530ad351f", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/conda/lib/python3.10/site-packages/transformers/tokenization_utils_base.py:1601: FutureWarning: `clean_up_tokenization_spaces` was not set. It will be set to `True` by default. This behavior will be depracted in transformers v4.45, and will be then set to `False` by default. For more details check this issue: https://github.com/huggingface/transformers/issues/31884
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/multiprocess/popen_fork.py:66: RuntimeWarning: os.fork() was called. os.fork() is incompatible with multithreaded code, and JAX is multithreaded, so this will likely lead to a deadlock.
+  self.pid = os.fork()
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c622fbab2847411aa6f1ab7e65f694d8", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "7b2e54448d984c468dbd6517dc4801b3", "version_major": 2, "version_minor": 0}</script></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1607,13 +1627,6 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">omnivault.utils.torch_utils.model_utils</span> <span class="kn">import</span> <span class="n">total_trainable_parameters</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e6</span>
 </pre></div>
 </div>
@@ -1634,7 +1647,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">2e-5</span><span class="p">,</span>
     <span class="n">per_device_train_batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">report_to</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
     <span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;./artifacts&#39;</span><span class="p">,</span>
     <span class="n">overwrite_output_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1659,36 +1672,50 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/conda/lib/python3.10/site-packages/transformers/training_args.py:1525: FutureWarning: `evaluation_strategy` is deprecated and will be removed in version 4.46 of 🤗 Transformers. Use `eval_strategy` instead
+  warnings.warn(
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics_for_single_label_classification</span><span class="p">(</span><span class="n">eval_prediction</span><span class="p">:</span> <span class="n">EvalPrediction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_metrics_for_single_label_classification</span><span class="p">(</span><span class="n">eval_prediction</span><span class="p">:</span> <span class="n">EvalPrediction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
     <span class="n">logits</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">predictions</span><span class="p">,</span> <span class="n">eval_prediction</span><span class="o">.</span><span class="n">label_ids</span>
-    <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
     <span class="n">probs</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">predictions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;eval_log_loss&quot;</span><span class="p">:</span> <span class="n">log_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">),</span>
-        <span class="s2">&quot;eval_accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">),</span>
-        <span class="s2">&quot;eval_precision&quot;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-        <span class="s2">&quot;eval_recall&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-        <span class="s2">&quot;eval_f1_score&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
-        <span class="s2">&quot;eval_confusion_matrix&quot;</span><span class="p">:</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="s2">&quot;eval_accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">),</span>
+        <span class="s2">&quot;eval_precision_macro&quot;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_recall_macro&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_f1_score_macro&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_precision_micro&quot;</span><span class="p">:</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_recall_micro&quot;</span><span class="p">:</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_f1_score_micro&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+        <span class="s2">&quot;eval_confusion_matrix&quot;</span><span class="p">:</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
         <span class="s2">&quot;eval_roc_auc&quot;</span><span class="p">:</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">multi_class</span><span class="o">=</span><span class="s2">&quot;ovr&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;eval_pr_auc&quot;</span><span class="p">:</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">),</span>
-        <span class="c1"># &quot;eval_brier_score&quot;: brier_score_loss(labels, np.max(probs, axis=1), pos_label=1),</span>
+        <span class="c1"># &quot;eval_pr_auc&quot;: average_precision_score(labels, probs, average=&quot;macro&quot;),</span>
     <span class="p">}</span>
 
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;eval_brier_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">brier_score_loss</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pos_label</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">brier_scores</span> <span class="o">=</span> <span class="p">[</span><span class="n">brier_score_loss</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)]</span>
+        <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;eval_brier_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">brier_scores</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
-            <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">class_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">):</span>
+            <span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">class_index</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">])</span>
             <span class="n">roc_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
-            <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">i</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">i</span><span class="p">])</span>
+            <span class="n">precision</span><span class="p">,</span> <span class="n">recall</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_curve</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">class_index</span><span class="p">,</span> <span class="n">probs</span><span class="p">[:,</span> <span class="n">class_index</span><span class="p">])</span>
             <span class="n">pr_auc</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">recall</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
-            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_roc_auc_class_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc</span>
-            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_pr_auc_class_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pr_auc</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_roc_auc_class_</span><span class="si">{</span><span class="n">class_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roc_auc</span>
+            <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;eval_pr_auc_class_</span><span class="si">{</span><span class="n">class_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pr_auc</span>
 
     <span class="k">return</span> <span class="n">metrics</span>
 </pre></div>
@@ -1697,17 +1724,165 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># trainer = Trainer(</span>
-<span class="c1">#     model=base_model,</span>
-<span class="c1">#     args=training_args,</span>
-<span class="c1">#     train_dataset=tokenized_train_dataset,</span>
-<span class="c1">#     eval_dataset=tokenized_valid_dataset,</span>
-<span class="c1">#     tokenizer=tokenizer,</span>
-<span class="c1">#     data_collator=data_collator,</span>
-<span class="c1">#     compute_metrics=compute_metrics_for_single_label_classification,</span>
-<span class="c1"># )</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">base_model</span><span class="p">,</span>
+    <span class="n">args</span><span class="o">=</span><span class="n">training_args</span><span class="p">,</span>
+    <span class="n">train_dataset</span><span class="o">=</span><span class="n">tokenized_train_dataset</span><span class="p">,</span>
+    <span class="n">eval_dataset</span><span class="o">=</span><span class="n">tokenized_valid_dataset</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
+    <span class="n">data_collator</span><span class="o">=</span><span class="n">data_collator</span><span class="p">,</span>
+    <span class="n">compute_metrics</span><span class="o">=</span><span class="n">compute_metrics_for_single_label_classification</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># trainer.train()</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">
+    <div>
+      
+      <progress value='1275' max='1275' style='width:300px; height:20px; vertical-align: middle;'></progress>
+      [1275/1275 02:05, Epoch 5/5]
+    </div>
+    <table border="1" class="dataframe">
+  <thead>
+ <tr style="text-align: left;">
+      <th>Epoch</th>
+      <th>Training Loss</th>
+      <th>Validation Loss</th>
+      <th>Log Loss</th>
+      <th>Accuracy</th>
+      <th>Precision Macro</th>
+      <th>Recall Macro</th>
+      <th>F1 Score Macro</th>
+      <th>Precision Micro</th>
+      <th>Recall Micro</th>
+      <th>F1 Score Micro</th>
+      <th>Confusion Matrix</th>
+      <th>Roc Auc</th>
+      <th>Brier Score</th>
+      <th>Roc Auc Class 0</th>
+      <th>Pr Auc Class 0</th>
+      <th>Roc Auc Class 1</th>
+      <th>Pr Auc Class 1</th>
+      <th>Roc Auc Class 2</th>
+      <th>Pr Auc Class 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>0.654800</td>
+      <td>0.575435</td>
+      <td>0.575435</td>
+      <td>0.740088</td>
+      <td>0.612724</td>
+      <td>0.596449</td>
+      <td>0.599999</td>
+      <td>0.740088</td>
+      <td>0.740088</td>
+      <td>0.740088</td>
+      <td>[[9, 5, 16], [0, 125, 15], [12, 11, 34]]</td>
+      <td>0.876099</td>
+      <td>0.113814</td>
+      <td>0.860237</td>
+      <td>0.379456</td>
+      <td>0.942775</td>
+      <td>0.963399</td>
+      <td>0.825284</td>
+      <td>0.608643</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.478300</td>
+      <td>0.219012</td>
+      <td>0.219012</td>
+      <td>0.929515</td>
+      <td>0.909526</td>
+      <td>0.901044</td>
+      <td>0.903625</td>
+      <td>0.929515</td>
+      <td>0.929515</td>
+      <td>0.929515</td>
+      <td>[[27, 3, 0], [0, 137, 3], [5, 5, 47]]</td>
+      <td>0.979735</td>
+      <td>0.038522</td>
+      <td>0.991540</td>
+      <td>0.935628</td>
+      <td>0.987603</td>
+      <td>0.991196</td>
+      <td>0.960062</td>
+      <td>0.933540</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>0.158000</td>
+      <td>0.221089</td>
+      <td>0.221089</td>
+      <td>0.938326</td>
+      <td>0.906788</td>
+      <td>0.942398</td>
+      <td>0.921905</td>
+      <td>0.938326</td>
+      <td>0.938326</td>
+      <td>0.938326</td>
+      <td>[[30, 0, 0], [2, 133, 5], [4, 3, 50]]</td>
+      <td>0.986326</td>
+      <td>0.031093</td>
+      <td>0.993739</td>
+      <td>0.949336</td>
+      <td>0.993103</td>
+      <td>0.995271</td>
+      <td>0.972136</td>
+      <td>0.952987</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>0.212800</td>
+      <td>0.227551</td>
+      <td>0.227551</td>
+      <td>0.942731</td>
+      <td>0.914779</td>
+      <td>0.944779</td>
+      <td>0.927814</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>[[30, 0, 0], [1, 134, 5], [4, 3, 50]]</td>
+      <td>0.989035</td>
+      <td>0.033271</td>
+      <td>0.994755</td>
+      <td>0.961793</td>
+      <td>0.994745</td>
+      <td>0.996582</td>
+      <td>0.977606</td>
+      <td>0.959318</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>0.101200</td>
+      <td>0.212625</td>
+      <td>0.212625</td>
+      <td>0.942731</td>
+      <td>0.915999</td>
+      <td>0.930785</td>
+      <td>0.923062</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>0.942731</td>
+      <td>[[28, 0, 2], [1, 135, 4], [3, 3, 51]]</td>
+      <td>0.990026</td>
+      <td>0.029624</td>
+      <td>0.994755</td>
+      <td>0.962396</td>
+      <td>0.994828</td>
+      <td>0.996647</td>
+      <td>0.980495</td>
+      <td>0.961750</td>
+    </tr>
+  </tbody>
+</table><p></div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>TrainOutput(global_step=1275, training_loss=0.3979669969222125, metrics={&#39;train_runtime&#39;: 125.2594, &#39;train_samples_per_second&#39;: 81.311, &#39;train_steps_per_second&#39;: 10.179, &#39;total_flos&#39;: 332666429276160.0, &#39;train_loss&#39;: 0.3979669969222125, &#39;epoch&#39;: 5.0})
 </pre></div>
 </div>
 </div>
