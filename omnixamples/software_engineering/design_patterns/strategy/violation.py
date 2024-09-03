@@ -89,7 +89,7 @@ if __name__ == "__main__":
                 print(f"X: {X}, y: {y}")
 
         # This will fail because RandomForest is not in the ModelType enum
-        trainer.model_type = "RANDOM_FOREST"
+        trainer.model_type = "RANDOM_FOREST"  # type: ignore[assignment]
         trainer.fit(X=X, y=y)
     except Exception as exc:
         print(f"Failed to add new model type without modifying Trainer class: {exc}")
