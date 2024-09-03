@@ -6,12 +6,19 @@ from __future__ import annotations
 import functools
 import inspect
 import logging
+import os
 import sys
+import threading
+import time
 import timeit
+import types
 from contextlib import contextmanager
-from typing import Any, Callable, Coroutine, Generator, Generic, Tuple, Type, TypeVar, cast, overload
+from typing import Any, Callable, Coroutine, Dict, Generator, Generic, Optional, Tuple, Type, TypeVar, cast, overload
 
-from typing_extensions import ParamSpec
+import psutil
+from pydantic import BaseModel
+from rich.pretty import pprint
+from typing_extensions import ParamSpec, Self
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -143,3 +150,112 @@ def timer(func: F) -> F:
         return awrapper
     else:
         return wrapper
+
+
+class TimedExecutionMetadata(BaseModel):
+    start_time: Optional[float] = None
+    start_datetime: Optional[str] = None
+    end_time: Optional[float] = None
+    end_datetime: Optional[str] = None
+    execution_time: Optional[float] = None
+    thread_id: int
+    process_id: int
+    initial_memory_usage: int
+    final_memory_usage: Optional[int] = None
+    memory_usage_change: Optional[int] = None
+    initial_cpu_time: psutil._common.pcputimes
+    final_cpu_time: Optional[psutil._common.pcputimes]
+    caller_function_name: str
+    caller_module_name: str
+    caller_module_path: str
+    caller_class_name: Optional[str] = None
+    caller_method_name: Optional[str] = None
+    exception: Optional[str] = None
+    tags: Dict[str, str] = {}
+
+
+class TimedExecution:
+    """Time profiler.
+
+    Examples
+    --------
+    >>> def my_function() -> List[int]:
+    ...     with TimedExecution(pretty_print=True) as timer:
+    ...         a = [1] * 1000000000
+    ...         return a
+    ...
+    >>> def my_error_function() -> None:
+    ...     with TimedExecution(pretty_print=True) as timer:
+    ...         a = 1
+    ...         if a == 1:
+    ...             raise ValueError("Error!")
+    ...
+    >>> class MyClass:
+    ...     def __init__(self) -> None:
+    ...         pass
+    ...
+    ...     def my_method(self) -> None:
+    ...         with TimedExecution(pretty_print=True) as timer:
+    ...             time.sleep(5)
+    ...
+    >>> my_function()
+    >>> MyClass().my_method()
+    >>> my_error_function()
+    """
+
+    def __init__(
+        self: Self,
+        metadata: Dict[str, Any] | None = None,
+        tags: Dict[str, str] | None = None,
+        pretty_print: bool = True,
+    ) -> None:
+        self.metadata = metadata or {}
+        self.tags = tags or {}
+        self.pretty_print = pretty_print
+        self.process = psutil.Process(os.getpid())
+
+    def __enter__(self: Self) -> Self:
+        self.start_time = timeit.default_timer()
+        self.metadata["start_time"] = self.start_time
+        self.metadata["start_datetime"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        self.metadata["thread_id"] = threading.get_ident()
+        self.metadata["process_id"] = os.getpid()
+        self.metadata["initial_memory_usage"] = self.process.memory_info().rss
+        self.metadata["initial_cpu_time"] = self.process.cpu_times()
+        self.metadata.update(self.tags)
+
+        stack = inspect.stack()
+        caller_frame = stack[1]
+        frame_info = inspect.getframeinfo(caller_frame.frame)
+
+        self.metadata["caller_function_name"] = caller_frame.function
+        self.metadata["caller_module_name"] = caller_frame.frame.f_globals["__name__"]
+        self.metadata["caller_module_path"] = frame_info.filename
+
+        if "self" in caller_frame.frame.f_locals:
+            self_instance = caller_frame.frame.f_locals["self"]
+            self.metadata["caller_class_name"] = self_instance.__class__.__name__
+            self.metadata["caller_method_name"] = caller_frame.function
+
+        return self
+
+    def __exit__(
+        self: Self,
+        exc_type: Type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
+        self.end_time = timeit.default_timer()
+        self.metadata["end_time"] = self.end_time
+        self.metadata["end_datetime"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        self.metadata["execution_time"] = self.end_time - self.start_time
+        self.metadata["final_memory_usage"] = self.process.memory_info().rss
+        self.metadata["memory_usage_change"] = (
+            self.metadata["final_memory_usage"] - self.metadata["initial_memory_usage"]
+        )
+        self.metadata["final_cpu_time"] = self.process.cpu_times()
+        if exc_type and exc_val and exc_tb:
+            self.metadata["exception"] = f"{exc_type.__name__}: {exc_val} traceback: {exc_tb}"
+
+        if self.pretty_print:
+            pprint(TimedExecutionMetadata(**self.metadata))
