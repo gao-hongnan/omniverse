@@ -1,27 +1,54 @@
-# Stage 11. Model Monitoring
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+# Stage 9. Model Monitoring (MLOps)
+
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
+
+```{contents}
+:local:
+```
 
 Model monitoring is about continuously tracking the performance of models in
 production to ensure that they continue to provide accurate and reliable
 predictions.
 
-- **Performance Monitoring**: Regularly evaluate the model's performance
-  metrics in production. This includes tracking metrics like accuracy,
-  precision, recall, F1 score for classification problems, or Mean Absolute
-  Error (MAE), Root Mean Squared Error (RMSE) for regression problems, etc.
+-   **Performance Monitoring**: Regularly evaluate the model's performance
+    metrics in production. This includes tracking metrics like accuracy,
+    precision, recall, F1 score for classification problems, or Mean Absolute
+    Error (MAE), Root Mean Squared Error (RMSE) for regression problems, etc.
 
-- **Data Drift Monitoring**: Over time, the data that the model receives can
-  change. These changes can lead to a decrease in the model's performance.
-  Therefore, it's crucial to monitor the data the model is scoring on to
-  detect any drift from the data the model was trained on.
+-   **Data Drift Monitoring**: Over time, the data that the model receives can
+    change. These changes can lead to a decrease in the model's performance.
+    Therefore, it's crucial to monitor the data the model is scoring on to
+    detect any drift from the data the model was trained on.
 
-- **Model Retraining**: If the performance of the model drops or significant
-  data drift is detected, it might be necessary to retrain the model with new
-  data. The model monitoring should provide alerts or triggers for such
-  situations.
+-   **Model Retraining**: If the performance of the model drops or significant
+    data drift is detected, it might be necessary to retrain the model with new
+    data. The model monitoring should provide alerts or triggers for such
+    situations.
 
-- **A/B Testing**: In case multiple models are in production, monitor their
-  performances comparatively through techniques like A/B testing to determine
-  which model performs better.
+-   **A/B Testing**: In case multiple models are in production, monitor their
+    performances comparatively through techniques like A/B testing to determine
+    which model performs better.
 
 In each of these stages, it's essential to keep in mind principles like
 reproducibility, automation, collaboration, and validation to ensure the
@@ -95,31 +122,31 @@ consider for your Bitcoin price prediction model:
    predictions on. If the data drifts too much, the model’s performance might
    decrease.
 
-To monitor data drift, you can use a two-sample t-test, which compares the means
-of two groups to determine if they're significantly different. Here's how to do
-it:
+    To monitor data drift, you can use a two-sample t-test, which compares the
+    means of two groups to determine if they're significantly different. Here's
+    how to do it:
 
-- Consider one feature at a time. For instance, start with 'Volume'.
-- From your current data, take a sample. Compute its mean (let's call it
-  mean1) and standard deviation (std1).
-- Take a sample of the same size from the data your model was trained on.
-  Compute its mean (mean2) and standard deviation (std2).
-- Use the t-test formula to calculate the t-score. The formula is
-  `t = (mean1 - mean2) / sqrt((std1^2/n1) + (std2^2/n2))`, where n1 and n2 are
-  the sizes of your samples.
-- If the absolute t-score is large (greater than the critical t-value for your
-  desired confidence level), then the means are significantly different,
-  indicating data drift.
+    - Consider one feature at a time. For instance, start with 'Volume'.
+    - From your current data, take a sample. Compute its mean (let's call it
+      mean1) and standard deviation (std1).
+    - Take a sample of the same size from the data your model was trained on.
+      Compute its mean (mean2) and standard deviation (std2).
+    - Use the t-test formula to calculate the t-score. The formula is
+      `t = (mean1 - mean2) / sqrt((std1^2/n1) + (std2^2/n2))`, where n1 and n2
+      are the sizes of your samples.
+    - If the absolute t-score is large (greater than the critical t-value for
+      your desired confidence level), then the means are significantly
+      different, indicating data drift.
 
-The resulting `t` value (t-score) is a measure of the size of the difference
-relative to the variation in your data. A large absolute t-score means that the
-difference in means is large relative to the variability of the data, which
-suggests that the means are significantly different. This would be an indication
-of data drift.
+    The resulting `t` value (t-score) is a measure of the size of the difference
+    relative to the variation in your data. A large absolute t-score means that
+    the difference in means is large relative to the variability of the data,
+    which suggests that the means are significantly different. This would be an
+    indication of data drift.
 
-Remember to conduct this test for all relevant features ('Open', 'Close',
-'Volume', etc.) and over regular intervals (daily, weekly, etc.) to ensure
-continuous monitoring.
+    Remember to conduct this test for all relevant features ('Open', 'Close',
+    'Volume', etc.) and over regular intervals (daily, weekly, etc.) to ensure
+    continuous monitoring.
 
 3. **Concept Drift Monitoring**: Sometimes, even if the data distribution stays
    the same, the underlying relationship between the input features and the
@@ -142,25 +169,25 @@ including statistical tests such as t-tests. Here's a general overview:
    model over time to ensure its accuracy and reliability. Some techniques for
    model monitoring include:
 
-   - Tracking key performance metrics like accuracy, precision, recall, or mean
-     absolute error.
-   - Monitoring model output distributions to detect significant changes or
-     shifts.
-   - Comparing model predictions with actual outcomes to identify
-     discrepancies.
+    - Tracking key performance metrics like accuracy, precision, recall, or mean
+      absolute error.
+    - Monitoring model output distributions to detect significant changes or
+      shifts.
+    - Comparing model predictions with actual outcomes to identify
+      discrepancies.
 
 2. Data Monitoring: It involves monitoring the input data used by your model to
    detect any changes or drifts that may impact the model's performance. Here
    are a few methods for data monitoring:
-   - Statistical tests: T-tests can be used to compare statistical properties
-     (e.g., means) of different data subsets or time periods. For example, you
-     can compare Bitcoin price increase predictions for different time
-     intervals to identify significant differences.
-   - Control charts: These graphical tools help detect shifts or anomalies in
-     data distribution, allowing you to identify potential drifts.
-   - Concept drift detection: Techniques like change point detection algorithms
-     or sliding window approaches can be employed to detect significant changes
-     in the underlying data distribution.
+    - Statistical tests: T-tests can be used to compare statistical properties
+      (e.g., means) of different data subsets or time periods. For example, you
+      can compare Bitcoin price increase predictions for different time
+      intervals to identify significant differences.
+    - Control charts: These graphical tools help detect shifts or anomalies in
+      data distribution, allowing you to identify potential drifts.
+    - Concept drift detection: Techniques like change point detection algorithms
+      or sliding window approaches can be employed to detect significant changes
+      in the underlying data distribution.
 
 Remember, model and data monitoring should be an ongoing process to ensure the
 reliability of your predictions. Regularly evaluating and updating your model

@@ -1,4 +1,31 @@
-# Stage 11. Model Serving (MLOps)
+---
+jupytext:
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
+mystnb:
+    number_source_lines: true
+kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+# Stage 8. Model Serving (MLOps)
+
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Level-Beginner-green)
+
+```{contents}
+:local:
+```
 
 Model serving is the process of making the trained machine learning models
 available for inference. It involves loading the model into memory and setting
@@ -516,22 +543,18 @@ to go over her content in details.
 
 ## Unifying Batch Pipeline and Streaming Pipeline
 
-TODO. See the section on Chip's
+See the section on Chip's
 book[^huyen-chip-model-deployment-and-prediction-service].
 
 ## Model Compression
 
-TODO. See the section on Chip's
+See the section on Chip's
 book[^huyen-chip-model-deployment-and-prediction-service].
 
 ## Machine Learning on the Cloud and on the Edge
 
-TODO. See the section on Chip's
+See the section on Chip's
 book[^huyen-chip-model-deployment-and-prediction-service].
-
-## Implementation (FastAPI)
-
-TODO.
 
 ## References and Further Readings
 
