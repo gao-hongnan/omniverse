@@ -1,0 +1,1412 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Stage 8. Model Serving (MLOps) &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'operations/machine_learning_lifecycle/08_model_deployment_and_serving';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/08_model_deployment_and_serving.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Stage 9. Model Monitoring (MLOps)" href="09_model_monitoring.html" />
+    <link rel="prev" title="Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)" href="07_model_validation_registry_and_pushing_model_to_production.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/kmeans_clustering/01_intro.html">K-Means</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="00_intro.html">The Lifecycle of an AIOps System</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="011_infrastructure_and_tooling_for_mlops.html">Stage 11. Infrastructure and Tooling for MLOps</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../api/reproducibility.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/operations/machine_learning_lifecycle/08_model_deployment_and_serving.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Foperations/machine_learning_lifecycle/08_model_deployment_and_serving.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/operations/machine_learning_lifecycle/08_model_deployment_and_serving.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../_sources/operations/machine_learning_lifecycle/08_model_deployment_and_serving.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Stage 8. Model Serving (MLOps)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finite-vs-unbounded-feature-space-precurser-to-deployment-strategies">Finite vs. Unbounded Feature Space, Precurser to Deployment Strategies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-distinction-between-finite-and-unbounded-feature-space">The Distinction Between Finite and Unbounded Feature Space</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-features-online-features-and-streaming-features">Batch Features, Online Features, and Streaming Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-strategies">Serving Strategies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-serving-inference-asynchronous">Batch Serving/Inference (Asynchronous)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-batch-features-only">Visualization (Batch Features only)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#disadvantages">Disadvantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-batch-serving-system">Setting up a Batch Serving System</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-time-serving-inference-online-with-only-batch-features">Real-Time Serving/Inference (Online with only Batch Features)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Visualization (Batch Features only)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-online-features">Visualization (Online Features)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Disadvantages</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-inference">Streaming Inference</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Disadvantages</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybrid-serving">Hybrid Serving</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-device-inference">On-Device Inference</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Disadvantages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-processing-does-not-mean-predicting-all-possible-inputs-in-advance">Batch Processing does not mean Predicting all Possible Inputs in Advance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-batch-prediction-to-online-prediction">From Batch Prediction to Online Prediction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unifying-batch-pipeline-and-streaming-pipeline">Unifying Batch Pipeline and Streaming Pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-compression">Model Compression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machine-learning-on-the-cloud-and-on-the-edge">Machine Learning on the Cloud and on the Edge</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="stage-8-model-serving-mlops">
+<h1>Stage 8. Model Serving (MLOps)<a class="headerlink" href="#stage-8-model-serving-mlops" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#finite-vs-unbounded-feature-space-precurser-to-deployment-strategies" id="id21">Finite vs. Unbounded Feature Space, Precurser to Deployment Strategies</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-distinction-between-finite-and-unbounded-feature-space" id="id22">The Distinction Between Finite and Unbounded Feature Space</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#batch-features-online-features-and-streaming-features" id="id23">Batch Features, Online Features, and Streaming Features</a></p></li>
+<li><p><a class="reference internal" href="#serving-strategies" id="id24">Serving Strategies</a></p>
+<ul>
+<li><p><a class="reference internal" href="#batch-serving-inference-asynchronous" id="id25">Batch Serving/Inference (Asynchronous)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#definition" id="id26">Definition</a></p></li>
+<li><p><a class="reference internal" href="#visualization-batch-features-only" id="id27">Visualization (Batch Features only)</a></p></li>
+<li><p><a class="reference internal" href="#example" id="id28">Example</a></p></li>
+<li><p><a class="reference internal" href="#advantages" id="id29">Advantages</a></p></li>
+<li><p><a class="reference internal" href="#disadvantages" id="id30">Disadvantages</a></p></li>
+<li><p><a class="reference internal" href="#setting-up-a-batch-serving-system" id="id31">Setting up a Batch Serving System</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#real-time-serving-inference-online-with-only-batch-features" id="id32">Real-Time Serving/Inference (Online with only Batch Features)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id33">Definition</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id34">Visualization (Batch Features only)</a></p></li>
+<li><p><a class="reference internal" href="#visualization-online-features" id="id35">Visualization (Online Features)</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id36">Example</a></p></li>
+<li><p><a class="reference internal" href="#id5" id="id37">Advantages</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id38">Disadvantages</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#streaming-inference" id="id39">Streaming Inference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id40">Definition</a></p></li>
+<li><p><a class="reference internal" href="#visualization" id="id41">Visualization</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id42">Example</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id43">Advantages</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id44">Disadvantages</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#hybrid-serving" id="id45">Hybrid Serving</a></p></li>
+<li><p><a class="reference internal" href="#on-device-inference" id="id46">On-Device Inference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id12" id="id47">Definition</a></p></li>
+<li><p><a class="reference internal" href="#id13" id="id48">Example</a></p></li>
+<li><p><a class="reference internal" href="#id14" id="id49">Advantages</a></p></li>
+<li><p><a class="reference internal" href="#id15" id="id50">Disadvantages</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#batch-processing-does-not-mean-predicting-all-possible-inputs-in-advance" id="id51">Batch Processing does not mean Predicting all Possible Inputs in Advance</a></p></li>
+<li><p><a class="reference internal" href="#from-batch-prediction-to-online-prediction" id="id52">From Batch Prediction to Online Prediction</a></p></li>
+<li><p><a class="reference internal" href="#unifying-batch-pipeline-and-streaming-pipeline" id="id53">Unifying Batch Pipeline and Streaming Pipeline</a></p></li>
+<li><p><a class="reference internal" href="#model-compression" id="id54">Model Compression</a></p></li>
+<li><p><a class="reference internal" href="#machine-learning-on-the-cloud-and-on-the-edge" id="id55">Machine Learning on the Cloud and on the Edge</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id56">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p>Model serving is the process of making the trained machine learning models
+available for inference. It involves loading the model into memory and setting
+up an API or a service to accept data inputs, perform predictions, and return
+the results.</p>
+<ul class="simple">
+<li><p><strong>Deployment</strong>: Models are deployed in a suitable environment that can be a
+server, a cloud service, or even an edge device. Depending on the use case,
+the deployment can be a batch scoring job that runs at regular intervals, or
+a real-time scoring service that needs to respond immediately to incoming
+requests.</p></li>
+<li><p><strong>Scalability</strong>: The model serving infrastructure should be able to handle
+varying loads. It should be able to scale up during high load times and
+scale down when the load is low to efficiently use resources.</p></li>
+<li><p><strong>Latency</strong>: For real-time applications, the model serving infrastructure
+should have low latency to deliver predictions within an acceptable time
+frame.</p></li>
+</ul>
+<section id="finite-vs-unbounded-feature-space-precurser-to-deployment-strategies">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Finite vs. Unbounded Feature Space, Precurser to Deployment Strategies</a><a class="headerlink" href="#finite-vs-unbounded-feature-space-precurser-to-deployment-strategies" title="Link to this heading">#</a></h2>
+<p>The concept of finite vs. unbounded feature space refers to the dimensionality
+and potential variations in the input data that a model is expected to handle.</p>
+<ul class="simple">
+<li><p><strong>Finite Feature Space</strong>: In a finite feature space, the possible inputs a
+model might encounter are limited and well-defined. For example, a model
+predicting whether an email is spam or not might look at a finite set of
+features like the length of the email, the number of capitalized words, etc.
+Since the feature space is finite and well understood, you can often batch
+process the inputs and generate predictions in large groups. This approach
+is often more computationally efficient.</p></li>
+<li><p><strong>Unbounded Feature Space</strong>: Conversely, in an unbounded feature space, the
+potential inputs are not strictly limited. For example, a model that
+generates responses to open-ended human language input operates in an
+unbounded feature space because the possible variations in language are
+virtually limitless. In such cases, real-time prediction is often necessary
+because the model needs to handle a constant stream of unique, unpredictable
+inputs.</p></li>
+</ul>
+<p>The nature of your feature space has a significant impact on your deployment
+strategy. If you’re working with a finite feature space and there’s no urgent
+need for real-time predictions, batch scoring can be a good approach. But if
+you’re dealing with an unbounded feature space or if your use case requires
+immediate predictions (such as recommendation systems, chatbots, etc.), then
+you’ll need to set up an infrastructure that can handle real-time scoring.</p>
+<p>It’s important to note that these are not strict rules but guidelines. The
+ultimate decision would depend on various factors like business requirements,
+computational resources, model complexity, etc.</p>
+<section id="the-distinction-between-finite-and-unbounded-feature-space">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">The Distinction Between Finite and Unbounded Feature Space</a><a class="headerlink" href="#the-distinction-between-finite-and-unbounded-feature-space" title="Link to this heading">#</a></h3>
+<p>When we say “finite feature space”, we don’t necessarily mean that the possible
+values for a feature are finite, but rather that the set of <em>types</em> of features
+we are considering is finite and well-defined.</p>
+<p>For instance, in the email spam detection example, we might decide to consider
+features such as the length of the email, the number of capitalized words, the
+presence of specific keywords, etc. This set of features forms a “finite feature
+space” because we have a specific, finite list of feature types we are
+considering.</p>
+<p>Within each of these feature types, of course, the specific values can vary
+widely. The length of an email could range from 1 word to thousands of words, so
+in that sense, the range of potential feature values can be quite broad.
+However, it is still a finite feature space because we are only considering a
+specific, finite set of feature types.</p>
+<p>In contrast, an “unbounded feature space” might refer to a situation where we
+can’t easily enumerate all the potential types of features in advance, or where
+new types of features may continually arise. An example might be a natural
+language processing task where the input could be any arbitrary text string, and
+we might need to consider an essentially infinite set of potential features
+(every possible word or phrase that could appear in the text).</p>
+<p>So to summarize, in a finite feature space, we have a specific, finite set of
+feature types that we are considering, even though the specific values for each
+feature can vary widely. In an unbounded feature space, we can’t easily
+enumerate all the potential feature types in advance, and new types of features
+may continually arise.</p>
+<p>The choice between batch processing and real-time processing usually depends
+more on the specific use case requirements (e.g., how quickly a prediction is
+needed) rather than the nature of the feature space. However, in some cases, an
+unbounded feature space might make batch processing more challenging, as the
+data preprocessing and feature extraction steps could be more complex and
+time-consuming.</p>
+</section>
+</section>
+<section id="batch-features-online-features-and-streaming-features">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Batch Features, Online Features, and Streaming Features</a><a class="headerlink" href="#batch-features-online-features-and-streaming-features" title="Link to this heading">#</a></h2>
+<p>Let’s clarify the distinction between “streaming features”, “online features”,
+and “batch features” and incorporate them into an example. I’ll use the case of
+a recommendation system as it’s a common area where all these feature types come
+into play.</p>
+<ul class="simple">
+<li><p><strong>Batch Features:</strong> Batch features are derived from historical data that is
+processed at regular intervals, typically in a batch mode. For a
+recommendation system, batch features could be item embeddings which
+represent items (like products, movies, articles, etc.) in a
+multi-dimensional space. These embeddings are usually precomputed using
+historical data (like past user interactions with items) and are updated
+periodically.</p></li>
+<li><p><strong>Online Features:</strong> Online features are a broader category that includes
+any feature used for real-time predictions. This can include both batch
+features (like the item embeddings mentioned above) that are stored and
+fetched when needed for a prediction, as well as real-time features that are
+derived from the current context.</p></li>
+<li><p><strong>Streaming Features:</strong> Streaming features are specifically derived from
+streaming data. In a recommendation system, these might be real-time user
+activity data, such as the sequence of items a user is currently viewing or
+interacting with in a session.</p></li>
+</ul>
+<p>Let’s consider a concrete example. Say we are running an e-commerce website and
+want to recommend products to users in real-time.</p>
+<ul class="simple">
+<li><p>When a user starts a browsing session on the site, we can track their
+activity in real-time, such as which products they are viewing, clicking on,
+or adding to their cart. These form our streaming features.</p></li>
+<li><p>At the same time, we also have item embeddings (batch features) precomputed
+for all products in our inventory, which we can fetch in real-time when
+needed for a prediction.</p></li>
+<li><p>Together, the item embeddings and the real-time user activity data
+constitute our online features, which are used for making the real-time
+product recommendations.</p></li>
+</ul>
+<p>So in this scenario, the item embeddings are batch features, which are a subset
+of online features, used for online prediction. However, they are not streaming
+features, as they are not computed from streaming data. The user’s real-time
+activity data are both streaming features and online features. This example
+should provide a good context to understand the different types of features
+involved in a real-time recommendation system.</p>
+</section>
+<section id="serving-strategies">
+<h2><a class="toc-backref" href="#id24" role="doc-backlink">Serving Strategies</a><a class="headerlink" href="#serving-strategies" title="Link to this heading">#</a></h2>
+<p>Model serving is the process of using a trained machine learning model to make
+predictions in a production environment. There are several common ways to serve
+a model, and the best method often depends on the specific use case. Here are
+some of the most common methods of model serving.</p>
+<section id="batch-serving-inference-asynchronous">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Batch Serving/Inference (Asynchronous)</a><a class="headerlink" href="#batch-serving-inference-asynchronous" title="Link to this heading">#</a></h3>
+<section id="definition">
+<h4><a class="toc-backref" href="#id26" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h4>
+<p>Batch inference refers to the process of making predictions on a large set of
+inputs at once. This is usually performed when there isn’t a need for real-time
+predictions, and when predictions can be made in advance and stored for later
+use.</p>
+<p><em>Batch prediction</em> is when predictions are generated periodically or whenever
+triggered. The predictions are stored somewhere, such as in SQL tables or an
+in-memory data‐ base, and retrieved as needed. For example, Netflix might
+generate movie recommen‐ dations for all of its users every four hours, and the
+precomputed recommendations are fetched and shown to users when they log on to
+Netflix. Batch prediction is also known as <em>asynchronous prediction</em>:
+predictions are generated asynchronously with
+requests<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="visualization-batch-features-only">
+<h4><a class="toc-backref" href="#id27" role="doc-backlink">Visualization (Batch Features only)</a><a class="headerlink" href="#visualization-batch-features-only" title="Link to this heading">#</a></h4>
+<figure markdown>
+  ![Batch Serving](../assets/batch-serving-chip-huyen.png)
+  <figcaption>A simplified architecture for batch prediction. Image Credit: Huyen, Chip. "Chapter 7.
+Model Deployment and Prediction Service." In Designing Machine Learning Systems:
+An Iterative Process for Production-Ready Applications, O'Reilly Media,
+Inc., 2022.
+ </figcaption>
+</figure>
+</section>
+<section id="example">
+<h4><a class="toc-backref" href="#id28" role="doc-backlink">Example</a><a class="headerlink" href="#example" title="Link to this heading">#</a></h4>
+<p>Batch serving is particularly suitable for tasks where the data doesn’t change
+rapidly and real-time predictions are not required. Here are a few examples:</p>
+<ol class="arabic simple">
+<li><p><strong>User content recommendation</strong>: Recommending content to users based on their
+viewing history is a common use case for batch serving. For example, a
+streaming service like Netflix or Spotify could use batch serving to generate
+personalized content recommendations for all users overnight, based on their
+viewing or listening history up to the end of the previous day.</p></li>
+<li><p><strong>Predictive maintenance</strong>: Another use case is predicting equipment failures
+or maintenance needs based on sensor data. If the equipment doesn’t require
+real-time monitoring, the sensor data could be batch processed overnight to
+predict the probability of equipment failure in the next few days or weeks.</p></li>
+<li><p><strong>Marketing campaign planning</strong>: In marketing, batch serving could be used to
+segment the customer base and predict the expected response to different
+marketing campaigns. These predictions could be used to plan marketing
+activities for the next few days or weeks.</p></li>
+</ol>
+<p>However, for new users who do not yet have a viewing history, the system might
+have to make generic recommendations based on their explicitly stated interests
+or demographic information. Also, for certain popular combinations of input
+features, caching could indeed be a valuable strategy to increase serving speed,
+even in a real-time serving setup. This is sometimes referred to as “hot data
+caching” or “frequently used data caching”.</p>
+</section>
+<section id="advantages">
+<h4><a class="toc-backref" href="#id29" role="doc-backlink">Advantages</a><a class="headerlink" href="#advantages" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>The model generates and caches predictions, which enables very fast
+inference for users. This is because the model doesn’t have to process each
+input individually in real-time; instead, it retrieves the precomputed
+results from the database.</p></li>
+<li><p>The model doesn’t need to be hosted as a live service since it’s never used
+in real-time. This can reduce the resource requirements and complexity of
+the deployment infrastructure.</p></li>
+</ul>
+</section>
+<section id="disadvantages">
+<h4><a class="toc-backref" href="#id30" role="doc-backlink">Disadvantages</a><a class="headerlink" href="#disadvantages" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>The predictions can become stale or outdated if the user develops new
+interests that aren’t captured by the old data on which the current
+predictions are based. In other words, the model’s predictions won’t adapt
+quickly to changes in user behavior or other factors.</p></li>
+<li><p>The input feature space must be finite because we need to generate all the
+predictions before they’re needed for real-time. This requirement limits the
+applicability of batch serving to certain use cases. For example, it might
+not be suitable for scenarios where the potential inputs are diverse or
+unpredictable, such as natural language processing tasks.</p></li>
+</ul>
+</section>
+<section id="setting-up-a-batch-serving-system">
+<h4><a class="toc-backref" href="#id31" role="doc-backlink">Setting up a Batch Serving System</a><a class="headerlink" href="#setting-up-a-batch-serving-system" title="Link to this heading">#</a></h4>
+<p>If you want to store predictions even when you don’t know in advance what input
+the users will provide, you can design your system to capture and store the
+predictions along with the corresponding user inputs. Here’s a general approach:</p>
+<ol class="arabic simple">
+<li><p>Set up a data storage system: Choose a suitable data storage solution such as
+a relational database, NoSQL database, or a data lake to store the
+predictions and associated user inputs. Select a storage solution that aligns
+with your system requirements in terms of scalability, query capabilities,
+and data retention policies.</p></li>
+<li><p>Define a data schema: Determine the structure of the data you want to store.
+Define the necessary fields to capture the user inputs and the corresponding
+predictions. For example, you might include fields such as user ID,
+timestamp, input features, and predicted output.</p></li>
+<li><p>Capture user inputs: Within your API or application, capture the user inputs
+as they interact with the system. Extract the relevant information from the
+user’s request, such as feature values or any contextual data you need for
+prediction.</p></li>
+<li><p>Generate predictions: Pass the user inputs to your pre-trained model to
+generate predictions. Retrieve the output from the model for the given
+inputs.</p></li>
+<li><p>Store the data: Once you have the user inputs and the corresponding
+predictions, store them in your chosen data storage system. Serialize the
+data in a format that can be stored, such as JSON or CSV, and save it in the
+appropriate database table or collection.</p></li>
+<li><p>Retrieve predictions: At a later time, you can query the data storage system
+to retrieve and analyze the stored predictions. You can use SQL queries,
+NoSQL queries, or other methods supported by your chosen storage solution to
+filter, aggregate, or perform further analysis on the stored data.</p></li>
+</ol>
+<p>By implementing this approach, you can store the predictions alongside the user
+inputs, enabling you to review and analyze the predictions later, gain insights,
+track performance, and potentially improve your models or system based on the
+collected data.</p>
+</section>
+</section>
+<section id="real-time-serving-inference-online-with-only-batch-features">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Real-Time Serving/Inference (Online with only Batch Features)</a><a class="headerlink" href="#real-time-serving-inference-online-with-only-batch-features" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h4><a class="toc-backref" href="#id33" role="doc-backlink">Definition</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<p>Real-time inference involves making predictions on the fly as soon as a request
+comes in. This approach is utilized when there’s a need for immediate
+prediction.</p>
+</section>
+<section id="id3">
+<h4><a class="toc-backref" href="#id34" role="doc-backlink">Visualization (Batch Features only)</a><a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<figure markdown>
+  ![Online Serving](../assets/online-serving-chip-huyen.png)
+  <figcaption>A simplified architecture for online prediction that only uses batch features. Image Credit: Huyen, Chip. "Chapter 7.
+Model Deployment and Prediction Service." In Designing Machine Learning Systems:
+An Iterative Process for Production-Ready Applications, O'Reilly Media,
+Inc., 2022.
+ </figcaption>
+</figure>
+<p>Say we have a recommender system recommending credit card (items) to users. The
+precomputer embeddings of credit card features may be static, but the user
+features may be different for each user. So, the user features are streaming
+features, and the credit card embeddings are batch features where we can store
+them in a database and retrieve them when needed to say, compute the cosine
+similarity between the user features and the credit card embeddings.</p>
+</section>
+<section id="visualization-online-features">
+<h4><a class="toc-backref" href="#id35" role="doc-backlink">Visualization (Online Features)</a><a class="headerlink" href="#visualization-online-features" title="Link to this heading">#</a></h4>
+<p>I do not have a diagram yet, but for instance, the users’ real-time
+activity/features are online features, and the credit card embeddings are batch
+features.</p>
+</section>
+<section id="id4">
+<h4><a class="toc-backref" href="#id36" role="doc-backlink">Example</a><a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>Fraud detection</strong>: A fraud detection system is a great example of a
+real-time inference application. In such a case, the model needs to evaluate
+transactions in real-time to prevent fraudulent activities.</p></li>
+<li><p><strong>Real-time personalization</strong>: In e-commerce, models might be used to
+personalize the shopping experience by recommending products or offers in
+real-time, based on the user’s current activity on the site.</p></li>
+<li><p><strong>Chatbots and virtual assistants</strong>: In conversational AI, models need to
+generate responses to user inputs in real-time.</p></li>
+<li><p><strong>Autocomplete</strong>: In search engines, models might be used to generate
+autocomplete suggestions in real-time as the user types in the search box.</p></li>
+</ul>
+</section>
+<section id="id5">
+<h4><a class="toc-backref" href="#id37" role="doc-backlink">Advantages</a><a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Provides immediate predictions, which can enhance the user experience and
+provide immediate feedback.</p></li>
+<li><p>More suitable for systems with an unbounded feature space, where inputs can
+change and evolve over time.</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4><a class="toc-backref" href="#id38" role="doc-backlink">Disadvantages</a><a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Requires more computational resources and infrastructure to handle real-time
+requests.</p></li>
+<li><p>More complex to implement and manage due to the need to handle potentially
+high volumes of real-time requests.</p></li>
+<li><p>Requires real-time monitoring to ensure the system is functioning correctly.</p></li>
+</ul>
+</section>
+</section>
+<section id="streaming-inference">
+<h3><a class="toc-backref" href="#id39" role="doc-backlink">Streaming Inference</a><a class="headerlink" href="#streaming-inference" title="Link to this heading">#</a></h3>
+<section id="id7">
+<h4><a class="toc-backref" href="#id40" role="doc-backlink">Definition</a><a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<p>Streaming inference refers to the process of making predictions on a continuous
+stream of incoming data. This method is useful when the data is constantly
+updating and predictions need to be made as soon as the new data arrives.</p>
+</section>
+<section id="visualization">
+<h4><a class="toc-backref" href="#id41" role="doc-backlink">Visualization</a><a class="headerlink" href="#visualization" title="Link to this heading">#</a></h4>
+<figure markdown>
+  ![Streaming Serving](../assets/online-serving-chip-huyen.png)
+  <figcaption>A simplified architecture for online prediction that uses both batch features and streaming features. Image Credit: Huyen, Chip. "Chapter 7.
+Model Deployment and Prediction Service." In Designing Machine Learning Systems:
+An Iterative Process for Production-Ready Applications, O'Reilly Media,
+Inc., 2022.
+ </figcaption>
+</figure>
+</section>
+<section id="id8">
+<h4><a class="toc-backref" href="#id42" role="doc-backlink">Example</a><a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>Streaming inference would be ideal for real-time monitoring of workplace safety
+based on continuous inputs from various sensors.</p>
+<p>Imagine a manufacturing plant where safety is crucial. In this environment,
+there might be various sensors distributed throughout the facility, continuously
+monitoring factors like temperature, noise levels, vibration, toxic gas
+concentrations, and other environmental variables. There could also be cameras
+monitoring the physical activities of workers, ensuring that safety protocols
+are being followed.</p>
+<p>A machine learning model could be set up to process this constant stream of
+sensor data in real time. Using streaming inference, the model would analyze
+each incoming piece of data as it arrives, looking for patterns or anomalies
+that might indicate a safety hazard.</p>
+<p>For example, the model might predict a risk of equipment failure if it detects
+unusual vibration patterns from a specific machine. Or it might alert to a
+potential safety violation if it recognizes through video analysis that a worker
+isn’t wearing the required protective gear.</p>
+<p>By using streaming inference in this way, the system can detect and respond to
+potential safety issues as soon as they arise, rather than waiting to analyze
+batches of data after the fact. This real-time response could prevent accidents,
+protect workers, and maintain productivity.</p>
+</section>
+<section id="id9">
+<h4><a class="toc-backref" href="#id43" role="doc-backlink">Advantages</a><a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Can handle continuous streams of data and provide real-time predictions.</p></li>
+<li><p>Particularly suitable for systems where the data is constantly updating and
+you need to make predictions as soon as new data arrives.</p></li>
+</ul>
+</section>
+<section id="id10">
+<h4><a class="toc-backref" href="#id44" role="doc-backlink">Disadvantages</a><a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Requires infrastructure and resources to handle continuous streams of data.</p></li>
+<li><p>More complex to implement and manage than batch or real-time inference.</p></li>
+<li><p>Also requires real-time monitoring to ensure the system is functioning
+correctly.</p></li>
+</ul>
+</section>
+</section>
+<section id="hybrid-serving">
+<h3><a class="toc-backref" href="#id45" role="doc-backlink">Hybrid Serving</a><a class="headerlink" href="#hybrid-serving" title="Link to this heading">#</a></h3>
+<p>However, online prediction and batch prediction don’t have to be mutually
+exclusive. One hybrid solution is that you precompute predictions for popular
+queries, then generate predictions online for less popular
+queries<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>A real-world example of this hybrid solution could be an e-commerce
+recommendation system.</p>
+<p>In this system, we could utilize embeddings to represent each product. An
+embedding is a way of representing a product in a high-dimensional space such
+that similar products are closer to each other. These embeddings can be
+pre-computed using historical data and used as batch features.</p>
+<p>For popular products, you can precompute the “nearest neighbors” in the
+embedding space using batch prediction. This means that for each popular
+product, you identify a set of other products that are closest to it in the
+embedding space, i.e., the most similar products. These become your precomputed
+recommendations for that product.</p>
+<p>Now, when a customer views a popular product, the system can instantly return
+the precomputed recommendations without needing to perform any online
+calculations. This approach helps to reduce the computation load and improve
+response times for the majority of customer interactions.</p>
+<p>On the other hand, for less popular products or unique customer queries, you
+might not have precomputed recommendations. In this case, you need to perform
+online prediction. When a customer views a less common product, the system would
+calculate its position in the embedding space and find the nearest neighbors in
+real-time, thereby generating personalized recommendations.</p>
+<p>In this way, embeddings can be used in both batch and online prediction
+settings, enabling a hybrid approach that balances computational efficiency with
+the ability to handle diverse customer needs.</p>
+</section>
+<section id="on-device-inference">
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">On-Device Inference</a><a class="headerlink" href="#on-device-inference" title="Link to this heading">#</a></h3>
+<section id="id12">
+<h4><a class="toc-backref" href="#id47" role="doc-backlink">Definition</a><a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<p>On-device inference refers to a machine learning model making predictions on the
+device itself, rather than on a server. This method is often used when there’s a
+need for real-time predictions without relying on a stable internet connection.</p>
+</section>
+<section id="id13">
+<h4><a class="toc-backref" href="#id48" role="doc-backlink">Example</a><a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<p>Voice recognition models on smartphones, like Siri or Google Assistant, are
+classic examples of on-device inference. These models need to respond instantly
+to voice commands, and running the model on the device itself reduces latency.</p>
+</section>
+<section id="id14">
+<h4><a class="toc-backref" href="#id49" role="doc-backlink">Advantages</a><a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Provides immediate predictions without needing a server or internet
+connection.</p></li>
+<li><p>Can help to preserve user privacy as no data needs to be sent to a server.</p></li>
+<li><p>Suitable for applications where the device might not always have a reliable
+internet connection.</p></li>
+</ul>
+</section>
+<section id="id15">
+<h4><a class="toc-backref" href="#id50" role="doc-backlink">Disadvantages</a><a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>Limited by the device’s computational resources, so models may need to be
+smaller and more efficient, potentially reducing their accuracy.</p></li>
+<li><p>Can be more difficult to update and maintain models across multiple devices.</p></li>
+<li><p>Implementing and managing models across a range of different device types
+and operating systems can add complexity.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="batch-processing-does-not-mean-predicting-all-possible-inputs-in-advance">
+<h2><a class="toc-backref" href="#id51" role="doc-backlink">Batch Processing does not mean Predicting all Possible Inputs in Advance</a><a class="headerlink" href="#batch-processing-does-not-mean-predicting-all-possible-inputs-in-advance" title="Link to this heading">#</a></h2>
+<p>There might be confusion around the batch processing and real-time processing.</p>
+<p>In the context of machine learning model serving, batch processing doesn’t mean
+predicting all possible inputs in advance. Instead, it means that predictions
+for multiple inputs are made together in one batch, rather than one at a time.</p>
+<p>For example, in a recommendation system, users’ activities might be collected
+over a day, and at the end of the day, recommendations for all users are
+generated together in a batch process and stored in a database. This doesn’t
+require knowing in advance what the users’ activities will be.</p>
+<p>On the other hand, real-time processing means that the model makes a prediction
+for a single input immediately when it is received, without waiting for more
+inputs to process together in a batch.</p>
+<p>The choice between batch processing and real-time processing often depends on
+the specific requirements of the use case.</p>
+<ol class="arabic simple">
+<li><p><strong>Batch Processing</strong>: If the application does not require immediate
+responses, and computational resources are limited, batch processing can be a
+good choice. Batch processing is computationally efficient because it allows
+the machine learning system to process large amounts of data at once, taking
+full advantage of the parallel processing capabilities of modern hardware.</p></li>
+<li><p><strong>Real-time Processing</strong>: If the application requires immediate responses
+(e.g., fraud detection, autonomous vehicles, etc.), real-time processing is
+necessary. Real-time processing might be more computationally intensive since
+predictions need to be made immediately for each individual input.</p></li>
+</ol>
+<p>So, when I mentioned the feature space (finite or unbounded) earlier, it was
+more about how difficult it might be to engineer features for batch or real-time
+processing. For finite feature spaces, feature engineering might be simpler,
+potentially making it easier to use batch processing. But for unbounded feature
+spaces, feature engineering can be more complex and computationally intensive,
+potentially making real-time processing more challenging.</p>
+<p>But ultimately, the choice between batch and real-time depends more on the
+specific requirements of the application and the computational resources
+available.</p>
+</section>
+<section id="from-batch-prediction-to-online-prediction">
+<h2><a class="toc-backref" href="#id52" role="doc-backlink">From Batch Prediction to Online Prediction</a><a class="headerlink" href="#from-batch-prediction-to-online-prediction" title="Link to this heading">#</a></h2>
+<p>One thing that resonates well from Chip’s chapter on model
+serving<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is that people
+coming from a traditional modelling or more academic background tend to be
+accustomed to online prediction as a natural way of transitioning from training
+to serving.</p>
+<p>This is likely how most people interact with their models while prototyping.
+This is also likely easier to do for most companies when first deploying a
+model. You export your model, upload the exported model to Amazon SageMaker or
+Google App Engine, and get back an exposed endpoint. Now, if you send a request
+that contains an input to that endpoint, it will send back a prediction
+generated on that input<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>In other words, I trained a nice model, I wrap it in a nice API like FastAPI,
+and I deploy it to a cloud service like AWS or GCP. Now, I can send requests to
+the API and get back predictions. This is online prediction. Rarely do we
+“precompute” predictions in advance and store them in a database for later use.</p>
+<p>She listed out the pros and cons with online prediction, and I think it’s worth
+to go over her content in details.</p>
+</section>
+<section id="unifying-batch-pipeline-and-streaming-pipeline">
+<h2><a class="toc-backref" href="#id53" role="doc-backlink">Unifying Batch Pipeline and Streaming Pipeline</a><a class="headerlink" href="#unifying-batch-pipeline-and-streaming-pipeline" title="Link to this heading">#</a></h2>
+<p>See the section on Chip’s
+book<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="model-compression">
+<h2><a class="toc-backref" href="#id54" role="doc-backlink">Model Compression</a><a class="headerlink" href="#model-compression" title="Link to this heading">#</a></h2>
+<p>See the section on Chip’s
+book<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="machine-learning-on-the-cloud-and-on-the-edge">
+<h2><a class="toc-backref" href="#id55" role="doc-backlink">Machine Learning on the Cloud and on the Edge</a><a class="headerlink" href="#machine-learning-on-the-cloud-and-on-the-edge" title="Link to this heading">#</a></h2>
+<p>See the section on Chip’s
+book<a class="footnote-reference brackets" href="#huyen-chip-model-deployment-and-prediction-service" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id56" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Huyen, Chip. “Chapter 7. Model Deployment and Prediction Service.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p><a class="reference external" href="https://madewithml.com/courses/mlops/api/">Madewithml: Serving</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="huyen-chip-model-deployment-and-prediction-service" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id11">2</a>,<a role="doc-backlink" href="#id16">3</a>,<a role="doc-backlink" href="#id17">4</a>,<a role="doc-backlink" href="#id18">5</a>,<a role="doc-backlink" href="#id19">6</a>,<a role="doc-backlink" href="#id20">7</a>)</span>
+<p>Huyen, Chip. “Chapter 7. Model Deployment and Prediction Service.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./operations/machine_learning_lifecycle"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07_model_validation_registry_and_pushing_model_to_production.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="09_model_monitoring.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Stage 9. Model Monitoring (MLOps)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#finite-vs-unbounded-feature-space-precurser-to-deployment-strategies">Finite vs. Unbounded Feature Space, Precurser to Deployment Strategies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-distinction-between-finite-and-unbounded-feature-space">The Distinction Between Finite and Unbounded Feature Space</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-features-online-features-and-streaming-features">Batch Features, Online Features, and Streaming Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#serving-strategies">Serving Strategies</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-serving-inference-asynchronous">Batch Serving/Inference (Asynchronous)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#definition">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-batch-features-only">Visualization (Batch Features only)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#example">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#advantages">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#disadvantages">Disadvantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-a-batch-serving-system">Setting up a Batch Serving System</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#real-time-serving-inference-online-with-only-batch-features">Real-Time Serving/Inference (Online with only Batch Features)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Visualization (Batch Features only)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization-online-features">Visualization (Online Features)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Disadvantages</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-inference">Streaming Inference</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Disadvantages</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hybrid-serving">Hybrid Serving</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-device-inference">On-Device Inference</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Definition</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Example</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Advantages</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Disadvantages</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#batch-processing-does-not-mean-predicting-all-possible-inputs-in-advance">Batch Processing does not mean Predicting all Possible Inputs in Advance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#from-batch-prediction-to-online-prediction">From Batch Prediction to Online Prediction</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unifying-batch-pipeline-and-streaming-pipeline">Unifying Batch Pipeline and Streaming Pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-compression">Model Compression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machine-learning-on-the-cloud-and-on-the-edge">Machine Learning on the Cloud and on the Edge</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

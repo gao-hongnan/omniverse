@@ -1,0 +1,1041 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Stage 5.3. Experiment Tracking And Versioning &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Stage 5.4. Model Testing" href="054_model_testing.html" />
+    <link rel="prev" title="Stage 5.2. Metric Selection" href="052_metric_selection.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/kmeans_clustering/01_intro.html">K-Means</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../00_intro.html">The Lifecycle of an AIOps System</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../011_infrastructure_and_tooling_for_mlops.html">Stage 11. Infrastructure and Tooling for MLOps</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/config_management/concept.html">Configuration Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../api/reproducibility.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Foperations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../../_sources/operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Stage 5.3. Experiment Tracking And Versioning</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-tracking">Experiment Tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-versioning-code-versioning-and-data-versioning">Model Versioning, Code Versioning, and Data Versioning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#code-versioning">1. Code versioning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-versioning">2. Data versioning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model-artifacts-and-metadata">3. Model artifacts and metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recovering-a-run">Recovering a run</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seeding">Seeding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="stage-5-3-experiment-tracking-and-versioning">
+<h1>Stage 5.3. Experiment Tracking And Versioning<a class="headerlink" href="#stage-5-3-experiment-tracking-and-versioning" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#experiment-tracking" id="id3">Experiment Tracking</a></p></li>
+<li><p><a class="reference internal" href="#reproducibility" id="id4">Reproducibility</a></p>
+<ul>
+<li><p><a class="reference internal" href="#model-versioning-code-versioning-and-data-versioning" id="id5">Model Versioning, Code Versioning, and Data Versioning</a></p>
+<ul>
+<li><p><a class="reference internal" href="#code-versioning" id="id6">1. Code versioning</a></p></li>
+<li><p><a class="reference internal" href="#data-versioning" id="id7">2. Data versioning</a></p></li>
+<li><p><a class="reference internal" href="#model-artifacts-and-metadata" id="id8">3. Model artifacts and metadata</a></p></li>
+<li><p><a class="reference internal" href="#recovering-a-run" id="id9">Recovering a run</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#seeding" id="id10">Seeding</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#hyperparameter-tuning" id="id11">Hyperparameter Tuning</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<p>During the iterative process of model development and training, keeping track of
+the numerous experiments run, their parameters, and outcomes is a crucial step.
+As models are trained, tested, tweaked, and retrained, it becomes increasingly
+complex to manage and compare these various experiments.</p>
+<p>This is where experiment tracking comes into play. By tracking each experiment,
+data scientists can easily compare the results of different models,
+configurations, hyperparameters, and even completely different approaches. Also
+it enables error analysis, debugging, and model improvement.</p>
+<section id="experiment-tracking">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Experiment Tracking</a><a class="headerlink" href="#experiment-tracking" title="Link to this heading">#</a></h2>
+<p>What do we track then? Can we track everything? Well if you can, that’s great,
+but it’s often better and more concise to track things that matter the most for
+monitoring and <strong><em>debugging</em></strong>. Here are some common metrics to track in
+experiment tracking:</p>
+<div class="pst-scrollable-table-container"><table class="table" id="ml-lifecycle-experiment-tracking-metrics">
+<caption><span class="caption-number">Table 25 </span><span class="caption-text">Some Common Metrics to Track in Experiment Tracking</span><a class="headerlink" href="#ml-lifecycle-experiment-tracking-metrics" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Model Architecture</p></td>
+<td><p>The type of model used, including the number of layers, activation
+functions, and other architectural details.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hyperparameters</p></td>
+<td><p>The settings and hyperparameters used for each model.</p></td>
+</tr>
+<tr class="row-even"><td><p>Evaluation Metrics</p></td>
+<td><p>How each model performed according to the selected evaluation metrics.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Feature Importance</p></td>
+<td><p>Which features were most influential in the model’s predictions.</p></td>
+</tr>
+<tr class="row-even"><td><p>System Metrics</p></td>
+<td><p>Resource usage, training time, and other system-level metrics such as
+what GPU was used, how much memory was used, etc.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gradient Norm (Global and Per Layer), Activation Distribution and Norms,
+Weight Distribution etc</p></td>
+<td><p>These are important indicators of how well the model is training, and
+can be used to diagnose issues like vanishing gradients, exploding
+gradients, etc. And for example if your embedding layer keep exploding,
+you may want to initialize the weights with smaller values.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>It’s also worth noting that several tools can facilitate experiment tracking,
+such as MLflow, TensorBoard, and Weights &amp; Biases. By adopting such tools, teams
+can create a central repository of experiments that enable collaboration and
+reproducibility. It becomes easier to revisit old experiments, share findings
+with team members, and ultimately make more informed decisions about which
+models and configurations to move forward with.</p>
+<p>If you can, tracking as many key indicators and metrics as possible is a good
+way to help debug model issues (i.e. why is model diverging at the 100th step)
+and memory leak issues (i.e. why is the CUDA memory usage increasing over time).</p>
+</section>
+<section id="reproducibility">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Reproducibility</a><a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h2>
+<p>To ensure that your machine learning experiments are reproducible, you should
+keep track of the following components:</p>
+<ol class="arabic simple">
+<li><p><strong>Code</strong></p></li>
+<li><p><strong>Data</strong></p></li>
+<li><p><strong>Model config, artifacts and metadata</strong></p></li>
+<li><p><strong>Environment</strong></p></li>
+<li><p><strong>Seeding</strong></p></li>
+</ol>
+<section id="model-versioning-code-versioning-and-data-versioning">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Model Versioning, Code Versioning, and Data Versioning</a><a class="headerlink" href="#model-versioning-code-versioning-and-data-versioning" title="Link to this heading">#</a></h3>
+<p>In addition to tracking experiments, it’s also important to version the models,
+code, and data used in those experiments. This ensures that the results of an
+experiment can be reproduced at a later time, even if the code, data, or
+environment have changed.</p>
+<p>Now it is worth mentioning that tracking model is the key, and since model is a
+combination of code and data, it is important to track the code and data as
+well<a class="footnote-reference brackets" href="#chip-chapter6" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. Tracking code can be easily done via version control
+systems like Git, and tracking data can be done via data versioning tools like
+DVC.</p>
+<p>Below we see some pseudo code on how to track the code, data, and model
+artifacts.</p>
+<section id="code-versioning">
+<h4><a class="toc-backref" href="#id6" role="doc-backlink">1. Code versioning</a><a class="headerlink" href="#code-versioning" title="Link to this heading">#</a></h4>
+<p>Use a version control system like <strong>Git</strong> to keep track of your codebase. Git
+allows you to track changes in your code over time and manage different
+versions. To log the exact commit hash of your codebase when logging your MLflow
+run, you can use the following code snippet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="n">commit_hash</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s2">&quot;git&quot;</span><span class="p">,</span> <span class="s2">&quot;rev-parse&quot;</span><span class="p">,</span> <span class="s2">&quot;HEAD&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;commit_hash&quot;</span><span class="p">,</span> <span class="n">commit_hash</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By logging the commit hash, you can always refer back to the exact version of
+the code used for a specific run, ensuring reproducibility.</p>
+</section>
+<section id="data-versioning">
+<h4><a class="toc-backref" href="#id7" role="doc-backlink">2. Data versioning</a><a class="headerlink" href="#data-versioning" title="Link to this heading">#</a></h4>
+<p>For data versioning, you can use a tool like <strong>DVC (Data Version Control)</strong>. DVC
+is designed to handle large data files, models, and metrics, and it integrates
+well with Git. DVC helps you track changes in your data files and manage
+different versions.</p>
+<p>When you start a new MLflow run, log the DVC version or metadata of the input
+data used in the experiment. This way, you can always retrieve the exact version
+of the data used for a specific run, ensuring reproducibility.</p>
+<p>See <a class="reference external" href="https://dvc.org/doc/start/data-management">Data Management Tutorial</a> for
+more insights.</p>
+<p>Important points to consider.</p>
+<ul class="simple">
+<li><p>gitignore will be created automatically in data folder once you dvc add.</p></li>
+<li><p>After successfully pushing the data to remote, how do you “retrieve them”?</p></li>
+<li><p>If you are in the same repository, you can just pull the data from remote.</p></li>
+</ul>
+<p>The idea is to use dvc checkout to switch between different versions of your
+data files, as tracked by DVC. When you use dvc checkout, you provide a Git
+commit hash or tag. DVC will then update your working directory with the data
+files that were tracked at that specific Git commit.</p>
+<p>Here are the steps to use dvc checkout with a Git commit hash:</p>
+<ul class="simple">
+<li><p>Make sure you have the latest version of your repository and DVC remote by
+running git pull and dvc pull.</p></li>
+<li><p>Switch to the desired Git commit by running git checkout <code class="docutils literal notranslate"><span class="pre">&lt;commit-hash&gt;</span></code>.</p></li>
+<li><p>Run dvc checkout to update your data files to the version tracked at the
+specified commit.</p></li>
+</ul>
+<p>Remember that dvc checkout only updates the data files tracked by DVC. To switch
+between code versions, you’ll still need to use git checkout.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;commit_hash&gt;
+dvc<span class="w"> </span>checkout<span class="w"> </span><span class="c1"># in this commit hash</span>
+dvc<span class="w"> </span>pull
+</pre></div>
+</div>
+</section>
+<section id="model-artifacts-and-metadata">
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">3. Model artifacts and metadata</a><a class="headerlink" href="#model-artifacts-and-metadata" title="Link to this heading">#</a></h4>
+<p>You have already logged the artifacts (model, vectorizer, config, log files)
+using <code class="docutils literal notranslate"><span class="pre">mlflow.log_artifact()</span></code>. You can also log additional metadata related to
+the artifacts as you have done with additional_metadata. This should be
+sufficient for keeping track of the artifacts associated with each run.</p>
+</section>
+<section id="recovering-a-run">
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Recovering a run</a><a class="headerlink" href="#recovering-a-run" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>Check the commit hashes for the code and data used in the run.</p></li>
+<li><p>Checkout the code and data versions using the commit hashes.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;commit_hash&gt;
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+python<span class="w"> </span>main.py<span class="w"> </span>train
+<span class="c1"># once done</span>
+git<span class="w"> </span>checkout<span class="w"> </span>main
+</pre></div>
+</div>
+<p>By combining code versioning with Git, data versioning with DVC, and logging
+artifacts and metadata with MLflow, you can ensure that your machine learning
+experiments are reproducible. This means that you can always go back and
+reproduce the results of a specific experiment, even if the code, data, or
+environment have changed but is it always the case? We see that in the next
+section.</p>
+</section>
+</section>
+<section id="seeding">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Seeding</a><a class="headerlink" href="#seeding" title="Link to this heading">#</a></h3>
+<p>I won’t go into too much on this, but beyond versioning, one must ensure
+aggresive seeding in their code base, especially in non-deterministic operations
+like training deep learning models. This is however not so simple, even with
+aggresive seeding, the same code might produce slightly different results if
+trained on a different hardware. Furthermore, a common mistake in the resumption
+of training is not saving the rng states, and since dataloaders in frameworks
+like pytorch will shuffle (if set to true) on each epoch, it may come as a shock
+that resuming training will produce different results.</p>
+<p>Just have a look at the below seeding functions I use for single node single GPU
+training:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">configure_deterministic_mode</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># fmt: off</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">use_deterministic_algorithms</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">warn_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span>        <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span>    <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span>          <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUBLAS_WORKSPACE_CONFIG&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;:4096:8&#39;</span>
+    <span class="c1"># fmt: on</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;Deterministic mode is activated. This will negatively impact performance and may cause increase in CUDA memory footprint.&quot;</span><span class="p">,</span>
+        <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">seed_all</span><span class="p">(</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1992</span><span class="p">,</span>
+    <span class="n">seed_torch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">set_torch_deterministic</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="c1"># fmt: off</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PYTHONHASHSEED&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>       <span class="c1"># set PYTHONHASHSEED env var at fixed value</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>                    <span class="c1"># numpy pseudo-random generator</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>                              <span class="c1"># python&#39;s built-in pseudo-random generator</span>
+
+    <span class="k">if</span> <span class="n">seed_torch</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>           <span class="c1"># pytorch (both CPU and CUDA)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">benchmark</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">set_torch_deterministic</span><span class="p">:</span>
+            <span class="n">configure_deterministic_mode</span><span class="p">()</span>
+    <span class="c1"># fmt: on</span>
+    <span class="k">return</span> <span class="n">seed</span>
+</pre></div>
+</div>
+<p>And seeding in distributed training is much more complex, so to fully ensure a
+reproducible training, one must not only ensure good versioning practices, but
+also ensure the seeding mechanism is in place.</p>
+</section>
+</section>
+<section id="hyperparameter-tuning">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Hyperparameter Tuning</a><a class="headerlink" href="#hyperparameter-tuning" title="Link to this heading">#</a></h2>
+<p>When training machine learning models, each combination of dataset and model
+requires a unique set of hyperparameters, which act as configurable variables.
+Determining the optimal hyperparameters involves conducting multiple experiments
+where different sets are tested with the model, a process known as
+hyperparameter tuning. Essentially, this involves training the model repeatedly,
+each time with a different configuration of hyperparameters. This tuning can be
+performed manually or through automated methods<a class="footnote-reference brackets" href="#aws-hyperparameter-tuning" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<p>Regardless of the chosen method, it’s crucial to systematically record the
+outcomes of these experiments. This typically involves using statistical
+measures, like the loss function, to evaluate and identify which hyperparameters
+yield the most effective results. Hyperparameter tuning is a critical component
+of model development and requires significant computational resources.</p>
+<p>There’s many methods, for example, random search, grid search, Bayesian
+optimization, and more recently, evolutionary algorithms. The choice of method
+really depends on many factors, such as the size of the search space, the
+computational resources available, and the time constraints. What is important
+is that the hyperparameters obey the same rules as the training phase, and no
+data leakage should occur.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p><a class="reference external" href="https://aws.amazon.com/what-is/hyperparameter-tuning/">What is Hyperparameter Tuning?</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="chip-chapter6" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Huyen, Chip. “Chapter 6. Model Development and Offline Evaluation.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p>
+</aside>
+<aside class="footnote brackets" id="aws-hyperparameter-tuning" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://aws.amazon.com/what-is/hyperparameter-tuning/">What is Hyperparameter Tuning?</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./operations/machine_learning_lifecycle/05_model_development_selection_and_training"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="052_metric_selection.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Stage 5.2. Metric Selection</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="054_model_testing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Stage 5.4. Model Testing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#experiment-tracking">Experiment Tracking</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-versioning-code-versioning-and-data-versioning">Model Versioning, Code Versioning, and Data Versioning</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#code-versioning">1. Code versioning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-versioning">2. Data versioning</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#model-artifacts-and-metadata">3. Model artifacts and metadata</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#recovering-a-run">Recovering a run</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#seeding">Seeding</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hyperparameter-tuning">Hyperparameter Tuning</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

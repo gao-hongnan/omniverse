@@ -1,0 +1,1555 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Stage 3.1. Data Source and Formats &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Stage 3.2. Data Model and Storage" href="032_data_model_and_storage.html" />
+    <link rel="prev" title="Stage 3. Data Pipeline (Data Engineering and DataOps)" href="03_dataops_pipeline.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    🌌 Omniverse: A Journey Through Knowledge
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/kmeans_clustering/01_intro.html">K-Means</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../00_intro.html">The Lifecycle of an AIOps System</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../011_infrastructure_and_tooling_for_mlops.html">Stage 11. Infrastructure and Tooling for MLOps</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/config_management/concept.html">Configuration Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../software_engineering/design_patterns/dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/stack/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../api/reproducibility.html">API Reference</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Foperations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../../_sources/operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Stage 3.1. Data Source and Formats</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-and-scope-the-data-source">Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-what-comes-before-data-extraction">Intuition (What comes before Data Extraction?)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-identify-and-scope-the-data-source">Steps to Identify and Scope the Data Source</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types-in-machine-learning-systems">Data Types in Machine Learning Systems</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources-in-machine-learning-systems">Data Sources in Machine Learning Systems</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats-in-machine-learning-systems">Data Formats in Machine Learning Systems</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-data-parallelism-and-data-sharding">Distributed Data Parallelism And Data Sharding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-on-multimodal-data-storage-for-e-commerce">An Example on Multimodal Data Storage For E-Commerce</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats">Data Formats</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-serialization-vs-data-deserialization">Data Serialization vs Data Deserialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#row-and-columnar-formats">Row and Columnar Formats</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-of-row-major-vs-column-major-order">Concept of Row-major vs Column-major order</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-row-major-vs-column-major-order">Examples of Row-major vs Column-major order</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-row-major-vs-column-major-order">Pros and cons of Row-major vs Column-major order</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#row-major-order">Row-major order</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#column-major-order">Column-major order</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modern-row-and-columnar-formats">Modern Row and Columnar Formats</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#text-vs-binary-formats">Text vs Binary Formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="stage-3-1-data-source-and-formats">
+<h1>Stage 3.1. Data Source and Formats<a class="headerlink" href="#stage-3-1-data-source-and-formats" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#identify-and-scope-the-data-source" id="id1">Identify and Scope the Data Source</a></p>
+<ul>
+<li><p><a class="reference internal" href="#intuition-what-comes-before-data-extraction" id="id2">Intuition (What comes before Data Extraction?)</a></p></li>
+<li><p><a class="reference internal" href="#steps-to-identify-and-scope-the-data-source" id="id3">Steps to Identify and Scope the Data Source</a></p></li>
+<li><p><a class="reference internal" href="#data-types-in-machine-learning-systems" id="id4">Data Types in Machine Learning Systems</a></p></li>
+<li><p><a class="reference internal" href="#data-sources-in-machine-learning-systems" id="id5">Data Sources in Machine Learning Systems</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#data-formats-in-machine-learning-systems" id="id6">Data Formats in Machine Learning Systems</a></p>
+<ul>
+<li><p><a class="reference internal" href="#distributed-data-parallelism-and-data-sharding" id="id7">Distributed Data Parallelism And Data Sharding</a></p></li>
+<li><p><a class="reference internal" href="#an-example-on-multimodal-data-storage-for-e-commerce" id="id8">An Example on Multimodal Data Storage For E-Commerce</a></p></li>
+<li><p><a class="reference internal" href="#data-formats" id="id9">Data Formats</a></p>
+<ul>
+<li><p><a class="reference internal" href="#data-serialization-vs-data-deserialization" id="id10">Data Serialization vs Data Deserialization</a></p></li>
+<li><p><a class="reference internal" href="#json" id="id11">JSON</a></p></li>
+<li><p><a class="reference internal" href="#row-and-columnar-formats" id="id12">Row and Columnar Formats</a></p>
+<ul>
+<li><p><a class="reference internal" href="#concept-of-row-major-vs-column-major-order" id="id13">Concept of Row-major vs Column-major order</a></p></li>
+<li><p><a class="reference internal" href="#examples-of-row-major-vs-column-major-order" id="id14">Examples of Row-major vs Column-major order</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pros-and-cons-of-row-major-vs-column-major-order" id="id15">Pros and cons of Row-major vs Column-major order</a></p>
+<ul>
+<li><p><a class="reference internal" href="#row-major-order" id="id16">Row-major order</a></p></li>
+<li><p><a class="reference internal" href="#column-major-order" id="id17">Column-major order</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#modern-row-and-columnar-formats" id="id18">Modern Row and Columnar Formats</a></p></li>
+<li><p><a class="reference internal" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance" id="id19">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#text-vs-binary-formats" id="id20">Text vs Binary Formats</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#workflow" id="id21">Workflow</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id22">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="identify-and-scope-the-data-source">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Identify and Scope the Data Source</a><a class="headerlink" href="#identify-and-scope-the-data-source" title="Link to this heading">#</a></h2>
+<p>In this stage, we identify and scope the data source. This involves determining
+the type of data, locating the data, assessing accessibility and compliance,
+gauging the data volume, and understanding data characteristics.</p>
+<section id="intuition-what-comes-before-data-extraction">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Intuition (What comes before Data Extraction?)</a><a class="headerlink" href="#intuition-what-comes-before-data-extraction" title="Link to this heading">#</a></h3>
+<p>As we have seen in the pipeline and in a later section, the ELT/ETL framework,
+the first step is data extraction. However, before we can extract data, we need
+to first identify the data source and scope it.</p>
+<p>In what follows, we will discuss the steps involved in identifying and scoping
+the data source, as well as the tools and methods for extracting data from the
+source.</p>
+</section>
+<section id="steps-to-identify-and-scope-the-data-source">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Steps to Identify and Scope the Data Source</a><a class="headerlink" href="#steps-to-identify-and-scope-the-data-source" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table" id="ml-lifecycle-03-steps-identify-scope-data-source">
+<caption><span class="caption-number">Table 14 </span><span class="caption-text">Table of Steps to Identify and Scope the Data Source</span><a class="headerlink" href="#ml-lifecycle-03-steps-identify-scope-data-source" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Step</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Rationale</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Define the Type of Data</p></td>
+<td><p>Determine whether the data is numerical, categorical, time-series,
+text-based, images, or audio.</p></td>
+<td><p>This can affect the model design and the choice of data sources.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Locate the Data</p></td>
+<td><p>Identify the location, such as databases (SQL or NoSQL), APIs, log
+files, Excel or CSV files, etc.</p></td>
+<td><p>Enables the selection of the suitable tools and methods for extraction.</p></td>
+</tr>
+<tr class="row-even"><td><p>Assess Accessibility and Compliance</p></td>
+<td><p>Understand permissions, authentication, privacy concerns, and
+restrictions on data extraction.</p></td>
+<td><p>Ensures adherence to legal and organizational policies.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gauge the Data Volume</p></td>
+<td><p>Determine the size of the dataset.</p></td>
+<td><p>Influences the choice of tools for extraction and storage. This is
+important because large dataset need to be stored in a way that is
+efficient and scalable.</p></td>
+</tr>
+<tr class="row-even"><td><p>Understand Data Characteristics</p></td>
+<td><p>Recognize and address special characteristics, for example, if you are
+collecting images of apples for classification, you need to be sure
+that the images have say, in RGB format, and not in grayscale.</p></td>
+<td><p>Facilitates proper processing, validation, and utilization of the data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="data-types-in-machine-learning-systems">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Data Types in Machine Learning Systems</a><a class="headerlink" href="#data-types-in-machine-learning-systems" title="Link to this heading">#</a></h3>
+<p>Before we scope the data source, a logical question to first ask is, what
+<em>types</em> of data are we dealing with? Knowing the data types will help us
+<strong>understand the nature and structure of information that we need to obtain.</strong>
+This understanding, in turn, informs our choice of <strong>data sources</strong> that are
+best suited to provide this specific type of data.</p>
+<p>For example, if we are working with time-series data, our data sources might be
+sensors, logs, or financial market feeds. If we are dealing with textual data,
+the sources might be documents, websites, or social media platforms.</p>
+<p>Here’s a brief overview of the different types of data in the form of a table.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Main Type</p></th>
+<th class="head"><p>Subtype</p></th>
+<th class="head"><p>Specific Types</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Structured Data</strong></p></td>
+<td><p>Numerical</p></td>
+<td><p>Continuous, Discrete</p></td>
+<td><p>Continuous data can take any value, while Discrete data takes specific values.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Categorical</p></td>
+<td><p>Nominal, Ordinal</p></td>
+<td><p>Nominal data has no inherent order; Ordinal data has a meaningful order.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Time-Series Data</p></td>
+<td><p></p></td>
+<td><p>Data collected at specific time intervals.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Geospatial Data</p></td>
+<td><p></p></td>
+<td><p>Information that includes geographical attributes.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Boolean Data</p></td>
+<td><p></p></td>
+<td><p>True/false or yes/no values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Semi-Structured Data</strong></p></td>
+<td><p>Multimodal</p></td>
+<td><p></p></td>
+<td><p>Combines data from multiple sources or types.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Graph Data</p></td>
+<td><p></p></td>
+<td><p>Represents relationships using nodes and edges.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Mixed Data Types</p></td>
+<td><p></p></td>
+<td><p>A combination of various data types.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Unstructured Data</strong></p></td>
+<td><p>Text-Based Data</p></td>
+<td><p></p></td>
+<td><p>Unstructured textual information.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Image Data</p></td>
+<td><p></p></td>
+<td><p>Visual information in a grid of pixels.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Audio Data</p></td>
+<td><p></p></td>
+<td><p>Sound or speech data.</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Binary Data</p></td>
+<td><p></p></td>
+<td><p>Data represented in a binary format.</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Embeddings</p></td>
+<td><p></p></td>
+<td><p>Representations of categorical, text, or complex data as continuous vectors</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="data-sources-in-machine-learning-systems">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Data Sources in Machine Learning Systems</a><a class="headerlink" href="#data-sources-in-machine-learning-systems" title="Link to this heading">#</a></h3>
+<p>Having identified the <em>types</em> of data that our machine learning system will
+handle, we now turn our attention to the various <strong>sources</strong> from which this
+data can be obtained. Different data types require specific sources, both in
+terms of format compatibility and functional alignment. Here’s an overview of
+various data sources, categorized by their characteristics and aligned with the
+types of data they typically provide:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Category</strong></p></th>
+<th class="head"><p><strong>Type</strong></p></th>
+<th class="head"><p><strong>Examples/Details</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Databases</strong></p></td>
+<td><p>Relational Databases (SQL)</p></td>
+<td><p><a class="reference external" href="https://www.mysql.com/">MySQL</a>, <a class="reference external" href="https://www.postgresql.org/">PostgreSQL</a>, <a class="reference external" href="https://www.microsoft.com/en-us/sql-server/">MS SQL Server</a></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>NoSQL Databases</p></td>
+<td><p><a class="reference external" href="https://www.mongodb.com/">MongoDB</a>, <a class="reference external" href="https://cassandra.apache.org/">Cassandra</a>, <a class="reference external" href="https://redis.io/">Redis</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>File-Based Sources</strong></p></td>
+<td><p>Flat Files</p></td>
+<td><p>CSV, Excel, TSV</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Binary Files</p></td>
+<td><p>Parquet, Avro</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Image and Video Files</p></td>
+<td><p>JPEG, PNG, MP4</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Text Files</p></td>
+<td><p>TXT, PDF, DOC</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Web Sources</strong></p></td>
+<td><p>Web APIs</p></td>
+<td><p>RESTful APIs, SOAP, <a class="reference external" href="https://graphql.org/">GraphQL</a></p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p>Web Scraping</p></td>
+<td><p>HTML, XML</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Social Media</p></td>
+<td><p>Twitter, Facebook, Reddit</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Streaming Data Sources</strong></p></td>
+<td><p>Message Brokers</p></td>
+<td><p><a class="reference external" href="https://kafka.apache.org/">Kafka</a>, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Real-Time Feeds</p></td>
+<td><p>Stock prices, sensor data</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Sensor Data</strong></p></td>
+<td><p>IoT Devices</p></td>
+<td><p>Smart devices, wearable tech</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Industrial Sensors</p></td>
+<td><p>Temperature, pressure, humidity sensors</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Scientific Sources</strong></p></td>
+<td><p>Genomic Data</p></td>
+<td><p>DNA sequences, proteomics</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Meteorological Data</p></td>
+<td><p>Weather stations, satellites</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Financial Data Sources</strong></p></td>
+<td><p>Stock Market Data</p></td>
+<td><p>Exchanges, trading platforms</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Banking Transactions</p></td>
+<td><p>Credit card swipes, ATM transactions</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Healthcare Data Sources</strong></p></td>
+<td><p>Electronic Health Records</p></td>
+<td><p>Patient medical records</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Medical Imaging</p></td>
+<td><p>MRI, CT scans, X-rays</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Government and Public Data</strong></p></td>
+<td><p>Census Data</p></td>
+<td><p>Demographics, economics</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Legislation and Regulations</p></td>
+<td><p>Law documents, policy papers</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Educational Data Sources</strong></p></td>
+<td><p>Academic Databases</p></td>
+<td><p>Research papers, thesis documents</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Learning Management Systems</p></td>
+<td><p>Student grades, course content</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Human-Generated Data Sources</strong></p></td>
+<td><p>Surveys and Questionnaires</p></td>
+<td><p>Market research, feedback forms</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Crowdsourcing Platforms</p></td>
+<td><p><a class="reference external" href="https://www.mturk.com/">Amazon Mechanical Turk</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Third-Party Data Providers</strong></p></td>
+<td><p>Commercial Data Providers</p></td>
+<td><p>Market trends, consumer habits</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>Open Data Repositories</p></td>
+<td><p><a class="reference external" href="https://www.kaggle.com/">Kaggle</a>, <a class="reference external" href="https://archive.ics.uci.edu/ml/index.php">UCI Machine Learning Repository</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="data-formats-in-machine-learning-systems">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Data Formats in Machine Learning Systems</a><a class="headerlink" href="#data-formats-in-machine-learning-systems" title="Link to this heading">#</a></h2>
+<p>In other words, once you scope the data source and data types, and manage to
+extract them, you need to store it in a format that is easy to work with. By
+easy I mean that the data should be easily accessible, scalable, and efficient
+to work with. As such, storing data isn’t straightforward because data can be of
+different types and one must be experienced or knowledgeable enough to know what
+storage to use when storing data of a particular type.</p>
+<p>Some questions to ask when choosing a data format:</p>
+<ul class="simple">
+<li><p>Where do you store the data? In a database? In a file system? In a key-value
+store? We want it to be ideally cheap and fast to retrieve the data.</p></li>
+<li><p>How to store complex models so they can be loaded and run on different
+devices (e.g. mobile phones, web browsers, etc.). In ML, it can be GPU, CPU,
+etc.</p></li>
+</ul>
+<section id="distributed-data-parallelism-and-data-sharding">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Distributed Data Parallelism And Data Sharding</a><a class="headerlink" href="#distributed-data-parallelism-and-data-sharding" title="Link to this heading">#</a></h3>
+<p>Sometimes data is too large to fit into a single machine’s memory. In such
+cases, we can use distributed data parallelism (DDP) and data sharding to
+distribute the data across multiple machines. In DDP the model and trainer are
+replicated across multiple instances/nodes/ranks and each instance processes a
+different subset of the data. In this case, data sharding is often necessary in
+DDP to ensure that each process (or GPU) gets a unique subset of the data during
+each training iteration. Each process needs to handle a different portion of the
+data to ensure diversity in learning across replicas and prevent data
+redundancy, which can skew the learning process.</p>
+<p>In practice, data loaders that are DDP-aware (like those in PyTorch)
+automatically shard the dataset across the available GPUs. For instance, if you
+have a dataset of 1000 samples and 10 GPUs, each GPU might be assigned 100
+unique samples per iteration. This distribution ensures that all the data gets
+utilized without overlap between GPUs (their sampler ensures that each GPU gets
+a unique subset of the data).</p>
+</section>
+<section id="an-example-on-multimodal-data-storage-for-e-commerce">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">An Example on Multimodal Data Storage For E-Commerce</a><a class="headerlink" href="#an-example-on-multimodal-data-storage-for-e-commerce" title="Link to this heading">#</a></h3>
+<p>In e-commerce platforms, product pages often contain rich multimedia
+information, including images and corresponding textual descriptions. Storing
+and retrieving this information efficiently can involve the following.</p>
+<ol class="arabic simple">
+<li><p><strong>Storing Images in a Binary Format</strong>: Rather than embedding the raw image
+tensor within a data structure, it’s often more efficient to store the image
+in a binary format (e.g., JPEG, PNG) and keep a reference to its location
+(e.g., file path or URL).</p></li>
+<li><p><strong>Utilizing a Database for Textual Information</strong>: The textual information,
+including descriptions and metadata, can be stored in a relational database.
+This approach provides scalable storage and efficient query capabilities.</p></li>
+<li><p><strong>Creating a Unified Schema</strong>: A unified schema or data model could
+encapsulate both the image references and the corresponding textual data.
+This schema acts as a bridge between the two data types, allowing them to be
+treated as a cohesive unit.</p></li>
+</ol>
+<p>Consider the below code snippet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sample_data_schema</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;product_id&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="s2">&quot;image_url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://path/to/image.jpg&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;This is a picture of a cat.&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;additional_metadata&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span>  <span class="c1"># Additional textual or numerical information.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>and in tabular form:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field Name</p></th>
+<th class="head"><p>Data Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">product_id</span></code></p></td>
+<td><p>Integer</p></td>
+<td><p>A unique identifier for the product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">image_url</span></code></p></td>
+<td><p>String (URL)</p></td>
+<td><p>The URL or file path to the product’s image.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>String (Text)</p></td>
+<td><p>The textual description of the product.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">additional_metadata</span></code></p></td>
+<td><p>Dictionary/JSON</p></td>
+<td><p>Additional textual or numerical information, such as categories, tags, or specifications.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In this approach, the <code class="docutils literal notranslate"><span class="pre">&quot;image_url&quot;</span></code> field stores a reference to the location of
+the image, and the <code class="docutils literal notranslate"><span class="pre">&quot;description&quot;</span></code> field contains the textual description. The
+additional metadata can encapsulate other relevant information, such as
+categories, tags, or product specifications.</p>
+<p>This design offers several advantages:</p>
+<ul class="simple">
+<li><p><strong>Scalability</strong>: By storing images in a binary format and using database
+storage for text, this approach can scale to handle large product catalogs.</p></li>
+<li><p><strong>Efficiency</strong>: Leveraging specialized storage mechanisms for different data
+types ensures that retrieval and updates are efficient.</p></li>
+</ul>
+</section>
+<section id="data-formats">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Data Formats</a><a class="headerlink" href="#data-formats" title="Link to this heading">#</a></h3>
+<p>We will describe a few choices of data formats below.</p>
+<section id="data-serialization-vs-data-deserialization">
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Data Serialization vs Data Deserialization</a><a class="headerlink" href="#data-serialization-vs-data-deserialization" title="Link to this heading">#</a></h4>
+<p>The process of transforming data structures or object states into a format that
+can be saved (e.g., in a file like JSON) and later rebuilt in the same or a
+different computing environment is known as serialization. The opposite process,
+called deserialization, involves retrieving data from the stored formats. In
+simpler terms, serialization refers to storing data, while deserialization
+refers to accessing data from the saved formats.</p>
+<p>In other words, <strong>storing data</strong> is called <strong>serialization</strong>, and <strong>retrieving
+data from the stored formats</strong> is called <strong>deserialization</strong>.</p>
+</section>
+<section id="json">
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">JSON</a><a class="headerlink" href="#json" title="Link to this heading">#</a></h4>
+<p><a class="reference external" href="https://www.json.org/json-en.html"><strong>JSON</strong></a>, which stands for JavaScript
+Object Notation, is a lightweight data-interchange format that uses a key-value
+pair paradigm. It is human-readable, easy to parse, and simple to generate,
+making it an ideal choice for data exchange between a server and a client in
+machine learning applications. JSON’s structure allows for easy storage in
+databases and can represent a wide variety of data types, including strings,
+numbers, booleans, objects, and arrays.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;age&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;cars&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ford&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Fiesta&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Focus&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Mustang&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;BMW&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;320&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;X3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;X5&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fiat&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;500&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Panda&quot;</span><span class="p">]</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>While JSON has many advantages, it does have some drawbacks, such as increased
+storage requirements due to its text-based nature. However, its simplicity and
+ease of use have made it one of the most popular data formats in machine
+learning and other applications.</p>
+<p>In addition to the key-value pair structure, JSON also supports nesting of
+objects and arrays, which allows for more complex data representation. This
+makes JSON a versatile choice for a variety of use cases, from simple
+configuration files to complex machine learning model inputs and outputs.</p>
+<p>Furthermore, JSON has extensive support in many programming languages, with
+built-in libraries or third-party packages available for parsing and generating
+JSON data.</p>
+<p>In summary, JSON’s human-readable format, easy parsing, support for complex data
+structures, and widespread language support make it an excellent choice for data
+exchange and storage in machine learning applications, despite its increased
+storage requirements compared to binary formats.</p>
+</section>
+<section id="row-and-columnar-formats">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Row and Columnar Formats</a><a class="headerlink" href="#row-and-columnar-formats" title="Link to this heading">#</a></h4>
+<section id="concept-of-row-major-vs-column-major-order">
+<h5><a class="toc-backref" href="#id13" role="doc-backlink">Concept of Row-major vs Column-major order</a><a class="headerlink" href="#concept-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h5>
+<p>Row-major and column-major order describe two ways to store multi-dimensional
+arrays in linear memory. In row-major order, the elements of a multi-dimensional
+array are stored row by row, whereas in column-major order, the elements are
+stored column by column.</p>
+</section>
+<section id="examples-of-row-major-vs-column-major-order">
+<h5><a class="toc-backref" href="#id14" role="doc-backlink">Examples of Row-major vs Column-major order</a><a class="headerlink" href="#examples-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h5>
+<p>In row-major order, the elements of each row of a matrix are stored together in
+contiguous memory locations, with the elements of successive rows appearing
+consecutively in memory. For example, consider a 3x2 matrix:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\boldsymbol{A} = \begin{bmatrix}
+    1 &amp; 2 \\
+    3 &amp; 4 \\
+    5 &amp; 6
+\end{bmatrix}
+\end{split}\]</div>
+<p>In row-major order, the elements are stored in memory as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In contrast, in column-major order, the elements of each column are stored
+together in contiguous memory locations, with the elements of successive columns
+appearing consecutively in memory. For the same matrix, the column-major order
+would be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Row-major and column-major order can make a difference in performance when
+accessing multi-dimensional arrays, especially for large arrays. For example,
+when accessing elements of a row in row-major order, consecutive elements of the
+row are likely to be cached together, which can improve access time. Similarly,
+when accessing elements of a column in column-major order, consecutive elements
+in the column are likely to be cached together, which can improve performance.</p>
+</section>
+</section>
+<section id="pros-and-cons-of-row-major-vs-column-major-order">
+<h4><a class="toc-backref" href="#id15" role="doc-backlink">Pros and cons of Row-major vs Column-major order</a><a class="headerlink" href="#pros-and-cons-of-row-major-vs-column-major-order" title="Link to this heading">#</a></h4>
+<section id="row-major-order">
+<h5><a class="toc-backref" href="#id16" role="doc-backlink">Row-major order</a><a class="headerlink" href="#row-major-order" title="Link to this heading">#</a></h5>
+<p><strong>Pros:</strong></p>
+<ul class="simple">
+<li><p>It is the default order used in many programming languages, including C and
+C++.</p></li>
+<li><p>It can be more intuitive for humans to understand, as rows are typically
+used to represent entities (e.g., students, observations) and columns are
+used to represent attributes (e.g., grades, measurements).</p></li>
+<li><p>When iterating over the elements of a matrix row-by-row, row-major order
+ensures that the elements accessed are contiguous in memory, which can
+improve cache locality and reduce the number of cache misses.</p></li>
+<li><p>Many linear algebra libraries, such as BLAS and LAPACK, use row-major order
+by default.</p></li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul class="simple">
+<li><p>When iterating over the elements of a matrix column-by-column, row-major
+order can lead to poor cache locality and a higher number of cache misses.
+This is because consecutive elements in the same column are not necessarily
+contiguous in memory.</p></li>
+<li><p>When transposing a matrix, row-major order requires copying the entire
+matrix into a new block of memory in column-major order, which can be costly
+for large matrices.</p></li>
+<li><p>Some hardware architectures may be optimized for column-major order, leading
+to lower performance for row-major order.</p></li>
+</ul>
+</section>
+<section id="column-major-order">
+<h5><a class="toc-backref" href="#id17" role="doc-backlink">Column-major order</a><a class="headerlink" href="#column-major-order" title="Link to this heading">#</a></h5>
+<p><strong>Pros:</strong></p>
+<ul class="simple">
+<li><p>Column-major order is used by default in some programming languages, such as
+Fortran.</p></li>
+<li><p>When iterating over the elements of a matrix column-by-column, column-major
+order ensures that the elements accessed are contiguous in memory, which can
+improve cache locality and reduce the number of cache misses.</p></li>
+<li><p>Some hardware architectures, such as GPUs, are optimized for column-major
+order, leading to potentially better performance.</p></li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul class="simple">
+<li><p>Column-major order can be less intuitive for humans to understand, as it is
+not the standard representation used in many fields.</p></li>
+<li><p>When iterating over the elements of a matrix row-by-row, column-major order
+can lead to poor cache locality and a higher number of cache misses. This is
+because consecutive elements in the same row are not necessarily contiguous
+in memory.</p></li>
+<li><p>Many linear algebra libraries, such as BLAS and LAPACK, use row-major order
+by default, so using column-major order may require additional memory copies
+or transpositions.</p></li>
+</ul>
+<p>Overall, the choice between row-major and column-major order depends on the
+specific use case and hardware architecture.</p>
+</section>
+</section>
+<section id="modern-row-and-columnar-formats">
+<h4><a class="toc-backref" href="#id18" role="doc-backlink">Modern Row and Columnar Formats</a><a class="headerlink" href="#modern-row-and-columnar-formats" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Library</p></th>
+<th class="head"><p>Order for Multidimensional Arrays</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>NumPy</p></td>
+<td><p>Row-Major Order</p></td>
+</tr>
+<tr class="row-odd"><td><p>MATLAB</p></td>
+<td><p>Column-Major Order</p></td>
+</tr>
+<tr class="row-even"><td><p>OpenGL</p></td>
+<td><p>Column-Major Order</p></td>
+</tr>
+<tr class="row-odd"><td><p>CUDA</p></td>
+<td><p>Column-Major Order</p></td>
+</tr>
+<tr class="row-even"><td><p>OpenCV</p></td>
+<td><p>Row-Major Order</p></td>
+</tr>
+<tr class="row-odd"><td><p>Eigen</p></td>
+<td><p>Supports both Row-Major and Column-Major Order</p></td>
+</tr>
+<tr class="row-even"><td><p>CSV</p></td>
+<td><p>Row-Major Order</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parquet</p></td>
+<td><p>Column-Major Order</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Column-major formats are better for accessing specific columns of large datasets
+with many features, while row-major formats are better for faster data writes
+when adding new individual examples to data. Row-major formats are better for a
+lot of writes, while column-major formats are better for a lot of column-based
+reads.</p>
+<p>When you have a dataset with many features, storing the data in a column-major
+format is more efficient because it allows for direct access to individual
+columns without having to scan through all the other data in the rows. This
+means that when you need to extract a specific subset of columns from the
+dataset, you can do so more efficiently because the system doesn’t need to read
+through all the other data in the rows to access the desired columns.</p>
+<p>In contrast, with a row-major format, the data for each row is stored together
+in memory, meaning that to access a specific column, you have to read through
+all the other columns in the row before you get to the desired column. This can
+be especially inefficient when dealing with large datasets with many features,
+as the system has to read through a lot of data to extract the desired subset of
+columns.</p>
+<p>For example, consider a dataset of ride-sharing transactions with 1,000
+features, but you only need to extract four specific columns: time, location,
+distance, and price. With a column-major format, you can directly access these
+columns, whereas with a row-major format, you have to read through all the other
+996 columns in each row before getting to the desired four columns. This can be
+slow and inefficient, especially if you need to access the subset of columns
+frequently or if the dataset is very large.</p>
+<p>In summary, storing data in a column-major format is more efficient for datasets
+with many features because it allows for direct access to individual columns,
+which can significantly speed up data retrieval and processing.</p>
+</section>
+<section id="examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">
+<h4><a class="toc-backref" href="#id19" role="doc-backlink">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a><a class="headerlink" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance" title="Link to this heading">#</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">timer</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Timer decorator.&quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> took </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> seconds to execute.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="nd">@timer</span>
+<span class="k">def</span> <span class="nf">traverse_dataframe_by_row</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+            <span class="k">pass</span>
+
+
+<span class="nd">@timer</span>
+<span class="k">def</span> <span class="nf">traverse_dataframe_by_column</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]:</span>
+            <span class="k">pass</span>
+
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">traverse_dataframe_by_row</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">traverse_dataframe_by_column</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+
+<span class="c1"># Row-major traversal (C-like order)</span>
+<span class="n">df_np</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+<span class="n">df_np</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_np</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>  <span class="c1"># Row-major traversal (C-like order)</span>
+<span class="n">n_rows</span><span class="p">,</span> <span class="n">n_cols</span> <span class="o">=</span> <span class="n">df_np</span><span class="o">.</span><span class="n">shape</span>
+
+
+<span class="nd">@timer</span>
+<span class="k">def</span> <span class="nf">traverse_numpy_by_row</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
+
+
+<span class="nd">@timer</span>
+<span class="k">def</span> <span class="nf">traverse_numpy_by_column</span><span class="p">(</span><span class="n">array</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cols</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rows</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">row_idx</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span>
+
+
+<span class="n">traverse_numpy_by_row</span><span class="p">(</span><span class="n">df_np</span><span class="p">)</span>
+<span class="n">traverse_numpy_by_column</span><span class="p">(</span><span class="n">df_np</span><span class="p">)</span>
+
+<span class="n">df_np_col</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df_np</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;F&quot;</span><span class="p">)</span>  <span class="c1"># Column-major traversal (Fortran-like order)</span>
+
+<span class="n">traverse_numpy_by_row</span><span class="p">(</span><span class="n">df_np_col</span><span class="p">)</span>
+<span class="n">traverse_numpy_by_column</span><span class="p">(</span><span class="n">df_np_col</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="text-vs-binary-formats">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Text vs Binary Formats</a><a class="headerlink" href="#text-vs-binary-formats" title="Link to this heading">#</a></h3>
+<p>CSV and JSON are text files, while Parquet files are binary files. Text files
+are human-readable, while binary files are only readable by programs that can
+interpret the raw bytes. Binary files contain only 0s and 1s and are more
+compact than text files. Binary files can save space compared to text files; for
+example, storing the number 1000000 requires 7 bytes in a text file and only 4
+bytes in a binary file as int32. Parquet files are more efficient than text
+files in terms of storage and processing speed. For example, AWS recommends
+using the Parquet format because it consumes up to 6x less storage and is up to
+2x faster to unload in Amazon S3 compared to text formats.</p>
+<p>For example, if you want to store the number <span class="math notranslate nohighlight">\(1000000\)</span>, and if you store it in
+text file it takes 7 characters (1, 0, 0, 0, 0, 0, 0), taking up 7 bytes of
+storage if 1 character is 1 byte. But if you store it in binary format as
+<code class="docutils literal notranslate"><span class="pre">int32</span></code>, then it takes 32 bits, which is 4 bytes.</p>
+</section>
+</section>
+<section id="workflow">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Workflow</a><a class="headerlink" href="#workflow" title="Link to this heading">#</a></h2>
+<p>Once the data source is scoped and well-defined, before we even start extracting
+the data, we need to know what kind of data we are dealing with and <strong>how</strong> and
+<strong>where</strong> we are going to store the extracted data.</p>
+<p>Determining the <strong>storage format</strong> is critical. Will the data be stored in its
+raw form, or does it need to be processed and converted into a different format
+like CSV, JSON, or Parquet? The chosen data format can have significant
+implications on storage costs, access speed, and compatibility with your data
+processing tools.</p>
+<p>The <strong>storage location</strong> is equally important. Depending on the volume of the
+data, your budget, and security requirements, you might opt for on-premises
+servers, cloud storage, or even a hybrid solution. Cloud storage, like Google
+Cloud Storage, Amazon S3, or Azure Blob Storage, offer scalable and secure
+solutions. However, you need to consider data privacy regulations and compliance
+requirements when deciding where to store the data.</p>
+<p>You should also consider how the data will be organized. Will it be stored in a
+structured database like MySQL, a NoSQL database like MongoDB, or a distributed
+file system like Hadoop HDFS? The data’s nature, the need for scalability, and
+the types of queries you’ll be running, all factor into this decision.</p>
+<p>Finally, the choice of <strong>storage technology</strong> also depends on the <strong>data
+operations</strong> you anticipate. For instance, if your data needs frequent updates,
+a database might be more suitable. If your data is largely static but needs to
+be read frequently, a file system might be a better choice.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Huyen, Chip. “Chapter 3. Data Engineering Fundamentals.” In Designing
+Machine Learning Systems: An Iterative Process for Production-Ready
+Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p>Kleppmann, Martin. “Chapter 2. Data Models and Query Languages.” In
+Designing Data-Intensive Applications. Beijing: O’Reilly, 2017.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./operations/machine_learning_lifecycle/03_dataops_pipeline"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_dataops_pipeline.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Stage 3. Data Pipeline (Data Engineering and DataOps)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="032_data_model_and_storage.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Stage 3.2. Data Model and Storage</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#identify-and-scope-the-data-source">Identify and Scope the Data Source</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition-what-comes-before-data-extraction">Intuition (What comes before Data Extraction?)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steps-to-identify-and-scope-the-data-source">Steps to Identify and Scope the Data Source</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-types-in-machine-learning-systems">Data Types in Machine Learning Systems</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-sources-in-machine-learning-systems">Data Sources in Machine Learning Systems</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats-in-machine-learning-systems">Data Formats in Machine Learning Systems</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#distributed-data-parallelism-and-data-sharding">Distributed Data Parallelism And Data Sharding</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#an-example-on-multimodal-data-storage-for-e-commerce">An Example on Multimodal Data Storage For E-Commerce</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-formats">Data Formats</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#data-serialization-vs-data-deserialization">Data Serialization vs Data Deserialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#json">JSON</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#row-and-columnar-formats">Row and Columnar Formats</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-of-row-major-vs-column-major-order">Concept of Row-major vs Column-major order</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-of-row-major-vs-column-major-order">Examples of Row-major vs Column-major order</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#pros-and-cons-of-row-major-vs-column-major-order">Pros and cons of Row-major vs Column-major order</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#row-major-order">Row-major order</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#column-major-order">Column-major order</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#modern-row-and-columnar-formats">Modern Row and Columnar Formats</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#examples-in-code-python-of-row-major-vs-column-major-order-and-its-effect-on-performance">Examples in code (Python) of Row-major vs Column-major order and its effect on performance</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#text-vs-binary-formats">Text vs Binary Formats</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow">Workflow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
