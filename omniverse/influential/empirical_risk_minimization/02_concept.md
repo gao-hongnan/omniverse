@@ -1,4 +1,4 @@
-# Concept
+# Concept: Empirical Risk Minimization
 
 ```{contents}
 :local:
@@ -66,20 +66,26 @@ We use $\mathcal{R}$ if $\mathcal{D}$ is clear from the context.
 ```{prf:remark} Interpretation of True Risk
 :label: remark-interpretation-true-risk
 
-We know in [Joint Expection](../../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.md)
-can be found by integrating over the joint distribution $\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})$,
-where the integrand is usually the probability of the event happening multiplied by the
-state of the event. In the case of the true risk, the event is the realization of a data point,
-and the state of the event is the loss incurred by the hypothesis $h$ on the data point.
+We know in
+[Joint Expection](../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.md)
+can be found by integrating over the joint distribution
+$\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})$,
+where the integrand is usually the probability of the event happening multiplied
+by the state of the event. In the case of the true risk, the event is the
+realization of a data point, and the state of the event is the loss incurred by
+the hypothesis $h$ on the data point.
 
-One may wonder why $\mathcal{L}((\mathbf{x}, y), h)$ being the state of the event has
-the associated probability $\mathbb{P}_{\mathcal{D}}(\mathbf{x}, y)$. First, we recognize
-that $\mathcal{L}((\mathbf{x}, y), h)$ is a random variable, and the probability of
-it **happening** is the probability of the event $(\mathbf{x}, y)$ happening, which in
-turn is the probability of the joint distribution $\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})$.
+One may wonder why $\mathcal{L}((\mathbf{x}, y), h)$ being the state of the
+event has the associated probability $\mathbb{P}_{\mathcal{D}}(\mathbf{x}, y)$.
+First, we recognize that $\mathcal{L}((\mathbf{x}, y), h)$ is a random variable,
+and the probability of it **happening** is the probability of the event
+$(\mathbf{x}, y)$ happening, which in turn is the probability of the joint
+distribution
+$\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})$.
 
-The main confusion can be caused by the lack of understanding of random variables. For example,
-you can also define the joint expecation of the random variables $\mathbf{x}$ and $y$ as
+The main confusion can be caused by the lack of understanding of random
+variables. For example, you can also define the joint expecation of the random
+variables $\mathbf{x}$ and $y$ as
 
 $$
 \mathbb{E}_{\mathcal{D}}\left[\mathbf{x}, y\right] = \int_{\mathcal{X}} \int_{\mathcal{Y}} \left(x_1 \cdot x_2 \cdots x_D \cdot y\right) \cdot \mathbb{P}_{\mathcal{D}}(\mathbf{x}, y) \mathrm{d} \mathbf{x} \mathrm{d} y
@@ -112,12 +118,15 @@ h^{*} = \underset{h \in \mathcal{H}}{\mathrm{argmin}} \mathbb{E}_{\mathcal{D}}\l
 $$ (eq: true-risk-minimization)
 ```
 
+[](03_bayes_optimal_classifier.md)
+
 ```{prf:example} Bayes Optimal Classifier
 :label: example-bayes-optimal-classifier
 
-See [Bayes Optimal Classifer](bayes_optimal_classifier.md) for a concrete example.
-The idea is that if we know the true distribution $\mathbb{P}_{\mathcal{D}}$, then
-it is relatively easy to find the hypothesis $h^{*}$ that minimizes the true risk.
+See [Bayes Optimal Classifer](03_bayes_optimal_classifier.md) for a concrete
+example. The idea is that if we know the true distribution
+$\mathbb{P}_{\mathcal{D}}$, then it is relatively easy to find the hypothesis
+$h^{*}$ that minimizes the true risk.
 
 We can simply construct such a hypothesis $h^{*}$ as
 
@@ -245,7 +254,7 @@ converges to the true risk expectation $\mathcal{R}_{\mathcal{D}}\left\{\mathcal
 
 Therefore, ERM is motivated by the law of large numbers, and in turn, the law of
 large numbers is motivated by the samples being $\textbf{i.i.d.}$
-{cite}`jung_2023`.
+{cite}`jung2022machine`.
 
 Note that the choice of the loss function $\mathcal{L}$ is crucial to the
 performance of the hypothesis $h$. And for different tasks such as Linear
