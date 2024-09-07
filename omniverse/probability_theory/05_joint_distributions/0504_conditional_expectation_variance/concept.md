@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Conditional Expectation
 
 ```{prf:definition} Conditional Expectation
@@ -48,8 +52,10 @@ we have seen that the expectation in itself is deterministic, as it represents t
 
 ## The Law of Total Expectation
 
-Just like the [Law of Total Probability](../../02_probability/0206_bayes_theorem.md) stated
-in {prf:ref}`thm:law-total-probability`, we can also state a similar law for the expectation.
+Just like the
+[Law of Total Probability](../../02_probability/0206_bayes_theorem.md) stated in
+{prf:ref}`thm:law-total-probability`, we can also state a similar law for the
+expectation.
 
 ```{prf:theorem} Law of Total Expectation
 :label: theorem:law_of_total_expectation
@@ -82,7 +88,8 @@ $$
 for the continuous case.
 ```
 
-An enlightening figure below extracted from {cite}`chan_2021` illustrates the Law of Total Expectation for the discrete case.
+An enlightening figure below extracted from {cite}`chan_2021` illustrates the
+Law of Total Expectation for the discrete case.
 
 ```{figure} ../assets/chan_fig5.11.png
 ---
@@ -138,4 +145,3 @@ $$
 \end{aligned}
 $$
 ```
-

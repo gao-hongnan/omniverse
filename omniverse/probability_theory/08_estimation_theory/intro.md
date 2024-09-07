@@ -1,9 +1,21 @@
-# Estimation Theory
+# Chapter 8. Estimation Theory
 
-Consider the common machine learning setup for a classification problem with $K$ classes, $k \geq 1$.
+```{contents}
+:local:
+```
 
-Let $\mathcal{P}_{\mathcal{D}}$ (denoted as $\mathcal{D}$ usually) be the underlying probability distribution
-over some input space $\mathcal{X}$ and output space $\mathcal{Y} = \{1, \ldots, K\}$.
+## Table of Contents
+
+```{tableofcontents}
+
+```
+
+Consider the common machine learning setup for a classification problem with $K$
+classes, $k \geq 1$.
+
+Let $\mathcal{P}_{\mathcal{D}}$ (denoted as $\mathcal{D}$ usually) be the
+underlying probability distribution over some input space $\mathcal{X}$ and
+output space $\mathcal{Y} = \{1, \ldots, K\}$.
 
 The learner receives a dataset $\mathcal{S}$ with $N$ samples, denoted as:
 
@@ -11,21 +23,25 @@ $$
 \mathcal{S} = \left\{\mathbf{x}^{(i)}, y^{(i)}\right\}_{i=1}^{N} \in \left(\mathcal{X} \times \mathcal{Y}\right)^{N}
 $$
 
-which are drawn **indepedently and identically distributed (i.i.d.)** from $\mathcal{P}_{\mathcal{D}}$.
+which are drawn **indepedently and identically distributed (i.i.d.)** from
+$\mathcal{P}_{\mathcal{D}}$.
 
-This typical setup abstracts away something very important due to notation simplicity. In reality,
-we can denote the underlying distribution as follows:
+This typical setup abstracts away something very important due to notation
+simplicity. In reality, we can denote the underlying distribution as follows:
 
 $$
 \mathbb{P}_{\mathcal{D}}\left(\mathcal{X}, \mathcal{Y};\boldsymbol{\theta}\right) ,
 $$
 
-where $\boldsymbol{\theta}$ is a parameter that characterizes the distribution $\mathcal{P}_{\mathcal{D}}$.
+where $\boldsymbol{\theta}$ is a parameter that characterizes the distribution
+$\mathcal{P}_{\mathcal{D}}$.
 
-Since $\mathbb{P}_{\mathcal{D}}\left(\mathcal{X}, \mathcal{Y};\boldsymbol{\theta}\right)$ is unknown to us,
-it follows that $\boldsymbol{\theta}$ is also unknown to us. Consequently, the whole goal of estimation is
-to solve an inverse problem to recover the parameter $\boldsymbol{\theta}$ based on the observations
-in $\mathcal{S}$.
+Since
+$\mathbb{P}_{\mathcal{D}}\left(\mathcal{X}, \mathcal{Y};\boldsymbol{\theta}\right)$
+is unknown to us, it follows that $\boldsymbol{\theta}$ is also unknown to us.
+Consequently, the whole goal of estimation is to solve an inverse problem to
+recover the parameter $\boldsymbol{\theta}$ based on the observations in
+$\mathcal{S}$.
 
 Let's see this pictorially:
 
@@ -38,10 +54,12 @@ Estimation is an inverse problem of recovering the unknown parameters that were 
 
 ## Parameters
 
-In the previous section, we introduced the concept of a parameter $\boldsymbol{\theta}$ that characterizes the distribution $\mathcal{P}_{\mathcal{D}}$.
+In the previous section, we introduced the concept of a parameter
+$\boldsymbol{\theta}$ that characterizes the distribution
+$\mathcal{P}_{\mathcal{D}}$.
 
-The definition of parameters can be made more apparent with some examples, all of which
-adapted from {cite}`chan_2021`.
+The definition of parameters can be made more apparent with some examples, all
+of which adapted from {cite}`chan_2021`.
 
 ```{prf:example} Parameter of a Bernoulli Distribution
 :label: prf:example-bernoulli-parameter
@@ -82,7 +100,8 @@ where $\theta$ is the mean.
 
 ## Good and Bad Estimates
 
-The estimation problem is well defined, let's see some pictorial examples below in {numref}`bad-good-estimates`.
+The estimation problem is well defined, let's see some pictorial examples below
+in {numref}`bad-good-estimates`.
 
 ```{figure} ./assets/chan_fig8.2.png
 ---
@@ -91,12 +110,23 @@ name: bad-good-estimates
 Image Credit: {cite}`chan_2021`.
 ```
 
-The figure shows a dataset containing 1000 data points generated from a 2D Gaussian distribution with an unknown mean vector $\boldsymbol{\mu}$ and an unknown covariance matrix $\boldsymbol{\Sigma}$. We duplicate this dataset in the four subfigures. The estimation problem is to recover the unknown mean vector $\boldsymbol{\mu}$ and the covariance matrix $\boldsymbol{\Sigma}$. In the subfigures we propose four candidates, each with a different mean vector and a different covariance matrix. We draw the contour lines of the corresponding Gaussians. It can be seen that some Gaussians fit the data better than others (i.e. pictorially the right most predicted Gaussian is the best fit).
-The goal of this chapter is to develop a systematic way of finding the best fit for the data {cite}`chan_2021`.
-
+The figure shows a dataset containing 1000 data points generated from a 2D
+Gaussian distribution with an unknown mean vector $\boldsymbol{\mu}$ and an
+unknown covariance matrix $\boldsymbol{\Sigma}$. We duplicate this dataset in
+the four subfigures. The estimation problem is to recover the unknown mean
+vector $\boldsymbol{\mu}$ and the covariance matrix $\boldsymbol{\Sigma}$. In
+the subfigures we propose four candidates, each with a different mean vector and
+a different covariance matrix. We draw the contour lines of the corresponding
+Gaussians. It can be seen that some Gaussians fit the data better than others
+(i.e. pictorially the right most predicted Gaussian is the best fit). The goal
+of this chapter is to develop a systematic way of finding the best fit for the
+data {cite}`chan_2021`.
 
 ## Notations
 
-In what follows, we may at some parts drop the labels $y$ and only focus on the input $\mathbf{x}$.
+In what follows, we may at some parts drop the labels $y$ and only focus on the
+input $\mathbf{x}$.
 
-We also adopt the [notations described in this section](../../notations/machine_learning_notations.md) for this chapter.
+We also adopt the
+[notations described in this section](../../notations/machine_learning.md) for
+this chapter.

@@ -1,5 +1,9 @@
 # Application: Moment Generating Function and the Sum of Random Variables
 
+```{contents}
+:local:
+```
+
 This section is based on the work of {cite}`chan_2021`.
 
 ## Sum of Independent Random Variables
@@ -56,7 +60,10 @@ $$
 
 ## Sum of Common Distributions via MGFs
 
-We have seen earlier in {ref}`sum-of-common-distributions-via-convolutions` that the sum of two random variables with common distributions is also a random variable with a common distribution. In this section, we will use MGF to prove this fact as well.
+We have seen earlier in {ref}`sum-of-common-distributions-via-convolutions` that
+the sum of two random variables with common distributions is also a random
+variable with a common distribution. In this section, we will use MGF to prove
+this fact as well.
 
 ```{prf:theorem} Sum of Poisson Random Variables is Poisson
 :label: thm:moment_generating_function_sum_of_poisson_rv
@@ -117,5 +124,9 @@ Therefore, the resulting random variable $Z$ is also a Gaussian. The mean and va
 
 ## Further Readings
 
-- Chan, Stanley H. "Chapter 6.1.2. Sum of independent variables via MGF." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-- Pishro-Nik, Hossein. "Chapter 6.1.3. Moment Generating Functions." In Introduction to Probability, Statistics, and Random Processes. Kappa Research, 2014.
+-   Chan, Stanley H. "Chapter 6.1.2. Sum of independent variables via MGF." In
+    Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan
+    Publishing Services, 2021.
+-   Pishro-Nik, Hossein. "Chapter 6.1.3. Moment Generating Functions." In
+    Introduction to Probability, Statistics, and Random Processes. Kappa
+    Research, 2014.

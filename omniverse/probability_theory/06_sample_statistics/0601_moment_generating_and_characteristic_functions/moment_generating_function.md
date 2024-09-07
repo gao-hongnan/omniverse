@@ -1,8 +1,15 @@
 # Moment Generating Function
 
+```{contents}
+:local:
+```
+
 ## Definition
 
-In probability theory and statistics, a moment generating function (MGF) is a function that uniquely determines the probability distribution of a random variable. Specifically, the MGF of a random variable is the expected value of the exponential function raised to a certain power of the random variable.
+In probability theory and statistics, a moment generating function (MGF) is a
+function that uniquely determines the probability distribution of a random
+variable. Specifically, the MGF of a random variable is the expected value of
+the exponential function raised to a certain power of the random variable.
 
 ```{prf:definition} Moment Generating Function
 :label: def:moment_generating_function
@@ -19,7 +26,11 @@ $M_{X}(s)$ is finite for all $s \in \mathbb{R}$ with $|s| \leq c$ (i.e. $s \in [
 In other words, the MGF of $X$ is the expected value of the exponential function raised to a certain power of $X$.
 ```
 
-By the [Law of the Unconscious Statistician](https://en.wikipedia.org/wiki/Law_of_the_unconscious_statistician), and {prf:ref}`prop_expectation_function_discrete` for the discrete case and {prf:ref}`prop_expectation_function_continuous` for the continuous case, we can easily see the following:
+By the
+[Law of the Unconscious Statistician](https://en.wikipedia.org/wiki/Law_of_the_unconscious_statistician),
+and {prf:ref}`prop_expectation_function_discrete` for the discrete case and
+{prf:ref}`prop_expectation_function_continuous` for the continuous case, we can
+easily see the following:
 
 For the discrete case, the MGF is
 
@@ -33,13 +44,17 @@ $$
 M_{X}(s)=\int_{-\infty}^{\infty} e^{s x} f_{X}(x) d x .
 $$
 
-The continuous case should remind us of the definition of a Laplace transform. For any function $f(t)$, the Laplace transform is
+The continuous case should remind us of the definition of a Laplace transform.
+For any function $f(t)$, the Laplace transform is
 
 $$
 \mathcal{L}[f](s)=\int_{-\infty}^{\infty} f(t) e^{s t} d t .
 $$
 
-From this perspective, we can interpret the MGF as the Laplace transform of the PDF. The argument $s$ of the output can be regarded as the coordinate in the Laplace space. If $s=-j \omega$, then $M_{X}(j \omega)$ becomes the Fourier transform of the PDF {cite}`chan_2021`.
+From this perspective, we can interpret the MGF as the Laplace transform of the
+PDF. The argument $s$ of the output can be regarded as the coordinate in the
+Laplace space. If $s=-j \omega$, then $M_{X}(j \omega)$ becomes the Fourier
+transform of the PDF {cite}`chan_2021`.
 
 ```{prf:example} Moment Generating Function Example 1.
 :label: ex:moment_generating_function_1
@@ -91,7 +106,6 @@ In other words, if $s$ is set to $0$, then the $k$-th derivative of the MGF is t
 *Proof can be found in {cite}`chan_2021`, page 325.*
 ```
 
-
 ```{prf:example} Moments of Bernoulli Random Variable
 :label: ex:moment_generating_function_bernoulli
 
@@ -122,7 +136,8 @@ $$
 *Question and solution from page 326 of {cite}`chan_2021`.*
 ```
 
-The table below lists the MGF of some common discrete and continuous random variables.
+The table below lists the MGF of some common discrete and continuous random
+variables.
 
 $$
 \begin{array}{lllll}
@@ -144,13 +159,23 @@ $$
 
 ### Moments
 
-The moment generating function of $\mathbf{X}$ provides us with all the moments of $\mathrm{X}$, which is why it is called the moment generating function.
+The moment generating function of $\mathbf{X}$ provides us with all the moments
+of $\mathrm{X}$, which is why it is called the moment generating function.
 
 ### Uniquely determines the distribution
 
-Moreover, the MGF uniquely determines the distribution, provided it exists. This means that if two random variables have the same MGF, they must have the same distribution. Therefore, finding the MGF of a random variable enables us to determine its distribution. This approach is particularly useful when working with sums of multiple independent random variables. The [proof can be found here](https://stats.stackexchange.com/questions/34956/proof-that-moment-generating-functions-uniquely-determine-probability-distributi#:~:text=If%20both%20moment%2Dgenerating%20functions,same%20theorem%20without%20a%20proof.).
+Moreover, the MGF uniquely determines the distribution, provided it exists. This
+means that if two random variables have the same MGF, they must have the same
+distribution. Therefore, finding the MGF of a random variable enables us to
+determine its distribution. This approach is particularly useful when working
+with sums of multiple independent random variables. The
+[proof can be found here](https://stats.stackexchange.com/questions/34956/proof-that-moment-generating-functions-uniquely-determine-probability-distributi#:~:text=If%20both%20moment%2Dgenerating%20functions,same%20theorem%20without%20a%20proof.).
 
 ## Further Readings
 
-- Chan, Stanley H. "Chapter 6.1.1. Moment-generating function." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-- Pishro-Nik, Hossein. "Chapter 6.1.3. Moment Generating Functions." In Introduction to Probability, Statistics, and Random Processes. Kappa Research, 2014.
+-   Chan, Stanley H. "Chapter 6.1.1. Moment-generating function." In
+    Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan
+    Publishing Services, 2021.
+-   Pishro-Nik, Hossein. "Chapter 6.1.3. Moment Generating Functions." In
+    Introduction to Probability, Statistics, and Random Processes. Kappa
+    Research, 2014.

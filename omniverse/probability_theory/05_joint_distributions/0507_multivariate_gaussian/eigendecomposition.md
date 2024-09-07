@@ -1,5 +1,9 @@
 # Eigendecomposition and Covariance Matrix
 
+```{contents}
+:local:
+```
+
 ```{prf:definition} Eigenvalue and Eigenvector
 :label: def:eigenvalue
 
@@ -119,7 +123,6 @@ roots of the characteristic polynomial are not necessarily distinct.
 2. A square matrix $\boldsymbol{A} \in \mathbb{F}^{D \times D}$ is **diagonalizable** if $\boldsymbol{A}$ is similar to a diagonal matrix in $\mathbb{F}^{D \times D}$.
 ```
 
-
 ```{prf:definition} Eigendecomposition
 :label: def:eigendecomposition
 
@@ -163,4 +166,3 @@ $$
 
 where $\alpha_d$ is the **basis coefficient** of $\boldsymbol{q}_d$.
 ```
-

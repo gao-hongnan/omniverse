@@ -17,6 +17,10 @@ kernelspec:
 
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Joint Expectation
 
 ```{prf:definition} Joint Expectation

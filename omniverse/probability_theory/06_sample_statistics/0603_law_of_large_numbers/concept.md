@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Sample Average
 
 ```{prf:definition} Sample Average
@@ -46,8 +50,11 @@ We easily see that as $N \rightarrow \infty$, the variance of the sample average
 
 ### Example of Convergence
 
-In the previous section, we see that as $N$ grows, the variance of the sample average goes to zero. In other words, what this really means is as $N$ increases, there will be less deviation
-of the sample average from the population mean. Let's see this in action in [the notebook here](convergence.ipynb).
+In the previous section, we see that as $N$ grows, the variance of the sample
+average goes to zero. In other words, what this really means is as $N$
+increases, there will be less deviation of the sample average from the
+population mean. Let's see this in action in
+[the notebook here](convergence.ipynb).
 
 ## Weak Law of Large Numbers
 
@@ -71,9 +78,15 @@ $$
 $$ (eq:weak-law-of-large-numbers-2)
 ```
 
-In other words, as sample size $N$ grows, the probability that the sample average $\bar{X}$ differs from the population mean $\mu$ by more than $\epsilon$ approaches zero.
-Note this is not saying that the *probability* of the difference between the sample average and the population mean is more than epsilon is zero, the expression is the probability that the difference is more than epsilon! So in laymen terms, as $N$ grows, then it is guaranteed
-that the difference between the sample average and the population mean is no more than $\epsilon$. This seems strong since $\epsilon$ can be arbitrarily small, but it is still a probability bound.
+In other words, as sample size $N$ grows, the probability that the sample
+average $\bar{X}$ differs from the population mean $\mu$ by more than $\epsilon$
+approaches zero. Note this is not saying that the _probability_ of the
+difference between the sample average and the population mean is more than
+epsilon is zero, the expression is the probability that the difference is more
+than epsilon! So in laymen terms, as $N$ grows, then it is guaranteed that the
+difference between the sample average and the population mean is no more than
+$\epsilon$. This seems strong since $\epsilon$ can be arbitrarily small, but it
+is still a probability bound.
 
 ## Strong Law of Large Numbers
 
@@ -97,9 +110,11 @@ $$
 $$ (eq:strong-law-of-large-numbers-2)
 ```
 
-
 ## Further Readings
 
-- [The Law of Large Numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers)
-- Chan, Stanley H. "Chapter 6.3. Law of Large Numbers." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-- Pishro-Nik, Hossein. "Chapter 7.1.1. Law of Large Numbers." In Introduction to Probability, Statistics, and Random Processes. Kappa Research, 2014.
+-   [The Law of Large Numbers](https://en.wikipedia.org/wiki/Law_of_large_numbers)
+-   Chan, Stanley H. "Chapter 6.3. Law of Large Numbers." In Introduction to
+    Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing
+    Services, 2021.
+-   Pishro-Nik, Hossein. "Chapter 7.1.1. Law of Large Numbers." In Introduction
+    to Probability, Statistics, and Random Processes. Kappa Research, 2014.

@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Joint PMF (Discrete Random Variables)
 
 ```{prf:definition} Joint PMF
@@ -109,9 +113,9 @@ $$ (eq_joint_pmf_pdf)
 
 ## Marginal PMF and PDF
 
-To recover the PMF or PDF of a single random variable, we can marginalize the joint PMF or PDF by
-summing or integrating over the other random variable. More concretely, we define the marginal PMF and PDF
-below.
+To recover the PMF or PDF of a single random variable, we can marginalize the
+joint PMF or PDF by summing or integrating over the other random variable. More
+concretely, we define the marginal PMF and PDF below.
 
 ```{prf:definition} Marginal PMF and PDF
 :label: def-marginal-pmf-pdf
@@ -180,11 +184,13 @@ $$
 
 ## Independence
 
-In the case of bivariate random variables, independence means that the joint PMF or PDF
-can be factorized into the product of the PMF or PDF of the individual random variables.
-This is nothing but the definition of independence mentioned in chapter 2 ({prf:ref}`def:independent-events`).
+In the case of bivariate random variables, independence means that the joint PMF
+or PDF can be factorized into the product of the PMF or PDF of the individual
+random variables. This is nothing but the definition of independence mentioned
+in chapter 2 ({prf:ref}`def:independent-events`).
 
 More concretely, we define independence below.
+
 ```{prf:definition} Independent random variables
 :label: def_independent
 
@@ -292,9 +298,10 @@ data $x_1, \ldots, x_N$.
 
 ## Joint CDF
 
-We now introduce the cumulative distribution function (CDF) for bivariate random variables.
-Similar to the 1-dimensional distribution, the joint CDF is a function that gives the probability
-in which both $X$ and $Y$ are less than or equal to some values $x$ and $y$, respectively.
+We now introduce the cumulative distribution function (CDF) for bivariate random
+variables. Similar to the 1-dimensional distribution, the joint CDF is a
+function that gives the probability in which both $X$ and $Y$ are less than or
+equal to some values $x$ and $y$, respectively.
 
 The joint CDF is defined as follows.
 
@@ -330,5 +337,3 @@ $$
 F_{X, Y}(x, y)=\int_{-\infty}^x f_X\left(x^{\prime}\right) d x^{\prime} \int_{-\infty}^y f_Y\left(y^{\prime}\right) d y^{\prime}=F_X(x) F_Y(y)
 $$
 ```
-
-

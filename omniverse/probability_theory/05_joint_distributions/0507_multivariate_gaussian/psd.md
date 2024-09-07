@@ -1,26 +1,33 @@
 # Covariance Matrix is Positive Semi-Definite
 
+```{contents}
+:local:
+```
+
 ## The Properties of Covariance Matrix
 
 The covariance matrix $\boldsymbol{\Sigma}$ is probably the heart and soul of
-the multivariate normal distribution. There are extensive studies on this, we will
-mention some important properties that will become more apparent later.
+the multivariate normal distribution. There are extensive studies on this, we
+will mention some important properties that will become more apparent later.
 
-Some intuition, notice that the expression in {eq}`eq:multivariate_gaussian_pdf` has
-the exponential term
+Some intuition, notice that the expression in {eq}`eq:multivariate_gaussian_pdf`
+has the exponential term
 
 $$
 \exp \left( -\frac{1}{2} \left(\mathbf{x} - \boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1} \left(\mathbf{x} - \boldsymbol{\mu}\right) \right)
 $$
 
-where $\boldsymbol{\mu}$ is the mean vector and $\boldsymbol{\Sigma}$ is the covariance matrix.
+where $\boldsymbol{\mu}$ is the mean vector and $\boldsymbol{\Sigma}$ is the
+covariance matrix.
 
-Note the $\boldsymbol{\Sigma}^{-1}$ term, which is a $D \times D$ matrix. This matrix is the
-inverse of the covariance matrix $\boldsymbol{\Sigma}$, which is also a $D \times D$ matrix.
-The implicit assumption is that $\boldsymbol{\Sigma}$ is invertible, how do we know for
-sure that this must be true? What if $\boldsymbol{\Sigma}$ is not invertible?
+Note the $\boldsymbol{\Sigma}^{-1}$ term, which is a $D \times D$ matrix. This
+matrix is the inverse of the covariance matrix $\boldsymbol{\Sigma}$, which is
+also a $D \times D$ matrix. The implicit assumption is that
+$\boldsymbol{\Sigma}$ is invertible, how do we know for sure that this must be
+true? What if $\boldsymbol{\Sigma}$ is not invertible?
 
-The validity of $\boldsymbol{\Sigma}$ requires the concept of **positive semi-definite**.
+The validity of $\boldsymbol{\Sigma}$ requires the concept of **positive
+semi-definite**.
 
 ### Covariance Matrix is Positive Semi-Definite
 
@@ -71,7 +78,8 @@ $$
 $$
 ```
 
-Finally, we can show that the covariance matrix $\boldsymbol{\Sigma}$ is **always** symmetric positive semi-definite.
+Finally, we can show that the covariance matrix $\boldsymbol{\Sigma}$ is
+**always** symmetric positive semi-definite.
 
 ```{prf:theorem} Covariance Matrix is always Symmetric Positive Semi-Definite
 :label: theorem:positive_semi_definite_covariance_matrix
@@ -108,11 +116,17 @@ where $\boldsymbol{b}=(\boldsymbol{X}-\boldsymbol{\mu})^T \boldsymbol{v}$.
 
 ### Importance
 
-So we know if the covariance matrix $\boldsymbol{\Sigma}$ is positive semi-definite, then the multivariate Gaussian distribution is well-defined.
+So we know if the covariance matrix $\boldsymbol{\Sigma}$ is positive
+semi-definite, then the multivariate Gaussian distribution is well-defined.
 
-However, in empirical applications, we are often estimating the covariance matrix $\boldsymbol{\Sigma}$ from data. The estimated covariance matrix $\hat{\boldsymbol{\Sigma}}$ is not necessarily positive semi-definite. So a way to check the validity of the estimated covariance matrix $\hat{\boldsymbol{\Sigma}}$ is to check if it is positive semi-definite.
+However, in empirical applications, we are often estimating the covariance
+matrix $\boldsymbol{\Sigma}$ from data. The estimated covariance matrix
+$\hat{\boldsymbol{\Sigma}}$ is not necessarily positive semi-definite. So a way
+to check the validity of the estimated covariance matrix
+$\hat{\boldsymbol{\Sigma}}$ is to check if it is positive semi-definite.
 
-Furthermore, generally, if we solve an optimization problem involving the following:
+Furthermore, generally, if we solve an optimization problem involving the
+following:
 
 $$
 \begin{aligned}
@@ -120,5 +134,6 @@ $$
 \end{aligned}
 $$
 
-then $f$ will be **convex** if $\boldsymbol{A}$ is positive semi-definite. Now the
-guarantee of convex is a big deal in optimization, because all local minima are global minima.
+then $f$ will be **convex** if $\boldsymbol{A}$ is positive semi-definite. Now
+the guarantee of convex is a big deal in optimization, because all local minima
+are global minima.

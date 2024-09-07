@@ -1,9 +1,13 @@
 # Probability Inequalities
 
-In this section, we will only list the definitions of the various inequalities without
-proofs. We will prove them along the way in the next section.
+```{contents}
+:local:
+```
 
-***This section is mainly adapted from {cite}`chan_2021`.***
+In this section, we will only list the definitions of the various inequalities
+without proofs. We will prove them along the way in the next section.
+
+**_This section is mainly adapted from {cite}`chan_2021`._**
 
 ## Union Bound
 
@@ -52,7 +56,8 @@ The Cauchy-Schwarz inequality is useful in analyzing $\mathbb{E}[X Y]$. For exam
 
 ## Jensen's Inequality
 
-Our next inequality is Jensen's inequality. To motivate the inequality, we recall that
+Our next inequality is Jensen's inequality. To motivate the inequality, we
+recall that
 
 $$
 \operatorname{Var}[X]=\mathbb{E}\left[X^{2}\right]-\mathbb{E}[X]^{2}
@@ -64,7 +69,9 @@ $$
 \underbrace{\mathbb{E}\left[X^{2}\right]}_{=\mathbb{E}[g(X)]} \geq \underbrace{\mathbb{E}[X]^{2}}_{=g(\mathbb{E}[X])} .
 $$
 
-Jensen's inequality is a generalization of the above result by recognizing that the inequality does not only hold for the function $g(X)=X^{2}$ but also for any convex function $g$. The theorem is stated as follows:
+Jensen's inequality is a generalization of the above result by recognizing that
+the inequality does not only hold for the function $g(X)=X^{2}$ but also for any
+convex function $g$. The theorem is stated as follows:
 
 ```{prf:theorem} Jensen's Inequality
 :label: theorem:jensen
@@ -109,7 +116,8 @@ For a more formal treatment with examples, see {cite}`chan_2021`.
 
 ## Markov's Inequality
 
-Our next inequality, Markov's inequality, is an elementary inequality that links probability and expectation.
+Our next inequality, Markov's inequality, is an elementary inequality that links
+probability and expectation.
 
 ```{prf:theorem} Markov's Inequality
 :label: theorem:markov
@@ -125,7 +133,8 @@ For a more formal treatment with examples, see {cite}`chan_2021`.
 
 ## Chebyshev's Inequality
 
-The next inequality is a simple extension of Markov's inequality. The result is known as Chebyshev's inequality.
+The next inequality is a simple extension of Markov's inequality. The result is
+known as Chebyshev's inequality.
 
 ```{prf:theorem} Chebyshev's Inequality
 :label: theorem:chebyshev
@@ -149,7 +158,9 @@ $$
 
 ## Chernoff's Bound
 
-We now introduce a powerful inequality or a set of general procedures that gives us some highly useful inequalities. The idea is named for Herman Chernoff, although it was actually due to his colleague Herman Rubin.
+We now introduce a powerful inequality or a set of general procedures that gives
+us some highly useful inequalities. The idea is named for Herman Chernoff,
+although it was actually due to his colleague Herman Rubin.
 
 ```{prf:theorem} Chernoff's Bound
 :label: theorem:chernoff-bound
@@ -175,9 +186,9 @@ See section 6.2.7 of {cite}`chan_2021` for more details.
 
 ## Hoeffding's Inequality
 
-Chernoff's bound can be used to derive many powerful inequalities, one of
-which is Hoeffding's inequality. This equality is the basis of Machine Learning's
-PACE (Probably Approximately Correct) framework and the VC dimension.
+Chernoff's bound can be used to derive many powerful inequalities, one of which
+is Hoeffding's inequality. This equality is the basis of Machine Learning's PACE
+(Probably Approximately Correct) framework and the VC dimension.
 
 ```{prf:theorem} Hoeffding's Inequality
 :label: theorem:hoeffding
@@ -209,12 +220,14 @@ $$
 See {cite}`chan_2021` for the proof.
 ```
 
-
 ### Interpretation of Hoeffding's Inequality
 
-***This section is extracted verbatim from Chan, Stanley H. "Chapter 6.2.8. Hoeffding's inequality." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.***
+**_This section is extracted verbatim from Chan, Stanley H. "Chapter 6.2.8.
+Hoeffding's inequality." In Introduction to Probability for Data Science. Ann
+Arbor, Michigan: Michigan Publishing Services, 2021._**
 
-Interpreting Hoeffding's inequality. One way to interpret Hoeffding's inequality is to write the equation as
+Interpreting Hoeffding's inequality. One way to interpret Hoeffding's inequality
+is to write the equation as
 
 $$
 \mathbb{P}\left[\left|\bar{X}-\mu\right|>\epsilon\right] \leq \underbrace{2 e^{-2 \epsilon^{2} N}}_{\delta},
@@ -238,34 +251,56 @@ $$
 \bar{X}-\sqrt{\frac{1}{2 N} \log \frac{2}{\delta}} \leq \mu \leq \bar{X}+\sqrt{\frac{1}{2 N} \log \frac{2}{\delta}} .
 $$
 
-This inequality is a confidence interval (see Chapter 9). It says that with probability at least $1-\delta$, the interval $\left[\bar{X}-\epsilon, \bar{X}+\epsilon\right]$ includes the true population mean $\mu$.
+This inequality is a confidence interval (see Chapter 9). It says that with
+probability at least $1-\delta$, the interval
+$\left[\bar{X}-\epsilon, \bar{X}+\epsilon\right]$ includes the true population
+mean $\mu$.
 
 There are two questions one can ask about the confidence interval:
 
-- Given $N$ and $\delta$, what is the confidence interval? Equation $6.28$ tells us that if we know $N$, to achieve a probability of at least $1-\delta$ the confidence interval will follow Equation 6.28. For example, if $N=10,000$ and $\delta=0.01, \sqrt{\frac{1}{2 N} \log \frac{2}{\delta}}=0.016$. Therefore, with a probability at least $99 \%$, the true population mean $\mu$ will be included in the interval
+-   Given $N$ and $\delta$, what is the confidence interval? Equation $6.28$
+    tells us that if we know $N$, to achieve a probability of at least
+    $1-\delta$ the confidence interval will follow Equation 6.28. For example,
+    if $N=10,000$ and
+    $\delta=0.01, \sqrt{\frac{1}{2 N} \log \frac{2}{\delta}}=0.016$. Therefore,
+    with a probability at least $99 \%$, the true population mean $\mu$ will be
+    included in the interval
 
 $$
 \bar{X}-0.16 \leq \mu \leq \bar{X}+0.16 \text {. }
 $$
 
-- If we want to achieve a certain confidence interval, what is the $N$ we need? If we are given $\epsilon$ and $\delta$, the $N$ we need is
+-   If we want to achieve a certain confidence interval, what is the $N$ we
+    need? If we are given $\epsilon$ and $\delta$, the $N$ we need is
 
 $$
 \delta \leq 2 e^{-2 \epsilon^{2} N} \quad \Rightarrow \quad N \geq \frac{\log \frac{2}{\delta}}{2 \epsilon^{2}} .
 $$
 
-For example, if $\delta=0.01$ and $\epsilon=0.01$, the $N$ we need is $N \geq 26,500$.
+For example, if $\delta=0.01$ and $\epsilon=0.01$, the $N$ we need is
+$N \geq 26,500$.
 
-When is Hoeffding's inequality used? Hoeffding's inequality is fundamental in modern machine learning theory. In this field, one often wants to quantify how well a learning
-algorithm performs with respect to the complexity of the model and the number of training samples. For example, if we choose a complex model, we should expect to use more training samples or overfit otherwise. Hoeffding's inequality provides an asymptotic description of the training error, testing error, and the number of training samples. The inequality is often used to compare the theoretical performance limit of one model versus another model. Therefore, although we do not need to use Hoeffding's inequality in this book, we hope you appreciate its tightness.
+When is Hoeffding's inequality used? Hoeffding's inequality is fundamental in
+modern machine learning theory. In this field, one often wants to quantify how
+well a learning algorithm performs with respect to the complexity of the model
+and the number of training samples. For example, if we choose a complex model,
+we should expect to use more training samples or overfit otherwise. Hoeffding's
+inequality provides an asymptotic description of the training error, testing
+error, and the number of training samples. The inequality is often used to
+compare the theoretical performance limit of one model versus another model.
+Therefore, although we do not need to use Hoeffding's inequality in this book,
+we hope you appreciate its tightness.
 
 ## Further Readings
 
 For a rigorous and concise treatment, see the following:
 
-- Chan, Stanley H. "Chapter 6.2. Probability Inequalities." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-- Pishro-Nik, Hossein. "Chapter 6.2.0. Probability Bounds." In Introduction to Probability, Statistics, and Random Processes. Kappa Research, 2014.
+-   Chan, Stanley H. "Chapter 6.2. Probability Inequalities." In Introduction to
+    Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing
+    Services, 2021.
+-   Pishro-Nik, Hossein. "Chapter 6.2.0. Probability Bounds." In Introduction to
+    Probability, Statistics, and Random Processes. Kappa Research, 2014.
 
 For code walkthrough, see:
 
-- [Nathaniel Dake: Probability Inequalities](https://www.nathanieldake.com/Mathematics/03-Probability-03-Inequalities.html)
+-   [Nathaniel Dake: Probability Inequalities](https://www.nathanieldake.com/Mathematics/03-Probability-03-Inequalities.html)

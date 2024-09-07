@@ -17,6 +17,10 @@ kernelspec:
 
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Likelihood
 
 ### Some Intuition
@@ -478,50 +482,47 @@ Then the probability of observing this dataset $\mathcal{S}$ is equivalent to
 asking what is the probability of observing this sequence of random variables
 $X^{(1)}, \ldots, X^{(N)}$ and is given by:
 
-$$
+```{math}
+:label: eq:coin-toss-likelihood-1
+
 \mathbb{P}(X ; \theta) = \prod_{n=1}^N \theta^{x^{(n)}}(1-\theta)^{1-x^{(n)}}.
-$$ (eq:coin-toss-likelihood-1)
+```
 
-Our goal is to find the value of $\theta$. How? Maximum likelihood estimation! We want to find the value of $\theta$ that maximizes the **joint probability** of observing the sequence of coin flips. This is equivalent to maximizing the **likelihood** of observing the sequence of coin flips. The likelihood function is given by the exact same equation as the joint probability, except that we do a notational change:
-
-
-$$
-
-\mathcal{L}(\theta \mid \mathcal{S}) = \prod\_{n=1}^N
-\theta^{x^{(n)}}(1-\theta)^{1-x^{(n)}}.
-
-$$
-
-Notice that this equation is none other than the product of $N$ Bernoulli random variables, each with parameter $\theta$. This is not surprising since coin toss is usually modelled as a Bernoulli random variable.
-
-If we flip $13$ coins and get the sequence "HHHTHTTHHHHHT", then the probability of observing this sequence is:
-
+Our goal is to find the value of $\theta$. How? Maximum likelihood estimation!
+We want to find the value of $\theta$ that maximizes the **joint probability**
+of observing the sequence of coin flips. This is equivalent to maximizing the
+**likelihood** of observing the sequence of coin flips. The likelihood function
+is given by the exact same equation as the joint probability, except that we do
+a notational change:
 
 $$
+\mathcal{L}(\theta \mid \mathcal{S}) = \prod_{n=1}^N \theta^{x^{(n)}}(1-\theta)^{1-x^{(n)}}.
+$$
 
-\begin{aligned} \mathbb{P}(X ; \theta) &= \theta^{x^{(1)}}(1-\theta)^{1-x^{(1)}}
-\times \theta^{x^{(2)}}(1-\theta)^{1-x^{(2)}} \times
-\theta^{x^{(3)}}(1-\theta)^{1-x^{(3)}} \times
-\theta^{x^{(4)}}(1-\theta)^{1-x^{(4)}} \times
-\theta^{x^{(5)}}(1-\theta)^{1-x^{(5)}} \times
-\theta^{x^{(6)}}(1-\theta)^{1-x^{(6)}} \times
-\theta^{x^{(7)}}(1-\theta)^{1-x^{(7)}} \times
-\theta^{x^{(8)}}(1-\theta)^{1-x^{(8)}} \times
-\theta^{x^{(9)}}(1-\theta)^{1-x^{(9)}} \times
-\theta^{x^{(10)}}(1-\theta)^{1-x^{(10)}} \times
-\theta^{x^{(11)}}(1-\theta)^{1-x^{(11)}} \times
-\theta^{x^{(12)}}(1-\theta)^{1-x^{(12)}} \times
-\theta^{x^{(13)}}(1-\theta)^{1-x^{(13)}} \\ &= \theta^{9}(1-\theta)^{4}.
+Notice that this equation is none other than the product of $N$ Bernoulli random
+variables, each with parameter $\theta$. This is not surprising since coin toss
+is usually modelled as a Bernoulli random variable.
+
+If we flip $13$ coins and get the sequence "HHHTHTTHHHHHT", then the probability
+of observing this sequence is:
+
+$$
+\begin{aligned}
+\mathbb{P}(X ; \theta) &= \theta^{x^{(1)}}(1-\theta)^{1-x^{(1)}} \times \theta^{x^{(2)}}(1-\theta)^{1-x^{(2)}} \times \theta^{x^{(3)}}(1-\theta)^{1-x^{(3)}} \times \theta^{x^{(4)}}(1-\theta)^{1-x^{(4)}} \times \theta^{x^{(5)}}(1-\theta)^{1-x^{(5)}} \times \theta^{x^{(6)}}(1-\theta)^{1-x^{(6)}} \times \theta^{x^{(7)}}(1-\theta)^{1-x^{(7)}} \times \theta^{x^{(8)}}(1-\theta)^{1-x^{(8)}} \times \theta^{x^{(9)}}(1-\theta)^{1-x^{(9)}} \times \theta^{x^{(10)}}(1-\theta)^{1-x^{(10)}} \times \theta^{x^{(11)}}(1-\theta)^{1-x^{(11)}} \times \theta^{x^{(12)}}(1-\theta)^{1-x^{(12)}} \times \theta^{x^{(13)}}(1-\theta)^{1-x^{(13)}} \\
+&= \theta^{9}(1-\theta)^{4}.
 \end{aligned}
-
 $$
 
-One nice thing about this example will be that we know the answer going in.  Indeed, if we said verbally, "I flipped 13 coins, and 9 came up heads, what is our best guess for the probability that the coin comes us heads?, " everyone would correctly guess $9/13$.  What this maximum likelihood method will give us is a way to get that number from first principals in a way that will generalize to vastly more complex situations {cite}`zhang2021dive`.
+One nice thing about this example will be that we know the answer going in.
+Indeed, if we said verbally, "I flipped 13 coins, and 9 came up heads, what is
+our best guess for the probability that the coin comes us heads?, " everyone
+would correctly guess $9/13$. What this maximum likelihood method will give us
+is a way to get that number from first principals in a way that will generalize
+to vastly more complex situations {cite}`zhang2023dive`.
 
 For our example, the plot of $P(X \mid \theta)$ is as follows:
 
 We know that a coin toss
-
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -533,7 +534,57 @@ sys.path.append(parent_dir)
 
 import matplotlib.pyplot as plt
 
-from omnivault.utils.visualization.style import use_svg_display
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+from typing import Sequence, Optional
+import rich
+from IPython.display import HTML, display
+
+import math
+
+import matplotlib.pyplot as plt
+from IPython.display import display
+
+%config InlineBackend.figure_format = 'svg'
+%matplotlib inline
+
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path | None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    if not current_path:
+        current_path = Path.cwd()
+    current_path = current_path.resolve()
+    for parent in [current_path, *current_path.parents]:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+current_file_path = Path("__file__")
+root_dir          = find_root_dir(current_file_path, marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.utils.visualization.style import use_svg_display
+    from omnivault.utils.reproducibility.seed import seed_all
+else:
+    raise ImportError("Root directory not found.")
 
 use_svg_display()
 
@@ -550,24 +601,30 @@ ax.set_ylabel(r'$\mathbb{P}(X ; \theta)$')
 plt.show();
 ```
 
-This has its maximum value somewhere near our expected $9/13 \approx 0.7\ldots$.  To see if it is exactly there, we can turn to calculus.  Notice that at the maximum, the gradient of the function is flat.  Thus, we could find the maximum likelihood estimate by finding the values of $\theta$ where the derivative is zero, and finding the one that gives the highest probability.  We compute:
-
-
-$$
-
-\begin{aligned} 0 & = \frac{d}{d\theta} \mathbb{P}(X ; \theta) \\ & =
-\frac{d}{d\theta} \theta^9(1-\theta)^4 \\ & = 9\theta^8(1-\theta)^4 -
-4\theta^9(1-\theta)^3 \\ & = \theta^8(1-\theta)^3(9-13\theta). \end{aligned}
+This has its maximum value somewhere near our expected $9/13 \approx 0.7\ldots$.
+To see if it is exactly there, we can turn to calculus. Notice that at the
+maximum, the gradient of the function is flat. Thus, we could find the maximum
+likelihood estimate by finding the values of $\theta$ where the derivative is
+zero, and finding the one that gives the highest probability. We compute:
 
 $$
+\begin{aligned}
+0 & = \frac{d}{d\theta} \mathbb{P}(X ; \theta) \\
+& = \frac{d}{d\theta} \theta^9(1-\theta)^4 \\
+& = 9\theta^8(1-\theta)^4 - 4\theta^9(1-\theta)^3 \\
+& = \theta^8(1-\theta)^3(9-13\theta).
+\end{aligned}
+$$
 
-This has three solutions: $0$, $1$ and $9/13$.  The first two are clearly minima, not maxima as they assign probability $0$ to our sequence.  The final value does *not* assign zero probability to our sequence, and thus must be the maximum likelihood estimate $\hat \theta = 9/13$ {cite}`zhang2021dive`.
+This has three solutions: $0$, $1$ and $9/13$. The first two are clearly minima,
+not maxima as they assign probability $0$ to our sequence. The final value does
+_not_ assign zero probability to our sequence, and thus must be the maximum
+likelihood estimate $\hat \theta = 9/13$ {cite}`zhang2023dive`.
 
----
-
-We can justify this intuition by deriving the maximum likelihood estimate for $\theta$ if
-we assume that the coin generator follows a Bernoulli distribution.
-The more generic case of the maximum likelihood estimate for $\theta$ is given by the following.
+We can justify this intuition by deriving the maximum likelihood estimate for
+$\theta$ if we assume that the coin generator follows a Bernoulli distribution.
+The more generic case of the maximum likelihood estimate for $\theta$ is given
+by the following.
 
 ```{prf:definition} Maximum Likelihood Estimation for Bernoulli Distribution
 :label: def:maximum-likelihood-estimation-for-bernoulli-distribution
@@ -576,69 +633,49 @@ The Maximum Likelihood estimate for a set of $\textrm{i.i.d.}$ Bernoulli random 
 
 We know that the log-likelihood function of a set of i.i.d. Bernoulli random variables is given by
 
-
 $$
-
-\log \mathcal{L}(\theta \mid \mathbf{x})=\left(\sum*{n=1}^{N} x^{(n)}\right)
-\cdot \log \theta+\left(N-\sum*{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)
-
+\log \mathcal{L}(\theta \mid \mathbf{x})=\left(\sum_{n=1}^{N} x^{(n)}\right) \cdot \log \theta+\left(N-\sum_{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)
 $$
 
 Thus, to find the ML estimate, we need to solve the optimization problem
 
-
 $$
-
-\widehat{\theta}=\underset{\theta \in
-\Theta}{\operatorname{argmax}}\left\{\left(\sum*{n=1}^{N} x^{(n)}\right) \cdot
-\log \theta+\left(N-\sum*{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)\right\}
-.
-
+\widehat{\theta}=\underset{\theta \in \Theta}{\operatorname{argmax}}\left\{\left(\sum_{n=1}^{N} x^{(n)}\right) \cdot \log \theta+\left(N-\sum_{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)\right\} .
 $$
 
 Taking the derivative with respect to $\theta$ and setting it to zero, we obtain
 
-
 $$
-
-\frac{d}{d \theta}\left\{\left(\sum*{n=1}^{N} x^{(n)}\right) \cdot \log
-\theta+\left(N-\sum*{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)\right\}=0 .
-
+\frac{d}{d \theta}\left\{\left(\sum_{n=1}^{N} x^{(n)}\right) \cdot \log \theta+\left(N-\sum_{n=1}^{N} x^{(n)}\right) \cdot \log (1-\theta)\right\}=0 .
 $$
 
 This gives us
 
-
 $$
-
-\frac{\left(\sum*{n=1}^{N} x^{(n)}\right)}{\theta}-\frac{N-\sum*{n=1}^{N}
-x^{(n)}}{1-\theta}=0
-
+\frac{\left(\sum_{n=1}^{N} x^{(n)}\right)}{\theta}-\frac{N-\sum_{n=1}^{N} x^{(n)}}{1-\theta}=0
 $$
 
 Rearranging the terms yields
 
-
 $$
-
-\widehat{\theta}=\frac{1}{N} \sum\_{n=1}^{N} x^{(n)}
-
+\widehat{\theta}=\frac{1}{N} \sum_{n=1}^{N} x^{(n)}
 $$
 ```
 
 Indeed, since we have $9$ heads and $4$ tails, we have:
 
-
+$$
+\begin{aligned}
+\widehat{\theta} &= \frac{1}{N} \sum_{n=1}^{N} x^{(n)} \\
+&= \frac{1}{13} \sum_{n=1}^{13} x^{(n)} \\
+&= \frac{1}{13} \cdot 9 \\
+&= \frac{9}{13}.
+\end{aligned}
 $$
 
-\begin{aligned} \widehat{\theta} &= \frac{1}{N} \sum*{n=1}^{N} x^{(n)} \\ &=
-\frac{1}{13} \sum*{n=1}^{13} x^{(n)} \\ &= \frac{1}{13} \cdot 9 \\ &=
-\frac{9}{13}. \end{aligned}
-
-$$
-
-since there are $9$ heads and $4$ tails, resulting in a sum of $9$ when you sum up the $x^{(n)}$'s.  Thus, the maximum likelihood estimate for $\theta$ is $\frac{9}{13}$.
-
+since there are $9$ heads and $4$ tails, resulting in a sum of $9$ when you sum
+up the $x^{(n)}$'s. Thus, the maximum likelihood estimate for $\theta$ is
+$\frac{9}{13}$.
 
 ## Visualizing Likelihood and Maximum Likelihood Estimation as $N$ Increases
 
@@ -647,15 +684,22 @@ written by Stanley H. Chan {cite}`chan_2021` for more details.
 
 ## Numerical Optimization and the Negative Log-Likelihood
 
-***The following section is adapted from section 22.7 from Dive Into Deep Learning, {cite}`zhang2021dive`.***
+**_The following section is adapted from section 22.7 from Dive Into Deep
+Learning, {cite}`zhang2023dive`._**
 
-The example on coin toss is nice, but what if we have billions of parameters and data examples?
+The example on coin toss is nice, but what if we have billions of parameters and
+data examples?
 
 ### Numerical Underflow
 
-First, notice that if we make the assumption that all the data examples are independent, we can no longer practically consider the likelihood itself as it is a product of many probabilities.  Indeed, each probability is in $[0,1]$, say typically of value about $1/2$, and the product of $(1/2)^{1000000000}$ is far below machine precision.  We cannot work with that directly.
+First, notice that if we make the assumption that all the data examples are
+independent, we can no longer practically consider the likelihood itself as it
+is a product of many probabilities. Indeed, each probability is in $[0,1]$, say
+typically of value about $1/2$, and the product of $(1/2)^{1000000000}$ is far
+below machine precision. We cannot work with that directly.
 
-Let's check the smallest representable positive number greater than zero for the `float32` data type:
+Let's check the smallest representable positive number greater than zero for the
+`float32` data type:
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -663,14 +707,15 @@ Let's check the smallest representable positive number greater than zero for the
 print(np.finfo(np.float32).eps)
 ```
 
-Let's cook up a simple example to illustrate this.  We will generate a random sequence of $1000000000$ coin tosses, and compute the likelihood of the sequence given that the coin is fair.  We will then compute the log-likelihood of the sequence given that the coin is fair.
+Let's cook up a simple example to illustrate this. We will generate a random
+sequence of $1000000000$ coin tosses, and compute the likelihood of the sequence
+given that the coin is fair. We will then compute the log-likelihood of the
+sequence given that the coin is fair.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
 
 import numpy as np
-
-from omnivault.utils.reproducibility.seed import seed_all
 
 seed_all(42)
 
@@ -681,46 +726,44 @@ likelihood = (theta ** np.sum(X)) * ((1 - theta) ** (N - np.sum(X)))
 print(f"Likelihood: {likelihood}")
 ```
 
-So the likelihood is $0$ because the $1000000000$ when multiplied is less than the smallest representable positive number greater than zero for the `float32` data type.
-
+So the likelihood is $0$ because the $1000000000$ when multiplied is less than
+the smallest representable positive number greater than zero for the `float32`
+data type.
 
 However, recall that the logarithm turns products to sums, in which case
 
-
+$$
+\log\left(\left(1/2\right)^{1000000000}\right) = 1000000000\cdot\log(1/2) \approx -301029995.6\ldots
 $$
 
-\log\left(\left(1/2\right)^{1000000000}\right) = 1000000000\cdot\log(1/2)
-\approx -301029995.6\ldots
+This number fits perfectly within even a single precision $32$-bit float. Thus,
+we should consider the _log-likelihood_, which is
 
 $$
-
-This number fits perfectly within even a single precision $32$-bit float.  Thus, we should consider the *log-likelihood*, which is
-
-
-$$
-
 \log(\mathbb{P}(X ; \boldsymbol{\theta})).
-
 $$
 
-Since the function $x \mapsto \log(x)$ is increasing, maximizing the likelihood is the same thing as maximizing the log-likelihood.
+Since the function $x \mapsto \log(x)$ is increasing, maximizing the likelihood
+is the same thing as maximizing the log-likelihood.
 
-We often work with loss functions, where we wish to minimize the loss.  We may turn maximum likelihood into the minimization of a loss by taking $-\log(\mathbb{P}(X ; \boldsymbol{\theta}))$, which is the *negative log-likelihood*.
+We often work with loss functions, where we wish to minimize the loss. We may
+turn maximum likelihood into the minimization of a loss by taking
+$-\log(\mathbb{P}(X ; \boldsymbol{\theta}))$, which is the _negative
+log-likelihood_.
 
-To illustrate this, consider the coin flipping problem from before, and pretend that we do not know the closed form solution.  We may compute that
-
-
-$$
-
--\log(\mathbb{P}(X ; \boldsymbol{\theta})) =
--\log\left(\theta^{x^{(n)}}(1-\theta)^{1-x^{(n)}}\right) =
--\left(n_H\log(\theta) + n_T\log(1-\theta)\right)
+To illustrate this, consider the coin flipping problem from before, and pretend
+that we do not know the closed form solution. We may compute that
 
 $$
+-\log(\mathbb{P}(X ; \boldsymbol{\theta})) = -\log\left(\theta^{x^{(n)}}(1-\theta)^{1-x^{(n)}}\right) = -\left(n_H\log(\theta) + n_T\log(1-\theta)\right)
+$$
 
-where $n_H$ is the number of heads and $n_T$ is the number of tails. This form is just like in {prf:ref}`def:maximum-likelihood-estimation-for-bernoulli-distribution`.
+where $n_H$ is the number of heads and $n_T$ is the number of tails. This form
+is just like in
+{prf:ref}`def:maximum-likelihood-estimation-for-bernoulli-distribution`.
 
-This can be written into code, and freely optimized even for billions of coin flips.
+This can be written into code, and freely optimized even for billions of coin
+flips.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -750,61 +793,44 @@ print(f"Empirical theta: {n_H / (n_H + n_T)}")
 
 ### Mathematical Convenience
 
-Numerical convenience is not the only reason why people like to use negative log-likelihoods. There are several other reasons why it is preferable.
+Numerical convenience is not the only reason why people like to use negative
+log-likelihoods. There are several other reasons why it is preferable.
 
-The second reason we consider the log-likelihood is the simplified application of calculus rules. As discussed above, due to independence assumptions, most probabilities we encounter in machine learning are products of individual probabilities.
-
-
-$$
-
-\mathbb{P}(X ; \boldsymbol{\theta}) = p(x_1\mid\boldsymbol{\theta})\cdot
-p(x_2\mid\boldsymbol{\theta})\cdots p(x_n\mid\boldsymbol{\theta}).
+The second reason we consider the log-likelihood is the simplified application
+of calculus rules. As discussed above, due to independence assumptions, most
+probabilities we encounter in machine learning are products of individual
+probabilities.
 
 $$
-
-This means that if we directly apply the product rule to compute a derivative we get
-
-
+\mathbb{P}(X ; \boldsymbol{\theta}) = p(x_1\mid\boldsymbol{\theta})\cdot p(x_2\mid\boldsymbol{\theta})\cdots p(x_n\mid\boldsymbol{\theta}).
 $$
 
-\begin{aligned} \frac{\partial}{\partial \boldsymbol{\theta}} \mathbb{P}(X ;
-\boldsymbol{\theta}) & = \left(\frac{\partial}{\partial
-\boldsymbol{\theta}}\mathbb{P}(x_1\mid\boldsymbol{\theta})\right)\cdot
-\mathbb{P}(x_2\mid\boldsymbol{\theta})\cdots
-\mathbb{P}(x_n\mid\boldsymbol{\theta}) \\ & \quad +
-\mathbb{P}(x_1\mid\boldsymbol{\theta})\cdot \left(\frac{\partial}{\partial
-\boldsymbol{\theta}}\mathbb{P}(x_2\mid\boldsymbol{\theta})\right)\cdots
-\mathbb{P}(x_n\mid\boldsymbol{\theta}) \\ & \quad \quad \quad \quad \quad \quad
-\quad \quad \quad \quad \vdots \\ & \quad +
-\mathbb{P}(x_1\mid\boldsymbol{\theta})\cdot
-\mathbb{P}(x_2\mid\boldsymbol{\theta}) \cdots \left(\frac{\partial}{\partial
-\boldsymbol{\theta}}\mathbb{P}(x_n\mid\boldsymbol{\theta})\right). \end{aligned}
+This means that if we directly apply the product rule to compute a derivative we
+get
 
 $$
-
-This requires $n(n-1)$ multiplications, along with $(n-1)$ additions, so it is proportional to quadratic time in the inputs!  Sufficient cleverness in grouping terms will reduce this to linear time, but it requires some thought.  For the negative log-likelihood we have instead
-
-
+\begin{aligned}
+\frac{\partial}{\partial \boldsymbol{\theta}} \mathbb{P}(X ; \boldsymbol{\theta}) & = \left(\frac{\partial}{\partial \boldsymbol{\theta}}\mathbb{P}(x_1\mid\boldsymbol{\theta})\right)\cdot \mathbb{P}(x_2\mid\boldsymbol{\theta})\cdots \mathbb{P}(x_n\mid\boldsymbol{\theta}) \\
+& \quad + \mathbb{P}(x_1\mid\boldsymbol{\theta})\cdot \left(\frac{\partial}{\partial \boldsymbol{\theta}}\mathbb{P}(x_2\mid\boldsymbol{\theta})\right)\cdots \mathbb{P}(x_n\mid\boldsymbol{\theta}) \\
+& \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \vdots \\
+& \quad + \mathbb{P}(x_1\mid\boldsymbol{\theta})\cdot \mathbb{P}(x_2\mid\boldsymbol{\theta}) \cdots \left(\frac{\partial}{\partial \boldsymbol{\theta}}\mathbb{P}(x_n\mid\boldsymbol{\theta})\right).
+\end{aligned}
 $$
 
--\log\left(\mathbb{P}(X ; \boldsymbol{\theta})\right) =
--\log(\mathbb{P}(x_1\mid\boldsymbol{\theta})) -
-\log(\mathbb{P}(x_2\mid\boldsymbol{\theta})) \cdots -
-\log(\mathbb{P}(x_n\mid\boldsymbol{\theta})),
+This requires $n(n-1)$ multiplications, along with $(n-1)$ additions, so it is
+proportional to quadratic time in the inputs! Sufficient cleverness in grouping
+terms will reduce this to linear time, but it requires some thought. For the
+negative log-likelihood we have instead
 
+$$
+-\log\left(\mathbb{P}(X ; \boldsymbol{\theta})\right) = -\log(\mathbb{P}(x_1\mid\boldsymbol{\theta})) - \log(\mathbb{P}(x_2\mid\boldsymbol{\theta})) \cdots - \log(\mathbb{P}(x_n\mid\boldsymbol{\theta})),
 $$
 
 which then gives
 
-
 $$
-
--   \frac{\partial}{\partial \boldsymbol{\theta}} \log\left(\mathbb{P}(X ;
-    \boldsymbol{\theta})\right) =
-    \frac{1}{\mathbb{P}(x_1\mid\boldsymbol{\theta})}\left(\frac{\partial}{\partial
-    \boldsymbol{\theta}}\mathbb{P}(x_1\mid\boldsymbol{\theta})\right) + \cdots +
-    \frac{1}{\mathbb{P}(x_n\mid\boldsymbol{\theta})}\left(\frac{\partial}{\partial
-    \boldsymbol{\theta}}\mathbb{P}(x_n\mid\boldsymbol{\theta})\right). $$
+- \frac{\partial}{\partial \boldsymbol{\theta}} \log\left(\mathbb{P}(X ; \boldsymbol{\theta})\right) = \frac{1}{\mathbb{P}(x_1\mid\boldsymbol{\theta})}\left(\frac{\partial}{\partial \boldsymbol{\theta}}\mathbb{P}(x_1\mid\boldsymbol{\theta})\right) + \cdots + \frac{1}{\mathbb{P}(x_n\mid\boldsymbol{\theta})}\left(\frac{\partial}{\partial \boldsymbol{\theta}}\mathbb{P}(x_n\mid\boldsymbol{\theta})\right).
+$$
 
 This requires only $n$ divides and $n-1$ sums, and thus is linear time in the
 inputs.
@@ -831,7 +857,7 @@ dataset as a way of measuring model performance.
 ## Maximum Likelihood for Continuous Variables
 
 **_The following section is adapted from section 22.7 from Dive Into Deep
-Learning, {cite}`zhang2021dive`._**
+Learning, {cite}`zhang2023dive`._**
 
 Everything that we have done so far assumes we are working with discrete random
 variables, but what if we want to work with continuous ones?
@@ -903,276 +929,192 @@ $\sigma^2$ are unknown.
 Let $\boldsymbol{\theta}=\left[\mu, \sigma^2\right]^T$ be the parameter. Find
 the maximum likelihood estimate of $\boldsymbol{\theta}$.
 
----
-
 **First**, we define the likelihood and log-likelihood functions. Since the
 random variables are i.i.d., the likelihood function is given by:
 
-$$
+```{math}
+:label: eq:gaussian-likelihood-1
+
 \begin{aligned}
 \overbrace{\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S} = \left\{X^{(1)}, \ldots, X^{(N)}\right\}\right)}^{\mathbb{P}\left(\mathcal{S} = \left\{X^{(1)}, \ldots, X^{(N)}\right\} ; \boldsymbol{\theta}\right)} &= \prod_{n=1}^N \overbrace{f_{\boldsymbol{\theta}}\left(x^{(n)}\right)}^{\mathcal{N}\left(x^{(n)} ; \mu, \sigma^2\right) \\} \\
 &= \prod_{n=1}^N \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2}\right).
 \end{aligned}
-$$ (eq:gaussian-likelihood-1)
+```
 
 The log-likelihood function is given by:
 
+```{math}
+:label: eq:gaussian-likelihood-2
 
-$$
-
-\begin{aligned} \overbrace{\log\mathcal{L}\left(\boldsymbol{\theta} \mid
-\mathcal{S} = \left\{X^{(1)}, \ldots,
-X^{(N)}\right\}\right)}^{\log\mathbb{P}\left(\mathcal{S} = \left\{X^{(1)},
-\ldots, X^{(N)}\right\} ; \boldsymbol{\theta}\right)} &= \log\left(\prod*{n=1}^N
-\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{\left(x^{(n)} -
-\mu\right)^2}{2\sigma^2}\right)\right) \\ &= \sum*{n=1}^N
-\log\left(\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{\left(x^{(n)} -
-\mu\right)^2}{2\sigma^2}\right)\right) &&(\*)\\ &= \sum*{n=1}^N
-\log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \sum*{n=1}^N
-\log\left(\exp\left(-\frac{\left(x^{(n)} -
-\mu\right)^2}{2\sigma^2}\right)\right) &&(**)\\ &= \sum*{n=1}^N
-\log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \sum*{n=1}^N
--\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2} \cdot \underbrace{\log(e)}\_{1}
-&&(\***)\\ &= \left(\sum*{n=1}^N -\frac{1}{2} \log(2\pi\sigma^2)\right) -
-\sum*{n=1}^N \frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2} &&(\*\*\*\*)\\ &=
--\frac{N}{2} \log(2\pi\sigma^2) - \sum\_{n=1}^N \frac{\left(x^{(n)} -
-\mu\right)^2}{2\sigma^2}. \end{aligned}
-
-$$
-(eq:gaussian-likelihood-2)
+\begin{aligned}
+\overbrace{\log\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S} = \left\{X^{(1)}, \ldots, X^{(N)}\right\}\right)}^{\log\mathbb{P}\left(\mathcal{S} = \left\{X^{(1)}, \ldots, X^{(N)}\right\} ; \boldsymbol{\theta}\right)} &= \log\left(\prod_{n=1}^N \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2}\right)\right) \\
+&= \sum_{n=1}^N \log\left(\frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2}\right)\right) &&(*)\\
+&= \sum_{n=1}^N \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \sum_{n=1}^N \log\left(\exp\left(-\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2}\right)\right) &&(**)\\
+&= \sum_{n=1}^N \log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) + \sum_{n=1}^N -\frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2} \cdot \underbrace{\log(e)}_{1} &&(***)\\
+&= \left(\sum_{n=1}^N -\frac{1}{2} \log(2\pi\sigma^2)\right) - \sum_{n=1}^N \frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2} &&(****)\\
+&= -\frac{N}{2} \log(2\pi\sigma^2) - \sum_{n=1}^N \frac{\left(x^{(n)} - \mu\right)^2}{2\sigma^2}.
+\end{aligned}
+```
 
 where
 
-- $(*)$ is the log-product rule, meaning that the logarithm of the product of $N$ terms is the sum of the logarithms of the $N$ terms.
-- $(**)$ is again the log-product rule.
-- $(***)$ is the log-exponential rule, meaning that the logarithm of the exponential of a term is the term multiplied by the logarithm of $e$.
-- $(****)$ is just writing $\log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) = \log\left(\sqrt{2\pi\sigma^2}^{-\frac{1}{2}}\right)$ and therefore the log of it is just $-\frac{1}{2} \log(2\pi\sigma^2)$.
+-   $(*)$ is the log-product rule, meaning that the logarithm of the product of
+    $N$ terms is the sum of the logarithms of the $N$ terms.
+-   $(**)$ is again the log-product rule.
+-   $(***)$ is the log-exponential rule, meaning that the logarithm of the
+    exponential of a term is the term multiplied by the logarithm of $e$.
+-   $(****)$ is just writing
+    $\log\left(\frac{1}{\sqrt{2\pi\sigma^2}}\right) = \log\left(\sqrt{2\pi\sigma^2}^{-\frac{1}{2}}\right)$
+    and therefore the log of it is just $-\frac{1}{2} \log(2\pi\sigma^2)$.
 
-Then, we take the derivative of the log-likelihood function with respect to $\mu$ and $\sigma^2$ and set them to zero to find the maximum likelihood estimates.
-
-
-$$
-
-\begin{aligned} \frac{\partial}{\partial \mu} \log
-\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots,
-X^{(N)}\right\}\right) & =\frac{\partial}{\partial \mu}\left(-\frac{N}{2} \log
-\left(2 \pi \sigma^2\right)-\sum*{n=1}^N \frac{\left(x^{(n)}-\mu\right)^2}{2
-\sigma^2}\right) \\ & =0-\frac{\partial}{\partial \mu}\left(\sum*{n=1}^N
-\frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\ & =-\frac{1}{2 \sigma^2}
-\sum*{n=1}^N \frac{\partial}{\partial
-\mu}\left(\left(x^{(n)}-\mu\right)^2\right) \\ & =-\frac{1}{2 \sigma^2}
-\sum*{n=1}^N 2\left(x^{(n)}-\mu\right)(-1) \\ & =\frac{1}{\sigma^2}\sum\_{n=1}^N
-\left(x^{(n)}- \mu\right) \\ \end{aligned}
+Then, we take the derivative of the log-likelihood function with respect to
+$\mu$ and $\sigma^2$ and set them to zero to find the maximum likelihood
+estimates.
 
 $$
-
-
-So the partial derivative of the log-likelihood function with respect to $\mu$ is:
-
-
+\begin{aligned}
+\frac{\partial}{\partial \mu} \log \mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots, X^{(N)}\right\}\right) & =\frac{\partial}{\partial \mu}\left(-\frac{N}{2} \log \left(2 \pi \sigma^2\right)-\sum_{n=1}^N \frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\
+& =0-\frac{\partial}{\partial \mu}\left(\sum_{n=1}^N \frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\
+& =-\frac{1}{2 \sigma^2} \sum_{n=1}^N \frac{\partial}{\partial \mu}\left(\left(x^{(n)}-\mu\right)^2\right) \\
+& =-\frac{1}{2 \sigma^2} \sum_{n=1}^N 2\left(x^{(n)}-\mu\right)(-1) \\
+& =\frac{1}{\sigma^2}\sum_{n=1}^N \left(x^{(n)}- \mu\right) \\
+\end{aligned}
 $$
 
-\frac{\partial}{\partial \mu} \log \mathcal{L}\left(\boldsymbol{\theta} \mid
-\mathcal{S}=\left\{X^{(1)}, \ldots,
-X^{(N)}\right\}\right)=\frac{1}{\sigma^2}\sum\_{n=1}^N \left(x^{(n)}- \mu\right)
+So the partial derivative of the log-likelihood function with respect to $\mu$
+is:
 
+$$
+\frac{\partial}{\partial \mu} \log \mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots, X^{(N)}\right\}\right)=\frac{1}{\sigma^2}\sum_{n=1}^N \left(x^{(n)}- \mu\right)
 $$
 
 and setting it to zero gives:
 
-
 $$
-
-\begin{aligned} \frac{1}{\sigma^2}\sum*{n=1}^N \left(x^{(n)}- \mu\right) = 0
-&\iff \sum*{n=1}^N x^{(n)}- \mu = 0 \\ &\iff \sum*{n=1}^N x^{(n)} = \mu N \\
-&\iff \mu = \frac{1}{N}\sum*{n=1}^N x^{(n)}. \end{aligned}
-
+\begin{aligned}
+\frac{1}{\sigma^2}\sum_{n=1}^N \left(x^{(n)}- \mu\right) = 0 &\iff \sum_{n=1}^N x^{(n)}- \mu = 0 \\
+&\iff \sum_{n=1}^N x^{(n)} = \mu N \\
+&\iff \mu = \frac{1}{N}\sum_{n=1}^N x^{(n)}.
+\end{aligned}
 $$
 
 resulting in the maximum likelihood estimate for $\mu$ to be:
 
-
 $$
-
-\hat{\mu} = \frac{1}{N}\sum\_{n=1}^N x^{(n)}.
-
+\hat{\mu} = \frac{1}{N}\sum_{n=1}^N x^{(n)}.
 $$
 
 Similarly, we have for $\sigma^2$:
 
-
 $$
-
-\begin{aligned} \frac{\partial}{\partial \sigma^2} \log
-\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots,
-X^{(N)}\right\}\right) & =\frac{\partial}{\partial \sigma^2}\left(-\frac{N}{2}
-\log \left(2 \pi \sigma^2\right)-\sum*{n=1}^N
-\frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\ & =-\frac{N}{2}
-\frac{\partial}{\partial \sigma^2}\left(\log \left(2 \pi
-\sigma^2\right)\right)-\sum*{n=1}^N \frac{\partial}{\partial
-\sigma^2}\left(\frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\ &
-=-\frac{N}{2} \frac{1}{\sigma^2}-\sum*{n=1}^N
-\frac{-1}{2\left(\sigma^2\right)^2}\left(x^{(n)}-\mu\right)^2 \\ & =-\frac{N}{2
-\sigma^2}+\frac{1}{2\left(\sigma^2\right)^2}
-\sum*{n=1}^N\left(x^{(n)}-\mu\right)^2 \end{aligned}
-
+\begin{aligned}
+\frac{\partial}{\partial \sigma^2} \log \mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots, X^{(N)}\right\}\right) & =\frac{\partial}{\partial \sigma^2}\left(-\frac{N}{2} \log \left(2 \pi \sigma^2\right)-\sum_{n=1}^N \frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\
+& =-\frac{N}{2} \frac{\partial}{\partial \sigma^2}\left(\log \left(2 \pi \sigma^2\right)\right)-\sum_{n=1}^N \frac{\partial}{\partial \sigma^2}\left(\frac{\left(x^{(n)}-\mu\right)^2}{2 \sigma^2}\right) \\
+& =-\frac{N}{2} \frac{1}{\sigma^2}-\sum_{n=1}^N \frac{-1}{2\left(\sigma^2\right)^2}\left(x^{(n)}-\mu\right)^2 \\
+& =-\frac{N}{2 \sigma^2}+\frac{1}{2\left(\sigma^2\right)^2} \sum_{n=1}^N\left(x^{(n)}-\mu\right)^2
+\end{aligned}
 $$
 
 So, the partial derivative with respect to $\sigma^2$ is:
 
-
 $$
-
-\frac{\partial}{\partial \sigma^2} \log \mathcal{L}\left(\boldsymbol{\theta}
-\mid \mathcal{S}=\left\{X^{(1)}, \ldots, X^{(N)}\right\}\right)=-\frac{N}{2
-\sigma^2}+\frac{1}{2\left(\sigma^2\right)^2}
-\sum\_{n=1}^N\left(x^{(n)}-\mu\right)^2
-
+\frac{\partial}{\partial \sigma^2} \log \mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S}=\left\{X^{(1)}, \ldots, X^{(N)}\right\}\right)=-\frac{N}{2 \sigma^2}+\frac{1}{2\left(\sigma^2\right)^2} \sum_{n=1}^N\left(x^{(n)}-\mu\right)^2
 $$
 
 and setting it to zero gives:
 
-
 $$
-
-\begin{aligned} -\frac{N}{2 \sigma^2}+\frac{1}{2\left(\sigma^2\right)^2}
-\sum*{n=1}^N\left(x^{(n)}-\mu\right)^2 = 0 &\iff \frac{N}{2 \sigma^2} =
-\frac{1}{2\left(\sigma^2\right)^2} \sum*{n=1}^N\left(x^{(n)}-\mu\right)^2 \\
-&\iff \sigma^2 = \frac{1}{N}\sum\_{n=1}^N\left(x^{(n)}-\mu\right)^2.
+\begin{aligned}
+-\frac{N}{2 \sigma^2}+\frac{1}{2\left(\sigma^2\right)^2} \sum_{n=1}^N\left(x^{(n)}-\mu\right)^2 = 0 &\iff \frac{N}{2 \sigma^2} = \frac{1}{2\left(\sigma^2\right)^2} \sum_{n=1}^N\left(x^{(n)}-\mu\right)^2 \\
+&\iff \sigma^2 = \frac{1}{N}\sum_{n=1}^N\left(x^{(n)}-\mu\right)^2.
 \end{aligned}
-
 $$
 
 resulting in the maximum likelihood estimate for $\sigma^2$ to be:
 
-
 $$
-
-\hat{\sigma}^2 = \frac{1}{N}\sum\_{n=1}^N\left(x^{(n)}-\hat{\mu}\right)^2.
-
+\hat{\sigma}^2 = \frac{1}{N}\sum_{n=1}^N\left(x^{(n)}-\hat{\mu}\right)^2.
 $$
 
 Note in particular that we placed $\mu$ by $\hat{\mu}$.
 
-Overall, the maximum likelihood estimate for the parameters of a Gaussian distribution is:
-
-
-$$
-
-\hat{\boldsymbol{\theta}} = \begin{bmatrix} \hat{\mu} \\ \hat{\sigma}^2
-\end{bmatrix} = \begin{bmatrix} \frac{1}{N}\sum*{n=1}^N x^{(n)} \\
-\frac{1}{N}\sum*{n=1}^N\left(x^{(n)}-\hat{\mu}\right)^2 \end{bmatrix}
+Overall, the maximum likelihood estimate for the parameters of a Gaussian
+distribution is:
 
 $$
-
+\hat{\boldsymbol{\theta}} = \begin{bmatrix} \hat{\mu} \\ \hat{\sigma}^2 \end{bmatrix} = \begin{bmatrix} \frac{1}{N}\sum_{n=1}^N x^{(n)} \\ \frac{1}{N}\sum_{n=1}^N\left(x^{(n)}-\hat{\mu}\right)^2 \end{bmatrix}
+$$
 
 ### Maximum Likelihood Estimation for Multivariate Gaussian
 
-See [my proof on multiple linear regression](../../../machine_learning/linear_models/linear_regression/concept.md), they have similar vein of logic. See [here](https://stats.stackexchange.com/questions/351549/maximum-likelihood-estimators-multivariate-gaussian) also.
+See
+[my proof on multiple linear regression](../../../machine_learning/linear_models/linear_regression/concept.md),
+they have similar vein of logic. See
+[here](https://stats.stackexchange.com/questions/351549/maximum-likelihood-estimators-multivariate-gaussian)
+also.
 
----
-
-Suppose that we are given a set of $\textrm{i.i.d.}$ $D$-dimensional Gaussian random vectors $\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(N)}$ such that:
-
-
-$$
-
-\mathbf{X}^{(n)} = \begin{bmatrix} X^{(n)}\_1 \\ \vdots \\ X^{(n)}\_D
-\end{bmatrix} \sim \mathcal{N}\left(\boldsymbol{\mu}, \boldsymbol{\Sigma}\right)
+Suppose that we are given a set of $\textrm{i.i.d.}$ $D$-dimensional Gaussian
+random vectors $\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(N)}$ such that:
 
 $$
-
-where the mean vector $\boldsymbol{\mu}$ and the covariance matrix $\boldsymbol{\Sigma}$ are given by
-
-
+\mathbf{X}^{(n)} = \begin{bmatrix} X^{(n)}_1 \\ \vdots \\ X^{(n)}_D \end{bmatrix} \sim \mathcal{N}\left(\boldsymbol{\mu}, \boldsymbol{\Sigma}\right)
 $$
 
-\boldsymbol{\mu} = \begin{bmatrix} \mu*1 \\ \vdots \\ \mu_D \end{bmatrix}, \quad
-\boldsymbol{\Sigma} = \begin{bmatrix} \sigma_1^2 & \cdots & \sigma*{1D} \\
-\vdots & \ddots & \vdots \\ \sigma\_{D1} & \cdots & \sigma_D^2 \end{bmatrix}
+where the mean vector $\boldsymbol{\mu}$ and the covariance matrix
+$\boldsymbol{\Sigma}$ are given by
 
 $$
-
-Now the $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are unknown, and we want to find the maximum likelihood estimate for them.
-
-As usual, we find the likelihood function for the parameters $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$, and then find the maximum likelihood estimate for them.
-
-
+\boldsymbol{\mu} = \begin{bmatrix} \mu_1 \\ \vdots \\ \mu_D \end{bmatrix}, \quad \boldsymbol{\Sigma} = \begin{bmatrix} \sigma_1^2 & \cdots & \sigma_{1D} \\ \vdots & \ddots & \vdots \\ \sigma_{D1} & \cdots & \sigma_D^2 \end{bmatrix}
 $$
 
-\begin{aligned} \mathcal{L}\left(\boldsymbol{\mu}, \boldsymbol{\Sigma} \mid
-\mathcal{S}=\left\{\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(N)}\right\}\right) &
-=\prod*{n=1}^N f*{\mathbf{X}^{(n)}}\left(\mathbf{x}^{(n)} ; \boldsymbol{\mu},
-\boldsymbol{\Sigma}\right) \\ & =\prod*{n=1}^N \frac{1}{\sqrt{(2
-\pi)^{D}|\boldsymbol{\Sigma}|}} \exp
-\left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^{T}
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}
-\\ & =\left(\frac{1}{\sqrt{(2 \pi)^{D}|\boldsymbol{\Sigma}|}}\right)^N \exp
-\left\{-\frac{1}{2}\sum*{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^{T}
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}
-\\ \end{aligned}
+Now the $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ are unknown, and we want to
+find the maximum likelihood estimate for them.
 
+As usual, we find the likelihood function for the parameters $\boldsymbol{\mu}$
+and $\boldsymbol{\Sigma}$, and then find the maximum likelihood estimate for
+them.
+
+$$
+\begin{aligned}
+\mathcal{L}\left(\boldsymbol{\mu}, \boldsymbol{\Sigma} \mid \mathcal{S}=\left\{\mathbf{X}^{(1)}, \ldots, \mathbf{X}^{(N)}\right\}\right) & =\prod_{n=1}^N f_{\mathbf{X}^{(n)}}\left(\mathbf{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma}\right) \\
+& =\prod_{n=1}^N \frac{1}{\sqrt{(2 \pi)^{D}|\boldsymbol{\Sigma}|}} \exp \left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^{T} \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\} \\
+& =\left(\frac{1}{\sqrt{(2 \pi)^{D}|\boldsymbol{\Sigma}|}}\right)^N \exp \left\{-\frac{1}{2}\sum_{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^{T} \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\} \\
+\end{aligned}
 $$
 
 and consequently the log-likelihood function is:
 
-
 $$
-
-\begin{aligned} \log \mathcal{L}\left(\boldsymbol{\mu}, \mathbf{\Sigma} \mid
-\mathcal{S}=\left\{\mathbf{x}^{(1)}, \ldots, \mathbf{X}^{(N)}\right\}\right) &
-=\log \left(\prod*{n=1}^N \frac{1}{\sqrt{(2 \pi)^D|\boldsymbol{\Sigma}|}} \exp
-\left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}\right)
-\\ & =\sum*{n=1}^N \log \left(\frac{1}{\sqrt{(2
-\pi)^D|\mathbf{\Sigma}|}}\right)+\sum*{n=1}^N \log \left(\exp
-\left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}\right)
-\\ & =\sum*{n=1}^N\left(-\frac{D}{2} \log (2 \pi)-\frac{1}{2} \log
-(|\mathbf{\Sigma}|)-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right) \\
-& =-\frac{N D}{2} \log (2 \pi)-\frac{N}{2} \log
-(|\boldsymbol{\Sigma}|)-\frac{1}{2}
-\sum\_{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)
+\begin{aligned}
+\log \mathcal{L}\left(\boldsymbol{\mu}, \mathbf{\Sigma} \mid \mathcal{S}=\left\{\mathbf{x}^{(1)}, \ldots, \mathbf{X}^{(N)}\right\}\right) & =\log \left(\prod_{n=1}^N \frac{1}{\sqrt{(2 \pi)^D|\boldsymbol{\Sigma}|}} \exp \left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}\right) \\
+& =\sum_{n=1}^N \log \left(\frac{1}{\sqrt{(2 \pi)^D|\mathbf{\Sigma}|}}\right)+\sum_{n=1}^N \log \left(\exp \left\{-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}\right) \\
+& =\sum_{n=1}^N\left(-\frac{D}{2} \log (2 \pi)-\frac{1}{2} \log (|\mathbf{\Sigma}|)-\frac{1}{2}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right) \\
+& =-\frac{N D}{2} \log (2 \pi)-\frac{N}{2} \log (|\boldsymbol{\Sigma}|)-\frac{1}{2} \sum_{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)
 \end{aligned}
-
 $$
 
----
-
-
-Finding the ML estimate requires taking the derivative with respect to both $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ :
-
+Finding the ML estimate requires taking the derivative with respect to both
+$\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$ :
 
 $$
-
-\begin{aligned} & \frac{d}{d \boldsymbol{\mu}}\left\{-\frac{N D}{2} \log (2
-\pi)-\frac{N}{2} \log (|\boldsymbol{\Sigma}|)-\frac{1}{2}
-\sum*{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}=0
-\\ & \frac{d}{d \boldsymbol{\Sigma}}\left\{-\frac{N D}{2} \log (2
-\pi)-\frac{N}{2} \log (|\boldsymbol{\Sigma}|)-\frac{1}{2}
-\sum*{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T
-\boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}=0
-. \end{aligned}
-
+\begin{aligned}
+& \frac{d}{d \boldsymbol{\mu}}\left\{-\frac{N D}{2} \log (2 \pi)-\frac{N}{2} \log (|\boldsymbol{\Sigma}|)-\frac{1}{2} \sum_{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}=0 \\
+& \frac{d}{d \boldsymbol{\Sigma}}\left\{-\frac{N D}{2} \log (2 \pi)-\frac{N}{2} \log (|\boldsymbol{\Sigma}|)-\frac{1}{2} \sum_{n=1}^N\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)^T \boldsymbol{\Sigma}^{-1}\left(\mathbf{x}^{(n)}-\boldsymbol{\mu}\right)\right\}=0 .
+\end{aligned}
 $$
 
-After some tedious algebraic steps (see Duda et al., Pattern Classification, Problem 3.14), we have that
-
-
-$$
-
-\begin{aligned} & \widehat{\boldsymbol{\mu}}=\frac{1}{N} \sum*{n=1}^{N}
-\mathbf{x}^{(n)}, \\ & \widehat{\boldsymbol{\Sigma}}=\frac{1}{N}
-\sum*{n=1}^{N}\left(\mathbf{x}^{(n)}-\widehat{\boldsymbol{\mu}}\right)\left(\mathbf{x}^{(n)}-\widehat{\boldsymbol{\mu}}\right)^{T}
-. \end{aligned}
+After some tedious algebraic steps (see Duda et al., Pattern Classification,
+Problem 3.14), we have that
 
 $$
-
+\begin{aligned}
+& \widehat{\boldsymbol{\mu}}=\frac{1}{N} \sum_{n=1}^{N} \mathbf{x}^{(n)}, \\
+& \widehat{\boldsymbol{\Sigma}}=\frac{1}{N} \sum_{n=1}^{N}\left(\mathbf{x}^{(n)}-\widehat{\boldsymbol{\mu}}\right)\left(\mathbf{x}^{(n)}-\widehat{\boldsymbol{\mu}}\right)^{T} .
+\end{aligned}
+$$
 
 ## References and Further Readings
 
-- Chan, Stanley H. "Chapter 8.1. Maximum-Likelihood Estimation." In Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-$$
+-   Chan, Stanley H. "Chapter 8.1. Maximum-Likelihood Estimation." In
+    Introduction to Probability for Data Science. Ann Arbor, Michigan: Michigan
+    Publishing Services, 2021.

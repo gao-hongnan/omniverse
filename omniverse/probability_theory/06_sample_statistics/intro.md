@@ -1,3 +1,14 @@
 # Chapter 6. Sample Statistics
 
-This chapter introduces the concepts of sample statistics and the sampling distribution of a statistic.
+```{contents}
+:local:
+```
+
+## Table of Contents
+
+```{tableofcontents}
+
+```
+
+This chapter introduces the concepts of sample statistics and the sampling
+distribution of a statistic.

@@ -1,19 +1,25 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Random Vectors
 
-In earlier sections we see that if $X$ and $Y$ are two random variables, then their
-joint distribution can be represented as $f_{X,Y}(x,y)$. Similarly, if $X_1, X_2, \ldots, X_N$ are
-$N$ random variables, then their joint distribution can be represented as
+In earlier sections we see that if $X$ and $Y$ are two random variables, then
+their joint distribution can be represented as $f_{X,Y}(x,y)$. Similarly, if
+$X_1, X_2, \ldots, X_N$ are $N$ random variables, then their joint distribution
+can be represented as
 
 $$
 f_{X_1, X_2, \ldots, X_N}(x_1, x_2, \ldots, x_N)
 $$
 
-where $x_1, x_2, \ldots, x_N$ are the realizations of the random variables $X_1, X_2, \ldots, X_N$ respectively.
+where $x_1, x_2, \ldots, x_N$ are the realizations of the random variables
+$X_1, X_2, \ldots, X_N$ respectively.
 
-The notation is cumbersome, and when dealing with high-dimensional data, we often package them in
-vectors/matrices.
+The notation is cumbersome, and when dealing with high-dimensional data, we
+often package them in vectors/matrices.
 
 ```{prf:definition} Random Vectors
 :label: def:random-vector
@@ -94,8 +100,9 @@ where $F_{X_1, X_2, \ldots, X_N}(x_1, x_2, \ldots, x_N)$ is the joint CDF of $X_
 
 ## Independence
 
-Integration gets difficult in high dimensions, one simplification is if the $N$ random variables are independent,
-then the joint PDF can be written as the product of the marginal PDFs.
+Integration gets difficult in high dimensions, one simplification is if the $N$
+random variables are independent, then the joint PDF can be written as the
+product of the marginal PDFs.
 
 ```{prf:definition} Independent Random Vectors
 :label: def:independent-random-vector
@@ -179,9 +186,10 @@ following two conditions hold:
 
 ## Expectation of Random Vectors
 
-We now define the expectation of a random vector $\boldsymbol{X}$. Note that this is **not**
-the same as {prf:ref}`def:joint-expectation-independent-random-vector`, where we are dealing with
-the **joint** expectation of a random vector, which returns a scalar.
+We now define the expectation of a random vector $\boldsymbol{X}$. Note that
+this is **not** the same as
+{prf:ref}`def:joint-expectation-independent-random-vector`, where we are dealing
+with the **joint** expectation of a random vector, which returns a scalar.
 
 ```{prf:definition} Expectation of Random Vectors
 :label: def:expectation-random-vector
@@ -204,7 +212,8 @@ We also call this the **mean vector**.
 
 The below are from {cite}`chan_2021`.
 
-Since the mean vector is a vector of individual elements, we need to compute the marginal PDFs before computing the expectations:
+Since the mean vector is a vector of individual elements, we need to compute the
+marginal PDFs before computing the expectations:
 
 $$
 \mathbb{E}[\boldsymbol{X}]=\left[\begin{array}{c}
@@ -224,9 +233,13 @@ $$
 f_{X_n}\left(x_n\right)=\int_{\Omega} f_{\boldsymbol{X}_{\backslash n}}\left(\boldsymbol{x}_{\backslash n}\right) d \boldsymbol{x}_{\backslash n} .
 $$
 
-Note that $\boldsymbol{x}_{\backslash n}$ is a vector of all the elements without $x_n$.
+Note that $\boldsymbol{x}_{\backslash n}$ is a vector of all the elements
+without $x_n$.
 
-In the equation above, $\boldsymbol{x}_{\backslash n}=\left[x_1, \ldots, x_{n-1}, x_{n+1}, \ldots, x_N\right]^T$ contains all the elements without $x_n$. For example, if the PDF is $f_{X_1, X_2, X_3}\left(x_1, x_2, x_3\right)$, then
+In the equation above,
+$\boldsymbol{x}_{\backslash n}=\left[x_1, \ldots, x_{n-1}, x_{n+1}, \ldots, x_N\right]^T$
+contains all the elements without $x_n$. For example, if the PDF is
+$f_{X_1, X_2, X_3}\left(x_1, x_2, x_3\right)$, then
 
 $$
 \mathbb{E}\left[X_1\right]=\int x_1 \underbrace{\int f_{X_1, X_2, X_3}\left(x_1, x_2, x_3\right) d x_2 d x_3}_{f_{X_1}\left(x_1\right)} d x_1 .
@@ -297,4 +310,3 @@ $$
 This is in line with the fact that the covariance of two independent
 random variables is zero ({prf:ref}`prop:covariance`).
 ```
-

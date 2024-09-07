@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Multivariate Gaussian
 
 ```{prf:definition} Multivariate Gaussian Distribution
@@ -50,17 +54,20 @@ parameterized by the covariance matrix $\boldsymbol{\Sigma}$.
 Therefore, both are contained in the definition.
 ```
 
-One can also easily see if $\boldsymbol{X}$ is a scalar (1-dimensional)
-random variable $X$, then $D = 1$, $\boldsymbol{\mu} = \mu$, and
-$\boldsymbol{\Sigma} = \sigma^2$, and by plugging into {eq}`eq:multivariate_gaussian_pdf`, the PDF of $X$ is merely
+One can also easily see if $\boldsymbol{X}$ is a scalar (1-dimensional) random
+variable $X$, then $D = 1$, $\boldsymbol{\mu} = \mu$, and
+$\boldsymbol{\Sigma} = \sigma^2$, and by plugging into
+{eq}`eq:multivariate_gaussian_pdf`, the PDF of $X$ is merely
 
-$$
+```{math}
+:label: eq:univariate_gaussian_pdf
 f_{\boldsymbol{X}}(\boldsymbol{x}) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left( -\frac{1}{2 \sigma^2} (x - \mu)^2 \right)
-$$ (eq:univariate_gaussian_pdf)
+```
 
 ## Independence
 
-If all the individual random variables $X_d$ in a multivariate Gaussian random vector $\boldsymbol{X}$ are independent, then the PDF can be greatly simplified
+If all the individual random variables $X_d$ in a multivariate Gaussian random
+vector $\boldsymbol{X}$ are independent, then the PDF can be greatly simplified
 to a product of univariate Gaussian PDFs.
 
 ```{prf:definition} PDF of Independent Multivariate Gaussian Random Vectors
@@ -73,8 +80,10 @@ Suppose that all entries in $\boldsymbol{X} = \begin{bmatrix} X_1 & X_2 & \cdots
 Then the PDF of $\boldsymbol{X}$ is given by
 
 $$
-f_{\boldsymbol{X}}(\boldsymbol{x}) = \prod_{d=1}^D \frac{1}{\sqrt{(2 \pi) \sigma_{d}^2}} \exp \left( -\frac{(x_d - \mu_d)^2}{2 \sigma_{d}^2} \right)
-$$ (eq:independent_multivariate_gaussian_pdf)
+f*{\boldsymbol{X}}(\boldsymbol{x}) = \prod*{d=1}^D \frac{1}{\sqrt{(2 \pi)
+\sigma*{d}^2}} \exp \left( -\frac{(x_d - \mu_d)^2}{2 \sigma*{d}^2} \right)
+$$
+(eq:independent_multivariate_gaussian_pdf)
 
 which is indeed a product of univariate Gaussian PDFs.
 ```
@@ -87,46 +96,37 @@ what we understand of independence from earlier.
 Formally, suppose $X_i$ and $X_j$ are independent for all $i \neq j$. Then, {prf:ref}`prop:covariance` states that $\operatorname{Cov}\left(X_i, X_j\right)=$ 0 . Consequently, the covariance matrix $\boldsymbol{\Sigma}$ is a diagonal matrix:
 
 $$
-\boldsymbol{\Sigma}=\left[\begin{array}{ccc}
-\sigma_1^2 & \cdots & 0 \\
-\vdots & \ddots & \vdots \\
-0 & \cdots & \sigma_D^2
-\end{array}\right]_{D \times D}
+\boldsymbol{\Sigma}=\left[\begin{array}{ccc} \sigma_1^2 & \cdots & 0 \\ \vdots &
+\ddots & \vdots \\ 0 & \cdots & \sigma_D^2 \end{array}\right]_{D \times D}
 $$
 
 where $\sigma_{d}^2=\operatorname{Var}\left[X_d\right]$. When this occurs, the exponential term in the Gaussian PDF is {cite}`chan_2021`
 
+
 $$
-(\boldsymbol{x}-\boldsymbol{\mu})^T \boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})=\left[\begin{array}{c}
-x_1-\mu_1 \\
-\vdots \\
-x_D-\mu_D
-\end{array}\right]^T\left[\begin{array}{ccc}
-\sigma_1^2 & \cdots & 0 \\
-\vdots & \ddots & \vdots \\
-0 & \cdots & \sigma_D^2
-\end{array}\right]^{-1}\left[\begin{array}{c}
-x_1-\mu_1 \\
-\vdots \\
-x_D-\mu_D
+(\boldsymbol{x}-\boldsymbol{\mu})^T
+\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})=\left[\begin{array}{c}
+x_1-\mu_1 \\ \vdots \\ x_D-\mu_D \end{array}\right]^T\left[\begin{array}{ccc}
+\sigma_1^2 & \cdots & 0 \\ \vdots & \ddots & \vdots \\ 0 & \cdots & \sigma_D^2
+\end{array}\right]^{-1}\left[\begin{array}{c} x_1-\mu_1 \\ \vdots \\ x_D-\mu_D
 \end{array}\right]=\sum_{d=1}^D \frac{\left(x_d-\mu_d\right)^2}{\sigma_d^2} .
 $$
 
 Moreover, the determinant $|\boldsymbol{\Sigma}|$ is
 
+
 $$
-\left.|\boldsymbol{\Sigma}|=\mid \begin{array}{ccc}
-\sigma_1^2 & \cdots & 0 \\
-\vdots & \ddots & \vdots \\
-0 & \cdots & \sigma_D
-^2
-\end{array}\right] \mid=\prod_{d=1}^D \sigma_d^2
+\left.|\boldsymbol{\Sigma}|=\mid \begin{array}{ccc} \sigma*1^2 & \cdots & 0 \\
+\vdots & \ddots & \vdots \\ 0 & \cdots & \sigma_D ^2 \end{array}\right]
+\mid=\prod*{d=1}^D \sigma_d^2
 $$
 
 Substituting these results into the joint Gaussian PDF, we obtain
 
+
 $$
-f_{\boldsymbol{X}}(\boldsymbol{x}) = \prod_{d=1}^D \frac{1}{\sqrt{(2 \pi) \sigma_{d}^2}} \exp \left( -\frac{(x_d - \mu_d)^2}{2 \sigma_{d}^2} \right)
+f*{\boldsymbol{X}}(\boldsymbol{x}) = \prod*{d=1}^D \frac{1}{\sqrt{(2 \pi)
+\sigma*{d}^2}} \exp \left( -\frac{(x_d - \mu_d)^2}{2 \sigma*{d}^2} \right)
 $$
 
 which is a product of individual univariate Gaussian PDFs.
@@ -142,12 +142,13 @@ in the random vector of each sample.
 In supervised learning, implicitly or explicitly, one *always* assumes that the training set
 
 $$
-\begin{aligned}
-\mathcal{S} &= \left\{\left(\mathbf{x}^{(1)}, y^{(1)}\right), \left(\mathbf{x}^{(2)}, y^{(2)}\right), \cdots, \left(\mathbf{x}^{(N)}, y^{(N)}\right)\right\} \\
-\end{aligned}
+\begin{aligned} \mathcal{S} &= \left\{\left(\mathbf{x}^{(1)}, y^{(1)}\right),
+\left(\mathbf{x}^{(2)}, y^{(2)}\right), \cdots, \left(\mathbf{x}^{(N)},
+y^{(N)}\right)\right\} \\ \end{aligned}
 $$
 
 is composed of $N$ input/response tuples
+
 
 $$
 \left({\mathbf{X}}^{(n)} = \mathbf{x}^{(n)}, Y^{(n)} = y^{(n)}\right)
@@ -155,14 +156,17 @@ $$
 
 that are ***independently drawn from the same (identical) joint distribution***
 
+
 $$
 \mathbb{P}_{\{\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta}\}}(\mathbf{x}, y)
 $$
 
 with
 
+
 $$
-\mathbb{P}(\mathbf{X} = \mathbf{x}, Y = y ; \boldsymbol{\theta}) = \mathbb{P}(Y = y \mid \mathbf{X} = \mathbf{x}) \mathbb{P}(\mathbf{X} = \mathbf{x})
+\mathbb{P}(\mathbf{X} = \mathbf{x}, Y = y ; \boldsymbol{\theta}) = \mathbb{P}(Y
+= y \mid \mathbf{X} = \mathbf{x}) \mathbb{P}(\mathbf{X} = \mathbf{x})
 $$
 
 where $\mathbb{P}(Y = y \mid \mathbf{X} = \mathbf{x})$ is the conditional probability of $Y$ given $\mathbf{X}$,
@@ -170,22 +174,23 @@ the relationship that the learner algorithm/concept $c$ is trying to capture.
 
 Then in this case, the i.i.d. assumption writes (also defined in {prf:ref}`def_iid`):
 
+
 $$
-\begin{aligned}
-\left({\mathbf{X}}^{(n)}, Y^{(n)}\right) &\sim \mathbb{P}_{\{\mathcal{X}, \mathcal{Y}, \boldsymbol{\theta}\}}(\mathbf{x}, y) \quad \text{and}\\
-\left({\mathbf{X}}^{(n)}, Y^{(n)}\right) &\text{ independent of } \left({\mathbf{X}}^{(m)}, Y^{(m)}\right) \quad \forall n \neq m \in \{1, 2, \ldots, N\}
-\end{aligned}
+\begin{aligned} \left({\mathbf{X}}^{(n)}, Y^{(n)}\right) &\sim
+\mathbb{P}_{\{\mathcal{X}, \mathcal{Y}, \boldsymbol{\theta}\}}(\mathbf{x}, y)
+\quad \text{and}\\ \left({\mathbf{X}}^{(n)}, Y^{(n)}\right) &\text{ independent
+of } \left({\mathbf{X}}^{(m)}, Y^{(m)}\right) \quad \forall n \neq m \in \{1, 2,
+\ldots, N\} \end{aligned}
 $$
 
 and we sometimes denote
 
+
 $$
-\begin{aligned}
-\left(\mathbf{x}^{(n)}, y^{(n)}\right) \overset{\text{i.i.d.}}{\sim} \mathbb{P}_{\{\mathcal{X}, \mathcal{Y}, \boldsymbol{\theta}\}}(\mathbf{x}, y)
-\end{aligned}
+\begin{aligned} \left(\mathbf{x}^{(n)}, y^{(n)}\right)
+\overset{\text{i.i.d.}}{\sim} \mathbb{P}_{\{\mathcal{X}, \mathcal{Y},
+\boldsymbol{\theta}\}}(\mathbf{x}, y) \end{aligned}
 $$
 
 This **does not assume any independence within each sample** $\mathbf{X}^{(n)}$.
 ```
-
-

@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Intuition through Convolutions
 
 {cite}`chan_2021` section 5.5.1.
@@ -21,9 +25,11 @@ where $\ast$ denotes convolution.
 ```
 
 (sum-of-common-distributions-via-convolutions)=
+
 ## Sum of Common Distribution
 
-The following proofs are from {cite}`chan_2021` section 5.5.3. Sum of common distributions.
+The following proofs are from {cite}`chan_2021` section 5.5.3. Sum of common
+distributions.
 
 ```{prf:theorem} Sum of Poisson Random Variables
 :label: theorem:sum-of-poisson-random-variables

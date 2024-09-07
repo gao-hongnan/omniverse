@@ -1,5 +1,9 @@
 # Concept
 
+```{contents}
+:local:
+```
+
 ## Conditional PMF
 
 ```{prf:definition} Conditional PMF
@@ -144,7 +148,6 @@ Interestingly, two variables can be independent in general but become dependent 
 And conversely, two dependent random variables can become independent upon conditioning on a third. This often happens when two otherwise unrelated events have a common cause. Shoe size and reading level are highly correlated among elementary school students, but this correlation disappears if we condition on age.
 ```
 
-
 ## Conditional PDF
 
 We now discuss the conditioning of a continuous random variable.
@@ -159,13 +162,16 @@ f_{X \mid Y}(x \mid y)=\frac{f_{X, Y}(x, y)}{f_{Y}(y)} .
 $$ (eq:conditional-pdf-2d)
 ```
 
-Even though {eq}`eq:conditional-pdf-2d` is in the [form of Bayes' rule](https://en.wikipedia.org/wiki/Bayes%27_theorem#Simple_form), this definition becomes hazy since we cannot treat the conditional PDF of a continuous random variable
-the same way we treat the discrete counterpart earlier. That is to say, we cannot just say that the conditional
-PDF stems from the Bayes' rule. This is because the
-denominator $p_{Y}(y)$ is already $0$ by definition (i.e. $\mathbb{P}[Y=y]=0$) when
-$Y$ is continuous.
+Even though {eq}`eq:conditional-pdf-2d` is in the
+[form of Bayes' rule](https://en.wikipedia.org/wiki/Bayes%27_theorem#Simple_form),
+this definition becomes hazy since we cannot treat the conditional PDF of a
+continuous random variable the same way we treat the discrete counterpart
+earlier. That is to say, we cannot just say that the conditional PDF stems from
+the Bayes' rule. This is because the denominator $p_{Y}(y)$ is already $0$ by
+definition (i.e. $\mathbb{P}[Y=y]=0$) when $Y$ is continuous.
 
-To answer this question, we first define the conditional $\mathrm{CDF}$ for continuous random variables.
+To answer this question, we first define the conditional $\mathrm{CDF}$ for
+continuous random variables.
 
 ```{prf:definition} Conditional CDF
 :label: def:conditional-cdf-of-a-continuous-random-variable
@@ -177,7 +183,9 @@ F_{X \mid Y}(x \mid y)=\frac{\int_{-\infty}^{x} f_{X, Y}\left(x^{\prime}, y\righ
 $$
 ```
 
-Professor Chan probed further by asking why should the conditional CDF of continuous random variable be defined in this way? One way to interpret $F_{X \mid Y}(x \mid y)$ is as the limiting perspective.
+Professor Chan probed further by asking why should the conditional CDF of
+continuous random variable be defined in this way? One way to interpret
+$F_{X \mid Y}(x \mid y)$ is as the limiting perspective.
 
 ```{prf:definition} Limiting Perspective
 :label: def:limiting-perspective
@@ -195,7 +203,8 @@ This should not come as a surprise as we are merely taking the limit for the con
 $Y$ here, since $Y$ being continuous is the one giving us troubles.
 ```
 
-With some calculations, we can express {eq}`eq:limiting-perspective` in terms of the conditional PDF of $X$ given $Y$.
+With some calculations, we can express {eq}`eq:limiting-perspective` in terms of
+the conditional PDF of $X$ given $Y$.
 
 $$
 \begin{aligned}
@@ -205,7 +214,9 @@ $$
 \end{aligned}
 $$
 
-The key here is that the small step size $h$ in the numerator and the denominator will cancel each other out. Now, given the conditional CDF, we can verify the definition of the conditional PDF. It holds that
+The key here is that the small step size $h$ in the numerator and the
+denominator will cancel each other out. Now, given the conditional CDF, we can
+verify the definition of the conditional PDF. It holds that
 
 $$
 \begin{aligned}
@@ -214,9 +225,13 @@ f_{X \mid Y}(x \mid y) & =\frac{d}{d x} F_{X \mid Y}(x \mid y) \\
 \end{aligned}
 $$
 
-where (a) follows from the fundamental theorem of calculus ({prf:ref}`fundamental_theorem_of_calculus`).
+where (a) follows from the fundamental theorem of calculus
+({prf:ref}`fundamental_theorem_of_calculus`).
 
-Just like the conditional PMF, we can calculate the probabilities using the conditional PDFs. In particular, if we evaluate the probability where $X \in A$ given that $Y$ takes a particular value $Y=y$, then we can integrate the conditional PDF $f_{X \mid Y}(x \mid y)$, with respect to $x$.
+Just like the conditional PMF, we can calculate the probabilities using the
+conditional PDFs. In particular, if we evaluate the probability where $X \in A$
+given that $Y$ takes a particular value $Y=y$, then we can integrate the
+conditional PDF $f_{X \mid Y}(x \mid y)$, with respect to $x$.
 
 ```{prf:theorem} Conditional PDF of an Event $A$ Given $Y=y$
 :label: thm:conditional-pdf-of-an-event-given-y
@@ -235,4 +250,3 @@ $$
 \mathbb{P}[X \in A]=\int_{\Omega_{Y}} \mathbb{P}[X \in A \mid Y=y] f_{Y}(y) d y
 $$
 ```
-
