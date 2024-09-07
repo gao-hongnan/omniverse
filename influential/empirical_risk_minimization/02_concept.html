@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Concept &#8212; Omniverse</title>
+    <title>Concept: Empirical Risk Minimization &#8212; Omniverse</title>
   
   
   
@@ -80,7 +80,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/influential/empirical_risk_minimization/02_concept.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="How to Calculate the Number of FLOPs in Transformer Based Models?" href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html" />
+    <link rel="next" title="Bayes Optimal Classifier" href="03_bayes_optimal_classifier.html" />
     <link rel="prev" title="Empirical Risk Minimization" href="01_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -223,12 +223,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../learning_theory/02_concept.html">Concept</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Empirical Risk Minimization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Empirical Risk Minimization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Concept</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../learning_theory/02_concept.html">Concept: Learning Theory</a></li>
 </ul>
 </details></li>
 </ul>
@@ -682,7 +683,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Concept</h1>
+    <h1>Concept: Empirical Risk Minimization</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -705,8 +706,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="concept">
-<h1>Concept<a class="headerlink" href="#concept" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="concept-empirical-risk-minimization">
+<h1>Concept: Empirical Risk Minimization<a class="headerlink" href="#concept-empirical-risk-minimization" title="Link to this heading">#</a></h1>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#approximating-true-risk-with-empirical-risk" id="id3">Approximating True Risk with Empirical Risk</a></p></li>
@@ -752,14 +753,14 @@ what is meant precisely by “any data point”. Maybe the most widely used appr
 to the define the concept of “any data point” is the <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span>
 assumption.</p>
 <div class="proof definition admonition" id="def-true-risk">
-<p class="admonition-title"><span class="caption-number">Definition 34 </span> (True Risk/Generalization Error)</p>
+<p class="admonition-title"><span class="caption-number">Definition 25 </span> (True Risk/Generalization Error)</p>
 <section class="definition-content" id="proof-content">
 <p>Let <span class="math notranslate nohighlight">\(\left(\mathbf{x}, y\right)\)</span> be any data point
 drawn from an <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span> joint distribution (<a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html#def_iid">Definition 91</a>) <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})\)</span>,
 then the (true) risk of a hypothesis <span class="math notranslate nohighlight">\(h \in \mathcal{H}\)</span> is the expectation of the loss
 incurred by <span class="math notranslate nohighlight">\(h\)</span> on (the realizations of) a random data point.</p>
 <div class="math notranslate nohighlight" id="equation-eq-true-risk">
-<span class="eqno">(31)<a class="headerlink" href="#equation-eq-true-risk" title="Link to this equation">#</a></span>\[
+<span class="eqno">(19)<a class="headerlink" href="#equation-eq-true-risk" title="Link to this equation">#</a></span>\[
 \mathcal{R}_{\mathcal{D}}\left\{\mathcal{L}((\mathbf{x}, y), h)\right\} := \mathbb{E}_{\mathcal{D}}\left[\mathcal{L}((\mathbf{x}, y), h)\right] = \int_{\mathcal{X}} \int_{\mathcal{Y}} \mathcal{L}((\mathbf{x}, y), h) \mathbb{P}_{\mathcal{D}}(\mathbf{x}, y) \mathrm{d} \mathbf{x} \mathrm{d} y
 \]</div>
 <p>Note that if <span class="math notranslate nohighlight">\(\mathrm{x}\)</span> is <span class="math notranslate nohighlight">\(D\)</span>-dimensional, then the integral <span class="math notranslate nohighlight">\(\int_{\mathcal{X}}\)</span> is actually
@@ -767,20 +768,26 @@ a <span class="math notranslate nohighlight">\(D\)</span>-dimensional integral.<
 <p>We use <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> if <span class="math notranslate nohighlight">\(\mathcal{D}\)</span> is clear from the context.</p>
 </section>
 </div><div class="proof remark admonition" id="remark-interpretation-true-risk">
-<p class="admonition-title"><span class="caption-number">Remark 20 </span> (Interpretation of True Risk)</p>
+<p class="admonition-title"><span class="caption-number">Remark 12 </span> (Interpretation of True Risk)</p>
 <section class="remark-content" id="proof-content">
-<p>We know in <a class="reference internal" href="#../../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.md"><span class="xref myst">Joint Expection</span></a>
-can be found by integrating over the joint distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})\)</span>,
-where the integrand is usually the probability of the event happening multiplied by the
-state of the event. In the case of the true risk, the event is the realization of a data point,
-and the state of the event is the loss incurred by the hypothesis <span class="math notranslate nohighlight">\(h\)</span> on the data point.</p>
-<p>One may wonder why <span class="math notranslate nohighlight">\(\mathcal{L}((\mathbf{x}, y), h)\)</span> being the state of the event has
-the associated probability <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathbf{x}, y)\)</span>. First, we recognize
-that <span class="math notranslate nohighlight">\(\mathcal{L}((\mathbf{x}, y), h)\)</span> is a random variable, and the probability of
-it <strong>happening</strong> is the probability of the event <span class="math notranslate nohighlight">\((\mathbf{x}, y)\)</span> happening, which in
-turn is the probability of the joint distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})\)</span>.</p>
-<p>The main confusion can be caused by the lack of understanding of random variables. For example,
-you can also define the joint expecation of the random variables <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(y\)</span> as</p>
+<p>We know in
+<a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html"><span class="std std-doc">Joint Expection</span></a>
+can be found by integrating over the joint distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})\)</span>,
+where the integrand is usually the probability of the event happening multiplied
+by the state of the event. In the case of the true risk, the event is the
+realization of a data point, and the state of the event is the loss incurred by
+the hypothesis <span class="math notranslate nohighlight">\(h\)</span> on the data point.</p>
+<p>One may wonder why <span class="math notranslate nohighlight">\(\mathcal{L}((\mathbf{x}, y), h)\)</span> being the state of the
+event has the associated probability <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathbf{x}, y)\)</span>.
+First, we recognize that <span class="math notranslate nohighlight">\(\mathcal{L}((\mathbf{x}, y), h)\)</span> is a random variable,
+and the probability of it <strong>happening</strong> is the probability of the event
+<span class="math notranslate nohighlight">\((\mathbf{x}, y)\)</span> happening, which in turn is the probability of the joint
+distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta})\)</span>.</p>
+<p>The main confusion can be caused by the lack of understanding of random
+variables. For example, you can also define the joint expecation of the random
+variables <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(y\)</span> as</p>
 <div class="math notranslate nohighlight">
 \[
 \mathbb{E}_{\mathcal{D}}\left[\mathbf{x}, y\right] = \int_{\mathcal{X}} \int_{\mathcal{Y}} \left(x_1 \cdot x_2 \cdots x_D \cdot y\right) \cdot \mathbb{P}_{\mathcal{D}}(\mathbf{x}, y) \mathrm{d} \mathbf{x} \mathrm{d} y
@@ -790,7 +797,7 @@ of the event happening is the probability of the joint distribution <span class=
 <p>Though the associated probability is the same, the state and the event are different.</p>
 </section>
 </div><div class="proof remark admonition" id="rem-iid-erm">
-<p class="admonition-title"><span class="caption-number">Remark 21 </span> (<span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span> Assumption in ERM)</p>
+<p class="admonition-title"><span class="caption-number">Remark 13 </span> (<span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span> Assumption in ERM)</p>
 <section class="remark-content" id="proof-content">
 <p>Since the <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span> assumption interprets data points as realizations of iid RVs with a
 common probability distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>, then the concept of
@@ -798,25 +805,27 @@ common probability distribution <span class="math notranslate nohighlight">\(\ma
 from the same distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>.</p>
 </section>
 </div><div class="proof theorem admonition" id="theorem-true-risk-minimization">
-<p class="admonition-title"><span class="caption-number">Theorem 8 </span> (True Risk Minimization)</p>
+<p class="admonition-title"><span class="caption-number">Theorem 2 </span> (True Risk Minimization)</p>
 <section class="theorem-content" id="proof-content">
 <p>If we do know the true distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>, then we can minimize
 the true risk directly by finding/learning a hypothesis <span class="math notranslate nohighlight">\(h \in \mathcal{H}\)</span>
-such that its true risk <a class="reference internal" href="#equation-eq-true-risk">(31)</a> is minimized.</p>
+such that its true risk <a class="reference internal" href="#equation-eq-true-risk">(19)</a> is minimized.</p>
 <div class="math notranslate nohighlight" id="equation-eq-true-risk-minimization">
-<span class="eqno">(32)<a class="headerlink" href="#equation-eq-true-risk-minimization" title="Link to this equation">#</a></span>\[
+<span class="eqno">(20)<a class="headerlink" href="#equation-eq-true-risk-minimization" title="Link to this equation">#</a></span>\[
 h^{*} = \underset{h \in \mathcal{H}}{\mathrm{argmin}} \mathbb{E}_{\mathcal{D}}\left[\mathcal{L}((\mathbf{x}, y), h)\right]
 \]</div>
 </section>
-</div><div class="proof example admonition" id="example-bayes-optimal-classifier">
-<p class="admonition-title"><span class="caption-number">Example 9 </span> (Bayes Optimal Classifier)</p>
+</div><p><a class="reference internal" href="03_bayes_optimal_classifier.html"><span class="std std-doc">Bayes Optimal Classifier</span></a></p>
+<div class="proof example admonition" id="example-bayes-optimal-classifier">
+<p class="admonition-title"><span class="caption-number">Example 6 </span> (Bayes Optimal Classifier)</p>
 <section class="example-content" id="proof-content">
-<p>See <a class="reference internal" href="#bayes_optimal_classifier.md"><span class="xref myst">Bayes Optimal Classifer</span></a> for a concrete example.
-The idea is that if we know the true distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>, then
-it is relatively easy to find the hypothesis <span class="math notranslate nohighlight">\(h^{*}\)</span> that minimizes the true risk.</p>
+<p>See <a class="reference internal" href="03_bayes_optimal_classifier.html"><span class="std std-doc">Bayes Optimal Classifer</span></a> for a concrete
+example. The idea is that if we know the true distribution
+<span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>, then it is relatively easy to find the hypothesis
+<span class="math notranslate nohighlight">\(h^{*}\)</span> that minimizes the true risk.</p>
 <p>We can simply construct such a hypothesis <span class="math notranslate nohighlight">\(h^{*}\)</span> as</p>
 <div class="math notranslate nohighlight" id="equation-eq-bayes-optimal-classifier">
-<span class="eqno">(33)<a class="headerlink" href="#equation-eq-bayes-optimal-classifier" title="Link to this equation">#</a></span>\[
+<span class="eqno">(21)<a class="headerlink" href="#equation-eq-bayes-optimal-classifier" title="Link to this equation">#</a></span>\[
 h^{*}(\mathbf{x}) = \underset{y \in \mathcal{Y}}{\mathrm{argmax}} \mathbb{P}_{\mathcal{D}}\left(y \mid \mathbf{x}\right)
 \]</div>
 <p>and declare that this hypothesis <span class="math notranslate nohighlight">\(h^{*}\)</span> minimizes the true risk <span class="math notranslate nohighlight">\(R\left\{\mathcal{L}((\mathbf{x}, y), h)\right\}\)</span>.</p>
@@ -825,11 +834,11 @@ h^{*}(\mathbf{x}) = \underset{y \in \mathcal{Y}}{\mathrm{argmax}} \mathbb{P}_{\m
 <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>, and therefore we cannot minimize the true risk
 directly. Instead, the empirical risk minimization (ERM) principle states that
 we can minimize the empirical risk. That is to say, we approximate the
-expectation in <a class="reference internal" href="#equation-eq-true-risk">(31)</a> by the empirical average of the loss incurred
+expectation in <a class="reference internal" href="#equation-eq-true-risk">(19)</a> by the empirical average of the loss incurred
 by <span class="math notranslate nohighlight">\(h\)</span> on the training data <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>.</p>
 <p>More concretely, we state it as follows.</p>
 <div class="proof definition admonition" id="def-empirical-risk">
-<p class="admonition-title"><span class="caption-number">Definition 35 </span> (Empirical Risk)</p>
+<p class="admonition-title"><span class="caption-number">Definition 26 </span> (Empirical Risk)</p>
 <section class="definition-content" id="proof-content">
 <p>Let <span class="math notranslate nohighlight">\(\mathcal{S} = \left \{ \left(\mathbf{x}^{(n)}, y^{(n)} \right) \right \}_{n=1}^N\)</span>
 be the dataset with <span class="math notranslate nohighlight">\(N\)</span> samples and <span class="math notranslate nohighlight">\(D\)</span> predictors where each data point in <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>
@@ -837,13 +846,13 @@ follows an <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span>
 then the empirical risk of a hypothesis <span class="math notranslate nohighlight">\(h \in \mathcal{H}\)</span> is the average of the loss
 incurred by <span class="math notranslate nohighlight">\(h\)</span> on the training data.</p>
 <div class="math notranslate nohighlight" id="equation-eq-empirical-risk">
-<span class="eqno">(34)<a class="headerlink" href="#equation-eq-empirical-risk" title="Link to this equation">#</a></span>\[
+<span class="eqno">(22)<a class="headerlink" href="#equation-eq-empirical-risk" title="Link to this equation">#</a></span>\[
 \hat{\mathcal{R}}_{\mathcal{S}} \left\{\mathcal{L}((\mathbf{x}, y), h)\right\} := \frac{1}{N} \sum_{n=1}^N \mathcal{L}\left(\left(\mathbf{x}^{(n)}, y^{(n)}\right), h\right)
 \]</div>
 <p>To ease notation, we use <span class="math notranslate nohighlight">\(\hat{\mathcal{R}}\)</span> if <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> is clear from the context.</p>
 </section>
 </div><div class="proof example admonition" id="example-empirical-risk">
-<p class="admonition-title"><span class="caption-number">Example 10 </span> (Empirical Risk)</p>
+<p class="admonition-title"><span class="caption-number">Example 7 </span> (Empirical Risk)</p>
 <section class="example-content" id="proof-content">
 <p>Let’s cite the example from <span id="id1">[<a class="reference internal" href="../../bibliography.html#id33" title="Hal Daume III. A course in machine learning. 2017.">III, 2017</a>]</span>.</p>
 <p>We write <span class="math notranslate nohighlight">\(\mathbb{E}_{(x, y) \sim \mathcal{D}}[\mathcal{L}(y, f(\boldsymbol{x}))]\)</span> for the expected loss. Expectation means “average.” This is saying “if you drew a bunch of <span class="math notranslate nohighlight">\((x, y)\)</span> pairs independently at random from the underlying distribution <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>, what would your average loss be?
@@ -866,12 +875,12 @@ More formally, if <span class="math notranslate nohighlight">\(\mathcal{D}\)</sp
 <p>The most important thing to remember is that there are two equivalent ways to think about expections: (1) The expectation of some function <span class="math notranslate nohighlight">\(g\)</span> is the weighted average value of <span class="math notranslate nohighlight">\(g\)</span>, where the weights are given by the underlying probability distribution. (2) The expectation of some function <span class="math notranslate nohighlight">\(g\)</span> is your best guess of the value of <span class="math notranslate nohighlight">\(g\)</span> if you were to draw a single item from the underlying probability distribution.</p>
 </section>
 </div><div class="proof theorem admonition" id="theorem-empirical-risk-minimization">
-<p class="admonition-title"><span class="caption-number">Theorem 9 </span> (Empirical Risk Minimization)</p>
+<p class="admonition-title"><span class="caption-number">Theorem 3 </span> (Empirical Risk Minimization)</p>
 <section class="theorem-content" id="proof-content">
 <p>The empirical risk minimization (ERM) principle states that we can minimize the empirical risk
 as follows:</p>
 <div class="math notranslate nohighlight" id="equation-eq-empirical-risk-minimization">
-<span class="eqno">(35)<a class="headerlink" href="#equation-eq-empirical-risk-minimization" title="Link to this equation">#</a></span>\[\begin{split}
+<span class="eqno">(23)<a class="headerlink" href="#equation-eq-empirical-risk-minimization" title="Link to this equation">#</a></span>\[\begin{split}
 \begin{aligned}
 \hat{h} \in \mathcal{H} &amp;= \underset{h \in \mathcal{H}}{\mathrm{argmin}} \hat{\mathcal{R}}\left\{\mathcal{L}((\mathbf{x}, y), h)\right\} \\
 &amp;= \underset{h \in \mathcal{H}}{\mathrm{argmin}} \frac{1}{N} \sum_{n=1}^N \mathcal{L}\left(\left(\mathbf{x}^{(n)}, y^{(n)}\right), h\right)
@@ -880,14 +889,14 @@ as follows:</p>
 <p>We see that <span class="math notranslate nohighlight">\(\hat{h}\)</span> may not be unique, so it can mean any hypothesis that minimizes the empirical risk.</p>
 </section>
 </div><div class="proof remark admonition" id="rem-risk-vs-loss">
-<p class="admonition-title"><span class="caption-number">Remark 22 </span> (Risk vs Loss)</p>
+<p class="admonition-title"><span class="caption-number">Remark 14 </span> (Risk vs Loss)</p>
 <section class="remark-content" id="proof-content">
 <p>Note that the empirical risk <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> is the expectation of the loss <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>.
 They are not the same thing!</p>
 <p>Sometimes we also call the risk the cost function or the objective function.</p>
 </section>
 </div><div class="proof remark admonition" id="rem-erm-trial-and-error">
-<p class="admonition-title"><span class="caption-number">Remark 23 </span> (ERM is “learning from data using trial and error”)</p>
+<p class="admonition-title"><span class="caption-number">Remark 15 </span> (ERM is “learning from data using trial and error”)</p>
 <section class="remark-content" id="proof-content">
 <p>As we can see now, there is no closed-form solution to the empirical risk minimization problem and therefore
 we may try to find a good hypothesis <span class="math notranslate nohighlight">\(h\)</span> by trial and error. And a good hypothesis <span class="math notranslate nohighlight">\(h\)</span> is one that has
@@ -897,12 +906,12 @@ the least empirical risk among all hypotheses in <span class="math notranslate n
 <section id="empirical-risk-minimization-approximates-true-risk-minimization">
 <span id="emprical-risk-approximates-true-risk"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Empirical Risk Minimization approximates True Risk Minimization</a><a class="headerlink" href="#empirical-risk-minimization-approximates-true-risk-minimization" title="Link to this heading">#</a></h2>
 <div class="proof theorem admonition" id="theorem-erm-approximates-trm">
-<p class="admonition-title"><span class="caption-number">Theorem 10 </span> (Empirical Risk Minimization approximates True Risk Minimization when <span class="math notranslate nohighlight">\(N \rightarrow \infty\)</span>)</p>
+<p class="admonition-title"><span class="caption-number">Theorem 4 </span> (Empirical Risk Minimization approximates True Risk Minimization when <span class="math notranslate nohighlight">\(N \rightarrow \infty\)</span>)</p>
 <section class="theorem-content" id="proof-content">
 <p>If we have a large enough dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> with <span class="math notranslate nohighlight">\(N \rightarrow \infty\)</span>,
 then the empirical risk minimization (ERM) principle approximates the true risk minimization (TRM) principle.</p>
 <div class="math notranslate nohighlight" id="equation-eq-empirical-risk-approximates-true-risk">
-<span class="eqno">(36)<a class="headerlink" href="#equation-eq-empirical-risk-approximates-true-risk" title="Link to this equation">#</a></span>\[
+<span class="eqno">(24)<a class="headerlink" href="#equation-eq-empirical-risk-approximates-true-risk" title="Link to this equation">#</a></span>\[
 \mathcal{R}_{\mathcal{D}}\left\{\mathcal{L}((\mathbf{x}, y), h)\right\} \approx \hat{\mathcal{R}}\left\{\mathcal{L}((\mathbf{x}^{(n)}, y^{(n)}), h)\right\} \quad \text{as} \quad N \rightarrow \infty
 \]</div>
 <p>This is just a corollary of The Convergence Theorem of The Law of Large Numbers
@@ -919,7 +928,7 @@ then the sample mean</p>
 </section>
 </div><p>Therefore, ERM is motivated by the law of large numbers, and in turn, the law of
 large numbers is motivated by the samples being <span class="math notranslate nohighlight">\(\textbf{i.i.d.}\)</span>
-<span id="id2">[]</span>.</p>
+<span id="id2">[<a class="reference internal" href="../../bibliography.html#id7" title="A. Jung. Machine Learning: The Basics. Springer, Singapore, 2022.">Jung, 2022</a>]</span>.</p>
 <p>Note that the choice of the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is crucial to the
 performance of the hypothesis <span class="math notranslate nohighlight">\(h\)</span>. And for different tasks such as Linear
 Regression, Logistic Regression, and other learning algorithms, we can design
@@ -968,11 +977,11 @@ formulations.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html"
+       href="03_bayes_optimal_classifier.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">How to Calculate the Number of FLOPs in Transformer Based Models?</p>
+        <p class="prev-next-title">Bayes Optimal Classifier</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
