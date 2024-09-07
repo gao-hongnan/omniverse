@@ -5,7 +5,7 @@
 ```
 
 See
-[Learning Theory section](../../../machine_learning/fundamentals/learning_theory/concept.md)
+[Learning Theory section](../../../influential/learning_theory/02_concept.md)
 for a more detailed discussion on the learning theory.
 
 In practice, we are often told that if you increase the number of data (or
