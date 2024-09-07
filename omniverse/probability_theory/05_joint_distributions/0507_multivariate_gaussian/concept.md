@@ -82,8 +82,7 @@ Then the PDF of $\boldsymbol{X}$ is given by
 $$
 f*{\boldsymbol{X}}(\boldsymbol{x}) = \prod*{d=1}^D \frac{1}{\sqrt{(2 \pi)
 \sigma*{d}^2}} \exp \left( -\frac{(x_d - \mu_d)^2}{2 \sigma*{d}^2} \right)
-$$
-(eq:independent_multivariate_gaussian_pdf)
+$$ (eq:independent_multivariate_gaussian_pdf)
 
 which is indeed a product of univariate Gaussian PDFs.
 ```

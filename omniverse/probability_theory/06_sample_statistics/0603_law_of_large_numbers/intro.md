@@ -21,7 +21,7 @@ We will soon see that this along with the probability bounds will build up to
 answer the most fundamental problem in Machine Learning: Is Learning Possible?
 
 See
-[Learning Theory section](../../../machine_learning/fundamentals/learning_theory/concept.md)
+[Learning Theory section](../../../influential/learning_theory/02_concept.md)
 for a more detailed discussion on the learning theory.
 
 ## Real Analysis
