@@ -17,6 +17,10 @@ kernelspec:
 
 # Continuous Uniform Distribution
 
+```{contents}
+:local:
+```
+
 ## Definition
 
 ```{prf:definition} Continuous Uniform Distribution (PDF)

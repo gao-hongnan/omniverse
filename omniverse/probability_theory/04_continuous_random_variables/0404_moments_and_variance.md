@@ -1,8 +1,13 @@
 # Moments and Variance
 
-The moment and variance of a continuous random variable $X$ are similar to the moment and
-variance of a discrete random variable in [](../03_discrete_random_variables/0306_moments_and_variance.md),
-but they are defined using integrals instead of sums.
+```{contents}
+:local:
+```
+
+The moment and variance of a continuous random variable $X$ are similar to the
+moment and variance of a discrete random variable in
+[](../03_discrete_random_variables/0306_moments_and_variance.md), but they are
+defined using integrals instead of sums.
 
 ```{admonition} Notation
 :class: note
@@ -42,7 +47,8 @@ $$ (eq_var_continuous_1)
 where $\mu = \expectation \lsq X \rsq$ is the **expectation** of $X$.
 ```
 
-We also have an equivalent definition of variance, which is more used in practice.
+We also have an equivalent definition of variance, which is more used in
+practice.
 
 ```{prf:definition} Variance (Alternative)
 :label: def_variance_continuous_alt
@@ -56,7 +62,7 @@ $$ (eq_var_continuous_2)
 
 ## Concept
 
-````{admonition} Concept
+```{admonition} Concept
 :class: important
 
 - **Variance** is a measure of how spread out a distribution is. More concretely,
@@ -66,8 +72,10 @@ expectation (population mean). The variance is the average of these data points 
 
 - **Variance** is **deterministic** and is synonymous with **Population Variance**.
 - **Sample Variance** is the variance of a **random sample** from the true population, which is a random variable.
-````
+```
 
 ## References and Further Readings
 
-- Chan, Stanley H. "Chapter 4.2.3. Momenets and variance." In Introduction to Probability for Data Science, 184-185. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
+-   Chan, Stanley H. "Chapter 4.2.3. Momenets and variance." In Introduction to
+    Probability for Data Science, 184-185. Ann Arbor, Michigan: Michigan
+    Publishing Services, 2021.

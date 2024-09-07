@@ -15,6 +15,12 @@ kernelspec:
     name: python3
 ---
 
+# Convolution and Sum of Random Variables
+
+```{contents}
+:local:
+```
+
 ```{code-cell} ipython3
 :tags: [remove-input]
 import sys
@@ -27,8 +33,6 @@ import matplotlib.pyplot as plt
 import matplotlib_inline
 matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
 ```
-
-# Convolution and Sum of Random Variables
 
 In {cite}`chan_2021`, the author gave us an intuitive treatment of the origin of
 Gaussian random variables before the formal mathematical treatment of the

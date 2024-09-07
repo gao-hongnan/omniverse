@@ -1,5 +1,9 @@
 # Expectation
 
+```{contents}
+:local:
+```
+
 ## Definition
 
 ```{prf:definition} Expectation
@@ -19,8 +23,9 @@ $$
 
 ## Existence of Expectation
 
-As seen in the discrete counterpart in [](../03_discrete_random_variables/0305_expectation.md),
-we have a similar result for continuous random variables.
+As seen in the discrete counterpart in
+[](../03_discrete_random_variables/0305_expectation.md), we have a similar
+result for continuous random variables.
 
 ```{prf:theorem} Existence of Expectation
 :label: thm_existence_of_expectation_continuous
@@ -45,17 +50,17 @@ $$
 $$
 ```
 
-
 ## Properties of Expectation
 
-Almost all properties of the discrete counterpart in [](../03_discrete_random_variables/0305_expectation.md)
-holds here.
+Almost all properties of the discrete counterpart in
+[](../03_discrete_random_variables/0305_expectation.md) holds here.
 
 Let $\P$ be a probability function defined over the probability space $\pspace$.
 
-Let $X$ be a continous random variable with sample space $\S$ and probability density function $\pdf$.
+Let $X$ be a continous random variable with sample space $\S$ and probability
+density function $\pdf$.
 
-Then the ***expectation*** of $X$ has the following properties:
+Then the **_expectation_** of $X$ has the following properties:
 
 ```{prf:property} The Law of The Unconscious Statistician
 :label: prop_expectation_function_continuous
@@ -109,7 +114,7 @@ $$
 
 ## Concept
 
-````{admonition} Concept
+```{admonition} Concept
 :class: important
 
 - **Expectation** is a measure of the mean value of a random variable and is **deterministic**. It
@@ -119,9 +124,10 @@ is also synonymous with the **population mean**.
 and is **random**.
 
 - **Average** of a random sample is a random variable and as sample size increases, the **average** of a random sample converges to the **population mean**.
-````
+```
 
 ## References and Further Readings
 
-- Chan, Stanley H. "Chapter 4.2. Expectation, Moment, and Variance." In Introduction to Probability for Data Science, 180–184. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
-
+-   Chan, Stanley H. "Chapter 4.2. Expectation, Moment, and Variance." In
+    Introduction to Probability for Data Science, 180–184. Ann Arbor, Michigan:
+    Michigan Publishing Services, 2021.

@@ -1,5 +1,9 @@
 # Cumulative Distribution Function
 
+```{contents}
+:local:
+```
+
 ## Definition
 
 ```{prf:definition} Cumulative Distribution Function
@@ -16,10 +20,9 @@ $$
 $$
 ```
 
-
 ## Properties of CDF
 
-````{prf:proposition} Properties of CDF
+```{prf:proposition} Properties of CDF
 :label: prop_continuous_discrete_cdf
 
 Let $X$ be a random variable (either discrete or continuous), then the CDF $\cdf$ of $X$ satisfies the following properties:
@@ -34,9 +37,9 @@ Let $X$ be a random variable (either discrete or continuous), then the CDF $\cdf
 
     In particular, we have the **minimum** of the CDF is 0 and the **maximum** is 1 for
     $x = -\infty$ and $x = \infty$ respectively.
-````
+```
 
-````{prf:proposition} Probability of an Interval
+```{prf:proposition} Probability of an Interval
 :label: prop_continuous_cdf_interval
 
 Let $X$ be a continuous random variable.
@@ -47,9 +50,9 @@ the probability of an interval $[a, b]$ is given by:
 $$
 \P \lsq a \leq X \leq b \rsq = \cdf(b) - \cdf(a)
 $$
-````
+```
 
-````{prf:definition} Left and Right Continuity
+```{prf:definition} Left and Right Continuity
 :label: def_continuous_cdf_continuity
 
 Let $X$ be a continuous random variable. Then its CDF $\cdf$ is said to be {cite}`chan_2021`:
@@ -61,9 +64,9 @@ Let $X$ be a continuous random variable. Then its CDF $\cdf$ is said to be {cite
 $$
 \lim_{h \to 0} \cdf(b-h) = \cdf(b) = \lim_{h \to 0} \cdf(b+h)
 $$
-````
+```
 
-````{prf:theorem} CDF is Right Continuous
+```{prf:theorem} CDF is Right Continuous
 :label: thm_cdf_right_continuous
 
 Let $X$ be a random variable (either discrete or continuous). Then its CDF $\cdf$ is always right continuous.
@@ -71,9 +74,9 @@ Let $X$ be a random variable (either discrete or continuous). Then its CDF $\cdf
 $$
 \cdf(b) = \cdf(b^{+}) = \lim_{h \to 0} \cdf(b+h)
 $$
-````
+```
 
-````{prf:theorem} Define Probability at a Point
+```{prf:theorem} Define Probability at a Point
 :label: thm_cdf_point
 
 Let $X$ be a random variable (either discrete or continuous), then $\P \lsq X = b \rsq$ is given by
@@ -84,14 +87,15 @@ $$
     0 & \text{otherwise}
 \end{cases}
 $$
-````
+```
 
 ## PDF is Derivative of CDF
 
-We have seen how we can convert a PDF $\pdf$ to a CDF $\cdf$ by integrating the PDF.
-We now show how to convert a CDF $\cdf$ to a PDF $\pdf$ by taking the derivative of the CDF.
+We have seen how we can convert a PDF $\pdf$ to a CDF $\cdf$ by integrating the
+PDF. We now show how to convert a CDF $\cdf$ to a PDF $\pdf$ by taking the
+derivative of the CDF.
 
-````{prf:theorem} PDF is Derivative of CDF
+```{prf:theorem} PDF is Derivative of CDF
 :label: thm_pdf_derivative_cdf
 
 By the **Fundamental Theorem of Calculus** defined in {prf:ref}`fundamental_theorem_of_calculus`,
@@ -107,8 +111,10 @@ $$
 $$
 \pdf(b) = \P \lsq X = b \rsq = \P \lsq X = b \rsq \delta(x-b)
 $$
-````
+```
 
 ## References and Further Readings
 
-- Chan, Stanley H. "Chapter 4.3. Cumulative Distribution Function." In Introduction to Probability for Data Science, 185-196. Ann Arbor, Michigan: Michigan Publishing Services, 2021.
+-   Chan, Stanley H. "Chapter 4.3. Cumulative Distribution Function." In
+    Introduction to Probability for Data Science, 185-196. Ann Arbor, Michigan:
+    Michigan Publishing Services, 2021.

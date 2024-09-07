@@ -17,6 +17,10 @@ kernelspec:
 
 # Gaussian Distribution
 
+```{contents}
+:local:
+```
+
 Perhaps the most important distribution is the Gaussian Distribution, also known
 as the Normal Distribution.
 

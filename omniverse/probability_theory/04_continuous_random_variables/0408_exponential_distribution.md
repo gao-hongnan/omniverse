@@ -17,6 +17,10 @@ kernelspec:
 
 # Exponential Distribution
 
+```{contents}
+:local:
+```
+
 ## Definition
 
 ```{prf:definition} Exponential Distribution (PDF)

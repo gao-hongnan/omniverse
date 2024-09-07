@@ -15,6 +15,12 @@ kernelspec:
     name: python3
 ---
 
+# From Discrete to Continuous
+
+```{contents}
+:local:
+```
+
 ```{code-cell} ipython3
 :tags: [remove-input]
 import sys
@@ -34,8 +40,6 @@ from omnivault.utils.reproducibility.seed import seed_all
 from omnivault.utils.probability_theory.plot import plot_continuous_pdf_and_cdf
 seed_all()
 ```
-
-# From Discrete to Continuous
 
 ## Calculus
 
