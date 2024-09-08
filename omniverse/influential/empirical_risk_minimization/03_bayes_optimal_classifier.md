@@ -1,5 +1,10 @@
 # Bayes Optimal Classifier
 
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
+
 ```{contents}
 :local:
 ```
