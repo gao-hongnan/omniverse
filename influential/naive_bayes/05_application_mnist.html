@@ -80,7 +80,7 @@
     <link rel="canonical" href="https://www.gaohongnan.com/influential/naive_bayes/05_application_mnist.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="How to Calculate the Number of FLOPs in Transformer Based Models?" href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html" />
+    <link rel="next" title="Mixture Models" href="../gaussian_mixture_models/01_intro.html" />
     <link rel="prev" title="Naive Bayes Application: Penguins" href="04_example_penguins.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -238,6 +238,11 @@
 <li class="toctree-l2"><a class="reference internal" href="03_implementation.html">Naives Bayes Implementation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -881,13 +886,10 @@ Downloading https://ossci-datasets.s3.amazonaws.com/mnist/train-images-idx3-ubyt
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/9912422 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  7%|▋         | 655360/9912422 [00:00&lt;00:01, 5986825.46it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  7%|▋         | 688128/9912422 [00:00&lt;00:01, 6149446.30it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 94%|█████████▎| 9273344/9912422 [00:00&lt;00:00, 51320273.60it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 9912422/9912422 [00:00&lt;00:00, 46685693.87it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 9912422/9912422 [00:00&lt;00:00, 47738514.81it/s]
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
@@ -909,31 +911,31 @@ Downloading https://ossci-datasets.s3.amazonaws.com/mnist/train-labels-idx1-ubyt
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/28881 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 28881/28881 [00:00&lt;00:00, 1562819.39it/s]
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 28881/28881 [00:00&lt;00:00, 1834583.20it/s]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Extracting ./temp/MNIST/raw/train-labels-idx1-ubyte.gz to ./temp/MNIST/raw
 
 Downloading http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-Failed to download (trying next):
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Failed to download (trying next):
 HTTP Error 403: Forbidden
 
 Downloading https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz to ./temp/MNIST/raw/t10k-images-idx3-ubyte.gz
+Downloading https://ossci-datasets.s3.amazonaws.com/mnist/t10k-images-idx3-ubyte.gz to ./temp/MNIST/raw/t10k-images-idx3-ubyte.gz
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/1648877 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 44%|████▎     | 720896/1648877 [00:00&lt;00:00, 6363838.55it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> 76%|███████▌  | 1245184/1648877 [00:00&lt;00:00, 10654443.26it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 1648877/1648877 [00:00&lt;00:00, 12022953.49it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 1648877/1648877 [00:00&lt;00:00, 13769818.61it/s]
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>
@@ -954,7 +956,7 @@ Downloading https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/4542 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 4542/4542 [00:00&lt;00:00, 17541923.36it/s]
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>100%|██████████| 4542/4542 [00:00&lt;00:00, 18695317.73it/s]
 </pre></div>
 </div>
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Extracting ./temp/MNIST/raw/t10k-labels-idx1-ubyte.gz to ./temp/MNIST/raw
@@ -1029,7 +1031,7 @@ Downloading https://ossci-datasets.s3.amazonaws.com/mnist/t10k-labels-idx1-ubyte
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/f02f86645b51bad52fdf9294f9c24a30fbfd4368f7d3fabcff200ad949d6727b.svg" src="../../_images/f02f86645b51bad52fdf9294f9c24a30fbfd4368f7d3fabcff200ad949d6727b.svg" />
+<img alt="../../_images/be634efa70b489fb8ac0effa43b79637167a377fdb2dc657d80e923f26773568.svg" src="../../_images/be634efa70b489fb8ac0effa43b79637167a377fdb2dc657d80e923f26773568.svg" />
 </div>
 </div>
 </section>
@@ -1106,7 +1108,7 @@ p(x_i = t_i \mid y) =
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/799236719635388d625f5995b639e3f4855c1e3761146eb176f41774c1295c8b.svg" src="../../_images/799236719635388d625f5995b639e3f4855c1e3761146eb176f41774c1295c8b.svg" />
+<img alt="../../_images/4c56ab08739e5de50a47fc476e8b8d5df4babbcd5cf3c4460d3920a42df70010.svg" src="../../_images/4c56ab08739e5de50a47fc476e8b8d5df4babbcd5cf3c4460d3920a42df70010.svg" />
 </div>
 </div>
 <p>By visualizing these <span class="math notranslate nohighlight">\(10\times 28\times 28\)</span> probabilities (for each pixel for each class) we could get some mean looking digits.</p>
@@ -1205,7 +1207,7 @@ classifier works pretty well.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/b4dd1b2f88b971f63d55c544d3c08b6c9314a3a95d0990071a4bba65f9f55188.svg" src="../../_images/b4dd1b2f88b971f63d55c544d3c08b6c9314a3a95d0990071a4bba65f9f55188.svg" />
+<img alt="../../_images/8290e22f3cf3f4d94caff243b9073a8078d9a3ff2a8bf2e8668dbf68f06d6978.svg" src="../../_images/8290e22f3cf3f4d94caff243b9073a8078d9a3ff2a8bf2e8668dbf68f06d6978.svg" />
 </div>
 </div>
 <p>Finally, let’s compute the overall accuracy of the classifier.</p>
@@ -1285,11 +1287,11 @@ classifier works pretty well.</p>
       </div>
     </a>
     <a class="right-next"
-       href="../../playbook/how_to_calculate_flops_in_transformer_based_models.html"
+       href="../gaussian_mixture_models/01_intro.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">How to Calculate the Number of FLOPs in Transformer Based Models?</p>
+        <p class="prev-next-title">Mixture Models</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -244,6 +244,11 @@
 <li class="toctree-l2"><a class="reference internal" href="influential/naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
 <ul class="nav bd-sidenav">
@@ -689,6 +694,8 @@ document.write(`
    <a href="#cap-875-koko-eating-bananas-feasibility-function-for-koko-eating-bananas"><strong>875-koko-eating-bananas-feasibility-function-for-koko-eating-bananas</strong></a> | 
    <a href="#cap-875-koko-eating-bananas-monotonicity"><strong>875-koko-eating-bananas-monotonicity</strong></a> | 
    <a href="#cap-875-koko-eating-bananas-why-ceiling"><strong>875-koko-eating-bananas-why-ceiling</strong></a> | 
+   <a href="#cap-alg:em-gmm-1"><strong>alg:em-gmm-1</strong></a> | 
+   <a href="#cap-alg:gmm-sampling"><strong>alg:gmm-sampling</strong></a> | 
    <a href="#cap-axiom:additivity"><strong>axiom:additivity</strong></a> | 
    <a href="#cap-axiom:non-negativity"><strong>axiom:non-negativity</strong></a> | 
    <a href="#cap-axiom:normalization"><strong>axiom:normalization</strong></a> | 
@@ -700,7 +707,9 @@ document.write(`
    <a href="#cap-brute-force-search-kmeans"><strong>brute-force-search-kmeans</strong></a> | 
    <a href="#cap-categorical-distribution"><strong>categorical-distribution</strong></a> | 
    <a href="#cap-categorical-distribution-example"><strong>categorical-distribution-example</strong></a> | 
+   <a href="#cap-categorical-distribution-gmm"><strong>categorical-distribution-gmm</strong></a> | 
    <a href="#cap-categorical-multinomial-distribution"><strong>categorical-multinomial-distribution</strong></a> | 
+   <a href="#cap-categorical-multinomial-distribution-gmm"><strong>categorical-multinomial-distribution-gmm</strong></a> | 
    <a href="#cap-computer-science-type-theory-contravariance"><strong>computer-science-type-theory-contravariance</strong></a> | 
    <a href="#cap-computer-science-type-theory-covariance"><strong>computer-science-type-theory-covariance</strong></a> | 
    <a href="#cap-computer-science-type-theory-generics-moot-example"><strong>computer-science-type-theory-generics-moot-example</strong></a> | 
@@ -865,6 +874,7 @@ document.write(`
    <a href="#cap-elbow-method"><strong>elbow-method</strong></a> | 
    <a href="#cap-event"><strong>event</strong></a> | 
    <a href="#cap-event_space"><strong>event_space</strong></a> | 
+   <a href="#cap-ex:gmm-update-mixture-weights"><strong>ex:gmm-update-mixture-weights</strong></a> | 
    <a href="#cap-ex:log-likelihood-bernoulli"><strong>ex:log-likelihood-bernoulli</strong></a> | 
    <a href="#cap-ex:moment_generating_function_1"><strong>ex:moment_generating_function_1</strong></a> | 
    <a href="#cap-ex:moment_generating_function_2"><strong>ex:moment_generating_function_2</strong></a> | 
@@ -877,6 +887,7 @@ document.write(`
    <a href="#cap-ex_iid_1"><strong>ex_iid_1</strong></a> | 
    <a href="#cap-example-bayes-optimal-classifier"><strong>example-bayes-optimal-classifier</strong></a> | 
    <a href="#cap-example-empirical-risk"><strong>example-empirical-risk</strong></a> | 
+   <a href="#cap-example-gmm-initialization"><strong>example-gmm-initialization</strong></a> | 
    <a href="#cap-example-marginal-pdf-bivariate-normal"><strong>example-marginal-pdf-bivariate-normal</strong></a> | 
    <a href="#cap-example-naive-bayes-feature-1-class-2"><strong>example-naive-bayes-feature-1-class-2</strong></a> | 
    <a href="#cap-example-pixels"><strong>example-pixels</strong></a> | 
@@ -924,15 +935,20 @@ document.write(`
    <a href="#cap-parameter-vector"><strong>parameter-vector</strong></a> | 
    <a href="#cap-posterior"><strong>posterior</strong></a> | 
    <a href="#cap-pre_image"><strong>pre_image</strong></a> | 
+   <a href="#cap-prf-gmm-update-covariance-example"><strong>prf-gmm-update-covariance-example</strong></a> | 
+   <a href="#cap-prf-gmm-update-means-example"><strong>prf-gmm-update-means-example</strong></a> | 
    <a href="#cap-prf:definition:in-sample-error"><strong>prf:definition:in-sample-error</strong></a> | 
    <a href="#cap-prf:definition:out-sample-error"><strong>prf:definition:out-sample-error</strong></a> | 
    <a href="#cap-prf:definition:zero-one-loss"><strong>prf:definition:zero-one-loss</strong></a> | 
    <a href="#cap-prf:example-bernoulli-parameter"><strong>prf:example-bernoulli-parameter</strong></a> | 
    <a href="#cap-prf:example-bits"><strong>prf:example-bits</strong></a> | 
    <a href="#cap-prf:example-gaussian-parameter"><strong>prf:example-gaussian-parameter</strong></a> | 
+   <a href="#cap-prf:example-gmm-1"><strong>prf:example-gmm-1</strong></a> | 
    <a href="#cap-prf:naive-bayes-estimation-algorithm"><strong>prf:naive-bayes-estimation-algorithm</strong></a> | 
    <a href="#cap-prf:remark-bounding-the-entire-hypothesis-set"><strong>prf:remark-bounding-the-entire-hypothesis-set</strong></a> | 
+   <a href="#cap-prf:remark-gmm-closed-form"><strong>prf:remark-gmm-closed-form</strong></a> | 
    <a href="#cap-prf:remark-major-confusion-alert"><strong>prf:remark-major-confusion-alert</strong></a> | 
+   <a href="#cap-prf:remark-notation-gmm"><strong>prf:remark-notation-gmm</strong></a> | 
    <a href="#cap-prf:remark:kmeans-optimal-cluster-centers-notation"><strong>prf:remark:kmeans-optimal-cluster-centers-notation</strong></a> | 
    <a href="#cap-prf:remark:why_contours_of_multivariate_gaussian_are_elliptical"><strong>prf:remark:why_contours_of_multivariate_gaussian_are_elliptical</strong></a> | 
    <a href="#cap-prior"><strong>prior</strong></a> | 
@@ -976,6 +992,7 @@ document.write(`
    <a href="#cap-rem-erm-trial-and-error"><strong>rem-erm-trial-and-error</strong></a> | 
    <a href="#cap-rem-iid-erm"><strong>rem-iid-erm</strong></a> | 
    <a href="#cap-rem-risk-vs-loss"><strong>rem-risk-vs-loss</strong></a> | 
+   <a href="#cap-rem:gmm-update-mixture-weights-depends-on-all-parameters"><strong>rem:gmm-update-mixture-weights-depends-on-all-parameters</strong></a> | 
    <a href="#cap-rem:likelihood"><strong>rem:likelihood</strong></a> | 
    <a href="#cap-rem:where-y"><strong>rem:where-y</strong></a> | 
    <a href="#cap-rem_exponential_distribution_pdf"><strong>rem_exponential_distribution_pdf</strong></a> | 
@@ -988,6 +1005,7 @@ document.write(`
    <a href="#cap-remark-bayes-optimal-classifier"><strong>remark-bayes-optimal-classifier</strong></a> | 
    <a href="#cap-remark-bayes-optimal-classifier-naive-bayes"><strong>remark-bayes-optimal-classifier-naive-bayes</strong></a> | 
    <a href="#cap-remark-empirical-parameters"><strong>remark-empirical-parameters</strong></a> | 
+   <a href="#cap-remark-gmm-update-means"><strong>remark-gmm-update-means</strong></a> | 
    <a href="#cap-remark-interpretation-true-risk"><strong>remark-interpretation-true-risk</strong></a> | 
    <a href="#cap-remark-joint-pdf"><strong>remark-joint-pdf</strong></a> | 
    <a href="#cap-remark-joint-pmf"><strong>remark-joint-pmf</strong></a> | 
@@ -1031,6 +1049,8 @@ document.write(`
    <a href="#cap-theorem-empirical-risk-minimization"><strong>theorem-empirical-risk-minimization</strong></a> | 
    <a href="#cap-theorem-erm-approximates-trm"><strong>theorem-erm-approximates-trm</strong></a> | 
    <a href="#cap-theorem-expectation-of-sample-average"><strong>theorem-expectation-of-sample-average</strong></a> | 
+   <a href="#cap-theorem-gmm-update-covariance"><strong>theorem-gmm-update-covariance</strong></a> | 
+   <a href="#cap-theorem-gmm-update-means"><strong>theorem-gmm-update-means</strong></a> | 
    <a href="#cap-theorem-hoeffding-inequality-restated"><strong>theorem-hoeffding-inequality-restated</strong></a> | 
    <a href="#cap-theorem-learning-theory-1"><strong>theorem-learning-theory-1</strong></a> | 
    <a href="#cap-theorem-strong-law-of-large-numbers"><strong>theorem-strong-law-of-large-numbers</strong></a> | 
@@ -1064,6 +1084,7 @@ document.write(`
    <a href="#cap-thm:empirical_correlation_coefficient"><strong>thm:empirical_correlation_coefficient</strong></a> | 
    <a href="#cap-thm:equivalent_conditions_for_lambda_to_be_an_eigenvalue"><strong>thm:equivalent_conditions_for_lambda_to_be_an_eigenvalue</strong></a> | 
    <a href="#cap-thm:generalization-bound"><strong>thm:generalization-bound</strong></a> | 
+   <a href="#cap-thm:gmm-update-mixture-weights"><strong>thm:gmm-update-mixture-weights</strong></a> | 
    <a href="#cap-thm:independence_and_covariance"><strong>thm:independence_and_covariance</strong></a> | 
    <a href="#cap-thm:independence_and_joint_expectation"><strong>thm:independence_and_joint_expectation</strong></a> | 
    <a href="#cap-thm:law-total-probability"><strong>thm:law-total-probability</strong></a> | 
@@ -1318,6 +1339,22 @@ document.write(`
        <a href="dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html#875-koko-eating-bananas-why-ceiling"><code class="xref">875-koko-eating-bananas-why-ceiling</code></a> <em>(dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-alg:em-gmm-1"><td></td><td>
+       <strong>alg:em-gmm-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#alg:em-gmm-1"><code class="xref">alg:em-gmm-1</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-alg:gmm-sampling"><td></td><td>
+       <strong>alg:gmm-sampling</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#alg:gmm-sampling"><code class="xref">alg:gmm-sampling</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-axiom:additivity"><td></td><td>
        <strong>axiom:additivity</strong></td><td></td></tr>
      <tr>
@@ -1406,12 +1443,28 @@ document.write(`
        <a href="influential/naive_bayes/02_concept.html#categorical-distribution-example"><code class="xref">categorical-distribution-example</code></a> <em>(influential/naive_bayes/02_concept)</em></td><td>
        <em>example</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-categorical-distribution-gmm"><td></td><td>
+       <strong>categorical-distribution-gmm</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#categorical-distribution-gmm"><code class="xref">categorical-distribution-gmm</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-categorical-multinomial-distribution"><td></td><td>
        <strong>categorical-multinomial-distribution</strong></td><td></td></tr>
      <tr>
        <td></td>
        <td>
        <a href="influential/naive_bayes/02_concept.html#categorical-multinomial-distribution"><code class="xref">categorical-multinomial-distribution</code></a> <em>(influential/naive_bayes/02_concept)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-categorical-multinomial-distribution-gmm"><td></td><td>
+       <strong>categorical-multinomial-distribution-gmm</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#categorical-multinomial-distribution-gmm"><code class="xref">categorical-multinomial-distribution-gmm</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-computer-science-type-theory-contravariance"><td></td><td>
@@ -2726,6 +2779,14 @@ document.write(`
        <a href="probability_theory/02_probability/0202_probability_space.html#event_space"><code class="xref">event_space</code></a> <em>(probability_theory/02_probability/0202_probability_space)</em></td><td>
        <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ex:gmm-update-mixture-weights"><td></td><td>
+       <strong>ex:gmm-update-mixture-weights</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#ex:gmm-update-mixture-weights"><code class="xref">ex:gmm-update-mixture-weights</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-ex:log-likelihood-bernoulli"><td></td><td>
        <strong>ex:log-likelihood-bernoulli</strong></td><td></td></tr>
      <tr>
@@ -2820,6 +2881,14 @@ document.write(`
        <td></td>
        <td>
        <a href="influential/empirical_risk_minimization/02_concept.html#example-empirical-risk"><code class="xref">example-empirical-risk</code></a> <em>(influential/empirical_risk_minimization/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-gmm-initialization"><td></td><td>
+       <strong>example-gmm-initialization</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#example-gmm-initialization"><code class="xref">example-gmm-initialization</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>example</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-example-marginal-pdf-bivariate-normal"><td></td><td>
@@ -3198,6 +3267,22 @@ document.write(`
        <a href="probability_theory/03_discrete_random_variables/0301_random_variables.html#pre_image"><code class="xref">pre_image</code></a> <em>(probability_theory/03_discrete_random_variables/0301_random_variables)</em></td><td>
        <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-gmm-update-covariance-example"><td></td><td>
+       <strong>prf-gmm-update-covariance-example</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#prf-gmm-update-covariance-example"><code class="xref">prf-gmm-update-covariance-example</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-gmm-update-means-example"><td></td><td>
+       <strong>prf-gmm-update-means-example</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#prf-gmm-update-means-example"><code class="xref">prf-gmm-update-means-example</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:definition:in-sample-error"><td></td><td>
        <strong>prf:definition:in-sample-error</strong></td><td></td></tr>
      <tr>
@@ -3246,6 +3331,14 @@ document.write(`
        <a href="probability_theory/08_estimation_theory/intro.html#prf:example-gaussian-parameter"><code class="xref">prf:example-gaussian-parameter</code></a> <em>(probability_theory/08_estimation_theory/intro)</em></td><td>
        <em>example</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf:example-gmm-1"><td></td><td>
+       <strong>prf:example-gmm-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#prf:example-gmm-1"><code class="xref">prf:example-gmm-1</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:naive-bayes-estimation-algorithm"><td></td><td>
        <strong>prf:naive-bayes-estimation-algorithm</strong></td><td></td></tr>
      <tr>
@@ -3262,12 +3355,28 @@ document.write(`
        <a href="influential/learning_theory/02_concept.html#prf:remark-bounding-the-entire-hypothesis-set"><code class="xref">prf:remark-bounding-the-entire-hypothesis-set</code></a> <em>(influential/learning_theory/02_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf:remark-gmm-closed-form"><td></td><td>
+       <strong>prf:remark-gmm-closed-form</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#prf:remark-gmm-closed-form"><code class="xref">prf:remark-gmm-closed-form</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:remark-major-confusion-alert"><td></td><td>
        <strong>prf:remark-major-confusion-alert</strong></td><td></td></tr>
      <tr>
        <td></td>
        <td>
        <a href="influential/learning_theory/02_concept.html#prf:remark-major-confusion-alert"><code class="xref">prf:remark-major-confusion-alert</code></a> <em>(influential/learning_theory/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf:remark-notation-gmm"><td></td><td>
+       <strong>prf:remark-notation-gmm</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#prf:remark-notation-gmm"><code class="xref">prf:remark-notation-gmm</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:remark:kmeans-optimal-cluster-centers-notation"><td></td><td>
@@ -3614,6 +3723,14 @@ document.write(`
        <a href="influential/empirical_risk_minimization/02_concept.html#rem-risk-vs-loss"><code class="xref">rem-risk-vs-loss</code></a> <em>(influential/empirical_risk_minimization/02_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-rem:gmm-update-mixture-weights-depends-on-all-parameters"><td></td><td>
+       <strong>rem:gmm-update-mixture-weights-depends-on-all-parameters</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#rem:gmm-update-mixture-weights-depends-on-all-parameters"><code class="xref">rem:gmm-update-mixture-weights-depends-on-all-parameters</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-rem:likelihood"><td></td><td>
        <strong>rem:likelihood</strong></td><td></td></tr>
      <tr>
@@ -3708,6 +3825,14 @@ document.write(`
        <td></td>
        <td>
        <a href="influential/naive_bayes/02_concept.html#remark-empirical-parameters"><code class="xref">remark-empirical-parameters</code></a> <em>(influential/naive_bayes/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-gmm-update-means"><td></td><td>
+       <strong>remark-gmm-update-means</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#remark-gmm-update-means"><code class="xref">remark-gmm-update-means</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-remark-interpretation-true-risk"><td></td><td>
@@ -4054,6 +4179,22 @@ document.write(`
        <a href="probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html#theorem-expectation-of-sample-average"><code class="xref">theorem-expectation-of-sample-average</code></a> <em>(probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept)</em></td><td>
        <em>theorem</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-gmm-update-covariance"><td></td><td>
+       <strong>theorem-gmm-update-covariance</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#theorem-gmm-update-covariance"><code class="xref">theorem-gmm-update-covariance</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-gmm-update-means"><td></td><td>
+       <strong>theorem-gmm-update-means</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#theorem-gmm-update-means"><code class="xref">theorem-gmm-update-means</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-theorem-hoeffding-inequality-restated"><td></td><td>
        <strong>theorem-hoeffding-inequality-restated</strong></td><td></td></tr>
      <tr>
@@ -4316,6 +4457,14 @@ document.write(`
        <td></td>
        <td>
        <a href="influential/learning_theory/02_concept.html#thm:generalization-bound"><code class="xref">thm:generalization-bound</code></a> <em>(influential/learning_theory/02_concept)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-thm:gmm-update-mixture-weights"><td></td><td>
+       <strong>thm:gmm-update-mixture-weights</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/gaussian_mixture_models/02_concept.html#thm:gmm-update-mixture-weights"><code class="xref">thm:gmm-update-mixture-weights</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>theorem</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-thm:independence_and_covariance"><td></td><td>
