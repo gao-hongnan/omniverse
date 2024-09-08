@@ -15,8 +15,8 @@ def test_construct_future_mask(adder_dataset: AdderDataset, adder_ground_truth: 
 
 
 @pytest.mark.parametrize(
-    "input,expected_padding_mask",
-    list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks)),
+    argnames="input,expected_padding_mask",
+    argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks)),
 )
 def test_construct_padding_mask(
     adder_dataset: AdderDataset, input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
@@ -27,8 +27,8 @@ def test_construct_padding_mask(
 
 
 @pytest.mark.parametrize(
-    "encoded_sequence,expected_target",
-    list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets)),
+    argnames="encoded_sequence,expected_target",
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets)),
 )
 def test_construct_target(
     adder_dataset: AdderDataset, encoded_sequence: List[int], expected_target: torch.LongTensor
@@ -39,8 +39,8 @@ def test_construct_target(
 
 
 @pytest.mark.parametrize(
-    "encoded_sequence,expected_input",
-    list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs)),
+    argnames="encoded_sequence,expected_input",
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs)),
 )
 def test_construct_input(
     adder_dataset: AdderDataset, encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
@@ -114,8 +114,8 @@ def test_collate_fn(adder_mock_batch: List[AdderDatasetYield], adder_ground_trut
         assert future_masks_expanded[i].size() == (1, input_len, input_len)
 
 
-@pytest.mark.parametrize("split", [[0.7, 0.1, 0.2], [0.8, 0.1, 0.1], [0.6, 0.2, 0.2]])
-@pytest.mark.parametrize("seed", [42, 1992])
+@pytest.mark.parametrize(argnames="split", argvalues=[[0.7, 0.1, 0.2], [0.8, 0.1, 0.1], [0.6, 0.2, 0.2]])
+@pytest.mark.parametrize(argnames="seed", argvalues=[42, 1992])
 def test_split_dataset(adder_dataset_but_larger: AdderDataset, split: List[float], seed: int) -> None:
     """Test splitting the dataset into train, validation, and test sets."""
     # Perform the split

@@ -6,7 +6,7 @@ from sklearn.naive_bayes import GaussianNB
 from omnivault.machine_learning.generative.naive_bayes import NaiveBayesGaussianLogLikelihood
 
 
-@pytest.mark.parametrize("num_classes", [2, 3, 4])
+@pytest.mark.parametrize(argnames="num_classes", argvalues=[2, 3, 4])
 def test_naive_bayes_vs_sklearn(num_classes: int) -> None:
     # Generate synthetic data
     X, y = make_classification(

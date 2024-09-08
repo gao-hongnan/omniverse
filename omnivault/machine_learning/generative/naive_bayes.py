@@ -1,4 +1,4 @@
-"""Naive Bayes Classifier.
+r"""Naive Bayes Classifier.
 
 High level module with business logic.
 

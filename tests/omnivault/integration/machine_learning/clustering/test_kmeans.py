@@ -6,7 +6,7 @@ from sklearn.datasets import make_blobs
 from omnivault.machine_learning.clustering.kmeans import KMeansLloyd
 
 
-@pytest.mark.parametrize("K", [3, 5])
+@pytest.mark.parametrize(argnames="K", argvalues=[3, 5])
 def test_kmeans_vs_sklearn(K: int) -> None:
     # Generate synthetic data
     X, _ = make_blobs(n_samples=1000, centers=K, n_features=2, random_state=1992, cluster_std=1.5)

@@ -28,8 +28,8 @@
 
 
 # @pytest.mark.parametrize(
-#     "module_name, propagate",
-#     [
+#     argnames="module_name, propagate",
+#     argvalues=[
 #         (None, False),
 #         ("test_module", True),
 #         ("test_module", False),
@@ -66,8 +66,8 @@
 
 
 # @pytest.mark.parametrize(
-#     "message",
-#     [
+#     argnames="message",
+#     argvalues=[
 #         "Test info message",
 #         "Test warning message",
 #         "Test error message",
