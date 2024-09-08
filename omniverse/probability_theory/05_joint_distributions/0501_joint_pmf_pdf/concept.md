@@ -141,7 +141,7 @@ is closed related to the law of total probability. In fact, [marginalization is 
 of conditioned observations](https://math.stackexchange.com/questions/3166711/is-marginalization-a-sum-of-conditioned-observations).
 
 In the chapter on
-[Naive Bayes](../../../machine_learning/generative/naive_bayes/concept.md),
+[Naive Bayes](../../../influential/naive_bayes/02_concept.md),
 we see that the
 denominator $\mathbb{P}(\mathbf{X})$ can be derived by marginalization.
 

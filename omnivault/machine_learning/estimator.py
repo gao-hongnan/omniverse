@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
+from typing import Any
 
-class BaseEstimator:
+
+class BaseEstimator(ABC):
     """Base Class for Estimators."""
 
     def __repr__(self) -> str:
@@ -52,3 +55,23 @@ class BaseEstimator:
             The hash of the estimator.
         """
         return hash(tuple(sorted(self.__dict__.items())))
+
+    @abstractmethod
+    def fit(self, *args: Any, **kwargs: Any) -> BaseEstimator:
+        """Fit the estimator.
+
+        Returns
+        -------
+        self : BaseEstimator
+            The fitted estimator.
+        """
+
+    @abstractmethod
+    def predict(self, *args: Any, **kwargs: Any) -> Any:
+        """Predict the labels for the data.
+
+        Returns
+        -------
+        y_pred : Any
+            The predicted labels for the data.
+        """

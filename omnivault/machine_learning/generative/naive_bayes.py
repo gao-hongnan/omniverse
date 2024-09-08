@@ -30,26 +30,16 @@ NOTE:
 """
 from __future__ import annotations
 
+import logging
 import math
-from typing import Dict, List, Optional
+from typing import Any
 
 import numpy as np
-from scipy.special import logsumexp
+from numpy.typing import NDArray
 
-from src.base.estimator import BaseEstimator
-from src.base.types import T
-
-"""Concrete Implementation of Naive Bayes Hyperparams."""
-from __future__ import annotations
-
-from src.base.hyperparams import Hyperparams
+from omnivault.machine_learning.estimator import BaseEstimator
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-
-
-class NaivesBayesHyperparams(Hyperparams):
-    random_state: int
-    num_classes: int
 
 
 # pylint: disable=too-many-instance-attributes
@@ -57,30 +47,30 @@ class NaiveBayesGaussian(BaseEstimator):
     num_samples: int
     num_features: int
 
-    theta: List[List[Dict[str, float]]]
-    pi: T
+    theta: NDArray[np.floating[Any]]
+    pi: NDArray[np.floating[Any]]
 
-    prior: T
-    likelihood: T
-    posterior: T
+    prior: NDArray[np.floating[Any]]
+    likelihood: NDArray[np.floating[Any]]
+    posterior: NDArray[np.floating[Any]]
 
     def __init__(self, random_state: int = 1992, num_classes: int = 3) -> None:
         self.random_state = random_state
         self.num_classes = num_classes
 
-    def _set_num_samples_and_features(self, X: T) -> None:
+    def _set_num_samples_and_features(self, X: NDArray[np.floating[Any]]) -> None:
         # num_samples unused since we vectorized when estimating parameters
         self.num_samples, self.num_features = X.shape
 
-    def fit(self, X: T, y: Optional[T] = None) -> NaiveBayesGaussian:
+    def fit(self, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]) -> NaiveBayesGaussian:
         """Fit Naive Bayes classifier according to X, y.
 
         Note:
             Fitting Naive Bayes involves us finding the theta and pi vector.
 
         Args:
-            X (T): N x D matrix
-            y (T): N x 1 vector
+            X (NDArray[np.floating[Any]]): N x D matrix
+            y (NDArray[np.floating[Any]]): N x 1 vector
         """
         self._set_num_samples_and_features(X)
 
@@ -89,7 +79,7 @@ class NaiveBayesGaussian(BaseEstimator):
         self.pi = self._estimate_prior_parameters(y)  # this is \boldsymbol{\pi}
         return self
 
-    def _estimate_prior_parameters(self, y: T) -> T:
+    def _estimate_prior_parameters(self, y: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Calculate the prior probability of each class.
 
         Returns a vector of prior probabilities for each class.
@@ -101,8 +91,10 @@ class NaiveBayesGaussian(BaseEstimator):
             pi[k] = np.sum(y == k) / len(y)
         return pi
 
-    def _estimate_likelihood_parameters(self, X: T, y: T) -> List[List[Dict[str, float]]]:
-        """Estimate the mean and variance of each feature for each class.
+    def _estimate_likelihood_parameters(
+        self, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
+    ) -> NDArray[np.floating[Any]]:
+        r"""Estimate the mean and variance of each feature for each class.
 
         The final theta should have shape K \times D.
         """
@@ -121,8 +113,10 @@ class NaiveBayesGaussian(BaseEstimator):
         return parameters
 
     @staticmethod
-    def _calculate_conditional_gaussian_pdf(x: T, mean: float, var: float, eps: float = 1e-4) -> float:
-        """Univariate Gaussian likelihood of the data x given mean and var.
+    def _calculate_conditional_gaussian_pdf(
+        x: NDArray[np.floating[Any]], mean: float, var: float, eps: float = 1e-4
+    ) -> float:
+        r"""Univariate Gaussian likelihood of the data x given mean and var.
 
         $\mathbb{P}(X_d = x_d | Y = k)$
 
@@ -133,7 +127,7 @@ class NaiveBayesGaussian(BaseEstimator):
         exponent = math.exp(-(math.pow(x - mean, 2) / (2 * var + eps)))
         return coeff * exponent
 
-    def _calculate_prior(self) -> T:
+    def _calculate_prior(self) -> NDArray[np.floating[Any]]:
         """Calculate the prior probability of each class.
 
         Returns a vector of prior probabilities for each class.
@@ -144,18 +138,18 @@ class NaiveBayesGaussian(BaseEstimator):
         prior = self.pi
         return prior
 
-    def _calculate_joint_likelihood(self, x: T) -> T:
-        """Calculate the joint likelihood of the data x given the parameters.
+    def _calculate_joint_likelihood(self, x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
+        r"""Calculate the joint likelihood of the data x given the parameters.
 
         $P(X|Y) = \prod_{d=1}^{D} P(X_d|Y)$
 
         This is our matrix M2 (M3) in the notes.
 
         Args:
-            x (T): A vector of shape (num_features,).
+            x (NDArray[np.floating[Any]]): A vector of shape (num_features,).
 
         Returns:
-            T: A vector of shape (num_classes,).
+            NDArray[np.floating[Any]]: A vector of shape (num_classes,).
         """
         likelihood = np.ones(self.num_classes)  # M2 matrix in notes
         M3 = np.ones((self.num_classes, self.num_features))  # M3 matrix in notes
@@ -168,7 +162,7 @@ class NaiveBayesGaussian(BaseEstimator):
         likelihood = np.prod(M3, axis=1)
         return likelihood
 
-    def _calculate_posterior(self, x: T) -> T:
+    def _calculate_posterior(self, x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Calculates posterior for one single data point x."""
         # x: (num_features,) 1 sample
         self.prior = self._calculate_prior()
@@ -178,11 +172,11 @@ class NaiveBayesGaussian(BaseEstimator):
         self.posterior = self.likelihood * self.prior
         return self.posterior
 
-    def predict_one_sample(self, x: T) -> T:
+    def predict_one_sample(self, x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the posterior of one sample x."""
         return self._calculate_posterior(x)
 
-    def predict(self, X: T) -> T:
+    def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the class labels of all the samples in X. Note
         that X can be any data (i.e. unseen data)."""
         num_samples = X.shape[0]
@@ -192,7 +186,7 @@ class NaiveBayesGaussian(BaseEstimator):
             y_preds[sample_index] = np.argmax(self.predict_one_sample(x), axis=0)
         return y_preds
 
-    def predict_pdf(self, X: T) -> T:
+    def predict_pdf(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the class PDF of all the samples in X."""
         num_samples = X.shape[0]
         # note the shape is num_samples x num_classes because we are not argmax it
@@ -201,7 +195,7 @@ class NaiveBayesGaussian(BaseEstimator):
             y_probs[sample_index] = self.predict_one_sample(x)
         return y_probs
 
-    def predict_proba(self, X: T) -> T:
+    def predict_proba(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the class probabilities of all the samples in X.
         Normalize it to get the probabilities."""
         y_probs = self.predict_pdf(X)
@@ -214,7 +208,7 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
     """In order not to pollute the original class, we create a new class
     and implement the log-likelihood version of the Gaussian Naive Bayes."""
 
-    def _calculate_joint_log_likelihood(self, x: T) -> T:
+    def _calculate_joint_log_likelihood(self, x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Calculate the joint log-likelihood of the data x given the parameters.
 
         log(P(X|Y)) = sum_{d=1}^{D} log(P(X_d|Y))
@@ -233,7 +227,7 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
                 log_likelihood[k] += np.log(self._calculate_conditional_gaussian_pdf(x[d], mean, var))
         return log_likelihood
 
-    def predict_log_proba(self, X: T) -> T:
+    def predict_log_proba(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the log-probabilities of all the samples in X.
 
         Args:
@@ -252,16 +246,16 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
             log_probs[sample_index] = log_posterior - np.log(np.sum(np.exp(log_posterior)))
         return log_probs
 
-    def predict_proba(self, X: T) -> T:
+    def predict_proba(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the probabilities of all the samples in X.
 
         np.exp is used to convert log-probabilities to probabilities.
 
         Args:
-            X (T): N x D matrix.
+            X (NDArray[np.floating[Any]]): N x D matrix.
 
         Returns:
-            T: N x K matrix with probabilities for each sample.
+            NDArray[np.floating[Any]]: N x K matrix with probabilities for each sample.
         """
         log_probs = self.predict_log_proba(X)
-        return np.exp(log_probs)
+        return np.exp(log_probs)  # type: ignore[no-any-return]

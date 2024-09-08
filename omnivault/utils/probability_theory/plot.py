@@ -51,23 +51,23 @@ def plot_quiver(
     angles: str = "xy",
     scale_units: str = "xy",
     scale: float = 1,
-    **kwargs: Dict[str, Any],
+    **kwargs: Any,
 ) -> Quiver:
     """Plot quiver."""
     return ax.quiver(x, y, u, v, angles=angles, scale_units=scale_units, scale=scale, **kwargs)
 
 
-def plot_hist(ax: plt.Axes, x: np.ndarray, **kwargs: Dict[str, Any]) -> BarContainer:
+def plot_hist(ax: plt.Axes, x: np.ndarray, **kwargs: Any) -> BarContainer:
     """Plot histogram."""
     return ax.hist(x, **kwargs)
 
 
-def plot_bar(ax: plt.Axes, x: np.ndarray, y: np.ndarray, **kwargs: Dict[str, Any]) -> BarContainer:
+def plot_bar(ax: plt.Axes, x: np.ndarray, y: np.ndarray, **kwargs: Any) -> BarContainer:
     """Plot bar plot."""
     return ax.bar(x, y, **kwargs)
 
 
-def plot_scatter(ax: plt.Axes, x: np.ndarray, y: np.ndarray, **kwargs: Dict[str, Any]) -> PathCollection:
+def plot_scatter(ax: plt.Axes, x: np.ndarray, y: np.ndarray, **kwargs: Any) -> PathCollection:
     """Plot scatter plot."""
     return ax.scatter(x, y, **kwargs)
 
@@ -78,7 +78,7 @@ def plot_contour(
     y: np.ndarray,
     z: np.ndarray,
     contourf: bool = False,
-    **kwargs: Dict[str, Any],
+    **kwargs: Any,
 ) -> QuadContourSet:
     """Plot contours."""
     contour = ax.contourf(x, y, z, **kwargs) if contourf else ax.contour(x, y, z, **kwargs)
@@ -86,7 +86,7 @@ def plot_contour(
 
 
 def plot_surface(
-    ax: plt.Axes, x: np.ndarray, y: np.ndarray, z: np.ndarray, **kwargs: Dict[str, Any]
+    ax: plt.Axes, x: np.ndarray, y: np.ndarray, z: np.ndarray, **kwargs: Any
 ) -> mpl_toolkits.mplot3d.art3d.Poly3DCollection:
     """Plot surface."""
     surface = ax.plot_surface(x, y, z, **kwargs)
