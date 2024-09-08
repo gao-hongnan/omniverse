@@ -360,10 +360,9 @@ $$
 
 Now there will be more examples of higher-dimensional log-likelihood functions
 in the next section. Furthermore, the section Maximum Likelihood Estimation for
-Priors in
-[Naive Bayes](../../machine_learning/generative/../../../machine_learning/generative/naive_bayes/concept.md)
-details one example of log-likelihood function for a higher-dimensional
-multivariate Bernoulli (Catagorical) distribution.
+Priors in [Naive Bayes](../../../influential/naive_bayes/02_concept.md),details
+one example of log-likelihood function for a higher-dimensional multivariate
+Bernoulli (Catagorical) distribution.
 
 ### Visualizing the Likelihood Function
 

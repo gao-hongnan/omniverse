@@ -17,6 +17,7 @@ import seaborn as sns
 import sklearn.cluster
 from numpy.typing import NDArray
 
+from omnivault.machine_learning._types import Fittable, Predictable
 from omnivault.machine_learning.estimator import BaseEstimator
 from omnivault.machine_learning.metrics.pairwise.distance import euclidean_distance, manhattan_distance
 from omnivault.utils.reproducibility.seed import seed_all
@@ -24,7 +25,7 @@ from omnivault.utils.reproducibility.seed import seed_all
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-class KMeansLloyd(BaseEstimator):
+class KMeansLloyd(BaseEstimator, Fittable, Predictable):
     """K-Means Lloyd's algorithm.
 
     Parameters

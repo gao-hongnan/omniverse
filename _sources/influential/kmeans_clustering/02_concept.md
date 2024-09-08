@@ -1521,7 +1521,7 @@ See
         Overall, if we interpret K-Means from the perspective of probabilistic
         modeling, then we can see that K-Means is a special case of GMM. And
         recall that
-        [in the geometry of multivariate gaussian](https://gao-hongnan.github.io/gaohn-galaxy/probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html),
+        [in the geometry of multivariate gaussian](https://www.gaohongnan.com/probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html),
         the shape of the multivariate gaussian is determined by the covariance
         matrix. Since we have deduced that the covariance matrix is
         $\sigma^2 \mathbf{I}$, a diagonal matrix with equal variance across all
