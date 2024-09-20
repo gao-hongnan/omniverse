@@ -1047,7 +1047,7 @@ $$
 ### Maximum Likelihood Estimation for Multivariate Gaussian
 
 See
-[my proof on multiple linear regression](../../../machine_learning/linear_models/linear_regression/concept.md),
+[my proof on multiple linear regression](../../../influential/linear_regression/02_concept.md),
 they have similar vein of logic. See
 [here](https://stats.stackexchange.com/questions/351549/maximum-likelihood-estimators-multivariate-gaussian)
 also.

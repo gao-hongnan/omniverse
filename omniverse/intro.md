@@ -1,4 +1,4 @@
-# Omniverse.
+# Omniverse
 
 ```{tableofcontents}
 
