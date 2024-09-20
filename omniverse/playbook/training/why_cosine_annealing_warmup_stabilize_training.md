@@ -209,7 +209,7 @@ cosine annealing scheduler is often combined with a warmup phase. In
 {numref}`why-cosine-warmup-loss-plot`, we can see that the loss curve is
 relatively smooth and converges way better than the ones without warmup.
 
-```{figure} ./assets/warmup_loss_plot_uvadlc.svg
+```{figure} ../assets/warmup_loss_plot_uvadlc.svg
 ---
 name: why-cosine-warmup-loss-plot
 ---
