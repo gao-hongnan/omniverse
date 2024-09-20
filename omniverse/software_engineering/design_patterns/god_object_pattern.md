@@ -21,7 +21,6 @@ kernelspec:
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
-[![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/288357646b8e4043d0b0a81c8b6b6c600fbd2efd/omnixamples/software_engineering/design_patterns/named_constructor/from_classmethod.py)
 
 ```{contents}
 :local:
