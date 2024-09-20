@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Registry Design Pattern &#8212; Omniverse</title>
+    <title>Registry &#8212; Omniverse</title>
   
   
   
@@ -78,8 +78,8 @@
     <link rel="canonical" href="https://www.gaohongnan.com/software_engineering/design_patterns/registry.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Python" href="../python/intro.html" />
-    <link rel="prev" title="Strategy Pattern" href="strategy.html" />
+    <link rel="next" title="Context Object Pattern (God Object)" href="god_object_pattern.html" />
+    <link rel="prev" title="Strategy" href="strategy.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -193,7 +193,7 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
                 <a class="reference internal" href="../../intro.html">
-                    🌌 Omniverse: A Journey Through Knowledge
+                    Omniverse.
                 </a>
             </li>
         </ul>
@@ -436,15 +436,18 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../config_management/concept.html">Configuration Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../config_management/concept.html">Configuration Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../config_management/01-pydra.html">Pydantic And Hydra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../config_management/02-state.html">State And Metadata Management</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Design Patterns</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="dependency-inversion-principle.html">Dependency Inversion Principle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="strategy.html">Strategy Pattern</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Registry Design Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="strategy.html">Strategy</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -730,7 +733,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Registry Design Pattern</h1>
+    <h1>Registry</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -754,8 +757,8 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="registry-design-pattern">
-<h1>Registry Design Pattern<a class="headerlink" href="#registry-design-pattern" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="registry">
+<h1>Registry<a class="headerlink" href="#registry" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
@@ -949,9 +952,9 @@ and parameters.</p></li>
 <span style="color: #7fbf7f; text-decoration-color: #7fbf7f">│   </span><span style="color: #008000; text-decoration-color: #008000">'CosineAnnealingWarmRestarts'</span><span style="color: #000000; text-decoration-color: #000000">: &lt;class </span><span style="color: #008000; text-decoration-color: #008000">'__main__.CosineAnnealingWarmRestartsConfig'</span><span style="font-weight: bold">&gt;</span>
 <span style="font-weight: bold">}</span>
 </pre>
-</div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Created StepLR scheduler: &lt;torch.optim.lr_scheduler.StepLR object at 0x7f78624e58e0&gt;
-Created CosineAnnealingLR scheduler: &lt;torch.optim.lr_scheduler.CosineAnnealingLR object at 0x7f78569c5070&gt;
-Created CosineAnnealingWarmRestarts scheduler: &lt;torch.optim.lr_scheduler.CosineAnnealingWarmRestarts object at 0x7f78624fed60&gt;
+</div><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Created StepLR scheduler: &lt;torch.optim.lr_scheduler.StepLR object at 0x7f3d5e8e68b0&gt;
+Created CosineAnnealingLR scheduler: &lt;torch.optim.lr_scheduler.CosineAnnealingLR object at 0x7f3d5e886070&gt;
+Created CosineAnnealingWarmRestarts scheduler: &lt;torch.optim.lr_scheduler.CosineAnnealingWarmRestarts object at 0x7f3d5e8ff880&gt;
 </pre></div>
 </div>
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/torch/optim/lr_scheduler.py:60: UserWarning: The verbose parameter is deprecated. Please use get_last_lr() to access the learning rate.
@@ -1051,15 +1054,15 @@ it one if you want to, either via the below way or via metaclass.</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Strategy Pattern</p>
+        <p class="prev-next-title">Strategy</p>
       </div>
     </a>
     <a class="right-next"
-       href="../python/intro.html"
+       href="god_object_pattern.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Python</p>
+        <p class="prev-next-title">Context Object Pattern (God Object)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

@@ -1,4 +1,4 @@
-# 🌌 Omniverse: A Journey Through Knowledge
+# Omniverse.
 
 ```{tableofcontents}
 
