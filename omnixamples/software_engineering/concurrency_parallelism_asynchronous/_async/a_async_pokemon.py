@@ -5,7 +5,7 @@ import logging
 import sys
 from random import randint
 
-from omnivault.core.timer import timer
+from omnivault.benchmark.timer import timer
 from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.config import parser
 from omnixamples.software_engineering.concurrency_parallelism_asynchronous._async.req_http import (
     JSONObject,
