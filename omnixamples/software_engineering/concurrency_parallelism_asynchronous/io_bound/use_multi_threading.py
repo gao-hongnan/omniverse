@@ -15,7 +15,8 @@ NUM_THREADS = 10
 def get_site(url: str, session: requests.Session, thread_index: int) -> None:
     with session.get(url, timeout=30) as response:
         content = response.content
-        logging.debug("Thread %s, Read %d from %s", thread_index, len(content), url)
+        thread_id = threading.get_ident()
+        logging.debug("Thread Index %d (ID: %d), Read %d from %s", thread_index, thread_id, len(content), url)
 
 
 @timer
@@ -26,17 +27,19 @@ def get_sites_with_threading(urls: List[str]) -> None:
             thread = threading.Thread(
                 target=get_site,
                 kwargs={"url": url, "session": session, "thread_index": index},
+                name=f"Thread-{index}",
             )
             threads.append(thread)
 
     for index, thread in enumerate(threads):
-        logging.debug("before starting thread %d.", index)
+        logging.debug("Before starting thread %d (Name: %s).", index, thread.name)
         thread.start()
 
+    # Join all threads
     for index, thread in enumerate(threads):
-        logging.info("before joining thread %d.", index)
+        logging.info("Before joining thread %d (Name: %s).", index, thread.name)
         thread.join()
-        logging.info("thread %d done", index)
+        logging.info("Thread %d (Name: %s) done.", index, thread.name)
 
 
 @timer

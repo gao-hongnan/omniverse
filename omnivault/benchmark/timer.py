@@ -131,8 +131,9 @@ def timer(func: F) -> F:
         end_time = timeit.default_timer()
         execution_time = end_time - start_time
         logger.info(
-            f"Function '{func.__name__}' took {execution_time:.4f} seconds to execute with args {args} and kwargs {kwargs}"
-        )
+            f"Function '{func.__name__}' took {execution_time:.4f} seconds to execute."
+        )  # with args {args} and kwargs {kwargs}"
+
         return result
 
     @functools.wraps(func)
@@ -142,8 +143,9 @@ def timer(func: F) -> F:
         end_time = timeit.default_timer()
         execution_time = end_time - start_time
         logger.info(
-            f"Function '{func.__name__}' took {execution_time:.4f} seconds to execute with args {args} and kwargs {kwargs}"
-        )
+            f"Function '{func.__name__}' took {execution_time:.4f} seconds to execute."
+        )  # with args {args} and kwargs {kwargs}"
+
         return result
 
     if inspect.iscoroutinefunction(func):

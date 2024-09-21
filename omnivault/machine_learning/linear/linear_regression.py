@@ -563,7 +563,7 @@ class reighnsLinearRegression:
                 # yet another vectorized operation
                 self.optimal_betas -= self.learning_rate * gradient_vector
                 if epoch % 100 == 0:
-                    print("EPOCH: {} | MSE_LOSS : {}".format(epoch, loss))
+                    print(f"EPOCH: {epoch} | MSE_LOSS : {loss}")
                     self.loss_history.append(loss)
 
         # set attributes from None to the optimal ones

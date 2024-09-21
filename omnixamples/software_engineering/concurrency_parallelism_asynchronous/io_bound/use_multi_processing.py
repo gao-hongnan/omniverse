@@ -7,10 +7,25 @@ import requests
 
 from omnivault.benchmark.timer import timer
 
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
+def create_logger() -> logging.Logger:
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    if not logger.handlers:
+        formatter = logging.Formatter("%(asctime)s - %(processName)s - %(process)d - %(levelname)s - %(message)s")
+        process_id = multiprocessing.current_process().pid
+        log_filename = f"process_{process_id}.log"
+        file_handler = logging.FileHandler(log_filename)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    return logger
+
+
+logger = create_logger()
 NUM_PROCESSES = multiprocessing.cpu_count()
-logging.info("NUM_PROCESSES: %d", NUM_PROCESSES)
+logger.info("NUM_PROCESSES: %d", NUM_PROCESSES)
 
 session: Optional[requests.Session] = None
 
@@ -25,7 +40,9 @@ def get_site(url: str) -> None:
     assert session is not None
     with session.get(url, timeout=30) as response:
         content = response.content
-        logging.debug("Process %s, Read %d from %s", multiprocessing.current_process().name, len(content), url)
+        process_name = multiprocessing.current_process().name
+        process_id = multiprocessing.current_process().pid
+        logger.info("Process Name: %s, Process ID: %d, Read %d from %s", process_name, process_id, len(content), url)
 
 
 @timer

@@ -4,8 +4,6 @@
 # Code based on https://github.com/mlflow/mlflow/blob/master/example/tutorial/pytorch_tensorboard.py.
 
 
-import os
-import sys
 from typing import *
 
 import matplotlib.pyplot as plt
@@ -15,9 +13,8 @@ from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
-from omnivault.machine_learning.linear.linear_regression import LinearRegression as MyLinearRegression
-import importlib
 
+from omnivault.machine_learning.linear.linear_regression import LinearRegression as MyLinearRegression
 
 """
 Notice that the intercept and coefficient values are not exactly the same when comparing sklearn's method and mine.
