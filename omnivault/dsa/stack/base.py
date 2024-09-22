@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generator, Generic, Iterable, List, Optional, overload
+from typing import Generic, Iterable, Iterator, List, Optional, overload
 
 from omnivault._types._generic import T
 
@@ -58,6 +58,6 @@ class Stack(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def __iter__(self) -> Generator[T, None, None]:
+    def __iter__(self) -> Iterator[T]:
         """Return an iterator for the stack."""
         raise NotImplementedError

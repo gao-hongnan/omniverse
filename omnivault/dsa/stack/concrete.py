@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Generator, List
+from typing import Iterator, List
 
 from omnivault._types._generic import T
 from omnivault.dsa.stack.base import Stack
@@ -26,7 +26,7 @@ class StackList(Stack[T]):
         """Return the size of the stack."""
         return len(self.stack_items)
 
-    def __iter__(self) -> Generator[T, None, None]:
+    def __iter__(self) -> Iterator[T]:
         """Iterate over the stack items.
 
         Note
