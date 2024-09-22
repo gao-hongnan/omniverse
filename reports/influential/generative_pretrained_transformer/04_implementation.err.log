@@ -1,0 +1,67 @@
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/nbclient/client.py", line 1314, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/asyncio/base_events.py", line 647, in run_until_complete
+    return future.result()
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+generator = torch.Generator(device=composer.device)
+generator.manual_seed(25)
+
+pos_embed = Sinusoid(d_model=composer.d_model, context_length=composer.block_size, dropout=0.0)
+P = pos_embed.P
+
+z0_tok_embed_with_pos_embed = pos_embed(z0_tok_embed)
+z0_tok_embed_add_pos_embed = z0_tok_embed + P
+
+torch.testing.assert_close(z0_tok_embed_with_pos_embed, z0_tok_embed_add_pos_embed, rtol=0.0, atol=0.0) # just to show that adding P to the z0 is the same as pos_embed(z0)
+------------------
+
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mRuntimeError[0m                              Traceback (most recent call last)
+Cell [0;32mIn[37], line 7[0m
+[1;32m      4[0m pos_embed [38;5;241m=[39m Sinusoid(d_model[38;5;241m=[39mcomposer[38;5;241m.[39md_model, context_length[38;5;241m=[39mcomposer[38;5;241m.[39mblock_size, dropout[38;5;241m=[39m[38;5;241m0.0[39m)
+[1;32m      5[0m P [38;5;241m=[39m pos_embed[38;5;241m.[39mP
+[0;32m----> 7[0m z0_tok_embed_with_pos_embed [38;5;241m=[39m [43mpos_embed[49m[43m([49m[43mz0_tok_embed[49m[43m)[49m
+[1;32m      8[0m z0_tok_embed_add_pos_embed [38;5;241m=[39m z0_tok_embed [38;5;241m+[39m P
+[1;32m     10[0m torch[38;5;241m.[39mtesting[38;5;241m.[39massert_close(z0_tok_embed_with_pos_embed, z0_tok_embed_add_pos_embed, rtol[38;5;241m=[39m[38;5;241m0.0[39m, atol[38;5;241m=[39m[38;5;241m0.0[39m) [38;5;66;03m# just to show that adding P to the z0 is the same as pos_embed(z0)[39;00m
+
+File [0;32m/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/torch/nn/modules/module.py:1553[0m, in [0;36mModule._wrapped_call_impl[0;34m(self, *args, **kwargs)[0m
+[1;32m   1551[0m     [38;5;28;01mreturn[39;00m [38;5;28mself[39m[38;5;241m.[39m_compiled_call_impl([38;5;241m*[39margs, [38;5;241m*[39m[38;5;241m*[39mkwargs)  [38;5;66;03m# type: ignore[misc][39;00m
+[1;32m   1552[0m [38;5;28;01melse[39;00m:
+[0;32m-> 1553[0m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_call_impl[49m[43m([49m[38;5;241;43m*[39;49m[43margs[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwargs[49m[43m)[49m
+
+File [0;32m/opt/hostedtoolcache/Python/3.9.20/x64/lib/python3.9/site-packages/torch/nn/modules/module.py:1562[0m, in [0;36mModule._call_impl[0;34m(self, *args, **kwargs)[0m
+[1;32m   1557[0m [38;5;66;03m# If we don't have any hooks, we want to skip the rest of the logic in[39;00m
+[1;32m   1558[0m [38;5;66;03m# this function, and just call forward.[39;00m
+[1;32m   1559[0m [38;5;28;01mif[39;00m [38;5;129;01mnot[39;00m ([38;5;28mself[39m[38;5;241m.[39m_backward_hooks [38;5;129;01mor[39;00m [38;5;28mself[39m[38;5;241m.[39m_backward_pre_hooks [38;5;129;01mor[39;00m [38;5;28mself[39m[38;5;241m.[39m_forward_hooks [38;5;129;01mor[39;00m [38;5;28mself[39m[38;5;241m.[39m_forward_pre_hooks
+[1;32m   1560[0m         [38;5;129;01mor[39;00m _global_backward_pre_hooks [38;5;129;01mor[39;00m _global_backward_hooks
+[1;32m   1561[0m         [38;5;129;01mor[39;00m _global_forward_hooks [38;5;129;01mor[39;00m _global_forward_pre_hooks):
+[0;32m-> 1562[0m     [38;5;28;01mreturn[39;00m [43mforward_call[49m[43m([49m[38;5;241;43m*[39;49m[43margs[49m[43m,[49m[43m [49m[38;5;241;43m*[39;49m[38;5;241;43m*[39;49m[43mkwargs[49m[43m)[49m
+[1;32m   1564[0m [38;5;28;01mtry[39;00m:
+[1;32m   1565[0m     result [38;5;241m=[39m [38;5;28;01mNone[39;00m
+
+Cell [0;32mIn[36], line 49[0m, in [0;36mSinusoid.forward[0;34m(self, z)[0m
+[1;32m     48[0m [38;5;28;01mdef[39;00m [38;5;21mforward[39m([38;5;28mself[39m, z: torch[38;5;241m.[39mTensor) [38;5;241m-[39m[38;5;241m>[39m torch[38;5;241m.[39mTensor:
+[0;32m---> 49[0m     z [38;5;241m=[39m [38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43m_add_positional_encoding[49m[43m([49m[43mz[49m[43m)[49m
+[1;32m     50[0m     z [38;5;241m=[39m [38;5;28mself[39m[38;5;241m.[39mdropout(z)
+[1;32m     51[0m     [38;5;28;01mreturn[39;00m z
+
+Cell [0;32mIn[36], line 55[0m, in [0;36mSinusoid._add_positional_encoding[0;34m(self, z)[0m
+[1;32m     53[0m [38;5;28;01mdef[39;00m [38;5;21m_add_positional_encoding[39m([38;5;28mself[39m, z: torch[38;5;241m.[39mTensor) [38;5;241m-[39m[38;5;241m>[39m torch[38;5;241m.[39mTensor:
+[1;32m     54[0m [38;5;250m    [39m[38;5;124;03m"""Add the positional encoding tensor to the input tensor."""[39;00m
+[0;32m---> 55[0m     [38;5;28;01mreturn[39;00m [43mz[49m[43m [49m[38;5;241;43m+[39;49m[43m [49m[38;5;28;43mself[39;49m[38;5;241;43m.[39;49m[43mP[49m[43m[[49m[43m:[49m[43m,[49m[43m [49m[43m:[49m[43m [49m[43mz[49m[38;5;241;43m.[39;49m[43mshape[49m[43m[[49m[38;5;241;43m1[39;49m[43m][49m[43m,[49m[43m [49m[43m:[49m[43m][49m
+
+[0;31mRuntimeError[0m: The size of tensor a (8) must match the size of tensor b (4) at non-singleton dimension 1
+

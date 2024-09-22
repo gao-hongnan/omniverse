@@ -1,4 +1,4 @@
-# K-Means
+# Lloyd's K-Means Clustering Algorithm
 
 K-Means is a non-probabilistic clustering algorithm that is used to group data
 points into a specified number of clusters. However, it can be treated as EM
