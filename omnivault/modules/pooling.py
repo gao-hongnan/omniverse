@@ -55,12 +55,6 @@ class LastTokenPooling(nn.Module):
             return pooled_logits
 
 
-from __future__ import annotations
-
-import torch
-from torch import nn
-
-
 class MeanPooler(nn.Module):
     """
     # Qwen/Qwen1.5-0.5B
