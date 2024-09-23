@@ -15,7 +15,7 @@ kernelspec:
     name: python3
 ---
 
-# Notations
+# Overview Of Concurrency, Parallelism, and Asynchronous Execution
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -823,6 +823,54 @@ simpler model for managing concurrency, particularly for I/O-bound applications.
 By choosing the appropriate concurrency model and employing synchronization
 mechanisms like locks when necessary, you can harness the full power of Python's
 concurrency capabilities effectively.
+
+## Concurrency vs Parallelism
+
+![Concurrency vs Parallelism](./assets/concurrency_parallelism.jpeg)
+
+Here are the three parallelization mechanisms in Python:
+
+### ⇢ **AsyncIO**
+
+-   **Type:** Single-threaded
+-   **Best for:** I/O-bound tasks
+-   **Limitations:** Not suitable for CPU-bound tasks like image or video
+    processing
+-   **How it works:** Uses a single event loop with coroutines managed by
+    async/await, which struggles with CPU-heavy operations.
+-   **Conclusion:** Not ideal for CPU-intensive tasks.
+
+### ⇢ **Threading**
+
+-   **Type:** Multi-threaded with shared memory
+-   **Best for:** I/O-bound tasks
+-   **Limitations:** Limited by the Global Interpreter Lock (GIL), which allows
+    only one thread to execute Python bytecode at a time, adding overhead for
+    CPU-bound tasks.
+-   **Analogy:** Think of the GIL as a mediator in a debate, letting only one
+    person speak at a time.
+-   **Conclusion:** Effective for I/O tasks but inefficient for CPU-heavy
+    processing.
+
+### ⇢ **Multiprocessing**
+
+-   **Type:** Multiple processes with separate memory spaces
+-   **Best for:** CPU-bound tasks
+-   **How it works:**
+    -   **Linux/macOS:** Uses "Fork" to create child processes that copy the
+        parent’s memory.
+    -   **Windows:** Uses "Spawn" to start fresh interpreter instances with
+        necessary resources.
+-   **Advantages:** Achieves true parallelism, allows control over processing
+    workflows, and enables efficient data sharing through Queues or raw ctypes
+    arrays.
+-   **Conclusion:** The preferred choice for CPU-intensive operations.
+
+### **Summary:**
+
+-   **AsyncIO:** Single-threaded, ideal for I/O, not for CPU-bound tasks.
+-   **Threading:** Shared memory, constrained by GIL.
+-   **Multiprocessing:** Separate memory spaces, offers true parallelism.
 
 ## References And Further Readings
 

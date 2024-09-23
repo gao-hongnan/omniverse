@@ -222,7 +222,7 @@ $\mathbf{X}^{\text{ohe}}$ contains a single '1' at the column $j$ corresponding
 to the vocabulary index of $x_t$, and '0's elsewhere.
 
 ```{prf:example} Example
-:label: gpt-notations-one-hot-example
+:label: gpt-notations-one-hot-example-dup
 
 For example, if the vocabulary
 $\mathcal{V} = \{\text{cat}, \text{dog}, \text{mouse}\}$ and the sequence

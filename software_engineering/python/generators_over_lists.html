@@ -245,11 +245,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
-</ul>
-</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
 <ul class="nav bd-sidenav">
@@ -465,15 +460,15 @@
 <li class="toctree-l2"><a class="reference internal" href="iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="decorator.html">Decorator</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Generators Over Lists For Memory Efficiency</a></li>
-
-
-
-
 <li class="toctree-l2"><a class="reference internal" href="pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="is_vs_equality.html">Is vs Equality</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/overview.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -757,13 +752,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Generators Over Lists For Memory Efficiency</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark">Benchmark</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark">Benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -774,8 +767,20 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="generators-over-lists-for-memory-efficiency">
+  <section class="tex2jax_ignore mathjax_ignore" id="generators-over-lists-for-memory-efficiency">
 <h1>Generators Over Lists For Memory Efficiency<a class="headerlink" href="#generators-over-lists-for-memory-efficiency" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#time-complexity" id="id1">Time Complexity</a></p></li>
+<li><p><a class="reference internal" href="#space-complexity" id="id2">Space Complexity</a></p></li>
+<li><p><a class="reference internal" href="#benchmark" id="id3">Benchmark</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id4">References And Further Readings</a></p></li>
+</ul>
+</nav>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
@@ -889,9 +894,8 @@ Wall time: 5.25 µs
 </div>
 </div>
 </div>
-</section>
 <section id="time-complexity">
-<h1>Time Complexity<a class="headerlink" href="#time-complexity" title="Link to this heading">#</a></h1>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Time Complexity</a><a class="headerlink" href="#time-complexity" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><em>Question:</em> What is the time complexity of the original function
 compared to the refactored version?</p></li>
@@ -901,7 +905,7 @@ through the entire dataset once to process and sum the elements.</p></li>
 </ul>
 </section>
 <section id="space-complexity">
-<h1>Space Complexity<a class="headerlink" href="#space-complexity" title="Link to this heading">#</a></h1>
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Space Complexity</a><a class="headerlink" href="#space-complexity" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><em>Question:</em> What is the space complexity of the original function
 compared to the refactored version?</p></li>
@@ -913,7 +917,7 @@ processes one element at a time without storing the entire list.</p></li>
 </ul>
 </section>
 <section id="benchmark">
-<h1>Benchmark<a class="headerlink" href="#benchmark" title="Link to this heading">#</a></h1>
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Benchmark</a><a class="headerlink" href="#benchmark" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">timeit</span>
@@ -1145,10 +1149,11 @@ Result: 9999999900000000
 </div>
 </section>
 <section id="references-and-further-readings">
-<h1>References And Further Readings<a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h1>
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">References And Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Item 30 Of Effective Python</p></li>
 </ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1215,13 +1220,11 @@ Result: 9999999900000000
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Generators Over Lists For Memory Efficiency</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark">Benchmark</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#benchmark">Benchmark</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References And Further Readings</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>
