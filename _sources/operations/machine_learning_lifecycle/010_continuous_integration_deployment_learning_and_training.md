@@ -2030,7 +2030,25 @@ organization.
 
 ## Phase 7. Continuous Learning and Training
 
-...
+As we consistently emphasized on monitoring and observing drifts in machine
+learning systems, what would you do if you detect a drift? One common approach
+is to re-train, or fine-tune the model on new data. So on top of _continuous
+integration_, _continuous deployment_, and _continuous monitoring_, we also have
+_continuous learning_ and _continuous training_.
+
+Consider your object detection model that detects whether a person is wearing
+safety helmets, masks and vests, but you notice that the model is performing
+super poorly. It turns out the colors and the shapes of the objects are slightly
+different now. So you likely need to collect more data, and retrain/fine-tune
+the model on the new data.
+
+```{admonition} See Also
+:class: seealso
+
+For more information on continuous learning and training, see Chapter 9.
+Continual Learning and Test in Production of Chip Huyen's book, _Designing
+Machine Learning Systems_.
+```
 
 ## Appendix A. Styling, Formatting, and Linting
 
