@@ -23,8 +23,10 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
-```{contents}
-:local:
+## Table of Contents
+
+```{tableofcontents}
+
 ```
 
 As we transition from the [**project scoping phase**](../02_project_scoping.md),

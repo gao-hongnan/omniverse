@@ -23,8 +23,10 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
-```{contents}
-:local:
+## Table of Contents
+
+```{tableofcontents}
+
 ```
 
 In this stage, the prepared data is used to train machine learning models, some

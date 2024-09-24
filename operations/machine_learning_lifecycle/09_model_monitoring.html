@@ -771,12 +771,23 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-health">System Health</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-health-dashboard">System Health Dashboard</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#my-old-example-to-refine">MY OLD EXAMPLE TO REFINE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monitor-2">Monitor 2</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drift-madewithml">Drift <em>madewithml</em></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift">Concept Drift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#categorizing-drift-types">Categorizing Drift Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-drift">Data Drift</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift">Concept Drift</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#target-drift">Target Drift</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-monitoring-a-bitcoin-price-prediction-model">Example: Monitoring a Bitcoin Price Prediction Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-performance-monitoring">1. Model Performance Monitoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-drift-monitoring">2. Data Drift Monitoring</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-two-sample-t-tests-for-data-drift">Using Two-Sample t-Tests for Data Drift</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift-monitoring">3. Concept Drift Monitoring</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-dashboard-in-practice">Monitoring Dashboard In Practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
         </div>
@@ -799,12 +810,26 @@ document.write(`
 <ul class="simple">
 <li><p><a class="reference internal" href="#intuition" id="id1">Intuition</a></p></li>
 <li><p><a class="reference internal" href="#system-health" id="id2">System Health</a></p></li>
-<li><p><a class="reference internal" href="#system-health-dashboard" id="id3">System Health Dashboard</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
-<li><p><a class="reference internal" href="#my-old-example-to-refine" id="id5">MY OLD EXAMPLE TO REFINE</a></p></li>
-<li><p><a class="reference internal" href="#monitor-2" id="id6">Monitor 2</a></p></li>
-<li><p><a class="reference internal" href="#drift-madewithml" id="id7">Drift <em>madewithml</em></a></p></li>
-<li><p><a class="reference internal" href="#concept-drift" id="id8">Concept Drift</a></p></li>
+<li><p><a class="reference internal" href="#categorizing-drift-types" id="id3">Categorizing Drift Types</a></p>
+<ul>
+<li><p><a class="reference internal" href="#data-drift" id="id4">Data Drift</a></p></li>
+<li><p><a class="reference internal" href="#concept-drift" id="id5">Concept Drift</a></p></li>
+<li><p><a class="reference internal" href="#target-drift" id="id6">Target Drift</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#example-monitoring-a-bitcoin-price-prediction-model" id="id7">Example: Monitoring a Bitcoin Price Prediction Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#model-performance-monitoring" id="id8">1. Model Performance Monitoring</a></p></li>
+<li><p><a class="reference internal" href="#data-drift-monitoring" id="id9">2. Data Drift Monitoring</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-two-sample-t-tests-for-data-drift" id="id10">Using Two-Sample t-Tests for Data Drift</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#concept-drift-monitoring" id="id11">3. Concept Drift Monitoring</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#monitoring-dashboard-in-practice" id="id12">Monitoring Dashboard In Practice</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id13">References and Further Readings</a></p></li>
 </ul>
 </nav>
 <p>Model monitoring is about continuously tracking the performance of models in
@@ -853,136 +878,69 @@ for <strong>drift detection</strong>.</p>
 actual system is up and running as it should. This can include metrics specific
 to service requests such as latency, throughput, error rates, etc. as well as
 infrastructure utilization such as CPU/GPU utilization, memory, etc.</p>
-</section>
-<section id="system-health-dashboard">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">System Health Dashboard</a><a class="headerlink" href="#system-health-dashboard" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Service Metrics</strong>:</p>
+<ul>
+<li><p><strong>Latency</strong>: Time taken to process requests.</p></li>
+<li><p><strong>Throughput</strong>: Number of requests processed per unit time.</p></li>
+<li><p><strong>Error Rates</strong>: Frequency of failed requests.</p></li>
+</ul>
+</li>
+<li><p><strong>Infrastructure Metrics</strong>:</p>
+<ul>
+<li><p><strong>CPU/GPU Utilization</strong>: Resource usage of the hardware.</p></li>
+<li><p><strong>Memory Consumption</strong>: Amount of memory used by the system.</p></li>
+<li></li>
+</ul>
+</li>
+</ul>
 <p>Fortunately, most cloud providers and even orchestration layers will provide
 this insight into our system’s health for free through a dashboard. In the event
 we don’t, we can easily use <a class="reference external" href="https://grafana.com/">Grafana</a>,
 <a class="reference external" href="https://www.datadoghq.com/">Datadog</a>, etc. to ingest system performance metrics
-from logs to create a customized dashboard and set alerts.</p>
+from logs to create a customized dashboard and set alerts. If you use AWS for
+example, you can use <a class="reference external" href="https://aws.amazon.com/cloudwatch/">AWS CloudWatch</a> to
+monitor your system’s health.</p>
 </section>
-<section id="examples">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
-<p>The plot shows both the cumulative mean squared error (MSE) and the sliding MSE
-over time.</p>
-<p>The x-axis represents the hour since the model has been deployed, and the y-axis
-represents the MSE. The “Threshold” line is a hypothetical threshold that we set
-for the MSE; we could say that any MSE above this threshold would indicate that
-the model’s performance is not satisfactory.</p>
-<p>We can see that both the cumulative and sliding MSE start reasonably low, but
-after some time, they start to increase, indicating that the model’s performance
-is degrading. The sliding MSE is more responsive to recent changes in the
-model’s performance and hence it rises above the threshold before the cumulative
-MSE. This is why it’s beneficial to monitor both cumulative and sliding
-metrics - they give us different insights into the model’s performance over
-time.</p>
-</section>
-<section id="my-old-example-to-refine">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">MY OLD EXAMPLE TO REFINE</a><a class="headerlink" href="#my-old-example-to-refine" title="Link to this heading">#</a></h2>
-<p>Model monitoring and data drift monitoring are key components in maintaining the
-performance of any predictive model over time. Here are the key aspects to
-consider for your Bitcoin price prediction model:</p>
-<ol class="arabic">
-<li><p><strong>Model Performance Monitoring</strong>: Regularly evaluate your model’s performance
-metrics such as accuracy, precision, recall, F1-score, AUC-ROC, etc.,
-depending on the nature of your problem (classification, regression, etc.).
-Track these metrics over time. If there’s a substantial decrease, your model
-might need retraining or updating.</p></li>
-<li><p><strong>Data Drift Monitoring</strong>: This involves checking if the distribution of the
-model’s input data is changing over time. You want to make sure that the data
-your model was trained on is representative of the data it is making
-predictions on. If the data drifts too much, the model’s performance might
-decrease.</p>
-<p>To monitor data drift, you can use a two-sample t-test, which compares the
-means of two groups to determine if they’re significantly different. Here’s
-how to do it:</p>
-<ul class="simple">
-<li><p>Consider one feature at a time. For instance, start with ‘Volume’.</p></li>
-<li><p>From your current data, take a sample. Compute its mean (let’s call it
-mean1) and standard deviation (std1).</p></li>
-<li><p>Take a sample of the same size from the data your model was trained on.
-Compute its mean (mean2) and standard deviation (std2).</p></li>
-<li><p>Use the t-test formula to calculate the t-score. The formula is
-<code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">(mean1</span> <span class="pre">-</span> <span class="pre">mean2)</span> <span class="pre">/</span> <span class="pre">sqrt((std1^2/n1)</span> <span class="pre">+</span> <span class="pre">(std2^2/n2))</span></code>, where n1 and n2
-are the sizes of your samples.</p></li>
-<li><p>If the absolute t-score is large (greater than the critical t-value for
-your desired confidence level), then the means are significantly
-different, indicating data drift.</p></li>
-</ul>
-<p>The resulting <code class="docutils literal notranslate"><span class="pre">t</span></code> value (t-score) is a measure of the size of the difference
-relative to the variation in your data. A large absolute t-score means that
-the difference in means is large relative to the variability of the data,
-which suggests that the means are significantly different. This would be an
-indication of data drift.</p>
-<p>Remember to conduct this test for all relevant features (‘Open’, ‘Close’,
-‘Volume’, etc.) and over regular intervals (daily, weekly, etc.) to ensure
-continuous monitoring.</p>
-</li>
-<li><p><strong>Concept Drift Monitoring</strong>: Sometimes, even if the data distribution stays
-the same, the underlying relationship between the input features and the
-target variable might change. This is called concept drift. To monitor this,
-you can look for a decrease in your model’s performance over time, even when
-there’s no significant data drift.</p></li>
-</ol>
-<p>Lastly, while t-tests can help in identifying drifts, they are just one part of
-the puzzle. Monitoring residuals (the differences between your model’s
-predictions and the actual values) can also provide insights into whether the
-model is continuing to perform well.</p>
-</section>
-<section id="monitor-2">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Monitor 2</a><a class="headerlink" href="#monitor-2" title="Link to this heading">#</a></h2>
-<p>When monitoring your model and data for drifts in the context of predicting
-Bitcoin price increase or decrease, there are a few techniques you can consider,
-including statistical tests such as t-tests. Here’s a general overview:</p>
-<ol class="arabic simple">
-<li><p>Model Monitoring: It involves monitoring the performance of your predictive
-model over time to ensure its accuracy and reliability. Some techniques for
-model monitoring include:</p>
-<ul class="simple">
-<li><p>Tracking key performance metrics like accuracy, precision, recall, or mean
-absolute error.</p></li>
-<li><p>Monitoring model output distributions to detect significant changes or
-shifts.</p></li>
-<li><p>Comparing model predictions with actual outcomes to identify
-discrepancies.</p></li>
-</ul>
-</li>
-<li><p>Data Monitoring: It involves monitoring the input data used by your model to
-detect any changes or drifts that may impact the model’s performance. Here
-are a few methods for data monitoring:</p>
-<ul class="simple">
-<li><p>Statistical tests: T-tests can be used to compare statistical properties
-(e.g., means) of different data subsets or time periods. For example, you
-can compare Bitcoin price increase predictions for different time
-intervals to identify significant differences.</p></li>
-<li><p>Control charts: These graphical tools help detect shifts or anomalies in
-data distribution, allowing you to identify potential drifts.</p></li>
-<li><p>Concept drift detection: Techniques like change point detection algorithms
-or sliding window approaches can be employed to detect significant changes
-in the underlying data distribution.</p></li>
-</ul>
-</li>
-</ol>
-<p>Remember, model and data monitoring should be an ongoing process to ensure the
-reliability of your predictions. Regularly evaluating and updating your model
-can help account for evolving market dynamics and improve its performance.</p>
-</section>
-<section id="drift-madewithml">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Drift <em>madewithml</em></a><a class="headerlink" href="#drift-madewithml" title="Link to this heading">#</a></h2>
+<section id="categorizing-drift-types">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Categorizing Drift Types</a><a class="headerlink" href="#categorizing-drift-types" title="Link to this heading">#</a></h2>
+<p>We use a table from
+<a class="reference external" href="https://madewithml.com/courses/mlops/monitoring/">madewithml</a> to illustrate the
+different types of drift.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
-\begin{array}{|lll|}
-\hline \text { Entity } &amp; \text { Description } &amp; \text { Drift } \\
-\hline X &amp; \text { inputs (features) } &amp; \text { data drift } \rightarrow P(X) \neq P_{\text {ref }}(X) \\
-\hline y &amp; \text { outputs (ground-truth) } &amp; \text { target drift } \rightarrow P(y) \neq P_{\text {ref }}(y) \\
-\hline P(y \mid X) &amp; \text { actual relationship between } X \text { and } y &amp; \text { concept drift } \rightarrow P(y \mid X) \neq P_{r e f}(y \mid X) \\
+\begin{array}{|l|l|l|}
+\hline
+\textbf{Entity} &amp; \textbf{Description} &amp; \textbf{Type of Drift} \\
+\hline
+X &amp; \text{Input Features} &amp; \text{Data Drift} \rightarrow P(X) \neq P_{\text{ref}}(X) \\
+\hline
+y &amp; \text{Target Variable} &amp; \text{Target Drift} \rightarrow P(y) \neq P_{\text{ref}}(y) \\
+\hline
+P(y \mid X) &amp; \text{Relationship between } X \text{ and } y &amp; \text{Concept Drift} \rightarrow P(y \mid X) \neq P_{\text{ref}}(y \mid X) \\
 \hline
 \end{array}
 \end{split}\]</div>
+<section id="data-drift">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Data Drift</a><a class="headerlink" href="#data-drift" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Objective</strong>: Detect changes in the input data distribution that may affect
+model performance.</p></li>
+<li><p><strong>Approach</strong>: Compare the distribution of incoming data with the data used
+during training.</p></li>
+<li><p><strong>Techniques</strong>: Statistical tests (e.g., t-tests), visualization (e.g.,
+histograms), drift detection algorithms.</p></li>
+</ul>
 </section>
 <section id="concept-drift">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">Concept Drift</a><a class="headerlink" href="#concept-drift" title="Link to this heading">#</a></h2>
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Concept Drift</a><a class="headerlink" href="#concept-drift" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Objective</strong>: Identify changes in the relationship between input features
+and the target variable.</p></li>
+<li><p><strong>Indicator</strong>: Decline in model performance without significant data drift.</p></li>
+<li><p><strong>Action</strong>: Retrain or adjust the model to accommodate new underlying
+patterns.</p></li>
+</ul>
 <p>Sometimes, even if the data distribution stays the same, the underlying
 relationship between the input features and the target variable might change.
 This is called concept drift. To monitor this, you can look for a decrease in
@@ -1011,6 +969,135 @@ see a decrease in performance – in this case, a decrease in the click-through
 rate – that could be an indication of concept drift. You might then decide to
 retrain your model on more recent data, or to revise it to take into account
 more recent trends in movie popularity.</p>
+</section>
+<section id="target-drift">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Target Drift</a><a class="headerlink" href="#target-drift" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Objective</strong>: Detect changes in the target variable distribution.</p></li>
+<li><p><strong>Approach</strong>: Compare the distribution of the target variable in the
+incoming data with the distribution used during training.</p></li>
+<li><p><strong>Techniques</strong>: Statistical tests (e.g., t-tests), visualization (e.g.,
+histograms), drift detection algorithms.</p></li>
+</ul>
+</section>
+</section>
+<section id="example-monitoring-a-bitcoin-price-prediction-model">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Example: Monitoring a Bitcoin Price Prediction Model</a><a class="headerlink" href="#example-monitoring-a-bitcoin-price-prediction-model" title="Link to this heading">#</a></h2>
+<p>To illustrate model and data drift monitoring, let’s consider a Bitcoin price
+prediction model. Here’s how to systematically monitor and maintain its
+performance:</p>
+<section id="model-performance-monitoring">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">1. Model Performance Monitoring</a><a class="headerlink" href="#model-performance-monitoring" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Metrics to Track</strong>:</p>
+<ul>
+<li><p><strong>Regression Metrics</strong>: MAE, RMSE, <span class="math notranslate nohighlight">\(R^2\)</span> Score.</p></li>
+</ul>
+</li>
+<li><p><strong>Procedure</strong>:</p>
+<ul>
+<li><p>Evaluate these metrics at regular intervals (e.g., daily, weekly).</p></li>
+<li><p>Plot metrics over time to identify trends or sudden changes.</p></li>
+</ul>
+</li>
+<li><p><strong>Action</strong>:</p>
+<ul>
+<li><p>If metrics degrade beyond acceptable thresholds, initiate model
+retraining or adjustments.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="data-drift-monitoring">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">2. Data Drift Monitoring</a><a class="headerlink" href="#data-drift-monitoring" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Objective</strong>: Ensure that the input data distribution remains similar to
+the training data.</p></li>
+<li><p><strong>Method</strong>: Use statistical tests to compare distributions of incoming data
+with reference data.</p></li>
+</ul>
+<section id="using-two-sample-t-tests-for-data-drift">
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Using Two-Sample t-Tests for Data Drift</a><a class="headerlink" href="#using-two-sample-t-tests-for-data-drift" title="Link to this heading">#</a></h4>
+<ul>
+<li><p><strong>Steps</strong>:</p>
+<ol class="arabic">
+<li><p><strong>Select Features</strong>: Focus on individual features (e.g., ‘Volume’,
+‘Open’, ‘Close’).</p></li>
+<li><p><strong>Sample Data</strong>:</p>
+<ul class="simple">
+<li><p><strong>Current Data</strong>: Collect a sample from the incoming data stream.</p></li>
+<li><p><strong>Reference Data</strong>: Use a sample from the original training dataset.</p></li>
+</ul>
+</li>
+<li><p><strong>Compute Statistics</strong>:</p>
+<ul class="simple">
+<li><p>Calculate the mean (<code class="docutils literal notranslate"><span class="pre">mean1</span></code>) and standard deviation (<code class="docutils literal notranslate"><span class="pre">std1</span></code>) for the
+current data.</p></li>
+<li><p>Calculate the mean (<code class="docutils literal notranslate"><span class="pre">mean2</span></code>) and standard deviation (<code class="docutils literal notranslate"><span class="pre">std2</span></code>) for the
+reference data.</p></li>
+</ul>
+</li>
+<li><p><strong>Perform t-Test</strong>:</p>
+<ul>
+<li><p>Compute the t-score using the formula:</p>
+<div class="math notranslate nohighlight">
+\[
+            t = \frac{\text{mean1} - \text{mean2}}{\sqrt{\frac{\text{std1}^2}{n1} + \frac{\text{std2}^2}{n2}}}
+            \]</div>
+<p>where <span class="math notranslate nohighlight">\(n1\)</span> and <span class="math notranslate nohighlight">\(n2\)</span> are sample sizes.</p>
+</li>
+</ul>
+</li>
+<li><p><strong>Interpret Results</strong>:</p>
+<ul class="simple">
+<li><p>Compare the absolute t-score with the critical t-value for the desired
+confidence level.</p></li>
+<li><p>A large absolute t-score indicates a significant difference in means,
+suggesting data drift.</p></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p><strong>Frequency</strong>: Conduct these tests for all relevant features at regular
+intervals (e.g., daily, weekly).</p></li>
+</ul>
+</section>
+</section>
+<section id="concept-drift-monitoring">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">3. Concept Drift Monitoring</a><a class="headerlink" href="#concept-drift-monitoring" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Objective</strong>: Detect changes in the relationship between input features and
+the target variable.</p></li>
+<li><p><strong>Indicator</strong>: A decline in model performance without significant data
+drift.</p></li>
+</ul>
+</section>
+</section>
+<section id="monitoring-dashboard-in-practice">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Monitoring Dashboard In Practice</a><a class="headerlink" href="#monitoring-dashboard-in-practice" title="Link to this heading">#</a></h2>
+<p>A hands on example of how to monitor a model’s performance using Kibana can be
+found in this
+<a class="reference external" href="https://deep-learning-blogs.vercel.app/blog/mlops-monitoring">MLOps Basics [Week 9]: Prediction Monitoring - Kibana</a>
+blog post.</p>
+<figure class="align-default" id="kibana-flow">
+<img alt="../../_images/kibana_flow.webp" src="../../_images/kibana_flow.webp" />
+<figcaption>
+<p><span class="caption-number">Fig. 50 </span><span class="caption-text">Kibana flow.</span><a class="headerlink" href="#kibana-flow" title="Link to this image">#</a></p>
+<div class="legend">
+<p>Image Credits: <a class="reference external" href="https://deep-learning-blogs.vercel.app/blog/mlops-monitoring">MLOps Basics [Week 9]: Prediction Monitoring - Kibana</a></p>
+</div>
+</figcaption>
+</figure>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Huyen, Chip. “Chapter 8. Data Distribution Shifts and Monitoring.” In
+Designing Machine Learning Systems: An Iterative Process for
+Production-Ready Applications, O’Reilly Media, Inc., 2022.</p></li>
+<li><p><a class="reference external" href="https://madewithml.com/courses/mlops/monitoring/">Madewithml: Monitoring</a></p></li>
+<li><p><a class="reference external" href="https://deep-learning-blogs.vercel.app/blog/mlops-monitoring">MLOps Basics [Week 9]: Prediction Monitoring - Kibana</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -1080,12 +1167,23 @@ more recent trends in movie popularity.</p>
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-health">System Health</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#system-health-dashboard">System Health Dashboard</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#my-old-example-to-refine">MY OLD EXAMPLE TO REFINE</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monitor-2">Monitor 2</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drift-madewithml">Drift <em>madewithml</em></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift">Concept Drift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#categorizing-drift-types">Categorizing Drift Types</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-drift">Data Drift</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift">Concept Drift</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#target-drift">Target Drift</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-monitoring-a-bitcoin-price-prediction-model">Example: Monitoring a Bitcoin Price Prediction Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-performance-monitoring">1. Model Performance Monitoring</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-drift-monitoring">2. Data Drift Monitoring</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-two-sample-t-tests-for-data-drift">Using Two-Sample t-Tests for Data Drift</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#concept-drift-monitoring">3. Concept Drift Monitoring</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#monitoring-dashboard-in-practice">Monitoring Dashboard In Practice</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>
 

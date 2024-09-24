@@ -78,134 +78,61 @@ actual system is up and running as it should. This can include metrics specific
 to service requests such as latency, throughput, error rates, etc. as well as
 infrastructure utilization such as CPU/GPU utilization, memory, etc.
 
-## System Health Dashboard
+-   **Service Metrics**:
+
+    -   **Latency**: Time taken to process requests.
+    -   **Throughput**: Number of requests processed per unit time.
+    -   **Error Rates**: Frequency of failed requests.
+
+-   **Infrastructure Metrics**:
+    -   **CPU/GPU Utilization**: Resource usage of the hardware.
+    -   **Memory Consumption**: Amount of memory used by the system.
+    -
 
 Fortunately, most cloud providers and even orchestration layers will provide
 this insight into our system's health for free through a dashboard. In the event
 we don't, we can easily use [Grafana](https://grafana.com/),
 [Datadog](https://www.datadoghq.com/), etc. to ingest system performance metrics
-from logs to create a customized dashboard and set alerts.
+from logs to create a customized dashboard and set alerts. If you use AWS for
+example, you can use [AWS CloudWatch](https://aws.amazon.com/cloudwatch/) to
+monitor your system's health.
 
-## Examples
+## Categorizing Drift Types
 
-The plot shows both the cumulative mean squared error (MSE) and the sliding MSE
-over time.
-
-The x-axis represents the hour since the model has been deployed, and the y-axis
-represents the MSE. The "Threshold" line is a hypothetical threshold that we set
-for the MSE; we could say that any MSE above this threshold would indicate that
-the model's performance is not satisfactory.
-
-We can see that both the cumulative and sliding MSE start reasonably low, but
-after some time, they start to increase, indicating that the model's performance
-is degrading. The sliding MSE is more responsive to recent changes in the
-model's performance and hence it rises above the threshold before the cumulative
-MSE. This is why it's beneficial to monitor both cumulative and sliding
-metrics - they give us different insights into the model's performance over
-time.
-
-## MY OLD EXAMPLE TO REFINE
-
-Model monitoring and data drift monitoring are key components in maintaining the
-performance of any predictive model over time. Here are the key aspects to
-consider for your Bitcoin price prediction model:
-
-1. **Model Performance Monitoring**: Regularly evaluate your model's performance
-   metrics such as accuracy, precision, recall, F1-score, AUC-ROC, etc.,
-   depending on the nature of your problem (classification, regression, etc.).
-   Track these metrics over time. If there's a substantial decrease, your model
-   might need retraining or updating.
-
-2. **Data Drift Monitoring**: This involves checking if the distribution of the
-   model's input data is changing over time. You want to make sure that the data
-   your model was trained on is representative of the data it is making
-   predictions on. If the data drifts too much, the model’s performance might
-   decrease.
-
-    To monitor data drift, you can use a two-sample t-test, which compares the
-    means of two groups to determine if they're significantly different. Here's
-    how to do it:
-
-    - Consider one feature at a time. For instance, start with 'Volume'.
-    - From your current data, take a sample. Compute its mean (let's call it
-      mean1) and standard deviation (std1).
-    - Take a sample of the same size from the data your model was trained on.
-      Compute its mean (mean2) and standard deviation (std2).
-    - Use the t-test formula to calculate the t-score. The formula is
-      `t = (mean1 - mean2) / sqrt((std1^2/n1) + (std2^2/n2))`, where n1 and n2
-      are the sizes of your samples.
-    - If the absolute t-score is large (greater than the critical t-value for
-      your desired confidence level), then the means are significantly
-      different, indicating data drift.
-
-    The resulting `t` value (t-score) is a measure of the size of the difference
-    relative to the variation in your data. A large absolute t-score means that
-    the difference in means is large relative to the variability of the data,
-    which suggests that the means are significantly different. This would be an
-    indication of data drift.
-
-    Remember to conduct this test for all relevant features ('Open', 'Close',
-    'Volume', etc.) and over regular intervals (daily, weekly, etc.) to ensure
-    continuous monitoring.
-
-3. **Concept Drift Monitoring**: Sometimes, even if the data distribution stays
-   the same, the underlying relationship between the input features and the
-   target variable might change. This is called concept drift. To monitor this,
-   you can look for a decrease in your model's performance over time, even when
-   there's no significant data drift.
-
-Lastly, while t-tests can help in identifying drifts, they are just one part of
-the puzzle. Monitoring residuals (the differences between your model’s
-predictions and the actual values) can also provide insights into whether the
-model is continuing to perform well.
-
-## Monitor 2
-
-When monitoring your model and data for drifts in the context of predicting
-Bitcoin price increase or decrease, there are a few techniques you can consider,
-including statistical tests such as t-tests. Here's a general overview:
-
-1. Model Monitoring: It involves monitoring the performance of your predictive
-   model over time to ensure its accuracy and reliability. Some techniques for
-   model monitoring include:
-
-    - Tracking key performance metrics like accuracy, precision, recall, or mean
-      absolute error.
-    - Monitoring model output distributions to detect significant changes or
-      shifts.
-    - Comparing model predictions with actual outcomes to identify
-      discrepancies.
-
-2. Data Monitoring: It involves monitoring the input data used by your model to
-   detect any changes or drifts that may impact the model's performance. Here
-   are a few methods for data monitoring:
-    - Statistical tests: T-tests can be used to compare statistical properties
-      (e.g., means) of different data subsets or time periods. For example, you
-      can compare Bitcoin price increase predictions for different time
-      intervals to identify significant differences.
-    - Control charts: These graphical tools help detect shifts or anomalies in
-      data distribution, allowing you to identify potential drifts.
-    - Concept drift detection: Techniques like change point detection algorithms
-      or sliding window approaches can be employed to detect significant changes
-      in the underlying data distribution.
-
-Remember, model and data monitoring should be an ongoing process to ensure the
-reliability of your predictions. Regularly evaluating and updating your model
-can help account for evolving market dynamics and improve its performance.
-
-## Drift _madewithml_
+We use a table from
+[madewithml](https://madewithml.com/courses/mlops/monitoring/) to illustrate the
+different types of drift.
 
 $$
-\begin{array}{|lll|}
-\hline \text { Entity } & \text { Description } & \text { Drift } \\
-\hline X & \text { inputs (features) } & \text { data drift } \rightarrow P(X) \neq P_{\text {ref }}(X) \\
-\hline y & \text { outputs (ground-truth) } & \text { target drift } \rightarrow P(y) \neq P_{\text {ref }}(y) \\
-\hline P(y \mid X) & \text { actual relationship between } X \text { and } y & \text { concept drift } \rightarrow P(y \mid X) \neq P_{r e f}(y \mid X) \\
+\begin{array}{|l|l|l|}
+\hline
+\textbf{Entity} & \textbf{Description} & \textbf{Type of Drift} \\
+\hline
+X & \text{Input Features} & \text{Data Drift} \rightarrow P(X) \neq P_{\text{ref}}(X) \\
+\hline
+y & \text{Target Variable} & \text{Target Drift} \rightarrow P(y) \neq P_{\text{ref}}(y) \\
+\hline
+P(y \mid X) & \text{Relationship between } X \text{ and } y & \text{Concept Drift} \rightarrow P(y \mid X) \neq P_{\text{ref}}(y \mid X) \\
 \hline
 \end{array}
 $$
 
-## Concept Drift
+### Data Drift
+
+-   **Objective**: Detect changes in the input data distribution that may affect
+    model performance.
+-   **Approach**: Compare the distribution of incoming data with the data used
+    during training.
+-   **Techniques**: Statistical tests (e.g., t-tests), visualization (e.g.,
+    histograms), drift detection algorithms.
+
+### Concept Drift
+
+-   **Objective**: Identify changes in the relationship between input features
+    and the target variable.
+-   **Indicator**: Decline in model performance without significant data drift.
+-   **Action**: Retrain or adjust the model to accommodate new underlying
+    patterns.
 
 Sometimes, even if the data distribution stays the same, the underlying
 relationship between the input features and the target variable might change.
@@ -240,3 +167,100 @@ see a decrease in performance – in this case, a decrease in the click-through
 rate – that could be an indication of concept drift. You might then decide to
 retrain your model on more recent data, or to revise it to take into account
 more recent trends in movie popularity.
+
+### Target Drift
+
+-   **Objective**: Detect changes in the target variable distribution.
+-   **Approach**: Compare the distribution of the target variable in the
+    incoming data with the distribution used during training.
+-   **Techniques**: Statistical tests (e.g., t-tests), visualization (e.g.,
+    histograms), drift detection algorithms.
+
+## Example: Monitoring a Bitcoin Price Prediction Model
+
+To illustrate model and data drift monitoring, let's consider a Bitcoin price
+prediction model. Here's how to systematically monitor and maintain its
+performance:
+
+### 1. Model Performance Monitoring
+
+-   **Metrics to Track**:
+    -   **Regression Metrics**: MAE, RMSE, $R^2$ Score.
+-   **Procedure**:
+    -   Evaluate these metrics at regular intervals (e.g., daily, weekly).
+    -   Plot metrics over time to identify trends or sudden changes.
+-   **Action**:
+    -   If metrics degrade beyond acceptable thresholds, initiate model
+        retraining or adjustments.
+
+### 2. Data Drift Monitoring
+
+-   **Objective**: Ensure that the input data distribution remains similar to
+    the training data.
+-   **Method**: Use statistical tests to compare distributions of incoming data
+    with reference data.
+
+#### Using Two-Sample t-Tests for Data Drift
+
+-   **Steps**:
+
+    1. **Select Features**: Focus on individual features (e.g., 'Volume',
+       'Open', 'Close').
+    2. **Sample Data**:
+        - **Current Data**: Collect a sample from the incoming data stream.
+        - **Reference Data**: Use a sample from the original training dataset.
+    3. **Compute Statistics**:
+        - Calculate the mean (`mean1`) and standard deviation (`std1`) for the
+          current data.
+        - Calculate the mean (`mean2`) and standard deviation (`std2`) for the
+          reference data.
+    4. **Perform t-Test**:
+
+        - Compute the t-score using the formula:
+
+            $$
+            t = \frac{\text{mean1} - \text{mean2}}{\sqrt{\frac{\text{std1}^2}{n1} + \frac{\text{std2}^2}{n2}}}
+            $$
+
+            where $n1$ and $n2$ are sample sizes.
+
+    5. **Interpret Results**:
+        - Compare the absolute t-score with the critical t-value for the desired
+          confidence level.
+        - A large absolute t-score indicates a significant difference in means,
+          suggesting data drift.
+
+-   **Frequency**: Conduct these tests for all relevant features at regular
+    intervals (e.g., daily, weekly).
+
+### 3. Concept Drift Monitoring
+
+-   **Objective**: Detect changes in the relationship between input features and
+    the target variable.
+-   **Indicator**: A decline in model performance without significant data
+    drift.
+
+## Monitoring Dashboard In Practice
+
+A hands on example of how to monitor a model's performance using Kibana can be
+found in this
+[MLOps Basics [Week 9]: Prediction Monitoring - Kibana](https://deep-learning-blogs.vercel.app/blog/mlops-monitoring)
+blog post.
+
+```{figure} ./assets/kibana_flow.webp
+---
+name: kibana_flow
+---
+
+Kibana flow.
+
+Image Credits: [MLOps Basics [Week 9]: Prediction Monitoring - Kibana](https://deep-learning-blogs.vercel.app/blog/mlops-monitoring)
+```
+
+## References and Further Readings
+
+-   Huyen, Chip. "Chapter 8. Data Distribution Shifts and Monitoring." In
+    Designing Machine Learning Systems: An Iterative Process for
+    Production-Ready Applications, O'Reilly Media, Inc., 2022.
+-   [Madewithml: Monitoring](https://madewithml.com/courses/mlops/monitoring/)
+-   [MLOps Basics [Week 9]: Prediction Monitoring - Kibana](https://deep-learning-blogs.vercel.app/blog/mlops-monitoring)
