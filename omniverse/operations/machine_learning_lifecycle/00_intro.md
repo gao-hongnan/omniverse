@@ -75,7 +75,6 @@ refine it below.
     - **Performance monitoring** to detect changes in the model performance.
 
 10. [Continuous Integration, Deployment, Learning and Training](010_continuous_integration_deployment_learning_and_training.md)
-11. [Infrastructure and Tooling for MLOps](011_infrastructure_and_tooling_for_mlops.md)
 
 The lifecycle gif below by
 [Deepak](https://www.linkedin.com/in/mr-deepak-bhardwaj/) captures a
