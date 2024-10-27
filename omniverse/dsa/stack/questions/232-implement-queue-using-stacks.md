@@ -17,7 +17,10 @@ kernelspec:
 
 # Implement Queue using Stacks
 
-<a href="https://leetcode.com/problems/implement-queue-using-stacks/"><img alt="Question Number" src="https://img.shields.io/badge/Question-232-blue"/></a>
+[![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
+[![LeetCode Problem](https://img.shields.io/badge/LeetCode-232-FFA116?style=social&logo=leetcode)](https://leetcode.com/problems/implement-queue-using-stacks/)
 ![Difficulty](https://img.shields.io/badge/Difficulty-Easy-green)
 
 ```{contents}
@@ -471,7 +474,7 @@ print(queue.pop())
 The newly arrived element is always added on top of stack `enqueue`, see
 {numref}`232_queue_using_stacksAPush`.
 
-```{figure} ../../assets/stack/232_queue_using_stacksAPush.png
+```{figure} ../assets/232_queue_using_stacksAPush.png
 ---
 name: 232_queue_using_stacksAPush
 ---
@@ -569,7 +572,7 @@ When the queue needs to be popped, we flip the `enqueue` stack and pour it into
 the `dequeue` stack, see {numref}232_queue_using_stacksAPop for a visual
 representation.
 
-```{figure} ../../assets/stack/232_queue_using_stacksAPop.png
+```{figure} ../assets/232_queue_using_stacksAPop.png
 ---
 name: 232_queue_using_stacksAPop
 ---
