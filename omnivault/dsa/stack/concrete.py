@@ -52,6 +52,10 @@ class StackList(Stack[T]):
         while not self.is_empty():
             yield self.pop()
 
+    def __repr__(self) -> str:
+        """Return the official string representation of the StackList."""
+        return f"StackList(stack_items={self.stack_items})"
+
     @property
     def stack_items(self) -> List[T]:
         """Read only property for the stack items."""

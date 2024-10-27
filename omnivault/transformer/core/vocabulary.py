@@ -8,7 +8,7 @@ import requests
 from typing_extensions import override
 
 
-class Vocabulary(ABC):
+class Vocabulary(ABC):  # noqa: B024
     """Base class for all vocabulary classes."""
 
     # Special tokens as class attributes
