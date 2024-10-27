@@ -75,7 +75,7 @@ def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, adder_gro
         assert isinstance(padding_mask, torch.BoolTensor)
         assert isinstance(future_mask, torch.BoolTensor)
 
-        index += 1
+        index += 1  # noqa: SIM113
         if index == length:
             break
 
