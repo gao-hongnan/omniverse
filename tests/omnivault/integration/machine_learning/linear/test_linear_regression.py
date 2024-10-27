@@ -45,7 +45,7 @@ def test_linear_regression_vs_sklearn(n_features: int, solver: str) -> None:
 
     # Check if the parameters are close enough
     np.testing.assert_allclose(lr_custom.coef_, lr_sklearn.coef_, rtol=1e-2, atol=1e-2)
-    np.testing.assert_allclose(lr_custom.intercept_, lr_sklearn.intercept_, rtol=1e-2, atol=1e-2)
+    np.testing.assert_allclose(lr_custom.intercept_, lr_sklearn.intercept_, rtol=1e-2, atol=1e-2)  # type: ignore[arg-type]
 
     # Check if predictions are close enough
     custom_pred = lr_custom.predict(X_val)

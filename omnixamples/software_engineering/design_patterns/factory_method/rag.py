@@ -19,9 +19,9 @@ class RAGSystem(BaseModel):
 
     @staticmethod
     def create_system(chunker_type: str, embedder_type: str, retriever_type: str) -> RAGSystem:
-        chunker = ComponentFactory.get_component("chunker", chunker_type)
-        embedder = ComponentFactory.get_component("embedder", embedder_type)
-        retriever = ComponentFactory.get_component("retriever", retriever_type)
+        chunker: Chunker = ComponentFactory.get_component("chunker", chunker_type)
+        embedder: Embedder = ComponentFactory.get_component("embedder", embedder_type)
+        retriever: Retriever = ComponentFactory.get_component("retriever", retriever_type)
         return RAGSystem(chunker=chunker, embedder=embedder, retriever=retriever)
 
     def process_query(self, query: str) -> List[str]:
