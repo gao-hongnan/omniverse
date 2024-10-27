@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -39,10 +41,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -84,6 +87,7 @@
     <link rel="prev" title="Vector and Its Operations" href="02-vector-operation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -99,19 +103,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -119,7 +112,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -127,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -144,7 +136,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -174,21 +167,17 @@
     
     
     <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -243,6 +232,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -453,9 +447,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -467,7 +463,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -727,24 +722,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -832,14 +819,14 @@ which represent complex entities like features, words, or even images.</p>
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> as a vector in <span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span>, where <span class="math notranslate nohighlight">\(D\)</span> is the dimension of the
 vector space:</p>
 <div class="math notranslate nohighlight" id="equation-03-vector-norm-vector-in-rd">
-<span class="eqno">(204)<a class="headerlink" href="#equation-03-vector-norm-vector-in-rd" title="Link to this equation">#</a></span>\[\begin{split}\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}\end{split}\]</div>
+<span class="eqno">(250)<a class="headerlink" href="#equation-03-vector-norm-vector-in-rd" title="Link to this equation">#</a></span>\[\begin{split}\mathbf{v} = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_D \end{bmatrix}\end{split}\]</div>
 <div class="proof definition admonition" id="03-vector-norm-norm-on-a-vector-space">
-<p class="admonition-title"><span class="caption-number">Definition 188 </span> (Norm on a Vector Space)</p>
+<p class="admonition-title"><span class="caption-number">Definition 191 </span> (Norm on a Vector Space)</p>
 <section class="definition-content" id="proof-content">
 <p>A norm on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
 <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
 <div class="math notranslate nohighlight" id="equation-03-vector-norm-norm-on-a-vector-space-function">
-<span class="eqno">(205)<a class="headerlink" href="#equation-03-vector-norm-norm-on-a-vector-space-function" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
+<span class="eqno">(251)<a class="headerlink" href="#equation-03-vector-norm-norm-on-a-vector-space-function" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
 \|\cdot\|: \mathbf{V} &amp; \rightarrow \mathbb{R}, \\
 \mathbf{v} &amp; \mapsto\|\mathbf{v}\|,
 \end{aligned}\end{split}\]</div>
@@ -886,7 +873,7 @@ as a set of vectors in the <span class="math notranslate nohighlight">\(D\)</spa
 specific case of the norm function. The <span class="math notranslate nohighlight">\(L_p\)</span> is a generalization of the concept
 of “length” for vectors in the <strong><em>vector space</em></strong> <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-lp-norm">
-<p class="admonition-title"><span class="caption-number">Definition 189 </span> (<span class="math notranslate nohighlight">\(L_p\)</span> Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 192 </span> (<span class="math notranslate nohighlight">\(L_p\)</span> Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>For a vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span> over the field
 <span class="math notranslate nohighlight">\(\mathbb{F} =
@@ -899,7 +886,7 @@ of “length” for vectors in the <strong><em>vector space</em></strong> <span 
 \end{aligned}
 \end{split}\]</div>
 <p>where each vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathcal{V}\)</span> (defined as in
-<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(204)</a>) is assigned a real number <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_p\)</span>,
+<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(250)</a>) is assigned a real number <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_p\)</span>,
 representing the <span class="math notranslate nohighlight">\(L_p\)</span> norm of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>.</p>
 <p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_p\)</span> norm of
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_p\)</span>, is defined as:</p>
@@ -909,7 +896,7 @@ representing the <span class="math notranslate nohighlight">\(L_p\)</span> norm 
 <span class="math notranslate nohighlight">\(p\)</span> is a real number greater than or equal to 1.</p>
 </section>
 </div><p>One can easily verify that the <span class="math notranslate nohighlight">\(L_p\)</span> norm satisfies the properties of a norm
-function in <a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a>.</p>
+function in <a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a>.</p>
 <p>As we shall see later (likely when we discuss about analytic geometry), the
 choice of <span class="math notranslate nohighlight">\(p\)</span> determines the metric’s sensitivity to differences in vector
 components, influencing its application in various algorithms.</p>
@@ -919,7 +906,7 @@ components, influencing its application in various algorithms.</p>
 <p>The <span class="math notranslate nohighlight">\(L_1\)</span> <strong>norm</strong>, also known as the <strong>Manhattan norm</strong> or <strong>Taxicab norm</strong>, is
 a specific case of the <span class="math notranslate nohighlight">\(L_p\)</span> norm where <span class="math notranslate nohighlight">\(p = 1\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-l1-norm">
-<p class="admonition-title"><span class="caption-number">Definition 190 </span> (<span class="math notranslate nohighlight">\(L_1\)</span> Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 193 </span> (<span class="math notranslate nohighlight">\(L_1\)</span> Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>For the same vector space <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_1\)</span> norm is
 defined by:</p>
@@ -931,7 +918,7 @@ defined by:</p>
 \end{aligned}
 \end{split}\]</div>
 <p>assigning to each vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span> (defined as in
-<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(204)</a>) the sum of the absolute values of its
+<a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(250)</a>) the sum of the absolute values of its
 components, <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_1\)</span>.</p>
 <p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_1\)</span> norm of
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_1\)</span>, is defined as:</p>
@@ -949,7 +936,7 @@ encouraging sparsity in the model parameters.</p>
 <figure class="align-default" id="vector-norm-manhattan-distance">
 <img alt="../../_images/wikipedia-520px-Manhattan_distance.svg.png" src="../../_images/wikipedia-520px-Manhattan_distance.svg.png" />
 <figcaption>
-<p><span class="caption-number">Fig. 62 </span><span class="caption-text">Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
+<p><span class="caption-number">Fig. 65 </span><span class="caption-text">Taxicab geometry versus Euclidean distance: In taxicab geometry, the red,
 yellow, and blue paths all have the same length of 12. In Euclidean
 geometry, the green line has length <span class="math notranslate nohighlight">\(6 \sqrt{2} \approx 8.49\)</span> and is the unique
 shortest path, while the other paths have the longer length of 12.</span><a class="headerlink" href="#vector-norm-manhattan-distance" title="Link to this image">#</a></p>
@@ -964,7 +951,7 @@ shortest path, while the other paths have the longer length of 12.</span><a clas
 <p>The <span class="math notranslate nohighlight">\(L_2\)</span> <strong>norm</strong>, or <strong>Euclidean norm</strong>, obtained by setting <span class="math notranslate nohighlight">\(p = 2\)</span>, is the
 most familiar norm in machine learning.</p>
 <div class="proof definition admonition" id="03-vector-norm-l2-norm">
-<p class="admonition-title"><span class="caption-number">Definition 191 </span> (L2 Norm)</p>
+<p class="admonition-title"><span class="caption-number">Definition 194 </span> (L2 Norm)</p>
 <section class="definition-content" id="proof-content">
 <p>Similarly, for <span class="math notranslate nohighlight">\(\mathcal{V} = \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_2\)</span> norm is given by:</p>
 <div class="math notranslate nohighlight">
@@ -975,7 +962,7 @@ most familiar norm in machine learning.</p>
 \end{aligned}
 \end{split}\]</div>
 <p>where <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_2\)</span> is the Euclidean length of the vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>
-(defined as in <a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(204)</a>).</p>
+(defined as in <a class="reference internal" href="#equation-03-vector-norm-vector-in-rd">(250)</a>).</p>
 <p>In other words, for a vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span>, the <span class="math notranslate nohighlight">\(L_2\)</span> norm of
 <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, denoted as <span class="math notranslate nohighlight">\(\|\mathbf{v}\|_2\)</span>, is defined as:</p>
 <div class="math notranslate nohighlight">
@@ -986,7 +973,7 @@ most familiar norm in machine learning.</p>
 machine learning to measure the magnitude of vectors, in optimization algorithms
 (like gradient descent), and in computing distances between points in feature
 space.</p>
-<p>With reference to figure <a class="reference internal" href="#vector-norm-manhattan-distance"><span class="std std-numref">Fig. 62</span></a>, the green
+<p>With reference to figure <a class="reference internal" href="#vector-norm-manhattan-distance"><span class="std std-numref">Fig. 65</span></a>, the green
 line defines the Euclidean distance between two points in <span class="math notranslate nohighlight">\(\mathbb{R}^2\)</span> and is
 the shortest path between the two points.</p>
 <p>Let’s see how the L2 norm looks like in a 2D space.</p>
@@ -1032,7 +1019,7 @@ the shortest path between the two points.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/82da1c06166996cfee36b4baa7767f5b5ecd11cb56aa95ba16cee44a7af7c2db.svg" src="../../_images/82da1c06166996cfee36b4baa7767f5b5ecd11cb56aa95ba16cee44a7af7c2db.svg" />
+<img alt="../../_images/894eaadcbcce4408e3c694b4ac555a83e6cf936a08f8388b83268c8e8e5e1b41.svg" src="../../_images/894eaadcbcce4408e3c694b4ac555a83e6cf936a08f8388b83268c8e8e5e1b41.svg" />
 </div>
 </div>
 <p>Notice that the calculation is equivalent to the
@@ -1078,12 +1065,12 @@ hypotenuse is the square root of the sum of the squares of the other sides.</p>
 <p>We can use 3D as a way to illustrate this. The following series of images are
 taken from
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a>.</p>
-<p>First, consider <a class="reference internal" href="#vector-norm-pythagorean-theorem-3d-a"><span class="std std-numref">Fig. 63</span></a>, we want to
+<p>First, consider <a class="reference internal" href="#vector-norm-pythagorean-theorem-3d-a"><span class="std std-numref">Fig. 66</span></a>, we want to
 find the length of the diagonal.</p>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-a">
 <img alt="../../_images/mathsisfun-pythagoras-3d-a.svg" src="../../_images/mathsisfun-pythagoras-3d-a.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 63 </span><span class="caption-text">Finding the length of the diagonal.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-a" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 66 </span><span class="caption-text">Finding the length of the diagonal.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-a" title="Link to this image">#</a></p>
 <div class="legend">
 <p><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
@@ -1100,7 +1087,7 @@ c = \sqrt{x^2 + y^2}
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-b">
 <img alt="../../_images/mathsisfun-pythagoras-3d-b.svg" src="../../_images/mathsisfun-pythagoras-3d-b.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 64 </span><span class="caption-text"><strong>Image Credit:
+<p><span class="caption-number">Fig. 67 </span><span class="caption-text"><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-b" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
@@ -1109,7 +1096,7 @@ to find.</p>
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d-c">
 <img alt="../../_images/mathsisfun-pythagoras-3d-c.svg" src="../../_images/mathsisfun-pythagoras-3d-c.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 65 </span><span class="caption-text"><strong>Image Credit:
+<p><span class="caption-number">Fig. 68 </span><span class="caption-text"><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d-c" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
@@ -1125,7 +1112,7 @@ d   &amp;= \sqrt{c^2 + z^2} \\
 <figure class="align-default" id="vector-norm-pythagorean-theorem-3d">
 <img alt="../../_images/mathsisfun-pythagoras-3d-d.svg" src="../../_images/mathsisfun-pythagoras-3d-d.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 66 </span><span class="caption-text">The Pythagorean Theorem in 3D.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 69 </span><span class="caption-text">The Pythagorean Theorem in 3D.</span><a class="headerlink" href="#vector-norm-pythagorean-theorem-3d" title="Link to this image">#</a></p>
 <div class="legend">
 <p><strong>Image Credit:
 <a class="reference external" href="https://www.mathsisfun.com/geometry/pythagoras-3d.html">Math is Fun</a></strong></p>
@@ -1178,16 +1165,16 @@ length of the sides of the triangle (or the vector components).</p>
 <em>exactly</em> the same.</p>
 <p>The key difference (without going to deep into real analysis and metric spaces)
 is that the <strong>norm</strong> as defined in
-<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a> is a function that maps a
+<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a> is a function that maps a
 vector to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (i.e. real number <span class="math notranslate nohighlight">\(\mathbb{R}\)</span>), while the
 <strong>distance</strong> is a function that maps a pair of vectors to a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>.</p>
 <div class="proof definition admonition" id="03-vector-norm-distance">
-<p class="admonition-title"><span class="caption-number">Definition 192 </span> (Distance)</p>
+<p class="admonition-title"><span class="caption-number">Definition 195 </span> (Distance)</p>
 <section class="definition-content" id="proof-content">
 <p>A distance on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> over a field <span class="math notranslate nohighlight">\(\mathbb{F}\)</span> (typically
 <span class="math notranslate nohighlight">\(\mathbb{R}\)</span> or <span class="math notranslate nohighlight">\(\mathbb{C}\)</span>), is a function</p>
 <div class="math notranslate nohighlight" id="equation-03-vector-norm-distance-function">
-<span class="eqno">(206)<a class="headerlink" href="#equation-03-vector-norm-distance-function" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
+<span class="eqno">(252)<a class="headerlink" href="#equation-03-vector-norm-distance-function" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
 d: \mathcal{V} \times \mathcal{V} &amp; \rightarrow \mathbb{R}, \\
 (\mathbf{u}, \mathbf{v}) &amp; \mapsto d(\mathbf{u}, \mathbf{v}),
 \end{aligned}\end{split}\]</div>
@@ -1232,7 +1219,7 @@ of the distances between the vectors and a third vector.</p>
 </ol>
 </section>
 </div><p>We say that every norm induces a distance metric defined in
-<a class="reference internal" href="#03-vector-norm-distance">Definition 192</a>.</p>
+<a class="reference internal" href="#03-vector-norm-distance">Definition 195</a>.</p>
 <p><strong>Why?</strong></p>
 <p>Given a norm <span class="math notranslate nohighlight">\(\|\cdot\|\)</span> on a vector space <span class="math notranslate nohighlight">\(\mathcal{V}\)</span>, one can define a
 distance function induced by this norm as
@@ -1243,10 +1230,10 @@ metric space properties:</p>
 <li><p><strong>Non-negativity</strong>: For any vectors <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v}\)</span>, the distance
 <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is never negative because norms are always
 non-negative. This is a direct result of the norm’s property of <strong>positive
-definiteness</strong> (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a>).</p></li>
+definiteness</strong> (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a>).</p></li>
 <li><p><strong>Identity of Indiscernibles</strong>: The distance <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{v})\)</span> is
 zero if and only if <span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{v}\)</span>. This follows from the positive
-definiteness property (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a>) of
+definiteness property (<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a>) of
 norms which states that <span class="math notranslate nohighlight">\(\|\mathbf{u}\| =
 0\)</span> if and only if
 <span class="math notranslate nohighlight">\(\mathbf{u} = \mathbf{0}\)</span>. Thus, <span class="math notranslate nohighlight">\(\|\mathbf{u} -
@@ -1260,7 +1247,7 @@ norms which states that <span class="math notranslate nohighlight">\(\|\mathbf{u
 <span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|\mathbf{v}-\mathbf{u}\|\)</span>, as the norm of a
 vector remains the same if its sign is reversed. This follows directly from
 the norm’s property of <strong>absolute homogeneity</strong>
-(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a>) because you can just set
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a>) because you can just set
 <span class="math notranslate nohighlight">\(\lambda = -1\)</span>. Thus,
 <span class="math notranslate nohighlight">\(\|\mathbf{u}-\mathbf{v}\| = \|-1\| \|\mathbf{v}-\mathbf{u}\| =
  \|\mathbf{v}-\mathbf{u}\|\)</span>.</p></li>
@@ -1271,7 +1258,7 @@ which states that for any
 <span class="math notranslate nohighlight">\(d(\mathbf{u}, \mathbf{w}) \leq
 d(\mathbf{u}, \mathbf{v}) + d(\mathbf{v}, \mathbf{w})\)</span>
 holds. This is a consequence of the norm’s triangle inequality
-(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 188</a>),
+(<a class="reference internal" href="#03-vector-norm-norm-on-a-vector-space">Definition 191</a>),
 <span class="math notranslate nohighlight">\(\|\mathbf{u}+\mathbf{v}\|
 \leq \|\mathbf{u}\| + \|\mathbf{v}\|\)</span>, applied
 to the vectors <span class="math notranslate nohighlight">\(\mathbf{u}-\mathbf{v}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}-\mathbf{w}\)</span>, which
@@ -1461,7 +1448,8 @@ Spaces, and Banach Algebras, Springer, 2014.</p></li>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1530,8 +1518,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

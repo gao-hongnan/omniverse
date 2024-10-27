@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -39,10 +41,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -84,6 +87,7 @@
     <link rel="prev" title="Mixture Models" href="01_intro.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -99,19 +103,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -119,7 +112,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -127,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -144,7 +136,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -174,21 +167,17 @@
     
     
     <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -243,6 +232,11 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Mixture Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -453,9 +447,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -467,7 +463,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -727,24 +722,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -1156,7 +1143,7 @@ document.write(`
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/0b1d1d297c082b3d1f3a90e5d578c4bdd0ff36a3cb6b3d229fefaa3f00686ca5.svg" src="../../_images/0b1d1d297c082b3d1f3a90e5d578c4bdd0ff36a3cb6b3d229fefaa3f00686ca5.svg" />
+<img alt="../../_images/581a1a00924bd87761ac23fac2eeba233b61ec7644257ef88190517e7188ea34.svg" src="../../_images/581a1a00924bd87761ac23fac2eeba233b61ec7644257ef88190517e7188ea34.svg" />
 </div>
 </div>
 <p>In this case, we say that</p>
@@ -1286,7 +1273,7 @@ data points, the empirical distribution of the samples will converge to the true
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/05267ccea0c9aaf92409f645b74fa6d52570c20f385068f755b4e377a74e9474.svg" src="../../_images/05267ccea0c9aaf92409f645b74fa6d52570c20f385068f755b4e377a74e9474.svg" />
+<img alt="../../_images/b9ebec16cb4fa9bab4b66e79a9df5b2b37d1945d3a5ad42b439df19f5ca1305e.svg" src="../../_images/b9ebec16cb4fa9bab4b66e79a9df5b2b37d1945d3a5ad42b439df19f5ca1305e.svg" />
 </div>
 </div>
 <p>In this code, we’re using a Gaussian Mixture Model (GMM) to generate and visualize samples from a mixture of two Gaussian distributions. The purpose of the visualization is to demonstrate how the GMM can approximate the true underlying distribution as the number of samples increases.</p>
@@ -1846,7 +1833,7 @@ estimated parameters are very close to the true parameters.</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/4cba9b8baa8d929b33b70a25cb1b2cf5adb5752649bf976ef76611dc95792138.svg" src="../../_images/4cba9b8baa8d929b33b70a25cb1b2cf5adb5752649bf976ef76611dc95792138.svg" />
+<img alt="../../_images/281e1060c833f5aefd905c5274586f228837bd906dce36fb23fd76c0fda7f5a8.svg" src="../../_images/281e1060c833f5aefd905c5274586f228837bd906dce36fb23fd76c0fda7f5a8.svg" />
 </div>
 </div>
 <p>When you <code class="docutils literal notranslate"><span class="pre">predict</span></code> on the samples <code class="docutils literal notranslate"><span class="pre">X</span></code>, you get the cluster/component in which
@@ -2012,7 +1999,7 @@ Then the highest probability is the cluster/component in which the sample belong
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/ec4dc1572ac719ee41eeda948656b5c47a444c11ec79b931919838318dbc7a0d.svg" src="../../_images/ec4dc1572ac719ee41eeda948656b5c47a444c11ec79b931919838318dbc7a0d.svg" />
+<img alt="../../_images/79f8119950312b6731a5e876b8b66318c852d67c599d97c3257114f302e10bfc.svg" src="../../_images/79f8119950312b6731a5e876b8b66318c852d67c599d97c3257114f302e10bfc.svg" />
 </div>
 </div>
 <div class="cell tag_hide-input docutils container">
@@ -2103,7 +2090,7 @@ Then the highest probability is the cluster/component in which the sample belong
 </pre>
 </div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">(</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1348</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1176</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span><span style="font-weight: bold">)</span>
 </pre>
-</div><img alt="../../_images/7019c6a570358f5a369eac7b33d835dd585a6d6293d467d6fcc43f50377d09f3.svg" src="../../_images/7019c6a570358f5a369eac7b33d835dd585a6d6293d467d6fcc43f50377d09f3.svg" />
+</div><img alt="../../_images/499034d2be5c66fd3a0338618f248a0840fb7da61d44f13e6ca2c5bbd890ffca.svg" src="../../_images/499034d2be5c66fd3a0338618f248a0840fb7da61d44f13e6ca2c5bbd890ffca.svg" />
 </div>
 </div>
 </section>
@@ -2871,7 +2858,7 @@ also known as the <strong>responsibility</strong> of the <span class="math notra
 </section>
 <section id="no-closed-form-solution">
 <h3><a class="toc-backref" href="#id71" role="doc-backlink">No Closed-Form Solution</a><a class="headerlink" href="#no-closed-form-solution" title="Link to this heading">#</a></h3>
-<p>We aim to find parameters <span class="math notranslate nohighlight">\(\widehat{\boldsymbol{\theta}}^{*}\)</span> that maximize the log-likelihood <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> defined in <a class="reference internal" href="#equation-eq-gmm-log-likelihood-1">(101)</a>. Our “normal” procedure would be to compute the gradient <span class="math notranslate nohighlight">\(\mathrm{d} \mathcal{L} / \mathrm{d} \boldsymbol{\theta}\)</span> of the <span class="math notranslate nohighlight">\(\log\)</span>-likelihood with respect to the model parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, set it to <span class="math notranslate nohighlight">\(\mathbf{0}\)</span>, and solve for <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>. However, unlike our previous examples for maximum likelihood estimation (e.g., when we discussed <span class="xref myst">linear regression</span>), we cannot obtain a closed-form solution. However, we can exploit an iterative scheme to find good model parameters <span class="math notranslate nohighlight">\(\widehat{\boldsymbol{\theta}}\)</span>, which will turn out to be the EM algorithm for GMMs. The key idea is to update one model parameter at a time while keeping the others fixed <span id="id10">[<a class="reference internal" href="../../bibliography.html#id9" title="Marc Peter Deisenroth, Cheng Soon Ong, and Aldo A. Faisal. Mathematics for Machine Learning. Cambridge University Press, 2021.">Deisenroth <em>et al.</em>, 2021</a>]</span>.</p>
+<p>We aim to find parameters <span class="math notranslate nohighlight">\(\widehat{\boldsymbol{\theta}}^{*}\)</span> that maximize the log-likelihood <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> defined in <a class="reference internal" href="#equation-eq-gmm-log-likelihood-1">(101)</a>. Our “normal” procedure would be to compute the gradient <span class="math notranslate nohighlight">\(\mathrm{d} \mathcal{L} / \mathrm{d} \boldsymbol{\theta}\)</span> of the <span class="math notranslate nohighlight">\(\log\)</span>-likelihood with respect to the model parameters <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>, set it to <span class="math notranslate nohighlight">\(\mathbf{0}\)</span>, and solve for <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span>. However, unlike our previous examples for maximum likelihood estimation (e.g., when we discussed <a class="reference internal" href="../linear_regression/02_concept.html"><span class="std std-doc">linear regression</span></a>), we cannot obtain a closed-form solution. However, we can exploit an iterative scheme to find good model parameters <span class="math notranslate nohighlight">\(\widehat{\boldsymbol{\theta}}\)</span>, which will turn out to be the EM algorithm for GMMs. The key idea is to update one model parameter at a time while keeping the others fixed <span id="id10">[<a class="reference internal" href="../../bibliography.html#id9" title="Marc Peter Deisenroth, Cheng Soon Ong, and Aldo A. Faisal. Mathematics for Machine Learning. Cambridge University Press, 2021.">Deisenroth <em>et al.</em>, 2021</a>]</span>.</p>
 <div class="proof remark admonition" id="prf:remark-gmm-closed-form">
 <p class="admonition-title"><span class="caption-number">Remark 32 </span> (Remark: Closed-Form Solution for Single Gaussian)</p>
 <section class="remark-content" id="proof-content">
@@ -3008,34 +2995,34 @@ and the mixture weights. This is part of the EM algorithm and will be explained 
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,611 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,816 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,619 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,823 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,624 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,828 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,674 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,878 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,682 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,885 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,688 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,892 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,779 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,981 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,787 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,990 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,794 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:44,997 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<img alt="../../_images/58b07ba5441a3ae37151cd9bf715fca8caa88b223611e663ad8252ea8458023d.svg" src="../../_images/58b07ba5441a3ae37151cd9bf715fca8caa88b223611e663ad8252ea8458023d.svg" />
+<img alt="../../_images/d9ad434012215e57643409b6227aa8e28a12fa159dfdfcf681287e5e84fa1471.svg" src="../../_images/d9ad434012215e57643409b6227aa8e28a12fa159dfdfcf681287e5e84fa1471.svg" />
 </div>
 </div>
 <p>Next, we can calculate the responsibilities <span class="math notranslate nohighlight">\(r^{(n)}_{k}\)</span> for each data point <span class="math notranslate nohighlight">\(x^{(n)}\)</span> and each mixture component <span class="math notranslate nohighlight">\(k\)</span>.</p>
@@ -3179,43 +3166,43 @@ N_{k}:=\sum_{n=1}^{N} r^{(n)}_{k}
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,907 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,110 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,915 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,118 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,922 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,126 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,986 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,190 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,992 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,196 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:06,998 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,202 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,096 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,298 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,104 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,306 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,111 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,313 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,174 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,376 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,180 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,382 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,185 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,387 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<img alt="../../_images/27417b32767aefc904106f34a2621a101a222b3281033fe90650503959d98f59.svg" src="../../_images/27417b32767aefc904106f34a2621a101a222b3281033fe90650503959d98f59.svg" />
+<img alt="../../_images/321e3be8996c8790926e70dbd233f32fa25195cf81100a3ff431cc24a5fe041f.svg" src="../../_images/321e3be8996c8790926e70dbd233f32fa25195cf81100a3ff431cc24a5fe041f.svg" />
 </div>
 </div>
 <p>The update of the mean parameters in <a class="reference internal" href="#equation-eq-gmm-update-means-1">(104)</a> look fairly straightforward. However, note that the responsibilities <span class="math notranslate nohighlight">\(r^{(n)}_{k}\)</span> are a function of <span class="math notranslate nohighlight">\(\pi_{j}, \boldsymbol{\mu}_{j}, \boldsymbol{\Sigma}_{j}\)</span> for all <span class="math notranslate nohighlight">\(j=1, \ldots, K\)</span>, such that the updates in <a class="reference internal" href="#equation-eq-gmm-update-means-1">(104)</a> depend on all parameters of the GMM, and a closed-form solution, which we obtained for linear regression, cannot be obtained.</p>
@@ -3386,61 +3373,61 @@ shows the GMM density prior to updating the (co)variance values, whereas the fig
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,273 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,608 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,280 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,615 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,286 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,621 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,458 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,660 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,468 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,670 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,478 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,679 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,523 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,715 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,531 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,722 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,538 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,728 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,592 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,767 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,605 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,777 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,614 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,786 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,708 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,879 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,715 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,885 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,721 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,891 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,773 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,941 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,783 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,951 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,792 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:45,960 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<img alt="../../_images/497e65806ff770432dae3fa3c9b78a6d0171b267550f54e04e3c891d556c489a.svg" src="../../_images/497e65806ff770432dae3fa3c9b78a6d0171b267550f54e04e3c891d556c489a.svg" />
+<img alt="../../_images/062a0b34e0bc8d13901f683b2644ad7ff2ed1caf0ba9b4f596ae8fb6eca8b766.svg" src="../../_images/062a0b34e0bc8d13901f683b2644ad7ff2ed1caf0ba9b4f596ae8fb6eca8b766.svg" />
 </div>
 </div>
 </section>
@@ -3628,25 +3615,25 @@ using the following code snippet:</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,903 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,054 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,916 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,063 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:07,930 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,073 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,090 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,235 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,103 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,248 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,117 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,261 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<img alt="../../_images/39b78e0903e2a53eab5ccc49a61f5a888fef1b24271381a42cc9626690d2ac75.svg" src="../../_images/39b78e0903e2a53eab5ccc49a61f5a888fef1b24271381a42cc9626690d2ac75.svg" />
+<img alt="../../_images/29c2e6ba56a4767e9ed77a68235b2a9c4b4704d238df6f4ebc9247a7aadd532b.svg" src="../../_images/29c2e6ba56a4767e9ed77a68235b2a9c4b4704d238df6f4ebc9247a7aadd532b.svg" />
 </div>
 </div>
 <p>We see the full cycle of updates below:</p>
@@ -3682,88 +3669,88 @@ using the following code snippet:</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,325 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,447 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,334 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,455 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,341 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,464 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,390 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,514 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,398 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,523 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,406 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,532 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,458 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,584 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,468 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,593 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,477 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,603 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,546 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,676 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,552 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,684 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,558 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,691 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,604 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,741 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,611 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,750 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,617 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,757 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,657 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,795 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,667 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,804 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,676 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,813 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,851 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,981 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,859 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,990 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,867 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:46,997 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,928 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,056 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,935 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,062 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,941 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,069 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:08,990 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,117 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:09,000 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,127 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-09-24 09:28:09,010 - INFO - Substituting symbol N from STIXNonUnicode
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-27 08:32:47,136 - INFO - Substituting symbol N from STIXNonUnicode
 </pre></div>
 </div>
-<img alt="../../_images/a6dc9638ffc86726bb3f94da82830ac6a0625100e3fe4e0fc75efb600cdf3ee7.svg" src="../../_images/a6dc9638ffc86726bb3f94da82830ac6a0625100e3fe4e0fc75efb600cdf3ee7.svg" />
+<img alt="../../_images/4d9234c7395528c17fe93747586d94ade478d676318a411d236253b575784ce2.svg" src="../../_images/4d9234c7395528c17fe93747586d94ade478d676318a411d236253b575784ce2.svg" />
 </div>
 </div>
 </section>
@@ -4168,7 +4155,7 @@ It is now the weighted sum of all the data points <span class="math notranslate 
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/c05efb77a11670bc253d37b1260e430cc46006b5a236daa50241e38d0005a3c8.svg" src="../../_images/c05efb77a11670bc253d37b1260e430cc46006b5a236daa50241e38d0005a3c8.svg" />
+<img alt="../../_images/11c2b0f2757963a77ae65ba6ccc1417a4552b797c7d23378a6033af6db107eb4.svg" src="../../_images/11c2b0f2757963a77ae65ba6ccc1417a4552b797c7d23378a6033af6db107eb4.svg" />
 </div>
 </div>
 </section>
@@ -4467,19 +4454,19 @@ It is now the weighted sum of all the data points <span class="math notranslate 
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/48d469223917b37fe800630aa40773e12eda41bdf83178c67b00b82adc2db344.svg" src="../../_images/48d469223917b37fe800630aa40773e12eda41bdf83178c67b00b82adc2db344.svg" />
+<img alt="../../_images/ab0777a026f16053b828ed23096db3a497f05aa182ec25c4eb682f15b2c6ad22.svg" src="../../_images/ab0777a026f16053b828ed23096db3a497f05aa182ec25c4eb682f15b2c6ad22.svg" />
 <div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">integral of pdf <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1.0000000000000429</span>
 </pre>
-</div><img alt="../../_images/24e55051fcde1dc96fab651c558a80bc172850a847f51b7ada6248269544b333.svg" src="../../_images/24e55051fcde1dc96fab651c558a80bc172850a847f51b7ada6248269544b333.svg" />
-<img alt="../../_images/9a183b676cc54d96a78981f49c046bd1d1d1c6762f0b3e19c326972bb5c53bc1.svg" src="../../_images/9a183b676cc54d96a78981f49c046bd1d1d1c6762f0b3e19c326972bb5c53bc1.svg" />
-<img alt="../../_images/37010ebde64e1c476aac5b1f308f54d9b5e2afd05e835ffd3939a8ae1c21aff2.svg" src="../../_images/37010ebde64e1c476aac5b1f308f54d9b5e2afd05e835ffd3939a8ae1c21aff2.svg" />
-<img alt="../../_images/e00f698fd6a35d4686f3aa46ce27419a3643bfd748828c7ae7c64fbd1d5ed727.svg" src="../../_images/e00f698fd6a35d4686f3aa46ce27419a3643bfd748828c7ae7c64fbd1d5ed727.svg" />
-<img alt="../../_images/88233e8c08c82b07b697f4fe4dc6ab2e5915f8ed7e6a1a9d9271e33066e0de0f.svg" src="../../_images/88233e8c08c82b07b697f4fe4dc6ab2e5915f8ed7e6a1a9d9271e33066e0de0f.svg" />
-<img alt="../../_images/fa44cddfcfbd7e88faec6b4a13f81cfbfa55329fe5ca47cf8719cc350e24af88.svg" src="../../_images/fa44cddfcfbd7e88faec6b4a13f81cfbfa55329fe5ca47cf8719cc350e24af88.svg" />
-<img alt="../../_images/bee566042ede953560275bd890a4a9c7cfca7592e74cb6e5bce849ed33bb24af.svg" src="../../_images/bee566042ede953560275bd890a4a9c7cfca7592e74cb6e5bce849ed33bb24af.svg" />
-<img alt="../../_images/f0890a251bd506f541f3bb96bf7c275f2e43e39f4f143fe39f0f96330cd39e9c.svg" src="../../_images/f0890a251bd506f541f3bb96bf7c275f2e43e39f4f143fe39f0f96330cd39e9c.svg" />
-<img alt="../../_images/86e0a94c364d94c908fa77ce37bf9f6cf227c0ca0f5b1960bd3527769f19f0b6.svg" src="../../_images/86e0a94c364d94c908fa77ce37bf9f6cf227c0ca0f5b1960bd3527769f19f0b6.svg" />
-<img alt="../../_images/5d12ef5c996493f06706ab9f0da64c9256bef7d21862ce517dc9cde65498285c.svg" src="../../_images/5d12ef5c996493f06706ab9f0da64c9256bef7d21862ce517dc9cde65498285c.svg" />
+</div><img alt="../../_images/d3f913738c80da6d2c77e20c56173cd2bce52c84fa47ea65eac46a6d9f7ec56f.svg" src="../../_images/d3f913738c80da6d2c77e20c56173cd2bce52c84fa47ea65eac46a6d9f7ec56f.svg" />
+<img alt="../../_images/fe9dd8b56b4ef86ddc4b87c090732d94c3613bfab5ebc224b5b0fb753dd4283d.svg" src="../../_images/fe9dd8b56b4ef86ddc4b87c090732d94c3613bfab5ebc224b5b0fb753dd4283d.svg" />
+<img alt="../../_images/d611d234fe7991ef83f090222aeca420c289514f3c19b7ebda19dedc5024cf6b.svg" src="../../_images/d611d234fe7991ef83f090222aeca420c289514f3c19b7ebda19dedc5024cf6b.svg" />
+<img alt="../../_images/2b959f52ae97b6931c171c9e07935a257372a0d58167f90e1210627ff494256e.svg" src="../../_images/2b959f52ae97b6931c171c9e07935a257372a0d58167f90e1210627ff494256e.svg" />
+<img alt="../../_images/44debfe27b5c83aed4f7e2e6731cd128521e4bb1bbd708c8d4a9179bd242eaa5.svg" src="../../_images/44debfe27b5c83aed4f7e2e6731cd128521e4bb1bbd708c8d4a9179bd242eaa5.svg" />
+<img alt="../../_images/dd1fd0c510e75bdffdd5566098518add82601815fa4687626fd63cd915c8f767.svg" src="../../_images/dd1fd0c510e75bdffdd5566098518add82601815fa4687626fd63cd915c8f767.svg" />
+<img alt="../../_images/bbf42d99d163744ea1ca7b7337594c55a4ec2a288facf824192b7b8c09b05f26.svg" src="../../_images/bbf42d99d163744ea1ca7b7337594c55a4ec2a288facf824192b7b8c09b05f26.svg" />
+<img alt="../../_images/e4a942c8f4e84ed8e591a23f6b9e0d6e0b2561fd78b7d600d28b5d3ce453dcf7.svg" src="../../_images/e4a942c8f4e84ed8e591a23f6b9e0d6e0b2561fd78b7d600d28b5d3ce453dcf7.svg" />
+<img alt="../../_images/2cf5a8f144bc7a3d87af426870a03ca047f5c8ecd8afe0d11d1bc94493aa42ce.svg" src="../../_images/2cf5a8f144bc7a3d87af426870a03ca047f5c8ecd8afe0d11d1bc94493aa42ce.svg" />
+<img alt="../../_images/6316a47c9eccd7920933c05432dcacc3d72cc25f30fade3f773cf3845deeae10.svg" src="../../_images/6316a47c9eccd7920933c05432dcacc3d72cc25f30fade3f773cf3845deeae10.svg" />
 </div>
 </div>
 </section>
@@ -4556,7 +4543,8 @@ wide array of examples in python code and it is very easy to follow.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -4737,8 +4725,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

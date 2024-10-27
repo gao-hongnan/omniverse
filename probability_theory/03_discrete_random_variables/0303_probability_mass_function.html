@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -39,10 +41,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -84,6 +87,7 @@
     <link rel="prev" title="Discrete Random Variables" href="0302_discrete_random_variables.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -99,19 +103,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -119,7 +112,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -127,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -144,7 +136,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -174,21 +167,17 @@
     
     
     <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -243,6 +232,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -453,9 +447,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -467,7 +463,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -679,24 +674,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -746,29 +733,29 @@ document.write(`
 <section id="definition">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Definition</a><a class="headerlink" href="#definition" title="Link to this heading">#</a></h2>
 <div class="proof definition admonition" id="def_state_space">
-<p class="admonition-title"><span class="caption-number">Definition 76 </span> (State Space)</p>
+<p class="admonition-title"><span class="caption-number">Definition 79 </span> (State Space)</p>
 <section class="definition-content" id="proof-content">
 <p>The set of all possible states of <span class="math notranslate nohighlight">\(X\)</span> is called the <strong>state space</strong> of <span class="math notranslate nohighlight">\(X\)</span> and is denoted as <span class="math notranslate nohighlight">\(X(\S)\)</span>.</p>
 <p>In particular, the state space of a discrete random variable <span class="math notranslate nohighlight">\(X\)</span> is a countable set
-as per <a class="reference internal" href="0302_discrete_random_variables.html#def_discrete_random_variables">Definition 75</a>.</p>
+as per <a class="reference internal" href="0302_discrete_random_variables.html#def_discrete_random_variables">Definition 78</a>.</p>
 </section>
 </div><div class="proof example admonition" id="example_state_space_coin_toss">
-<p class="admonition-title"><span class="caption-number">Example 23 </span> (State Space of Coin Toss)</p>
+<p class="admonition-title"><span class="caption-number">Example 25 </span> (State Space of Coin Toss)</p>
 <section class="example-content" id="proof-content">
-<p>Let us revisit the example in <a class="reference internal" href="0301_random_variables.html#example_random_variable_coin_toss">Example 20</a> and examine the state space of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Let us revisit the example in <a class="reference internal" href="0301_random_variables.html#example_random_variable_coin_toss">Example 22</a> and examine the state space of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>The state space of <span class="math notranslate nohighlight">\(X\)</span> is the set of all possible values that <span class="math notranslate nohighlight">\(X\)</span> can take. As enumerated in the example,
 we see that the state space of <span class="math notranslate nohighlight">\(X\)</span> is <span class="math notranslate nohighlight">\(\{0, 1, 2\}\)</span> (i.e. <span class="math notranslate nohighlight">\(X\)</span> takes 3 states 0, 1 and 2).</p>
 </section>
 </div><div class="proof example admonition" id="example_state_space_dice_roll">
-<p class="admonition-title"><span class="caption-number">Example 24 </span> (State Space of Dice Roll)</p>
+<p class="admonition-title"><span class="caption-number">Example 26 </span> (State Space of Dice Roll)</p>
 <section class="example-content" id="proof-content">
-<p>Let us revisit the example in <a class="reference internal" href="0301_random_variables.html#example_random_variable_dice_roll">Example 21</a> and examine the state space of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Let us revisit the example in <a class="reference internal" href="0301_random_variables.html#example_random_variable_dice_roll">Example 23</a> and examine the state space of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>The state space of <span class="math notranslate nohighlight">\(X\)</span> is the set of all possible values that <span class="math notranslate nohighlight">\(X\)</span> can take. As enumerated in the example,
 we see that the state space of <span class="math notranslate nohighlight">\(X\)</span> is <span class="math notranslate nohighlight">\(\{1, 2, 3, 4, 5, 6\}\)</span> (i.e. <span class="math notranslate nohighlight">\(X\)</span> takes 6 states 1, 2, 3, 4, 5 and 6).</p>
 <p>For two dice rolls, the state space is <span class="math notranslate nohighlight">\(\{(1, 1), (1, 2), \ldots, (6, 6)\}\)</span> where each state is a tuple of two dice rolls.</p>
 </section>
 </div><div class="proof definition admonition" id="def_pmf">
-<p class="admonition-title"><span class="caption-number">Definition 77 </span> (Probability Mass Function)</p>
+<p class="admonition-title"><span class="caption-number">Definition 80 </span> (Probability Mass Function)</p>
 <section class="definition-content" id="proof-content">
 <p>The <strong>probability mass function</strong> (PMF) of a random variable <span class="math notranslate nohighlight">\(X\)</span> is a function that maps each state
 <span class="math notranslate nohighlight">\(x\)</span> in the state space <span class="math notranslate nohighlight">\(X(\S)\)</span> to its probability <span class="math notranslate nohighlight">\(\pmf(x) = \P\lsq X = x \rsq\)</span>.</p>
@@ -782,11 +769,11 @@ we see that the state space of <span class="math notranslate nohighlight">\(X\)<
 \end{split}\]</div>
 </section>
 </div><div class="proof example admonition" id="example_pmf_coin_toss">
-<p class="admonition-title"><span class="caption-number">Example 25 </span> (PMF of Coin Toss)</p>
+<p class="admonition-title"><span class="caption-number">Example 27 </span> (PMF of Coin Toss)</p>
 <section class="example-content" id="proof-content">
-<p>Let us revisit <a class="reference internal" href="0301_random_variables.html#example_random_variable_coin_toss">Example 20</a> on coin toss and compute the PMF of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Let us revisit <a class="reference internal" href="0301_random_variables.html#example_random_variable_coin_toss">Example 22</a> on coin toss and compute the PMF of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>Recall the sample space is given by <span class="math notranslate nohighlight">\(\S = \{(HH), (HT), (TH), (TT)\}\)</span> and the state space is given by
-<span class="math notranslate nohighlight">\(X(\S) = \{0, 1, 2\}\)</span> as enumerated in <a class="reference internal" href="#example_state_space_coin_toss">Example 23</a>.</p>
+<span class="math notranslate nohighlight">\(X(\S) = \{0, 1, 2\}\)</span> as enumerated in <a class="reference internal" href="#example_state_space_coin_toss">Example 25</a>.</p>
 <p>Thus, our domain of <span class="math notranslate nohighlight">\(\pmf\)</span> is <span class="math notranslate nohighlight">\(X(\S) = \{0, 1, 2\}\)</span> we have 3 mappings to compute:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -800,11 +787,11 @@ we see that the state space of <span class="math notranslate nohighlight">\(X\)<
 Thus, the PMF of <span class="math notranslate nohighlight">\(X\)</span> is completely determined by the 3 mappings above.</p>
 </section>
 </div><div class="proof example admonition" id="example_pmf_two_dice_rolls">
-<p class="admonition-title"><span class="caption-number">Example 26 </span> (PMF of Two Dice Rolls)</p>
+<p class="admonition-title"><span class="caption-number">Example 28 </span> (PMF of Two Dice Rolls)</p>
 <section class="example-content" id="proof-content">
-<p>Let us revisit <a class="reference internal" href="0301_random_variables.html#example_random_variable_dice_roll">Example 21</a> on two dice rolls and compute the PMF of <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Let us revisit <a class="reference internal" href="0301_random_variables.html#example_random_variable_dice_roll">Example 23</a> on two dice rolls and compute the PMF of <span class="math notranslate nohighlight">\(X\)</span>.</p>
 <p>Recall the sample space is given by <span class="math notranslate nohighlight">\(\S = \lset (1, 1), (1, 2), \ldots, (6, 6) \rset\)</span> and the state space is given by
-<span class="math notranslate nohighlight">\(X(\S) = \lset (1, 1), (1, 2), \ldots, (6, 6) \rset\)</span> as enumerated in <a class="reference internal" href="#example_state_space_dice_roll">Example 24</a>.</p>
+<span class="math notranslate nohighlight">\(X(\S) = \lset (1, 1), (1, 2), \ldots, (6, 6) \rset\)</span> as enumerated in <a class="reference internal" href="#example_state_space_dice_roll">Example 26</a>.</p>
 <p>Thus, our domain of <span class="math notranslate nohighlight">\(\pmf\)</span> is <span class="math notranslate nohighlight">\(X(\S) = \lset (1, 1), (1, 2), \ldots, (6, 6) \rset\)</span> we have 36 states to compute:</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}
@@ -824,7 +811,7 @@ Thus, the PMF of <span class="math notranslate nohighlight">\(X\)</span> is comp
 <section class="theorem-content" id="proof-content">
 <p>A PMF should satisfy the following normalization property:</p>
 <div class="math notranslate nohighlight" id="equation-eq-pmf-normalization">
-<span class="eqno">(129)<a class="headerlink" href="#equation-eq-pmf-normalization" title="Link to this equation">#</a></span>\[
+<span class="eqno">(175)<a class="headerlink" href="#equation-eq-pmf-normalization" title="Link to this equation">#</a></span>\[
 \sum_{x \in X(\S)} \pmf(x) = 1
 \]</div>
 </section>
@@ -895,7 +882,8 @@ section 3.2.5.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -955,8 +943,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

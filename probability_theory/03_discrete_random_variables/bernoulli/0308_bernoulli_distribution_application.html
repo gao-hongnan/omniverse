@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -39,10 +41,11 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
@@ -84,6 +87,7 @@
     <link rel="prev" title="Concept" href="0308_bernoulli_distribution_concept.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -99,19 +103,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../../search.html"
       method="get">
@@ -119,7 +112,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -127,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -144,7 +136,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -174,21 +167,17 @@
     
     
     <img src="../../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="../../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -243,6 +232,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -453,9 +447,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -467,7 +463,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -710,24 +705,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -982,7 +969,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/609609d6d6d9392c88c033081dd590c03828ac96559856ce0cad1d5bf5dd5ca7.svg" src="../../../_images/609609d6d6d9392c88c033081dd590c03828ac96559856ce0cad1d5bf5dd5ca7.svg" />
+<img alt="../../../_images/4af668e58f26b0342bbee91c020668bb792a711d61ea256e6c4e78ad8f7c32a1.svg" src="../../../_images/4af668e58f26b0342bbee91c020668bb792a711d61ea256e6c4e78ad8f7c32a1.svg" />
 </div>
 </div>
 <p>The true pmf (ideal histogram) gives the answer that out of the true population, <span class="math notranslate nohighlight">\(80\%\)</span> has no covid, and <span class="math notranslate nohighlight">\(20\%\)</span> has covid.</p>
@@ -1024,7 +1011,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/28332cc52938a457850f8aef59ff4c8b1334f51b012f08df849a22734071e2b6.svg" src="../../../_images/28332cc52938a457850f8aef59ff4c8b1334f51b012f08df849a22734071e2b6.svg" />
+<img alt="../../../_images/9c69c4ee7bd9b60b864c028447b1736068771df3db43418c2eebbe4ea2c697e7.svg" src="../../../_images/9c69c4ee7bd9b60b864c028447b1736068771df3db43418c2eebbe4ea2c697e7.svg" />
 </div>
 </div>
 <p>The CDF is plotted below.</p>
@@ -1037,7 +1024,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/045d320505423569a37357f364365ff1eced5a14b42e3f54757e312d433f35cf.svg" src="../../../_images/045d320505423569a37357f364365ff1eced5a14b42e3f54757e312d433f35cf.svg" />
+<img alt="../../../_images/5bcfeac1207ef37dbe14b373d1d347732d0a563ed9f626e6c0a52f4c305904d9.svg" src="../../../_images/5bcfeac1207ef37dbe14b373d1d347732d0a563ed9f626e6c0a52f4c305904d9.svg" />
 </div>
 </div>
 </section>
@@ -1179,7 +1166,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/9fe71fcb56d5ce842e8cf9be930f623e27c705584be196c721589ac07a020b60.svg" src="../../../_images/9fe71fcb56d5ce842e8cf9be930f623e27c705584be196c721589ac07a020b60.svg" />
+<img alt="../../../_images/a167f2ec3dc3a0264021ed5dd42738fea77adf6e9495eaffad3d1a3c6c3fb108.svg" src="../../../_images/a167f2ec3dc3a0264021ed5dd42738fea77adf6e9495eaffad3d1a3c6c3fb108.svg" />
 </div>
 </div>
 <p>It is quite clear that as number of samples go up, the empirical histograms become more accurate. This is not surprisingly as intuitively, as your samples become large, your distribution will be more accurate to the true population.</p>
@@ -1227,7 +1214,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.821 0.179]
 </pre></div>
 </div>
-<img alt="../../../_images/de4d16393af38acbd8d7c7977caa84b529cd74a250bf84588e438c08f1abc940.svg" src="../../../_images/de4d16393af38acbd8d7c7977caa84b529cd74a250bf84588e438c08f1abc940.svg" />
+<img alt="../../../_images/e8171cedd9e7e95f1fd1a2b46d55cc788b753491c8ea4535b9fe9e4063235f9b.svg" src="../../../_images/e8171cedd9e7e95f1fd1a2b46d55cc788b753491c8ea4535b9fe9e4063235f9b.svg" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1246,7 +1233,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.8018 0.1982]
 </pre></div>
 </div>
-<img alt="../../../_images/f5a9fb06b0de2fdd3171a39d999f61ee9cf1408e04942502621830f8aa8a99ec.svg" src="../../../_images/f5a9fb06b0de2fdd3171a39d999f61ee9cf1408e04942502621830f8aa8a99ec.svg" />
+<img alt="../../../_images/76bbe382b93b07b53e1b3d71952e34ded79c53eaf6df9edfbbbeb1b5367b2de5.svg" src="../../../_images/76bbe382b93b07b53e1b3d71952e34ded79c53eaf6df9edfbbbeb1b5367b2de5.svg" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -1265,7 +1252,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.79922222 0.20077778]
 </pre></div>
 </div>
-<img alt="../../../_images/898b2d210fcdc124cd7efb0108ab4567ee03ed89a83af58ff312bc9e1574a4ab.svg" src="../../../_images/898b2d210fcdc124cd7efb0108ab4567ee03ed89a83af58ff312bc9e1574a4ab.svg" />
+<img alt="../../../_images/f9404d7ef4a055e31bb952a92573d3ee16073093a0a11be0e37aa7916a907317.svg" src="../../../_images/f9404d7ef4a055e31bb952a92573d3ee16073093a0a11be0e37aa7916a907317.svg" />
 </div>
 </div>
 </section>
@@ -1349,7 +1336,8 @@ Then <span class="math notranslate nohighlight">\(Y(y=1 | X = x)\)</span> follow
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1413,8 +1401,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

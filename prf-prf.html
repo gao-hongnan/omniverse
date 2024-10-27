@@ -15,17 +15,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -38,10 +40,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -80,6 +83,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
 
     <script>
       DOCUMENTATION_OPTIONS.COLLAPSE_INDEX = true;
@@ -101,19 +105,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -121,7 +114,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -129,8 +121,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -148,7 +140,8 @@
       
         
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -178,21 +171,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -247,6 +236,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="influential/linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -457,9 +451,11 @@
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -471,7 +467,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -635,24 +630,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 
 </div></div>
       
@@ -764,6 +751,8 @@ document.write(`
    <a href="#cap-decoder-layer-normalization"><strong>decoder-layer-normalization</strong></a> | 
    <a href="#cap-decoder-positional-encoding"><strong>decoder-positional-encoding</strong></a> | 
    <a href="#cap-decoder-simplified-objective-function"><strong>decoder-simplified-objective-function</strong></a> | 
+   <a href="#cap-def-conditional-likelihood-function-linear-regression"><strong>def-conditional-likelihood-function-linear-regression</strong></a> | 
+   <a href="#cap-def-conditional-log-likelihood-function-linear-regression"><strong>def-conditional-log-likelihood-function-linear-regression</strong></a> | 
    <a href="#cap-def-empirical-risk"><strong>def-empirical-risk</strong></a> | 
    <a href="#cap-def-gelu"><strong>def-gelu</strong></a> | 
    <a href="#cap-def-gelu-notation"><strong>def-gelu-notation</strong></a> | 
@@ -771,6 +760,7 @@ document.write(`
    <a href="#cap-def-marginal-pmf-pdf"><strong>def-marginal-pmf-pdf</strong></a> | 
    <a href="#cap-def-positionwise-ffn"><strong>def-positionwise-ffn</strong></a> | 
    <a href="#cap-def-positionwise-ffn-notation"><strong>def-positionwise-ffn-notation</strong></a> | 
+   <a href="#cap-def-r-squared"><strong>def-r-squared</strong></a> | 
    <a href="#cap-def-sample-average"><strong>def-sample-average</strong></a> | 
    <a href="#cap-def-true-risk"><strong>def-true-risk</strong></a> | 
    <a href="#cap-def-voronoi-region"><strong>def-voronoi-region</strong></a> | 
@@ -951,8 +941,13 @@ document.write(`
    <a href="#cap-parameter-vector"><strong>parameter-vector</strong></a> | 
    <a href="#cap-posterior"><strong>posterior</strong></a> | 
    <a href="#cap-pre_image"><strong>pre_image</strong></a> | 
+   <a href="#cap-prf-example-conditional-expectation"><strong>prf-example-conditional-expectation</strong></a> | 
+   <a href="#cap-prf-example-learner"><strong>prf-example-learner</strong></a> | 
    <a href="#cap-prf-gmm-update-covariance-example"><strong>prf-gmm-update-covariance-example</strong></a> | 
    <a href="#cap-prf-gmm-update-means-example"><strong>prf-gmm-update-means-example</strong></a> | 
+   <a href="#cap-prf-remark-iid"><strong>prf-remark-iid</strong></a> | 
+   <a href="#cap-prf-remark-notation-convention-linear-regression"><strong>prf-remark-notation-convention-linear-regression</strong></a> | 
+   <a href="#cap-prf-remark-x-random"><strong>prf-remark-x-random</strong></a> | 
    <a href="#cap-prf:definition:in-sample-error"><strong>prf:definition:in-sample-error</strong></a> | 
    <a href="#cap-prf:definition:out-sample-error"><strong>prf:definition:out-sample-error</strong></a> | 
    <a href="#cap-prf:definition:zero-one-loss"><strong>prf:definition:zero-one-loss</strong></a> | 
@@ -961,6 +956,7 @@ document.write(`
    <a href="#cap-prf:example-gaussian-parameter"><strong>prf:example-gaussian-parameter</strong></a> | 
    <a href="#cap-prf:example-gmm-1"><strong>prf:example-gmm-1</strong></a> | 
    <a href="#cap-prf:naive-bayes-estimation-algorithm"><strong>prf:naive-bayes-estimation-algorithm</strong></a> | 
+   <a href="#cap-prf:remark-bias"><strong>prf:remark-bias</strong></a> | 
    <a href="#cap-prf:remark-bounding-the-entire-hypothesis-set"><strong>prf:remark-bounding-the-entire-hypothesis-set</strong></a> | 
    <a href="#cap-prf:remark-gmm-closed-form"><strong>prf:remark-gmm-closed-form</strong></a> | 
    <a href="#cap-prf:remark-major-confusion-alert"><strong>prf:remark-major-confusion-alert</strong></a> | 
@@ -1029,6 +1025,7 @@ document.write(`
    <a href="#cap-remark-kmeans-problem-statement"><strong>remark-kmeans-problem-statement</strong></a> | 
    <a href="#cap-remark-learning-problem-notations"><strong>remark-learning-problem-notations</strong></a> | 
    <a href="#cap-remark-learning-problem-notations-learning-theory"><strong>remark-learning-problem-notations-learning-theory</strong></a> | 
+   <a href="#cap-remark-likelihood-function-notation-clash"><strong>remark-likelihood-function-notation-clash</strong></a> | 
    <a href="#cap-remark-marginal-distribution-ltp"><strong>remark-marginal-distribution-ltp</strong></a> | 
    <a href="#cap-remark-random-variable-is-a-function"><strong>remark-random-variable-is-a-function</strong></a> | 
    <a href="#cap-remark-summary-1"><strong>remark-summary-1</strong></a> | 
@@ -1803,6 +1800,22 @@ document.write(`
        <a href="influential/generative_pretrained_transformer/03_concept.html#decoder-simplified-objective-function"><code class="xref">decoder-simplified-objective-function</code></a> <em>(influential/generative_pretrained_transformer/03_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-def-conditional-likelihood-function-linear-regression"><td></td><td>
+       <strong>def-conditional-likelihood-function-linear-regression</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#def-conditional-likelihood-function-linear-regression"><code class="xref">def-conditional-likelihood-function-linear-regression</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-def-conditional-log-likelihood-function-linear-regression"><td></td><td>
+       <strong>def-conditional-log-likelihood-function-linear-regression</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#def-conditional-log-likelihood-function-linear-regression"><code class="xref">def-conditional-log-likelihood-function-linear-regression</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-def-empirical-risk"><td></td><td>
        <strong>def-empirical-risk</strong></td><td></td></tr>
      <tr>
@@ -1857,6 +1870,14 @@ document.write(`
        <td></td>
        <td>
        <a href="influential/generative_pretrained_transformer/02_notations.html#def-positionwise-ffn-notation"><code class="xref">def-positionwise-ffn-notation</code></a> <em>(influential/generative_pretrained_transformer/02_notations)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-def-r-squared"><td></td><td>
+       <strong>def-r-squared</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#def-r-squared"><code class="xref">def-r-squared</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
        <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-def-sample-average"><td></td><td>
@@ -3299,6 +3320,22 @@ document.write(`
        <a href="probability_theory/03_discrete_random_variables/0301_random_variables.html#pre_image"><code class="xref">pre_image</code></a> <em>(probability_theory/03_discrete_random_variables/0301_random_variables)</em></td><td>
        <em>definition</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-example-conditional-expectation"><td></td><td>
+       <strong>prf-example-conditional-expectation</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf-example-conditional-expectation"><code class="xref">prf-example-conditional-expectation</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-example-learner"><td></td><td>
+       <strong>prf-example-learner</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf-example-learner"><code class="xref">prf-example-learner</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf-gmm-update-covariance-example"><td></td><td>
        <strong>prf-gmm-update-covariance-example</strong></td><td></td></tr>
      <tr>
@@ -3314,6 +3351,30 @@ document.write(`
        <td>
        <a href="influential/gaussian_mixture_models/02_concept.html#prf-gmm-update-means-example"><code class="xref">prf-gmm-update-means-example</code></a> <em>(influential/gaussian_mixture_models/02_concept)</em></td><td>
        <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-remark-iid"><td></td><td>
+       <strong>prf-remark-iid</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf-remark-iid"><code class="xref">prf-remark-iid</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-remark-notation-convention-linear-regression"><td></td><td>
+       <strong>prf-remark-notation-convention-linear-regression</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf-remark-notation-convention-linear-regression"><code class="xref">prf-remark-notation-convention-linear-regression</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf-remark-x-random"><td></td><td>
+       <strong>prf-remark-x-random</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf-remark-x-random"><code class="xref">prf-remark-x-random</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:definition:in-sample-error"><td></td><td>
        <strong>prf:definition:in-sample-error</strong></td><td></td></tr>
@@ -3378,6 +3439,14 @@ document.write(`
        <td>
        <a href="influential/naive_bayes/02_concept.html#prf:naive-bayes-estimation-algorithm"><code class="xref">prf:naive-bayes-estimation-algorithm</code></a> <em>(influential/naive_bayes/02_concept)</em></td><td>
        <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-prf:remark-bias"><td></td><td>
+       <strong>prf:remark-bias</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#prf:remark-bias"><code class="xref">prf:remark-bias</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-prf:remark-bounding-the-entire-hypothesis-set"><td></td><td>
        <strong>prf:remark-bounding-the-entire-hypothesis-set</strong></td><td></td></tr>
@@ -3921,6 +3990,14 @@ document.write(`
        <td></td>
        <td>
        <a href="influential/learning_theory/02_concept.html#remark-learning-problem-notations-learning-theory"><code class="xref">remark-learning-problem-notations-learning-theory</code></a> <em>(influential/learning_theory/02_concept)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-likelihood-function-notation-clash"><td></td><td>
+       <strong>remark-likelihood-function-notation-clash</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="influential/linear_regression/02_concept.html#remark-likelihood-function-notation-clash"><code class="xref">remark-likelihood-function-notation-clash</code></a> <em>(influential/linear_regression/02_concept)</em></td><td>
        <em>remark</em></td></tr>
      <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
      <tr class="cap" id="cap-remark-marginal-distribution-ltp"><td></td><td>
@@ -4897,8 +4974,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

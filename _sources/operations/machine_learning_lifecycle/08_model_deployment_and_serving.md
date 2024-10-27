@@ -189,14 +189,15 @@ requests[^huyen-chip-model-deployment-and-prediction-service].
 
 #### Visualization (Batch Features only)
 
-<figure markdown>
-  ![Batch Serving](../assets/batch-serving-chip-huyen.png)
-  <figcaption>A simplified architecture for batch prediction. Image Credit: Huyen, Chip. "Chapter 7.
-Model Deployment and Prediction Service." In Designing Machine Learning Systems:
-An Iterative Process for Production-Ready Applications, O'Reilly Media,
-Inc., 2022.
- </figcaption>
-</figure>
+```{figure} ./assets/batch-serving-chip-huyen.png
+---
+name: batch-serving-chip-huyen
+---
+
+A simplified architecture for batch prediction.
+
+Image Credits: [Chip Huyen - Designing Machine Learning Systems](https://learning.oreilly.com/library/view/designing-machine-learning-systems/9781098103002/)
+```
 
 #### Example
 
@@ -301,14 +302,15 @@ prediction.
 
 #### Visualization (Batch Features only)
 
-<figure markdown>
-  ![Online Serving](../assets/online-serving-chip-huyen.png)
-  <figcaption>A simplified architecture for online prediction that only uses batch features. Image Credit: Huyen, Chip. "Chapter 7.
-Model Deployment and Prediction Service." In Designing Machine Learning Systems:
-An Iterative Process for Production-Ready Applications, O'Reilly Media,
-Inc., 2022.
- </figcaption>
-</figure>
+```{figure} ./assets/online-serving-chip-huyen.png
+---
+name: online-serving-chip-huyen-1
+---
+
+A simplified architecture for online prediction that only uses batch features.
+
+Image Credits: [Chip Huyen - Designing Machine Learning Systems](https://learning.oreilly.com/library/view/designing-machine-learning-systems/9781098103002/)
+```
 
 Say we have a recommender system recommending credit card (items) to users. The
 precomputer embeddings of credit card features may be static, but the user
@@ -361,14 +363,15 @@ updating and predictions need to be made as soon as the new data arrives.
 
 #### Visualization
 
-<figure markdown>
-  ![Streaming Serving](../assets/online-serving-chip-huyen.png)
-  <figcaption>A simplified architecture for online prediction that uses both batch features and streaming features. Image Credit: Huyen, Chip. "Chapter 7.
-Model Deployment and Prediction Service." In Designing Machine Learning Systems:
-An Iterative Process for Production-Ready Applications, O'Reilly Media,
-Inc., 2022.
- </figcaption>
-</figure>
+```{figure} ./assets/online-serving-chip-huyen.png
+---
+name: online-serving-chip-huyen-2
+---
+
+A simplified architecture for online prediction that uses both batch features and streaming features.
+
+Image Credits: [Chip Huyen - Designing Machine Learning Systems](https://learning.oreilly.com/library/view/designing-machine-learning-systems/9781098103002/)
+```
 
 #### Example
 
@@ -541,22 +544,19 @@ the API and get back predictions. This is online prediction. Rarely do we
 She listed out the pros and cons with online prediction, and I think it's worth
 to go over her content in details.
 
-## Unifying Batch Pipeline and Streaming Pipeline
-
-See the section on Chip's
-book[^huyen-chip-model-deployment-and-prediction-service].
-
-## Model Compression
-
-See the section on Chip's
-book[^huyen-chip-model-deployment-and-prediction-service].
-
-## Machine Learning on the Cloud and on the Edge
-
-See the section on Chip's
-book[^huyen-chip-model-deployment-and-prediction-service].
-
 ## References and Further Readings
+
+```{admonition} See Also
+:class: seealso
+
+There's many more topics to cover on model deployment and prediction service:
+
+-   Unifying Batch Pipeline and Streaming Pipeline
+-   Model Compression
+-   Machine Learning on the Cloud and on the Edge
+
+You can find more details in Chip's book[^huyen-chip-model-deployment-and-prediction-service].
+```
 
 -   Huyen, Chip. "Chapter 7. Model Deployment and Prediction Service." In
     Designing Machine Learning Systems: An Iterative Process for

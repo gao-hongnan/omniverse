@@ -408,10 +408,7 @@ With a centralized factory, testing becomes more manageable. Mock components can
 be registered with the factory during tests, allowing for controlled and
 predictable testing environments without altering the system's core logic.
 
-## 4. Empowering Good Design Principles
-
-The Factory Method pattern in the RAG system empowers several foundational
-software design principles:
+## We Adhere To Good Design Principles
 
 ### a. Single Responsibility Principle (SRP)
 

@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -39,10 +41,11 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
@@ -84,6 +87,7 @@
     <link rel="prev" title="Vector and Its Definition" href="01-vector-definition.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -99,19 +103,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="../../search.html"
       method="get">
@@ -119,7 +112,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -127,8 +119,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -144,7 +136,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -174,21 +167,17 @@
     
     
     <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
-    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -243,6 +232,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
 </ul>
 </details></li>
 </ul>
@@ -453,9 +447,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
@@ -467,7 +463,6 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
 </ul>
 </details></li>
@@ -727,24 +722,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -859,7 +846,7 @@ to multiply the vector from either side, resulting in the same outcome.</p></li>
 <section id="algebraic-definition">
 <h3><a class="toc-backref" href="#id4" role="doc-backlink">Algebraic Definition</a><a class="headerlink" href="#algebraic-definition" title="Link to this heading">#</a></h3>
 <div class="proof definition admonition" id="02-vector-operation-vector-addition-algebraic-definition">
-<p class="admonition-title"><span class="caption-number">Definition 186 </span> (Algebraic Definition (Vector Addition and Subtraction))</p>
+<p class="admonition-title"><span class="caption-number">Definition 189 </span> (Algebraic Definition (Vector Addition and Subtraction))</p>
 <section class="definition-content" id="proof-content">
 <p>For any vectors <strong><span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathbb{R}^D\)</span></strong>, where
 <strong><span class="math notranslate nohighlight">\(\mathbb{R}^D\)</span></strong> represents the D-dimensional
@@ -889,7 +876,7 @@ D\}\)</span>.</p>
 let’s consider vectors in a D-dimensional space, particularly focusing on 2D for
 visualization.</p>
 <div class="math notranslate nohighlight" id="equation-02-vector-operation-vector-addition-example-1">
-<span class="eqno">(203)<a class="headerlink" href="#equation-02-vector-operation-vector-addition-example-1" title="Link to this equation">#</a></span>\[\begin{split}\mathbf{u} =
+<span class="eqno">(249)<a class="headerlink" href="#equation-02-vector-operation-vector-addition-example-1" title="Link to this equation">#</a></span>\[\begin{split}\mathbf{u} =
 \begin{bmatrix}
 4 \\
 7
@@ -899,11 +886,11 @@ visualization.</p>
 4
 \end{bmatrix}\end{split}\]</div>
 <div class="proof example admonition" id="02-vector-operation-vector-addition-example">
-<p class="admonition-title"><span class="caption-number">Example 51 </span> (Vector Addition)</p>
+<p class="admonition-title"><span class="caption-number">Example 53 </span> (Vector Addition)</p>
 <section class="example-content" id="proof-content">
 <p>To add vectors <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>, start by placing both vectors with
 their tails at the origin as shown in
-<a class="reference internal" href="#vector-operation-vector-addition"><span class="std std-numref">Fig. 60</span></a>. One approach is to extend vector
+<a class="reference internal" href="#vector-operation-vector-addition"><span class="std std-numref">Fig. 63</span></a>. One approach is to extend vector
 <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> by moving 8 units right (along the x-axis) and 4 units up (along
 the y-axis) from the head of <span class="math notranslate nohighlight">\(\mathbf{u}\)</span>. This results in
 <span class="math notranslate nohighlight">\(\mathbf{u} + \mathbf{v} = \begin{bmatrix} 12 \\ 11 \end{bmatrix}\)</span>.</p>
@@ -962,7 +949,7 @@ head position of <span class="math notranslate nohighlight">\(\mathbf{v}\)</span
 <figure class="align-default" id="vector-operation-vector-addition">
 <img alt="../../_images/02-vector-operation-addition.svg" src="../../_images/02-vector-operation-addition.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 60 </span><span class="caption-text">Vector addition; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-addition" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 63 </span><span class="caption-text">Vector addition; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-addition" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>For the sake of displaying completeness of vector addition in 3D, let’s look at
@@ -1007,14 +994,14 @@ how we can plot it with our code base:</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../_images/aad6bee9f9d1e6662387858f5f7dc78b8ae49c97d36e43fceacca53082f98475.svg" src="../../_images/aad6bee9f9d1e6662387858f5f7dc78b8ae49c97d36e43fceacca53082f98475.svg" />
+<img alt="../../_images/f14d2c850a19ba38a05ccfaec90c9349292388fadf9a7f403f9ed229206171fd.svg" src="../../_images/f14d2c850a19ba38a05ccfaec90c9349292388fadf9a7f403f9ed229206171fd.svg" />
 </div>
 </div>
 <div class="proof example admonition" id="02-vector-operation-vector-subtraction-example">
-<p class="admonition-title"><span class="caption-number">Example 52 </span> (Vector Subtraction)</p>
+<p class="admonition-title"><span class="caption-number">Example 54 </span> (Vector Subtraction)</p>
 <section class="example-content" id="proof-content">
 <p>To conceptualize vector subtraction, consider two methods realized by the
-diagram in <a class="reference internal" href="#vector-operation-vector-subtraction"><span class="std std-numref">Fig. 61</span></a>.</p>
+diagram in <a class="reference internal" href="#vector-operation-vector-subtraction"><span class="std std-numref">Fig. 64</span></a>.</p>
 <ul class="simple">
 <li><p><strong>First Method:</strong> Recognize that <span class="math notranslate nohighlight">\(\mathbf{u} - \mathbf{v}\)</span> is equivalent to
 <span class="math notranslate nohighlight">\(\mathbf{u} + (-\mathbf{v})\)</span>. Here,
@@ -1080,7 +1067,7 @@ geometrically, the vector <span class="math notranslate nohighlight">\(\mathbf{u
 <figure class="align-default" id="vector-operation-vector-subtraction">
 <img alt="../../_images/02-vector-operation-subtraction.svg" src="../../_images/02-vector-operation-subtraction.svg" />
 <figcaption>
-<p><span class="caption-number">Fig. 61 </span><span class="caption-text">Vector subtraction; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-subtraction" title="Link to this image">#</a></p>
+<p><span class="caption-number">Fig. 64 </span><span class="caption-text">Vector subtraction; By Hongnan G.</span><a class="headerlink" href="#vector-operation-vector-subtraction" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 <p>We can also use code to combine them to a subplot:</p>
@@ -1149,7 +1136,7 @@ geometrically, the vector <span class="math notranslate nohighlight">\(\mathbf{u
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/11f9e45c372ccb4b34e0cad21fcafe55aea4414af218acec6b9aa6caca62051f.svg" src="../../_images/11f9e45c372ccb4b34e0cad21fcafe55aea4414af218acec6b9aa6caca62051f.svg" />
+<img alt="../../_images/d2730de24f2bc867ce64493103dc9edcecdc2eee92c564131e5c5aba514af879.svg" src="../../_images/d2730de24f2bc867ce64493103dc9edcecdc2eee92c564131e5c5aba514af879.svg" />
 </div>
 </div>
 </section>
@@ -1161,7 +1148,7 @@ it’s insightful to note a fundamental property of vector addition within such 
 context. Suppose we have a set of vectors <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> defined over a field
 <span class="math notranslate nohighlight">\(\mathbb{F}\)</span>. In this scenario, every vector in <span class="math notranslate nohighlight">\(\mathcal{V}\)</span> exhibits
 <strong>commutative</strong> properties in addition, as dictated by the definition of a field
-in <a class="reference internal" href="../01_preliminaries/01-fields.html#linear-algebra-01-preliminaries-field">Definition 180</a>.</p>
+in <a class="reference internal" href="../01_preliminaries/01-fields.html#linear-algebra-01-preliminaries-field">Definition 183</a>.</p>
 <p>Concretely, this means that for any two vectors
 <span class="math notranslate nohighlight">\(\mathbf{u}, \mathbf{v} \in \mathcal{V}\)</span>, the operation of vector addition is
 commutative; that is, <span class="math notranslate nohighlight">\(\mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}\)</span>. This
@@ -1173,7 +1160,7 @@ property holds regardless of the dimension <span class="math notranslate nohighl
 <section id="id1">
 <h3><a class="toc-backref" href="#id8" role="doc-backlink">Algebraic Definition</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <div class="proof definition admonition" id="02-vector-operation-scalar-vector-multiplication-algebraic-definition">
-<p class="admonition-title"><span class="caption-number">Definition 187 </span> (Algebraic Definition (Scalar-Vector Multiplication))</p>
+<p class="admonition-title"><span class="caption-number">Definition 190 </span> (Algebraic Definition (Scalar-Vector Multiplication))</p>
 <section class="definition-content" id="proof-content">
 <p>Given any vector <span class="math notranslate nohighlight">\(\mathbf{v} \in \mathbb{R}^D\)</span> and a scalar
 <span class="math notranslate nohighlight">\(\lambda \in \mathbb{R}\)</span>, the operation of multiplying the vector <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>
@@ -1279,7 +1266,7 @@ space:</p>
 </div>
 </details>
 <div class="cell_output docutils container">
-<img alt="../../_images/15165941d2d6b019c056d06cf18638b6b456425457c9ba306bb0df6e7baa6c42.svg" src="../../_images/15165941d2d6b019c056d06cf18638b6b456425457c9ba306bb0df6e7baa6c42.svg" />
+<img alt="../../_images/c253cc2d7a777e580a07373dddb69afe1ebe3d5e4a001b12c14855acf008cc3a.svg" src="../../_images/c253cc2d7a777e580a07373dddb69afe1ebe3d5e4a001b12c14855acf008cc3a.svg" />
 </div>
 </div>
 </section>
@@ -1291,7 +1278,7 @@ fundamental role in various applications within linear algebra, such as in the
 context of
 <a class="reference external" href="https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix"><strong>eigendecomposition</strong></a>.</p>
 <p>As we have seen in the
-<a class="reference internal" href="#02-vector-operation-scalar-vector-multiplication-algebraic-definition">Definition 187</a>,
+<a class="reference internal" href="#02-vector-operation-scalar-vector-multiplication-algebraic-definition">Definition 190</a>,
 this operation involves scaling a vector by a scalar factor, which alters the
 vector’s magnitude without changing its direction (geometrically we can see this
 too). The result, <span class="math notranslate nohighlight">\(\lambda \mathbf{v}\)</span>, is a vector in the same direction as
@@ -1400,7 +1387,8 @@ only to the interaction between a scalar and a vector, not between two vectors.<
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1476,8 +1464,8 @@ By Gao Hongnan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>
