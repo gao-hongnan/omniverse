@@ -17,6 +17,7 @@ import pytest
 from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression as SklearnLinearRegression
 from sklearn.model_selection import train_test_split
+
 from omnivault.machine_learning.linear.linear_regression import LinearRegression as CustomLinearRegression
 
 
