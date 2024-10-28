@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 from collections.abc import MutableSequence
-from typing import Generic, Iterable, Optional
+from typing import Generic, Iterable, SupportsIndex, List, overload
 
 from omnivault._types._generic import T
 
+# see `_collections_abc.py` for the definition of `MutableSequence`.
+
 
 class Deque(MutableSequence[T], Generic[T]):
-    def __init__(self, iterable: Optional[Iterable[T]] = None, maxlen: Optional[int] = None):
+    def __init__(self, iterable: Iterable[T] | None = None, maxlen: int | None = None):
         self.maxlen = maxlen
         self._data = list(iterable) if iterable is not None else []
 
@@ -26,8 +30,8 @@ class Deque(MutableSequence[T], Generic[T]):
             self._data.pop()
             self._data.insert(0, item)
 
-    def pop(self) -> T:
-        return self._data.pop()
+    def pop(self, index: int = -1) -> T:
+        return self._data.pop(index)
 
     def popleft(self) -> T:
         return self._data.pop(0)
@@ -35,13 +39,13 @@ class Deque(MutableSequence[T], Generic[T]):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __getitem__(self, index) -> T:
+    def __getitem__(self, index: SupportsIndex) -> T:
         return self._data[index]
 
-    def __setitem__(self, index, value: T) -> None:
+    def __setitem__(self, index: SupportsIndex, value: T) -> None:
         self._data[index] = value
 
-    def __delitem__(self, index) -> None:
+    def __delitem__(self, index: int | slice) -> None:
         del self._data[index]
 
     def insert(self, index: int, value: T) -> None:
@@ -51,7 +55,6 @@ class Deque(MutableSequence[T], Generic[T]):
             raise OverflowError("Deque is at its maximum size")
 
 
-# Example usage
 my_deque = Deque([1, 2, 3], maxlen=3)
 my_deque.append(4)
 print(my_deque)  # Output might be [2, 3, 4] if maxlen is reached

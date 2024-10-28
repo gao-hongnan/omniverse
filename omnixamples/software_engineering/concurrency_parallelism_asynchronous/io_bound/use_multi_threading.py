@@ -44,6 +44,10 @@ def get_sites_with_threading(urls: List[str]) -> None:
 
 @timer
 def get_sites_with_concurrent_futures(urls: List[str]) -> None:
+    """The difference between threading and concurrent.futures is that
+    threading is a higher level of abstraction, while concurrent.futures is
+    a lower level of abstraction.
+    """
     with requests.Session() as session, concurrent.futures.ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
         futures = [executor.submit(get_site, url, session, i) for i, url in enumerate(urls)]
         concurrent.futures.wait(futures)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, Iterable, Iterator, List, Optional, overload
+from typing import Generic, Iterable, Iterator, List, overload
 
 from omnivault._types._generic import T
 
@@ -12,19 +12,17 @@ class Stack(ABC, Generic[T]):
     """
 
     @overload
-    def __init__(self) -> None:
-        ...
+    def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iterable: Iterable[T]) -> None:
-        ...
+    def __init__(self, iterable: Iterable[T]) -> None: ...
 
-    def __init__(self, iterable: Optional[Iterable[T]] = None) -> None:
+    def __init__(self, iterable: Iterable[T] | None = None) -> None:
         """Construct a new stack object.
 
         Parameters
         ----------
-        iterable : Optional[Iterable[T]], optional
+        iterable : Iterable[T] | None
             An iterable to initialize the stack with, by default None
         """
         self._stack_items: List[T] = []
