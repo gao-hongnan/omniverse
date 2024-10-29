@@ -12,10 +12,12 @@ class Stack(ABC, Generic[T]):
     """
 
     @overload
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        ...
 
     @overload
-    def __init__(self, iterable: Iterable[T]) -> None: ...
+    def __init__(self, iterable: Iterable[T]) -> None:
+        ...
 
     def __init__(self, iterable: Iterable[T] | None = None) -> None:
         """Construct a new stack object.

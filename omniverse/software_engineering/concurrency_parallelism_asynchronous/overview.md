@@ -27,7 +27,7 @@ kernelspec:
 :local:
 ```
 
-## The Problem: Synchronous Execution InSingle Process And Single Thread
+## The Problem: Synchronous Execution In Single Process And Single Thread
 
 In general, and by default, a normal Python program runs as a single process
 with a single thread. This is known as the "main thread" within the "main

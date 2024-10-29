@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import MutableSequence
-from typing import Generic, Iterable, SupportsIndex, List, overload
+from typing import Generic, Iterable, List, cast, overload
 
 from omnivault._types._generic import T
 
 # see `_collections_abc.py` for the definition of `MutableSequence`.
+# https://github.com/python/cpython/blob/3.7/Modules/_collectionsmodule.c
 
 
 class Deque(MutableSequence[T], Generic[T]):
@@ -39,11 +40,33 @@ class Deque(MutableSequence[T], Generic[T]):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __getitem__(self, index: SupportsIndex) -> T:
-        return self._data[index]
+    @overload
+    def __getitem__(self, index: int) -> T:
+        ...
 
-    def __setitem__(self, index: SupportsIndex, value: T) -> None:
-        self._data[index] = value
+    @overload
+    def __getitem__(self, index: slice) -> List[T]:
+        ...
+
+    def __getitem__(self, index: int | slice) -> T | List[T]:
+        result = self._data[index]
+        if isinstance(index, slice):
+            return list(result) if isinstance(result, Iterable) else [result]
+        return result
+
+    @overload
+    def __setitem__(self, index: int, value: T) -> None:
+        ...
+
+    @overload
+    def __setitem__(self, index: slice, value: Iterable[T]) -> None:
+        ...
+
+    def __setitem__(self, index: int | slice, value: T | Iterable[T]) -> None:
+        if isinstance(index, slice):
+            self._data[index] = list(value) if hasattr(value, "__iter__") else [value]
+        else:
+            self._data[index] = cast(T, value)
 
     def __delitem__(self, index: int | slice) -> None:
         del self._data[index]

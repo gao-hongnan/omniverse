@@ -565,7 +565,7 @@ Some more remarks on **_amortized worst-case time complexity_**:
 
 - - Operations
   - Average Time Complexity
-  - Amortized Worst-Case Time Complexity
+  - Amortized/Worst-Case Time Complexity
 - - `push`
   - $\mathcal{O}(1)$
   - $\mathcal{O}(1)$ [occasional resizing]
