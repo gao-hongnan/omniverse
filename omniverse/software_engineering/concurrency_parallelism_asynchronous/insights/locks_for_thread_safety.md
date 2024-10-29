@@ -19,6 +19,7 @@ kernelspec:
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/8ddcd6a345925e7fd550b74ce4577a0e2807aa5f/omnixamples/software_engineering/concurrency_parallelism_asynchronous/race_condition.py)
