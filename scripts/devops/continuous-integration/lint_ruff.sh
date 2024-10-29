@@ -8,7 +8,6 @@
 DEFAULT_FLAGS=(
     check
     --no-fix
-    --no-show-source
     # Add more default flags here if necessary
 )
 DEFAULT_PACKAGES=(
@@ -72,7 +71,7 @@ show_usage() {
     "$ ${TOOL} --check \\
     --config=.${TOOL}.toml \\
     --no-fix \\
-    --no-show-source \\
+    --no-show-fixes \\
     <PACKAGE-1> <PACKAGE-2> ..."
     empty_line
 
