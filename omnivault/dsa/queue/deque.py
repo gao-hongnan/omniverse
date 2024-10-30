@@ -43,10 +43,12 @@ class Deque(MutableSequence[T], Generic[T]):
         return len(self._data)
 
     @overload
-    def __getitem__(self, index: int) -> T: ...
+    def __getitem__(self, index: int) -> T:
+        ...
 
     @overload
-    def __getitem__(self, index: slice) -> List[T]: ...
+    def __getitem__(self, index: slice) -> List[T]:
+        ...
 
     def __getitem__(self, index: int | slice) -> T | List[T]:
         result = self._data[index]
@@ -55,10 +57,12 @@ class Deque(MutableSequence[T], Generic[T]):
         return result
 
     @overload
-    def __setitem__(self, index: int, value: T) -> None: ...
+    def __setitem__(self, index: int, value: T) -> None:
+        ...
 
     @overload
-    def __setitem__(self, index: slice, value: Iterable[T]) -> None: ...
+    def __setitem__(self, index: slice, value: Iterable[T]) -> None:
+        ...
 
     def __setitem__(self, index: int | slice, value: T | Iterable[T]) -> None:
         if isinstance(index, slice):
