@@ -1,0 +1,1521 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Global Interpreter Lock (GIL) &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'software_engineering/python/gil';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/software_engineering/python/gil.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Iterator Protocol" href="iterator_protocol.html" />
+    <link rel="prev" title="Init vs New" href="new_vs_init.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Python</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="is_vs_equality.html">Is vs Equality</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/stack/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/232-implement-queue-using-stacks.html">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/queue/intro.html">Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/queue/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/queue/dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/software_engineering/python/gil.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fsoftware_engineering/python/gil.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/software_engineering/python/gil.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Global Interpreter Lock (GIL)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-counting-in-python">Reference Counting in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#threads-and-race-conditions">Threads and Race Conditions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protecting-reference-counts-with-locks">Protecting Reference Counts with Locks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deadlocks">Deadlocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-global-interpreter-lock-gil-in-python">The Global Interpreter Lock (GIL) in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cpu-bound-tasks">CPU-bound tasks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gil-is-released-during-io-bound-tasks">GIL Is Released During IO-bound Tasks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="global-interpreter-lock-gil">
+<h1>Global Interpreter Lock (GIL)<a class="headerlink" href="#global-interpreter-lock-gil" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#reference-counting-in-python" id="id1">Reference Counting in Python</a></p></li>
+<li><p><a class="reference internal" href="#threads-and-race-conditions" id="id2">Threads and Race Conditions</a></p></li>
+<li><p><a class="reference internal" href="#protecting-reference-counts-with-locks" id="id3">Protecting Reference Counts with Locks</a></p></li>
+<li><p><a class="reference internal" href="#deadlocks" id="id4">Deadlocks</a></p></li>
+<li><p><a class="reference internal" href="#the-global-interpreter-lock-gil-in-python" id="id5">The Global Interpreter Lock (GIL) in Python</a></p></li>
+<li><p><a class="reference internal" href="#cpu-bound-tasks" id="id6">CPU-bound tasks</a></p></li>
+<li><p><a class="reference internal" href="#gil-is-released-during-io-bound-tasks" id="id7">GIL Is Released During IO-bound Tasks</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id8">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="reference-counting-in-python">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Reference Counting in Python</a><a class="headerlink" href="#reference-counting-in-python" title="Link to this heading">#</a></h2>
+<p>In Python, <strong>reference counting</strong> is a memory management technique used to keep
+track of how many references (or “pointers”) exist to an object in memory. When
+an object’s reference count drops to zero, Python automatically frees the memory
+allocated to that object.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">a</span>
+<span class="n">a_ref_count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a_ref_count</span><span class="p">)</span>  <span class="c1"># Output: 3</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">=</span> <span class="pre">[]</span></code> creates an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code> and assigns it to variable <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">a</span></code> makes <code class="docutils literal notranslate"><span class="pre">b</span></code> reference the same list as <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sys.getrefcount(a)</span></code> returns the number of references to the list <code class="docutils literal notranslate"><span class="pre">a</span></code> points
+to. The count is <code class="docutils literal notranslate"><span class="pre">3</span></code> because:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span></code> references the list.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">b</span></code> references the list.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">sys.getrefcount(a)</span></code> function temporarily creates another reference
+when it’s called.</p></li>
+</ul>
+</li>
+</ol>
+<p>As a beginner python programmer, we thank our lucky stars that Python manages
+memory for us. But, as a good student, we ask, why is managing the reference
+count important?</p>
+<p>First, <strong>memory management</strong> helps Python automatically manage memory by
+keeping track of objects and freeing memory when objects are no longer needed.
+For example, if we delete the reference <code class="docutils literal notranslate"><span class="pre">b</span></code>, the reference count of <code class="docutils literal notranslate"><span class="pre">a</span></code> drops to
+2.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">del</span> <span class="n">b</span>
+<span class="n">a_ref_count</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getrefcount</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">a_ref_count</span><span class="p">)</span>  <span class="c1"># Output: 2</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2
+</pre></div>
+</div>
+</div>
+</div>
+<p>Second, <strong>avoiding memory leaks</strong> ensures that memory is reused efficiently and
+prevents memory from being wasted on unused objects.</p>
+</section>
+<section id="threads-and-race-conditions">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Threads and Race Conditions</a><a class="headerlink" href="#threads-and-race-conditions" title="Link to this heading">#</a></h2>
+<p>A <strong>race condition</strong> occurs when two or more threads access shared data
+simultaneously, and the final outcome depends on the sequence of execution.</p>
+<p>For example, if two threads try to increment a counter from 5 to 6:</p>
+<ol class="arabic simple">
+<li><p>Thread A reads counter (value = 5)</p></li>
+<li><p>Thread B reads counter (value = 5)</p></li>
+<li><p>Thread A adds 1 (5 + 1 = 6)</p></li>
+<li><p>Thread B adds 1 (5 + 1 = 6)</p></li>
+<li><p>Thread A writes 6</p></li>
+<li><p>Thread B writes 6</p></li>
+</ol>
+<p>Even though two increment operations occurred, the counter only increased by 1
+instead of 2. This happens because both threads read the original value before
+either could update it. The final result depends on which thread writes last,
+and the program “races” to an incorrect outcome.</p>
+<p>Show me the code to illustrate the race condition!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;With reference to effective python book chapter 54.</span>
+<span class="sd">Ref: https://github.com/bslatkin/effectivepython/blob/master/example_code/item_54.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Barrier</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">NUM_THREADS</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">BARRIER</span> <span class="o">=</span> <span class="n">Barrier</span><span class="p">(</span><span class="n">NUM_THREADS</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Counter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">offset</span>
+
+<span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">thread_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">counter</span><span class="p">:</span> <span class="n">Counter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The barrier is used to synchronize the threads so that they all start counting</span>
+<span class="sd">    at the same time. This makes it easier to get a race condition since we wait for</span>
+<span class="sd">    the other threads to start else in the loop we always have an order that the</span>
+<span class="sd">    first thread likely starts first and then the second and so on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BARRIER</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Thread </span><span class="si">%s</span><span class="s2">, starting&quot;</span><span class="p">,</span> <span class="n">thread_index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">):</span>
+        <span class="n">counter</span><span class="o">.</span><span class="n">increment</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">thread_unsafe</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+
+    <span class="n">threads</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_THREADS</span><span class="p">):</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">total_iterations</span><span class="p">,</span> <span class="n">counter</span><span class="p">))</span>
+        <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">total_iterations</span> <span class="o">*</span> <span class="n">NUM_THREADS</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">count</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Counter should be </span><span class="si">%s</span><span class="s2">, got </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">found</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">total_iterations</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span>
+
+    <span class="n">thread_unsafe</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-29 10:22:29,521 - DEBUG - Thread 4, starting
+2024-10-29 10:22:29,522 - DEBUG - Thread 0, starting
+2024-10-29 10:22:29,522 - DEBUG - Thread 3, starting
+2024-10-29 10:22:29,522 - DEBUG - Thread 2, starting
+2024-10-29 10:22:29,523 - DEBUG - Thread 1, starting
+2024-10-29 10:22:29,951 - INFO - Counter should be 5000000, got 4564365
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="protecting-reference-counts-with-locks">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Protecting Reference Counts with Locks</a><a class="headerlink" href="#protecting-reference-counts-with-locks" title="Link to this heading">#</a></h2>
+<p>So we circle back a bit to the reference count thingy earlier. Since we saw how
+race conditions can happen, the same thing can happen to the reference count of
+an object - which means that the <strong>reference count</strong> of an object can be
+modified by multiple threads. If two threads try to increment or decrement the
+reference count simultaneously without protection, it can lead to
+inconsistencies, such as the case where reference counts might reach zero
+incorrectly, freeing memory while it’s still in use, causing crashes or bugs.</p>
+<p>How do we prevent this? We first understand the rough idea of a <strong>lock</strong>.</p>
+<p>A <strong>lock</strong> is a synchronization mechanism used to control access to shared
+resources. When a thread acquires a lock, other threads must wait until the lock
+is released before accessing the resource.</p>
+<ul class="simple">
+<li><p>In the first example without a lock, both threads might read the same
+<code class="docutils literal notranslate"><span class="pre">counter</span></code> value before incrementing it, causing some increments to be lost.</p></li>
+<li><p>In the second example, the lock ensures that only one thread can modify the
+counter at a time.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">lock:</span></code> statement automatically acquires the lock before entering
+the block and releases it when exiting.</p></li>
+<li><p>This guarantees that the final counter value will always be correct.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;With reference to effective python book chapter 54.</span>
+<span class="sd">Ref: https://github.com/bslatkin/effectivepython/blob/master/example_code/item_54.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Barrier</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">NUM_THREADS</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">BARRIER</span> <span class="o">=</span> <span class="n">Barrier</span><span class="p">(</span><span class="n">NUM_THREADS</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">CounterLock</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">offset</span>
+
+
+<span class="k">def</span> <span class="nf">worker</span><span class="p">(</span><span class="n">thread_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">counter</span><span class="p">:</span> <span class="n">Counter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The barrier is used to synchronize the threads so that they all start counting</span>
+<span class="sd">    at the same time. This makes it easier to get a race condition since we wait for</span>
+<span class="sd">    the other threads to start else in the loop we always have an order that the</span>
+<span class="sd">    first thread likely starts first and then the second and so on.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">BARRIER</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Thread </span><span class="si">%s</span><span class="s2">, starting&quot;</span><span class="p">,</span> <span class="n">thread_index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">):</span>
+        <span class="n">counter</span><span class="o">.</span><span class="n">increment</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">thread_safe</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="n">CounterLock</span><span class="p">()</span>
+
+    <span class="n">threads</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_THREADS</span><span class="p">):</span>
+        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">worker</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">total_iterations</span><span class="p">,</span> <span class="n">counter</span><span class="p">))</span>
+        <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="n">expected</span> <span class="o">=</span> <span class="n">total_iterations</span> <span class="o">*</span> <span class="n">NUM_THREADS</span>
+    <span class="n">found</span> <span class="o">=</span> <span class="n">counter</span><span class="o">.</span><span class="n">count</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Counter should be </span><span class="si">%s</span><span class="s2">, got </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">found</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">total_iterations</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span>
+
+    <span class="n">thread_safe</span><span class="p">(</span><span class="n">total_iterations</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-29 10:22:29,959 - DEBUG - Thread 4, starting
+2024-10-29 10:22:29,959 - DEBUG - Thread 0, starting
+2024-10-29 10:22:29,959 - DEBUG - Thread 3, starting
+2024-10-29 10:22:29,960 - DEBUG - Thread 2, starting
+2024-10-29 10:22:29,960 - DEBUG - Thread 1, starting
+2024-10-29 10:22:30,821 - INFO - Counter should be 5000000, got 5000000
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="deadlocks">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Deadlocks</a><a class="headerlink" href="#deadlocks" title="Link to this heading">#</a></h2>
+<p>A <strong>deadlock</strong> occurs when two or more threads are waiting indefinitely for
+locks held by each other, preventing them from making progress.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="k">class</span> <span class="nc">BankAccount</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">balance</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">balance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">balance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Account </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">: $</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">balance</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">unsafe_transfer</span><span class="p">(</span><span class="n">from_account</span><span class="p">:</span> <span class="n">BankAccount</span><span class="p">,</span> <span class="n">to_account</span><span class="p">:</span> <span class="n">BankAccount</span><span class="p">,</span> <span class="n">amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">from_account</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Locked account </span><span class="si">{</span><span class="n">from_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Simulate some work and make deadlock more likely</span>
+        <span class="k">with</span> <span class="n">to_account</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Locked account </span><span class="si">{</span><span class="n">to_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">from_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">&gt;=</span> <span class="n">amount</span><span class="p">:</span>
+                <span class="n">from_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">-=</span> <span class="n">amount</span>
+                <span class="n">to_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">+=</span> <span class="n">amount</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transferred $</span><span class="si">{</span><span class="n">amount</span><span class="si">}</span><span class="s2"> from Account </span><span class="si">{</span><span class="n">from_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> to Account </span><span class="si">{</span><span class="n">to_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">safe_transfer</span><span class="p">(</span><span class="n">from_account</span><span class="p">:</span> <span class="n">BankAccount</span><span class="p">,</span> <span class="n">to_account</span><span class="p">:</span> <span class="n">BankAccount</span><span class="p">,</span> <span class="n">amount</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">first</span><span class="p">:</span> <span class="n">BankAccount</span> <span class="o">=</span> <span class="n">from_account</span> <span class="k">if</span> <span class="n">from_account</span><span class="o">.</span><span class="n">id</span> <span class="o">&lt;</span> <span class="n">to_account</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="n">to_account</span>
+    <span class="n">second</span><span class="p">:</span> <span class="n">BankAccount</span> <span class="o">=</span> <span class="n">to_account</span> <span class="k">if</span> <span class="n">from_account</span><span class="o">.</span><span class="n">id</span> <span class="o">&lt;</span> <span class="n">to_account</span><span class="o">.</span><span class="n">id</span> <span class="k">else</span> <span class="n">from_account</span>
+
+    <span class="k">with</span> <span class="n">first</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Locked account </span><span class="si">{</span><span class="n">first</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Simulate some work</span>
+        <span class="k">with</span> <span class="n">second</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Locked account </span><span class="si">{</span><span class="n">second</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">from_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">&gt;=</span> <span class="n">amount</span><span class="p">:</span>
+                <span class="n">from_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">-=</span> <span class="n">amount</span>
+                <span class="n">to_account</span><span class="o">.</span><span class="n">balance</span> <span class="o">+=</span> <span class="n">amount</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transferred $</span><span class="si">{</span><span class="n">amount</span><span class="si">}</span><span class="s2"> from Account </span><span class="si">{</span><span class="n">from_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> to Account </span><span class="si">{</span><span class="n">to_account</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="n">account1</span><span class="p">:</span> <span class="n">BankAccount</span> <span class="o">=</span> <span class="n">BankAccount</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">account2</span><span class="p">:</span> <span class="n">BankAccount</span> <span class="o">=</span> <span class="n">BankAccount</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial balances:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">account1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">account2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Trying unsafe transfers (will likely deadlock):&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create threads with unsafe transfers (will deadlock)</span>
+<span class="n">thread1</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">unsafe_transfer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">account1</span><span class="p">,</span> <span class="n">account2</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+<span class="n">thread2</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">unsafe_transfer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">account2</span><span class="p">,</span> <span class="n">account1</span><span class="p">,</span> <span class="mi">300</span><span class="p">))</span>
+
+<span class="n">thread1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">thread2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<span class="n">thread1</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+<span class="n">thread2</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">thread1</span></code> acquires the lock on <code class="docutils literal notranslate"><span class="pre">account1</span></code> and waits to acquire the lock on
+<code class="docutils literal notranslate"><span class="pre">account2</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thread2</span></code> acquires the lock on <code class="docutils literal notranslate"><span class="pre">account2</span></code> and waits to acquire the lock on
+<code class="docutils literal notranslate"><span class="pre">account1</span></code>.</p></li>
+<li><p>Both threads are waiting for each other to release the locks, causing a
+deadlock.</p></li>
+</ol>
+<p>Why do we need to know this? Because as we saw earlier, locks are useful for
+preventing race conditions. But using locks not so carefully can lead to
+deadlocks. GIL will aim to solve this as well.</p>
+</section>
+<section id="the-global-interpreter-lock-gil-in-python">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">The Global Interpreter Lock (GIL) in Python</a><a class="headerlink" href="#the-global-interpreter-lock-gil-in-python" title="Link to this heading">#</a></h2>
+<p>The <strong>Global Interpreter Lock (GIL)</strong> is a <strong>mutex</strong> (lock) that protects access
+to Python objects, preventing multiple native threads from executing Python
+bytecodes simultaneously in the same process.</p>
+<ul class="simple">
+<li><p>To solve deadlocks, gil only has <strong>one lock</strong> for the entire process - thus
+the scenario where two threads are waiting for each other to release a lock
+is avoided. In more intuition, the gil allows only <strong>one thread</strong> to execute
+bytecode at a time.</p></li>
+<li><p>With locks in place, race conditions are mostly resolved.</p></li>
+</ul>
+<p>With gil, it has its own trade-offs:</p>
+<ul class="simple">
+<li><p><strong>Limits Multi-threaded Performance:</strong> Because the GIL allows only one
+thread to execute Python code at a time, CPU-bound multi-threaded programs
+don’t benefit from multiple cores. They run almost as if they were
+single-threaded.</p></li>
+<li><p><strong>Inefficiency in Multi-core Systems:</strong> In CPU-bound tasks, the GIL can
+become a bottleneck, preventing Python programs from fully utilizing
+multi-core processors.</p></li>
+</ul>
+<p>Let’s see an example of how gil can limit multi-threaded performance.</p>
+</section>
+<section id="cpu-bound-tasks">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">CPU-bound tasks</a><a class="headerlink" href="#cpu-bound-tasks" title="Link to this heading">#</a></h2>
+<p>We first compare the performance of single-threaded vs multi-threaded and note
+for cpu-bound tasks, the time taken is almost the same.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="k">def</span> <span class="nf">cpu_bound_task</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CPU intensive task - calculating sum of numbers&quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20_000_000</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">count</span>
+
+
+<span class="k">def</span> <span class="nf">run_tasks_single_thread</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">num_iterations</span><span class="p">):</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_iterations</span><span class="p">):</span>
+        <span class="n">task</span><span class="p">()</span>
+
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+
+
+<span class="k">def</span> <span class="nf">run_tasks_multi_thread</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">num_threads</span><span class="p">):</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">threads</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_threads</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+        <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+
+<span class="c1"># NOTE: CPU-bound tasks</span>
+<span class="n">num_tasks</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPU-bound task comparison:&quot;</span><span class="p">)</span>
+<span class="n">single_thread_cpu</span> <span class="o">=</span> <span class="n">run_tasks_single_thread</span><span class="p">(</span><span class="n">cpu_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single-threaded time: </span><span class="si">{</span><span class="n">single_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">multi_thread_cpu</span> <span class="o">=</span> <span class="n">run_tasks_multi_thread</span><span class="p">(</span><span class="n">cpu_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multi-threaded time: </span><span class="si">{</span><span class="n">multi_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Speed difference: </span><span class="si">{</span><span class="n">single_thread_cpu</span><span class="o">/</span><span class="n">multi_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU-bound task comparison:
+Single-threaded time: 1.71 seconds
+Multi-threaded time: 1.62 seconds
+Speed difference: 1.06x
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, we compare the performance of single-threaded vs multi-threaded vs
+multi-process. We note that multi-process is the fastest and this is expected
+because there is no GIL in multi-process.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="k">def</span> <span class="nf">run_tasks_multi_process</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">num_processes</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run tasks using multiple processes&quot;&quot;&quot;</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="n">processes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_processes</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">processes</span><span class="p">:</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+
+<span class="c1"># Comparison of all three approaches</span>
+<span class="n">num_tasks</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPU-bound task comparison:&quot;</span><span class="p">)</span>
+<span class="n">single_thread_cpu</span> <span class="o">=</span> <span class="n">run_tasks_single_thread</span><span class="p">(</span><span class="n">cpu_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single-threaded time: </span><span class="si">{</span><span class="n">single_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">multi_thread_cpu</span> <span class="o">=</span> <span class="n">run_tasks_multi_thread</span><span class="p">(</span><span class="n">cpu_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multi-threaded time: </span><span class="si">{</span><span class="n">multi_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">multi_process_cpu</span> <span class="o">=</span> <span class="n">run_tasks_multi_process</span><span class="p">(</span><span class="n">cpu_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multi-process time: </span><span class="si">{</span><span class="n">multi_process_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Speed comparison (relative to single-thread):&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Threading speedup: </span><span class="si">{</span><span class="n">single_thread_cpu</span><span class="o">/</span><span class="n">multi_thread_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multiprocessing speedup: </span><span class="si">{</span><span class="n">single_thread_cpu</span><span class="o">/</span><span class="n">multi_process_cpu</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>CPU-bound task comparison:
+Single-threaded time: 1.73 seconds
+Multi-threaded time: 1.58 seconds
+Multi-process time: 0.09 seconds
+
+Speed comparison (relative to single-thread):
+Threading speedup: 1.10x
+Multiprocessing speedup: 18.59x
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 116, in spawn_main
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 116, in spawn_main
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 116, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 126, in _main
+        exitcode = _main(fd, parent_sentinel)exitcode = _main(fd, parent_sentinel)
+
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 126, in _main
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 126, in _main
+    self = reduction.pickle.load(from_parent)
+AttributeError: Can&#39;t get attribute &#39;cpu_bound_task&#39; on &lt;module &#39;__main__&#39; (built-in)&gt;
+    self = reduction.pickle.load(from_parent)
+AttributeError: Can&#39;t get attribute &#39;cpu_bound_task&#39; on &lt;module &#39;__main__&#39; (built-in)&gt;
+    self = reduction.pickle.load(from_parent)
+AttributeError: Can&#39;t get attribute &#39;cpu_bound_task&#39; on &lt;module &#39;__main__&#39; (built-in)&gt;
+Traceback (most recent call last):
+  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 116, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+  File &quot;/opt/homebrew/Caskroom/miniconda/base/envs/omniverse/lib/python3.9/multiprocessing/spawn.py&quot;, line 126, in _main
+    self = reduction.pickle.load(from_parent)
+AttributeError: Can&#39;t get attribute &#39;cpu_bound_task&#39; on &lt;module &#39;__main__&#39; (built-in)&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="gil-is-released-during-io-bound-tasks">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">GIL Is Released During IO-bound Tasks</a><a class="headerlink" href="#gil-is-released-during-io-bound-tasks" title="Link to this heading">#</a></h2>
+<p>As mentioned, the GIL is released during IO-bound tasks. As to why, please see
+this <a class="reference external" href="https://stackoverflow.com/questions/1294382/what-is-the-global-interpreter-lock-gil-in-cpython/55309364#55309364">post</a>.</p>
+<p>Let’s see an example of this.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">io_bound_task</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IO intensive task - making HTTP requests&quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
+<span class="c1"># NOTE: IO-bound tasks</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IO-bound task comparison:&quot;</span><span class="p">)</span>
+<span class="n">single_thread_io</span> <span class="o">=</span> <span class="n">run_tasks_single_thread</span><span class="p">(</span><span class="n">io_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Single-threaded time: </span><span class="si">{</span><span class="n">single_thread_io</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">multi_thread_io</span> <span class="o">=</span> <span class="n">run_tasks_multi_thread</span><span class="p">(</span><span class="n">io_bound_task</span><span class="p">,</span> <span class="n">num_tasks</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multi-threaded time: </span><span class="si">{</span><span class="n">multi_thread_io</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Speed difference: </span><span class="si">{</span><span class="n">single_thread_io</span><span class="o">/</span><span class="n">multi_thread_io</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-29 20:14:18,709 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>IO-bound task comparison:
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2024-10-29 20:14:19,014 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,021 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,072 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,075 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,122 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,126 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,167 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,174 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,174 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,174 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,174 - DEBUG - Starting new HTTPS connection (1): api.github.com:443
+2024-10-29 20:14:19,256 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,259 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,261 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+2024-10-29 20:14:19,261 - DEBUG - https://api.github.com:443 &quot;GET / HTTP/1.1&quot; 200 510
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Single-threaded time: 0.50 seconds
+Multi-threaded time: 0.09 seconds
+Speed difference: 5.24x
+</pre></div>
+</div>
+</div>
+</div>
+<p>Indeed, the multi-threaded version is faster than the single-threaded version.</p>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://realpython.com/python-gil/">The Global Interpreter Lock (GIL) in Python</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/1294382/what-is-the-global-interpreter-lock-gil-in-cpython/55309364#55309364">https://stackoverflow.com/questions/1294382/what-is-the-global-interpreter-lock-gil-in-cpython/55309364#55309364</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./software_engineering/python"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="new_vs_init.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Init vs New</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="iterator_protocol.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">The Iterator Protocol</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reference-counting-in-python">Reference Counting in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#threads-and-race-conditions">Threads and Race Conditions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protecting-reference-counts-with-locks">Protecting Reference Counts with Locks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deadlocks">Deadlocks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-global-interpreter-lock-gil-in-python">The Global Interpreter Lock (GIL) in Python</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cpu-bound-tasks">CPU-bound tasks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gil-is-released-during-io-bound-tasks">GIL Is Released During IO-bound Tasks</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -19,6 +19,7 @@ kernelspec:
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Stack-orange)
 ![Tag](https://img.shields.io/badge/Tag-Array-orange)
 ![Tag](https://img.shields.io/badge/Tag-Linked_List-orange)
@@ -564,7 +565,7 @@ Some more remarks on **_amortized worst-case time complexity_**:
 
 - - Operations
   - Average Time Complexity
-  - Amortized Worst-Case Time Complexity
+  - Amortized/Worst-Case Time Complexity
 - - `push`
   - $\mathcal{O}(1)$
   - $\mathcal{O}(1)$ [occasional resizing]

@@ -35,6 +35,7 @@ Further intuition can be found in Chan's book, see
 ## CDF of Functions of Random Variables
 
 ```{prf:remark} Finding CDF is easier
+:label: remark-finding-cdf-is-easier
 
 Given a random variable $X$ and a function $g$, finding the CDF of $Y = g(X)$ is easier
 than directly finding the PDF of $Y$. This is because the CDF of $Y=g(X)$ is a monotonically

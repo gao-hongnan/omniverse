@@ -1,0 +1,1906 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Implement Queue using Stacks &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=bb35926c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'dsa/stack/questions/232-implement-queue-using-stacks';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/dsa/stack/questions/232-implement-queue-using-stacks.html" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Reverse String" href="344-reverse-string.html" />
+    <link rel="prev" title="Min Stack" href="155-min-stack.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../influential/linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/gil.html">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/python/is_vs_equality.html">Is vs Equality</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../intro.html">Stack</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../concept.html">Concept</a></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="intro.html">Questions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../queue/intro.html">Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../queue/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../queue/dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../queue/questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../queue/questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/dsa/stack/questions/232-implement-queue-using-stacks.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fdsa/stack/questions/232-implement-queue-using-stacks.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../../_sources/dsa/stack/questions/232-implement-queue-using-stacks.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../../_sources/dsa/stack/questions/232-implement-queue-using-stacks.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Implement Queue using Stacks</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assumptions">Assumptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraints">Constraints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-constraints-for">What are Constraints for?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-cases">Test Cases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge Cases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-using-two-stacks">Solution (Using Two Stacks)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-using-list">Implementation using List</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-using-stack-class">Implementation using Stack Class</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#push">Push</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#code-breakdown">Code Breakdown</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pop">Pop</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Code Breakdown</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Time Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Space Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#armortized-analysis">Armortized Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peek">Peek</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empty">Empty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="implement-queue-using-stacks">
+<h1>Implement Queue using Stacks<a class="headerlink" href="#implement-queue-using-stacks" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<a class="reference external" href="https://leetcode.com/problems/implement-queue-using-stacks/"><img alt="LeetCode Problem" src="https://img.shields.io/badge/LeetCode-232-FFA116?style=social&amp;logo=leetcode" /></a>
+<img alt="Difficulty" src="https://img.shields.io/badge/Difficulty-Easy-green" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#problem" id="id5">Problem</a></p></li>
+<li><p><a class="reference internal" href="#intuition" id="id6">Intuition</a></p></li>
+<li><p><a class="reference internal" href="#assumptions" id="id7">Assumptions</a></p></li>
+<li><p><a class="reference internal" href="#constraints" id="id8">Constraints</a></p>
+<ul>
+<li><p><a class="reference internal" href="#what-are-constraints-for" id="id9">What are Constraints for?</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#test-cases" id="id10">Test Cases</a></p></li>
+<li><p><a class="reference internal" href="#edge-cases" id="id11">Edge Cases</a></p></li>
+<li><p><a class="reference internal" href="#solution-using-two-stacks" id="id12">Solution (Using Two Stacks)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#implementation-using-list" id="id13">Implementation using List</a></p></li>
+<li><p><a class="reference internal" href="#implementation-using-stack-class" id="id14">Implementation using Stack Class</a></p></li>
+<li><p><a class="reference internal" href="#push" id="id15">Push</a></p>
+<ul>
+<li><p><a class="reference internal" href="#code-breakdown" id="id16">Code Breakdown</a></p></li>
+<li><p><a class="reference internal" href="#time-complexity" id="id17">Time Complexity</a></p></li>
+<li><p><a class="reference internal" href="#space-complexity" id="id18">Space Complexity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pop" id="id19">Pop</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id20">Code Breakdown</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id21">Time Complexity</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id22">Space Complexity</a></p></li>
+<li><p><a class="reference internal" href="#armortized-analysis" id="id23">Armortized Analysis</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#peek" id="id24">Peek</a></p></li>
+<li><p><a class="reference internal" href="#empty" id="id25">Empty</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id26">References and Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="problem">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Problem</a><a class="headerlink" href="#problem" title="Link to this heading">#</a></h2>
+<p>Implement a First-In-First-Out (FIFO) queue using only two stacks. The
+implemented queue should support all the functions of a normal queue, which are:
+<code class="docutils literal notranslate"><span class="pre">push</span></code>, <code class="docutils literal notranslate"><span class="pre">peek</span></code>, <code class="docutils literal notranslate"><span class="pre">pop</span></code>, and <code class="docutils literal notranslate"><span class="pre">empty</span></code>.</p>
+<p>The class <code class="docutils literal notranslate"><span class="pre">MyQueue</span></code> should include the following methods:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">push(int</span> <span class="pre">x)</span></code>: Pushes element <code class="docutils literal notranslate"><span class="pre">x</span></code> to the back of the queue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pop()</span></code>: Removes the element from the front of the queue and returns it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">peek()</span></code>: Returns the element at the front of the queue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">empty()</span></code>: Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if the queue is empty, <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise.</p></li>
+</ul>
+</section>
+<section id="intuition">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
+<p>Our main challenge here is that stacks are Last-In-First-Out (LIFO) structures,
+but we need to implement a First-In-First-Out (FIFO) structure using them. We
+can solve this problem by using two stacks, where one stack serves as a
+reversing mechanism.</p>
+<p>When we push elements into the queue, we push them into the first stack. To pop
+an element, we need to get it from the bottom of the first stack. However,
+because we can only remove elements from the top in a stack, we transfer all
+elements from the first stack to the second stack, which reverses the order of
+the elements. Then, we can simply pop the top element from the second stack.</p>
+<p>One easy way out which also works is just use one stack and use <code class="docutils literal notranslate"><span class="pre">insert</span></code> to push
+elements to the bottom of the stack. However, this is not a good solution
+because <code class="docutils literal notranslate"><span class="pre">insert</span></code> is an expensive operation. It takes <span class="math notranslate nohighlight">\(O(n)\)</span> time to insert an
+element to the bottom of a stack of size <span class="math notranslate nohighlight">\(n\)</span>.</p>
+</section>
+<section id="assumptions">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Assumptions</a><a class="headerlink" href="#assumptions" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>You must only utilize the standard operations of a stack: pushing to the
+top, peeking/popping from the top, checking its size, and checking if it’s
+empty.</p></li>
+<li><p>Depending on your programming language, stacks might not be supported
+natively. However, you can simulate a stack using a list or a deque
+(double-ended queue) as long as you stick to the stack’s standard
+operations.</p></li>
+<li><p>In our examples, we’ll be using Python’s <code class="docutils literal notranslate"><span class="pre">list</span></code> to represent a stack. We
+will be using two stacks:</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack: This stack is used for the <code class="docutils literal notranslate"><span class="pre">push</span></code> operation. In
+this stack, an element that is pushed first will be on the bottom and
+the element pushed last will be on the top. For instance, if we push 1,
+2, 3, and 4 in this order, our <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack will look like
+<code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4]</span></code>. Here, <code class="docutils literal notranslate"><span class="pre">1</span></code> is at the front of the queue (the bottom of
+the stack) and <code class="docutils literal notranslate"><span class="pre">4</span></code> is at the back of the queue (the top of the stack).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack: This stack is used for the <code class="docutils literal notranslate"><span class="pre">pop</span></code> and <code class="docutils literal notranslate"><span class="pre">peek</span></code>
+operations. The order of the elements in this stack is the reverse of
+their order in the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack. If our <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack is
+<code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4]</span></code>, our <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack will be <code class="docutils literal notranslate"><span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">2,</span> <span class="pre">1]</span></code>. In this
+case, <code class="docutils literal notranslate"><span class="pre">1</span></code> is still at the front of the queue (now the top of the stack)
+and <code class="docutils literal notranslate"><span class="pre">4</span></code> is at the back of the queue (now the bottom of the stack).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="constraints">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Constraints</a><a class="headerlink" href="#constraints" title="Link to this heading">#</a></h2>
+<ul>
+<li><p>The value that can be pushed into the queue (<code class="docutils literal notranslate"><span class="pre">x</span></code>) is constrained by the
+range:</p>
+<div class="math notranslate nohighlight">
+\[
+    1 \leq x \leq 9.
+    \]</div>
+</li>
+<li><p>The total number of function calls made to <code class="docutils literal notranslate"><span class="pre">push</span></code>, <code class="docutils literal notranslate"><span class="pre">pop</span></code>, <code class="docutils literal notranslate"><span class="pre">peek</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">empty</span></code> will not exceed 100.</p></li>
+<li><p>All calls to <code class="docutils literal notranslate"><span class="pre">pop</span></code> and <code class="docutils literal notranslate"><span class="pre">peek</span></code> functions will be valid.</p></li>
+</ul>
+<section id="what-are-constraints-for">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">What are Constraints for?</a><a class="headerlink" href="#what-are-constraints-for" title="Link to this heading">#</a></h3>
+<p>In programming problems, <strong>constraints</strong> are set to define the scope and limits
+of the problem. They help us determine the feasible approaches and solutions for
+the problem by providing information about the range and characteristics of the
+input data. They also allow us to anticipate the worst-case scenarios that our
+algorithm should be able to handle without leading to inefficiencies or
+failures, such as exceeding the time limit or the memory limit.</p>
+<p>In the context of the current problem:</p>
+<ul class="simple">
+<li><p>The constraint on <code class="docutils literal notranslate"><span class="pre">x</span></code> (i.e., <span class="math notranslate nohighlight">\(1 \leq x \leq 9\)</span>) specifies the minimum and
+maximum value that can be pushed into the queue. Knowing this, we can
+evaluate whether our solution would handle all possible values of <code class="docutils literal notranslate"><span class="pre">x</span></code>. This
+constraint is important to consider when dealing with edge cases.</p></li>
+<li><p>The constraint on the number of function calls (i.e., at most 100 calls will
+be made to <code class="docutils literal notranslate"><span class="pre">push</span></code>, <code class="docutils literal notranslate"><span class="pre">pop</span></code>, <code class="docutils literal notranslate"><span class="pre">peek</span></code>, and <code class="docutils literal notranslate"><span class="pre">empty</span></code>) informs us about the maximum
+operations our solution should handle efficiently. A solution with a time
+complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>, where <span class="math notranslate nohighlight">\(n\)</span> is the number of operations, would
+likely be acceptable.</p></li>
+<li><p>The stipulation that all calls to <code class="docutils literal notranslate"><span class="pre">pop</span></code> and <code class="docutils literal notranslate"><span class="pre">peek</span></code> functions will be valid
+simplifies the problem by indicating that we do not need to consider
+scenarios where these functions are called on an empty queue. This
+eliminates the need for additional error checking in our implementation.</p></li>
+</ul>
+</section>
+</section>
+<section id="test-cases">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Test Cases</a><a class="headerlink" href="#test-cases" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Test Case 1:</p>
+<ul>
+<li><p>Operations: <code class="docutils literal notranslate"><span class="pre">push(5)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(6)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(7)</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">push(8)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">peek()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">push(9)</span></code>, <code class="docutils literal notranslate"><span class="pre">empty()</span></code></p></li>
+<li><p>Queue states: <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[5,6]</span></code>, <code class="docutils literal notranslate"><span class="pre">[5,6,7]</span></code>, <code class="docutils literal notranslate"><span class="pre">[6,7]</span></code>, <code class="docutils literal notranslate"><span class="pre">[6,7,8]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[6,7,8]</span></code>, <code class="docutils literal notranslate"><span class="pre">[7,8]</span></code>, <code class="docutils literal notranslate"><span class="pre">[8]</span></code>, <code class="docutils literal notranslate"><span class="pre">[8,9]</span></code>, <code class="docutils literal notranslate"><span class="pre">[8,9]</span></code></p></li>
+<li><p>Expected Output: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">6</span></code>, <code class="docutils literal notranslate"><span class="pre">6</span></code>, <code class="docutils literal notranslate"><span class="pre">7</span></code>,
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+<li><p>Explanation: After each push and pop operation, the queue state is
+updated. The peek operation does not change the queue state. The empty
+operation returns <code class="docutils literal notranslate"><span class="pre">False</span></code> since the queue is not empty.</p></li>
+</ul>
+</li>
+<li><p>Test Case 2:</p>
+<ul>
+<li><p>Operations: <code class="docutils literal notranslate"><span class="pre">push(2)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(4)</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">push(6)</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">empty()</span></code></p></li>
+<li><p>Queue states: <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[2]</span></code>, <code class="docutils literal notranslate"><span class="pre">[2,4]</span></code>, <code class="docutils literal notranslate"><span class="pre">[4]</span></code>, <code class="docutils literal notranslate"><span class="pre">[4,6]</span></code>, <code class="docutils literal notranslate"><span class="pre">[6]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+<li><p>Expected Output: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code>, <code class="docutils literal notranslate"><span class="pre">6</span></code>, <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p>Explanation: After each push and pop operation, the queue state is
+updated. The empty operation returns <code class="docutils literal notranslate"><span class="pre">True</span></code> as the queue is empty.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="edge-cases">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Edge Cases</a><a class="headerlink" href="#edge-cases" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Edge Case 1:</p>
+<ul>
+<li><p>Operations: <code class="docutils literal notranslate"><span class="pre">push(1)</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code></p></li>
+<li><p>Queue states: <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+<li><p>Expected Output: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, Error message</p></li>
+<li><p>Explanation: After pushing 1 and popping it, the queue is empty. Then
+the <code class="docutils literal notranslate"><span class="pre">pop()</span></code> operation tries to remove an element from the empty queue.
+This should ideally throw an error or return a specific value indicating
+that the operation is not valid.</p></li>
+</ul>
+</li>
+<li><p>Edge Case 2:</p>
+<ul>
+<li><p>Operations: <code class="docutils literal notranslate"><span class="pre">push(1)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(2)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(3)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(4)</span></code>, <code class="docutils literal notranslate"><span class="pre">push(5)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop()</span></code>, <code class="docutils literal notranslate"><span class="pre">empty()</span></code></p></li>
+<li><p>Queue states: <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1,2]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1,2,3]</span></code>, <code class="docutils literal notranslate"><span class="pre">[1,2,3,4]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[1,2,3,4,5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[2,3,4,5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[3,4,5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[4,5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[5]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code>, <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
+<li><p>Expected Output: <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">3</span></code>,
+<code class="docutils literal notranslate"><span class="pre">4</span></code>, <code class="docutils literal notranslate"><span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+<li><p>Explanation: This case tests the FIFO behavior of the queue after a
+sequence</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="solution-using-two-stacks">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Solution (Using Two Stacks)</a><a class="headerlink" href="#solution-using-two-stacks" title="Link to this heading">#</a></h2>
+<p>A <strong>queue</strong> operates on the principle of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Queue_(abstract_data_type)"><strong>First In First Out (FIFO)</strong></a>,
+meaning that the elements that are inserted first are the ones that get removed
+first. Commonly, queues are implemented using
+<a class="reference external" href="https://en.wikipedia.org/wiki/Linked_list"><strong>linked lists</strong></a>, with new elements
+being added to the rear and removed from the front. However, in this instance,
+we are implementing a queue using two <strong>stacks</strong>, which inherently operate on a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Stack_(abstract_data_type)"><strong>Last In First Out (LIFO)</strong></a>
+basis. Here, elements are added and removed from the same end, known as the top.</p>
+<p>To emulate the FIFO behavior of a queue using stacks, we need two of them. These
+two stacks collaboratively work to reverse the order of element arrival,
+effectively transforming the LIFO behavior of a stack into the FIFO behavior of
+a queue. Consequently, one of the stacks ends up holding the queue elements in
+the order they should logically be in if we were using a traditional queue
+structure. This innovative use of two stacks provides an alternative approach to
+implementing a queue data structure.</p>
+<section id="implementation-using-list">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Implementation using List</a><a class="headerlink" href="#implementation-using-list" title="Link to this heading">#</a></h3>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="k">class</span> <span class="nc">MyQueue</span><span class="p">:</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 6</span><span class="sd">    Class that implements queue using two stacks (enqueue and dequeue).</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="sd">    Attributes</span>
+<span class="linenos"> 9</span><span class="sd">    ----------</span>
+<span class="linenos">10</span><span class="sd">    enqueue : List[int]</span>
+<span class="linenos">11</span><span class="sd">        Stack for enqueue operation (push to back of queue).</span>
+<span class="linenos">12</span><span class="sd">    dequeue : List[int]</span>
+<span class="linenos">13</span><span class="sd">        Stack for dequeue operation (remove from front of queue).</span>
+<span class="linenos">14</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">17</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes an empty queue.&quot;&quot;&quot;</span>
+<span class="linenos">18</span>        <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">19</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">22</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">23</span><span class="sd">        Pushes an integer x to the back of the queue.</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="sd">        Parameters</span>
+<span class="linenos">26</span><span class="sd">        ----------</span>
+<span class="linenos">27</span><span class="sd">        x : int</span>
+<span class="linenos">28</span><span class="sd">            The integer to be added to the back of the queue.</span>
+<span class="linenos">29</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">30</span>        <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="linenos">31</span>
+<span class="linenos">32</span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">33</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">34</span><span class="sd">        Transfers elements from the enqueue stack to the dequeue stack.</span>
+<span class="linenos">35</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">36</span>        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="p">):</span>
+<span class="linenos">37</span>            <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+<span class="linenos">38</span>
+<span class="linenos">39</span>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos">40</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">41</span><span class="sd">        Removes an integer from the front of the queue and returns it.</span>
+<span class="linenos">42</span>
+<span class="linenos">43</span><span class="sd">        Returns</span>
+<span class="linenos">44</span><span class="sd">        -------</span>
+<span class="linenos">45</span><span class="sd">        int</span>
+<span class="linenos">46</span><span class="sd">            The integer at the front of the queue.</span>
+<span class="linenos">47</span>
+<span class="linenos">48</span><span class="sd">        Raises</span>
+<span class="linenos">49</span><span class="sd">        ------</span>
+<span class="linenos">50</span><span class="sd">        IndexError</span>
+<span class="linenos">51</span><span class="sd">            If both stacks are empty, indicating the queue is empty.</span>
+<span class="linenos">52</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">53</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">):</span>
+<span class="linenos">54</span>            <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+<span class="linenos">55</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="linenos">56</span>
+<span class="linenos">57</span>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos">58</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">59</span><span class="sd">        Returns the integer at the front of the queue without removing it.</span>
+<span class="linenos">60</span>
+<span class="linenos">61</span><span class="sd">        Returns</span>
+<span class="linenos">62</span><span class="sd">        -------</span>
+<span class="linenos">63</span><span class="sd">        int</span>
+<span class="linenos">64</span><span class="sd">            The integer at the front of the queue.</span>
+<span class="linenos">65</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">66</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">):</span>
+<span class="linenos">67</span>            <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+<span class="linenos">68</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="linenos">69</span>
+<span class="linenos">70</span>    <span class="k">def</span> <span class="nf">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="linenos">71</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">72</span><span class="sd">        Checks if the provided stack is empty.</span>
+<span class="linenos">73</span>
+<span class="linenos">74</span><span class="sd">        Parameters</span>
+<span class="linenos">75</span><span class="sd">        ----------</span>
+<span class="linenos">76</span><span class="sd">        stack : List[int]</span>
+<span class="linenos">77</span><span class="sd">            The stack to be checked.</span>
+<span class="linenos">78</span>
+<span class="linenos">79</span><span class="sd">        Returns</span>
+<span class="linenos">80</span><span class="sd">        -------</span>
+<span class="linenos">81</span><span class="sd">        bool</span>
+<span class="linenos">82</span><span class="sd">            True if the stack is empty, False otherwise.</span>
+<span class="linenos">83</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">84</span>        <span class="k">return</span> <span class="ow">not</span> <span class="n">stack</span>
+<span class="linenos">85</span>
+<span class="linenos">86</span>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="linenos">87</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">88</span><span class="sd">        Checks if the queue is empty.</span>
+<span class="linenos">89</span>
+<span class="linenos">90</span><span class="sd">        Returns</span>
+<span class="linenos">91</span><span class="sd">        -------</span>
+<span class="linenos">92</span><span class="sd">        bool</span>
+<span class="linenos">93</span><span class="sd">            True if the queue is empty, False otherwise.</span>
+<span class="linenos">94</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">95</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>A small test suite is provided below to check the correctness of the algorithm.</p>
+<p>Consider the case where we push <code class="docutils literal notranslate"><span class="pre">1,2,3,4</span></code> and then pop the first in queue and
+then push <code class="docutils literal notranslate"><span class="pre">5,</span> <span class="pre">6</span></code> to queue again and then pop the next in queue.</p>
+<p>Our implementation still work in that case. Here’s the step-by-step breakdown:</p>
+<ol class="arabic simple">
+<li><p>You push 1, 2, 3, 4 to the queue. Now, <code class="docutils literal notranslate"><span class="pre">self.enqueue</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">4]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self.dequeue</span> <span class="pre">=</span> <span class="pre">[]</span></code>.</p></li>
+<li><p>You execute <code class="docutils literal notranslate"><span class="pre">pop()</span></code>. Because <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code> is empty, you pop each element
+from <code class="docutils literal notranslate"><span class="pre">self.enqueue</span></code> to <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code>, resulting in <code class="docutils literal notranslate"><span class="pre">self.enqueue</span> <span class="pre">=</span> <span class="pre">[]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self.dequeue</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">2,</span> <span class="pre">1]</span></code>. Then you pop from <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code>, so you get
+1, and <code class="docutils literal notranslate"><span class="pre">self.dequeue</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">2]</span></code>.</p></li>
+<li><p>Now, you push 5 and 6 to the queue. So, <code class="docutils literal notranslate"><span class="pre">self.enqueue</span> <span class="pre">=</span> <span class="pre">[5,</span> <span class="pre">6]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self.dequeue</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">3,</span> <span class="pre">2]</span></code>.</p></li>
+<li><p>If you execute <code class="docutils literal notranslate"><span class="pre">pop()</span></code> again, it will pop from <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code> since it’s not
+empty, and you get 2. After the operation, <code class="docutils literal notranslate"><span class="pre">self.enqueue</span> <span class="pre">=</span> <span class="pre">[5,</span> <span class="pre">6]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self.dequeue</span> <span class="pre">=</span> <span class="pre">[4,</span> <span class="pre">3]</span></code>.</p></li>
+<li><p>If you keep popping until <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code> is empty, and then execute <code class="docutils literal notranslate"><span class="pre">pop()</span></code>
+again, it will transfer elements from <code class="docutils literal notranslate"><span class="pre">self.enqueue</span></code> to <code class="docutils literal notranslate"><span class="pre">self.dequeue</span></code> just
+like before.</p></li>
+</ol>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">rich</span> <span class="kn">import</span> <span class="nb">print</span>
+<span class="linenos"> 2</span>
+<span class="linenos"> 3</span><span class="n">queue</span> <span class="o">=</span> <span class="n">MyQueue</span><span class="p">()</span>
+<span class="linenos"> 4</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos"> 5</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="linenos"> 6</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="linenos"> 7</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="linenos"> 8</span><span class="nb">print</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+<span class="linenos"> 9</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="linenos">10</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="linenos">11</span><span class="nb">print</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>
+</pre>
+</div></div>
+</div>
+</section>
+<section id="implementation-using-stack-class">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Implementation using Stack Class</a><a class="headerlink" href="#implementation-using-stack-class" title="Link to this heading">#</a></h3>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="linenos">  2</span>
+<span class="linenos">  3</span><span class="kn">import</span> <span class="nn">math</span>
+<span class="linenos">  4</span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+<span class="linenos">  5</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Any</span>
+<span class="linenos">  6</span><span class="kn">from</span> <span class="nn">rich.pretty</span> <span class="kn">import</span> <span class="n">pprint</span>
+<span class="linenos">  7</span>
+<span class="linenos">  8</span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="linenos">  9</span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="linenos"> 10</span>
+<span class="linenos"> 11</span><span class="k">def</span> <span class="nf">find_root_dir</span><span class="p">(</span><span class="n">current_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.git&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 12</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 13</span><span class="sd">    Find the root directory by searching for a directory or file that serves as a</span>
+<span class="linenos"> 14</span><span class="sd">    marker.</span>
+<span class="linenos"> 15</span>
+<span class="linenos"> 16</span><span class="sd">    Parameters</span>
+<span class="linenos"> 17</span><span class="sd">    ----------</span>
+<span class="linenos"> 18</span><span class="sd">    current_path : Path | None</span>
+<span class="linenos"> 19</span><span class="sd">        The starting path to search from. If None, the current working directory</span>
+<span class="linenos"> 20</span><span class="sd">        `Path.cwd()` is used.</span>
+<span class="linenos"> 21</span><span class="sd">    marker : str</span>
+<span class="linenos"> 22</span><span class="sd">        The name of the file or directory that signifies the root.</span>
+<span class="linenos"> 23</span>
+<span class="linenos"> 24</span><span class="sd">    Returns</span>
+<span class="linenos"> 25</span><span class="sd">    -------</span>
+<span class="linenos"> 26</span><span class="sd">    Path | None</span>
+<span class="linenos"> 27</span><span class="sd">        The path to the root directory. Returns None if the marker is not found.</span>
+<span class="linenos"> 28</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos"> 29</span>    <span class="k">if</span> <span class="ow">not</span> <span class="n">current_path</span><span class="p">:</span>
+<span class="linenos"> 30</span>        <span class="n">current_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+<span class="linenos"> 31</span>    <span class="n">current_path</span> <span class="o">=</span> <span class="n">current_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+<span class="linenos"> 32</span>    <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">[</span><span class="n">current_path</span><span class="p">,</span> <span class="o">*</span><span class="n">current_path</span><span class="o">.</span><span class="n">parents</span><span class="p">]:</span>
+<span class="linenos"> 33</span>        <span class="k">if</span> <span class="p">(</span><span class="n">parent</span> <span class="o">/</span> <span class="n">marker</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+<span class="linenos"> 34</span>            <span class="k">return</span> <span class="n">parent</span>
+<span class="linenos"> 35</span>    <span class="k">return</span> <span class="kc">None</span>
+<span class="linenos"> 36</span>
+<span class="linenos"> 37</span><span class="n">root_dir</span> <span class="o">=</span> <span class="n">find_root_dir</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;omnivault&#39;</span><span class="p">)</span>
+<span class="linenos"> 38</span>
+<span class="linenos"> 39</span><span class="k">if</span> <span class="n">root_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 40</span>    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">root_dir</span><span class="p">))</span>
+<span class="linenos"> 41</span>    <span class="kn">from</span> <span class="nn">omnivault.dsa.stack.concrete</span> <span class="kn">import</span> <span class="n">StackList</span>
+<span class="linenos"> 42</span>    <span class="kn">from</span> <span class="nn">omnivault._types._generic</span> <span class="kn">import</span> <span class="n">T</span>
+<span class="linenos"> 43</span><span class="k">else</span><span class="p">:</span>
+<span class="linenos"> 44</span>    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Root directory not found.&quot;</span><span class="p">)</span>
+<span class="linenos"> 45</span>
+<span class="linenos"> 46</span>
+<span class="linenos"> 47</span><span class="k">class</span> <span class="nc">MyQueue</span><span class="p">:</span>
+<span class="linenos"> 48</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 49</span><span class="sd">    Class that implements queue using two stacks (enqueue and dequeue).</span>
+<span class="linenos"> 50</span>
+<span class="linenos"> 51</span><span class="sd">    Attributes</span>
+<span class="linenos"> 52</span><span class="sd">    ----------</span>
+<span class="linenos"> 53</span><span class="sd">    enqueue : StackList[int]</span>
+<span class="linenos"> 54</span><span class="sd">        Stack for enqueue operation (push to back of queue).</span>
+<span class="linenos"> 55</span><span class="sd">    dequeue : StackList[int]</span>
+<span class="linenos"> 56</span><span class="sd">        Stack for dequeue operation (remove from front of queue).</span>
+<span class="linenos"> 57</span><span class="sd">    &quot;&quot;&quot;</span>
+<span class="linenos"> 58</span>
+<span class="linenos"> 59</span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 60</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes an empty queue.&quot;&quot;&quot;</span>
+<span class="linenos"> 61</span>        <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="p">:</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">StackList</span><span class="p">()</span>
+<span class="linenos"> 62</span>        <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">:</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">StackList</span><span class="p">()</span>
+<span class="linenos"> 63</span>
+<span class="linenos"> 64</span>    <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 65</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 66</span><span class="sd">        Pushes an integer x to the back of the queue.</span>
+<span class="linenos"> 67</span>
+<span class="linenos"> 68</span><span class="sd">        Parameters</span>
+<span class="linenos"> 69</span><span class="sd">        ----------</span>
+<span class="linenos"> 70</span><span class="sd">        x : int</span>
+<span class="linenos"> 71</span><span class="sd">            The integer to be added to the back of the queue.</span>
+<span class="linenos"> 72</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 73</span>        <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="linenos"> 74</span>
+<span class="linenos"> 75</span>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 76</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 77</span><span class="sd">        Transfers elements from the enqueue stack to the dequeue stack.</span>
+<span class="linenos"> 78</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 79</span>        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+<span class="linenos"> 80</span>            <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+<span class="linenos"> 81</span>
+<span class="linenos"> 82</span>    <span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 83</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 84</span><span class="sd">        Removes an integer from the front of the queue and returns it.</span>
+<span class="linenos"> 85</span>
+<span class="linenos"> 86</span><span class="sd">        Returns</span>
+<span class="linenos"> 87</span><span class="sd">        -------</span>
+<span class="linenos"> 88</span><span class="sd">        int</span>
+<span class="linenos"> 89</span><span class="sd">            The integer at the front of the queue.</span>
+<span class="linenos"> 90</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos"> 91</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+<span class="linenos"> 92</span>            <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+<span class="linenos"> 93</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="linenos"> 94</span>
+<span class="linenos"> 95</span>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="linenos"> 96</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos"> 97</span><span class="sd">        Returns the integer at the front of the queue without removing it.</span>
+<span class="linenos"> 98</span>
+<span class="linenos"> 99</span><span class="sd">        Returns</span>
+<span class="linenos">100</span><span class="sd">        -------</span>
+<span class="linenos">101</span><span class="sd">        int</span>
+<span class="linenos">102</span><span class="sd">            The integer at the front of the queue.</span>
+<span class="linenos">103</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">104</span>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+<span class="linenos">105</span>            <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+<span class="linenos">106</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">peek</span><span class="p">()</span>
+<span class="linenos">107</span>
+<span class="linenos">108</span>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="linenos">109</span><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="linenos">110</span><span class="sd">        Checks if the queue is empty.</span>
+<span class="linenos">111</span>
+<span class="linenos">112</span><span class="sd">        Returns</span>
+<span class="linenos">113</span><span class="sd">        -------</span>
+<span class="linenos">114</span><span class="sd">        bool</span>
+<span class="linenos">115</span><span class="sd">            True if the queue is empty, False otherwise.</span>
+<span class="linenos">116</span><span class="sd">        &quot;&quot;&quot;</span>
+<span class="linenos">117</span>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">queue</span> <span class="o">=</span> <span class="n">MyQueue</span><span class="p">()</span>
+<span class="linenos">2</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="linenos">4</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="linenos">5</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="linenos">6</span><span class="nb">print</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+<span class="linenos">7</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="linenos">8</span><span class="n">queue</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="linenos">9</span><span class="nb">print</span><span class="p">(</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>
+</pre>
+</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">2</span>
+</pre>
+</div></div>
+</div>
+</section>
+<section id="push">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Push</a><a class="headerlink" href="#push" title="Link to this heading">#</a></h3>
+<p>The newly arrived element is always added on top of stack <code class="docutils literal notranslate"><span class="pre">enqueue</span></code>, see
+<a class="reference internal" href="#queue-using-stacksapush"><span class="std std-numref">Fig. 59</span></a>.</p>
+<figure class="align-default" id="queue-using-stacksapush">
+<img alt="../../../_images/232_queue_using_stacksAPush.png" src="../../../_images/232_queue_using_stacksAPush.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 59 </span><span class="caption-text">Pushing an element onto the queue <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack.</span><a class="headerlink" href="#queue-using-stacksapush" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="code-breakdown">
+<h4><a class="toc-backref" href="#id16" role="doc-backlink">Code Breakdown</a><a class="headerlink" href="#code-breakdown" title="Link to this heading">#</a></h4>
+<p>This <code class="docutils literal notranslate"><span class="pre">push</span></code> method is a part of the <code class="docutils literal notranslate"><span class="pre">MyQueue</span></code> class, which implements a queue
+using two stacks: <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code>.</p>
+<p>Let’s break down what this <code class="docutils literal notranslate"><span class="pre">push</span></code> function is doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pushes an integer x to the back of the queue.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : int</span>
+<span class="sd">        The integer to be added to the back of the queue.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">push</span></code> method appends an integer <code class="docutils literal notranslate"><span class="pre">x</span></code> to the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack, which is used
+as the main storage for incoming elements.</p>
+<p>This mimics the behavior of a queue’s <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> operation, adding an element to
+the back of the queue. In a typical queue implementation, new elements are
+always added to the end (or back) of the queue. Here, we simulate this by
+pushing new elements onto the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack.</p>
+</section>
+<section id="time-complexity">
+<h4><a class="toc-backref" href="#id17" role="doc-backlink">Time Complexity</a><a class="headerlink" href="#time-complexity" title="Link to this heading">#</a></h4>
+<p>The time complexity of the <code class="docutils literal notranslate"><span class="pre">push</span></code> operation in this queue implementation is
+<span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>. This is because the <code class="docutils literal notranslate"><span class="pre">push</span></code> operation essentially involves an
+<code class="docutils literal notranslate"><span class="pre">append</span></code> operation to the end of the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> list, which is a constant time
+operation in Python.</p>
+<p>To understand this in a more practical sense, consider the following line from
+the <code class="docutils literal notranslate"><span class="pre">push</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">enqueue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This line performs an append operation on the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> list. In Python,
+appending to the end of a list is a constant time operation, meaning it takes a
+constant amount of time to execute, regardless of the size of the list.
+Therefore, the time complexity of the <code class="docutils literal notranslate"><span class="pre">push</span></code> operation is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="push-time-complexity">
+<caption><span class="caption-number">Table 58 </span><span class="caption-text">Time Complexity of Push Operation</span><a class="headerlink" href="#push-time-complexity" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Worst Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Average Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Best Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="space-complexity">
+<h4><a class="toc-backref" href="#id18" role="doc-backlink">Space Complexity</a><a class="headerlink" href="#space-complexity" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table" id="push-space-complexity">
+<caption><span class="caption-number">Table 59 </span><span class="caption-text">Space Complexity of Push Operation</span><a class="headerlink" href="#push-space-complexity" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Complexity</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Auxiliary Space</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stacks which help in the operations of the queue
+can grow with the number of elements, which is <span class="math notranslate nohighlight">\(n\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total Space</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span></p></td>
+<td><p>The total space is the sum of the input and auxiliary space. Since the input
+space is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> (no data given at the start), the total space
+complexity remains <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note carefully we treated both the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stacks as auxiliary
+space. This is because they are not part of the input, but rather are used to
+help in the operations of the queue.</p>
+</section>
+</section>
+<section id="pop">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Pop</a><a class="headerlink" href="#pop" title="Link to this heading">#</a></h3>
+<p>When the queue needs to be popped, we flip the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack and pour it into
+the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack, see {numref}232_queue_using_stacksAPop for a visual
+representation.</p>
+<figure class="align-default" id="queue-using-stacksapop">
+<img alt="../../../_images/232_queue_using_stacksAPop.png" src="../../../_images/232_queue_using_stacksAPop.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 60 </span><span class="caption-text">Popping an element from the queue <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack.</span><a class="headerlink" href="#queue-using-stacksapop" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="id1">
+<h4><a class="toc-backref" href="#id20" role="doc-backlink">Code Breakdown</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<p>This <code class="docutils literal notranslate"><span class="pre">pop</span></code> method is a part of the <code class="docutils literal notranslate"><span class="pre">MyQueue</span></code> class, which implements a queue
+using two stacks: <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code>.</p>
+<p>Let’s break down what this <code class="docutils literal notranslate"><span class="pre">pop</span></code> function is doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes an integer from the front of the queue and returns it.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The integer at the front of the queue.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    IndexError</span>
+<span class="sd">        If both stacks are empty, indicating the queue is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_stack_empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dequeue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">pop</span></code> method simulates the behavior of a queue’s <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> operation,
+removing an element from the front of the queue. If the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack is
+empty, it calls the <code class="docutils literal notranslate"><span class="pre">move</span></code> method to transfer all elements from the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code>
+stack to the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack, reversing their order to maintain the correct
+queue order. It then pops and returns the top element from the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack,
+which corresponds to the front of the queue.</p>
+</section>
+<section id="id2">
+<h4><a class="toc-backref" href="#id21" role="doc-backlink">Time Complexity</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<p>The time complexity of the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation is not always constant because it
+depends on whether the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack is empty. If the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack is not
+empty, then popping an element off the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack is a constant time
+operation, <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p>
+<p>However, if the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack is empty, we need to transfer all elements from
+the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack to the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack using <code class="docutils literal notranslate"><span class="pre">move</span></code> method, which takes
+<span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span> time, where <span class="math notranslate nohighlight">\(n\)</span> is the number of elements in the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code>
+stack.</p>
+<p>However, if we use
+<a class="reference external" href="https://en.wikipedia.org/wiki/Amortized_analysis"><strong>amortized analysis</strong></a>, we
+see that for <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code> operations, there could be at most <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">pop</span></code> operations
+that transfer elements from <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> to <code class="docutils literal notranslate"><span class="pre">dequeue</span></code>. Thus, in an amortized sense,
+each <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation takes constant time, giving us an amortized time complexity
+of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> for the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="pop-time-complexity">
+<caption><span class="caption-number">Table 60 </span><span class="caption-text">Time Complexity of Pop Operation</span><a class="headerlink" href="#pop-time-complexity" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Case</p></th>
+<th class="head"><p>Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Worst Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Amortized Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Best Case</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id3">
+<h4><a class="toc-backref" href="#id22" role="doc-backlink">Space Complexity</a><a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>The reason that the space complexity of the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation is considered
+<span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> is because the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation itself does not require any
+additional space that scales with the size of the input.</p>
+<p>When you call the <code class="docutils literal notranslate"><span class="pre">pop</span></code> method, it does not create any new data structures or
+variables that depend on the size of the input (the number of elements in the
+queue). Even when the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation triggers the <code class="docutils literal notranslate"><span class="pre">move</span></code> operation, no new
+space is allocated; instead, the existing space in the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code>
+stacks is reorganized.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> and <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stacks already exist as part of the queue’s storage,
+so their space usage is considered part of the total space complexity of the
+queue, not the auxiliary space complexity of the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation. The auxiliary
+space complexity considers only the additional space required to perform the
+operation, beyond the space already used to store the input.</p>
+<p>So, while the total space complexity of the <code class="docutils literal notranslate"><span class="pre">MyQueue</span></code> class is <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>,
+where n is the number of elements in the queue, the space complexity of the
+<code class="docutils literal notranslate"><span class="pre">pop</span></code> operation is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> because it doesn’t require any additional
+space beyond what’s already used to store the elements in the queue.</p>
+<div class="pst-scrollable-table-container"><table class="table" id="pop-space-complexity">
+<caption><span class="caption-number">Table 61 </span><span class="caption-text">Space Complexity of Pop Operation</span><a class="headerlink" href="#pop-space-complexity" title="Link to this table">#</a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Complexity</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Auxiliary Space</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+<td><p>See explanation above.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total Space</p></td>
+<td><p><span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span></p></td>
+<td><p>The total space is the sum of the input and auxiliary space. Since the input
+space is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> (no data given at the start), the total space
+complexity remains <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="armortized-analysis">
+<h4><a class="toc-backref" href="#id23" role="doc-backlink">Armortized Analysis</a><a class="headerlink" href="#armortized-analysis" title="Link to this heading">#</a></h4>
+<p>We will use <code class="docutils literal notranslate"><span class="pre">s1</span></code> to represent the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack and <code class="docutils literal notranslate"><span class="pre">s2</span></code> to represent the
+<code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack for the following analysis.</p>
+<p>I was genuinely confused by the amortized analysis of the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation when I
+first encountered it. I didn’t understand how we could say that the amortized
+time complexity of the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation was <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> when the worst-case
+time complexity was <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span> (seemingly).</p>
+<p>Firstly, amortized time complexity is different from the worst-case time
+complexity. For the worst-case time complexity, we look at the scenario where
+the most unlucky thing can happen (i.e. finding the desired number only at the
+last element of a list). However, for the amortized time complexity, we average
+the time taken by all operations in a sequence, this sequence can be defined as
+the worst-case sequence of operations<a class="footnote-reference brackets" href="#sequence" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>The basic idea is that a worst case operation can alter the state in such a way
+that the worst case cannot occur again for a long time, thus amortizing its
+cost.</p>
+<p>The key to understanding why these queue operations have O(1) amortized time
+complexity is understanding that each individual element is only moved once from
+the <code class="docutils literal notranslate"><span class="pre">enqueue</span></code> stack to the <code class="docutils literal notranslate"><span class="pre">dequeue</span></code> stack.</p>
+<p>Let’s consider a sequence of <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code> operations followed by <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">pop</span></code>/<code class="docutils literal notranslate"><span class="pre">peek</span></code>
+operations:</p>
+<div class="math notranslate nohighlight">
+\[
+\underbrace{\text{enqueue(1), enqueue(2), ..., enqueue(n)}}_{\text{enqueue operations}}, \overbrace{\text{dequeue(1), dequeue(2), ..., dequeue(n)}}^{\text{dequeue operations}}
+\]</div>
+<ol class="arabic simple">
+<li><p>Each <code class="docutils literal notranslate"><span class="pre">push</span></code> operation is clearly O(1). And so <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code> operations are
+<span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>.</p></li>
+<li><p>The worst case time complexity of a single pop operation is <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>,
+since we have <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">pop</span></code> operations, the total time complexity is
+<span class="math notranslate nohighlight">\(\mathcal{O}(n^2)\)</span>.</p></li>
+</ol>
+<div class="proof remark admonition" id="worst-case-only">
+<p class="admonition-title"><span class="caption-number">Remark 70 </span> (Analyzing Time Complexity with Worst Case Only)</p>
+<section class="remark-content" id="proof-content">
+<p>If we only consider the worst-case time complexity for the <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation, it
+could lead us to an overly pessimistic time complexity estimate.</p>
+<p>Here’s a breakdown of the scenario:</p>
+<ul class="simple">
+<li><p>We begin with an empty queue.</p></li>
+<li><p>We push <span class="math notranslate nohighlight">\(n\)</span> elements into the queue. Each <code class="docutils literal notranslate"><span class="pre">push</span></code> operation has a time
+complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>, so <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code> operations have a time
+complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>.</p></li>
+<li><p>We then pop all <span class="math notranslate nohighlight">\(n\)</span> elements from the queue. Each <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation could
+potentially have a worst-case time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span> when the
+<code class="docutils literal notranslate"><span class="pre">s2</span></code> stack is empty.</p></li>
+</ul>
+<p>Now, if we were to look <strong>only</strong> at the worst-case time complexity of the <code class="docutils literal notranslate"><span class="pre">pop</span></code>
+operation, we might think that popping <span class="math notranslate nohighlight">\(n\)</span> elements from the queue would have a
+time complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(n^2)\)</span>, because for each <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation we’re
+considering its worst-case scenario, which is <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>, and we’re doing
+this <span class="math notranslate nohighlight">\(n\)</span> times.</p>
+<p>However, this would be overly pessimistic as the bound given by the worst case
+analysis is very “loose”. In reality, the worst-case scenario for a <code class="docutils literal notranslate"><span class="pre">pop</span></code>
+operation (i.e., the <code class="docutils literal notranslate"><span class="pre">s2</span></code> stack being empty and needing to move all elements
+from <code class="docutils literal notranslate"><span class="pre">s1</span></code> to <code class="docutils literal notranslate"><span class="pre">s2</span></code>) only happens once for every <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code> operations. After the
+elements have been moved to <code class="docutils literal notranslate"><span class="pre">s2</span></code>, all the remaining <code class="docutils literal notranslate"><span class="pre">pop</span></code> operations have a time
+complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> until <code class="docutils literal notranslate"><span class="pre">s2</span></code> becomes empty again. In other words,
+the number of times <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation can be called is <strong><em>limited</em></strong> by the number
+of <code class="docutils literal notranslate"><span class="pre">push</span></code> operations before it.</p>
+<p>Therefore, the overall time complexity for <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">pop</span></code> operations is not
+<span class="math notranslate nohighlight">\(\mathcal{O}(n^2)\)</span>, but closer to <span class="math notranslate nohighlight">\(\mathcal{O}(n)\)</span>, leading to an amortized time
+complexity of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> per operation. Let’s proceed to prove it.</p>
+</section>
+</div><div class="proof example admonition" id="amortized-time-complexity">
+<p class="admonition-title"><span class="caption-number">Example 51 </span> (Amortized Time Complexity of Queue Operations)</p>
+<section class="example-content" id="proof-content">
+<p>Let’s break down the operations and their costs:</p>
+<ul class="simple">
+<li><p>Each <code class="docutils literal notranslate"><span class="pre">push</span></code> operation costs <span class="math notranslate nohighlight">\(1\)</span> unit of time, as it involves a single
+<code class="docutils literal notranslate"><span class="pre">append</span></code> operation to the end of stack <code class="docutils literal notranslate"><span class="pre">s1</span></code>. Therefore, <span class="math notranslate nohighlight">\(n\)</span> <code class="docutils literal notranslate"><span class="pre">push</span></code>
+operations cost <span class="math notranslate nohighlight">\(n\)</span> units of time.</p></li>
+<li><p>The first <code class="docutils literal notranslate"><span class="pre">pop</span></code> operation after a sequence of push operations is more
+expensive, as it involves popping all elements from stack <code class="docutils literal notranslate"><span class="pre">s1</span></code> and pushing
+them to stack <code class="docutils literal notranslate"><span class="pre">s2</span></code>. This costs <span class="math notranslate nohighlight">\(2n\)</span> units of time (one for each <code class="docutils literal notranslate"><span class="pre">pop</span></code> from
+<code class="docutils literal notranslate"><span class="pre">s1</span></code>, and one for each <code class="docutils literal notranslate"><span class="pre">push</span></code> to <code class="docutils literal notranslate"><span class="pre">s2</span></code>).</p></li>
+<li><p>However, once the elements are in stack <code class="docutils literal notranslate"><span class="pre">s2</span></code>, each subsequent <code class="docutils literal notranslate"><span class="pre">pop</span></code>
+operation only costs <span class="math notranslate nohighlight">\(1\)</span> unit of time, as it simply involves popping an
+element off the top of <code class="docutils literal notranslate"><span class="pre">s2</span></code>. Therefore, <span class="math notranslate nohighlight">\(n - 1\)</span> such pop operations cost
+<span class="math notranslate nohighlight">\(n - 1\)</span> units of time.</p></li>
+</ul>
+<p>So, the total cost of performing <span class="math notranslate nohighlight">\(n\)</span> push operations and <span class="math notranslate nohighlight">\(n\)</span> pop operations is</p>
+<div class="math notranslate nohighlight">
+\[
+\underbrace{n}_{\text{push to s1}} + \underbrace{2n}_{\text{pop from s1 and push to s2}} + \underbrace{n - 1}_{\text{pop from s2}} = \underbrace{4n - 1}_{\text{total time units}}
+\]</div>
+<p>However, we performed <span class="math notranslate nohighlight">\(2n\)</span> operations in total (each <code class="docutils literal notranslate"><span class="pre">push</span></code> and each <code class="docutils literal notranslate"><span class="pre">pop</span></code> is
+considered an operation), so the average cost per operation is</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\overbrace{4n - 1}^{\text{time units}}}{\underbrace{2n}_{\text{operations}}} = 2 - \frac{1}{2n}
+\]</div>
+<p>Note carefully the difference in units, the numerator is in time units, while
+the denominator is in number of operations. So the end result is in time units
+per operation, which coincides with the definition that on average, each
+operation takes <span class="math notranslate nohighlight">\(2 - \frac{1}{2n}\)</span> time units.</p>
+<p>So when you compute <span class="math notranslate nohighlight">\(\frac{(4n - 1)}{2n}\)</span>, you’re effectively asking: “On
+average, how many computational steps (time units) does each operation take?”
+This is the definition of amortized time complexity.</p>
+<p>As <span class="math notranslate nohighlight">\(n\)</span> approaches infinity (which is usually the case when we talk about time
+complexity), the <span class="math notranslate nohighlight">\(\frac{1}{2n}\)</span> term becomes negligible, and so the amortized
+time complexity is approximately <span class="math notranslate nohighlight">\(2\)</span>, which is a constant. Therefore, we say
+that the amortized time complexity is <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[
+\lim_{{n \to \infty}} \left(2 - \frac{1}{2n}\right) = 2
+\]</div>
+<p>or more concisely,</p>
+<div class="math notranslate nohighlight">
+\[
+\lim_{{n \to \infty}} \mathcal{O}\left(2 - \frac{1}{2n}\right) = \mathcal{O}(1)
+\]</div>
+<p>The concept of amortized analysis is used in algorithms to show that while an
+operation might be expensive in the worst case, over time, the average cost per
+operation is much lower.</p>
+<p>In this scenario, the expensive operation (pop operation when s2 is empty) does
+not happen very often - it only happens when all elements need to be transferred
+from <code class="docutils literal notranslate"><span class="pre">s1</span></code> to <code class="docutils literal notranslate"><span class="pre">s2</span></code>, which happens once for every <span class="math notranslate nohighlight">\(n\)</span> operations. Thus, the cost
+of this expensive operation is “amortized” over the <span class="math notranslate nohighlight">\(n\)</span> operations, resulting in
+an average cost of <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span> per operation.</p>
+</section>
+</div></section>
+</section>
+<section id="peek">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Peek</a><a class="headerlink" href="#peek" title="Link to this heading">#</a></h3>
+<p>Same as <code class="docutils literal notranslate"><span class="pre">pop</span></code>, except we don’t remove the element from <code class="docutils literal notranslate"><span class="pre">s2</span></code>.</p>
+</section>
+<section id="empty">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Empty</a><a class="headerlink" href="#empty" title="Link to this heading">#</a></h3>
+<p>Both <code class="docutils literal notranslate"><span class="pre">s1</span></code> and <code class="docutils literal notranslate"><span class="pre">s2</span></code> must be empty for the queue to be empty. The time and space
+complexity of the <code class="docutils literal notranslate"><span class="pre">empty</span></code> operation are both trivial, <span class="math notranslate nohighlight">\(\mathcal{O}(1)\)</span>.</p>
+</section>
+</section>
+<section id="references-and-further-readings">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://leetcode.com/problems/implement-queue-using-stacks/editorial/">https://leetcode.com/problems/implement-queue-using-stacks/editorial/</a></p></li>
+</ul>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="sequence" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">1</a><span class="fn-bracket">]</span></span>
+<p>A sequence is a series of operations that are performed on a data structure.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./dsa/stack/questions"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="155-min-stack.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Min Stack</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="344-reverse-string.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Reverse String</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem">Problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assumptions">Assumptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraints">Constraints</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-are-constraints-for">What are Constraints for?</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#test-cases">Test Cases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-cases">Edge Cases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-using-two-stacks">Solution (Using Two Stacks)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-using-list">Implementation using List</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-using-stack-class">Implementation using Stack Class</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#push">Push</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#code-breakdown">Code Breakdown</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#time-complexity">Time Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#space-complexity">Space Complexity</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pop">Pop</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Code Breakdown</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Time Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Space Complexity</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#armortized-analysis">Armortized Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peek">Peek</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#empty">Empty</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

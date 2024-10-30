@@ -1,0 +1,913 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Queue &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'dsa/queue/intro';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/dsa/queue/intro.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Concept" href="concept.html" />
+    <link rel="prev" title="Reverse String" href="../stack/questions/344-reverse-string.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../influential/linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../influential/linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/gil.html">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/is_vs_equality.html">Is vs Equality</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stack/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../stack/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../stack/questions/20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stack/questions/155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stack/questions/232-implement-queue-using-stacks.html">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../stack/questions/344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Queue</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Fdsa/queue/intro.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/dsa/queue/intro.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Queue</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="queue">
+<h1>Queue<a class="headerlink" href="#queue" title="Link to this heading">#</a></h1>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#table-of-contents" id="id1">Table of Contents</a></p></li>
+</ul>
+</nav>
+<section id="table-of-contents">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Table of Contents</a><a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="concept.html">Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dequeue.html">Double Ended Queue</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./dsa/queue"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../stack/questions/344-reverse-string.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Reverse String</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="concept.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Concept</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
