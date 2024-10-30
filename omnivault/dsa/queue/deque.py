@@ -8,6 +8,8 @@ from omnivault._types._generic import T
 # see `_collections_abc.py` for the definition of `MutableSequence`.
 # https://github.com/python/cpython/blob/3.7/Modules/_collectionsmodule.c
 
+# TODO: this is the "more formal" version, compare with from queue import Queue also
+
 
 class Deque(MutableSequence[T], Generic[T]):
     def __init__(self, iterable: Iterable[T] | None = None, maxlen: int | None = None):
@@ -41,12 +43,10 @@ class Deque(MutableSequence[T], Generic[T]):
         return len(self._data)
 
     @overload
-    def __getitem__(self, index: int) -> T:
-        ...
+    def __getitem__(self, index: int) -> T: ...
 
     @overload
-    def __getitem__(self, index: slice) -> List[T]:
-        ...
+    def __getitem__(self, index: slice) -> List[T]: ...
 
     def __getitem__(self, index: int | slice) -> T | List[T]:
         result = self._data[index]
@@ -55,12 +55,10 @@ class Deque(MutableSequence[T], Generic[T]):
         return result
 
     @overload
-    def __setitem__(self, index: int, value: T) -> None:
-        ...
+    def __setitem__(self, index: int, value: T) -> None: ...
 
     @overload
-    def __setitem__(self, index: slice, value: Iterable[T]) -> None:
-        ...
+    def __setitem__(self, index: slice, value: Iterable[T]) -> None: ...
 
     def __setitem__(self, index: int | slice, value: T | Iterable[T]) -> None:
         if isinstance(index, slice):
