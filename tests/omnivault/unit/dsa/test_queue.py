@@ -1,9 +1,8 @@
-from typing import cast, List, TypeVar
+from typing import List
+
 import pytest
 
-from omnivault.dsa.queue.concrete import QueueList, DeQueueList
-
-from omnivault._types._generic import T
+from omnivault.dsa.queue.concrete import DeQueueList, QueueList
 
 
 class TestQueueList:
@@ -62,7 +61,7 @@ class TestQueueList:
         result: List[int] = []
 
         for item in populated_queue:
-            result.append(item)
+            result.append(item)  # noqa: PERF402
 
         assert result == expected
         assert populated_queue.is_empty() is True  # Iterator should consume queue

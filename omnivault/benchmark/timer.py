@@ -13,7 +13,7 @@ import time
 import timeit
 import types
 from contextlib import contextmanager
-from typing import Any, Callable, Coroutine, Dict, Generator, Generic, Optional, Tuple, Type, TypeVar, cast, overload
+from typing import Any, Callable, Coroutine, Dict, Generator, Generic, Tuple, Type, TypeVar, cast, overload
 
 import psutil
 from pydantic import BaseModel
@@ -155,24 +155,24 @@ def timer(func: F) -> F:
 
 
 class TimedExecutionMetadata(BaseModel):
-    start_time: Optional[float] = None
-    start_datetime: Optional[str] = None
-    end_time: Optional[float] = None
-    end_datetime: Optional[str] = None
-    execution_time: Optional[float] = None
+    start_time: float | None = None
+    start_datetime: str | None = None
+    end_time: float | None = None
+    end_datetime: str | None = None
+    execution_time: float | None = None
     thread_id: int
     process_id: int
     initial_memory_usage: int
-    final_memory_usage: Optional[int] = None
-    memory_usage_change: Optional[int] = None
+    final_memory_usage: int | None = None
+    memory_usage_change: int | None = None
     initial_cpu_time: psutil._common.pcputimes
-    final_cpu_time: Optional[psutil._common.pcputimes]
+    final_cpu_time: psutil._common.pcputimes | None = None
     caller_function_name: str
     caller_module_name: str
     caller_module_path: str
-    caller_class_name: Optional[str] = None
-    caller_method_name: Optional[str] = None
-    exception: Optional[str] = None
+    caller_class_name: str | None = None
+    caller_method_name: str | None = None
+    exception: str | None = None
     tags: Dict[str, str] = {}
 
 
