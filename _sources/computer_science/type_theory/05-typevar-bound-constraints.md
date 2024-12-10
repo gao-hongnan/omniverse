@@ -57,7 +57,7 @@ def add(x: T, y: T) -> T:
     return x + y
 ```
 
-And note that running `mypy`[^3] above will yield two particular errors:
+And note that running `mypy`[^1] above will yield two particular errors:
 
 ```text
 4: error: Returning Any from function declared to return "T"  [no-any-return]
