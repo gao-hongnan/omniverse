@@ -1,9 +1,13 @@
 # Application 1: Predicting Iris Species and Deploying with Docker using Streamlit (Revisit my common-utils)
 
+```{contents}
+:local:
+```
+
 In this section, we will use the
-[**Iris Dataset**](https://en.wikipedia.org/wiki/Iris_flower_data_set) to
-make a simple machine learning model to predict the species of an iris flower given
-the sepal length, sepal width, petal length, and petal width.
+[**Iris Dataset**](https://en.wikipedia.org/wiki/Iris_flower_data_set) to make a
+simple machine learning model to predict the species of an iris flower given the
+sepal length, sepal width, petal length, and petal width.
 
 We will then containerize the model using Docker and deploy it using
 [**Streamlit**](https://streamlit.io/).

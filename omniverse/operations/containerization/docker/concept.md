@@ -1,5 +1,9 @@
 # Docker
 
+```{contents}
+:local:
+```
+
 ## Learning Objectives
 
 1. Understand the significance and advantages of Docker. This involves
@@ -134,8 +138,8 @@ packaging and delivery in units called
     and resource usage control with
     **[cgroups](https://man7.org/linux/man-pages/man7/cgroups.7.html)**.
 
-    This is crucial in ML, where dependencies may vary widely for different
-    models.
+    This is crucial in ML, where _dependencies_ (_services_) may vary widely for
+    different models.
 
     Dependencies are software components required for an application to
     function. For example, to serve a deep learning model that predicts house
@@ -192,8 +196,8 @@ packaging and delivery in units called
    **[Docker Swarm](https://docs.docker.com/engine/swarm/)** for managing and
    scaling container deployments.
 
-We dive into the two most important concepts, **containers** and **images** in
-the next section.
+We look at the two most important concepts, **containers** and **images** in the
+next section.
 
 #### Containers
 
@@ -254,10 +258,13 @@ Before we install Docker, let's take a look at how the container engine works on
 top our operating system, which can be our local hardware or something managed
 on the cloud.
 
-<figure markdown>
-  ![Image title](../../assets/docker-architecture.png){ width="1000" }
-  <figcaption>Docker Architecture. Image Credit: [Madewithml](https://madewithml.com/courses/mlops/docker/)</figcaption>
-</figure>
+```{figure} ../assets/docker-architecture.png
+---
+name: docker-architecture
+---
+
+Docker Architecture. Image Credit: [Madewithml](https://madewithml.com/courses/mlops/docker/)
+```
 
 The image can be further broken down:
 
@@ -292,7 +299,7 @@ In this diagram:
 -   Docker images can be pushed to a Docker Registry and pulled from there.
 -   Docker containers can mount Docker volumes and connect to Docker networks.
 
-```mermaid
+```{mermaid}
 graph TB
 
   subgraph Docker_Client["Docker Client"]
@@ -599,16 +606,15 @@ where:
 
 Some other useful commands include:
 
-| Flag                        | Description                                                                                                                                                                                                 |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--build-arg <arg>=<value>` | Specify build-time variables. Example: if Dockerfile contains `ARG version`, use `--build-arg version=1.0.0` to set `version` to `1.0.0`.                                                                   |
-| `--no-cache`                | Disable the Docker build cache. Without this flag, Docker will reuse intermediate images from previous builds to speed up the build.                                                                        |
-| `--rm=true` or `--rm=false` | Determine whether Docker should automatically remove intermediate containers after a successful build. Default is `true`.                                                                                   |
+| Flag                        | Description                                                                                                                                                                                           |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--build-arg <arg>=<value>` | Specify build-time variables. Example: if Dockerfile contains `ARG version`, use `--build-arg version=1.0.0` to set `version` to `1.0.0`.                                                             |
+| `--no-cache`                | Disable the Docker build cache. Without this flag, Docker will reuse intermediate images from previous builds to speed up the build.                                                                  |
+| `--rm=true` or `--rm=false` | Determine whether Docker should automatically remove intermediate containers after a successful build. Default is `true`.                                                                             |
 | `--platform`                | Specify the platform for which the image is built. Example: `--platform linux/arm64` to build an image for Linux on ARM. This is immensely useful when building multi-architecture images[^platform]. |
 
-!!! info "More Flags"
-      For a full list of available flags, you can refer to the
-      [Docker documentation](https://docs.docker.com/engine/reference/commandline/build/).
+!!! info "More Flags" For a full list of available flags, you can refer to the
+[Docker documentation](https://docs.docker.com/engine/reference/commandline/build/).
 
       Alternatively, simple run:
 
@@ -1082,10 +1088,9 @@ See my instructions in
 | `VOLUME`     | Creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers.                                    | `VOLUME /var/lib/mysql` creates a mount point at `/var/lib/mysql`.                                                                                                                      |
 | `ENTRYPOINT` | Allows you to configure a container that will run as an executable.                                                                                                       | `ENTRYPOINT ["python", "app.py"]` runs `app.py` when the container starts.                                                                                                              |
 
-!!! tip "Dockerfile Commands"
-      You can find more information about Dockerfile
-      commands in the
-      [Dockerfile Reference](https://docs.docker.com/engine/reference/builder/).
+!!! tip "Dockerfile Commands" You can find more information about Dockerfile
+commands in the
+[Dockerfile Reference](https://docs.docker.com/engine/reference/builder/).
 
 ### CMD vs ENTRYPOINT
 
@@ -1127,7 +1132,7 @@ or if you wish to change the learning rate, you could run:
 Now, let's say you want to containerize this script. You could write a
 Dockerfile like this:
 
-```Dockerfile title="Dockerfile" linenums="1"
+```Dockerfile
 FROM python:3.9-slim
 
 WORKDIR /app
@@ -1162,10 +1167,9 @@ by specifying a new command when running the container.
    python main.py train --config '{"epochs": 10, "lr": 0.001}' --in-file data.csv
 ```
 
-!!! note "Override with other commands"
-      You can also override the default
-      command with other functions such as `predict` in the script. For example, you
-      can run:
+!!! note "Override with other commands" You can also override the default
+command with other functions such as `predict` in the script. For example, you
+can run:
 
       ```bash title="Override CMD"
       ❯ docker run -t <IMAGE_NAME>:<IMAGE_TAG> \

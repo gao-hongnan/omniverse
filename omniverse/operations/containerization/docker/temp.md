@@ -716,34 +716,34 @@ setups.
 
 ### Follow up: similar to docker-compose
 
-```docker-compose
-version: '3'
+```yaml
+version: "3"
 
 services:
-  db:
-    image: postgres
-    networks:
-      - my-network
+    db:
+        image: postgres
+        networks:
+            - my-network
 
-  api:
-    image: my-flask-app
-    networks:
-      - my-network
-    depends_on:
-      - db
+    api:
+        image: my-flask-app
+        networks:
+            - my-network
+        depends_on:
+            - db
 
-  web:
-    image: nginx
-    ports:
-      - "80:80"
-    networks:
-      - my-network
-    depends_on:
-      - api
+    web:
+        image: nginx
+        ports:
+            - "80:80"
+        networks:
+            - my-network
+        depends_on:
+            - api
 
 networks:
-  my-network:
-    driver: bridge
+    my-network:
+        driver: bridge
 ```
 
 ### Follow up: when do you need specify --network=host?
