@@ -90,15 +90,19 @@ type variables to a specific set of types that support our desired operations
 ## Constraining Type Variable
 
 **Constraints** allow you to specify a list of explicit types that a type
-variable (`TypeVar`) can take. This is akin to saying that the type variable can
-represent any one of these specified types, and no others.
+variable (`TypeVar`) can take. This means the type variable can represent any
+one of these specified types, and no others.
 
 -   **Syntax**: `T = TypeVar("T", Type1, Type2, ...)`
 -   **Meaning**: The type variable `T` can be any one of `Type1`, `Type2`, etc.
 -   **Concrete**: `T = TypeVar("T", int, float)` means `T` can only be `int` or
     `float`.
 
-### Revisiting Add Example
+To be more formal, a constrained type variable is a type variable $T$ bound to a
+finite set of types $\mathcal{S} = \{T_1, T_2, \ldots, T_n\}$ such that $T$ can
+only be instantiated with types from $\mathcal{S}$. So if one declares
+`T = TypeVar("T", T_1, T_2, ...)`, then $T$ can only be bound to a type
+$T_i \in \mathcal{S} = \{T_1, T_2, \ldots, T_n\}$.
 
 In our `add` example, since we only want the type variable `T` to take on 4
 specific types, we can thus re-write the type variable as such:
@@ -128,8 +132,9 @@ This is usually defined as
 
 What does this even mean? Type binding is the association of a type variable
 (like `T`) with a **concrete** type (like `int`). We can intuitively think of
-this action as a _substitution_ of the type variable with a concrete type - we
-replace every occurrence of `T` with the concrete (actual) type.
+this action as a _substitution_ (or _mapping_) of the type variable with a
+concrete type - we replace every occurrence of `T` with the concrete (actual)
+type.
 
 #### Type Variables And Substitution
 
@@ -145,7 +150,7 @@ In line 6, we declared `T` as
     substituted with the same type.
 
 Since type binding happens at **_function call time (runtime)_**, then the
-process is like:
+process is like follows (`T` and $T$ are interchangeable):
 
 -   Say we invoke the function `add(a=x, b=y)` where `x` and `y` are of some
     type.
@@ -156,8 +161,8 @@ process is like:
     -   $T_y$ must be one of the types defined in the set
         `{int, float, NDArray[np.float64]}`.
     -   $T_x$ and $T_y$ must be the same type due to both have same type
-        variable `T`.
-    -   Then `T` is mapped (or bound) to $T_x$ ($T \mapsto T_x$).
+        variable $T$.
+    -   Then $T$ is mapped (or bound) to $T_x$ ($T \mapsto T_x$).
 
 #### Binding Time And Scope
 
@@ -167,20 +172,20 @@ Consider the following two calls:
 def add(a: T, b: T) -> T:
     return a + b
 
-z1 = add(1, 2) # T ↦ int
+z1 = add(2, 5) # T ↦ int
 z2 = add(1.0, 2.0) # T ↦ float
 ```
 
 Each function call creates a new binding scope:
 
--   The binding `T ↦ int` is created when `z1 = add(1, 2)` is called.
-    -   Firstly, `type(1) = int` and since `int` is one of the types defined in
-        the set `{int, float, NDArray[np.float64], str}`, then the binding is
-        created.
-    -   Then `T` is bound to `int`.
-    -   Then we see that `type(2) = int` matches `type(1)` (also `T`).
-    -   Return type is therefore valid as `int`.
--   The binding `T ↦ float` is created when `z2 = add(1.0, 2.0)` is called.
+For the call `z1 = add(2, 5)`:
+
+1. Let $x_1 = 2$ and $x_2 = 5$ be the input arguments
+2. Given $\text{type}(x_1) = \text{int} \in \mathcal{S}$ where
+   $\mathcal{S} = \{\text{int}, \text{float}, \text{NDArray}[\text{np.float64}], \text{str}\}$
+3. Create binding $T \mapsto \text{int}$
+4. Verify $\text{type}(x_2) = \text{int} = T$
+5. Therefore return type $\text{type}(z_1) = T = \text{int}$ is valid
 
 An invalid binding would be:
 
@@ -308,11 +313,11 @@ for each approach above, my guess is:
 
 1. Union types:
 
-    1. For each argument $x: \text{Union}[T_1, T_2, ...]$, the type checker will
-       check if $x$ is of any of the types in the Union.
-    2. If $x$ is of any of the types in the Union, then the type checker will
+    1. For each argument `x`, the type checker will check if `x` is of any of
+       the types in the union `Union[T_1, T_2, ...]`.
+    2. If `x` is of any of the types in the union, then the type checker will
        proceed to check the next argument.
-    3. If $x$ is not of any of the types in the Union, then the type checker
+    3. If `x` is not of any of the types in the union, then the type checker
        will raise an error.
 
 2. Constrained TypeVar:
@@ -332,10 +337,8 @@ type variable can represent any type that is a subtype of the specified bound.
 -   **Syntax**: `T = TypeVar("T", bound=SuperType)`
 -   **Meaning**: The type variable `T` can be any type that is a subtype of
     `SuperType` (including `SuperType` itself).
-
-The excerpt discusses how to enforce type constraints in Python using the
-`TypeVar` function from the `typing` module, focusing on the concept of an upper
-bound. Here's a more structured explanation for clarity:
+-   **Concrete**: `T = TypeVar("T", bound=BaseModel)` means `T` can be any type
+    that is a subclass of `BaseModel` (from `pydantic`).
 
 ### Defining Type Variables with Upper Bounds
 
@@ -343,10 +346,30 @@ In Python's type hinting system, you can define a type variable that restricts
 which types can be used in place of it by specifying an upper bound. This is
 done using the `bound=<type>` argument in the `TypeVar` function. The key point
 is that any type that replaces this type variable must be a subtype of the
-specified boundary type. It's important to note that the boundary type itself
-cannot be another type variable or a parameterized type.
+specified boundary type.
 
-### Example: Ensuring Type Safety with `Sized`
+It's important to note that the boundary type itself cannot be another type
+variable or a parameterized type. For example:
+
+```python
+# NOT ALLOWED!
+T1 = TypeVar("T1")
+T2 = TypeVar("T2", bound=T1)        # Cannot use T1 as a bound
+```
+
+You also cannot use a parameterized generic type as a bound. For example:
+
+```python
+# This is NOT allowed
+from typing import List
+T = TypeVar('T', bound=List[int])   # Error! Can't use List[int] as a bound
+
+# This is NOT allowed either
+S = TypeVar('S')
+T = TypeVar('T', bound=List[S])     # Error! Can't use parameterized List as bound
+```
+
+### A Case Study On `Sized`
 
 Consider the `Sized` protocol from Python's `typing` module, which represents
 any type that supports the `len()` function. We define a type variable `ST` with
