@@ -1,3 +1,4 @@
+<!-- _templates/html.html -->
 
 <!DOCTYPE html>
 
@@ -77,6 +78,8 @@
                 gtag('config', 'G-MYW5YKC2WF');
             </script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'computer_science/type_theory/05-typevar-bound-constraints';</script>
     <link rel="canonical" href="https://www.gaohongnan.com/computer_science/type_theory/05-typevar-bound-constraints.html" />
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -806,14 +809,23 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-motivation-the-problem-with-unconstrained-type-variable">Some Motivation, The Problem With Unconstrained Type Variable</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraining-type-variable">Constraining Type Variable</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#revisiting-add-example">Revisiting Add Example</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#type-binding">Type Binding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#type-variables-and-substitution">Type Variables And Substitution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-time-and-scope">Binding Time And Scope</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type">Union Type</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#constrained-typevar-approach">Constrained TypeVar Approach</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upper-bounding-type-variables">Upper Bounding Type Variables</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-type-variables-with-upper-bounds">Defining Type Variables with Upper Bounds</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-ensuring-type-safety-with-sized">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-case-study-on-sized">A Case Study On <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bounding-and-semantic-clarity">Bounding and Semantic Clarity</a></li>
 </ul>
 </li>
@@ -839,135 +851,245 @@
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#constraining-type-variable" id="id3">Constraining Type Variable</a></p>
+<li><p><a class="reference internal" href="#some-motivation-the-problem-with-unconstrained-type-variable" id="id5">Some Motivation, The Problem With Unconstrained Type Variable</a></p></li>
+<li><p><a class="reference internal" href="#constraining-type-variable" id="id6">Constraining Type Variable</a></p>
 <ul>
-<li><p><a class="reference internal" href="#revisiting-add-example" id="id4">Revisiting Add Example</a></p></li>
-<li><p><a class="reference internal" href="#union-type-versus-constrained-type-variable" id="id5">Union Type versus Constrained Type Variable</a></p></li>
+<li><p><a class="reference internal" href="#type-binding" id="id7">Type Binding</a></p>
+<ul>
+<li><p><a class="reference internal" href="#type-variables-and-substitution" id="id8">Type Variables And Substitution</a></p></li>
+<li><p><a class="reference internal" href="#binding-time-and-scope" id="id9">Binding Time And Scope</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#upper-bounding-type-variables" id="id6">Upper Bounding Type Variables</a></p>
+<li><p><a class="reference internal" href="#union-type-versus-constrained-type-variable" id="id10">Union Type versus Constrained Type Variable</a></p>
 <ul>
-<li><p><a class="reference internal" href="#defining-type-variables-with-upper-bounds" id="id7">Defining Type Variables with Upper Bounds</a></p></li>
-<li><p><a class="reference internal" href="#example-ensuring-type-safety-with-sized" id="id8">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></p></li>
-<li><p><a class="reference internal" href="#bounding-and-semantic-clarity" id="id9">Bounding and Semantic Clarity</a></p></li>
+<li><p><a class="reference internal" href="#union-type" id="id11">Union Type</a></p></li>
+<li><p><a class="reference internal" href="#constrained-typevar-approach" id="id12">Constrained TypeVar Approach</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#bound-versus-constraints" id="id10">Bound versus Constraints</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id11">References and Further Readings</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#upper-bounding-type-variables" id="id13">Upper Bounding Type Variables</a></p>
+<ul>
+<li><p><a class="reference internal" href="#defining-type-variables-with-upper-bounds" id="id14">Defining Type Variables with Upper Bounds</a></p></li>
+<li><p><a class="reference internal" href="#a-case-study-on-sized" id="id15">A Case Study On <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></p></li>
+<li><p><a class="reference internal" href="#bounding-and-semantic-clarity" id="id16">Bounding and Semantic Clarity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#bound-versus-constraints" id="id17">Bound versus Constraints</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id18">References and Further Readings</a></p></li>
 </ul>
 </nav>
-<p>If you recall from
-<a class="reference internal" href="04-generics.html#computer-science-type-theory-04-generics-generic-functions"><span class="std std-ref">Generic Functions</span></a> section, we
-made up a simple example on <code class="docutils literal notranslate"><span class="pre">add</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<section id="some-motivation-the-problem-with-unconstrained-type-variable">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Some Motivation, The Problem With Unconstrained Type Variable</a><a class="headerlink" href="#some-motivation-the-problem-with-unconstrained-type-variable" title="Link to this heading">#</a></h2>
+<p>Let’s first examine why unconstrained type variables can lead to issues, a
+simple <code class="docutils literal notranslate"><span class="pre">add</span></code> function that adds two arguments together:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 </pre></div>
 </div>
-<p>And note that running mypy above will yield two particular errors:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Returning<span class="w"> </span>Any<span class="w"> </span>from<span class="w"> </span><span class="k">function</span><span class="w"> </span>declared<span class="w"> </span>to<span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s2">&quot;T&quot;</span><span class="w">  </span><span class="o">[</span>no-any-return<span class="o">]</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
-<span class="w">        </span>^~~~~~~~~~~~
-<span class="m">4</span>:<span class="w"> </span>error:<span class="w"> </span>Unsupported<span class="w"> </span>left<span class="w"> </span>operand<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>+<span class="w"> </span><span class="o">(</span><span class="s2">&quot;T&quot;</span><span class="o">)</span><span class="w">  </span><span class="o">[</span>operator<span class="o">]</span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y
-<span class="w">               </span>^~~~~
+<p>And note that running <code class="docutils literal notranslate"><span class="pre">mypy</span></code><a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> above will yield two particular errors:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>4: error: Returning Any from function declared to return &quot;T&quot;  [no-any-return]
+        return x + y
+        ^~~~~~~~~~~~
+4: error: Unsupported left operand type for + (&quot;T&quot;)  [operator]
+        return x + y
+               ^~~~~
 </pre></div>
 </div>
-<p>As a recap, this is because <code class="docutils literal notranslate"><span class="pre">T</span></code> can represent literally any type, and not all
-type can do <code class="docutils literal notranslate"><span class="pre">add</span></code>. For instance, two dictionaries cannot be added together
-because their <code class="docutils literal notranslate"><span class="pre">__add__</span></code> is not well defined. This error that <code class="docutils literal notranslate"><span class="pre">mypy</span></code> raised
-forces you to rethink your code design - in that what types of type the type
-variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can take on. Assume for the sake of simplicity, that your program’s
-<code class="docutils literal notranslate"><span class="pre">add</span></code> would only operate on a few types:</p>
+<p>These errors occur because <code class="docutils literal notranslate"><span class="pre">TypeVar(&quot;T&quot;)</span></code> is <em><strong>unconstrained</strong></em>, and this
+<em>means</em> <code class="docutils literal notranslate"><span class="pre">T</span></code> can represent literally any type, and not all type can do <code class="docutils literal notranslate"><span class="pre">add</span></code>. Why
+so? Because for <code class="docutils literal notranslate"><span class="pre">+</span></code> operator, the underlying object must implement the <code class="docutils literal notranslate"><span class="pre">__add__</span></code>
+method. For instance, two dictionaries cannot be added together because their
+<code class="docutils literal notranslate"><span class="pre">__add__</span></code> is not well defined. This error that <code class="docutils literal notranslate"><span class="pre">mypy</span></code> raised forces you to
+rethink your code design - in that what types of type the type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can
+take on. Assume for the sake of simplicity, that your program’s <code class="docutils literal notranslate"><span class="pre">add</span></code> would only
+operate on a few types:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></li>
 </ul>
-<p>And if we can somehow tell our type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on any one of the 3
-types above, then our job is done. This is where we would use the
-<strong>constraints</strong>.</p>
+<p>And if we can somehow tell our type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on any one of the 4
+types above, then our job is done. This motivates the need for <em>constraining</em>
+type variables to a specific set of types that support our desired operations
+(i.e. <code class="docutils literal notranslate"><span class="pre">+</span></code> operator).</p>
+</section>
 <section id="constraining-type-variable">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Constraining Type Variable</a><a class="headerlink" href="#constraining-type-variable" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Constraining Type Variable</a><a class="headerlink" href="#constraining-type-variable" title="Link to this heading">#</a></h2>
 <p><strong>Constraints</strong> allow you to specify a list of explicit types that a type
-variable (<code class="docutils literal notranslate"><span class="pre">TypeVar</span></code>) can take. This is akin to saying that the type variable can
-represent any one of these specified types, and no others.</p>
+variable (<code class="docutils literal notranslate"><span class="pre">TypeVar</span></code>) can take. This means the type variable can represent any
+one of these specified types, and no others.</p>
 <ul class="simple">
-<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar('T',</span> <span class="pre">Type1,</span> <span class="pre">Type2,</span> <span class="pre">...)</span></code></p></li>
+<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">Type1,</span> <span class="pre">Type2,</span> <span class="pre">...)</span></code></p></li>
 <li><p><strong>Meaning</strong>: The type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can be any one of <code class="docutils literal notranslate"><span class="pre">Type1</span></code>, <code class="docutils literal notranslate"><span class="pre">Type2</span></code>, etc.</p></li>
+<li><p><strong>Concrete</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">int,</span> <span class="pre">float)</span></code> means <code class="docutils literal notranslate"><span class="pre">T</span></code> can only be <code class="docutils literal notranslate"><span class="pre">int</span></code> or
+<code class="docutils literal notranslate"><span class="pre">float</span></code>.</p></li>
 </ul>
-<section id="revisiting-add-example">
-<h3><a class="toc-backref" href="#id4" role="doc-backlink">Revisiting Add Example</a><a class="headerlink" href="#revisiting-add-example" title="Link to this heading">#</a></h3>
-<p>In our <code class="docutils literal notranslate"><span class="pre">add</span></code> example, since we only want the type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on 3, and
-only 3 types, we can thus re-write the type variable as such:</p>
+<p>To be more formal, a constrained type variable is a type variable <span class="math notranslate nohighlight">\(T\)</span> bound to a
+finite set of types <span class="math notranslate nohighlight">\(\mathcal{S} = \{T_1, T_2, \ldots, T_n\}\)</span> such that <span class="math notranslate nohighlight">\(T\)</span> can
+only be instantiated with types from <span class="math notranslate nohighlight">\(\mathcal{S}\)</span>. So if one declares
+<code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">T_1,</span> <span class="pre">T_2,</span> <span class="pre">...)</span></code>, then <span class="math notranslate nohighlight">\(T\)</span> can only be bound to a type
+<span class="math notranslate nohighlight">\(T_i \in \mathcal{S} = \{T_1, T_2, \ldots, T_n\}\)</span>.</p>
+<p>In our <code class="docutils literal notranslate"><span class="pre">add</span></code> example, since we only want the type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on 4
+specific types, we can thus re-write the type variable as such:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
 <span class="linenos">2</span>
-<span class="linenos">3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="linenos">4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="linenos">3</span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="linenos">4</span><span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="linenos">5</span>
+<span class="linenos">6</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="linenos">9</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div>
 </div>
 </div>
 <p>Then running <code class="docutils literal notranslate"><span class="pre">mypy</span></code> again, will yield no errors, because the static type checker
-is intelligent enough to know that <code class="docutils literal notranslate"><span class="pre">T</span></code> can only take on <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code> or
-<code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code>, all of which has the add operator well defined.</p>
+is intelligent enough to know that <code class="docutils literal notranslate"><span class="pre">T</span></code> can only take on <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code>, all of which has the add operator well defined.</p>
+<section id="type-binding">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Type Binding</a><a class="headerlink" href="#type-binding" title="Link to this heading">#</a></h3>
+<p>When using a constrained <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code>, the type checker ensures that within a
+<strong>single usage of the function</strong>, all occurrences of <code class="docutils literal notranslate"><span class="pre">T</span></code> must be the same type.
+This is usually defined as
+<a class="reference external" href="https://courses.cs.vt.edu/cs3304/Fall16/meng/lecture_notes/cs3304-9.pdf"><strong>Type Binding</strong></a>.</p>
+<p>What does this even mean? Type binding is the association of a type variable
+(like <code class="docutils literal notranslate"><span class="pre">T</span></code>) with a <strong>concrete</strong> type (like <code class="docutils literal notranslate"><span class="pre">int</span></code>). We can intuitively think of
+this action as a <em>substitution</em> (or <em>mapping</em>) of the type variable with a
+concrete type - we replace every occurrence of <code class="docutils literal notranslate"><span class="pre">T</span></code> with the concrete (actual)
+type.</p>
+<section id="type-variables-and-substitution">
+<h4><a class="toc-backref" href="#id8" role="doc-backlink">Type Variables And Substitution</a><a class="headerlink" href="#type-variables-and-substitution" title="Link to this heading">#</a></h4>
+<p>Let’s use the earlier example of <code class="docutils literal notranslate"><span class="pre">add</span></code> function, and see how type binding works.</p>
+<p>In line 6, we declared <code class="docutils literal notranslate"><span class="pre">T</span></code> as
+<code class="docutils literal notranslate"><span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">int,</span> <span class="pre">float,</span> <span class="pre">NDArray[np.float64],</span> <span class="pre">str)</span></code>. This means:</p>
+<ul class="simple">
+<li><p>There <em>exists</em> a type variable <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> can only be <em>substituted</em> from the set of types
+<code class="docutils literal notranslate"><span class="pre">{int,</span> <span class="pre">float,</span> <span class="pre">NDArray[np.float64],</span> <span class="pre">str}</span></code>.</p></li>
+<li><p><strong><em>All</em></strong> occurences of <code class="docutils literal notranslate"><span class="pre">T</span></code> in a single <strong>function invocation</strong> must be
+substituted with the same type.</p></li>
+</ul>
+<p>Since type binding happens at <strong><em>function call time (runtime)</em></strong>, then the
+process is like follows (<code class="docutils literal notranslate"><span class="pre">T</span></code> and <span class="math notranslate nohighlight">\(T\)</span> are interchangeable):</p>
+<ul class="simple">
+<li><p>Say we invoke the function <code class="docutils literal notranslate"><span class="pre">add(a=x,</span> <span class="pre">b=y)</span></code> where <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are of some
+type.</p></li>
+<li><p>Let <code class="docutils literal notranslate"><span class="pre">type(x)</span></code> be denoted as <span class="math notranslate nohighlight">\(T_x\)</span> and <code class="docutils literal notranslate"><span class="pre">type(y)</span></code> be denoted as <span class="math notranslate nohighlight">\(T_y\)</span>.</p></li>
+<li><p>For the checker to pass, we must abide by:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(T_x\)</span> must be one of the types defined in the set
+<code class="docutils literal notranslate"><span class="pre">{int,</span> <span class="pre">float,</span> <span class="pre">NDArray[np.float64]}</span></code>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_y\)</span> must be one of the types defined in the set
+<code class="docutils literal notranslate"><span class="pre">{int,</span> <span class="pre">float,</span> <span class="pre">NDArray[np.float64]}</span></code>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(T_x\)</span> and <span class="math notranslate nohighlight">\(T_y\)</span> must be the same type due to both have same type
+variable <span class="math notranslate nohighlight">\(T\)</span>.</p></li>
+<li><p>Then <span class="math notranslate nohighlight">\(T\)</span> is mapped (or bound) to <span class="math notranslate nohighlight">\(T_x\)</span> (<span class="math notranslate nohighlight">\(T \mapsto T_x\)</span>).</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="binding-time-and-scope">
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Binding Time And Scope</a><a class="headerlink" href="#binding-time-and-scope" title="Link to this heading">#</a></h4>
+<p>Consider the following two calls:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+
+<span class="n">z1</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="c1"># T ↦ int</span>
+<span class="n">z2</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span> <span class="c1"># T ↦ float</span>
+</pre></div>
+</div>
+<p>Each function call creates a new binding scope:</p>
+<p>For the call <code class="docutils literal notranslate"><span class="pre">z1</span> <span class="pre">=</span> <span class="pre">add(2,</span> <span class="pre">5)</span></code>:</p>
+<ol class="arabic simple">
+<li><p>Let <span class="math notranslate nohighlight">\(x_1 = 2\)</span> and <span class="math notranslate nohighlight">\(x_2 = 5\)</span> be the input arguments</p></li>
+<li><p>Given <span class="math notranslate nohighlight">\(\text{type}(x_1) = \text{int} \in \mathcal{S}\)</span> where
+<span class="math notranslate nohighlight">\(\mathcal{S} = \{\text{int}, \text{float}, \text{NDArray}[\text{np.float64}], \text{str}\}\)</span></p></li>
+<li><p>Create binding <span class="math notranslate nohighlight">\(T \mapsto \text{int}\)</span></p></li>
+<li><p>Verify <span class="math notranslate nohighlight">\(\text{type}(x_2) = \text{int} = T\)</span></p></li>
+<li><p>Therefore return type <span class="math notranslate nohighlight">\(\text{type}(z_1) = T = \text{int}\)</span> is valid</p></li>
+</ol>
+<p>An invalid binding would be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z3</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is because:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">type(1)</span> <span class="pre">=</span> <span class="pre">int</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">int</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type(&quot;3&quot;)</span> <span class="pre">=</span> <span class="pre">str</span> <span class="pre">!=</span> <span class="pre">int</span> <span class="pre">!=</span> <span class="pre">T</span></code></p></li>
+<li><p>Type Error ensues. Mypy will also catch this.</p></li>
+</ul>
+</section>
 </section>
 <section id="union-type-versus-constrained-type-variable">
-<h3><a class="toc-backref" href="#id5" role="doc-backlink">Union Type versus Constrained Type Variable</a><a class="headerlink" href="#union-type-versus-constrained-type-variable" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Union Type versus Constrained Type Variable</a><a class="headerlink" href="#union-type-versus-constrained-type-variable" title="Link to this heading">#</a></h3>
 <p>The definition of constrained type variable may not be immediately clear on why
-we cannot just use an <code class="docutils literal notranslate"><span class="pre">Union</span></code> type.</p>
+we cannot just use an <code class="docutils literal notranslate"><span class="pre">Union</span></code> type. After all, <code class="docutils literal notranslate"><span class="pre">Union</span></code> type is a type that can
+take on any one of the types defined in the set
+<code class="docutils literal notranslate"><span class="pre">{int,</span> <span class="pre">float,</span> <span class="pre">str,</span> <span class="pre">NDArray[np.float64]}</span></code>. Why bother to purposely specify a
+constrained type variable? As we shall see shortly, using <code class="docutils literal notranslate"><span class="pre">Union</span></code> type is a
+loose constraint, and it does not enforce the type variable to be of the same
+type (i.e. within a function scope, <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> must be of the same type can be
+violated).</p>
+<section id="union-type">
+<h4><a class="toc-backref" href="#id11" role="doc-backlink">Union Type</a><a class="headerlink" href="#union-type" title="Link to this heading">#</a></h4>
 <p>Consider the following union type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
-<span class="linenos"> 4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span>
-<span class="linenos"> 7</span><span class="n">add_two_int</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-<span class="linenos"> 8</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_two_int</span><span class="p">)</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="n">add_int_and_float</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">9.99</span><span class="p">)</span>
-<span class="linenos">11</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_int_and_float</span><span class="p">)</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="n">add_int_and_ndarray</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
-<span class="linenos">14</span><span class="n">pprint</span><span class="p">(</span><span class="n">add_int_and_ndarray</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="linenos">2</span><span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="linenos">3</span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]]</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
+<span class="linenos">8</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">7</span>
-</pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">12.99</span>
-</pre>
-</div><div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="color: #800080; text-decoration-color: #800080; font-weight: bold">array</span><span style="font-weight: bold">([</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">4</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">6</span><span style="font-weight: bold">])</span>
-</pre>
-</div></div>
 </div>
-<p>With <code class="docutils literal notranslate"><span class="pre">Union</span></code>, the operation we use between arguments (i.e. <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>) is
-supported by any <em>permutation order</em><a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. As we can see, we added two <code class="docutils literal notranslate"><span class="pre">int</span></code>,
-added <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">float</span></code>, and lastly, added <code class="docutils literal notranslate"><span class="pre">int</span></code> and an <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>! Is this
-really what we want? Do we really want to allow <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">NDArray</span></code> to be added
-together freely (they can, but some may regard it as not safe as it might lead
-to undesirable consequences via broadcasting). Consequently, there will be no
-error raised.</p>
-<p>Furthermore, what if your programming logic changes and now you only want to add
-<code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">str</span></code>. This will be problematic because if we use union type, then it
-has potential of adding an <code class="docutils literal notranslate"><span class="pre">int</span></code> and a <code class="docutils literal notranslate"><span class="pre">str</span></code>, which is likely lead a type error
-saying unsupported operand type for the add operator between <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">str</span></code>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
-<span class="linenos">2</span>
-<span class="linenos">3</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
-<span class="linenos">4</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<p>This type signature allows any combination of types within the Union.</p>
+<ul class="simple">
+<li><p>For any arguments <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>:
+<span class="math notranslate nohighlight">\(\text{type}(a), \text{type}(b) \in \{\text{int}, \text{float}, \text{NDArray}[\text{np.float64}]\}\)</span></p></li>
+<li><p>No constraint exists requiring <span class="math notranslate nohighlight">\(\text{type}(a) = \text{type}(b)\)</span></p></li>
+</ul>
+<p>This leads to potentially unsafe operations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result1</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>                     <span class="c1"># Works as expected: 7</span>
+<span class="n">result2</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">9.99</span><span class="p">)</span>                  <span class="c1"># Type mixing: 12.99</span>
+<span class="n">result3</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>   <span class="c1"># Implicit broadcasting: array([4, 5, 6])</span>
+<span class="n">result4</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">)</span>                   <span class="c1"># Type mixing: error!</span>
 </pre></div>
 </div>
-</div>
+<p>The Union type permits all these operations because it only enforces that each
+argument independently belongs to the set of allowed types.</p>
+<p>More verbosely, with <code class="docutils literal notranslate"><span class="pre">Union</span></code>, the operation we use between arguments (i.e. <code class="docutils literal notranslate"><span class="pre">a</span></code>
+and <code class="docutils literal notranslate"><span class="pre">b</span></code>) is supported by any <em>permutation order</em><a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. As we can see, we added
+two <code class="docutils literal notranslate"><span class="pre">int</span></code>, added <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">float</span></code>, added <code class="docutils literal notranslate"><span class="pre">int</span></code> and an <code class="docutils literal notranslate"><span class="pre">NDArray</span></code>, and lastly,
+added <code class="docutils literal notranslate"><span class="pre">int</span></code> and a <code class="docutils literal notranslate"><span class="pre">str</span></code> (which is an error)! Is this really what we want? Do we
+really want to allow <code class="docutils literal notranslate"><span class="pre">int</span></code> and <code class="docutils literal notranslate"><span class="pre">NDArray</span></code> to be added together freely (they can,
+but some may regard it as not safe as it might lead to undesirable consequences
+via broadcasting). Consequently, there will be no error raised for certain
+operations that are unsafe. We fear not those that raises an error, but those
+that does not (silent errors).</p>
+<p>Furthermore, let’s consider a scenario where you want to restrict the <code class="docutils literal notranslate"><span class="pre">add</span></code>
+function to only work with <code class="docutils literal notranslate"><span class="pre">int</span></code> or <code class="docutils literal notranslate"><span class="pre">str</span></code> types. Using a <code class="docutils literal notranslate"><span class="pre">Union</span></code> type would be
+problematic because it allows mixing these types in a single operation (like
+adding an <code class="docutils literal notranslate"><span class="pre">int</span></code> with a <code class="docutils literal notranslate"><span class="pre">str</span></code>), which would raise a runtime error.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">U</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">U</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">U</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
 </div>
 <p>Our static type checker is fast to spot this potential error and raised aptly
 the following:</p>
@@ -980,63 +1102,97 @@ the following:</p>
 <span class="m">4</span>:<span class="w"> </span>note:<span class="w"> </span>Both<span class="w"> </span>left<span class="w"> </span>and<span class="w"> </span>right<span class="w"> </span>operands<span class="w"> </span>are<span class="w"> </span>unions
 </pre></div>
 </div>
-<p>This is when type variable prove to be more type safe here.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
-<span class="linenos">2</span>
-<span class="linenos">3</span>
-<span class="linenos">4</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="linenos">5</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-<span class="linenos">6</span>
-<span class="linenos">7</span>
-<span class="linenos">8</span><span class="n">add_int_and_ndarray</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+<p>This suggests there’s a better way to type hint rather than using <code class="docutils literal notranslate"><span class="pre">Union</span></code> type.</p>
+</section>
+<section id="constrained-typevar-approach">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">Constrained TypeVar Approach</a><a class="headerlink" href="#constrained-typevar-approach" title="Link to this heading">#</a></h4>
+<p>Now consider using a constrained TypeVar:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
 </pre></div>
 </div>
-</div>
-</div>
-<p>And now, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> will raise an error here, telling you that you need to abide to
-the contract, that within the scope of the function <code class="docutils literal notranslate"><span class="pre">add</span></code>, all type variable
-must be the same type! So <code class="docutils literal notranslate"><span class="pre">add_int_and_ndarray</span></code> will raise an error.</p>
-<p>Furthermore, now the below example will be okay because the static type checker
-has piece of mind that both <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> must of same type and no mixing is
-involved.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-<span class="linenos">2</span>
-<span class="linenos">3</span>
-<span class="linenos">4</span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
-<span class="linenos">5</span>    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<p>This enforces a stronger type constraint. Formally:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\exists T \in \{\text{int}, \text{float}, \text{NDArray}[\text{np.float64}]\}: \text{type}(a) = T \land \text{type}(b) = T\)</span></p></li>
+<li><p>The return type must be the same <span class="math notranslate nohighlight">\(T\)</span> that was bound to the arguments</p></li>
+</ul>
+<p>This prevents type mixing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result1</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>                     <span class="c1"># Valid: T ↦ int</span>
+<span class="n">result3</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>   <span class="c1"># Type Error: Cannot bind T to both int and NDArray</span>
+<span class="n">result4</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;4&quot;</span><span class="p">)</span>                   <span class="c1"># Type Error: Cannot bind T to both int and str</span>
 </pre></div>
 </div>
-</div>
-</div>
+<p>TypeVar provides stronger compile-time guarantees and ensures type consistency
+within a function scope. Naively, I <em>guess</em> the type checker applies some rules
+for each approach above, my guess is:</p>
+<ol class="arabic simple">
+<li><p>Union types:</p>
+<ol class="arabic simple">
+<li><p>For each argument <code class="docutils literal notranslate"><span class="pre">x</span></code>, the type checker will check if <code class="docutils literal notranslate"><span class="pre">x</span></code> is of any of
+the types in the union <code class="docutils literal notranslate"><span class="pre">Union[T_1,</span> <span class="pre">T_2,</span> <span class="pre">...]</span></code>.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is of any of the types in the union, then the type checker will
+proceed to check the next argument.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">x</span></code> is not of any of the types in the union, then the type checker
+will raise an error.</p></li>
+</ol>
+</li>
+<li><p>Constrained TypeVar:</p>
+<ol class="arabic simple">
+<li><p>First occurrence of <code class="docutils literal notranslate"><span class="pre">T</span></code> is checked against the set of types defined in
+the <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> declaration.</p></li>
+<li><p>If the type of the first occurrence of <code class="docutils literal notranslate"><span class="pre">T</span></code> is not in the set, then the
+type checker will raise an error.</p></li>
+<li><p>If the type of the first occurrence of <code class="docutils literal notranslate"><span class="pre">T</span></code> is in the set, then <code class="docutils literal notranslate"><span class="pre">T</span></code> is
+bound to the type of the first occurrence of <code class="docutils literal notranslate"><span class="pre">T</span></code> and <strong><em>all subsequent
+occurrences of <code class="docutils literal notranslate"><span class="pre">T</span></code> must be of the same type</em></strong>.</p></li>
+</ol>
+</li>
+</ol>
+</section>
 </section>
 </section>
 <section id="upper-bounding-type-variables">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Upper Bounding Type Variables</a><a class="headerlink" href="#upper-bounding-type-variables" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Upper Bounding Type Variables</a><a class="headerlink" href="#upper-bounding-type-variables" title="Link to this heading">#</a></h2>
 <p><strong>Bounds</strong> specify an upper bound for the type variable. This means that the
 type variable can represent any type that is a subtype of the specified bound.</p>
 <ul class="simple">
-<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar('T',</span> <span class="pre">bound=SuperType)</span></code></p></li>
+<li><p><strong>Syntax</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">bound=SuperType)</span></code></p></li>
 <li><p><strong>Meaning</strong>: The type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> can be any type that is a subtype of
 <code class="docutils literal notranslate"><span class="pre">SuperType</span></code> (including <code class="docutils literal notranslate"><span class="pre">SuperType</span></code> itself).</p></li>
+<li><p><strong>Concrete</strong>: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">TypeVar(&quot;T&quot;,</span> <span class="pre">bound=BaseModel)</span></code> means <code class="docutils literal notranslate"><span class="pre">T</span></code> can be any type
+that is a subclass of <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> (from <code class="docutils literal notranslate"><span class="pre">pydantic</span></code>).</p></li>
 </ul>
-<p>The excerpt discusses how to enforce type constraints in Python using the
-<code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> function from the <code class="docutils literal notranslate"><span class="pre">typing</span></code> module, focusing on the concept of an upper
-bound. Here’s a more structured explanation for clarity:</p>
 <section id="defining-type-variables-with-upper-bounds">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Defining Type Variables with Upper Bounds</a><a class="headerlink" href="#defining-type-variables-with-upper-bounds" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Defining Type Variables with Upper Bounds</a><a class="headerlink" href="#defining-type-variables-with-upper-bounds" title="Link to this heading">#</a></h3>
 <p>In Python’s type hinting system, you can define a type variable that restricts
 which types can be used in place of it by specifying an upper bound. This is
 done using the <code class="docutils literal notranslate"><span class="pre">bound=&lt;type&gt;</span></code> argument in the <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> function. The key point
 is that any type that replaces this type variable must be a subtype of the
-specified boundary type. It’s important to note that the boundary type itself
-cannot be another type variable or a parameterized type.</p>
+specified boundary type.</p>
+<p>It’s important to note that the boundary type itself cannot be another type
+variable or a parameterized type. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># NOT ALLOWED!</span>
+<span class="n">T1</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T1&quot;</span><span class="p">)</span>
+<span class="n">T2</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T2&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">T1</span><span class="p">)</span>        <span class="c1"># Cannot use T1 as a bound</span>
+</pre></div>
+</div>
+<p>You also cannot use a parameterized generic type as a bound. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is NOT allowed</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span>   <span class="c1"># Error! Can&#39;t use List[int] as a bound</span>
+
+<span class="c1"># This is NOT allowed either</span>
+<span class="n">S</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">List</span><span class="p">[</span><span class="n">S</span><span class="p">])</span>     <span class="c1"># Error! Can&#39;t use parameterized List as bound</span>
+</pre></div>
+</div>
 </section>
-<section id="example-ensuring-type-safety-with-sized">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a><a class="headerlink" href="#example-ensuring-type-safety-with-sized" title="Link to this heading">#</a></h3>
+<section id="a-case-study-on-sized">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">A Case Study On <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a><a class="headerlink" href="#a-case-study-on-sized" title="Link to this heading">#</a></h3>
 <p>Consider the <code class="docutils literal notranslate"><span class="pre">Sized</span></code> protocol from Python’s <code class="docutils literal notranslate"><span class="pre">typing</span></code> module, which represents
 any type that supports the <code class="docutils literal notranslate"><span class="pre">len()</span></code> function. We define a type variable <code class="docutils literal notranslate"><span class="pre">ST</span></code> with
 <code class="docutils literal notranslate"><span class="pre">Sized</span></code> as its upper bound:</p>
@@ -1070,7 +1226,7 @@ be subclass of the bound super type.</p></li>
 </ul>
 </section>
 <section id="bounding-and-semantic-clarity">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Bounding and Semantic Clarity</a><a class="headerlink" href="#bounding-and-semantic-clarity" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Bounding and Semantic Clarity</a><a class="headerlink" href="#bounding-and-semantic-clarity" title="Link to this heading">#</a></h3>
 <p>Bounding also offers more clarity and semantic meaning, than say, an <code class="docutils literal notranslate"><span class="pre">Union</span></code>
 type.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Animal</span><span class="p">:</span>
@@ -1108,7 +1264,7 @@ or <code class="docutils literal notranslate"><span class="pre">Car</span></code
 </section>
 </section>
 <section id="bound-versus-constraints">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Bound versus Constraints</a><a class="headerlink" href="#bound-versus-constraints" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Bound versus Constraints</a><a class="headerlink" href="#bound-versus-constraints" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>Bounds</strong> are used to specify that a type variable must be a subtype of a
 particular type. This is akin to setting an upper limit (or in some
@@ -1156,16 +1312,20 @@ arguments must be of type <code class="docutils literal notranslate"><span class
 can be different, as long as both are upper bounded by <code class="docutils literal notranslate"><span class="pre">Animal</span></code>.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id11" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/58903906/whats-the-difference-between-a-constrained-typevar-and-a-union">What’s the difference between a constrained TypeVar and a Union?</a></p></li>
 <li><p><a class="reference external" href="https://peps.python.org/pep-0484/#type-variables-with-an-upper-bound">Type variables with an upper bound - PEP484</a></p></li>
-<li><p><a class="reference external" href="https://stackoverflow.com/questions/59933946/difference-between-typevart-a-b-and-typevart-bound-uniona-b">Difference between TypeVar(‘T’, A, B) and TypeVar(‘T’, bound=Union[A, B])</a></p></li>
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/59933946/difference-between-typevart-a-b-and-typevart-bound-uniona-b">Difference between TypeVar(“T”, A, B) and TypeVar(“T”, bound=Union[A, B])</a></p></li>
 </ul>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<aside class="footnote brackets" id="id3" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://stackoverflow.com/questions/59933946/difference-between-typevart-a-b-and-typevart-bound-uniona-b">Difference between TypeVar(“T”, A, B) and TypeVar(“T”, bound=Union[A, B])</a></p>
+</aside>
+<aside class="footnote brackets" id="id4" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://stackoverflow.com/questions/58903906/whats-the-difference-between-a-constrained-typevar-and-a-union">What’s the difference between a constrained TypeVar and a Union?</a></p>
 </aside>
 </aside>
@@ -1237,14 +1397,23 @@ can be different, as long as both are upper bounded by <code class="docutils lit
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#some-motivation-the-problem-with-unconstrained-type-variable">Some Motivation, The Problem With Unconstrained Type Variable</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#constraining-type-variable">Constraining Type Variable</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#revisiting-add-example">Revisiting Add Example</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#type-binding">Type Binding</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#type-variables-and-substitution">Type Variables And Substitution</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#binding-time-and-scope">Binding Time And Scope</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type-versus-constrained-type-variable">Union Type versus Constrained Type Variable</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#union-type">Union Type</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#constrained-typevar-approach">Constrained TypeVar Approach</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#upper-bounding-type-variables">Upper Bounding Type Variables</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-type-variables-with-upper-bounds">Defining Type Variables with Upper Bounds</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-ensuring-type-safety-with-sized">Example: Ensuring Type Safety with <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-case-study-on-sized">A Case Study On <code class="docutils literal notranslate"><span class="pre">Sized</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bounding-and-semantic-clarity">Bounding and Semantic Clarity</a></li>
 </ul>
 </li>
@@ -1301,7 +1470,46 @@ By Gao Hongnan
   <script defer src="../../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
 <script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
+
   <footer class="bd-footer">
   </footer>
+<div class="share-buttons" style="padding: 15px; text-align: center; background-color: #f5f5f5; margin: 15px 0;">
+    <div class="container" style="max-width: 500px; margin: 0 auto;">
+        <h3 style="margin: 0 0 10px 0; font-size: 1.1em;">Connect with me!</h3>
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <!-- LinkedIn Follow Button -->
+            <a href="https://www.linkedin.com/in/gao-hongnan/" target="_blank" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #0077b5; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Follow on LinkedIn
+                </button>
+            </a>
+
+            <!-- Twitter/X Follow Button -->
+            <a href="https://x.com/gaohongnan" target="_blank" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #000000; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Follow on X
+                </button>
+            </a>
+        </div>
+
+        <h3 style="margin: 12px 0 10px 0; font-size: 1.1em;">Share this page!</h3>
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <!-- LinkedIn Share Button -->
+            <a href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), 'linkedin-share', 'width=600,height=400')" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #0077b5; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Share on LinkedIn
+                </button>
+            </a>
+
+            <!-- Twitter/X Share Button -->
+            <a href="javascript:void(0);" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Check out this page by @gaohongnan!') + '&url=' + encodeURIComponent(window.location.href), 'twitter-share', 'width=600,height=400')" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #000000; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Share on X
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
   </body>
 </html>
