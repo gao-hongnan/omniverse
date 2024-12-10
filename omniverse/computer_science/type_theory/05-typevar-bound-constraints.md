@@ -369,16 +369,47 @@ S = TypeVar('S')
 T = TypeVar('T', bound=List[S])     # Error! Can't use parameterized List as bound
 ```
 
+### Some Motivation, Simple Length Comparison
+
+Let's say we want to write a function that compares the lengths of two
+sequences.
+
+```python
+from typing import TypeVar
+
+T = TypeVar("T")
+
+def longer(x: T, y: T) -> T:
+    return x if len(x) > len(y) else y
+```
+
+This fails the type checker because `T` could be any type - there's no guarantee
+it supports `len()`. For example, the below code works because `list` and `str`
+both support `len()`:
+
+```python
+compare_lengths([1, 2], [3])
+compare_lengths("hello", "hi")
+```
+
+However, the below code will fail at runtime because `int` does not support
+`len()`:
+
+```python
+compare_lengths(42, 100)
+```
+
 ### A Case Study On `Sized`
 
-Consider the `Sized` protocol from Python's `typing` module, which represents
-any type that supports the `len()` function. We define a type variable `ST` with
-`Sized` as its upper bound:
+We can fix this using `bound` to ensure our type variable only accepts types
+that support `len()`. Consider the `Sized` protocol from Python's `typing`
+module, which represents any type that supports the `len()` function. We define
+a type variable `ST` with `Sized` as its upper bound:
 
 ```python
 from typing import TypeVar, Sized
 
-ST = TypeVar('ST', bound=Sized)
+ST = TypeVar("ST", bound=Sized)
 ```
 
 This definition means that `ST` can be replaced by any type that has a `len()`
@@ -389,10 +420,7 @@ returns the object with the greater length:
 
 ```python
 def longer(x: ST, y: ST) -> ST:
-    if len(x) > len(y):
-        return x
-    else:
-        return y
+    return x if len(x) > len(y) else y
 ```
 
 Because `ST` is bound to `Sized`, we can safely use `len()` on `x` and `y`. This
@@ -402,10 +430,30 @@ allows the function to work with any sized collection, such as lists or sets.
     type being `List[int]`.
 -   `longer({1}, {1, 2})` operates on sets, returning the larger set as
     `Set[int]`.
--   The statement about `longer([1], {1, 2})` being okay and returning a type
-    `Collection[int]` is correct as well. This is because unlike constraints, we
-    do not need both `x` and `y` to be of the same exact type, they just need to
-    be subclass of the bound super type.
+-   What's interesting is that `longer([1], {1, 2})` being okay and returning a
+    type `Collection[int]` is correct as well. This is because **unlike**
+    constraints, we do not need both `x` and `y` to be of the same exact type,
+    they just need to be subclass of the bound super type.
+
+### Why Not Use Constraints?
+
+You might wonder why not use constraints, we can try, say, let's say we want to
+let `T` be a type that is either a `list`, `str`, or `tuple`.
+
+```python
+T = TypeVar('T', list, str, tuple)
+```
+
+This approach has limitations because we need to add and list every possible
+type that we want to allow, or that has `__len__` method. This is not scalable
+and so bound is more applicable.
+
+More formally, we can say something like, let $S$ be the set of all types that
+implement the `Sized` protocol. For type variable $T$ with bound `Sized`:
+
+-   $\forall t \in T \implies t \in S$
+-   That is, any type $t$ that can be bound to $T$ must be in the set of `Sized`
+    types.
 
 ### Bounding and Semantic Clarity
 
@@ -446,6 +494,53 @@ subclass of `Animal`. This means you could pass in an instance of `Dog` or
 
 In `function_with_union`, the argument arg can be an instance of `Dog`, `Cat`,
 or `Car`. There's no requirement that these types are related in any way.
+
+### A Case Study On `Addable`
+
+Let's say we want to write a function that doubles any number. Without `bound`:
+
+```python
+from typing import TypeVar
+
+T = TypeVar('T')
+
+def double(x: T) -> T:
+    return x + x
+```
+
+If we run through `mypy`, we get the below errors:
+
+```text
+tmp.py:237: error: Returning Any from function declared to return "T"  [no-any-return]
+        return x + x
+        ^~~~~~~~~~~~
+tmp.py:237: error: Unsupported left operand type for + ("T")  [operator]
+        return x + x
+               ^~~~~
+Found 2 errors in 1 file (checked 1 source file)
+```
+
+Rightfully so, same logic, not all types support `+` operation, like
+`double(x={"key": "value"})` will cause errors. To resolve this, we seek to find
+a class like `Sized` that has the `__add__` method. But let's say it's hard to
+find, we can define our own protocol.
+
+```python
+from __future__ import annotations
+
+from typing import TypeVar, Protocol
+
+
+class Addable(Protocol):
+    def __add__(self, other: T) -> T: ...
+
+
+T = TypeVar("T", bound=Addable)
+
+
+def double(x: T) -> T:
+    return x + x
+```
 
 ## Bound versus Constraints
 
