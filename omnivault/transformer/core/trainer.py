@@ -35,8 +35,7 @@ from omnivault.utils.reproducibility.rng import load_and_set_rng_state
 
 @runtime_checkable
 class TrainerCallback(Protocol):
-    def __call__(self, trainer: Trainer, *args: Any, **kwargs: Any) -> None:
-        ...
+    def __call__(self, trainer: Trainer, *args: Any, **kwargs: Any) -> None: ...
 
 
 class TrainerEvent(str, Enum):

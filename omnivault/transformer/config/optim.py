@@ -95,9 +95,11 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
     def build(
         self,
         *,
-        params: List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]]
-        | nn.ParameterList
-        | Iterator[nn.Parameter],
+        params: (
+            List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]]
+            | nn.ParameterList
+            | Iterator[nn.Parameter]
+        ),
         **kwargs: Any,
     ) -> torch.optim.Optimizer:
         """Builder method for creating an optimizer instance."""

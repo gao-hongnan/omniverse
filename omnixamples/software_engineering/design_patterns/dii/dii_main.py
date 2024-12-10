@@ -4,6 +4,7 @@ will depend on both the low-level and high-level modules. This is the final step
 of the Dependency Inversion Principle (DIP) implementation + Dependency
 Injection.
 """
+
 from typing import List, Union
 
 from rich.pretty import pprint

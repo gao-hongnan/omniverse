@@ -10,12 +10,10 @@ class AccountBase(BaseModel):
         from_attributes = True
 
 
-class AccountCreateRequest(AccountBase):
-    ...
+class AccountCreateRequest(AccountBase): ...
 
 
-class AccountUpdateRequest(AccountBase):
-    ...
+class AccountUpdateRequest(AccountBase): ...
 
 
 class AccountResponse(AccountBase):

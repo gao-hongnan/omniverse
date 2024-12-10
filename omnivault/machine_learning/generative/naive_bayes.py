@@ -28,6 +28,7 @@ NOTE:
 
     4. Try to implement predict_proba and predict_log_proba following sklearn.
 """
+
 from __future__ import annotations
 
 import logging

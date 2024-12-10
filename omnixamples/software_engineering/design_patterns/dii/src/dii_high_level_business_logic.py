@@ -29,6 +29,7 @@ Note that it is similar to Strategy Pattern. But we will not be changing the
 behavior of the algorithm at runtime. We will be changing the algorithm at
 compile time.
 """
+
 from typing import Any, List, Literal, Union
 
 from omnixamples.software_engineering.design_patterns.dii.src.dii_base import (  # from abstract interface import Transforms

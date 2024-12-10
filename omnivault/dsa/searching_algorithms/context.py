@@ -7,6 +7,7 @@ The SearchContext class holds a reference to a search strategy and delegates the
 searching task to it. This allows for dynamic swapping of search algorithms at
 runtime, adhering to the principles of the Strategy Pattern.
 """
+
 from typing import Sequence
 
 from omnivault._types._generic import Real

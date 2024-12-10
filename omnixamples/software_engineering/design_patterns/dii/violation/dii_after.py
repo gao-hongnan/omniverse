@@ -1,4 +1,5 @@
 """Less violation but everything is contained in one script, the inversion is not obvious."""
+
 from abc import ABC, abstractmethod
 from typing import Any, Callable, List, Literal, Union
 

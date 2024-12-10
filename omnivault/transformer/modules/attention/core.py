@@ -108,6 +108,7 @@ Notations
   distinction is important during cross-attention, where the decoder attends to
   the output of the encoder, and thus the lengths can be different.
 """
+
 from __future__ import annotations
 
 from typing import Tuple

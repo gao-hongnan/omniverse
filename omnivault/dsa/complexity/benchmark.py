@@ -15,8 +15,7 @@ R = TypeVar("R")
 class DataStructure(Protocol):
     """Protocol defining the interface for data structures that can be used in timing analysis."""
 
-    def __len__(self) -> int:
-        ...
+    def __len__(self) -> int: ...
 
 
 class TimingResult(Protocol):

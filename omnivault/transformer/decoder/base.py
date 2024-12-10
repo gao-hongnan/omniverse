@@ -69,8 +69,7 @@ class BaseDecoder(nn.Module, ABC):
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base
         encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,  # that's memory_mask in torch code base
-    ) -> torch.FloatTensor:
-        ...
+    ) -> torch.FloatTensor: ...
 
     def _init_weights(self, module: nn.Module) -> None:
         """Initializes weights of the given module using Xavier uniform initialization."""

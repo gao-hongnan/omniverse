@@ -1,4 +1,5 @@
 """Dump all global configs here or whatever is not decided here."""
+
 from __future__ import annotations
 
 from typing import Type, Union

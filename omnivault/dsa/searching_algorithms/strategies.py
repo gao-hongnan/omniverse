@@ -8,6 +8,7 @@ These strategies are designed to be used interchangeably by the SearchContext
 class in context.py, demonstrating the flexibility and decoupling offered by the
 Strategy Pattern.
 """
+
 from __future__ import annotations
 
 import math

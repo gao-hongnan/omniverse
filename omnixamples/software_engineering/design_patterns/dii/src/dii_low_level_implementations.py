@@ -2,6 +2,7 @@
 This module is the low-level concrete implementations of the project. This
 module depend only on the abstract interface module.
 """
+
 from omnixamples.software_engineering.design_patterns.dii.src.dii_base import (  # from abstract interface import Transforms
     TransformFunc,
     Transforms,

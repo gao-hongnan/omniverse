@@ -25,6 +25,7 @@ are floats unpacked from our `Vector` objects. We then use a for loop to
 iterate over the vectors and plot them one by one. Maybe consider FIXME
 this to support vectorized plotting.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Sequence

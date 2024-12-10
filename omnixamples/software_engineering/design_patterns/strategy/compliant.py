@@ -1,4 +1,5 @@
 """Demonstrates the strategy pattern."""
+
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import List
@@ -14,8 +15,7 @@ class ModelType(Enum):
 
 class TrainingStrategy(ABC):
     @abstractmethod
-    def train(self, X: List[List[float]], y: List[float]) -> None:
-        ...
+    def train(self, X: List[List[float]], y: List[float]) -> None: ...
 
 
 class LinearRegressionStrategy(TrainingStrategy):

@@ -1,4 +1,5 @@
 """Core functions for Git versioning."""
+
 from __future__ import annotations
 
 import logging

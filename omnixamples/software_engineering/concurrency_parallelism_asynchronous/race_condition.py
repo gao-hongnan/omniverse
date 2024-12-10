@@ -1,6 +1,7 @@
 """With reference to effective python book chapter 54.
 Ref: https://github.com/bslatkin/effectivepython/blob/master/example_code/item_54.py
 """
+
 import logging
 import threading
 from threading import Barrier

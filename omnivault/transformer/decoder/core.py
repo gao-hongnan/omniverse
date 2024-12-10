@@ -126,26 +126,22 @@ class GPTDecoder(BaseDecoder):
     @overload
     def create_target_masks(
         self, batch_size: int, seq_len: int, target_padding_masks: torch.BoolTensor, future_masks: torch.BoolTensor
-    ) -> torch.BoolTensor:
-        ...
+    ) -> torch.BoolTensor: ...
 
     @overload
     def create_target_masks(
         self, batch_size: int, seq_len: int, target_padding_masks: torch.BoolTensor, future_masks: NotGiven
-    ) -> torch.BoolTensor:
-        ...
+    ) -> torch.BoolTensor: ...
 
     @overload
     def create_target_masks(
         self, batch_size: int, seq_len: int, target_padding_masks: NotGiven, future_masks: torch.BoolTensor
-    ) -> torch.BoolTensor:
-        ...
+    ) -> torch.BoolTensor: ...
 
     @overload
     def create_target_masks(
         self, batch_size: int, seq_len: int, target_padding_masks: NotGiven, future_masks: NotGiven
-    ) -> torch.BoolTensor:
-        ...
+    ) -> torch.BoolTensor: ...
 
     def create_target_masks(
         self,

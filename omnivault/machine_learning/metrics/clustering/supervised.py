@@ -98,15 +98,13 @@ def contingency_matrix(
 @overload
 def purity_score(
     y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], per_cluster: Literal[True]
-) -> NDArray[np.floating[Any]]:
-    ...
+) -> NDArray[np.floating[Any]]: ...
 
 
 @overload
 def purity_score(
     y_trues: NDArray[np.integer[Any]], y_preds: NDArray[np.integer[Any]], per_cluster: Literal[False] = False
-) -> float:
-    ...
+) -> float: ...
 
 
 def purity_score(

@@ -4,6 +4,7 @@ References:
 - https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html
 - https://github.com/rushter/MLAlgorithms/blob/master/mla/kmeans.py
 """
+
 from __future__ import annotations
 
 import logging

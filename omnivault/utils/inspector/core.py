@@ -8,15 +8,13 @@ from typing import Any, Callable, Dict, List, Set, Tuple, Type, get_type_hints, 
 @overload
 def get_members_of_function_or_method(
     func_or_class: Type[object], predicate: Callable[[Any], bool] | None = None
-) -> List[Tuple[str, Any]]:
-    ...
+) -> List[Tuple[str, Any]]: ...
 
 
 @overload
 def get_members_of_function_or_method(
     func_or_class: Callable[..., Any], predicate: Callable[[Any], bool] | None = None
-) -> List[Tuple[str, Any]]:
-    ...
+) -> List[Tuple[str, Any]]: ...
 
 
 def get_members_of_function_or_method(

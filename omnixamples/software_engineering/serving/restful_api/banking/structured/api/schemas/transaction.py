@@ -19,13 +19,11 @@ class TransactionBase(BaseModel):
 
 
 # Used for creating a new transaction
-class TransactionCreateRequest(TransactionBase):
-    ...
+class TransactionCreateRequest(TransactionBase): ...
 
 
 # Used for updating an existing transaction
-class TransactionUpdateRequest(TransactionBase):
-    ...
+class TransactionUpdateRequest(TransactionBase): ...
 
 
 # Used for response when a transaction is created or updated

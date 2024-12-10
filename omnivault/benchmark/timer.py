@@ -47,12 +47,12 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
             self.return_value = return_value
 
     @overload
-    def __new__(cls: Type[SyncAsyncDecoratorFactory[P, T]]) -> SyncAsyncDecoratorFactory[P, T]:
-        ...
+    def __new__(cls: Type[SyncAsyncDecoratorFactory[P, T]]) -> SyncAsyncDecoratorFactory[P, T]: ...
 
     @overload
-    def __new__(cls: Type[SyncAsyncDecoratorFactory[P, T]], func: Callable[P, T]) -> SyncAsyncDecoratorFactory[P, T]:
-        ...
+    def __new__(
+        cls: Type[SyncAsyncDecoratorFactory[P, T]], func: Callable[P, T]
+    ) -> SyncAsyncDecoratorFactory[P, T]: ...
 
     def __new__(
         cls: Type[SyncAsyncDecoratorFactory[P, T]], *args: Any, **kwargs: Any
@@ -76,8 +76,7 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
         ...
 
     @overload
-    def __call__(self, func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, Coroutine[Any, Any, T]]:
-        ...
+    def __call__(self, func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, Coroutine[Any, Any, T]]: ...
 
     def __call__(
         self, func: Callable[P, T] | Callable[P, Coroutine[Any, Any, T]]

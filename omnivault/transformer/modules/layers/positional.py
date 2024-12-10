@@ -12,8 +12,7 @@ class PositionalEncoding(ABC, nn.Module):
         self.dropout = nn.Dropout(p=dropout, inplace=False)
 
     @abstractmethod
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        ...
+    def forward(self, x: torch.Tensor) -> torch.Tensor: ...
 
 
 class Sinusoid(PositionalEncoding):

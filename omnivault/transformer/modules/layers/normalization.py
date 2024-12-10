@@ -77,6 +77,7 @@ class LayerNorm(nn.Module):
     >>> output.shape
     torch.Size([2, 10, 128])
     """
+
     __constants__ = ["normalized_shape", "eps", "elementwise_affine"]
 
     normalized_shape: Union[int, Tuple[int, ...]]

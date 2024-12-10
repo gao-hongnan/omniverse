@@ -1,4 +1,5 @@
 """Shows a violation of the strategy pattern."""
+
 from enum import Enum, auto
 from typing import Any, List, Union
 

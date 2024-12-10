@@ -1,4 +1,5 @@
 """Violation of DII."""
+
 from typing import Any, Callable, List, Literal, Union
 
 from rich.pretty import pprint

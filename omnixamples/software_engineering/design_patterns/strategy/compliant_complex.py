@@ -5,8 +5,7 @@ from typing import Callable, Dict, List, Protocol, Type
 
 
 class TrainingStrategy(Protocol):
-    def train(self, X: List[List[float]], y: List[float]) -> None:
-        ...
+    def train(self, X: List[List[float]], y: List[float]) -> None: ...
 
 
 class ModelType(Enum):

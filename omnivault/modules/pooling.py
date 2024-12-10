@@ -17,12 +17,10 @@ class LastTokenPooling(nn.Module):
         self.pre_head_pooling = pre_head_pooling
 
     @overload
-    def forward(self, last_hidden_state: torch.Tensor, logits: None = None) -> torch.Tensor:
-        ...
+    def forward(self, last_hidden_state: torch.Tensor, logits: None = None) -> torch.Tensor: ...
 
     @overload
-    def forward(self, last_hidden_state: None, logits: torch.Tensor) -> torch.Tensor:
-        ...
+    def forward(self, last_hidden_state: None, logits: torch.Tensor) -> torch.Tensor: ...
 
     def forward(
         self, last_hidden_state: torch.Tensor | None = None, logits: torch.Tensor | None = None

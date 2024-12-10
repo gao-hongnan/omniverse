@@ -1,4 +1,5 @@
 """Script to replace LaTeX math symbols in a markdown file."""
+
 import argparse
 
 
