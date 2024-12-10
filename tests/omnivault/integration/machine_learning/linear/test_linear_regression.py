@@ -12,6 +12,7 @@ mechanism there does not invert the matrix and is therefore different than
 ours. Note that there are many ways to solve the linear least squares
 problem.
 """
+
 import numpy as np
 import pytest
 from sklearn.datasets import make_regression
