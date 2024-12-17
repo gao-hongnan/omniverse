@@ -1,7 +1,7 @@
 # pytest tests/omnivault/unit/_types/test_sentinel.py -v
 import threading
 from threading import Thread
-from typing import Generic
+from typing import Generic, List
 
 from omnivault._types._generic import T
 from omnivault._types._sentinel import Singleton
@@ -63,7 +63,7 @@ def test_singleton_state() -> None:
 
 def test_singleton_thread_safety() -> None:
     """Test thread safety of singleton creation."""
-    singleton_instances: list[MutableSingleton] = []
+    singleton_instances: List[MutableSingleton] = []
 
     def create_singleton() -> None:
         singleton_instances.append(MutableSingleton())
