@@ -212,10 +212,12 @@ class Singleton(type, Generic[_T]):
     """
 
     _instances: Dict[Singleton[_T], _T] = {}
-    _lock: threading.Lock = threading.Lock()  # Create a lock object
+    _lock: threading.Lock = threading.Lock()
 
     def __call__(cls: Singleton[_T], *args: Any, **kwargs: Any) -> _T:
         # Lock the block of code where the instance is checked and created
+        # This is necessary to avoid race conditions when multiple threads try to
+        # create the same singleton instance at the same time.
         with cls._lock:
             if cls not in cls._instances:
                 cls._instances[cls] = super().__call__(*args, **kwargs)
