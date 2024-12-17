@@ -20,7 +20,7 @@ kernelspec:
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
-![Tag](https://img.shields.io/badge/Tag-Brain_Dump-red)
+![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
 ```{contents}
@@ -45,8 +45,9 @@ from typing_extensions import reveal_type
 
 ## Some Motivation, The Problem With Unconstrained Type Variable
 
-Let's first examine why unconstrained type variables can lead to issues, a
-simple `add` function that adds two arguments together:
+We start off with some motivation. To understand why unconstrained type
+variables can be problematic, let's examine a simple `add` function that
+combines two arguments:
 
 ```python
 from typing import TypeVar
@@ -57,7 +58,8 @@ def add(x: T, y: T) -> T:
     return x + y
 ```
 
-And note that running `mypy`[^1] above will yield two particular errors:
+And note that running this piece of code through `mypy`[^1] will yield two
+particular errors:
 
 ```text
 4: error: Returning Any from function declared to return "T"  [no-any-return]
@@ -82,10 +84,10 @@ operate on a few types:
 -   `NDArray[np.float64]`
 -   `str`
 
-And if we can somehow tell our type variable `T` to take on any one of the 4
-types above, then our job is done. This motivates the need for _constraining_
-type variables to a specific set of types that support our desired operations
-(i.e. `+` operator).
+And if we can somehow tell our type variable `T` to **_only_** take on any one
+of the 4 types above, then our job is done. This motivates the need for
+_constraining_ type variables to a specific set of types that support our
+desired operations (i.e. `+` operator).
 
 ## Constraining Type Variable
 
@@ -121,7 +123,7 @@ def add(a: T, b: T) -> T:
 
 Then running `mypy` again, will yield no errors, because the static type checker
 is intelligent enough to know that `T` can only take on `int`, `float`, `str`,
-or `NDArray[np.float64]`, all of which has the add operator well defined.
+or `NDArray[np.float64]`, all of which has the `add` operator well defined.
 
 ### Type Binding
 
@@ -213,7 +215,7 @@ violated).
 
 #### Union Type
 
-Consider the following union type:
+Consider the following example using `Union` type:
 
 ```{code-cell}
 from typing import Union

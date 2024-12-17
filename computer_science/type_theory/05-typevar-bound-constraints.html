@@ -850,7 +850,7 @@
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
-<img alt="Tag" src="https://img.shields.io/badge/Tag-Brain_Dump-red" />
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Structured_Musings-purple" />
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
@@ -887,8 +887,9 @@
 </nav>
 <section id="some-motivation-the-problem-with-unconstrained-type-variable">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Some Motivation, The Problem With Unconstrained Type Variable</a><a class="headerlink" href="#some-motivation-the-problem-with-unconstrained-type-variable" title="Link to this heading">#</a></h2>
-<p>Let’s first examine why unconstrained type variables can lead to issues, a
-simple <code class="docutils literal notranslate"><span class="pre">add</span></code> function that adds two arguments together:</p>
+<p>We start off with some motivation. To understand why unconstrained type
+variables can be problematic, let’s examine a simple <code class="docutils literal notranslate"><span class="pre">add</span></code> function that
+combines two arguments:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
@@ -897,7 +898,8 @@ simple <code class="docutils literal notranslate"><span class="pre">add</span></
     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 </pre></div>
 </div>
-<p>And note that running <code class="docutils literal notranslate"><span class="pre">mypy</span></code><a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> above will yield two particular errors:</p>
+<p>And note that running this piece of code through <code class="docutils literal notranslate"><span class="pre">mypy</span></code><a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> will yield two
+particular errors:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>4: error: Returning Any from function declared to return &quot;T&quot;  [no-any-return]
         return x + y
         ^~~~~~~~~~~~
@@ -920,10 +922,10 @@ operate on a few types:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></li>
 </ul>
-<p>And if we can somehow tell our type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to take on any one of the 4
-types above, then our job is done. This motivates the need for <em>constraining</em>
-type variables to a specific set of types that support our desired operations
-(i.e. <code class="docutils literal notranslate"><span class="pre">+</span></code> operator).</p>
+<p>And if we can somehow tell our type variable <code class="docutils literal notranslate"><span class="pre">T</span></code> to <strong><em>only</em></strong> take on any one
+of the 4 types above, then our job is done. This motivates the need for
+<em>constraining</em> type variables to a specific set of types that support our
+desired operations (i.e. <code class="docutils literal notranslate"><span class="pre">+</span></code> operator).</p>
 </section>
 <section id="constraining-type-variable">
 <h2><a class="toc-backref" href="#id6" role="doc-backlink">Constraining Type Variable</a><a class="headerlink" href="#constraining-type-variable" title="Link to this heading">#</a></h2>
@@ -960,7 +962,7 @@ specific types, we can thus re-write the type variable as such:</p>
 </div>
 <p>Then running <code class="docutils literal notranslate"><span class="pre">mypy</span></code> again, will yield no errors, because the static type checker
 is intelligent enough to know that <code class="docutils literal notranslate"><span class="pre">T</span></code> can only take on <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>,
-or <code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code>, all of which has the add operator well defined.</p>
+or <code class="docutils literal notranslate"><span class="pre">NDArray[np.float64]</span></code>, all of which has the <code class="docutils literal notranslate"><span class="pre">add</span></code> operator well defined.</p>
 <section id="type-binding">
 <h3><a class="toc-backref" href="#id7" role="doc-backlink">Type Binding</a><a class="headerlink" href="#type-binding" title="Link to this heading">#</a></h3>
 <p>When using a constrained <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code>, the type checker ensures that within a
@@ -1048,7 +1050,7 @@ type (i.e. within a function scope, <code class="docutils literal notranslate"><
 violated).</p>
 <section id="union-type">
 <h4><a class="toc-backref" href="#id11" role="doc-backlink">Union Type</a><a class="headerlink" href="#union-type" title="Link to this heading">#</a></h4>
-<p>Consider the following union type:</p>
+<p>Consider the following example using <code class="docutils literal notranslate"><span class="pre">Union</span></code> type:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
