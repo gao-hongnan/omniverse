@@ -202,6 +202,30 @@ class TimedExecution:
     >>> my_function()
     >>> MyClass().my_method()
     >>> my_error_function()
+    ...
+    >>> # Async examples
+    >>> async def async_function() -> None:
+    ...     async with TimedExecution(pretty_print=True) as timer:
+    ...         await asyncio.sleep(2)
+    ...
+    >>> class MyClass:
+    ...     async def async_method(self) -> None:
+    ...         async with TimedExecution(pretty_print=True) as timer:
+    ...             await asyncio.sleep(3)
+    ...
+    >>> async def main() -> None:
+    ...     await async_function()
+    ...     my_class: Final[MyClass] = MyClass()
+    ...     await my_class.async_method()
+    ...
+    >>> def run() -> None:
+    ...     '''Entry point for running the async code.'''
+    ...     asyncio.run(main())
+    ...
+    >>> my_function()
+    >>> MyClass().my_method()
+    >>> my_error_function()
+    >>> run()  # Run async examples
     """
 
     def __init__(
@@ -215,7 +239,8 @@ class TimedExecution:
         self.pretty_print = pretty_print
         self.process = psutil.Process(os.getpid())
 
-    def __enter__(self: Self) -> Self:
+    def _setup_metadata(self) -> None:
+        """Common setup code for both sync and async contexts"""
         self.start_time = timeit.default_timer()
         self.metadata["start_time"] = self.start_time
         self.metadata["start_datetime"] = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -226,7 +251,7 @@ class TimedExecution:
         self.metadata.update(self.tags)
 
         stack = inspect.stack()
-        caller_frame = stack[1]
+        caller_frame = stack[2]
         frame_info = inspect.getframeinfo(caller_frame.frame)
 
         self.metadata["caller_function_name"] = caller_frame.function
@@ -238,14 +263,13 @@ class TimedExecution:
             self.metadata["caller_class_name"] = self_instance.__class__.__name__
             self.metadata["caller_method_name"] = caller_frame.function
 
-        return self
-
-    def __exit__(
-        self: Self,
+    def _cleanup_metadata(
+        self,
         exc_type: Type[BaseException] | None,
         exc_val: BaseException | None,
         exc_tb: types.TracebackType | None,
     ) -> None:
+        """Common cleanup code for both sync and async contexts"""
         self.end_time = timeit.default_timer()
         self.metadata["end_time"] = self.end_time
         self.metadata["end_datetime"] = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -260,3 +284,27 @@ class TimedExecution:
 
         if self.pretty_print:
             pprint(TimedExecutionMetadata(**self.metadata))
+
+    def __enter__(self: Self) -> Self:
+        self._setup_metadata()
+        return self
+
+    def __exit__(
+        self: Self,
+        exc_type: Type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
+        self._cleanup_metadata(exc_type, exc_val, exc_tb)
+
+    async def __aenter__(self: Self) -> Self:
+        self._setup_metadata()
+        return self
+
+    async def __aexit__(
+        self: Self,
+        exc_type: Type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: types.TracebackType | None,
+    ) -> None:
+        self._cleanup_metadata(exc_type, exc_val, exc_tb)

@@ -32,8 +32,7 @@ knowledge! 🚀
 
 ## Blogs
 
--   https://gao-hongnan.github.io/gaohn-galaxy
--   https://www.gaohongnan.com (migrating from the previous blog)
+-   https://www.gaohongnan.com
 
 The tiered structure of the blogs is as follows:
 
