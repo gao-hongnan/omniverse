@@ -9,18 +9,23 @@ import psutil
 import pytest
 from pydantic import ValidationError
 
-from omnivault.benchmark.timer import TimedExecution, TimedExecutionMetadata
+from omnivault.benchmark.timer import TimedExecution, TimedExecutionMetadata, TimerDecorator, timer
 
 
 @pytest.fixture
 def sample_metadata() -> Dict[str, Any]:
     """Fixture providing sample metadata for testing."""
-    process = psutil.Process()
+    cpu_times = psutil._common.pcputimes(
+        user=0.0,
+        system=0.0,
+        children_user=0.0,
+        children_system=0.0,
+    )
     return {
         "thread_id": 123,
         "process_id": 456,
         "initial_memory_usage": 1000,
-        "initial_cpu_time": process.cpu_times(),
+        "initial_cpu_time": cpu_times,
         "caller_function_name": "test_function",
         "caller_module_name": "test_module",
         "caller_module_path": "/path/to/test.py",
@@ -152,3 +157,51 @@ class TestTimedExecution:
 
         assert test_instance.timer.metadata["caller_class_name"] == "TestClass"
         assert test_instance.timer.metadata["caller_method_name"] == "test_method"
+
+
+@timer
+def sync_function(sleep_time: float = 0.1) -> str:
+    time.sleep(sleep_time)
+    return "sync done"
+
+
+@timer
+async def async_function(sleep_time: float = 0.1) -> str:
+    await asyncio.sleep(sleep_time)
+    return "async done"
+
+
+class TestTimerDecorator:
+    """Test the timer decorator implementations."""
+
+    def test_sync_function(self) -> None:
+        result: str = sync_function(0.3)
+        assert result == "sync done"
+
+    @pytest.mark.asyncio
+    async def test_async_function(self) -> None:
+        result: str = await async_function(0.3)
+        assert result == "async done"
+
+
+class TestTimerDecoratorClass:
+    """Test the TimerDecorator class implementation."""
+
+    @TimerDecorator
+    def sync_method(self, sleep_time: float = 0.1) -> str:
+        time.sleep(sleep_time)
+        return "sync done"
+
+    @TimerDecorator
+    async def async_method(self, sleep_time: float = 0.1) -> str:
+        await asyncio.sleep(sleep_time)
+        return "async done"
+
+    def test_sync_method(self) -> None:
+        result: str = self.sync_method(0.1)  # type: ignore[call-overload]
+        assert result == "sync done"
+
+    @pytest.mark.asyncio
+    async def test_async_method(self) -> None:
+        result: str = await self.async_method(0.1)  # type: ignore[call-overload]
+        assert result == "async done"
