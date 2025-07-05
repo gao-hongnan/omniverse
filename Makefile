@@ -10,9 +10,13 @@ SOURCES := $(PACKAGE_NAME) $(TEST_DIR)
 
 .PHONY: install
 install: .uv
-	uv sync --frozen --all-groups --all-extras
+	uv sync --frozen --all-extras --all-packages --all-groups
 	uv run pre-commit install
 	uv run pre-commit install --hook-type commit-msg
+
+.PHONY: sync
+sync: .uv
+	uv sync --all-groups --all-extras
 
 .PHONY: format
 format: .uv
@@ -66,6 +70,7 @@ clean:
 help:
 	@echo "Development Commands:"
 	@echo "  install             Install all dependencies (all groups + extras)"
+	@echo "  sync                Update dependencies and lock file (use after changing pyproject.toml)"
 	@echo "  install-lint        Install only linting dependencies"
 	@echo "  install-test        Install only testing dependencies"
 	@echo "  install-dev         Install dev group (includes lint, type, test, docs)"
