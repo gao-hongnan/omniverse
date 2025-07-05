@@ -1,5 +1,6 @@
 # NOTE: unit-tested
 """Utilities to evaluate the clustering performance of models."""
+
 from __future__ import annotations
 
 from typing import Any, Literal, overload

@@ -216,9 +216,9 @@ class TFDatasetWrapper(Dataset):
 
 
 def custom_collate_fn(
-    batch: List[Tuple[torch.Tensor, torch.Tensor]]
+    batch: List[Tuple[torch.Tensor, torch.Tensor]],
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    sources, targets = zip(*batch)
+    sources, targets = zip(*batch, strict=False)
 
     sources = torch.stack(sources)
     targets = torch.stack(targets)

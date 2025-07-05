@@ -5,26 +5,46 @@
 [![LinkedIn](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![Continuous Integration Checks on Omnivault.](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml/badge.svg)](https://github.com/gao-hongnan/omniverse/actions/workflows/ci_omnivault.yaml)
 
--   [Omniverse](#omniverse)
-    -   [Blogs](#blogs)
-    -   [Implementation of Decoder](#implementation-of-decoder)
-    -   [Building and Running NVIDIA Docker Image](#building-and-running-nvidia-docker-image)
-    -   [Building and Running Jupyter Book Docker Image](#building-and-running-jupyter-book-docker-image)
-        -   [Building the Docker Image](#building-the-docker-image)
-        -   [Running the Docker Container](#running-the-docker-container)
-        -   [Stopping the Docker Container](#stopping-the-docker-container)
-        -   [Further Enhancements](#further-enhancements)
-        -   [References and Further Readings](#references-and-further-readings)
-    -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
-        -   [Semantic Versioning](#semantic-versioning)
-            -   [Format](#format)
-            -   [Example Versioning](#example-versioning)
-            -   [Pre-release and Build Metadata](#pre-release-and-build-metadata)
-        -   [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
-        -   [Example Workflow](#example-workflow)
-    -   [Custom Domain for GitHub Pages](#custom-domain-for-github-pages)
-    -   [How to Index Jupyter Book?](#how-to-index-jupyter-book)
-        -   [References and Further Readings](#references-and-further-readings-1)
+<!-- 🚀 Project Metadata -->
+
+[![PyPI version](https://img.shields.io/pypi/v/omniverse)](https://pypi.org/project/omniverse/)
+[![PyPI Downloads](https://static.pepy.tech/badge/omniverse/month)](https://pepy.tech/project/omniverse)
+[![License](https://img.shields.io/github/license/gao-hongnan/omniverse)](https://opensource.org/licenses/MIT)
+
+<!-- 🧰 Tooling & Quality -->
+
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![Type‑checked with Pyright](https://img.shields.io/badge/type%20checked-pyright-blue?logo=pyright&logoColor=white)](https://github.com/microsoft/pyright)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
+<!-- 🌟 Extras -->
+
+[![Blog](https://img.shields.io/badge/Blog-live-brightgreen)](gaohongnan.com)
+[![Docker](https://img.shields.io/badge/Docker-ready-blue?logo=docker)](https://hub.docker.com/r/gao-hongnan/omniverse)
+[![GitHub stars](https://img.shields.io/github/stars/gao-hongnan/omniverse.svg?style=social&label=Star)](https://github.com/gao-hongnan/omniverse)
+
+- [Omniverse](#omniverse)
+    - [Blogs](#blogs)
+    - [Implementation of Decoder](#implementation-of-decoder)
+    - [Building and Running NVIDIA Docker Image](#building-and-running-nvidia-docker-image)
+    - [Building and Running Jupyter Book Docker Image](#building-and-running-jupyter-book-docker-image)
+        - [Building the Docker Image](#building-the-docker-image)
+        - [Running the Docker Container](#running-the-docker-container)
+        - [Stopping the Docker Container](#stopping-the-docker-container)
+        - [Further Enhancements](#further-enhancements)
+        - [References and Further Readings](#references-and-further-readings)
+    - [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows)
+        - [Semantic Versioning](#semantic-versioning)
+            - [Format](#format)
+            - [Example Versioning](#example-versioning)
+            - [Pre-release and Build Metadata](#pre-release-and-build-metadata)
+        - [Release using GitHub Actions CI/CD Workflows](#release-using-github-actions-cicd-workflows-1)
+        - [Example Workflow](#example-workflow)
+    - [Custom Domain for GitHub Pages](#custom-domain-for-github-pages)
+    - [How to Index Jupyter Book?](#how-to-index-jupyter-book)
+        - [References and Further Readings](#references-and-further-readings-1)
 
 🌌 Omniverse: A cosmic collection of machine learning, deep learning, data
 science, math, and software engineering explorations. Dive into the universe of

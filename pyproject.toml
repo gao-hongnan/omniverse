@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "omniverse"
@@ -8,9 +8,10 @@ version = "0.0.63"
 description = "A collection of code for Omniverse."
 authors = [{name="GAO Hongnan", email="hongnangao@gmail.com"}]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
@@ -38,35 +39,6 @@ Homepage = "https://github.com/gao-hongnan/omniverse"
 Issues = "https://github.com/gao-hongnan/omniverse/issues"
 
 [project.optional-dependencies]
-dev = [
-    "bandit==1.7.5",
-    "black==24.10.0",
-    "colorama==0.4.6",
-    "cookiecutter==2.4.0",
-    "coverage==7.3.2",
-    "ghp-import==2.1.0",
-    "ipywidgets==7.7.2",
-    "isort==5.13.2",
-    "jupytext==1.15.2",
-    "jupyter-book==1.0.0",
-    "mypy==1.13.0",
-    "pandas-stubs==2.1.4.231227",
-    "pre-commit==4.0.1",
-    "pytest==8.3.4",
-    "pytest-asyncio==0.25.0",
-    "ruff==0.8.2",
-    "sphinxcontrib-mermaid==0.1.0",
-    "sphinx-inline-tabs==2023.4.21",
-    "sphinx-proof==0.2.0",
-    "sphinx-sitemap==2.5.1",
-    "typeguard==4.1.5",
-    "types-psutil==6.0.0.20240621",
-    "types-requests==2.31.0.10",
-    "types-tabulate==0.9.0.20240106",
-    "types-tqdm==4.66.0.5",
-    "types-PyYAML==6.0.12.20240917",
-]
-
 serving = [
     "fastapi==0.109.2",
     "uvicorn==0.27.1",
@@ -77,8 +49,58 @@ serving = [
     "pydantic==2.5.2",
 ]
 
-[tool.setuptools.packages.find]
-include = ["omnivault*"]
+[tool.hatch.build.targets.wheel]
+packages = ["omnivault"]
+
+[dependency-groups]
+lint = [
+    "ruff==0.8.2",
+    "bandit==1.7.5",
+    "pre-commit==4.0.1",  # For git hooks
+    "commitizen==3.13.0",  # For commit message validation
+]
+
+type = [
+    "mypy==1.13.0",
+    "pandas-stubs==2.1.4.231227",
+    "types-psutil==6.0.0.20240621",
+    "types-requests==2.31.0.10",
+    "types-tabulate==0.9.0.20240106",
+    "types-tqdm==4.66.0.5",
+    "types-PyYAML==6.0.12.20240917",
+]
+
+test = [
+    "pytest==8.3.4",
+    "pytest-asyncio==0.25.0",
+    "coverage==7.3.2",
+    "typeguard==4.1.5",
+    "colorama==0.4.6",  # For colored test output
+]
+
+docs = [
+    "jupyter-book==1.0.0",
+    "jupytext==1.15.2",
+    "sphinx-inline-tabs==2023.4.21",
+    "sphinx-proof==0.2.0",
+    "sphinx-sitemap==2.5.1",
+    "sphinxcontrib-mermaid==0.1.0",
+    "ghp-import==2.1.0",
+    "ipywidgets==7.7.2",  # For Jupyter notebook widgets in docs
+]
+
+utils = [
+    "cookiecutter==2.4.0",  # Project template generation
+]
+
+dev = [
+    { include-group = "lint" },
+    { include-group = "type" },
+    { include-group = "test" },
+    { include-group = "docs" },
+    { include-group = "utils" },
+]
+
 
 # https://bandit.readthedocs.io/en/latest/config.html
 [tool.bandit]
@@ -97,47 +119,11 @@ exclude_dirs = [
     "dist",
 ]
 
-[tool.isort]
-profile = "black"
-line_length = 120
-verbose = false
-skip = [
-    ".eggs",
-    ".git",
-    ".hg",
-    ".mypy_cache",
-    ".tox",
-    "venv_*",
-    "venv",
-    ".venv",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-]
-skip_glob = [
-    "**/venv_*",
-    "venv",
-    ".venv",
-]
 
-[tool.black]
-line-length = 120           # NOTE: in sync with ruff
-target-version = ['py39']   # NOTE: in sync with ruff
-verbose = false
-diff = false
-color = false
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "semver"
+version_provider = "pep621"
+update_changelog_on_bump = true
+major_version_zero = true

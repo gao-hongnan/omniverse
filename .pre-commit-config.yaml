@@ -1,12 +1,7 @@
-# NOTE: It is important to have exactly the same config for all pre-commit hooks as the github action yaml. In other words, local and remote CI checks should be the same.
-# pre-commit run --all-files --verbose
-# See https://pycqa.github.io/isort/docs/configuration/black_compatibility.html for arg diff in local vs remote.
-# Reference: https://github.com/mosaicml/composer/blob/dev/.pre-commit-config.yaml
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
-      # - id: check-added-large-files
       - id: check-ast
       - id: check-builtin-literals
       - id: check-case-conflict
@@ -18,90 +13,52 @@ repos:
       - id: check-toml
       - id: check-vcs-permalinks
       - id: check-xml
-      # - id: check-yaml
+      - id: check-yaml
       - id: debug-statements
       - id: destroyed-symlinks
       - id: mixed-line-ending
       - id: trailing-whitespace
         exclude: omniverse
-  - repo: local
-    hooks:
-      - id: ci-security-bandit
-        name: Run Security Check (Bandit)
-        entry: >
-            bash -c 'set -o pipefail;
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/security_bandit.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  - repo: local
-    hooks:
-      - id: ci-lint-ruff
-        name: Run Linter Check (Ruff)
-        entry: >
-            bash -c 'set -o pipefail;
-            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/main/scripts/devops/continuous-integration/lint_ruff.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  # - repo: https://github.com/igorshubovych/markdownlint-cli
-  #   rev: v0.38.0
-  #   hooks:
-  #   - id: markdownlint
-  #     args: [--config, .markdownlint.json]
-  - repo: local
-    hooks:
-      - id: ci-format-isort
-        name: Run Formatter Check (Isort)
-        entry: >
-            bash -c 'set -o pipefail;
-            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
-            export CUSTOM_FLAGS=--filter-files &&
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_isort.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  - repo: local
-    hooks:
-      - id: ci-format-black
-        name: Run Formatter Check (Black)
-        entry: >
-            bash -c 'set -o pipefail;
-            export CUSTOM_PACKAGES="omnivault omnixamples tests" &&
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/format_black.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  - repo: local
-    hooks:
-      - id: ci-type-mypy
-        name: Run Static Type Check (MyPy)
-        entry: >
-            bash -c 'set -o pipefail;
-            export CUSTOM_PACKAGES="omnivault tests" &&
-            export CUSTOM_FLAGS="--python-version=3.9 --color-output --no-pretty" &&
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/type_mypy.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  - repo: local
-    hooks:
-      - id: ci-unit-test-pytest
-        name: Run Unit Tests (PyTest)
-        entry: >
-            bash -c 'set -o pipefail;
-            curl -sSL https://raw.githubusercontent.com/gao-hongnan/omniverse/dev/scripts/devops/continuous-integration/test_unit_pytest.sh |
-            bash'
-        language: system
-        types: [python]
-        pass_filenames: false
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
-    hooks:
       - id: check-merge-conflict
+
+  - repo: local
+    hooks:
+      - id: security-bandit
+        name: Security Check (Bandit)
+        entry: make security
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: lint-ruff
+        name: Lint and Format Check (Ruff)
+        entry: make lint
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: type-mypy
+        name: Type Check (MyPy)
+        entry: make typecheck
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: unit-test
+        name: Unit Tests (PyTest)
+        entry: make test
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.3
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

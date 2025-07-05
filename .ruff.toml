@@ -1,4 +1,3 @@
-# Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
     ".direnv",
@@ -23,53 +22,24 @@ exclude = [
     "venv",
 ]
 
-extend-exclude = [
-    "omnivault/transformer/core/optim.py", # we keep almost the same code as pytorch team so no qa here.
-    "omniverse/drafts/**/*.py",
-]
-
-# Same as Black.
 line-length = 120
 indent-width = 4
+target-version = "py312"
 output-format = "grouped"
 
-# Assume Python 3.9
-target-version = "py39"
-
-[lint.extend-per-file-ignores]
-"omnivault/transformer/**/*.py" = ['UP007']
-"omnivault/linear_algebra/**/*.py" = ['UP007']
-"omnivault/dsa/**/*.py" = ['UP007']
-"omnivault/dsa/searching_algorithms/strategies.py" = ["E741"]
-"omnivault/transformer/config/composer.py" = ["UP007"] # because pydantic somehow cannot handle | operator even if I did `from __future__ import annotations`
-"omnivault/transformer/config/criterion.py" = ["UP007"]
-"omnivault/transformer/modules/attention/core.py" = ["E741"]
-"omnivault/transformer/modules/layers/mlp.py" = ["B008"]
-"omnivault/transformer/core/callbacks.py" = ["G004"]
-"omnixamples/software_engineering/serving/restful_api/**/*.py" = ["B008"] # in fastapi, using Depends(...) is a common pattern
-"omnivault/machine_learning/clustering/kmeans.py" = ["NPY002"]
-"omnivault/utils/reproducibility/seed.py" = ["NPY002"]
-"tests/**/*.py" = ["PT006"]
-
 [lint]
-
 exclude = ["*.ipynb"]
-
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
-
 select = [
-    "ARG", # flake8-unused-arguments
+    "ARG",
     "B",
     "C4",
     "G",
     "E",
     "EXE",
     "F",
+    "I",
     "SIM1",
     "W",
-    # Not included in flake8
     "NPY",
     "PERF",
     "PGH004",
@@ -78,19 +48,19 @@ select = [
     "PIE804",
     "PIE807",
     "PIE810",
-    "PLC0131", # type bivariance
-    "PLC0132", # type param mismatch
-    "PLC0205", # string as __slots__
+    "PLC0131",
+    "PLC0132",
+    "PLC0205",
     "PLE",
-    "PLR0133", # constant comparison
-    "PLR0206", # property with params
-    "PLR1722", # use sys exit
-    "PLW0129", # assert on string literal
-    "PLW0406", # import self
-    "PLW0711", # binary op exception
-    "PLW1509", # preexec_fn not safe with threads
-    "PLW3301", # nested min max
-    "PT006", # TODO: enable more PT rules
+    "PLR0133",
+    "PLR0206",
+    "PLR1722",
+    "PLW0129",
+    "PLW0406",
+    "PLW0711",
+    "PLW1509",
+    "PLW3301",
+    "PT006",
     "PT022",
     "PT023",
     "PT024",
@@ -102,23 +72,22 @@ select = [
     "UP",
 ]
 ignore = [
-    "E501",   # line-too-long: handled by black.
-    "UP006",  # non-pep585-annotation: Use `list` instead of `List` for type annotation.
-    "UP015",  # redundant-open-models
-    "UP035",  # deprecated-import: `typing.Type` is deprecated, use `type` instead.
-    "G004",   # no-logging-fstring: logging should use f-string
-    "UP007",  # |
+    "E501",
+    "UP006",
+    "UP015",
+    "UP035",
+    "G004",
+    "UP007",
 ]
-
-# Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
-
-# Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[format] # default config from ruff
-quote-style = "double" # Like Black, use double quotes for strings.
-indent-style = "space"              # Like Black, indent with spaces, rather than tabs.
-skip-magic-trailing-comma = false # Like Black, respect magic trailing commas.
-line-ending = "auto" # Like Black, automatically detect the appropriate line ending.
+[lint.isort]
+known-first-party = ["omnivault", "omniverse", "omnixamples"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

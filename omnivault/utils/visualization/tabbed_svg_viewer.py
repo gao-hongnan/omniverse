@@ -28,7 +28,7 @@ def create_tabbed_svg_viewer(image_paths: List[str], tab_titles: List[str]) -> i
 
     outputs = [ipywidgets.Output() for _ in image_paths]
 
-    for output, image_path in zip(outputs, image_paths):
+    for output, image_path in zip(outputs, image_paths, strict=False):
         with output:
             display(SVG(filename=image_path))
 
