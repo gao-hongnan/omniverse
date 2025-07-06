@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -581,7 +571,6 @@ We can automate the code without a DAG as well, so why DAG? Here's some reasons.
 
 ```{list-table} Why DAG?
 :header-rows: 1
-:widths: 25 75
 :name: ml-lifecycle-03-why-dag
 
 -   -   Feature

@@ -7,7 +7,6 @@
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
 ```{contents}
-:local:
 ```
 
 This guide will help you set up your AWS environment and install AWS CLI and AWS
