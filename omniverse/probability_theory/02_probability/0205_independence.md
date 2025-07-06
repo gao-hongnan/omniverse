@@ -1,7 +1,6 @@
 # Independence
 
 ```{contents}
-:local:
 ```
 
 ## Definition (Independent Events)

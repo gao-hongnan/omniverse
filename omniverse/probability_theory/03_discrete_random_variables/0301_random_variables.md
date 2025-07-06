@@ -1,7 +1,6 @@
 # Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Definition

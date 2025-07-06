@@ -1,7 +1,6 @@
 # Moments and Variance
 
 ```{contents}
-:local:
 ```
 
 ## Notation

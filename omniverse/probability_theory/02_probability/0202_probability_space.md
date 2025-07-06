@@ -1,7 +1,6 @@
 # Probability Space
 
 ```{contents}
-:local:
 ```
 
 Most definitions and theorems below are cited from {cite}`chan_2021`.

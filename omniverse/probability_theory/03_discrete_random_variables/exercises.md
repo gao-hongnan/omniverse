@@ -1,7 +1,6 @@
 # Exercises
 
 ```{contents}
-:local:
 ```
 
 ## Problem 1

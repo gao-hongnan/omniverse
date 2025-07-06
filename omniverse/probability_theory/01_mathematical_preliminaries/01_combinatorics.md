@@ -1,7 +1,6 @@
 # Permutations and Combinations
 
 ```{contents}
-:local:
 ```
 
 ## The Counting Principles

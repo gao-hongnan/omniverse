@@ -1,7 +1,6 @@
 # Conditional Probability
 
 ```{contents}
-:local:
 ```
 
 ## Definition

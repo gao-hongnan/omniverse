@@ -1,7 +1,6 @@
 # Chapter 1. Mathematical Preliminaries
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents
