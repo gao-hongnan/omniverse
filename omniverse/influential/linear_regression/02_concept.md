@@ -7,7 +7,6 @@ jupytext:
     format_name: myst
     format_version: 0.13
     jupytext_version: 1.11.5
-mystnb:
   number_source_lines: true
 kernelspec:
   display_name: Python 3

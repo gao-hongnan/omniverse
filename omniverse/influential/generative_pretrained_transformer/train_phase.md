@@ -1,7 +1,6 @@
 # The Training Phase
 
 ```{contents}
-:local:
 ```
 
 This chapter will cover the training phase of the GPT model, which involves

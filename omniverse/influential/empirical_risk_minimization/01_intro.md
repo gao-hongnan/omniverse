@@ -6,7 +6,6 @@
 ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
 
 ```{contents}
-:local:
 ```
 
 ```{tableofcontents}

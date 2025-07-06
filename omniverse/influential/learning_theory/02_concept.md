@@ -6,7 +6,6 @@
 ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
 
 ```{contents}
-:local:
 ```
 
 This topic is quite theoretical and heavy. I do not have the ability to explain
@@ -1115,7 +1114,7 @@ Thus, we found a bound for the whole hypothesis set $\mathcal{H}$. Thus our $1 -
 $\left| \mathcal{H} \right| 2 e^{-2 \epsilon^{2} N}$.
 
 
-```{toggle}
+```{dropdown} Legacy Note
 The below content was what I initially wrote, but the argument is hand-wavy, so I tried to lay
 out the argument more formally above. Still quite unsure if the reasoning is correct, but at least
 should be along those lines.
@@ -1158,7 +1157,7 @@ our expression is now in the form of "at least one $h_m$ is bad" which translate
 ```
 ````
 
-````{toggle}
+````{dropdown} Major Confusion Alert
 ```{prf:remark} Major Confusion Alert
 :label: prf:remark-major-confusion-alert
 
