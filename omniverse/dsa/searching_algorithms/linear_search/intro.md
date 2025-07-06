@@ -1,7 +1,6 @@
 # Linear Search
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

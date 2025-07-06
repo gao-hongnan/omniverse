@@ -1,7 +1,6 @@
 # Stack
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

@@ -1,7 +1,6 @@
 # List/Array
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

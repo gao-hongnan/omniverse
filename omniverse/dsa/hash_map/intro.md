@@ -1,7 +1,6 @@
 # Hash Map
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents
