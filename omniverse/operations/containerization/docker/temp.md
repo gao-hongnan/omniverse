@@ -1,7 +1,6 @@
 # Containerization
 
 ```{contents}
-:local:
 ```
 
 ## Dockerfile
