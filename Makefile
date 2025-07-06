@@ -1,6 +1,7 @@
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := help # NOTE: if you run `make` without any arguments, it will run the help command
 
 PACKAGE_NAME := omnivault
+DOCS_DIR := omniverse
 TEST_DIR := tests
 SOURCES := $(PACKAGE_NAME) $(TEST_DIR)
 
@@ -14,9 +15,13 @@ install: .uv
 	uv run pre-commit install
 	uv run pre-commit install --hook-type commit-msg
 
+.PHONY: lock
+lock: .uv
+	uv lock --upgrade
+
 .PHONY: sync
 sync: .uv
-	uv sync --all-groups --all-extras
+	uv sync --all-extras --all-packages --all-groups
 
 .PHONY: format
 format: .uv
@@ -27,7 +32,6 @@ format: .uv
 lint: .uv
 	uv run ruff check $(SOURCES)
 	uv run ruff format --check $(SOURCES)
-
 
 .PHONY: security
 security: .uv
@@ -47,20 +51,16 @@ test: .uv
 .PHONY: coverage
 coverage: .uv
 	uv run coverage run -m pytest $(TEST_DIR)
-	uv run coverage run -m pytest
+	uv run coverage html -d htmlcov
 	uv run coverage xml -o coverage.xml
 	uv run coverage report -m --fail-under=95
 
 .PHONY: docs
-docs:
-	cd docs && make html
+docs: .uv
+	cd $(DOCS_DIR) && uv run jupyter book build .
 
 .PHONY: ci
-ci: format lint typecheck test coverage
-
-.PHONY: lock
-lock: .uv
-	uv lock --upgrade
+ci: lint security typecheck test coverage
 
 .PHONY: clean
 clean:
@@ -70,20 +70,17 @@ clean:
 help:
 	@echo "Development Commands:"
 	@echo "  install             Install all dependencies (all groups + extras)"
-	@echo "  sync                Update dependencies and lock file (use after changing pyproject.toml)"
-	@echo "  install-lint        Install only linting dependencies"
-	@echo "  install-test        Install only testing dependencies"
-	@echo "  install-dev         Install dev group (includes lint, type, test, docs)"
+	@echo "  lock                Update and regenerate lock file"
+	@echo "  sync                Sync dependencies (without --frozen)"
 	@echo "  format              Format code with ruff"
 	@echo "  lint                Lint code with ruff (includes format check)"
 	@echo "  security            Run security checks with bandit"
 	@echo "  typecheck           Run type checking with mypy, pyright"
 	@echo "  test                Run tests with pytest"
-	@echo "  coverage            Run tests with coverage reporting"
-	@echo "  docs                Build documentation"
-	@echo "  ci                  Run full CI pipeline (lint, typecheck, test, coverage)"
+	@echo "  coverage            Run tests with coverage reporting (95% minimum)"
+	@echo "  docs                Build Jupyter Book documentation"
+	@echo "  ci                  Run full CI pipeline (lint, security, typecheck, test, coverage)"
 	@echo ""
 	@echo "Utility Commands:"
-	@echo "  lock                Update lock files"
 	@echo "  clean               Clean build artifacts and cache files"
 	@echo "  help                Show this help message"
