@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -24,7 +14,6 @@ kernelspec:
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/tree/e96d19fc2cc5d4a1f9311fe91aced78ab5f4a910/omnixamples/software_engineering/design_patterns/dii)
 
 ```{contents}
-:local:
 ```
 
 ## Definition

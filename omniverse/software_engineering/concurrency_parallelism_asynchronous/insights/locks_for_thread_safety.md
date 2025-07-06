@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -25,7 +15,6 @@ kernelspec:
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/8ddcd6a345925e7fd550b74ce4577a0e2807aa5f/omnixamples/software_engineering/concurrency_parallelism_asynchronous/race_condition.py)
 
 ```{contents}
-:local:
 ```
 
 With pre-emptive multitasking, the OS can interrupt a thread at any time, even
