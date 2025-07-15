@@ -1,7 +1,6 @@
 # The Geometry of Multivariate Gaussians
 
 ```{contents}
-:local:
 ```
 
 By the eigendecomposition theorem, we can write the covariance matrix

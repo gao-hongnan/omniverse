@@ -1,7 +1,6 @@
 # Concept
 
 ```{contents}
-:local:
 ```
 
 ## Joint PMF (Discrete Random Variables)

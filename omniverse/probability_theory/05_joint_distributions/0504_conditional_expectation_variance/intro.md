@@ -1,7 +1,6 @@
 # Conditional Expectation and Variance
 
 ```{contents}
-:local:
 ```
 
 ## Introduction

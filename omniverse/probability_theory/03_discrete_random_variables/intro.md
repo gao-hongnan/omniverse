@@ -1,7 +1,6 @@
 # Chapter 3. Discrete Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

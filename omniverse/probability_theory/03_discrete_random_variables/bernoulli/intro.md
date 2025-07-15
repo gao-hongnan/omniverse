@@ -1,7 +1,6 @@
 # Bernoulli Distribution
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

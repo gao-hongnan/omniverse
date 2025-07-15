@@ -1,7 +1,6 @@
 # Multivariate Gaussian Distribution
 
 ```{contents}
-:local:
 ```
 
 This section talks about the multivariate Gaussian distribution, which is a

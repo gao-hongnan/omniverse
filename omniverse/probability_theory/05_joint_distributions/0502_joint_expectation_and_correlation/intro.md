@@ -1,7 +1,6 @@
 # Joint Expectation and Correlation
 
 ```{contents}
-:local:
 ```
 
 ## Introduction

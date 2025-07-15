@@ -1,7 +1,6 @@
 # Cumulative Distribution Function
 
 ```{contents}
-:local:
 ```
 
 ## Definition

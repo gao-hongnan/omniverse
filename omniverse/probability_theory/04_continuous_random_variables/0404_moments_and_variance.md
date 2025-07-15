@@ -1,7 +1,6 @@
 # Moments and Variance
 
 ```{contents}
-:local:
 ```
 
 The moment and variance of a continuous random variable $X$ are similar to the

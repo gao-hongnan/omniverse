@@ -1,7 +1,6 @@
 # Concept
 
 ```{contents}
-:local:
 ```
 
 ## Definition

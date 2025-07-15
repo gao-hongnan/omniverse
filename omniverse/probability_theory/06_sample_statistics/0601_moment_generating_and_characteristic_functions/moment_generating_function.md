@@ -1,7 +1,6 @@
 # Moment Generating Function
 
 ```{contents}
-:local:
 ```
 
 ## Definition

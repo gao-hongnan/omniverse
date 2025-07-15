@@ -1,7 +1,6 @@
 # Chapter 8. Estimation Theory
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

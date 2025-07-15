@@ -1,7 +1,6 @@
 # Characteristic Function
 
 ```{contents}
-:local:
 ```
 
 ## Why Characteristic Function?

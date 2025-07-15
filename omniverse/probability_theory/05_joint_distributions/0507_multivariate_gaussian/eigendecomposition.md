@@ -1,7 +1,6 @@
 # Eigendecomposition and Covariance Matrix
 
 ```{contents}
-:local:
 ```
 
 ```{prf:definition} Eigenvalue and Eigenvector

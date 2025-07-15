@@ -1,7 +1,6 @@
 # Geometric Distribution
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

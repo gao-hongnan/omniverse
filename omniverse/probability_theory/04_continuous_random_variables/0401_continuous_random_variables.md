@@ -1,7 +1,6 @@
 # Continuous Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Definition

@@ -1,7 +1,6 @@
 # Probability Inequalities
 
 ```{contents}
-:local:
 ```
 
 Probability bounds are important in machine learning because they provide

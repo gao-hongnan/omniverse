@@ -1,7 +1,6 @@
 # Application: Learning Theory
 
 ```{contents}
-:local:
 ```
 
 See

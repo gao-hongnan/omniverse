@@ -1,7 +1,6 @@
 # Probability Inequalities
 
 ```{contents}
-:local:
 ```
 
 In this section, we will only list the definitions of the various inequalities

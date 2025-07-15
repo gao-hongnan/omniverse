@@ -1,7 +1,6 @@
 # Moment Generating and Characteristic Functions
 
 ```{contents}
-:local:
 ```
 
 Moment generating functions are functions that generate moments (i.e., expected

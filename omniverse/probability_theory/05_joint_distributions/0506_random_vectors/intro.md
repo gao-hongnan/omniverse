@@ -1,7 +1,6 @@
 # Random Vectors
 
 ```{contents}
-:local:
 ```
 
 So far we have mostly discussed about joint distributions in terms of two random

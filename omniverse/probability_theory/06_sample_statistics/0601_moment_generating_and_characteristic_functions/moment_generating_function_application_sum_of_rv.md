@@ -1,7 +1,6 @@
 # Application: Moment Generating Function and the Sum of Random Variables
 
 ```{contents}
-:local:
 ```
 
 This section is based on the work of {cite}`chan_2021`.

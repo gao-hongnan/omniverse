@@ -1,7 +1,6 @@
 # Mean, Median and Mode
 
 ```{contents}
-:local:
 ```
 
 ## Median

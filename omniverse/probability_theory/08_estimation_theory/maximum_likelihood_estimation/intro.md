@@ -1,7 +1,6 @@
 # Maximum Likelihood Estimation
 
 ```{contents}
-:local:
 ```
 
 Maximum-likelihood (ML) estimation is a statistical method that aims to find the
