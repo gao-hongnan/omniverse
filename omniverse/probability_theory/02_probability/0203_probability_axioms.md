@@ -1,7 +1,6 @@
 # Probability Axioms
 
 ```{contents}
-:local:
 ```
 
 ## The Three Axioms of Probability (Kolmogorov Axioms)

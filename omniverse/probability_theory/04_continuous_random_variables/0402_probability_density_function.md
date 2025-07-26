@@ -1,7 +1,6 @@
 # Probability Density Function
 
 ```{contents}
-:local:
 ```
 
 ## Definition

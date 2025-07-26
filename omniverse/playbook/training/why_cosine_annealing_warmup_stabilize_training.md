@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -25,7 +15,6 @@ kernelspec:
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/main/omnivault/schedulers/cosine_annealing_warmup.py)
 
 ```{contents}
-:local:
 ```
 
 ```{code-cell} ipython3

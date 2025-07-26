@@ -1,7 +1,6 @@
 # Functions of Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Intuition

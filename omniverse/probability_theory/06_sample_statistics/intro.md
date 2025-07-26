@@ -1,7 +1,6 @@
 # Chapter 6. Sample Statistics
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

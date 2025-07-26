@@ -1,7 +1,6 @@
 # Chapter 2. Probability
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

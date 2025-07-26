@@ -1,7 +1,6 @@
 # Fields
 
 ```{contents}
-:local:
 ```
 
 ## Learning Objectives

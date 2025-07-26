@@ -171,7 +171,7 @@ class Trainer:
             [metric_value_or_values] if isinstance(metric_value_or_values, float) else metric_value_or_values
         )
 
-        for metric_name, metric_value in zip(metric_names, metric_values):
+        for metric_name, metric_value in zip(metric_names, metric_values, strict=False):
             self.metrics_dict[metric_name] = metric_value
             self.history[metric_name].append(metric_value)
 

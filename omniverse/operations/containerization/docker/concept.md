@@ -1,7 +1,6 @@
 # Docker
 
 ```{contents}
-:local:
 ```
 
 ## Learning Objectives

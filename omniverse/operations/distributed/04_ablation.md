@@ -8,7 +8,6 @@
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/aceb4aa24f2fd03c459d9903608205cbe4d84f7d/omnixamples/distributed/a_basic/d_ablations.py)
 
 ```{contents}
-:local:
 ```
 
 ## Barrier

@@ -1,7 +1,6 @@
 # Independent and Identically Distributed (IID)
 
 ```{contents}
-:local:
 ```
 
 ## Definition

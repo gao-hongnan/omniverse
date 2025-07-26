@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -24,7 +14,6 @@ kernelspec:
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/288357646b8e4043d0b0a81c8b6b6c600fbd2efd/omnixamples/software_engineering/design_patterns/named_constructor/from_classmethod.py)
 
 ```{contents}
-:local:
 ```
 
 The `from_xxx` pattern is increasingly popular in modern Python libraries. I did

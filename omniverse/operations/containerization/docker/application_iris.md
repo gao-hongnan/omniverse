@@ -1,7 +1,6 @@
 # Application 1: Predicting Iris Species and Deploying with Docker using Streamlit (Revisit my common-utils)
 
 ```{contents}
-:local:
 ```
 
 In this section, we will use the

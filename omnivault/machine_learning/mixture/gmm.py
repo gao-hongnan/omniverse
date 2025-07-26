@@ -524,7 +524,7 @@ class GaussianMixtureModel(BaseEstimator):
             """
             Plot the Gaussian contours for each component in the GMM.
             """
-            for mean, cov in zip(means, covariances):
+            for mean, cov in zip(means, covariances, strict=False):
                 pdf = grid_gaussian_pdf(xx, yy, mean, cov)
                 ax.contour(xx, yy, pdf, levels=10, colors="k")
 

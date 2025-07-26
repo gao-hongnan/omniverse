@@ -8,7 +8,6 @@
 [![Code](https://img.shields.io/badge/View-Code-blue?style=flat-square&logo=github)](https://github.com/gao-hongnan/omniverse/blob/88e2c1743a4ea01c1756eb3fa44639f98d77ac83/omnixamples/distributed/a_basic/b_demo.py)
 
 ```{contents}
-:local:
 ```
 
 **DistributedDataParallel (DDP)** provides module-level data parallelism that's

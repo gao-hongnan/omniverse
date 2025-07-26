@@ -1,7 +1,6 @@
 # Joint PMF and PDF
 
 ```{contents}
-:local:
 ```
 
 ## Introduction

@@ -1,7 +1,6 @@
 # Sum of Random Variables
 
 ```{contents}
-:local:
 ```
 
 This section details the sum of random variables. In the example

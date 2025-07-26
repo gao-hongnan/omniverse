@@ -1,7 +1,6 @@
 # Probability Mass Function
 
 ```{contents}
-:local:
 ```
 
 ## Definition

@@ -1,7 +1,6 @@
 # Summary
 
 ```{contents}
-:local:
 ```
 
 ## Conditional

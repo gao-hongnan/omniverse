@@ -1,7 +1,6 @@
 # Baye\'s Theorem and the Law of Total Probability
 
 ```{contents}
-:local:
 ```
 
 ## Baye\'s Theorem

@@ -1,7 +1,6 @@
 # Covariance Matrix is Positive Semi-Definite
 
 ```{contents}
-:local:
 ```
 
 ## The Properties of Covariance Matrix

@@ -1,7 +1,6 @@
 # Calculus
 
 ```{contents}
-:local:
 ```
 
 ## Integration

@@ -1,7 +1,6 @@
 # Poisson Distribution
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

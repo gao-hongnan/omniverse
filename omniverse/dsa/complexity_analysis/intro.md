@@ -1,7 +1,6 @@
 # Complexity Analysis
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

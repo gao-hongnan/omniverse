@@ -47,11 +47,11 @@ problems with labels.
 Abuse notation: $\mathcal{S}$ or $\mathcal{D}_{\mathrm{train}}$ or
 $\mathcal{D}_{\{\mathbf{x}, y\}}$
 
-````{div} full-width
+````{div}
+:class: full-width
 ```{list-table} Machine Learning Notations
 :header-rows: 1
 :name: machine-learning-notations
-:widths: 10 40 50
 
 * - Notation
   - Description

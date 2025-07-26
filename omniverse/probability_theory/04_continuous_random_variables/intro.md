@@ -1,7 +1,6 @@
 # Chapter 4. Continuous Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

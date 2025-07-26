@@ -1,7 +1,6 @@
 # Preliminaries
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

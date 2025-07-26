@@ -1,7 +1,6 @@
 # Discrete Random Variables
 
 ```{contents}
-:local:
 ```
 
 ## Definition

@@ -6,7 +6,6 @@
 ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
 
 ```{contents}
-:local:
 ```
 
 ## Notations
@@ -24,8 +23,10 @@
 to the joint distribution of the input and the label,
 
   $$
+  \begin{aligned}
   \mathcal{D} &= \mathbb{P}(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta}) \\
   &= \mathbb{P}_{\{\mathcal{X}, \mathcal{Y} ; \boldsymbol{\theta}\}}(\mathbf{x}, y)
+  \end{aligned}
   $$
 
   where $\mathbf{x} \in \mathcal{X}$ and $y \in \mathcal{Y}$, and $\boldsymbol{\theta}$ is the
@@ -319,12 +320,14 @@ the numerator of the conditional probability in {eq}`eq:conditional-naive-bayes`
   and
 
   $$
+  \begin{aligned}
   \mathbf{M_3} &= \begin{bmatrix}
   \mathbb{P}(X_1 = x_1 \mid Y = 1 ; \theta_{11}) & \mathbb{P}(X_2 = x_2 \mid Y = 1 ; \theta_{12}) & \cdots & \mathbb{P}(X_D = x_D \mid Y = 1 ; \theta_{1D}) \\
   \mathbb{P}(X_1 = x_1 \mid Y = 2 ; \theta_{21}) & \mathbb{P}(X_2 = x_2 \mid Y = 2 ; \theta_{22}) & \cdots & \mathbb{P}(X_D = x_D \mid Y = 2 ; \theta_{2D}) \\
   \vdots & \vdots & \ddots & \vdots \\
   \mathbb{P}(X_1 = x_1 \mid Y = K ; \theta_{K1}) & \mathbb{P}(X_2 = x_2 \mid Y = K ; \theta_{K2}) & \cdots & \mathbb{P}(X_D = x_D \mid Y = K ; \theta_{KD})
-  \end{bmatrix}_{K \times D} \\
+  \end{bmatrix}_{K \times D}
+  \end{aligned}
   $$ (eq:naive-bayes-m3)
 
   Note superscript $q$ is removed for simplicity, and $\circ$ is the element-wise (Hadamard) product.

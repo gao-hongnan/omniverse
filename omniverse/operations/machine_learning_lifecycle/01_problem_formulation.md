@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -24,7 +14,6 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
 ```{contents}
-:local:
 ```
 
 ## Introduction
@@ -96,7 +85,6 @@ critical role in driving user engagement and revenue for streaming platforms.
 ```{list-table}
 :name: business-metrics-movie-recommendation
 :header-rows: 1
-:widths: 25 75
 
 -   -   Metric
     -   Description

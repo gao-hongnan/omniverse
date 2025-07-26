@@ -1,6 +1,7 @@
 # NOTE: unit-tested
 """Even though the module is called pairwise, the functions are not pairwise.
 This will be implemented in due time, so for now it just expects two 1D arrays."""
+
 from typing import Any
 
 import numpy as np

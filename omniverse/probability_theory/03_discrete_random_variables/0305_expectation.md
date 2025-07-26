@@ -1,7 +1,6 @@
 # Expectation
 
 ```{contents}
-:local:
 ```
 
 ## Definition

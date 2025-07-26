@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -24,7 +14,6 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
 ```{contents}
-:local:
 ```
 
 After a model has been trained and evaluated, it's crucial to thoroughly
@@ -47,7 +36,6 @@ segments of the data.
 ```{list-table} Offline Validation Steps
 :header-rows: 1
 :name: offline-validation-steps
-:widths: 20 80
 
 * - Validation Step
   - Details
@@ -99,7 +87,6 @@ Online validation assesses the model's performance in a real-world environment:
 ```{list-table} Online Validation Techniques
 :header-rows: 1
 :name: online-validation-techniques
-:widths: 20 80
 
 * - Technique
   - Details

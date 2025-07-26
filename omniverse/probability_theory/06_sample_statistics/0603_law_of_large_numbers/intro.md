@@ -1,7 +1,6 @@
 # Law of Large Numbers
 
 ```{contents}
-:local:
 ```
 
 This section talks about the

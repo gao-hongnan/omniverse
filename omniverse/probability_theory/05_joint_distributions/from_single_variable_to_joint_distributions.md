@@ -1,7 +1,6 @@
 # From Single Variable to Joint Distributions
 
 ```{contents}
-:local:
 ```
 
 In the simplest sense, joint distributions are extensions of the PDFs and PMFs

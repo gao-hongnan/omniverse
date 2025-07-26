@@ -4,7 +4,6 @@
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 
 ```{contents}
-:local:
 ```
 
 ## Introduction

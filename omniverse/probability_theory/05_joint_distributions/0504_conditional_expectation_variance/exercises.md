@@ -1,7 +1,6 @@
 # Exercises
 
 ```{contents}
-:local:
 ```
 
 ## Example 5.7 ([link](https://www.probabilitycourse.com/chapter5/5_1_3_conditioning_independence.php))

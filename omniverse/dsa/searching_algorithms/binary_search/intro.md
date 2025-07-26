@@ -1,7 +1,6 @@
 # Binary Search
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

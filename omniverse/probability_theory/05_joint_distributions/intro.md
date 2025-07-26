@@ -1,7 +1,6 @@
 # Chapter 5. Joint Distributions
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

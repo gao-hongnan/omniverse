@@ -1,7 +1,6 @@
 # Vectors
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

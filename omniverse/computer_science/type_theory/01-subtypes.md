@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -25,7 +15,6 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Tag-Vetted-green)
 
 ```{contents}
-:local:
 ```
 
 ```{code-cell} ipython3
@@ -581,10 +570,10 @@ type `float`, or $\mathcal{B}$) are added, Python implicitly applies the
 conversion function $f$ to `int_value` to convert it into a `float` (type
 $\mathcal{B}$) before the addition. This can be thought of as:
 
--   $\mathcal{V}_{\mathcal{A}} = \text{int_value}$
--   $\mathcal{V}_{\mathcal{B}} = f(\text{int_value}) = \text{float_value}$
+-   $\mathcal{V}_{\mathcal{A}} = \text{int\_value}$
+-   $\mathcal{V}_{\mathcal{B}} = f(\text{int\_value}) = \text{float\_value}$
 
-Here, $f(\text{int_value})$ effectively "coerces" or converts the integer value
+Here, $f(\text{int\_value})$ effectively "coerces" or converts the integer value
 to a floating-point value, ensuring that the addition operation occurs between
 two values of the same type ($\mathcal{B}$, or `float`). The result of this
 operation is a `float`, demonstrating how the coercive conversion aligns with

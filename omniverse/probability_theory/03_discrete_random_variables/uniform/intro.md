@@ -1,7 +1,6 @@
 # Discrete Uniform Distribution
 
 ```{contents}
-:local:
 ```
 
 ## Table of Contents

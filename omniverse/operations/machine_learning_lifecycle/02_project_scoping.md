@@ -1,14 +1,4 @@
 ---
-jupytext:
-    cell_metadata_filter: -all
-    formats: md:myst
-    text_representation:
-        extension: .md
-        format_name: myst
-        format_version: 0.13
-        jupytext_version: 1.11.5
-mystnb:
-    number_source_lines: true
 kernelspec:
     display_name: Python 3
     language: python
@@ -24,7 +14,6 @@ kernelspec:
 ![Tag](https://img.shields.io/badge/Level-Beginner-green)
 
 ```{contents}
-:local:
 ```
 
 ## Introduction
@@ -550,7 +539,7 @@ objectives:
     $$
     \begin{aligned}
     \mathcal{L} &= \alpha \mathcal{L}_1 + \beta \mathcal{L}_2 \\
-    &= \alpha \text{quality_loss} + \beta \text{engagement_loss} \\
+    &= \alpha \text{quality\_loss} + \beta \text{engagement\_loss} \\
     \end{aligned}
     $$
 
@@ -574,7 +563,7 @@ prediction.
 $$
 \begin{aligned}
 \hat{y} &= \alpha h_1(x) + \beta h_2(x) \\
-&= \alpha \text{quality_prediction} + \beta \text{engagement_prediction}
+&= \alpha \text{quality\_prediction} + \beta \text{engagement\_prediction}
 \end{aligned}
 $$
 

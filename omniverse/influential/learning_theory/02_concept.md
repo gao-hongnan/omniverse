@@ -6,7 +6,6 @@
 ![Tag](https://img.shields.io/badge/Tag-Organized_Chaos-orange)
 
 ```{contents}
-:local:
 ```
 
 This topic is quite theoretical and heavy. I do not have the ability to explain
@@ -1115,7 +1114,7 @@ Thus, we found a bound for the whole hypothesis set $\mathcal{H}$. Thus our $1 -
 $\left| \mathcal{H} \right| 2 e^{-2 \epsilon^{2} N}$.
 
 
-```{toggle}
+```{dropdown} Legacy Note
 The below content was what I initially wrote, but the argument is hand-wavy, so I tried to lay
 out the argument more formally above. Still quite unsure if the reasoning is correct, but at least
 should be along those lines.
@@ -1158,7 +1157,7 @@ our expression is now in the form of "at least one $h_m$ is bad" which translate
 ```
 ````
 
-````{toggle}
+````{dropdown} Major Confusion Alert
 ```{prf:remark} Major Confusion Alert
 :label: prf:remark-major-confusion-alert
 
@@ -1175,8 +1174,8 @@ $$
 
 That is the probability that the least upper bound (that is the supremum $\sup _{h \in \mathcal{H}}$ ) of the absolute difference between $\mathcal{R}(h)$ and $\hat{\mathcal{R}}(h)$ is larger than a very small value $\epsilon$.
 
-In more laymen words, every $h_m \in \mathcal{H}$ induces a difference categorized by say $\text{in_out_error_diff}_m = \mathcal{R}(h_m)-\hat{\mathcal{R}}(h_m)$, and this
-$\text{in_out_error_diff}_m$ is a scalar value, say ranging from $0$ to $1$, sometimes, a hypothesis $h_i$ can induce a difference of say $0.2$, and sometimes, another hypothesis $h_j$ can induce a difference of say $0.8$. The supremum of these differences is the *nasty and bad* hypothesis $h_{\text{bad}}$ that induces the maximum difference amongst all the $h_m \in \mathcal{H}$. BUT IF WE CAN BOUND THE BADDEST AND WORST CASE by a very small value $\epsilon$, then we are good. This is exactly what the Hoeffding's Inequality does. It says that the largest difference between $\mathcal{R}(h)$ and $\hat{\mathcal{R}}(h)$ exceeding $\epsilon$ is lesser
+In more laymen words, every $h_m \in \mathcal{H}$ induces a difference categorized by say $\text{in\_out\_error\_diff}_m = \mathcal{R}(h_m)-\hat{\mathcal{R}}(h_m)$, and this
+$\text{in\_out\_error\_diff}_m$ is a scalar value, say ranging from $0$ to $1$, sometimes, a hypothesis $h_i$ can induce a difference of say $0.2$, and sometimes, another hypothesis $h_j$ can induce a difference of say $0.8$. The supremum of these differences is the *nasty and bad* hypothesis $h_{\text{bad}}$ that induces the maximum difference amongst all the $h_m \in \mathcal{H}$. BUT IF WE CAN BOUND THE BADDEST AND WORST CASE by a very small value $\epsilon$, then we are good. This is exactly what the Hoeffding's Inequality does. It says that the largest difference between $\mathcal{R}(h)$ and $\hat{\mathcal{R}}(h)$ exceeding $\epsilon$ is lesser
 or equals to $2 e^{-2 \epsilon^{2} N}$. Note this is not saying that exceeding $\epsilon$ is impossible, it is saying that the probability of this bad event happening and exceeding $\epsilon$ is bounded by $2 e^{-2 \epsilon^{2} N}$. This is a very important point to note.
 ````
 

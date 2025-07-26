@@ -73,7 +73,9 @@ def compare_test_cases(
             f"descriptions={len(description_list)}"
         )
 
-    for i, (actual, expected, description) in enumerate(zip(actual_list, expected_list, description_list)):
+    for i, (actual, expected, description) in enumerate(
+        zip(actual_list, expected_list, description_list, strict=False)
+    ):
         compare_test_case(
             actual=actual,
             expected=expected,
