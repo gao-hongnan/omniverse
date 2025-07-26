@@ -1,17 +1,15 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
-  number_source_lines: true
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
 ```{code-cell} ipython3
@@ -75,28 +73,24 @@ use_svg_display()
 # Concept
 
 ```{contents}
+
 ```
 
-This section details the linear regression model from a probabilistic perspective.
-
+This section details the linear regression model from a probabilistic
+perspective.
 
 ## Intuition
 
-As a running example, suppose that we wish
-to estimate the prices of houses (in dollars)
-based on their area (in square feet) and age (in years).
-To develop a model for predicting house prices,
-we need to get our hands on data consisting of sales,
-including the sales price, area, and age for each home.
-In the terminology of machine learning,
-the dataset is called a *training dataset* or *training set*,
-and each row (containing the data corresponding to one sale)
-is called an *example* (or *data point*, *instance*, *sample*).
-The thing we are trying to predict (price)
-is called a *label* (or *target*).
-The variables (age and area)
-upon which the predictions are based
-are called *features* (or *covariates*) {cite}`zhang2023dive`.
+As a running example, suppose that we wish to estimate the prices of houses (in
+dollars) based on their area (in square feet) and age (in years). To develop a
+model for predicting house prices, we need to get our hands on data consisting
+of sales, including the sales price, area, and age for each home. In the
+terminology of machine learning, the dataset is called a _training dataset_ or
+_training set_, and each row (containing the data corresponding to one sale) is
+called an _example_ (or _data point_, _instance_, _sample_). The thing we are
+trying to predict (price) is called a _label_ (or _target_). The variables (age
+and area) upon which the predictions are based are called _features_ (or
+_covariates_) {cite}`zhang2023dive`.
 
 Let's create a housing dataset below with $100$ samples.
 
@@ -135,11 +129,11 @@ plt.ylabel('Price ($)')
 plt.show()
 ```
 
-
 ### Univariate Linear Model
 
-Let's try to model the relationship between the house size (sqft) and the price ($). The assumption of linearity means that the expected value of the target (price) can be expressed as a
-linear function of the feature (sqft).
+Let's try to model the relationship between the house size (sqft) and the price
+($). The assumption of linearity means that the expected value of the target
+(price) can be expressed as a linear function of the feature (sqft).
 
 $$
 \text{price} = \beta_0 + \beta_1 \cdot \text{sqft} \iff y = \beta_0 + \beta_1 x
@@ -199,9 +193,14 @@ explanatory variables (features). As a continuation of the example above,
 let's say that we want to predict the price of a house given its size and age, we
 would then have the linear equation below.
 
+
 $$
-\text{price} = \beta_0 + \beta_1 \cdot \text{sqft} + \beta_2 \cdot \text{age} \iff y = \beta_0 + \beta_1 x_1 + \beta_2 x_2
-$$ (eq_price-area-age)
+
+\text{price} = \beta_0 + \beta_1 \cdot \text{sqft} + \beta_2 \cdot \text{age}
+\iff y = \beta_0 + \beta_1 x_1 + \beta_2 x_2
+
+$$
+(eq_price-area-age)
 
 where $\beta_0$ is the intercept, $\beta_1$ and $\beta_2$ the coefficients, $x_1$ and $x_2$ the features (sqft and age) and $y$ the target (price).
 
@@ -212,8 +211,14 @@ such that the model's predictions are as close as possible to the true prices ob
 
 As with any machine learning problem, we need to define a hypothesis space $\mathcal{H}$, which is the set of all possible models that we consider. In the case of linear regression, the hypothesis space is the set of all possible linear functions.
 
+
 $$
-\mathcal{H} = \left\{ h \in \mathbb{R}^{D} \rightarrow \mathbb{R} \mid h\left(\mathbf{x}; \boldsymbol{\beta}\right) = \boldsymbol{\beta}^T \mathbf{x} + \beta_0 \text{ for some parameter/weight vector } \boldsymbol{\beta} \in \mathbb{R}^{D}\right\}
+
+\mathcal{H} = \left\{ h \in \mathbb{R}^{D} \rightarrow \mathbb{R} \mid
+h\left(\mathbf{x}; \boldsymbol{\beta}\right) = \boldsymbol{\beta}^T \mathbf{x} +
+\beta_0 \text{ for some parameter/weight vector } \boldsymbol{\beta} \in
+\mathbb{R}^{D}\right\}
+
 $$
 
 where we specify
@@ -233,8 +238,12 @@ Once we have defined our hypothesis, we need to define a loss function $\mathcal
 The loss in the case of linear regression is usually the [**mean squared error loss**](https://en.wikipedia.org/wiki/Mean_squared_error) (MSE),
 which we will use in this section.
 
+
 $$
-\mathcal{L} = \mathbb{E}_{\mathbf{x}, y \sim \mathcal{D}}\left[\left(y - h\left(\mathbf{x}; \boldsymbol{\beta}\right)\right)^{2}\right]
+
+\mathcal{L} = \mathbb{E}\_{\mathbf{x}, y \sim \mathcal{D}}\left[\left(y -
+h\left(\mathbf{x}; \boldsymbol{\beta}\right)\right)^{2}\right]
+
 $$
 
 and via the ERM framework we deal with empirical loss $\widehat{\mathcal{L}}$
@@ -252,14 +261,16 @@ target $y \in \mathcal{Y}$ for any input $\mathbf{x} \in \mathcal{X}$.
 
 Then the linear regression model has the following form:
 
+
 $$
-\left|
-\begin{array}{l}
-y := f\left(\mathbf{x}\right) + \varepsilon = \beta_0 + \boldsymbol{\beta}^T \mathbf{x} + \varepsilon \\
- \boldsymbol{\varepsilon} \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}(0, \sigma^2) \\
-\end{array}
+
+\left| \begin{array}{l} y := f\left(\mathbf{x}\right) + \varepsilon = \beta_0 +
+\boldsymbol{\beta}^T \mathbf{x} + \varepsilon \\ \boldsymbol{\varepsilon}
+\overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}(0, \sigma^2) \\ \end{array}
 \right.
-$$ (eq-linear-regression-1)
+
+$$
+(eq-linear-regression-1)
 
 where
 
@@ -269,16 +280,25 @@ where
 To be more precise, the $\varepsilon^{(1)}, \ldots, \varepsilon^{(N)}$ are
 all conditionally $i.i.d.$ given $\mathbf{x}^{(1)}, \ldots, \mathbf{x}^{(N)}$:
 
+
 $$
-\left\{\varepsilon^{(i)} \mid \mathbf{x}^{(n)}\right\}_{n=1}^{N} \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}(0, \sigma^2)
+
+\left\{\varepsilon^{(i)} \mid \mathbf{x}^{(n)}\right\}\_{n=1}^{N}
+\overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}(0, \sigma^2)
+
 $$
 
 It follows that (explained later) that we can interpret $y$ as a realization of a random variable
 $Y$:
 
+
 $$
-Y \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
-$$ (eq-linear-regression-2)
+
+Y \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}\left(\beta_0 +
+\boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
+
+$$
+(eq-linear-regression-2)
 
 and whether $Y$ is indeed $i.i.d.$ depends on if we treat $\mathbf{x}$ as a realization of a random variable $\mathbf{X}$
 or not.
@@ -286,9 +306,14 @@ or not.
 In any case, we are interested in finding $y \mid \mathbf{x}$, so we can also
 say that:
 
+
 $$
-Y \mid \mathbf{X} \sim \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
-$$ (eq-linear-regression-3)
+
+Y \mid \mathbf{X} \sim \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T
+\mathbf{x}, \sigma^2\right)
+
+$$
+(eq-linear-regression-3)
 
 which we will show later.
 
@@ -302,9 +327,18 @@ $\hat{h}$ and $f$ is small.
 As in all supervised learning problems, the learner $\mathcal{A}$ receives a labeled sample dataset $\mathcal{S}$
 containing $N$ i.i.d. samples $\left(\mathbf{x}^{(n)}, y^{(n)}\right)$ drawn from $\mathbb{P}_{\mathcal{D}}$:
 
+
 $$
-\mathcal{S} = \left\{\left(\mathbf{x}^{(1)}, y^{(1)}\right), \left(\mathbf{x}^{(2)}, y^{(2)}\right), \ldots, \left(\mathbf{x}^{(N)}, y^{(N)}\right)\right\} \subset \mathbb{R}^{D} \quad \overset{\small{\text{i.i.d.}}}{\sim} \quad \mathbb{P}_{\mathcal{D}}\left(\mathcal{X}, \mathcal{Y} ; \boldsymbol{\beta}\right)
-$$ (eq-dataset-linear-regression)
+
+\mathcal{S} = \left\{\left(\mathbf{x}^{(1)}, y^{(1)}\right),
+\left(\mathbf{x}^{(2)}, y^{(2)}\right), \ldots, \left(\mathbf{x}^{(N)},
+y^{(N)}\right)\right\} \subset \mathbb{R}^{D} \quad
+\overset{\small{\text{i.i.d.}}}{\sim} \quad
+\mathbb{P}\_{\mathcal{D}}\left(\mathcal{X}, \mathcal{Y} ;
+\boldsymbol{\beta}\right)
+
+$$
+(eq-dataset-linear-regression)
 
 Subsequently, the learner $\mathcal{A}$ will learn a linear hypothesis (linear in the parameters)
 $h \in \mathcal{H}$ that minimizes a certain defined loss function $\mathcal{L}$.
@@ -321,10 +355,16 @@ assumption in many formulations, then only the error term $\varepsilon$ is drawn
 More concretely, define
 the learned hypothesis $\hat{h}$ to be of the following form:
 
+
 $$
-\hat{y} := \hat{h}\left(\mathbf{x}; \hat{\boldsymbol{\beta}}\right) &= \hat{\beta}_0 + \hat{\beta}_1 x_1 + \ldots + \hat{\beta}_D x_D \\
-&= \hat{\beta}_0 + \hat{\boldsymbol{\beta}}^T \mathbf{x}
-$$ (eq-hypothesis-1)
+
+\begin{aligned} \hat{y} := \hat{h}\left(\mathbf{x};
+\hat{\boldsymbol{\beta}}\right) &= \hat{\beta}\_0 + \hat{\beta}\_1 x_1 +
+\ldots + \hat{\beta}\_D x_D \\ &= \hat{\beta}\_0 + \hat{\boldsymbol{\beta}}^T
+\mathbf{x} \end{aligned}
+
+$$
+(eq-hypothesis-1)
 
 where we collected all features $x_1, \ldots, x_D$ into a vector $\mathbf{x}$ and all weights $\hat{\beta}_1, \ldots, \hat{\beta}_D$ into a vector $\hat{\boldsymbol{\beta}}$.
 Note that the "hat" symbol is used to denote an estimated quantity.
@@ -333,31 +373,40 @@ It is also typical to add a bias term $1$ to the input vector $\mathbf{x}$
 and a bias weight $\hat{\beta}_0$ to the weight vector $\hat{\boldsymbol{\beta}}$
 for a more compact notation:
 
+
 $$
-\hat{y} := \hat{h}\left(\mathbf{x}; \hat{\boldsymbol{\beta}}\right) = \hat{\boldsymbol{\beta}}^T \mathbf{x}
-$$ (eq-hypothesis-2)
+
+\hat{y} := \hat{h}\left(\mathbf{x}; \hat{\boldsymbol{\beta}}\right) =
+\hat{\boldsymbol{\beta}}^T \mathbf{x}
+
+$$
+(eq-hypothesis-2)
 
 where
 
 - the vector $\mathbf{x}$ is re-defined to be of the form below:
 
-    $$
+
+$$
+
     \mathbf{x} = \begin{bmatrix}1 \\ x_1 \\ \vdots \\ x_D\end{bmatrix}_{(D+1) \times 1}
     $$ (eq-x)
 
     and $x_1, \ldots, x_D$ are the features of the input $\mathbf{x}$ and $1$ is the bias term.
 
-- the weight vector $\boldsymbol{\beta}$ is re-defined to be of the form below:
+-   the weight vector $\boldsymbol{\beta}$ is re-defined to be of the form
+    below:
 
     $$
     \boldsymbol{\beta} = \begin{bmatrix}\beta_0 \\ \beta_1 \\ \vdots \\ \beta_D\end{bmatrix}_{(D+1) \times 1}
     $$ (eq-beta)
 
-    where $\beta_0$ is the bias term and $\beta_1, \ldots, \beta_D$ are the weights of the features $x_1, \ldots, x_D$.
+      where $\beta_0$ is the bias term and $\beta_1, \ldots, \beta_D$ are the weights of the features $x_1, \ldots, x_D$.
+    $$
 
-
-Next, we define a loss function $\mathcal{L}$ that measures the error between the true label
-$y$ and the predicted label $\hat{h}\left(\mathbf{x}; \boldsymbol{\beta}\right)$.
+Next, we define a loss function $\mathcal{L}$ that measures the error between
+the true label $y$ and the predicted label
+$\hat{h}\left(\mathbf{x}; \boldsymbol{\beta}\right)$.
 
 $$
 \begin{aligned}
@@ -368,13 +417,16 @@ $$ (eq-linear-regression-loss-function-1)
 
 We present a few equivalent notations for the loss function $\mathcal{L}$:
 
+
 $$
-\begin{aligned}
-\mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &= \mathcal{L}(y, \hat{y}) \\
-&= \mathcal{L}\left(y, \hat{h}\left(\mathbf{x}; \hat{\boldsymbol{\beta}}\right)\right) \\
-&= \mathcal{L}\left(\hat{\boldsymbol{\beta}}\right)
-\end{aligned}
-$$ (eq-linear-regression-loss-function-2)
+
+\begin{aligned} \mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &=
+\mathcal{L}(y, \hat{y}) \\ &= \mathcal{L}\left(y, \hat{h}\left(\mathbf{x};
+\hat{\boldsymbol{\beta}}\right)\right) \\ &=
+\mathcal{L}\left(\hat{\boldsymbol{\beta}}\right) \end{aligned}
+
+$$
+(eq-linear-regression-loss-function-2)
 
 where the last equation is to emphasize that the loss function $\mathcal{L}$ is a function of the weight vector $\hat{\boldsymbol{\beta}}$
 and not of the input $\mathbf{x}$ for the context of machine learning.
@@ -382,13 +434,16 @@ and not of the input $\mathbf{x}$ for the context of machine learning.
 The choice of loss function in regression is often the [**mean squared error loss**](https://en.wikipedia.org/wiki/Mean_squared_error) (MSE)
 defined by:
 
+
 $$
-\begin{aligned}
-\mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &= \left(y - \hat{y}\right)^2 \\
-&= \left(y - \hat{h}\left(\mathbf{x}; \hat{\boldsymbol{\beta}}\right)\right)^2 \\
-&= \left(y - \hat{\boldsymbol{\beta}}^T \mathbf{x} \right)^2 \\
-\end{aligned}
-$$ (eq-linear-regression-loss-function-3)
+
+\begin{aligned} \mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &=
+\left(y - \hat{y}\right)^2 \\ &= \left(y - \hat{h}\left(\mathbf{x};
+\hat{\boldsymbol{\beta}}\right)\right)^2 \\ &= \left(y -
+\hat{\boldsymbol{\beta}}^T \mathbf{x} \right)^2 \\ \end{aligned}
+
+$$
+(eq-linear-regression-loss-function-3)
 
 where we used the fact that $\hat{y} = \hat{\boldsymbol{\beta}}^T \mathbf{x}$.
 
@@ -405,20 +460,29 @@ Given a hypothesis set $\mathcal{H}$ of functions mapping $\mathcal{X}$ to $\mat
 the regression problem consists of using the labeled sample $\mathcal{S}$ {eq}`eq-dataset-linear-regression`
 to find a hypothesis $h \in \mathcal{H}$ with small expected loss or generalization error $\mathcal{R}(\hat{h})$ with respect to the target $f$ :
 
+
 $$
-\mathcal{R}_{\mathcal{D}}(\hat{h})=\underset{(x, y) \sim \mathcal{D}}{\mathbb{E}}[\mathcal{L}\left(y, \hat{h}\left(x\right)\right)]
-$$ (eq-generalization-error-1)
+
+\mathcal{R}\_{\mathcal{D}}(\hat{h})=\underset{(x, y) \sim
+\mathcal{D}}{\mathbb{E}}[\mathcal{L}\left(y, \hat{h}\left(x\right)\right)]
+
+$$
+(eq-generalization-error-1)
 
 We will denote $\mathcal{R}_{\mathcal{D}}$ as $\mathcal{R}$ when the context is clear.
 
 Then via the Empirical Risk Minimization (ERM) framework, we can define the empirical risk or empirical loss of $h$ as:
 
+
 $$
-\begin{aligned}
-\widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h}) &= \frac{1}{N} \sum_{n=1}^{N} \mathcal{L}\left(y^{(n)}, \hat{h}\left(\mathbf{x}^{(n)}\right)\right) \\
-&= \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{h}\left(\mathbf{x}^{(n)}\right)\right)^2
-\end{aligned}
-$$ (eq-empirical-risk-1)
+
+\begin{aligned} \widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h}) &= \frac{1}{N}
+\sum_{n=1}^{N} \mathcal{L}\left(y^{(n)},
+\hat{h}\left(\mathbf{x}^{(n)}\right)\right) \\ &= \frac{1}{N} \sum\_{n=1}^{N}
+\left(y^{(n)} - \hat{h}\left(\mathbf{x}^{(n)}\right)\right)^2 \end{aligned}
+
+$$
+(eq-empirical-risk-1)
 
 It is also very common to denote the empirical risk as $\widehat{\mathcal{R}}_{\mathcal{S}}$ as $\widehat{\mathcal{R}}$ when the context is clear.
 In addition, in some machine learning texts, the empirical risk is the [**cost function**](https://en.wikipedia.org/wiki/Cost_function),
@@ -430,22 +494,35 @@ And thus, we task a learner $\mathcal{A}$, which can be any algorithm that takes
 searches for the optimal parameters $\hat{\boldsymbol{\beta}}$ that minimize the empirical risk $\widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h})$.
 We define the objective function as follows:
 
+
 $$
-\begin{aligned}
-\hat{h} := \underset{\hat{h} \in \mathcal{H}}{\operatorname{argmin}} \widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h}) &= \underset{\hat{h} \in \mathcal{H}}{\operatorname{argmin}} \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{h}\left(\mathbf{x}^{(n)}\right)\right)^2 \\
+
+\begin{aligned} \hat{h} := \underset{\hat{h} \in
+\mathcal{H}}{\operatorname{argmin}} \widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h})
+&= \underset{\hat{h} \in \mathcal{H}}{\operatorname{argmin}} \frac{1}{N}
+\sum_{n=1}^{N} \left(y^{(n)} - \hat{h}\left(\mathbf{x}^{(n)}\right)\right)^2 \\
 \end{aligned}
-$$ (eq-objective-function-1)
+
+$$
+(eq-objective-function-1)
 
 where $\hat{h}$ is a of the form $\hat{h}(\mathbf{x}) = \hat{\boldsymbol{\beta}}^T \mathbf{x}$.
 
 Since the hypothesis space $\mathcal{H}$ is **parametrized** by the weight vector $\hat{\boldsymbol{\beta}}$,
 we can rewrite the objective function as follows:
 
+
 $$
-\begin{aligned}
-\hat{\boldsymbol{\beta}} := \underset{\hat{\boldsymbol{\beta}} \in \mathbb{R}^D}{\operatorname{argmin}} \widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h}) &= \underset{\hat{\boldsymbol{\beta}} \in \mathbb{R}^D}{\operatorname{argmin}} \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{\boldsymbol{\beta}}^T \mathbf{x}^{(n)}\right)^2 \\
-\end{aligned}
-$$ (eq-objective-function-2)
+
+\begin{aligned} \hat{\boldsymbol{\beta}} := \underset{\hat{\boldsymbol{\beta}}
+\in \mathbb{R}^D}{\operatorname{argmin}}
+\widehat{\mathcal{R}}_{\mathcal{S}}(\hat{h}) &=
+\underset{\hat{\boldsymbol{\beta}} \in \mathbb{R}^D}{\operatorname{argmin}}
+\frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{\boldsymbol{\beta}}^T
+\mathbf{x}^{(n)}\right)^2 \\ \end{aligned}
+
+$$
+(eq-objective-function-2)
 
 It is worth mentioning that both {eq}`eq-objective-function-1` and {eq}`eq-objective-function-2` are equivalent in
 the sense that solving for the optimal $\hat{\boldsymbol{\beta}}$ in {eq}`eq-objective-function-2`
@@ -464,9 +541,14 @@ We have wrapped up the problem formulation, we will proceed to expand on a few d
 Previously, we claimed that we can interpret $y$ as a realization of a random variable
 $Y$:
 
+
 $$
-Y \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
-$$ (eq-linear-regression-4)
+
+Y \overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}\left(\beta_0 +
+\boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
+
+$$
+(eq-linear-regression-4)
 
 But why is this the case?
 
@@ -474,13 +556,16 @@ But why is this the case?
 
 To see why this is the case, let's consider the following linear regression model:
 
+
 $$
-\begin{aligned}
-y &= f\left(\mathbf{x}; \boldsymbol{\beta}\right) \\
-&= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_D x_D + \varepsilon \\
+
+\begin{aligned} y &= f\left(\mathbf{x}; \boldsymbol{\beta}\right) \\ &=
+\beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_D x_D + \varepsilon \\
 \varepsilon &\overset{\small{\text{i.i.d.}}}{\sim} \mathcal{N}(0, \sigma^2)
 \end{aligned}
-$$ (eq-linear-regression-5)
+
+$$
+(eq-linear-regression-5)
 
 and note that we treat $f(\cdot)$ as a **deterministic** function of $\mathbf{x}$ and $\boldsymbol{\beta}$
 (see section 3.1.1 of {cite}`bishop2007`). Under this assumption, then it is easy to see that
@@ -493,11 +578,14 @@ will mean shifting the mean of the Gaussian distribution by the constant and the
 
 Thus, we have:
 
+
 $$
-\begin{aligned}
-y &\sim \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x}, \sigma^2\right)
-\end{aligned}
-$$ (eq-y-distribution-1)
+
+\begin{aligned} y &\sim \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T
+\mathbf{x}, \sigma^2\right) \end{aligned}
+
+$$
+(eq-y-distribution-1)
 
 However, we are not that interested in the distribution of $y$ unconditioned. Why? If we model
 the distribution of $y$ unconditioned, then we are essentially saying that we do not care about
@@ -532,13 +620,17 @@ distributed with the same vein of logic in the previous section.
 
 That means the following:
 
+
 $$
-\begin{aligned}
-y \mid \mathbf{x} &\sim \mathcal{N}\left(y ; f\left(\mathbf{x}; \boldsymbol{\beta}\right), \sigma^2\right) \\
-&= \mathcal{N}\left(y ; f\left(\mathbf{x}; \boldsymbol{\beta}\right), \boldsymbol{\beta}^{-1}\right) \\
-&= \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x}, \boldsymbol{\beta}^{-1}\right) \\
-\end{aligned}
-$$ (eq-y-distribution-2)
+
+\begin{aligned} y \mid \mathbf{x} &\sim \mathcal{N}\left(y ; f\left(\mathbf{x};
+\boldsymbol{\beta}\right), \sigma^2\right) \\ &= \mathcal{N}\left(y ;
+f\left(\mathbf{x}; \boldsymbol{\beta}\right), \boldsymbol{\beta}^{-1}\right) \\
+&= \mathcal{N}\left(\beta_0 + \boldsymbol{\beta}^T \mathbf{x},
+\boldsymbol{\beta}^{-1}\right) \\ \end{aligned}
+
+$$
+(eq-y-distribution-2)
 
 where the notation $\mathcal{N}\left(y ; f\left(\mathbf{x}; \boldsymbol{\beta}\right), \sigma^2\right)$
 means that the distribution is a normal distribution with mean $f\left(\mathbf{x}; \boldsymbol{\beta}\right)$
@@ -548,12 +640,16 @@ is of $y$.
 
 Then consider the expectation of $y$ given $\mathbf{x}$ below:
 
+
 $$
-\begin{aligned}
-\mathbb{E}[y \mid \mathbf{x}] &= \mathbb{E}\left[\mathcal{N}\left(f\left(\mathbf{x}; \boldsymbol{\beta}\right), \sigma^2\right)\right] \\
-&= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_D x_D \\
-\end{aligned}
-$$ (eq-conditional-expectation-1)
+
+\begin{aligned} \mathbb{E}[y \mid \mathbf{x}] &=
+\mathbb{E}\left[\mathcal{N}\left(f\left(\mathbf{x}; \boldsymbol{\beta}\right),
+\sigma^2\right)\right] \\ &= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots +
+\beta_D x_D \\ \end{aligned}
+
+$$
+(eq-conditional-expectation-1)
 
 since by definition the expectation of a normal distribution is the mean parameter.
 
@@ -564,10 +660,13 @@ Consequently, finding the optimal $\boldsymbol{\beta}$
 gives rise the hypothesis $\hat{h} = \boldsymbol{\beta}^T \mathbf{x}$,
 which also turns out to be the estimate of the conditional expectation of $y$ given $\mathbf{x}$.
 
+
 $$
-\begin{aligned}
-\hat{\boldsymbol{\beta}} \iff \hat{h} = \hat{\boldsymbol{\beta}}^T \mathbf{x} \iff \widehat{\mathbb{E}}[y \mid \mathbf{x}]
-\end{aligned}
+
+\begin{aligned} \hat{\boldsymbol{\beta}} \iff \hat{h} =
+\hat{\boldsymbol{\beta}}^T \mathbf{x} \iff \widehat{\mathbb{E}}[y \mid
+\mathbf{x}] \end{aligned}
+
 $$
 
 
@@ -601,13 +700,16 @@ This will be made apparent in the section detailing on fitting non-linear inputs
 For example, consider a non-linear transformation map defined by $\phi(\cdot)$, then $\phi(\mathbf{x})$ is a non-linear function of $\mathbf{x}$.
 But if we write the linear regression model as follows:
 
+
 $$
-\begin{aligned}
-y &= \phi\left(\mathbf{x}; \boldsymbol{\beta}\right) \\
-&= \boldsymbol{\beta}^T \phi(\mathbf{x}) \\
-&= \beta_0 + \beta_1 \phi_1(\mathbf{x}) + \beta_2 \phi_2(\mathbf{x}) + \cdots + \beta_D \phi_D(\mathbf{x}) \\
-\end{aligned}
-$$ (eq-non-linear-linear-regression-1)
+
+\begin{aligned} y &= \phi\left(\mathbf{x}; \boldsymbol{\beta}\right) \\ &=
+\boldsymbol{\beta}^T \phi(\mathbf{x}) \\ &= \beta_0 + \beta_1
+\phi_1(\mathbf{x}) + \beta_2 \phi_2(\mathbf{x}) + \cdots + \beta_D
+\phi_D(\mathbf{x}) \\ \end{aligned}
+
+$$
+(eq-non-linear-linear-regression-1)
 
 Then we can see that the linearity is in the parameters $\boldsymbol{\beta}$, not the input features $\mathbf{x}$.
 Therefore, this expression is still a valid form of "linear regression".
@@ -620,33 +722,39 @@ model non-linear functions by using a non-linear transformation map $\phi(\cdot)
 
 Consider the basis function $\boldsymbol{\phi(\cdot)}$ defined as follows:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\phi}: \mathbb{R}^D &\rightarrow \mathbb{R}^K \\
-\mathbf{x} &\mapsto \boldsymbol{\phi}(\mathbf{x}) \\
-\end{aligned}
-$$ (eq-basis-function-1)
+
+\begin{aligned} \boldsymbol{\phi}: \mathbb{R}^D &\rightarrow \mathbb{R}^K \\
+\mathbf{x} &\mapsto \boldsymbol{\phi}(\mathbf{x}) \\ \end{aligned}
+
+$$
+(eq-basis-function-1)
 
 Notice that $\boldsymbol{\phi(\cdot)}$ is a bolded, and is a function that maps a vector $\mathbf{x}$ of dimension $D$ to a vector $\boldsymbol{\phi}(\mathbf{x})$ of dimension $K$.
 
 We can decompose the basis function $\boldsymbol{\phi(\cdot)}$ into a set of basis functions $\phi_1(\cdot), \phi_2(\cdot), \ldots, \phi_K(\cdot)$ as follows:
 
+
 $$
-\begin{aligned}
-\phi_k: \mathbb{R}^D &\rightarrow \mathbb{R} \\
-\mathbf{x} &\mapsto \phi_k(\mathbf{x}) \\
-\end{aligned}
+
+\begin{aligned} \phi_k: \mathbb{R}^D &\rightarrow \mathbb{R} \\ \mathbf{x}
+&\mapsto \phi_k(\mathbf{x}) \\ \end{aligned}
+
 $$
 
 for the $k$-th component of the feature vector $\boldsymbol{\phi}$. Now we can write the linear regression model as follows:
 
+
 $$
-\begin{aligned}
-y &= \boldsymbol{\beta}^T \boldsymbol{\phi}(\mathbf{x}) + \varepsilon \\
-&= \beta_0 + \beta_1 \phi_1(\mathbf{x}) + \beta_2 \phi_2(\mathbf{x}) + \cdots + \beta_K \phi_K(\mathbf{x}) + \varepsilon \\
-&= \sum_{k=0}^K \beta_k \phi_k(\mathbf{x}) + \varepsilon \\
-\end{aligned}
-$$ (eq-linear-regression-basis-function-1)
+
+\begin{aligned} y &= \boldsymbol{\beta}^T \boldsymbol{\phi}(\mathbf{x}) +
+\varepsilon \\ &= \beta*0 + \beta_1 \phi_1(\mathbf{x}) + \beta_2
+\phi_2(\mathbf{x}) + \cdots + \beta_K \phi_K(\mathbf{x}) + \varepsilon \\ &=
+\sum*{k=0}^K \beta_k \phi_k(\mathbf{x}) + \varepsilon \\ \end{aligned}
+
+$$
+(eq-linear-regression-basis-function-1)
 
 Then if you denote $\mathbf{z} = \boldsymbol{\phi}(\mathbf{x})$, then the form is still exactly the same as {eq}`eq-linear-regression-5`.
 
@@ -670,53 +778,49 @@ as shown below:
 
 
 $$
-\left|
-\begin{array}{l}
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\varepsilon} \\
- \boldsymbol{\varepsilon} \sim \mathcal{N}(\boldsymbol{0}, \sigma^2 \mathbf{I})
-\end{array}
-\right.
-$$ (eq-linear-regression-matrix-1)
+
+\left| \begin{array}{l} \mathbf{y} = \mathbf{X} \boldsymbol{\beta} +
+\boldsymbol{\varepsilon} \\ \boldsymbol{\varepsilon} \sim
+\mathcal{N}(\boldsymbol{0}, \sigma^2 \mathbf{I}) \end{array} \right.
+
+$$
+(eq-linear-regression-matrix-1)
 
 or equivalently,
 
+
 $$
-\underbrace{\left[\begin{array}{c}
-y^{(1)} \\
-y^{(2)} \\
-\vdots \\
-y^{(N)}
-\end{array}\right]}_{=\mathbf{y}}=\underbrace{\left[\begin{array}{cccc}
-1 & x_1^{(1)} & x_2^{(1)} & \cdots & x_D^{(1)} \\
-1 & x_1^{(2)} & x_2^{(2)} & \cdots & x_D^{(2)} \\
-\vdots & \cdots & \vdots & \vdots \\
-1 & x_1^{(N)} & x_2^{(N)} & \cdots & x_D^{(N)}
-\end{array}\right]}_{=\mathbf{X}} \underbrace{\left[\begin{array}{c}
-\beta_0 \\
-\beta_1 \\
-\vdots \\
-\beta_D
+
+\underbrace{\left[\begin{array}{c} y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)}
+\end{array}\right]}_{=\mathbf{y}}=\underbrace{\left[\begin{array}{ccccc} 1 &
+x_1^{(1)} & x_2^{(1)} & \cdots & x_D^{(1)} \\ 1 & x_1^{(2)} & x_2^{(2)} & \cdots
+& x_D^{(2)} \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_1^{(N)} &
+x_2^{(N)} & \cdots & x_D^{(N)} \end{array}\right]}_{=\mathbf{X}}
+\underbrace{\left[\begin{array}{c} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_D
 \end{array}\right]}_{=\boldsymbol{\beta}}+\underbrace{\left[\begin{array}{c}
-\varepsilon^{(1)} \\
-\varepsilon^{(2)} \\
-\vdots \\
-\varepsilon^{(N)}
+\varepsilon^{(1)} \\ \varepsilon^{(2)} \\ \vdots \\ \varepsilon^{(N)}
 \end{array}\right]}_{=\boldsymbol{\varepsilon}},
-$$ (eq-linear-regression-matrix-2)
+
+$$
+(eq-linear-regression-matrix-2)
 
 where
 
 - $\mathbf{X}$ **is the Design Matrix** of shape $N \times D$
     where $N$ is the number of observations (training samples) and $D$ is the number of independent feature/input variables.
 
-    $$
+
+$$
+
     \mathbf{X} = \begin{bmatrix} 1 &  x_1^{(1)} & x_2^{(1)} & \cdots & x_D^{(1)} \\
                     1 &  x_1^{(2)} & x_2^{(2)} & \cdots & x_D^{(2)} \\
                     \vdots & \vdots & \vdots & \vdots & \vdots \\
                     1 &  x_1^{(N)} & x_2^{(N)} & \cdots & x_D^{(N)} \end{bmatrix}_{N \times (D+1)} = \begin{bmatrix} \left(\mathbf{x^{(1)}}\right)^{T} \\ \left(\mathbf{x^{(2)}}\right)^{T} \\ \vdots \\ \left(\mathbf{x^{(N)}}\right)^{T}\end{bmatrix}
     $$
 
-- The $n$-th row of $\mathbf{X}$ is defined as the transpose of $\mathbf{x}^{(n)}$, which is also known as the $n$-th training sample, represented as a $D+1$-dimensional vector.
+-   The $n$-th row of $\mathbf{X}$ is defined as the transpose of
+    $\mathbf{x}^{(n)}$, which is also known as the $n$-th training sample,
+    represented as a $D+1$-dimensional vector.
 
     $$
     \mathbf{x}^{(n)} = \begin{bmatrix} 1 \\ x_1^{(n)} \\ x_2^{(n)} \\ \vdots \\ x_D^{(n)} \end{bmatrix}_{(D+1) \times 1}
@@ -724,35 +828,41 @@ where
 
     where $x_d^{(n)}$ is the $d$-th feature of the $n$-th training sample.
 
-- $\mathbf{y}$ **the output** is a column vector that contains the output for the $N$ observations.
+-   $\mathbf{y}$ **the output** is a column vector that contains the output for
+    the $N$ observations.
 
     $$
     \mathbf{y} = \begin{bmatrix} y^{(1)} \\ y^{(2)} \\ \vdots \\ y^{(N)} \end{bmatrix}_{N \times 1}
     $$
 
-- $\boldsymbol{\beta}$ **the vector of coefficients/parameters:** The column vector $\boldsymbol{\beta}$ contains all the coefficients of the linear model.
+-   $\boldsymbol{\beta}$ **the vector of coefficients/parameters:** The column
+    vector $\boldsymbol{\beta}$ contains all the coefficients of the linear
+    model.
 
     $$\boldsymbol{\beta} = \begin{bmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_D \end{bmatrix}_{(D+1) \times 1}$$
 
-- $\boldsymbol{\varepsilon}$ **the random vector of the error terms:** The column vector $\boldsymbol{\varepsilon}$ contains $N$ error terms corresponding to the $N$ observations.
+-   $\boldsymbol{\varepsilon}$ **the random vector of the error terms:** The
+    column vector $\boldsymbol{\varepsilon}$ contains $N$ error terms
+    corresponding to the $N$ observations.
 
     $$
     \boldsymbol{\varepsilon} = \begin{bmatrix} \varepsilon^{(1)} \\ \varepsilon^{(2)} \\ \vdots \\ \varepsilon^{(N)} \end{bmatrix}_{N \times 1}
     $$
 
-As we move along, we will make slight modification to the variables above, to accommodate the intercept term as seen in the Design Matrix.
-
+As we move along, we will make slight modification to the variables above, to
+accommodate the intercept term as seen in the Design Matrix.
 
 ### Break down of the Matrix Representation
 
-A **multivariate linear regression** problem between an input variable $\mathbf{x}^{(n)}$
-and output variable $y^{(n)}$ can be represented as such:
+A **multivariate linear regression** problem between an input variable
+$\mathbf{x}^{(n)}$ and output variable $y^{(n)}$ can be represented as such:
 
 $$
 y^{(n)} = \beta_0 + \beta_1 x_1^{(n)} + \beta_2 x_2^{(n)} + \cdots + \beta_D x_D^{(n)} + \varepsilon^{(n)}
 $$
 
-Since there exists $N$ observations, we can write an equation for each observation:
+Since there exists $N$ observations, we can write an equation for each
+observation:
 
 $$
 \begin{aligned}
@@ -765,24 +875,30 @@ $$
 
 where $x_0^{(n)} = 1$ for all $n$ is the intercept term.
 
-
 We transform the above system of linear equations into matrix form as follows:
 
 $$
 \begin{bmatrix} y^{(1)}  \\ y^{(2)} \\ y^{(3)} \\ \vdots \\ \mathbf{y}^{(m)} \end{bmatrix}_{m \times 1} = \begin{bmatrix} 1 &  x_1^{(1)} & x_2^{(1)} & \cdots & x_n^{(1)} \\
                 1 &  x_1^{(2)} & x_2^{(2)} & \cdots & x_n^{(2)} \\
                 \vdots & \vdots & \vdots & \vdots & \vdots \\
-                1 &  x_1^{(m)} & x_2^{(m)} & \cdots & x_n^{(m)} \end{bmatrix}_{m \times (n+1)} \begin{bmatrix} \beta_0 \\ \beta_ 1 \\ \beta_2 \\ \vdots \\ \beta_n\end{bmatrix}_{(n+1) \times 1} + \begin{bmatrix} \varepsilon^{(1)} \\ \varepsilon^{(2)} \\ \varepsilon^{(3)} \\ \vdots \\ \varepsilon^{(m)} \end{bmatrix}_{m \times 1}$$
+                1 &  x_1^{(m)} & x_2^{(m)} & \cdots & x_n^{(m)} \end{bmatrix}_{m \times (n+1)} \begin{bmatrix} \beta_0 \\ \beta_ 1 \\ \beta_2 \\ \vdots \\ \beta_n\end{bmatrix}_{(n+1) \times 1} + \begin{bmatrix} \varepsilon^{(1)} \\ \varepsilon^{(2)} \\ \varepsilon^{(3)} \\ \vdots \\ \varepsilon^{(m)} \end{bmatrix}_{m \times 1}
+$$
 
-We then write the above system of linear equations more compactly as **y** = **Xβ** + $\boldsymbol{\varepsilon}$   where $ε\sim^{\text{i.i.d}}N(0, σ^2)$ recovering back the equation at the start.
+We then write the above system of linear equations more compactly as
+**y** = **Xβ** + $\boldsymbol{\varepsilon}$  where
+$ε\sim^{\text{i.i.d}}N(0, σ^2)$ recovering back the equation at the start.
 
-In what follows, we will restate some definitions again, and use the matrix representation
-in {eq}`eq-linear-regression-matrix-2` to derive the closed-form solution for the coefficients $\boldsymbol{\beta}$.
-
+In what follows, we will restate some definitions again, and use the matrix
+representation in {eq}`eq-linear-regression-matrix-2` to derive the closed-form
+solution for the coefficients $\boldsymbol{\beta}$.
 
 ## Hypothesis Space
 
-Given the sample dataset $\mathcal{S} = \left\{\mathbf{x}^{(n)}, y^{(n)}\right\}_{n=1}^N$, the hypothesis space $\mathcal{H}$ is the set of all functions $h: \mathbb{R}^D \rightarrow \mathbb{R}$ that can be learned from the dataset $\mathcal{S}$.
+Given the sample dataset
+$\mathcal{S} = \left\{\mathbf{x}^{(n)}, y^{(n)}\right\}_{n=1}^N$, the hypothesis
+space $\mathcal{H}$ is the set of all functions
+$h: \mathbb{R}^D \rightarrow \mathbb{R}$ that can be learned from the dataset
+$\mathcal{S}$.
 
 We mentioned in the first section that the hypothesis space is given by:
 
@@ -795,11 +911,16 @@ $$ (eq-hypothesis-space-linear-regression-1)
 Now, we have also defined in [basis function and non-linearity](basis-function-and-non-linearity)
 that we can model non-linearity. Therefore, the hypothesis space can be expanded to include non-linear functions.
 
+
 $$
-\begin{aligned}
-\mathcal{H} &= \left\{ h \in \mathbb{R}^{D} \rightarrow \mathbb{R}, h\left(\mathbf{x}; \boldsymbol{\beta}\right) = \boldsymbol{\beta}^T \mathbf{\phi}(\mathbf{x}) + \beta_0 : \boldsymbol{\beta} \in \mathbb{R}^D, \beta_0 \in \mathbb{R} \right\}
-\end{aligned}
-$$ (eq-hypothesis-space-linear-regression-2)
+
+\begin{aligned} \mathcal{H} &= \left\{ h \in \mathbb{R}^{D} \rightarrow
+\mathbb{R}, h\left(\mathbf{x}; \boldsymbol{\beta}\right) = \boldsymbol{\beta}^T
+\mathbf{\phi}(\mathbf{x}) + \beta_0 : \boldsymbol{\beta} \in \mathbb{R}^D,
+\beta_0 \in \mathbb{R} \right\} \end{aligned}
+
+$$
+(eq-hypothesis-space-linear-regression-2)
 
 where $\mathbf{\phi}(\mathbf{x})$ is a non-linear function that maps $\mathbf{x}$ to a higher dimensional space $\mathbb{R}^D$.
 
@@ -811,22 +932,28 @@ As mentioned in the first section, we will be using the mean squared error (MSE)
 We define a loss function $\mathcal{L}$ that measures the error between the true label
 $y$ and the predicted label $\hat{h}\left(\mathbf{x}; \boldsymbol{\beta}\right)$.
 
+
 $$
-\begin{aligned}
-\mathcal{L}: \mathcal{X} \times \mathcal{Y} \times \mathcal{H} &\to \mathbb{R}_{+} \\
-\left((\mathbf{x}, y), h\right) &\mapsto \mathcal{L}\left(\left(\mathbf{x}, y\right), h\right)
-\end{aligned}
-$$ (eq-linear-regression-loss-function-4)
+
+\begin{aligned} \mathcal{L}: \mathcal{X} \times \mathcal{Y} \times \mathcal{H}
+&\to \mathbb{R}\_{+} \\ \left((\mathbf{x}, y), h\right) &\mapsto
+\mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) \end{aligned}
+
+$$
+(eq-linear-regression-loss-function-4)
 
 We present a few equivalent notations for the loss function $\mathcal{L}$:
 
+
 $$
-\begin{aligned}
-\mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &= \mathcal{L}(y, \hat{y}) \\
-&= \mathcal{L}\left(y, \hat{h}\left(\mathbf{x}; \boldsymbol{\beta}\right)\right) \\
-&= \mathcal{L}\left(\boldsymbol{\beta}\right)
-\end{aligned}
-$$ (eq-linear-regression-loss-function-5)
+
+\begin{aligned} \mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &=
+\mathcal{L}(y, \hat{y}) \\ &= \mathcal{L}\left(y, \hat{h}\left(\mathbf{x};
+\boldsymbol{\beta}\right)\right) \\ &=
+\mathcal{L}\left(\boldsymbol{\beta}\right) \end{aligned}
+
+$$
+(eq-linear-regression-loss-function-5)
 
 where the last equation is to emphasize that the loss function $\mathcal{L}$ is a function of the weight vector $\boldsymbol{\beta}$
 and not of the input $\mathbf{x}$ for the context of machine learning.
@@ -834,23 +961,29 @@ and not of the input $\mathbf{x}$ for the context of machine learning.
 The choice of loss function in regression is often the [**mean squared error loss**](https://en.wikipedia.org/wiki/Mean_squared_error) (MSE)
 defined by:
 
+
 $$
-\begin{aligned}
-\mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &= \left(y - \hat{y}\right)^2 \\
-&= \left(y - \hat{h}\left(\mathbf{x}; \boldsymbol{\beta}\right)\right)^2 \\
-&= \left(y - \boldsymbol{\beta}^T \mathbf{x} \right)^2 \\
-\end{aligned}
-$$ (eq-linear-regression-loss-function-6)
+
+\begin{aligned} \mathcal{L}\left(\left(\mathbf{x}, y\right), h\right) &=
+\left(y - \hat{y}\right)^2 \\ &= \left(y - \hat{h}\left(\mathbf{x};
+\boldsymbol{\beta}\right)\right)^2 \\ &= \left(y - \boldsymbol{\beta}^T
+\mathbf{x} \right)^2 \\ \end{aligned}
+
+$$
+(eq-linear-regression-loss-function-6)
 
 where we used the fact that $\hat{y} = \boldsymbol{\beta}^T \mathbf{x}$.
 
 Then for our empirical loss, we can write:
 
+
 $$
-\begin{aligned}
-\widehat{\mathcal{L}}\left(h \mid \mathcal{S}\right)
+
+\begin{aligned} \widehat{\mathcal{L}}\left(h \mid \mathcal{S}\right)
 \end{aligned}
-$$ (eq-linear-regression-loss-function-7)
+
+$$
+(eq-linear-regression-loss-function-7)
 
 to indicate that the empirical loss is a function of the hypothesis $h$ and the dataset $\mathcal{S}$.
 
@@ -864,14 +997,19 @@ Of course, we are not able to compute the expected loss over the entire input-ou
 so we look at the expected loss over the training dataset $\mathcal{S}$, denoted by $\widehat{\mathcal{J}}$. This is the cost function
 and is just the empirical risk function defined in {eq}`eq-empirical-risk-1`.
 
+
 $$
-\begin{aligned}
-\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) := \widehat{\mathcal{J}}\left(h \mid \mathcal{S}\right) &= \frac{1}{N} \sum_{n=1}^{N} \mathcal{L}\left(\left(\mathbf{x}^{(n)}, y^{(n)}\right), h\right) \\
-&= \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - h\left(\mathbf{x}^{(n)}; \boldsymbol{\beta}\right)\right)^2 \\
-&= \frac{1}{N} \left\| \mathbf{y} - \mathbf{\hat{y}} \right\|_2^2 \\
-&= \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2
-\end{aligned}
-$$ (eq-linear-regression-cost-function-1)
+
+\begin{aligned} \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid
+\mathcal{S}\right) := \widehat{\mathcal{J}}\left(h \mid \mathcal{S}\right) &=
+\frac{1}{N} \sum*{n=1}^{N} \mathcal{L}\left(\left(\mathbf{x}^{(n)},
+y^{(n)}\right), h\right) \\ &= \frac{1}{N} \sum*{n=1}^{N} \left(y^{(n)} -
+h\left(\mathbf{x}^{(n)}; \boldsymbol{\beta}\right)\right)^2 \\ &= \frac{1}{N}
+\left\| \mathbf{y} - \mathbf{\hat{y}} \right\|\_2^2 \\ &= \frac{1}{N} \left\|
+\mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|\_2^2 \end{aligned}
+
+$$
+(eq-linear-regression-cost-function-1)
 
 where the last equation is due to our matrix representation, a more concise notation.
 
@@ -900,21 +1038,32 @@ optimal weight vector $\hat{\boldsymbol{\beta}}$ by taking the derivative of the
 
 We now formulate the optimization problem in terms of the objective function.
 
+
 $$
-\begin{alignat}{1}
-\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) &= \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
-$$ (eq-linear-regression-objective-function-1)
+
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) =
+\frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|\_2^2
+
+$$
+(eq-linear-regression-objective-function-1)
 
 where $\boldsymbol{\Theta}$ is the set of all possible weight vectors $\boldsymbol{\beta}$.
 
 Equivalently, we are finding the below:
 
+
 $$
-\begin{alignat}{1}
-\hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
-$$ (eq-linear-regression-objective-function-2)
+
+\hat{\boldsymbol{\beta}} = \underset{\boldsymbol{\beta} \in
+\boldsymbol{\Theta}}{\operatorname{argmin}} \quad
+\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) =
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta}
+\right\|\_2^2
+
+$$
+(eq-linear-regression-objective-function-2)
 
 where $\hat{\boldsymbol{\beta}}$ is the optimal estimate of the weight vector $\boldsymbol{\beta}$.
 
@@ -930,13 +1079,22 @@ mean squared error (MSE) between the predicted values $\mathbf{\hat{y}}$ and the
 Let's consider the base case where each sample is a scalar, i.e. $\mathbf{x}^{(n)} \in \mathbb{R}$.
 That is to say, we seek to find:
 
+
 $$
-\begin{aligned}
-\hat{\boldsymbol{\beta}} := \left(\hat{\beta}_0, \hat{\beta}_1\right) &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) \\
-&= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-&= \underset{\beta_0, \beta_1 \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \sum_{n=1}^N \left( y^{(n)} - \left(\beta_0 + \beta_1 x^{(n)}\right) \right)^2 \\
+
+\begin{aligned} \hat{\boldsymbol{\beta}} := \left(\hat{\beta}_0,
+\hat{\beta}\_1\right) &= \underset{\boldsymbol{\beta} \in
+\boldsymbol{\Theta}}{\operatorname{argmin}} \quad
+\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) \\ &=
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta}
+\right\|\_2^2 \\ &= \underset{\beta_0, \beta_1 \in
+\boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \sum_{n=1}^N
+\left( y^{(n)} - \left(\beta_0 + \beta_1 x^{(n)}\right) \right)^2 \\
 \end{aligned}
-$$ (eq-linear-regression-objective-function-3)
+
+$$
+(eq-linear-regression-objective-function-3)
 
 where the last equality expands the matrix-vector product $\mathbf{X} \boldsymbol{\beta}$ into
 its constituent elements. This is a step back from the matrix representation of the data, but it is
@@ -947,57 +1105,103 @@ The following proof adapts from {cite}`chan_2021`.
 ```{prf:proof}
 As with any two-dimensional optimization problem, the optimal point $(\hat{\beta}_1, \hat{\beta}_0)$ should have a zero gradient, meaning that
 
+
 $$
-\frac{\partial}{\partial \hat{\beta}_1} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right)=0 \quad \text { and } \quad \frac{\partial}{\partial \hat{\beta}_0} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right)=0 .
+
+\frac{\partial}{\partial \hat{\beta}\_1}
+\widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right)=0 \quad \text { and } \quad \frac{\partial}{\partial
+\hat{\beta}\_0} \widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right)=0 .
+
 $$
 
 This should be familiar to you, even if you have only learned basic calculus. This pair of equations says that, at $\hat{\beta}_1$ minimum point, the directional slopes should be zero no matter which direction you are looking at.
 The derivative with respect to $\hat{\beta}_1$ is
 
+
 $$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\beta}_1} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right) & =\frac{\partial}{\partial \hat{\beta}_1}\left\{\sum_{n=1}^N\left(y^{(n)}-\left(\hat{\beta}_1 x^{(n)}+\hat{\beta}_0\right)\right)^2\right\} \\
-&=\frac{\partial}{\partial \hat{\beta}_1}\left\{\left(y^{(1)}-\left(\hat{\beta}_1 x^{(1)}+\hat{\beta}_0\right)\right)^2+\left(y^{(2)}-\left(\hat{\beta}_1 x^{(2)}+\hat{\beta}_0\right)\right)^2+\cdots+\left(y^{(N)}-\left(\hat{\beta}_1 x^{(N)}+\hat{\beta}_0\right)\right)^2\right\} \\
-&=2\left(y^{(1)}-\left(\hat{\beta}_1 x^{(1)}+\hat{\beta}_0\right)\right)\left(-x^{(1)}\right)+\cdots+2\left(y^{(N)}-\left(\hat{\beta}_1 x^{(N)}+\hat{\beta}_0\right)\right)\left(-x^{(N)}\right) \\
-&=2\left(-\sum_{n=1}^N x^{(n)} y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N \left(x^{(n)}\right)^2+\hat{\beta}_0 \sum_{n=1}^N x^{(n)}\right)
-\end{aligned}
+
+\begin{aligned} \frac{\partial}{\partial \hat{\beta}_1}
+\widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right) & =\frac{\partial}{\partial
+\hat{\beta}\_1}\left\{\sum_{n=1}^N\left(y^{(n)}-\left(\hat{\beta}_1
+x^{(n)}+\hat{\beta}\_0\right)\right)^2\right\} \\ &=\frac{\partial}{\partial
+\hat{\beta}\_1}\left\{\left(y^{(1)}-\left(\hat{\beta}\_1
+x^{(1)}+\hat{\beta}\_0\right)\right)^2+\left(y^{(2)}-\left(\hat{\beta}\_1
+x^{(2)}+\hat{\beta}\_0\right)\right)^2+\cdots+\left(y^{(N)}-\left(\hat{\beta}\_1
+x^{(N)}+\hat{\beta}\_0\right)\right)^2\right\} \\
+&=2\left(y^{(1)}-\left(\hat{\beta}\_1
+x^{(1)}+\hat{\beta}\_0\right)\right)\left(-x^{(1)}\right)+\cdots+2\left(y^{(N)}-\left(\hat{\beta}\_1
+x^{(N)}+\hat{\beta}\_0\right)\right)\left(-x^{(N)}\right) \\
+&=2\left(-\sum_{n=1}^N x^{(n)} y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N
+\left(x^{(n)}\right)^2+\hat{\beta}_0 \sum_{n=1}^N x^{(n)}\right) \end{aligned}
+
 $$
 
 Similarly, the derivative with respect to $\hat{\beta}_0$ is
 
+
 $$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\beta}_0} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right) & =\frac{\partial}{\partial \hat{\beta}_0}\left\{\sum_{n=1}^N\left(y^{(n)}-\left(\hat{\beta}_1 x^{(n)}+\hat{\beta}_0\right)\right)^2\right\} \\
-& =2\left(y^{(1)}-\left(\hat{\beta}_1 x^{(1)}+\hat{\beta}_0\right)\right)(-1)+\cdots+2\left(y^{(N)}-\left(\hat{\beta}_1 x^{(n)}+\hat{\beta}_0\right)\right)(-1) \\
-& =2\left(-\sum_{n=1}^N y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N x^{(n)}+\hat{\beta}_0 \sum_{n=1}^N 1\right)
+
+\begin{aligned} \frac{\partial}{\partial \hat{\beta}_0}
+\widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right) & =\frac{\partial}{\partial
+\hat{\beta}\_0}\left\{\sum_{n=1}^N\left(y^{(n)}-\left(\hat{\beta}_1
+x^{(n)}+\hat{\beta}\_0\right)\right)^2\right\} \\ &
+=2\left(y^{(1)}-\left(\hat{\beta}\_1
+x^{(1)}+\hat{\beta}\_0\right)\right)(-1)+\cdots+2\left(y^{(N)}-\left(\hat{\beta}\_1
+x^{(n)}+\hat{\beta}\_0\right)\right)(-1) \\ & =2\left(-\sum_{n=1}^N
+y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N x^{(n)}+\hat{\beta}_0 \sum_{n=1}^N 1\right)
 \end{aligned}
+
 $$
 
 Setting these two equations to zero, we have that
 
-$$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\beta}_0} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right) = 0 &\iff 2\left(-\sum_{n=1}^N y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N x^{(n)}+\hat{\beta}_0 \sum_{n=1}^N 1\right) = 0 \\
-&\iff \hat{\beta}_0 \sum_{n=1}^N 1 = \sum_{n=1}^N y^{(n)} - \hat{\beta}_1 \sum_{n=1}^N x^{(n)} \\
-&\iff \hat{\beta}_0 N = \sum_{n=1}^N y^{(n)} - \hat{\beta}_1 \sum_{n=1}^N x^{(n)} \\
-&\iff \hat{\beta}_0 = \frac{1}{N} \sum_{n=1}^N y^{(n)} - \hat{\beta}_1 \frac{1}{N} \sum_{n=1}^N x^{(n)} \\
-&\iff \hat{\beta}_0 = \bar{y} - \hat{\beta}_1 \bar{x} \\
-\end{aligned}
-$$ (eq:linreg-beta0)
 
 $$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\beta}_1} \widehat{\mathcal{J}}\left(\hat{\beta}_0, \hat{\beta}_1 \mid \mathcal{S}\right) = 0 &\iff 2\left(-\sum_{n=1}^N x^{(n)} y^{(n)}+\hat{\beta}_1 \sum_{n=1}^N \left(x^{(n)}\right)^2+\hat{\beta}_0 \sum_{n=1}^N x^{(n)}\right) = 0 \\
-&\iff \hat{\beta}_1 \sum_{n=1}^N \left(x^{(n)}\right)^2 = \sum_{n=1}^N x^{(n)} y^{(n)} - \hat{\beta}_0 \sum_{n=1}^N x^{(n)} \\
-&\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \hat{\beta}_0 \sum_{n=1}^N x^{(n)}\right)}{\sum_{n=1}^N \left(x^{(n)}\right)^2}  \\
-&\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \left(\bar{y} - \hat{\beta}_1 \bar{x}\right) \sum_{n=1}^N x^{(n)}\right)}{\sum_{n=1}^N \left(x^{(n)}\right)^2} \\
-&\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \bar{y} \sum_{n=1}^N x^{(n)} - \hat{\beta}_1 \bar{x} \sum_{n=1}^N x^{(n)} + \hat{\beta}_1 \bar{x} \sum_{n=1}^N x^{(n)}\right)}{\sum_{n=1}^N \left(x^{(n)}\right)^2} \\
-&\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \bar{y} \sum_{n=1}^N x^{(n)}\right)}{\sum_{n=1}^N \left(x^{(n)}\right)^2} \\
-&\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \bar{y} \sum_{n=1}^N x^{(n)}\right)}{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right)^2} \\
-&\iff \hat{\beta}_1 = \frac{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right) \left(y^{(n)} - \bar{y}\right)}{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right)^2} \\
-&\iff \hat{\beta}_1 = r_{XY} \frac{s_Y}{s_X} \\
-\end{aligned}
-$$ (eq-linreg-beta1)
+
+\begin{aligned} \frac{\partial}{\partial \hat{\beta}_0}
+\widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right) = 0 &\iff 2\left(-\sum_{n=1}^N y^{(n)}+\hat{\beta}_1
+\sum_{n=1}^N x^{(n)}+\hat{\beta}_0 \sum_{n=1}^N 1\right) = 0 \\ &\iff
+\hat{\beta}_0 \sum_{n=1}^N 1 = \sum*{n=1}^N y^{(n)} - \hat{\beta}\_1
+\sum*{n=1}^N x^{(n)} \\ &\iff \hat{\beta}_0 N = \sum_{n=1}^N y^{(n)} -
+\hat{\beta}_1 \sum_{n=1}^N x^{(n)} \\ &\iff \hat{\beta}_0 = \frac{1}{N}
+\sum_{n=1}^N y^{(n)} - \hat{\beta}_1 \frac{1}{N} \sum_{n=1}^N x^{(n)} \\ &\iff
+\hat{\beta}\_0 = \bar{y} - \hat{\beta}\_1 \bar{x} \\ \end{aligned}
+
+$$
+(eq:linreg-beta0)
+
+
+$$
+
+\begin{aligned} \frac{\partial}{\partial \hat{\beta}_1}
+\widehat{\mathcal{J}}\left(\hat{\beta}\_0, \hat{\beta}\_1 \mid
+\mathcal{S}\right) = 0 &\iff 2\left(-\sum_{n=1}^N x^{(n)} y^{(n)}+\hat{\beta}_1
+\sum_{n=1}^N \left(x^{(n)}\right)^2+\hat{\beta}_0 \sum_{n=1}^N x^{(n)}\right) =
+0 \\ &\iff \hat{\beta}_1 \sum_{n=1}^N \left(x^{(n)}\right)^2 = \sum*{n=1}^N
+x^{(n)} y^{(n)} - \hat{\beta}\_0 \sum*{n=1}^N x^{(n)} \\ &\iff \hat{\beta}_1 =
+\frac{\left(\sum_{n=1}^N x^{(n)} y^{(n)} - \hat{\beta}_0 \sum_{n=1}^N
+x^{(n)}\right)}{\sum*{n=1}^N \left(x^{(n)}\right)^2} \\ &\iff \hat{\beta}\_1 =
+\frac{\left(\sum*{n=1}^N x^{(n)} y^{(n)} - \left(\bar{y} - \hat{\beta}_1
+\bar{x}\right) \sum_{n=1}^N x^{(n)}\right)}{\sum*{n=1}^N \left(x^{(n)}\right)^2}
+\\ &\iff \hat{\beta}\_1 = \frac{\left(\sum*{n=1}^N x^{(n)} y^{(n)} - \bar{y}
+\sum*{n=1}^N x^{(n)} - \hat{\beta}\_1 \bar{x} \sum*{n=1}^N x^{(n)} +
+\hat{\beta}_1 \bar{x} \sum_{n=1}^N x^{(n)}\right)}{\sum*{n=1}^N
+\left(x^{(n)}\right)^2} \\ &\iff \hat{\beta}\_1 = \frac{\left(\sum*{n=1}^N
+x^{(n)} y^{(n)} - \bar{y} \sum*{n=1}^N x^{(n)}\right)}{\sum*{n=1}^N
+\left(x^{(n)}\right)^2} \\ &\iff \hat{\beta}_1 = \frac{\left(\sum_{n=1}^N
+x^{(n)} y^{(n)} - \bar{y} \sum*{n=1}^N x^{(n)}\right)}{\sum*{n=1}^N
+\left(x^{(n)} - \bar{x}\right)^2} \\ &\iff \hat{\beta}_1 = \frac{\sum_{n=1}^N
+\left(x^{(n)} - \bar{x}\right) \left(y^{(n)} - \bar{y}\right)}{\sum*{n=1}^N
+\left(x^{(n)} - \bar{x}\right)^2} \\ &\iff \hat{\beta}\_1 = r*{XY}
+\frac{s_Y}{s_X} \\ \end{aligned}
+
+$$
+(eq-linreg-beta1)
 
 where
 
@@ -1011,12 +1215,16 @@ where
 
 Thus, we conclude that the optimal **estimates** of $\beta_0$ and $\beta_1$ are given by:
 
+
 $$
-\begin{aligned}
-\hat{\beta}_0 &= \bar{y} - \hat{\beta}_1 \bar{x} \\
-\hat{\beta}_1 &= \frac{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right) \left(y^{(n)} - \bar{y}\right)}{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right)^2}
+
+\begin{aligned} \hat{\beta}_0 &= \bar{y} - \hat{\beta}\_1 \bar{x} \\
+\hat{\beta}\_1 &= \frac{\sum_{n=1}^N \left(x^{(n)} - \bar{x}\right)
+\left(y^{(n)} - \bar{y}\right)}{\sum\_{n=1}^N \left(x^{(n)} - \bar{x}\right)^2}
 \end{aligned}
-$$ (eq-linear-regression-solution-1)
+
+$$
+(eq-linear-regression-solution-1)
 
 We can also see that the second derivative of both the equations gives us more than $0$, indicating
 that the solution found is a **global minimum** (convexity).
@@ -1028,38 +1236,49 @@ We can generalize the above to the $D$-dimensional case. We have in equation
 {eq}`eq-linear-regression-matrix-1` that we can write the linear regression formulation
 more compactly as
 
+
 $$
-\left|
-\begin{array}{l}
-\mathbf{y} = \mathbf{X} \boldsymbol{\beta} + \boldsymbol{\varepsilon} \\
- \boldsymbol{\varepsilon} \overset{\small{\text{iid}}}{\sim} \mathcal{N}\left(\mathbf{0}, \sigma^2 \mathbf{I}\right)
-\end{array}
-\right.
+
+\left| \begin{array}{l} \mathbf{y} = \mathbf{X} \boldsymbol{\beta} +
+\boldsymbol{\varepsilon} \\ \boldsymbol{\varepsilon}
+\overset{\small{\text{iid}}}{\sim} \mathcal{N}\left(\mathbf{0}, \sigma^2
+\mathbf{I}\right) \end{array} \right.
+
 $$
 
 We will minimize {eq}`eq-linear-regression-objective-function-1` with respect to $\boldsymbol{\beta}$.
 
+
 $$
-\begin{alignat}{1}
-\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) &= \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) =
+\frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|\_2^2
+
 $$
 
 With some matrix calculus, we can derive that:
 
+
 $$
-\begin{aligned}
-\nabla_{\boldsymbol{\beta}} \widehat{\mathcal{J}}\left(\hat{\boldsymbol{\beta}} \mid \mathcal{S}\right) &= \nabla_{\boldsymbol{\beta}} \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}} \right\|_2^2 \\
-&= \frac{2}{N} \left(\mathbf{X}^T \mathbf{X} \hat{\boldsymbol{\beta}} - \mathbf{X}^T \mathbf{y}\right) \\
+
+\begin{aligned} \nabla*{\boldsymbol{\beta}}
+\widehat{\mathcal{J}}\left(\hat{\boldsymbol{\beta}} \mid \mathcal{S}\right) &=
+\nabla*{\boldsymbol{\beta}} \frac{1}{N} \left\| \mathbf{y} - \mathbf{X}
+\hat{\boldsymbol{\beta}} \right\|\_2^2 \\ &= \frac{2}{N} \left(\mathbf{X}^T
+\mathbf{X} \hat{\boldsymbol{\beta}} - \mathbf{X}^T \mathbf{y}\right) \\
 \end{aligned}
+
 $$
 
 Equating it to $\boldsymbol{0}$, we get:
 
+
 $$
-\begin{aligned}
-\mathbf{X}^T \mathbf{X} \hat{\boldsymbol{\beta}} &= \mathbf{X}^T \mathbf{y} \\
-\end{aligned}
+
+\begin{aligned} \mathbf{X}^T \mathbf{X} \hat{\boldsymbol{\beta}} &= \mathbf{X}^T
+\mathbf{y} \\ \end{aligned}
+
 $$
 
 and we call this the [**normal equations**](https://en.wikipedia.org/wiki/Normal_equation). We can solve
@@ -1067,10 +1286,12 @@ for $\hat{\boldsymbol{\beta}}$ to get the estimates of $\boldsymbol{\beta}$.
 
 To solve for $\hat{\boldsymbol{\beta}}$, we can use the [**matrix inverse**](https://en.wikipedia.org/wiki/Invertible_matrix) of $\mathbf{X}^T \mathbf{X}$ to get:
 
+
 $$
-\begin{aligned}
-\hat{\boldsymbol{\beta}} &= \left(\mathbf{X}^T \mathbf{X}\right)^{-1} \mathbf{X}^T \mathbf{y} \\
-\end{aligned}
+
+\begin{aligned} \hat{\boldsymbol{\beta}} &= \left(\mathbf{X}^T
+\mathbf{X}\right)^{-1} \mathbf{X}^T \mathbf{y} \\ \end{aligned}
+
 $$
 
 ## Model Fitting via Maximum Likelihood Estimation
@@ -1090,12 +1311,13 @@ the [**likelihood function**](https://en.wikipedia.org/wiki/Likelihood_function)
 
 With slight abuse of notation, we denote the following:
 
+
 $$
-\begin{aligned}
-\mathcal{S} &= \left\{ \left(\mathbf{x}^{(n)}, y^{(n)}\right) \right\}_{n=1}^{N} \\
-\mathcal{X} &= \left\{ \mathbf{x}^{(n)} \right\}_{n=1}^{N} \\
-\mathcal{Y} &= \left\{ y^{(n)} \right\}_{n=1}^{N} \\
-\end{aligned}
+
+\begin{aligned} \mathcal{S} &= \left\{ \left(\mathbf{x}^{(n)}, y^{(n)}\right)
+\right\}_{n=1}^{N} \\ \mathcal{X} &= \left\{ \mathbf{x}^{(n)} \right\}_{n=1}^{N}
+\\ \mathcal{Y} &= \left\{ y^{(n)} \right\}\_{n=1}^{N} \\ \end{aligned}
+
 $$
 
 where $\mathbf{x}^{(n)} \in \mathbb{R}^{D}$ is the $n$-th input and $y^{(n)} \in \mathbb{R}$ is the $n$-th output.
@@ -1131,17 +1353,29 @@ So there is nothing wrong in our problem formulation to say that the joint tuple
 
 The conditional likelihood function is the probability of observing the dataset $\mathcal{S}$ given the model parameters $\boldsymbol{\beta}$.
 
+
 $$
-\begin{aligned}
-\mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) &\stackrel{\text { def }}{=} \mathbb{P}_{\mathcal{D}}\left(\mathcal{Y}\mid \mathcal{X} ; \boldsymbol{\beta}\right) \\
-&= \mathbb{P}_{\mathcal{D}}\left(y^{(1)}, y^{(2)}, \ldots, y^{(N)} \mid \mathbf{x}^{(1)}, \mathbf{x}^{(2)}, \ldots, \mathbf{x}^{(N)} ; \boldsymbol{\beta}\right) \\
-&= \prod_{n=1}^{N} \mathbb{P}_{\mathcal{D}}\left(y^{(n)} \mid \mathbf{x}^{(n)} ; \boldsymbol{\beta}\right) \\
-&= \prod_{n=1}^{N} \mathcal{N}\left(\boldsymbol{\beta}^{\top} \mathbf{x}^{(n)}, \sigma^2\right) && (*) \\
-&= \prod_{n=1}^{N} \frac{1}{\sqrt{2 \pi \sigma^2}} \exp \left(-\frac{\left(y^{(n)} - \boldsymbol{\beta}^{\top} \mathbf{x}^{(n)}\right)^{2}}{2 \sigma^2}\right) \\
-&= \frac{1}{\left(2 \pi \sigma^2\right)^{N / 2}} \exp \left(-\frac{1}{2 \sigma^2} \sum_{n=1}^{N}\left(y^{(n)} - \boldsymbol{\beta}^{\top} \mathbf{x}^{(n)}\right)^{2}\right) \\
-&= \frac{1}{\left(2 \pi \sigma^2\right)^{N / 2}} \exp \left(-\frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|_2^2\right) && (**) \\
-\end{aligned}
-$$ (eq-linear-regression-likelihood-function)
+
+\begin{aligned} \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S})
+&\stackrel{\text { def }}{=} \mathbb{P}_{\mathcal{D}}\left(\mathcal{Y}\mid
+\mathcal{X} ; \boldsymbol{\beta}\right) \\ &=
+\mathbb{P}_{\mathcal{D}}\left(y^{(1)}, y^{(2)}, \ldots, y^{(N)} \mid
+\mathbf{x}^{(1)}, \mathbf{x}^{(2)}, \ldots, \mathbf{x}^{(N)} ;
+\boldsymbol{\beta}\right) \\ &= \prod*{n=1}^{N}
+\mathbb{P}*{\mathcal{D}}\left(y^{(n)} \mid \mathbf{x}^{(n)} ;
+\boldsymbol{\beta}\right) \\ &= \prod*{n=1}^{N}
+\mathcal{N}\left(\boldsymbol{\beta}^{\top} \mathbf{x}^{(n)}, \sigma^2\right) &&
+(\*) \\ &= \prod*{n=1}^{N} \frac{1}{\sqrt{2 \pi \sigma^2}} \exp
+\left(-\frac{\left(y^{(n)} - \boldsymbol{\beta}^{\top}
+\mathbf{x}^{(n)}\right)^{2}}{2 \sigma^2}\right) \\ &= \frac{1}{\left(2 \pi
+\sigma^2\right)^{N / 2}} \exp \left(-\frac{1}{2 \sigma^2}
+\sum\_{n=1}^{N}\left(y^{(n)} - \boldsymbol{\beta}^{\top}
+\mathbf{x}^{(n)}\right)^{2}\right) \\ &= \frac{1}{\left(2 \pi \sigma^2\right)^{N
+/ 2}} \exp \left(-\frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X}
+\boldsymbol{\beta}\right\|\_2^2\right) && (\*\*) \\ \end{aligned}
+
+$$
+(eq-linear-regression-likelihood-function)
 
 where
 
@@ -1180,12 +1414,17 @@ meaning they return the same optimal parameters.
 The conditional log-likelihood function is the log of the probability of observing the dataset $\mathcal{S}$ given the model parameters $\boldsymbol{\beta}$
 is defined as the log of the conditional likelihood function in {prf:ref}`def-conditional-likelihood-function-linear-regression`.
 
+
 $$
-\begin{aligned}
-\log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) &= \log \frac{1}{\left(2 \pi \sigma^2\right)^{N / 2}} \exp \left(-\frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|_2^2\right) \\
-&= -\frac{N}{2} \log \left(2 \pi \sigma^2\right) -\frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|_2^2 \\
-\end{aligned}
-$$ (eq-linear-regression-log-likelihood-function)
+
+\begin{aligned} \log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) &= \log
+\frac{1}{\left(2 \pi \sigma^2\right)^{N / 2}} \exp \left(-\frac{1}{2 \sigma^2}
+\left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|\_2^2\right) \\ &=
+-\frac{N}{2} \log \left(2 \pi \sigma^2\right) -\frac{1}{2 \sigma^2}
+\left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|\_2^2 \\ \end{aligned}
+
+$$
+(eq-linear-regression-log-likelihood-function)
 ```
 
 We should already see where this is going. The right hand side of equation
@@ -1200,35 +1439,61 @@ Since likelihood function, we can maximize it to find the optimal parameters $\h
 
 Recall in the objective function in {eq}`eq-linear-regression-objective-function-2` below, we are minimizing the cost function.
 
+
 $$
-\begin{alignat}{1}
-\hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+
+\hat{\boldsymbol{\beta}} = \underset{\boldsymbol{\beta} \in
+\boldsymbol{\Theta}}{\operatorname{argmin}} \quad
+\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) =
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta}
+\right\|\_2^2
+
 $$
 
 To do the same, instead of maximizing the log-likelihood function, we can minimize the negative log-likelihood function,
 which yields the same optimal parameters.
 
+
 $$
-\begin{alignat}{1}
-\hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmax}} \quad \log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\
-&= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad -\log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\
-&= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{N}{2} \log \left(2 \pi \sigma^2\right) + \frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|_2^2 \\
-\end{alignat}
-$$ (eq-linear-regression-maximum-likelihood-estimation-1)
+
+\begin{aligned} \hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in
+\boldsymbol{\Theta}}{\operatorname{argmax}} \quad \log
+\mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\ &=
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad -\log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\ &=
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}}
+\quad \frac{N}{2} \log \left(2 \pi \sigma^2\right) + \frac{1}{2 \sigma^2}
+\left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|\_2^2 \end{aligned}
+
+$$
+(eq-linear-regression-maximum-likelihood-estimation-1)
 
 We seek to find the optimal parameters $\hat{\boldsymbol{\beta}}$ that minimize the negative log-likelihood function.
 We compute the gradient of the negative log-likelihood function with respect to the parameters $\boldsymbol{\beta}$:
 
+
 $$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(-\log \mathcal{L}(\hat{\boldsymbol{\beta}} \mid \mathcal{S})\right) &= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(\frac{N}{2} \log \left(2 \pi \sigma^2\right) + \frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right\|_2^2\right) \\
-&= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right\|_2^2\right) \\
-&= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2} \left(\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right)^T \left(\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right)\right) && (*) \\
-&= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2} \left(\mathbf{y}^T \mathbf{y} - 2 \mathbf{y}^T \mathbf{X} \hat{\boldsymbol{\beta}} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T \mathbf{X} \hat{\boldsymbol{\beta}}\right)\right) \\
-&= \frac{1}{\sigma^2} \left(-\mathbf{y}^T \mathbf{X} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T \mathbf{X}\right) \in \mathbb{R}^{1 \times D} && (**) \\
-\end{aligned}
-$$ (eq-linear-regression-maximum-likelihood-estimation-2)
+
+\begin{aligned} \frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(-\log
+\mathcal{L}(\hat{\boldsymbol{\beta}} \mid \mathcal{S})\right) &=
+\frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(\frac{N}{2} \log
+\left(2 \pi \sigma^2\right) + \frac{1}{2 \sigma^2} \left\|\mathbf{y} -
+\mathbf{X} \hat{\boldsymbol{\beta}}\right\|\_2^2\right) \\ &=
+\frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2}
+\left\|\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right\|\_2^2\right) \\
+&= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2}
+\left(\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right)^T
+\left(\mathbf{y} - \mathbf{X} \hat{\boldsymbol{\beta}}\right)\right) && (\*) \\
+&= \frac{\partial}{\partial \hat{\boldsymbol{\beta}}}\left(\frac{1}{2 \sigma^2}
+\left(\mathbf{y}^T \mathbf{y} - 2 \mathbf{y}^T \mathbf{X}
+\hat{\boldsymbol{\beta}} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T \mathbf{X}
+\hat{\boldsymbol{\beta}}\right)\right) \\ &= \frac{1}{\sigma^2}
+\left(-\mathbf{y}^T \mathbf{X} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T
+\mathbf{X}\right) \in \mathbb{R}^{1 \times D} && (\*\*) \\ \end{aligned}
+
+$$
+(eq-linear-regression-maximum-likelihood-estimation-2)
 
 where
 
@@ -1237,13 +1502,20 @@ where
 
 Next, we will set the gradient to zero and solve for the optimal parameters $\hat{\boldsymbol{\beta}}$.
 
+
 $$
-\begin{aligned}
-\frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(-\log \mathcal{L}(\hat{\boldsymbol{\beta}} \mid \mathcal{S})\right) = \boldsymbol{0}^{\top} &\overset{(**)}{\iff} \frac{1}{\sigma^2} \left(-\mathbf{y}^T \mathbf{X} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T \mathbf{X}\right) = \boldsymbol{0}^{\top} \\
-&\iff \hat{\boldsymbol{\beta}}^T \mathbf{X}^T \mathbf{X} = \mathbf{y}^T \mathbf{X} && (\star) \\
-&\iff \hat{\boldsymbol{\beta}}^T = \mathbf{y}^T \mathbf{X} \left(\mathbf{X}^T \mathbf{X}\right)^{-1} && (\star \star) \\
-&\iff \hat{\boldsymbol{\beta}} = \left(\mathbf{X}^T \mathbf{X}\right)^{-1} \mathbf{X}^T \mathbf{y} && (\star \star \star) \\
-\end{aligned}
+
+\begin{aligned} \frac{\partial}{\partial \hat{\boldsymbol{\beta}}} \left(-\log
+\mathcal{L}(\hat{\boldsymbol{\beta}} \mid \mathcal{S})\right) =
+\boldsymbol{0}^{\top} &\overset{(\*\*)}{\iff} \frac{1}{\sigma^2}
+\left(-\mathbf{y}^T \mathbf{X} + \hat{\boldsymbol{\beta}}^T \mathbf{X}^T
+\mathbf{X}\right) = \boldsymbol{0}^{\top} \\ &\iff \hat{\boldsymbol{\beta}}^T
+\mathbf{X}^T \mathbf{X} = \mathbf{y}^T \mathbf{X} && (\star) \\ &\iff
+\hat{\boldsymbol{\beta}}^T = \mathbf{y}^T \mathbf{X} \left(\mathbf{X}^T
+\mathbf{X}\right)^{-1} && (\star \star) \\ &\iff \hat{\boldsymbol{\beta}} =
+\left(\mathbf{X}^T \mathbf{X}\right)^{-1} \mathbf{X}^T \mathbf{y} && (\star
+\star \star) \\ \end{aligned}
+
 $$
 
 where
@@ -1262,8 +1534,11 @@ as a conditional expectation of the target variable given the input under the pr
 
 Therefore, the MLE estimate $\hat{\boldsymbol{\beta}}$, when plugged into the equation
 
+
 $$
+
 \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \cdots + \beta_D x_D
+
 $$
 
 gives us the estimate of the conditional expectation of the target variable given the input.
@@ -1284,8 +1559,11 @@ Mean Squared Error (MSE) is a widely used metric for evaluating the performance 
 
 The MSE is calculated as follows:
 
+
 $$
-\text{MSE} = \frac{1}{N} \sum_{n=1}^{N}(y^{(n)} - \hat{y}^{(n)})^2
+
+\text{MSE} = \frac{1}{N} \sum\_{n=1}^{N}(y^{(n)} - \hat{y}^{(n)})^2
+
 $$
 
 where:
@@ -1318,8 +1596,11 @@ R-squared ($R^2$) is a statistical measure that represents the proportion of the
 
 The R-squared value is defined as:
 
+
 $$
-R^2 = \dfrac{SS_{tot} - SS_{res}}{SS_{tot}} = 1 - \frac{SS_{res}}{SS_{tot}}
+
+R^2 = \dfrac{SS*{tot} - SS*{res}}{SS*{tot}} = 1 - \frac{SS*{res}}{SS\_{tot}}
+
 $$
 
 where:
@@ -1330,14 +1611,20 @@ where:
 
 Mathematically, the residual sum of squares is defined as:
 
+
 $$
-SS_{res} = \sum_{n=1}^{N}(y^{(n)} - \hat{y}^{(n)})^2
+
+SS*{res} = \sum*{n=1}^{N}(y^{(n)} - \hat{y}^{(n)})^2
+
 $$
 
 And the total sum of squares is defined as:
 
+
 $$
-SS_{tot} = \sum_{n=1}^{n}(y^{(n)} - \bar{y})^2
+
+SS*{tot} = \sum*{n=1}^{n}(y^{(n)} - \bar{y})^2
+
 $$
 
 where:
@@ -1609,14 +1896,20 @@ Let's look at the feature $x_1$ and its corresponding coefficient $\hat{\beta}_1
 
 We claim that scaling $x_1$ with a factor $a$ scales $\hat{\beta}_1$by a factor $\frac{1}{a}$. To see this, note that
 
+
 $$
-\hat{\beta}_1(x_1)=\dfrac{\sum_{n=1}^{N}\left(x_{1}^{(n)}−\bar{x}_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum_{n=1}^{N}\left(x_{1}^{(n)}−\bar{x}_1\right)^2}
+
+\hat{\beta}_1(x_1)=\dfrac{\sum_{n=1}^{N}\left(x*{1}^{(n)}−\bar{x}\_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum*{n=1}^{N}\left(x\_{1}^{(n)}−\bar{x}\_1\right)^2}
+
 $$
 
 Thus
 
+
 $$
-\hat{\beta}_1(ax_1)=\dfrac{\sum_{n=1}^{N}\left(ax_{1}^{(n)}−a\bar{x}_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum_{n=1}^{N}\left(ax_{1}^{(n)}−a\bar{x}_1\right)^2}=\dfrac{\sum_{n=1}^{N}\left(x_{1}^{(n)}−\bar{x}_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum_{n=1}^{N}\left(x_{1}^{(n)}−\bar{x}_1\right)^2}=\dfrac{1}{a}\hat{\beta}_1(x_1)
+
+\hat{\beta}_1(ax_1)=\dfrac{\sum_{n=1}^{N}\left(ax*{1}^{(n)}−a\bar{x}\_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum*{n=1}^{N}\left(ax*{1}^{(n)}−a\bar{x}\_1\right)^2}=\dfrac{\sum*{n=1}^{N}\left(x*{1}^{(n)}−\bar{x}\_1\right)\left(y^{(n)}−\bar{y}\right)}{\sum*{n=1}^{N}\left(x\_{1}^{(n)}−\bar{x}\_1\right)^2}=\dfrac{1}{a}\hat{\beta}\_1(x_1)
+
 $$
 
 Thus, scaling simply corresponds to scaling the corresponding slopes. Because if we scale **square feet (**$x_1$) by a factor of $\frac{1}{10}$, then if the original $\hat{\beta}_1$
@@ -1631,14 +1924,21 @@ However, if you are using Gradient Descent (an optimization algorithm) in Regres
 
 Say we have obtained the following estimates for the coefficients of the multiple linear regression model:
 
+
 $$
-\hat{\beta}_0 = 92451, \hat{\beta}_1 = 139, \hat{\beta}_2 = -8621, \hat{\beta}_3 = -81
+
+\hat{\beta}\_0 = 92451, \hat{\beta}\_1 = 139, \hat{\beta}\_2 = -8621,
+\hat{\beta}\_3 = -81
+
 $$
 
 and so our estimated model $\hat{y}: = \hat{h}(\mathbf{x})$ of the ground truth $y:= f(\mathbf{x})$ is:
 
+
 $$
+
 \hat{y} = 92451+139x_1-8621x_2-81x_3
+
 $$
 
 where
@@ -1658,11 +1958,14 @@ Mean Squared Error (MSE) is a commonly used metric for evaluating the performanc
 
 The MSE is defined as:
 
+
 $$
-\begin{aligned}
-MSE(\boldsymbol{\beta}) := \hat{\mathcal{J}}(\boldsymbol{\beta}) &= \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{y}^{(n)}\right)^2 \\
-&= \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \left(\beta_0 + \beta_1 x_1^{(n)} + \ldots \beta_D x_D^{(n)}\right)\right)^2
-\end{aligned}
+
+\begin{aligned} MSE(\boldsymbol{\beta}) := \hat{\mathcal{J}}(\boldsymbol{\beta})
+&= \frac{1}{N} \sum*{n=1}^{N} \left(y^{(n)} - \hat{y}^{(n)}\right)^2 \\ &=
+\frac{1}{N} \sum*{n=1}^{N} \left(y^{(n)} - \left(\beta_0 + \beta_1 x_1^{(n)} +
+\ldots \beta_D x_D^{(n)}\right)\right)^2 \end{aligned}
+
 $$
 
 Where:
@@ -1673,28 +1976,46 @@ Where:
 
 In the context of linear regression, the error term is defined as the difference between the actual value and the predicted value:
 
+
 $$
-\varepsilon^{(n)} = y^{(n)} - \hat{y}^{(n)} = y^{(n)} - \left(\beta_0 + \beta_1 x_1^{(n)} + \ldots \beta_D x_D^{(n)}\right)
+
+\varepsilon^{(n)} = y^{(n)} - \hat{y}^{(n)} = y^{(n)} - \left(\beta_0 + \beta_1
+x_1^{(n)} + \ldots \beta_D x_D^{(n)}\right)
+
 $$
 
 The variance of the error term is:
 
+
 $$
-\sigma^2 = \frac{1}{N} \sum_{n=1}^{N} \left(\varepsilon^{(n)}\right)^2
+
+\sigma^2 = \frac{1}{N} \sum\_{n=1}^{N} \left(\varepsilon^{(n)}\right)^2
+
 $$
 
 However, in practice, we do not know the true values of the parameters $\beta_0, \beta_1, \ldots, \beta_D$.
 We estimate them using the sample data $\mathcal{S}$, which gives us the predicted values $\hat{y}^{(n)} = \beta_0 + \beta_1 x_1^{(n)} + \ldots \beta_D x_D^{(n)}$.
 Therefore, the estimated variance of the error term is:
 
+
 $$
-\hat{\sigma}^2 = \frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{y}^{(n)}\right)^2 = \hat{\mathcal{J}}(\hat{\boldsymbol{\beta}}) = MSE(\hat{\boldsymbol{\beta}})
+
+\hat{\sigma}^2 = \frac{1}{N} \sum\_{n=1}^{N} \left(y^{(n)} -
+\hat{y}^{(n)}\right)^2 = \hat{\mathcal{J}}(\hat{\boldsymbol{\beta}}) =
+MSE(\hat{\boldsymbol{\beta}})
+
 $$
 
 The MSE is an unbiased estimator of the variance of the error term because the expected value of the MSE is equal to the true variance of the error term:
 
+
 $$
-\mathbb{E}[MSE(\hat{\boldsymbol{\beta}})] = \mathbb{E}\left[\frac{1}{N} \sum_{n=1}^{N} \left(y^{(n)} - \hat{y}^{(n)}\right)^2\right] = \frac{1}{N} \sum_{n=1}^{N} \mathbb{E}\left[\left(y^{(n)} - \hat{y}^{(n)}\right)^2\right] = \frac{1}{N} \sum_{n=1}^{N} \sigma^2 = \sigma^2
+
+\mathbb{E}[MSE(\hat{\boldsymbol{\beta}})] = \mathbb{E}\left[\frac{1}{N}
+\sum_{n=1}^{N} \left(y^{(n)} - \hat{y}^{(n)}\right)^2\right] = \frac{1}{N}
+\sum*{n=1}^{N} \mathbb{E}\left[\left(y^{(n)} - \hat{y}^{(n)}\right)^2\right] =
+\frac{1}{N} \sum*{n=1}^{N} \sigma^2 = \sigma^2
+
 $$
 
 This property is important because it ensures that the MSE provides an accurate measure of the model's performance. If the MSE were a biased estimator, it would consistently overestimate or underestimate the true variance of the error term, leading to incorrect inferences about the model's performance. Since the MSE is an unbiased estimator, it provides a reliable estimate of the model's error variance, making it a useful metric for model evaluation and comparison.
@@ -1708,8 +2029,13 @@ To justify this, we need to recall the variance-covariance matrix for $\hat{\bol
 
 This is a consequence of that $\hat{\boldsymbol{\beta}}$ is a linear estimator, recall that we are treating $\boldsymbol{\beta}$ and $\mathbf{X}$ as constant and non-stochastic, and consequently $\hat{\boldsymbol{\beta}}$ is linear function of the error vector $\boldsymbol{\varepsilon}$.
 
+
 $$
-\hat{\boldsymbol{\beta}} = \boldsymbol{\beta} + (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\boldsymbol{\varepsilon} = g(\boldsymbol{\varepsilon})
+
+\hat{\boldsymbol{\beta}} = \boldsymbol{\beta} +
+(\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\boldsymbol{\varepsilon} =
+g(\boldsymbol{\varepsilon})
+
 $$
 
 And using the property that ***a linear transform of a normal random variable is normal***, we can easily see that $\hat{\boldsymbol{\beta}}$ must be normal as well since $\hat{\boldsymbol{\beta}}$ is a linear transformation of $\boldsymbol{\varepsilon}$.
@@ -1728,9 +2054,13 @@ area of the house, in square feet, and we are interested in learning about the p
 
 As an example, assumed we have already learned that the estimated intercept $\hat{\beta}_0$ and the estimated slope $\hat{\beta}_1$ are given by:
 
+
 $$
+
 \beta_0 = 114418, \beta_1 = 962
-$$ (eq-estimated-intercept-slope-linear-regression-univariate-1)
+
+$$
+(eq-estimated-intercept-slope-linear-regression-univariate-1)
 
 where we round the numbers to the nearest integer for simplicity.
 
@@ -1753,9 +2083,13 @@ plt.show()
 
 As we can see above from both the fitted plot and the OLS coefficients, there does seem to be a linear relationship between the two. Furthermore, the OLS regression line's equation can be easily calculated and given by:
 
+
 $$
+
 \hat{y} = \beta_0 + \beta_1x_1 = 114418 + 962x_1
-$$ (eq-estimated-intercept-slope-linear-regression-univariate-2)
+
+$$
+(eq-estimated-intercept-slope-linear-regression-univariate-2)
 
 where $x_1$ is the area of the house in square feet.
 
@@ -1813,14 +2147,20 @@ Consequently, we can conclude that greater the magnitude of $|t|$ ($t$ can be 
 
 To find the t-value of $\hat{\beta_1}$, we need to first know what is the standard error of $\hat{\beta_1}$, which is $\text{SE}(\hat{\mathbf{\beta_1}})$. The formula is given by
 
+
 $$
+
 \text{SE}(\hat{\beta_1}) = \sqrt{\sigma^2(\mathbf{X}^T\mathbf{X})^{-1}}
+
 $$
 
 But since we do not know the value of the population variance $\sigma^2$ of the error term, we estimate it with
 
+
 $$
+
 \hat{\sigma}^2 = \dfrac{\text{Residual Sum of Squares (RSS)}}{N - D - 1}
+
 $$
 
 where $N$ is the number of samples, $D$ is the number of features.
@@ -1879,57 +2219,78 @@ How T-distribution is formed:
 
 1. Define our null and alternative hypothesis. In Simple Linear Regression, we simply set:
 
-    $$
+
+$$
+
     \begin{aligned}
     & H_0: &\beta_1 &= 0 \\
     & H_{A}: &\beta_1 &\neq 0
     \end{aligned}
     $$
 
-
-2. Determine the test statistic that is most suitable for this parameter $\beta_1$. Note that $\beta_1$ is actually a constant and not a random variable, and we cannot know the distribution of $\beta_1$ anyways since population is unknown. However, we can make use of the OLS estimator of $\beta_1$ to draw inferences about it. So although we do not know $\beta_1$ we are able to derive the sampling distribution of $\hat{\beta_1}$ which we have shown in the first section to be:
+2. Determine the test statistic that is most suitable for this parameter
+   $\beta_1$. Note that $\beta_1$ is actually a constant and not a random
+   variable, and we cannot know the distribution of $\beta_1$ anyways since
+   population is unknown. However, we can make use of the OLS estimator of
+   $\beta_1$ to draw inferences about it. So although we do not know $\beta_1$
+   we are able to derive the sampling distribution of $\hat{\beta_1}$ which we
+   have shown in the first section to be:
 
     $$
     \hat{\boldsymbol{\beta}} \sim N\left(\boldsymbol{\beta},  \hat{\sigma}^2(\mathbf{X}^T\mathbf{X})^{-1}\right)
     $$
 
-
-We could jolly well define $\hat{\beta_1}$ to be our test statistic and calculate $P(\hat{\beta_1} \geq B_H)$ where $B_H$ is the hypothesis we want to test, if not for the fact that we do not even know the value of $\sigma^2$ - which we desperately need because it appeared in the variance of $\hat{\beta_1}$. So this is the reason why we need to use an equivalent test statistic:
+We could jolly well define $\hat{\beta_1}$ to be our test statistic and
+calculate $P(\hat{\beta_1} \geq B_H)$ where $B_H$ is the hypothesis we want to
+test, if not for the fact that we do not even know the value of $\sigma^2$ -
+which we desperately need because it appeared in the variance of
+$\hat{\beta_1}$. So this is the reason why we need to use an equivalent test
+statistic:
 
 $$
 t_{\hat{\mathbf{\beta_1}}} = \dfrac{\hat{\mathbf{\beta_1}} - \mathbf{\beta_1}_H}{\text{SE}(\hat{\mathbf{\beta_1}})} \sim t(df)
 $$
 
-This means that if our $\hat{\beta_1}$ follows a normal distribution of $\hat{\boldsymbol{\beta}} \sim N\left(\boldsymbol{\beta},  \hat{\sigma}^2(\mathbf{X}^T\mathbf{X})^{-1}\right)$, then an equivalent distribution is $t_{\hat{\mathbf{\beta_1}}} \sim t(df)$.
+This means that if our $\hat{\beta_1}$ follows a normal distribution of
+$\hat{\boldsymbol{\beta}} \sim N\left(\boldsymbol{\beta},  \hat{\sigma}^2(\mathbf{X}^T\mathbf{X})^{-1}\right)$,
+then an equivalent distribution is $t_{\hat{\mathbf{\beta_1}}} \sim t(df)$.
 
-So it is clear that for any $a, b \in \mathbb{R}$, finding $P(a \leq \hat{\beta_1} \leq b)$ is the same as finding
+So it is clear that for any $a, b \in \mathbb{R}$, finding
+$P(a \leq \hat{\beta_1} \leq b)$ is the same as finding
 
 $$
 \mathbb{P}\left(\dfrac{a}{\text{SE}(\hat{\beta_1})} \leq t_{\hat{\mathbf{\beta_1}}} \leq \dfrac{b}{\text{SE}(\hat{\beta_1})} \right)
 $$
 
+So finally, we have formed a sampling distribution of t-statistics, hinged on
+the assumption that **_our null hypothesis is true, $\beta_1 = 0$ (this is
+important)._**
 
-So finally, we have formed a sampling distribution of t-statistics, hinged on the assumption that ***our null hypothesis is true, $\beta_1 = 0$ (this is important).***
-
-[Jim Statistics](https://statisticsbyjim.com/hypothesis-testing/t-tests-t-values-t-distributions-probabilities/) provides an intuitive idea.
+[Jim Statistics](https://statisticsbyjim.com/hypothesis-testing/t-tests-t-values-t-distributions-probabilities/)
+provides an intuitive idea.
 
 ### P-Values
 
-We use the resulting test statistic to calculate the p-value. As always, the p-value is the answer to the question "how likely is it that we’d get a test statistic $t_{\hat{\boldsymbol{\beta}}}$ as extreme as we did if the null hypothesis were true?" The p-value is determined by referring to a t-distribution with $m-(n+1) = m-2$ degrees of freedom where we recall that $m$ is the number of data, and $n$ is the number of variables. The $n+1$ is because we are actually fitting 2 parameters, so we add on 1 intercept term which has a dummy variable $x_0$.
-
-
-
+We use the resulting test statistic to calculate the p-value. As always, the
+p-value is the answer to the question "how likely is it that we’d get a test
+statistic $t_{\hat{\boldsymbol{\beta}}}$ as extreme as we did if the null
+hypothesis were true?" The p-value is determined by referring to a
+t-distribution with $m-(n+1) = m-2$ degrees of freedom where we recall that $m$
+is the number of data, and $n$ is the number of variables. The $n+1$ is because
+we are actually fitting 2 parameters, so we add on 1 intercept term which has a
+dummy variable $x_0$.
 
 Finally, we make a decision:
 
+1. If the p-value is smaller than the significance level $\alpha$, we reject the
+   null hypothesis in favor of the alternative. We conclude "there is sufficient
+   evidence at the $\alpha$ level to conclude that there is a linear
+   relationship in the population between the predictor x and response y."
 
-1. If the p-value is smaller than the significance level $\alpha$, we reject the null hypothesis in favor of the alternative. We conclude "there is sufficient evidence at the $\alpha$ level to conclude that there is a linear relationship in the population between the predictor x and response y."
-
-
-2. If the p-value is larger than the significance level $\alpha$, we fail to reject the null hypothesis. We conclude "there is not enough evidence at the $\alpha$ level to conclude that there is a linear relationship in the population between the predictor x and response y."
-
-
-
+2. If the p-value is larger than the significance level $\alpha$, we fail to
+   reject the null hypothesis. We conclude "there is not enough evidence at the
+   $\alpha$ level to conclude that there is a linear relationship in the
+   population between the predictor x and response y."
 
 Let us implement our p-values.
 
@@ -1969,15 +2330,21 @@ for i in range(D + 1):
 
 We easily use python to calculate the statistics for us, as shown above.
 
+Because the p-value is so small (usually less than $0.05$, this means that if
+our null hypothesis was actually true that $\beta_1 = 0$, then there is only a
+$0.0\%$ chance to get this $t = 38.348$ value. In other words, it is unlikely to
+observe such a substantial association between the predictor and the response
+due to chance, in the absence of any real association between the predictor and
+the response. We can reject the null hypothesis and conclude that $\beta_1$ does
+not equal 0. There is sufficient evidence, at the $\alpha = 0.05$ level, to
+conclude that there is a linear relationship in the population between house
+area and the sale price.
 
-Because the p-value is so small (usually less than $0.05$, this means that if our null hypothesis was actually true that $\beta_1 = 0$, then there is only a $0.0\%$ chance to get this $t = 38.348$ value. In other words, it is unlikely to observe such a substantial association between the predictor and the response due to chance, in the absence of any real association between the predictor and the response. We can reject the null hypothesis and conclude that $\beta_1$ does not equal 0. There is sufficient evidence, at the $\alpha = 0.05$ level, to conclude that there is a linear relationship in the population between house area and the sale price.
+Similarly, we can see the p-value for $\hat{\beta_0}$ to be less than $0.05$ as
+well. Consequently, we conclude that $\beta_0 \neq 0$ and $\beta_1 \neq 0$.
 
-
-
-Similarly, we can see the p-value for $\hat{\beta_0}$ to be less than $0.05$ as well. Consequently, we conclude that $\beta_0 \neq 0$ and $\beta_1 \neq 0$.
-
-
-Since the above is a self implemented function, it is always good to check with the statsmodels.api from python to check if I am correct.
+Since the above is a self implemented function, it is always good to check with
+the statsmodels.api from python to check if I am correct.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -1990,61 +2357,108 @@ We see the t and p values coincide.
 ### The Pandora Box of Confidence Intervals, P-values and Hypothesis Testing
 
 The focus of this post is not to go into details on how to interpret the
-coefficients using statistical methods. As I've mentioned, regression analysis in itself
-can be one whole undergraduate module spanning more than 1 term/semester. To have a more
-thorough understanding, I would recommend reading the regression chapter in An Introduction to Statistical Learning by Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani.
+coefficients using statistical methods. As I've mentioned, regression analysis
+in itself can be one whole undergraduate module spanning more than 1
+term/semester. To have a more thorough understanding, I would recommend reading
+the regression chapter in An Introduction to Statistical Learning by Gareth
+James, Daniela Witten, Trevor Hastie and Robert Tibshirani.
 
 ---
 
 ## Time Complexity
 
-Time Complexity is an important topic, you do not want your code to run for 1 billion years, and therefore, an efficient code will be important to businesses. That is also why Time Complexity questions are becoming increasingly popular in Machine Learning and Data Science interviews!
+Time Complexity is an important topic, you do not want your code to run for 1
+billion years, and therefore, an efficient code will be important to businesses.
+That is also why Time Complexity questions are becoming increasingly popular in
+Machine Learning and Data Science interviews!
 
-The Linear Algorithm that we used here simply uses matrix multiplication. We will also ignore the codes that are of constant time O(1). For example, `self.coef_=None` in the constructor is O(1) and we do not really wish to consider this in the *grand scheme of things.*
+The Linear Algorithm that we used here simply uses matrix multiplication. We
+will also ignore the codes that are of constant time O(1). For
+example, `self.coef_=None` in the constructor is O(1) and we do not really wish
+to consider this in the *grand scheme of things.*
 
-What is the really important ones are in code lines 37–40. Given X to be a m by n matrix/array, where m is the number of samples and n the number of features. In addition, y is a m by 1 vector. Refer to this [Wikipedia Page](https://en.wikipedia.org/wiki/Computational_complexity_of_mathematical_operations) for a handy helpsheet on the various time complexity for mathematical operations.
+What is the really important ones are in code lines 37–40. Given X to be a m by
+n matrix/array, where m is the number of samples and n the number of features.
+In addition, y is a m by 1 vector. Refer to
+this [Wikipedia Page](https://en.wikipedia.org/wiki/Computational_complexity_of_mathematical_operations) for
+a handy helpsheet on the various time complexity for mathematical operations.
 
-Line 37: `np.dot(X.T,X)` In the dot product, we transpose the m × n matrix to become n × m, this operation takes O(m × n) time because we are effectively performing two for loops. Next up is performing matrix multiplication, note carefully that `np.dot` between two 2-d arrays does not mean [dot product](https://stackoverflow.com/questions/3744094/time-and-space-complexity-of-vector-dot-product-computation#:~:text=Assuming%20that%20multiplication%20and%20addition,computed%2C%20i.e.%20ai%20*%20bi%20.), instead they are matrix multiplication, which takes O(m × n²) time. The output matrix of this step is n× n.
+Line 37: `np.dot(X.T,X)` In the dot product, we transpose the m × n matrix to
+become n × m, this operation takes O(m × n) time because we are effectively
+performing two for loops. Next up is performing matrix multiplication, note
+carefully that `np.dot` between two 2-d arrays does not
+mean [dot product](https://stackoverflow.com/questions/3744094/time-and-space-complexity-of-vector-dot-product-computation#:~:text=Assuming%20that%20multiplication%20and%20addition,computed%2C%20i.e.%20ai%20*%20bi%20.),
+instead they are matrix multiplication, which takes O(m × n²) time. The output
+matrix of this step is n× n.
 
 Line 38: Inverting a n × n matrix takes n³ time. The output matrix is n × n.
 
-Line 39: Now we perform matrix multiplication of n × n and n × m, which gives O(m × n²), the output matrix is n × m.
+Line 39: Now we perform matrix multiplication of n × n and n × m, which gives
+O(m × n²), the output matrix is n × m.
 
 Line 40: Lastly, the time complexity is O(m × n).
 
-Adding them all up gives you O(2mn+2mn²+n³) whereby simple triangle inequality of mn<mn² implies we can remove the less dominant 2mn term. In the end, the run time complexity of this Linear Regression Algorithm using Normal Equation is O(n²(m+n)). However, you noticed that there are two variables in the bigO notation, and you wonder if we can further reduce the bigO notation to a single variable? Well, if the number of variables is small, which means n is kept small and maybe constant, we can reduce the time complexity to O(m), however, if your variables are increasing, then your time complexity will explode if n → ∞.
-
+Adding them all up gives you O(2mn+2mn²+n³) whereby simple triangle inequality
+of mn<mn² implies we can remove the less dominant 2mn term. In the end, the run
+time complexity of this Linear Regression Algorithm using Normal Equation is
+O(n²(m+n)). However, you noticed that there are two variables in the bigO
+notation, and you wonder if we can further reduce the bigO notation to a single
+variable? Well, if the number of variables is small, which means n is kept small
+and maybe constant, we can reduce the time complexity to O(m), however, if your
+variables are increasing, then your time complexity will explode if n → ∞.
 
 ## References and Further Readings
 
-- Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of Machine Learning. The MIT Press, 2018.
-- Murphy, Kevin P. "Chapter 21.3. K-Means Clustering." In Probabilistic Machine Learning: An Introduction. MIT Press, 2022.
-- Hal Daumé III. "Chapter 3.4. K-Means Clustering." In A Course in Machine Learning, January 2017.
-- Hal Daumé III. "Chapter 15.1. K-Means Clustering." In A Course in Machine Learning, January 2017.
-- Bishop, Christopher M. "Chapter 9.1. K-Means Clustering." In Pattern Recognition and Machine Learning. New York: Springer-Verlag, 2016.
-- James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. "Chapter 12.4.1. K-Means Clustering." In An Introduction to Statistical Learning: With Applications in R. Boston: Springer, 2022.
-- Hastie, Trevor, Tibshirani, Robert and Friedman, Jerome. "Chapter 14.3. Cluster Analysis." In The Elements of Statistical Learning. New York, NY, USA: Springer New York Inc., 2001.
-- Raschka, Sebastian. "Chapter 10.1. Grouping objects by similarity using k-means." In Machine Learning with PyTorch and Scikit-Learn.
-- Jung, Alexander. "Chapter 8.1. Hard Clustering with K-Means." In Machine Learning: The Basics. Singapore: Springer Nature Singapore, 2023.
-- Vincent, Tan. "Lecture 17a." In MA4270 Data Modelling and Computation.
-- https://online.stat.psu.edu/stat462/
-- [Statistics by Jim - Regression](https://statisticsbyjim.com/regression/)
-    - [Interpreting MLR Coefficients and P-values](https://statisticsbyjim.com/regression/interpret-coefficients-p-values-regression/)
-    - [Goodness of Fit and R-Squared](https://blog.minitab.com/en/adventures-in-statistics-2/regression-analysis-how-do-i-interpret-r-squared-and-assess-the-goodness-of-fit)
-    - [T-Test](https://blog.minitab.com/en/statistics-and-quality-data-analysis/what-is-a-t-test-and-why-is-it-like-telling-a-kid-to-clean-up-that-mess-in-the-kitchen)
+-   Mohri, Mehryar, Rostamizadeh Afshi and Talwalkar Ameet. Foundations of
+    Machine Learning. The MIT Press, 2018.
+-   Murphy, Kevin P. "Chapter 21.3. K-Means Clustering." In Probabilistic
+    Machine Learning: An Introduction. MIT Press, 2022.
+-   Hal Daumé III. "Chapter 3.4. K-Means Clustering." In A Course in Machine
+    Learning, January 2017.
+-   Hal Daumé III. "Chapter 15.1. K-Means Clustering." In A Course in Machine
+    Learning, January 2017.
+-   Bishop, Christopher M. "Chapter 9.1. K-Means Clustering." In Pattern
+    Recognition and Machine Learning. New York: Springer-Verlag, 2016.
+-   James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani.
+    "Chapter 12.4.1. K-Means Clustering." In An Introduction to Statistical
+    Learning: With Applications in R. Boston: Springer, 2022.
+-   Hastie, Trevor, Tibshirani, Robert and Friedman, Jerome. "Chapter 14.3.
+    Cluster Analysis." In The Elements of Statistical Learning. New York, NY,
+    USA: Springer New York Inc., 2001.
+-   Raschka, Sebastian. "Chapter 10.1. Grouping objects by similarity using
+    k-means." In Machine Learning with PyTorch and Scikit-Learn.
+-   Jung, Alexander. "Chapter 8.1. Hard Clustering with K-Means." In Machine
+    Learning: The Basics. Singapore: Springer Nature Singapore, 2023.
+-   Vincent, Tan. "Lecture 17a." In MA4270 Data Modelling and Computation.
+-   https://online.stat.psu.edu/stat462/
+-   [Statistics by Jim - Regression](https://statisticsbyjim.com/regression/)
 
-- [Normal Equation (ML Wiki) Wholesome and Mathematically Rigorous](http://mlwiki.org/index.php/Normal_Equation)
-- [Ordinary Least Squares Wikipedia](https://en.wikipedia.org/wiki/Ordinary_least_squares)
-- [Linear Regression Assumptions by Jeff Macaluso from Microsoft](https://jeffmacaluso.github.io/post/LinearRegressionAssumptions/)
-- [Stanford's STATS203 class - Consider downloading them before it's gone](http://statweb.stanford.edu/~jtaylo/courses/stats203/)
-- [Kaggle Linear Regression Assumptions](https://www.kaggle.com/shrutimechlearn/step-by-step-assumptions-linear-regression)
-- [Linear Regression Additive Effects (PSU STATS462)](https://online.stat.psu.edu/stat462/node/164/)
-- [Hands on Linear Regression](https://mylearningsinaiml.wordpress.com/concepts/regression/hands-on-linear-regression/)
-- [Real Python Linear Regression](https://realpython.com/linear-regression-in-python/#multiple-linear-regression)
-- [Normal Equation Derivation II](https://eli.thegreenplace.net/2014/derivation-of-the-normal-equation-for-linear-regression/)
-- [Feature Scaling does not affect Linear Regressions' validity of Coefficients](https://stats.stackexchange.com/questions/29781/when-conducting-multiple-regression-when-should-you-center-your-predictor-varia)
-- [Hypothesis Testing on Optimal Coefficients](https://online.stat.psu.edu/stat462/)
-- [Conditional Mean and Expectation of Linear Regression](https://stats.stackexchange.com/questions/220507/linear-regression-conditional-expectations-and-expected-values/220509#220509)
+    -   [Interpreting MLR Coefficients and P-values](https://statisticsbyjim.com/regression/interpret-coefficients-p-values-regression/)
+    -   [Goodness of Fit and R-Squared](https://blog.minitab.com/en/adventures-in-statistics-2/regression-analysis-how-do-i-interpret-r-squared-and-assess-the-goodness-of-fit)
+    -   [T-Test](https://blog.minitab.com/en/statistics-and-quality-data-analysis/what-is-a-t-test-and-why-is-it-like-telling-a-kid-to-clean-up-that-mess-in-the-kitchen)
 
-[^dirac-delta]: A Dirac delta (function) is a function that is zero everywhere except at zero, where it is infinite. It is named after the physicist Paul Dirac.
-[^weaker-condition]: Note that we have proved $\mathbb{E}[\boldsymbol{\varepsilon}] = \boldsymbol{0}$ and $\mathrm{Var}[\boldsymbol{\varepsilon}] = \sigma^2\mathbf{I}$ earlier by the Law of Iterated Expectation on $\boldsymbol{\varepsilon} \mid \mathbf{X}$, but it is necessary to further assume that $\boldsymbol{\varepsilon}$ itself has a normal distribution, or else we will not know the distribution of $\boldsymbol{\varepsilon}$.
+-   [Normal Equation (ML Wiki) Wholesome and Mathematically Rigorous](http://mlwiki.org/index.php/Normal_Equation)
+-   [Ordinary Least Squares Wikipedia](https://en.wikipedia.org/wiki/Ordinary_least_squares)
+-   [Linear Regression Assumptions by Jeff Macaluso from Microsoft](https://jeffmacaluso.github.io/post/LinearRegressionAssumptions/)
+-   [Stanford's STATS203 class - Consider downloading them before it's gone](http://statweb.stanford.edu/~jtaylo/courses/stats203/)
+-   [Kaggle Linear Regression Assumptions](https://www.kaggle.com/shrutimechlearn/step-by-step-assumptions-linear-regression)
+-   [Linear Regression Additive Effects (PSU STATS462)](https://online.stat.psu.edu/stat462/node/164/)
+-   [Hands on Linear Regression](https://mylearningsinaiml.wordpress.com/concepts/regression/hands-on-linear-regression/)
+-   [Real Python Linear Regression](https://realpython.com/linear-regression-in-python/#multiple-linear-regression)
+-   [Normal Equation Derivation II](https://eli.thegreenplace.net/2014/derivation-of-the-normal-equation-for-linear-regression/)
+-   [Feature Scaling does not affect Linear Regressions' validity of Coefficients](https://stats.stackexchange.com/questions/29781/when-conducting-multiple-regression-when-should-you-center-your-predictor-varia)
+-   [Hypothesis Testing on Optimal Coefficients](https://online.stat.psu.edu/stat462/)
+-   [Conditional Mean and Expectation of Linear Regression](https://stats.stackexchange.com/questions/220507/linear-regression-conditional-expectations-and-expected-values/220509#220509)
+
+[^dirac-delta]:
+    A Dirac delta (function) is a function that is zero everywhere except at
+    zero, where it is infinite. It is named after the physicist Paul Dirac.
+
+[^weaker-condition]:
+    Note that we have proved
+    $\mathbb{E}[\boldsymbol{\varepsilon}] = \boldsymbol{0}$ and
+    $\mathrm{Var}[\boldsymbol{\varepsilon}] = \sigma^2\mathbf{I}$ earlier by the
+    Law of Iterated Expectation on $\boldsymbol{\varepsilon} \mid \mathbf{X}$,
+    but it is necessary to further assume that $\boldsymbol{\varepsilon}$ itself
+    has a normal distribution, or else we will not know the distribution of
+    $\boldsymbol{\varepsilon}$.

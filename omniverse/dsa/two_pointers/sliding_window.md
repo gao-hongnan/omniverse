@@ -319,7 +319,7 @@ $i = n - k + 1$.
 At each step, we update the maximum sum found so far:
 
 $$
-\text{{max_sum}} = \max(\text{{max_sum}}, S)
+\text{max\_sum} = \max(\text{max\_sum}, S)
 $$
 
 This will eventually give us the maximum sum of any subarray of length $k$ in

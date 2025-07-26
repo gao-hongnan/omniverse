@@ -122,7 +122,7 @@ exponent $c_{\text {crit }}=\log _b a$. (The table below uses standard
 [big $\mathcal{O}$ notation](https://en.wikipedia.org/wiki/Big_O_notation)).
 
 $$
-c_{\text {crit }}=\log_b a=\log (\text{# subproblems} ) / \log (\text{relative subproblem size})
+c_{\text{crit}} = \log_b a = \log(\text{\# subproblems}) / \log(\text{relative subproblem size})
 $$
 
 ```{list-table} Master Theorem Cases

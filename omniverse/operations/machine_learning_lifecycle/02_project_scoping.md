@@ -539,7 +539,7 @@ objectives:
     $$
     \begin{aligned}
     \mathcal{L} &= \alpha \mathcal{L}_1 + \beta \mathcal{L}_2 \\
-    &= \alpha \text{quality_loss} + \beta \text{engagement_loss} \\
+    &= \alpha \text{quality\_loss} + \beta \text{engagement\_loss} \\
     \end{aligned}
     $$
 
@@ -563,7 +563,7 @@ prediction.
 $$
 \begin{aligned}
 \hat{y} &= \alpha h_1(x) + \beta h_2(x) \\
-&= \alpha \text{quality_prediction} + \beta \text{engagement_prediction}
+&= \alpha \text{quality\_prediction} + \beta \text{engagement\_prediction}
 \end{aligned}
 $$
 
