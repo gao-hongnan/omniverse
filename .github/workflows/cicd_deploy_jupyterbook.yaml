@@ -1,79 +1,104 @@
-name: continuous-integration-contiuous-deployment-jupyterbook
+name: continuous-integration-continuous-deployment-jupyterbook
 
 on:
   push:  # Trigger the workflow on push to main branch
     branches:
       - main
 
-env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
+env:
   CONTENT_DIR: omniverse # the directory where the book's content is stored
   WEBSITE: www.gaohongnan.com
-  WORKING_DIRECTORY: "."
-  BANDIT_OUTPUT_FILENAME: "bandit_results.log"
-  RUFF_OUTPUT_FILENAME: "ruff_results.log"
-  ISORT_OUTPUT_FILENAME: "isort_results.log"
-  BLACK_OUTPUT_FILENAME: "black_results.log"
-  MYPY_OUTPUT_FILENAME: "mypy_results.log"
-  UNIT_TEST_OUTPUT_FILENAME: "unit_test_results.log"
+  UV_FROZEN: "1"
 
 # This job installs dependencies, build the book, and pushes it to `gh-pages`
 jobs:
-  setup-env-vars: # FIXME: see env comment.
+  # Run CI checks first
+  lint:
     runs-on: ubuntu-latest
-    outputs:
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-      bandit-output-filename: ${{ env.BANDIT_OUTPUT_FILENAME }}
-      ruff-output-filename: ${{ env.RUFF_OUTPUT_FILENAME }}
-      isort-output-filename: ${{ env.ISORT_OUTPUT_FILENAME }}
-      black-output-filename: ${{ env.BLACK_OUTPUT_FILENAME }}
-      mypy-output-filename: ${{ env.MYPY_OUTPUT_FILENAME }}
-      unit-test-output-filename: ${{ env.UNIT_TEST_OUTPUT_FILENAME }}
     steps:
-      - run: echo "Exposing env vars to reusable workflows."
-  continuous-integration:
-    needs: setup-env-vars
-    uses: ./.github/workflows/_continuous_integration.yaml
-    with:
-      working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
-      bandit-output-filename: ${{ needs.setup-env-vars.outputs.bandit-output-filename }}
-      ruff-output-filename: ${{ needs.setup-env-vars.outputs.ruff-output-filename }}
-      isort-output-filename: ${{ needs.setup-env-vars.outputs.isort-output-filename }}
-      black-output-filename: ${{ needs.setup-env-vars.outputs.black-output-filename }}
-      mypy-output-filename: ${{ needs.setup-env-vars.outputs.mypy-output-filename }}
-      unit-test-output-filename: ${{ needs.setup-env-vars.outputs.unit-test-output-filename }}
-    secrets: inherit
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run lint
+        run: make lint
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run security checks
+        run: make security
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run typecheck
+        run: make typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run tests
+        run: make test
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run tests with coverage
+        run: make coverage
+
   build-and-deploy-book:
     name: Build and Deploy JupyterBook to GitHub Pages
-    runs-on: ${{ matrix.os }}
-    needs: [setup-env-vars, continuous-integration] # need this since we run CI first before CD, if not all jobs run in parallel
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.9]
+    runs-on: ubuntu-latest
+    needs: [lint, security, typecheck, test, coverage] # need this since we run CI first before CD
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-      - name: Get pip cache directory path
-        id: pip-cache
-        run: echo "dir=$(pip cache dir)" >> $GITHUB_OUTPUT # set-output is deprecated.
-      - name: Cache
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}-${{ hashFiles('**/requirements-dev.txt') }}
-          restore-keys: ${{ runner.os }}-pip-
-      - name: Install Dependencies
-        uses: ./.github/actions/install-dependencies
-        with:
-          working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
       - name: Build the book
         run: |
-          jupyter-book build ${{ env.CONTENT_DIR }}
+          uv run jupyter-book build ${{ env.CONTENT_DIR }}
       - name: GitHub Pages action # Deploy the book's HTML to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         with:

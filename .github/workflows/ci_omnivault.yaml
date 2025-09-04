@@ -13,8 +13,6 @@ on:
       - "omnivault/**"
       - "!omnivault/**/*.md"
       - "!omnivault/**/.gitignore"
-      - "requirements.txt"
-      - "requirements-dev.txt"
   pull_request:
     branches:
       - main
@@ -28,36 +26,98 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env: # FIXME: env cannot be passed down to jobs defined as workflow call what?! https://github.com/orgs/community/discussions/26671 - this is annoying.
-  WORKING_DIRECTORY: "."
-  RUFF_OUTPUT_FILENAME: "ruff_results.log"
-  ISORT_OUTPUT_FILENAME: "isort_results.log"
-  BLACK_OUTPUT_FILENAME: "black_results.log"
-  MYPY_OUTPUT_FILENAME: "mypy_results.log"
-  UNIT_TEST_OUTPUT_FILENAME: "unit_test_results.log"
+env:
+  UV_FROZEN: "1"
 
 jobs:
-  setup-env-vars: # FIXME: see env comment.
+  lint:
     runs-on: ubuntu-latest
-    outputs:
-      working-directory: ${{ env.WORKING_DIRECTORY }}
-      bandit-output-filename: ${{ env.BANDIT_OUTPUT_FILENAME }}
-      ruff-output-filename: ${{ env.RUFF_OUTPUT_FILENAME }}
-      isort-output-filename: ${{ env.ISORT_OUTPUT_FILENAME }}
-      black-output-filename: ${{ env.BLACK_OUTPUT_FILENAME }}
-      mypy-output-filename: ${{ env.MYPY_OUTPUT_FILENAME }}
-      unit-test-output-filename: ${{ env.UNIT_TEST_OUTPUT_FILENAME }}
     steps:
-      - run: echo "Exposing env vars to reusable workflows."
-  continuous-integration:
-    needs: setup-env-vars
-    uses: ./.github/workflows/_continuous_integration.yaml
-    with:
-      working-directory: ${{ needs.setup-env-vars.outputs.working-directory }}
-      bandit-output-filename: ${{ needs.setup-env-vars.outputs.bandit-output-filename }}
-      ruff-output-filename: ${{ needs.setup-env-vars.outputs.ruff-output-filename }}
-      isort-output-filename: ${{ needs.setup-env-vars.outputs.isort-output-filename }}
-      black-output-filename: ${{ needs.setup-env-vars.outputs.black-output-filename }}
-      mypy-output-filename: ${{ needs.setup-env-vars.outputs.mypy-output-filename }}
-      unit-test-output-filename: ${{ needs.setup-env-vars.outputs.unit-test-output-filename }}
-    secrets: inherit
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run lint
+        run: make lint
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run security checks
+        run: make security
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run typecheck
+        run: make typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run tests
+        run: make test
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make sync
+      - name: Run tests with coverage
+        run: make coverage
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install dependencies
+        run: make install  # This includes pre-commit install
+      - name: Run pre-commit hooks
+        run: uv run pre-commit run --all-files
