@@ -1,0 +1,1570 @@
+<!-- _templates/html.html -->
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Chain-of-Verification Reduces Hallucination in Large Language Models &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'influential/cove/cove';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/influential/cove/cove.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Empirical Risk Minimization" href="../empirical_risk_minimization/01_intro.html" />
+    <link rel="prev" title="Implementation" href="../low_rank_adaptation/03_implementation.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Omniverse - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Chain-of-Verification Reduces Hallucination in Large Language Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/gil.html">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/is_vs_equality.html">Is vs Equality</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-pep-3124-overloading.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/stack/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/232-implement-queue-using-stacks.html">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/queue/intro.html">Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/queue/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/queue/dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Finfluential/cove/cove.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/influential/cove/cove.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Chain-of-Verification Reduces Hallucination in Large Language Models</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-notation-guide">Mathematical Notation Guide</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundations">Theoretical Foundations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hallucination-problem">The Hallucination Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cove-solution-framework">The CoVe Solution Framework</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cove-architecture-from-monologue-to-dialogue">1. The CoVe Architecture: From Monologue to Dialogue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-case-study-in-action-correcting-a-factual-hallucination">2. A Case Study in Action: Correcting a Factual Hallucination</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-1-the-draft-the-confident-hallucination">Stage 1: The Draft (The Confident Hallucination)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-2-the-plan-generating-verification-questions">Stage 2: The Plan (Generating Verification Questions)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-3-the-execution-independent-fact-finding">Stage 3: The Execution (Independent Fact-Finding)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-4-the-synthesis-the-final-verdict">Stage 4: The Synthesis (The Final Verdict)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-cove-is-a-breakthrough-in-ai-reliability">3. Why CoVe is a Breakthrough in AI Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-applications-beyond-q-a">4. Real-World Applications Beyond Q&amp;A</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-generation-and-review"><strong>Code Generation and Review</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-precision-the-square-root-case"><strong>Mathematical Precision: The Square Root Case</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithm-implementation-the-quickselect-trap"><strong>Algorithm Implementation: The QuickSelect Trap</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-implementation-a-minimalist-python-example">5. Practical Implementation: A Minimalist Python Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#console-output-breakdown">Console Output Breakdown</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations-and-future-directions">6. Limitations and Future Directions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#current-limitations">Current Limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#future-research-directions">Future Research Directions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bibliography">Bibliography</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="chain-of-verification-reduces-hallucination-in-large-language-models">
+<h1>Chain-of-Verification Reduces Hallucination in Large Language Models<a class="headerlink" href="#chain-of-verification-reduces-hallucination-in-large-language-models" title="Link to this heading">#</a></h1>
+<p>Large Language Models demonstrate remarkable capabilities in natural language
+understanding and generation. Yet they suffer from a fundamental reliability
+problem: <strong>hallucination</strong>—the generation of plausible-sounding but factually
+incorrect information. This phenomenon represents the primary obstacle to
+deploying LLMs in domains where accuracy is non-negotiable.</p>
+<p>Chain-of-Verification (CoVe) <span id="id1">[<a class="reference internal" href="#id45" title="Shehzaad Dhuliawala, Mojtaba Komeili, Jing Xu, Roberta Raileanu, Xian Li, Asli Celikyilmaz, and Jason Weston. Chain-of-verification reduces hallucination in large language models. 2023. URL: https://arxiv.org/abs/2309.11495, arXiv:2309.11495.">Dhuliawala <em>et al.</em>, 2023</a>]</span>
+introduces a structured metacognitive framework that enables language models to
+systematically verify their own outputs. Through a four-stage process of
+drafting, planning verification, executing verification, and synthesis, CoVe
+achieves substantial reductions in hallucination rates across diverse tasks.</p>
+<p>This analysis examines the theoretical foundations, empirical performance, and
+practical implementation of CoVe, demonstrating how deliberate self-verification
+transforms unreliable language models into more trustworthy reasoning systems.</p>
+<section id="mathematical-notation-guide">
+<h2>Mathematical Notation Guide<a class="headerlink" href="#mathematical-notation-guide" title="Link to this heading">#</a></h2>
+<div class="proof remark admonition" id="remark-notation">
+<p class="admonition-title"><span class="caption-number">Remark 7 </span> (Notation Conventions)</p>
+<section class="remark-content" id="proof-content">
+<p>This document employs rigorous mathematical notation to formalize the Chain-of-Verification framework. The following conventions are used throughout:</p>
+<p><strong>Spaces and Sets:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{Q}\)</span> - Query space: the set of all possible user queries</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{R}\)</span> - Response space: the set of all possible model responses</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{V}\)</span> - Verification space: the set of verification questions</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{A}\)</span> - Answer space: the set of verification answers</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{K}\)</span> - Knowledge base: the ground truth factual information</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{F}\)</span> - Factual statement space: the set of all factual claims</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{N}\)</span> - Natural numbers (for counting and indexing)</p></li>
+</ul>
+<p><strong>Operators and Transformations:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathscr{L}\)</span> - Language model functional: the core LLM inference operator</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathfrak{P}\)</span> - Planning operator: maps queries and responses to verification questions</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathfrak{V}\)</span> - Verification operator: maps questions to factual answers</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathfrak{S}\)</span> - Synthesis operator: combines evidence to produce final response</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathfrak{K}\)</span> - Knowledge extraction operator: retrieves facts from knowledge base</p></li>
+<li><p><span class="math notranslate nohighlight">\(\pi_{\mathbb{F}}\)</span> - Factual projection: extracts factual claims from text</p></li>
+</ul>
+<p><strong>Functions and Metrics:</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathscr{P}\)</span> - Performance functional: measures model accuracy</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathscr{C}\)</span> - Complexity class: computational complexity characterization</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathfrak{I}\)</span> - Inference operator: single LLM call abstraction</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Delta_{\mathscr{P}}\)</span> - Performance delta: improvement measurement</p></li>
+</ul>
+</section>
+</div></section>
+<section id="theoretical-foundations">
+<h2>Theoretical Foundations<a class="headerlink" href="#theoretical-foundations" title="Link to this heading">#</a></h2>
+<section id="the-hallucination-problem">
+<h3>The Hallucination Problem<a class="headerlink" href="#the-hallucination-problem" title="Link to this heading">#</a></h3>
+<div class="proof definition admonition" id="def-hallucination">
+<p class="admonition-title"><span class="caption-number">Definition 18 </span> (Hallucination)</p>
+<section class="definition-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{K}\)</span> be a knowledge base and <span class="math notranslate nohighlight">\(\pi_{\mathbb{F}}:\mathcal{R}\to 2^{\mathbb{F}}\)</span> extract factual claims from a response. Write <span class="math notranslate nohighlight">\(\mathsf{Cn}(\mathcal{K})\)</span> for the entailment closure of <span class="math notranslate nohighlight">\(\mathcal{K}\)</span>. A claim <span class="math notranslate nohighlight">\(\phi\in\pi_{\mathbb{F}}(r)\)</span> is a hallucination if either:</p>
+<ol class="arabic simple">
+<li><p><strong>Unsupported</strong>: <span class="math notranslate nohighlight">\(\mathsf{Cn}(\mathcal{K}) \nvdash \phi\)</span>, or</p></li>
+<li><p><strong>Contradicted</strong>: <span class="math notranslate nohighlight">\(\mathsf{Cn}(\mathcal{K}) \vdash \neg \phi\)</span>.</p></li>
+</ol>
+<p>This matches long-form factuality practice (e.g., FActScore labels support vs. non-support).</p>
+</section>
+</div><div class="proof lemma admonition" id="lemma-hallucination-factors">
+<p class="admonition-title"><span class="caption-number">Lemma 1 </span> (Factors Increasing Hallucination Probability)</p>
+<section class="lemma-content" id="proof-content">
+<p>The probability of hallucination in language models increases due to:</p>
+<ol class="arabic simple">
+<li><p><strong>Autoregressive accumulation</strong>: Each token generation depends on previous tokens, compounding errors</p></li>
+<li><p><strong>Training data artifacts</strong>: Models learn spurious correlations from training data</p></li>
+<li><p><strong>Confidence miscalibration</strong>: Models express high confidence regardless of factual accuracy</p></li>
+</ol>
+</section>
+</div></section>
+<section id="the-cove-solution-framework">
+<h3>The CoVe Solution Framework<a class="headerlink" href="#the-cove-solution-framework" title="Link to this heading">#</a></h3>
+<div class="proof definition admonition" id="def-cove-process">
+<p class="admonition-title"><span class="caption-number">Definition 19 </span> (Chain-of-Verification Procedure)</p>
+<section class="definition-content" id="proof-content">
+<p>The CoVe framework <span id="id2">[<a class="reference internal" href="#id45" title="Shehzaad Dhuliawala, Mojtaba Komeili, Jing Xu, Roberta Raileanu, Xian Li, Asli Celikyilmaz, and Jason Weston. Chain-of-verification reduces hallucination in large language models. 2023. URL: https://arxiv.org/abs/2309.11495, arXiv:2309.11495.">Dhuliawala <em>et al.</em>, 2023</a>]</span> addresses hallucination through structured decomposition. The verification process consists of four stages:</p>
+<ol class="arabic simple">
+<li><p><strong>Baseline Response</strong>: Generate initial response to the query</p></li>
+<li><p><strong>Verification Planning</strong>: Create a set of verification questions based on the initial response</p></li>
+<li><p><strong>Independent Verification</strong>: Answer each verification question independently without access to the initial response</p></li>
+<li><p><strong>Final Synthesis</strong>: Combine the original response with verification answers to produce a corrected output</p></li>
+</ol>
+</section>
+</div><div class="proof remark admonition" id="remark-4">
+<p class="admonition-title"><span class="caption-number">Remark 8 </span></p>
+<section class="remark-content" id="proof-content">
+<p>The key insight is that <strong>factored, decoupled verification</strong> mitigates error propagation from the initial response, as each verification <span class="math notranslate nohighlight">\(a_i\)</span> is computed independently without access to <span class="math notranslate nohighlight">\(r_0\)</span>.</p>
+</section>
+</div></section>
+</section>
+<hr class="docutils" />
+<section id="the-cove-architecture-from-monologue-to-dialogue">
+<h2>1. The CoVe Architecture: From Monologue to Dialogue<a class="headerlink" href="#the-cove-architecture-from-monologue-to-dialogue" title="Link to this heading">#</a></h2>
+<p>The weakness of a standard AI query is that it’s a single, monolithic process.
+It thinks and speaks in one breath, with no opportunity for reflection. CoVe
+shatters this process into four distinct, logical stages, creating an internal
+dialogue that surfaces and corrects errors.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Stage</p></th>
+<th class="head text-left"><p>Role</p></th>
+<th class="head text-left"><p>The Core Task</p></th>
+<th class="head text-left"><p>Analogy</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>1. Draft</strong></p></td>
+<td class="text-left"><p>The Baseliner</p></td>
+<td class="text-left"><p>Generate a direct, initial answer to the user’s query.</p></td>
+<td class="text-left"><p>The confident first draft of an essay.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>2. Plan</strong></p></td>
+<td class="text-left"><p>The Skeptic</p></td>
+<td class="text-left"><p>Break down the draft into a set of verifiable, factual claims.</p></td>
+<td class="text-left"><p>An editor creating a fact-checking plan.</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>3. Execute</strong></p></td>
+<td class="text-left"><p>The Investigator</p></td>
+<td class="text-left"><p>Answer each of those factual questions independently, without context from the original draft.</p></td>
+<td class="text-left"><p>A researcher looking up each fact in a fresh source.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>4. Synthesize</strong></p></td>
+<td class="text-left"><p>The Judge</p></td>
+<td class="text-left"><p>Compare the initial draft against the independently verified facts and issue a final, corrected verdict.</p></td>
+<td class="text-left"><p>The author revising the draft based on the editor’s and researcher’s findings.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>This multi-step, role-separated approach is the key. By forcing <strong>decoupled
+verification</strong>, CoVe mitigates the risk that a hallucination in the <code class="docutils literal notranslate"><span class="pre">Draft</span></code>
+stage poisons the <code class="docutils literal notranslate"><span class="pre">Execute</span></code> stage.</p>
+</section>
+<hr class="docutils" />
+<section id="a-case-study-in-action-correcting-a-factual-hallucination">
+<h2>2. A Case Study in Action: Correcting a Factual Hallucination<a class="headerlink" href="#a-case-study-in-action-correcting-a-factual-hallucination" title="Link to this heading">#</a></h2>
+<p>Let’s walk through the classic example you provided, which reliably fools less
+sophisticated models.</p>
+<p><strong>Initial Query:</strong> “Who was the first woman to win two Nobel Prizes in different
+scientific fields?”</p>
+<section id="stage-1-the-draft-the-confident-hallucination">
+<h3>Stage 1: The Draft (The Confident Hallucination)<a class="headerlink" href="#stage-1-the-draft-the-confident-hallucination" title="Link to this heading">#</a></h3>
+<p>A standard LLM, accessing a flawed pattern in its training data, might
+confidently respond:</p>
+<blockquote>
+<div><p><strong>Initial AI Draft:</strong> “The first woman to win two Nobel Prizes in different
+scientific fields was Dorothy Hodgkin. She won the Nobel Prize in Chemistry in
+1964 and the Nobel Prize in Physiology or Medicine in 1969.”</p>
+</div></blockquote>
+<p>This answer is authoritative, specific, and <strong>completely wrong</strong>. Dorothy
+Hodgkin was a brilliant scientist who won a single, well-deserved Nobel Prize.</p>
+</section>
+<section id="stage-2-the-plan-generating-verification-questions">
+<h3>Stage 2: The Plan (Generating Verification Questions)<a class="headerlink" href="#stage-2-the-plan-generating-verification-questions" title="Link to this heading">#</a></h3>
+<p>Now, CoVe kicks in. A separate LLM instance, playing the role of a skeptic,
+examines the draft and generates a set of questions to probe its core claims. It
+doesn’t know or care if the answer is right; it only cares about what must be
+true for the answer to be valid.</p>
+<blockquote>
+<div><p><strong>Generated Verification Questions:</strong></p>
+<ol class="arabic simple">
+<li><p>Did Dorothy Hodgkin win two Nobel Prizes?</p></li>
+<li><p>In which years and fields did Dorothy Hodgkin win Nobel Prizes?</p></li>
+<li><p>Did Dorothy Hodgkin win a Nobel Prize in Physiology or Medicine?</p></li>
+<li><p>Has any woman won two Nobel Prizes in different scientific fields?</p></li>
+<li><p>If so, who was it and in what fields?</p></li>
+</ol>
+</div></blockquote>
+</section>
+<section id="stage-3-the-execution-independent-fact-finding">
+<h3>Stage 3: The Execution (Independent Fact-Finding)<a class="headerlink" href="#stage-3-the-execution-independent-fact-finding" title="Link to this heading">#</a></h3>
+<p>This is the most critical step. The system now spawns <em>new, independent LLM
+calls</em> to answer each question from Stage 2. Crucially, these calls do not see
+the original draft, preventing it from “contaminating” their answers.</p>
+<blockquote>
+<div><p><strong>Q1:</strong> Did Dorothy Hodgkin win two Nobel Prizes?</p>
+<p><strong>A1:</strong> No, Dorothy Hodgkin won one Nobel Prize.</p>
+<p><strong>Q2:</strong> In which years and fields did Dorothy Hodgkin win Nobel Prizes?</p>
+<p><strong>A2:</strong> Dorothy Hodgkin won the Nobel Prize in Chemistry in 1964.</p>
+<p><strong>Q3:</strong> Did Dorothy Hodgkin win a Nobel Prize in Physiology or Medicine?</p>
+<p><strong>A3:</strong> No, her Nobel Prize was in Chemistry.</p>
+<p><strong>Q4:</strong> Has any woman won two Nobel Prizes in different scientific fields?</p>
+<p><strong>A4:</strong> Yes, Marie Curie.</p>
+<p><strong>Q5:</strong> If so, who was it and in what fields?</p>
+<p><strong>A5:</strong> Marie Curie won the Nobel Prize in Physics in 1903 and the Nobel Prize
+in Chemistry in 1911.</p>
+</div></blockquote>
+</section>
+<section id="stage-4-the-synthesis-the-final-verdict">
+<h3>Stage 4: The Synthesis (The Final Verdict)<a class="headerlink" href="#stage-4-the-synthesis-the-final-verdict" title="Link to this heading">#</a></h3>
+<p>The final LLM instance, the “Judge,” receives the original query, the initial
+(flawed) draft, and the log of verification Q&amp;A pairs. Its task is to render a
+final judgment.</p>
+<blockquote>
+<div><p><strong>Input to the Judge:</strong></p>
+<ul class="simple">
+<li><p><strong>Query:</strong> “Who was the first woman to win two Nobel Prizes in different
+scientific fields?”</p></li>
+<li><p><strong>Draft Answer:</strong> “Dorothy Hodgkin…”</p></li>
+<li><p><strong>Verification Log:</strong></p>
+<ul>
+<li><p><strong>Q:</strong> Did Hodgkin win two? <strong>A:</strong> No, only one.</p></li>
+<li><p><strong>Q:</strong> Did any woman win two in different fields? <strong>A:</strong> Yes, Marie
+Curie (Physics 1903, Chemistry 1911).</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Final Corrected Answer:</strong> “The first woman to win two Nobel Prizes in
+different scientific fields was <strong>Marie Curie</strong>. She received the Nobel Prize
+in Physics in 1903 for joint research on radiation and the Nobel Prize in
+Chemistry in 1911 for the discovery of radium and polonium. Dorothy Hodgkin
+won a single Nobel Prize in Chemistry in 1964.”</p>
+</div></blockquote>
+<p>The system successfully identified its own hallucination and produced a correct,
+verified, and detailed response.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="why-cove-is-a-breakthrough-in-ai-reliability">
+<h2>3. Why CoVe is a Breakthrough in AI Reliability<a class="headerlink" href="#why-cove-is-a-breakthrough-in-ai-reliability" title="Link to this heading">#</a></h2>
+<p>This strategy is powerful because it addresses the fundamental cognitive
+weaknesses of LLMs.</p>
+<ol class="arabic simple">
+<li><p><strong>Decouples Reasoning from Fact-Finding:</strong> An LLM’s reasoning process can be
+skewed by its initial assumptions. CoVe separates the act of generating an
+answer (<code class="docutils literal notranslate"><span class="pre">Draft</span></code>) from the act of finding facts (<code class="docutils literal notranslate"><span class="pre">Execute</span></code>), preventing the
+initial bias from influencing the verification.</p></li>
+<li><p><strong>Forces Falsifiability:</strong> The <code class="docutils literal notranslate"><span class="pre">Plan</span></code> stage compels the LLM to convert its
+fluent prose into a series of testable, falsifiable claims. An answer that
+cannot be broken down into checkable facts is inherently less trustworthy.</p></li>
+<li><p><strong>Mitigates Confirmation Bias:</strong> By answering each verification question in
+isolation, the <code class="docutils literal notranslate"><span class="pre">Execute</span></code> stage functions like a double-blind study. The
+model isn’t seeking facts to <em>confirm</em> its draft; it’s simply answering
+questions, which makes the evidence it gathers far more objective.</p></li>
+<li><p><strong>Creates a Trail of Audits:</strong> The entire process is transparent. If the
+final answer is still questionable, a human can review the verification log
+to see exactly where the reasoning went astray. This is impossible with a
+single, black-box response.</p></li>
+</ol>
+</section>
+<section id="real-world-applications-beyond-q-a">
+<h2>4. Real-World Applications Beyond Q&amp;A<a class="headerlink" href="#real-world-applications-beyond-q-a" title="Link to this heading">#</a></h2>
+<p>The CoVe pattern is a universal tool for enhancing reliability in any domain
+where accuracy is critical.</p>
+<section id="code-generation-and-review">
+<h3><strong>Code Generation and Review</strong><a class="headerlink" href="#code-generation-and-review" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Request:</strong> “Write a Python function to merge two sorted lists.”</p></li>
+<li><p><strong>Draft:</strong> The LLM generates a function.</p></li>
+<li><p><strong>CoVe Questions:</strong></p>
+<ol class="arabic simple">
+<li><p>Does the function correctly handle cases where one list is empty?</p></li>
+<li><p>Does the function maintain efficiency (e.g., O(n+m) time complexity)?</p></li>
+<li><p>Does the function handle lists with duplicate values correctly?</p></li>
+<li><p>Are there any off-by-one errors in the loop conditions or array
+indexing?</p></li>
+</ol>
+</li>
+<li><p><strong>Benefit:</strong> Moves beyond code that simply “runs” to code that is robust,
+efficient, and correct across all edge cases.</p></li>
+</ul>
+</section>
+<section id="mathematical-precision-the-square-root-case">
+<h3><strong>Mathematical Precision: The Square Root Case</strong><a class="headerlink" href="#mathematical-precision-the-square-root-case" title="Link to this heading">#</a></h3>
+<p>A compelling example of CoVe catching <strong>incomplete</strong> (rather than incorrect)
+answers:</p>
+<ul class="simple">
+<li><p><strong>Query:</strong> “What is the square root of 144?”</p></li>
+<li><p><strong>Draft:</strong> “The square root of 144 is 12 (12 × 12 = 144).”</p></li>
+<li><p><strong>CoVe Verification Questions:</strong></p>
+<ol class="arabic simple">
+<li><p>What is the product of 12 multiplied by itself?</p></li>
+<li><p>Is 12 the only number that, when squared, equals 144?</p></li>
+<li><p>What about negative numbers—does (-12)² also equal 144?</p></li>
+</ol>
+</li>
+<li><p><strong>Verification Discovery:</strong> Both +12 and -12 are valid square roots</p></li>
+<li><p><strong>Final Corrected Answer:</strong> “The square roots of 144 are ±12, as both 12² =
+144 and (-12)² = 144.”</p></li>
+<li><p><strong>Significance:</strong> This demonstrates CoVe’s ability to enhance mathematical
+completeness, not just correctness. The initial answer wasn’t <em>wrong</em>, but
+it was <em>incomplete</em>—a subtle distinction that matters in educational and
+technical contexts.</p></li>
+</ul>
+</section>
+<section id="algorithm-implementation-the-quickselect-trap">
+<h3><strong>Algorithm Implementation: The QuickSelect Trap</strong><a class="headerlink" href="#algorithm-implementation-the-quickselect-trap" title="Link to this heading">#</a></h3>
+<p>Code generation often produces solutions that work but have subtle bugs or
+inefficiencies:</p>
+<ul>
+<li><p><strong>Request:</strong> “Write a Python function that finds the k-th largest element in
+an unsorted array without sorting the entire array”</p></li>
+<li><p><strong>Draft Implementation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">find_kth_largest</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">heapq</span>
+    <span class="k">return</span> <span class="n">heapq</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">nums</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>CoVe Verification Questions:</strong></p>
+<ol class="arabic simple">
+<li><p>Does the function handle the case when k is larger than the array
+length?</p></li>
+<li><p>What is the time complexity—is it actually better than sorting?</p></li>
+<li><p>Does it handle duplicate values correctly?</p></li>
+<li><p>What happens with negative numbers or when <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">0</span></code>?</p></li>
+<li><p>Is <code class="docutils literal notranslate"><span class="pre">heapq.nlargest</span></code> actually avoiding full sorting internally?</p></li>
+</ol>
+</li>
+<li><p><strong>Verification Discovery:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">heapq.nlargest</span></code> has <code class="docutils literal notranslate"><span class="pre">O(n</span> <span class="pre">log</span> <span class="pre">k)</span></code> complexity, which is good</p></li>
+<li><p>BUT: No error handling for <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">&gt;</span> <span class="pre">len(nums)</span></code> or <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">≤</span> <span class="pre">0</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">heapq.nlargest</span></code> returns a list, memory inefficient for large <code class="docutils literal notranslate"><span class="pre">k</span></code></p></li>
+<li><p>Better approach: QuickSelect algorithm with <code class="docutils literal notranslate"><span class="pre">O(n)</span></code> average time</p></li>
+</ul>
+</li>
+<li><p><strong>Corrected Implementation:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">find_kth_largest</span><span class="p">(</span><span class="n">nums</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nums</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> for array of length </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">quickselect</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">k_smallest</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">left</span> <span class="o">==</span> <span class="n">right</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nums</span><span class="p">[</span><span class="n">left</span><span class="p">]</span>
+
+        <span class="n">pivot_index</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k_smallest</span> <span class="o">==</span> <span class="n">pivot_index</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">nums</span><span class="p">[</span><span class="n">k_smallest</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">k_smallest</span> <span class="o">&lt;</span> <span class="n">pivot_index</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">quickselect</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">pivot_index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k_smallest</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">quickselect</span><span class="p">(</span><span class="n">pivot_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">k_smallest</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">partition</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+        <span class="n">pivot</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">right</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">left</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
+                <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">right</span><span class="p">]</span> <span class="o">=</span> <span class="n">nums</span><span class="p">[</span><span class="n">right</span><span class="p">],</span> <span class="n">nums</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">i</span>
+
+    <span class="k">return</span> <span class="n">quickselect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">nums</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Impact:</strong> The initial solution worked but was suboptimal and lacked error
+handling. CoVe verification exposed these issues, leading to a
+production-ready implementation with better algorithmic complexity.</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="practical-implementation-a-minimalist-python-example">
+<h2>5. Practical Implementation: A Minimalist Python Example<a class="headerlink" href="#practical-implementation-a-minimalist-python-example" title="Link to this heading">#</a></h2>
+<p>The following code demonstrates a clean, asynchronous implementation of the CoVe
+pipeline using <code class="docutils literal notranslate"><span class="pre">instructor</span></code> and <code class="docutils literal notranslate"><span class="pre">pydantic</span></code> for structured, reliable outputs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">instructor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncOpenAI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">instructor</span><span class="o">.</span><span class="n">from_openai</span><span class="p">(</span><span class="n">AsyncOpenAI</span><span class="p">())</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DraftResponse</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Detailed reasoning for the answer&quot;</span><span class="p">)</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The draft answer to the question&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SkepticQuestions</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">questions</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;List of 3-6 yes/no questions that would help verify or disprove the draft answer&quot;</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">FactCheckAnswer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;yes&quot;</span><span class="p">,</span> <span class="s2">&quot;no&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Factual answer to the verification question&quot;</span><span class="p">)</span>
+    <span class="n">brief_explanation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Brief explanation for the answer&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">JudgeVerdict</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">reasoning</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Reasoning for the final verdict based on verification results&quot;</span><span class="p">)</span>
+    <span class="n">final_answer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The final, corrected answer after reviewing verification evidence&quot;</span><span class="p">)</span>
+    <span class="n">revision_made</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether the verdict differs from the initial assessment&quot;</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">drafter</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DraftResponse</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+        <span class="n">response_model</span><span class="o">=</span><span class="n">DraftResponse</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a helpful assistant. Answer the user&#39;s question directly.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">skeptic</span><span class="p">(</span><span class="n">draft</span><span class="p">:</span> <span class="n">DraftResponse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SkepticQuestions</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+        <span class="n">response_model</span><span class="o">=</span><span class="n">SkepticQuestions</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a skeptical fact-checker. Given an answer, generate a list of sharp, specific yes/no questions that would verify its key claims.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Draft reasoning: </span><span class="si">{</span><span class="n">draft</span><span class="o">.</span><span class="n">reasoning</span><span class="si">}</span><span class="se">\n</span><span class="s2">Draft answer: </span><span class="si">{</span><span class="n">draft</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fact_checker</span><span class="p">(</span><span class="n">question</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FactCheckAnswer</span><span class="p">:</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+        <span class="n">response_model</span><span class="o">=</span><span class="n">FactCheckAnswer</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a world-class researcher. Answer the following yes/no question accurately based on public knowledge.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">question</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">judge</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">draft</span><span class="p">:</span> <span class="n">DraftResponse</span><span class="p">,</span> <span class="n">qa_pairs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FactCheckAnswer</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">JudgeVerdict</span><span class="p">:</span>
+    <span class="n">qa_log</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Q: </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="se">\n</span><span class="s2">A: </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">brief_explanation</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">qa_pairs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+        <span class="n">response_model</span><span class="o">=</span><span class="n">JudgeVerdict</span><span class="p">,</span>
+        <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;You are a judge. You have been given a user&#39;s query, an initial draft answer, and a log of verification Q&amp;A. Your task is to synthesize this information into a final, corrected answer. If the verification log contradicts the draft, you MUST use the verified facts to write a new, more accurate answer.&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Original Query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">Draft Reasoning: </span><span class="si">{</span><span class="n">draft</span><span class="o">.</span><span class="n">reasoning</span><span class="si">}</span><span class="se">\n</span><span class="s2">Draft Answer: </span><span class="si">{</span><span class="n">draft</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">Verification Log:</span><span class="se">\n</span><span class="si">{</span><span class="n">qa_log</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_cove_pipeline</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;▶️ Query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">draft_response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">drafter</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;📝 [Drafter] </span><span class="si">{</span><span class="n">draft_response</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">skeptic_questions</span> <span class="o">=</span> <span class="k">await</span> <span class="n">skeptic</span><span class="p">(</span><span class="n">draft_response</span><span class="p">)</span>
+    <span class="n">questions</span> <span class="o">=</span> <span class="n">skeptic_questions</span><span class="o">.</span><span class="n">questions</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🤔 [Skeptic] Verification Questions:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   - </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">questions</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">fact_check_results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">fact_checker</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">questions</span><span class="p">))</span>
+    <span class="n">qa_pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">questions</span><span class="p">,</span> <span class="n">fact_check_results</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;🔍 [Fact-Checker] Results:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   Q: </span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="se">\n</span><span class="s2">   A: </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">a</span><span class="o">.</span><span class="n">brief_explanation</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">q</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">qa_pairs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">verdict</span> <span class="o">=</span> <span class="k">await</span> <span class="n">judge</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">draft_response</span><span class="p">,</span> <span class="n">qa_pairs</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;Revised&quot;</span> <span class="k">if</span> <span class="n">verdict</span><span class="o">.</span><span class="n">revision_made</span> <span class="k">else</span> <span class="s2">&quot;Confirmed&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ [Judge] </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">verdict</span><span class="o">.</span><span class="n">final_answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">verdict</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">test_query</span> <span class="o">=</span> <span class="s2">&quot;Who was the first woman to win two Nobel Prizes in different scientific fields?&quot;</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">run_cove_pipeline</span><span class="p">(</span><span class="n">test_query</span><span class="p">))</span>
+</pre></div>
+</div>
+<section id="console-output-breakdown">
+<h3>Console Output Breakdown<a class="headerlink" href="#console-output-breakdown" title="Link to this heading">#</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>▶️<span class="w"> </span>Query:<span class="w"> </span>Who<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>first<span class="w"> </span>woman<span class="w"> </span>to<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes<span class="w"> </span><span class="k">in</span><span class="w"> </span>different<span class="w"> </span>scientific<span class="w"> </span>fields?
+
+📝<span class="w"> </span>Draft:<span class="w"> </span>The<span class="w"> </span>first<span class="w"> </span>woman<span class="w"> </span>to<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes<span class="w"> </span><span class="k">in</span><span class="w"> </span>different<span class="w"> </span>scientific<span class="w"> </span>fields<span class="w"> </span>was<span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin.<span class="w"> </span>She<span class="w"> </span>won<span class="w"> </span>the<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Chemistry<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1964</span><span class="w"> </span>and<span class="w"> </span>the<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Physiology<span class="w"> </span>or<span class="w"> </span>Medicine<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1969</span>.
+
+🤔<span class="w"> </span>Verification<span class="w"> </span>Plan:
+<span class="w">   </span>-<span class="w"> </span>Did<span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes?
+<span class="w">   </span>-<span class="w"> </span>What<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>year<span class="w"> </span>and<span class="w"> </span>field<span class="w"> </span><span class="k">for</span><span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin<span class="s1">&#39;s Nobel Prize win?</span>
+<span class="s1">   - Did Dorothy Hodgkin win a Nobel Prize in Physiology or Medicine?</span>
+<span class="s1">   - Who was the first woman to win two Nobel Prizes in different fields?</span>
+
+<span class="s1">🔍 Verification Log:</span>
+<span class="s1">   Q: Did Dorothy Hodgkin win two Nobel Prizes?</span>
+<span class="s1">   A: No, Dorothy Hodgkin won only one Nobel Prize.</span>
+
+<span class="s1">   Q: What was the year and field for Dorothy Hodgkin&#39;</span>s<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span>win?
+<span class="w">   </span>A:<span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin<span class="w"> </span>won<span class="w"> </span>the<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Chemistry<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1964</span>.
+
+<span class="w">   </span>Q:<span class="w"> </span>Did<span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin<span class="w"> </span>win<span class="w"> </span>a<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Physiology<span class="w"> </span>or<span class="w"> </span>Medicine?
+<span class="w">   </span>A:<span class="w"> </span>No,<span class="w"> </span>her<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span>was<span class="w"> </span><span class="k">in</span><span class="w"> </span>the<span class="w"> </span>field<span class="w"> </span>of<span class="w"> </span>Chemistry.
+
+<span class="w">   </span>Q:<span class="w"> </span>Who<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>first<span class="w"> </span>woman<span class="w"> </span>to<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes<span class="w"> </span><span class="k">in</span><span class="w"> </span>different<span class="w"> </span>fields?
+<span class="w">   </span>A:<span class="w"> </span>Marie<span class="w"> </span>Curie<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>first<span class="w"> </span>woman<span class="w"> </span>to<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes<span class="w"> </span><span class="k">in</span><span class="w"> </span>different<span class="w"> </span>fields,<span class="w"> </span>Physics<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1903</span><span class="w"> </span>and<span class="w"> </span>Chemistry<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1911</span>.
+
+✅<span class="w"> </span>Final<span class="w"> </span>Verified<span class="w"> </span>Answer:<span class="w"> </span>Marie<span class="w"> </span>Curie<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>first<span class="w"> </span>woman<span class="w"> </span>to<span class="w"> </span>win<span class="w"> </span>two<span class="w"> </span>Nobel<span class="w"> </span>Prizes<span class="w"> </span><span class="k">in</span><span class="w"> </span>different<span class="w"> </span>scientific<span class="w"> </span>fields.<span class="w"> </span>She<span class="w"> </span>received<span class="w"> </span>the<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Physics<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1903</span><span class="w"> </span>and<span class="w"> </span>the<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Chemistry<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1911</span>.<span class="w"> </span>Dorothy<span class="w"> </span>Hodgkin<span class="w"> </span>won<span class="w"> </span>a<span class="w"> </span>single<span class="w"> </span>Nobel<span class="w"> </span>Prize<span class="w"> </span><span class="k">in</span><span class="w"> </span>Chemistry<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1964</span>.
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="limitations-and-future-directions">
+<h2>6. Limitations and Future Directions<a class="headerlink" href="#limitations-and-future-directions" title="Link to this heading">#</a></h2>
+<section id="current-limitations">
+<h3>Current Limitations<a class="headerlink" href="#current-limitations" title="Link to this heading">#</a></h3>
+<div class="proof observation admonition" id="obs-complexity">
+<p class="admonition-title"><span class="caption-number">Observation 1 </span> (Computational Complexity)</p>
+<section class="observation-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(\mathfrak{I}\)</span> denote one LLM call. For <span class="math notranslate nohighlight">\(s\)</span> planning units (e.g., sentences/segments) and <span class="math notranslate nohighlight">\(n\)</span> verification facts:</p>
+<ul class="simple">
+<li><p><strong>Draft:</strong> <span class="math notranslate nohighlight">\(\Theta(1)\cdot\mathfrak{I}\)</span></p></li>
+<li><p><strong>Plan:</strong> <span class="math notranslate nohighlight">\(\Theta(s)\cdot\mathfrak{I}\)</span>  (planning is issued per sentence/segment)</p></li>
+<li><p><strong>Verify:</strong> <span class="math notranslate nohighlight">\(\Theta(n)\cdot\mathfrak{I}\)</span>  (one per fact; <strong>parallelizable</strong>)</p></li>
+<li><p><strong>Consistent response (per fact):</strong> <span class="math notranslate nohighlight">\(\Theta(n)\cdot\mathfrak{I}\)</span></p></li>
+<li><p><strong>Synthesize/finalization:</strong> <span class="math notranslate nohighlight">\(\Theta(1)\cdot\mathfrak{I}\)</span></p></li>
+</ul>
+<p><strong>Approx. call count (generic CoVe run):</strong> <span class="math notranslate nohighlight">\(\;\;1 + s + n + n \;(+\;1)\)</span>  ⇒ <strong><span class="math notranslate nohighlight">\(s + 2n + O(1)\)</span></strong>.</p>
+<p><strong>Latency:</strong> dominated by serial stages + the slowest verification branch; with parallel verification, end-to-end latency behaves like <em>O(depth)</em> rather than <em>O(n)</em>, while <strong>cost</strong> scales ≈ linearly with the number of verification and per-fact consistent-response calls.</p>
+</section>
+</div><div class="proof remark admonition" id="remark-6">
+<p class="admonition-title"><span class="caption-number">Remark 9 </span> (Limitations)</p>
+<section class="remark-content" id="proof-content">
+<p>Key limitations include:</p>
+<ol class="arabic simple">
+<li><p><strong>Verification Accuracy</strong>: While verification questions achieve higher accuracy than original queries, they remain imperfect</p></li>
+<li><p><strong>Question Generation Quality</strong>: Performance depends critically on the quality of generated verification questions</p></li>
+</ol>
+</section>
+</div></section>
+<section id="future-research-directions">
+<h3>Future Research Directions<a class="headerlink" href="#future-research-directions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>External Tool Integration</strong>: Combining CoVe with retrieval systems and
+knowledge bases</p></li>
+<li><p><strong>Cross-Model Verification</strong>: Using different models for drafting and
+verification to reduce correlated errors</p></li>
+<li><p><strong>Adaptive Verification</strong>: Dynamically adjusting verification depth based on
+query complexity and confidence</p></li>
+<li><p><strong>Multi-Modal Extension</strong>: Applying CoVe to vision-language models and other
+modalities</p></li>
+</ul>
+</section>
+</section>
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>Chain-of-Verification represents a paradigm shift in addressing LLM reliability.
+By decomposing the generation process into distinct metacognitive stages, CoVe
+achieves substantial reductions in hallucination while maintaining
+interpretability and auditability.</p>
+<p>As language models become increasingly prevalent in critical applications,
+frameworks like CoVe that enhance reliability through systematic verification
+will become essential infrastructure for trustworthy AI systems.</p>
+</section>
+<section id="bibliography">
+<h2>Bibliography<a class="headerlink" href="#bibliography" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id3">
+<div role="list" class="citation-list">
+<div class="citation" id="id45" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span>DKX+23<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>Shehzaad Dhuliawala, Mojtaba Komeili, Jing Xu, Roberta Raileanu, Xian Li, Asli Celikyilmaz, and Jason Weston. Chain-of-verification reduces hallucination in large language models. 2023. URL: <a class="reference external" href="https://arxiv.org/abs/2309.11495">https://arxiv.org/abs/2309.11495</a>, <a class="reference external" href="https://arxiv.org/abs/2309.11495">arXiv:2309.11495</a>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./influential/cove"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../low_rank_adaptation/03_implementation.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Implementation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../empirical_risk_minimization/01_intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Empirical Risk Minimization</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-notation-guide">Mathematical Notation Guide</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theoretical-foundations">Theoretical Foundations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-hallucination-problem">The Hallucination Problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cove-solution-framework">The CoVe Solution Framework</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cove-architecture-from-monologue-to-dialogue">1. The CoVe Architecture: From Monologue to Dialogue</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-case-study-in-action-correcting-a-factual-hallucination">2. A Case Study in Action: Correcting a Factual Hallucination</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-1-the-draft-the-confident-hallucination">Stage 1: The Draft (The Confident Hallucination)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-2-the-plan-generating-verification-questions">Stage 2: The Plan (Generating Verification Questions)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-3-the-execution-independent-fact-finding">Stage 3: The Execution (Independent Fact-Finding)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stage-4-the-synthesis-the-final-verdict">Stage 4: The Synthesis (The Final Verdict)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-cove-is-a-breakthrough-in-ai-reliability">3. Why CoVe is a Breakthrough in AI Reliability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-applications-beyond-q-a">4. Real-World Applications Beyond Q&amp;A</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#code-generation-and-review"><strong>Code Generation and Review</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mathematical-precision-the-square-root-case"><strong>Mathematical Precision: The Square Root Case</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#algorithm-implementation-the-quickselect-trap"><strong>Algorithm Implementation: The QuickSelect Trap</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#practical-implementation-a-minimalist-python-example">5. Practical Implementation: A Minimalist Python Example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#console-output-breakdown">Console Output Breakdown</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations-and-future-directions">6. Limitations and Future Directions</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#current-limitations">Current Limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#future-research-directions">Future Research Directions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bibliography">Bibliography</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+
+  <footer class="bd-footer">
+  </footer>
+<div class="share-buttons" style="padding: 15px; text-align: center; background-color: #f5f5f5; margin: 15px 0;">
+    <div class="container" style="max-width: 500px; margin: 0 auto;">
+        <h3 style="margin: 0 0 10px 0; font-size: 1.1em;">Connect with me!</h3>
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <!-- LinkedIn Follow Button -->
+            <a href="https://www.linkedin.com/in/gao-hongnan/" target="_blank" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #0077b5; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Follow on LinkedIn
+                </button>
+            </a>
+
+            <!-- Twitter/X Follow Button -->
+            <a href="https://x.com/gaohongnan" target="_blank" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #000000; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Follow on X
+                </button>
+            </a>
+        </div>
+
+        <h3 style="margin: 12px 0 10px 0; font-size: 1.1em;">Share this page!</h3>
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <!-- LinkedIn Share Button -->
+            <a href="javascript:void(0);" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), 'linkedin-share', 'width=600,height=400')" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #0077b5; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Share on LinkedIn
+                </button>
+            </a>
+
+            <!-- Twitter/X Share Button -->
+            <a href="javascript:void(0);" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Check out this page by @gaohongnan!') + '&url=' + encodeURIComponent(window.location.href), 'twitter-share', 'width=600,height=400')" style="text-decoration: none; flex: 1; max-width: 160px;">
+                <button style="background-color: #000000; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; width: 100%; font-size: 0.9em;">
+                    Share on X
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+  </body>
+</html>
