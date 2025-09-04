@@ -1,0 +1,94 @@
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+import matplotlib.pyplot as plt
+
+
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path | None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    if not current_path:
+        current_path = Path.cwd()
+    current_path = current_path.resolve()
+    for parent in [current_path, *current_path.parents]:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+root_dir = find_root_dir(marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.utils.visualization.style import use_svg_display
+else:
+    raise ImportError("Root directory not found.")
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import statsmodels.api as sm
+from scipy import stats
+from statsmodels.stats.stattools import durbin_watson
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from sklearn.linear_model import LinearRegression
+from statsmodels.api import OLS
+
+use_svg_display()
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mModuleNotFoundError[39m                       Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 46[39m
+[32m     44[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mnumpy[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01mnp[39;00m
+[32m     45[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mseaborn[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01msns[39;00m
+[32m---> [39m[32m46[39m [38;5;28;01mimport[39;00m[38;5;250m [39m[34;01mstatsmodels[39;00m[34;01m.[39;00m[34;01mapi[39;00m[38;5;250m [39m[38;5;28;01mas[39;00m[38;5;250m [39m[34;01msm[39;00m
+[32m     47[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mscipy[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m stats
+[32m     48[39m [38;5;28;01mfrom[39;00m[38;5;250m [39m[34;01mstatsmodels[39;00m[34;01m.[39;00m[34;01mstats[39;00m[34;01m.[39;00m[34;01mstattools[39;00m[38;5;250m [39m[38;5;28;01mimport[39;00m durbin_watson
+
+[31mModuleNotFoundError[39m: No module named 'statsmodels'
+

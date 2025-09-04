@@ -1,0 +1,178 @@
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+"""Module for creating PyTorch scheduler instances dynamically with an enhanced Registry pattern."""
+
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
+from typing import Any, Callable, Dict, Literal, Type
+
+import torch
+from pydantic import BaseModel
+from rich.pretty import pprint
+
+RegisteredSchedulers = Literal[
+    "StepLR",
+    "CosineAnnealingLR",
+    "CosineAnnealingWarmRestarts",
+]
+
+
+class SchedulerRegistry:
+    _schedulers: Dict[str, Type[SchedulerConfig]] = {}
+
+    @classmethod
+    def register(cls: Type[SchedulerRegistry], name: str) -> Callable[[Type[SchedulerConfig]], Type[SchedulerConfig]]:
+        def register_scheduler_cls(scheduler_cls: Type[SchedulerConfig]) -> Type[SchedulerConfig]:
+            if name in cls._schedulers:
+                raise ValueError(f"Cannot register duplicate scheduler {name}")
+            if not issubclass(scheduler_cls, SchedulerConfig):
+                raise ValueError(f"Scheduler (name={name}, class={scheduler_cls.__name__}) must extend SchedulerConfig")
+            cls._schedulers[name] = scheduler_cls
+            return scheduler_cls
+
+        return register_scheduler_cls
+
+    @classmethod
+    def get_scheduler(cls, name: str) -> Type[SchedulerConfig]:
+        scheduler_cls = cls._schedulers.get(name)
+        if not scheduler_cls:
+            raise ValueError(f"Scheduler {name} not found in registry")
+        return scheduler_cls
+
+    @classmethod
+    def create_scheduler(
+        cls: Type[SchedulerRegistry], name: str, optimizer: torch.optim.Optimizer, **kwargs: Any
+    ) -> torch.optim.lr_scheduler.LRScheduler:
+        scheduler_cls = cls.get_scheduler(name)
+        scheduler_config = scheduler_cls(**kwargs)
+        return scheduler_config.build(optimizer)
+
+
+class SchedulerConfig(BaseModel, ABC):
+    """Base class for creating PyTorch scheduler instances dynamically."""
+
+    @abstractmethod
+    def build(self, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.LRScheduler:
+        """Builder method for creating a scheduler instance."""
+        pass
+
+    class Config:
+        extra = "forbid"
+
+
+@SchedulerRegistry.register("StepLR")
+class StepLRConfig(SchedulerConfig):
+    step_size: int
+    gamma: float = 0.1
+    last_epoch: int = -1
+    verbose: bool = False
+
+    def build(self, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.StepLR:
+        return torch.optim.lr_scheduler.StepLR(
+            optimizer, step_size=self.step_size, gamma=self.gamma, last_epoch=self.last_epoch, verbose=self.verbose
+        )
+
+
+@SchedulerRegistry.register("CosineAnnealingLR")
+class CosineAnnealingLRConfig(SchedulerConfig):
+    T_max: int
+    eta_min: float = 0
+    last_epoch: int = -1
+    verbose: bool = False
+
+    def build(self, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.CosineAnnealingLR:
+        return torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=self.T_max, eta_min=self.eta_min, last_epoch=self.last_epoch, verbose=self.verbose
+        )
+
+
+@SchedulerRegistry.register("CosineAnnealingWarmRestarts")
+class CosineAnnealingWarmRestartsConfig(SchedulerConfig):
+    T_0: int
+    T_mult: int = 1
+    eta_min: float = 0
+    last_epoch: int = -1
+    verbose: bool = False
+
+    def build(self, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.CosineAnnealingWarmRestarts:
+        return torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer,
+            T_0=self.T_0,
+            T_mult=self.T_mult,
+            eta_min=self.eta_min,
+            last_epoch=self.last_epoch,
+            verbose=self.verbose,
+        )
+
+
+if __name__ == "__main__":
+    # Create a dummy optimizer for demonstration
+    model = torch.nn.Linear(10, 2)
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+
+    pprint(SchedulerRegistry._schedulers)
+    # Create a StepLR scheduler
+    step_lr = SchedulerRegistry.create_scheduler("StepLR", optimizer, step_size=30, gamma=0.1)
+    print(f"Created StepLR scheduler: {step_lr}")
+
+    # Create a CosineAnnealingLR scheduler
+    cosine_lr = SchedulerRegistry.create_scheduler("CosineAnnealingLR", optimizer, T_max=100, eta_min=0.001)
+    print(f"Created CosineAnnealingLR scheduler: {cosine_lr}")
+
+    # Create a LambdaLR scheduler
+    cosine_warm_restarts = SchedulerRegistry.create_scheduler(
+        "CosineAnnealingWarmRestarts", optimizer, T_0=100, T_mult=2
+    )
+    print(f"Created CosineAnnealingWarmRestarts scheduler: {cosine_warm_restarts}")
+
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 114[39m
+[32m    112[39m pprint(SchedulerRegistry._schedulers)
+[32m    113[39m [38;5;66;03m# Create a StepLR scheduler[39;00m
+[32m--> [39m[32m114[39m step_lr = [43mSchedulerRegistry[49m[43m.[49m[43mcreate_scheduler[49m[43m([49m[33;43m"[39;49m[33;43mStepLR[39;49m[33;43m"[39;49m[43m,[49m[43m [49m[43moptimizer[49m[43m,[49m[43m [49m[43mstep_size[49m[43m=[49m[32;43m30[39;49m[43m,[49m[43m [49m[43mgamma[49m[43m=[49m[32;43m0.1[39;49m[43m)[49m
+[32m    115[39m [38;5;28mprint[39m([33mf[39m[33m"[39m[33mCreated StepLR scheduler: [39m[38;5;132;01m{[39;00mstep_lr[38;5;132;01m}[39;00m[33m"[39m)
+[32m    117[39m [38;5;66;03m# Create a CosineAnnealingLR scheduler[39;00m
+
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 47[39m, in [36mSchedulerRegistry.create_scheduler[39m[34m(cls, name, optimizer, **kwargs)[39m
+[32m     45[39m scheduler_cls = [38;5;28mcls[39m.get_scheduler(name)
+[32m     46[39m scheduler_config = scheduler_cls(**kwargs)
+[32m---> [39m[32m47[39m [38;5;28;01mreturn[39;00m [43mscheduler_config[49m[43m.[49m[43mbuild[49m[43m([49m[43moptimizer[49m[43m)[49m
+
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 70[39m, in [36mStepLRConfig.build[39m[34m(self, optimizer)[39m
+[32m     69[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mbuild[39m([38;5;28mself[39m, optimizer: torch.optim.Optimizer) -> torch.optim.lr_scheduler.StepLR:
+[32m---> [39m[32m70[39m     [38;5;28;01mreturn[39;00m [43mtorch[49m[43m.[49m[43moptim[49m[43m.[49m[43mlr_scheduler[49m[43m.[49m[43mStepLR[49m[43m([49m
+[32m     71[39m [43m        [49m[43moptimizer[49m[43m,[49m[43m [49m[43mstep_size[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mstep_size[49m[43m,[49m[43m [49m[43mgamma[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mgamma[49m[43m,[49m[43m [49m[43mlast_epoch[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mlast_epoch[49m[43m,[49m[43m [49m[43mverbose[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mverbose[49m
+[32m     72[39m [43m    [49m[43m)[49m
+
+[31mTypeError[39m: StepLR.__init__() got an unexpected keyword argument 'verbose'
+
