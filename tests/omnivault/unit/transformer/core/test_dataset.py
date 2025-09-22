@@ -16,7 +16,7 @@ def test_construct_future_mask(adder_dataset: AdderDataset, adder_ground_truth: 
 
 @pytest.mark.parametrize(
     argnames="input,expected_padding_mask",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks)),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks, strict=False)),
 )
 def test_construct_padding_mask(
     adder_dataset: AdderDataset, input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
@@ -28,7 +28,7 @@ def test_construct_padding_mask(
 
 @pytest.mark.parametrize(
     argnames="encoded_sequence,expected_target",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets)),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets, strict=False)),
 )
 def test_construct_target(
     adder_dataset: AdderDataset, encoded_sequence: List[int], expected_target: torch.LongTensor
@@ -40,7 +40,7 @@ def test_construct_target(
 
 @pytest.mark.parametrize(
     argnames="encoded_sequence,expected_input",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs)),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs, strict=False)),
 )
 def test_construct_input(
     adder_dataset: AdderDataset, encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor

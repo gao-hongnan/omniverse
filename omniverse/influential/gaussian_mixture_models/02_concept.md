@@ -1,24 +1,21 @@
 ---
 jupytext:
-  cell_metadata_filter: -all
-  formats: md:myst
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.11.5
+    cell_metadata_filter: -all
+    formats: md:myst
+    text_representation:
+        extension: .md
+        format_name: myst
+        format_version: 0.13
+        jupytext_version: 1.11.5
 mystnb:
-  number_source_lines: true
+    number_source_lines: true
 kernelspec:
-  display_name: Python 3
-  language: python
-  name: python3
+    display_name: Python 3
+    language: python
+    name: python3
 ---
 
-
-
 # Concept
-
 
 ```{contents}
 :local:
@@ -66,7 +63,7 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.machine_learning.estimator import BaseEstimator
-    from omnivault.utils.reproducibility.seed import seed_all
+    from reproducibility.seed import seed_all
     from omnivault.machine_learning.utils import make_meshgrid
 else:
     raise ImportError("Root directory not found.")
@@ -87,11 +84,19 @@ use_svg_display()
 seed_all(1992, False, False)
 ```
 
-Gaussian Mixture Models are a statistical technique used for approximating the probability distribution of data, known as [**density estimation**](https://en.wikipedia.org/wiki/Density_estimation#:~:text=In%20statistics%2C%20probability%20density%20estimation,unobservable%20underlying%20probability%20density%20function.).
+Gaussian Mixture Models are a statistical technique used for approximating the
+probability distribution of data, known as
+[**density estimation**](https://en.wikipedia.org/wiki/Density_estimation#:~:text=In%20statistics%2C%20probability%20density%20estimation,unobservable%20underlying%20probability%20density%20function.).
 
-From the introduction in [the previous section](01_intro.md), one might ask the motivation of using a linear combination to approximate a probability distribution. The answer is that the linear combination of simple distributions is a flexible model that can approximate a wide variety of probability distributions.
+From the introduction in [the previous section](01_intro.md), one might ask the
+motivation of using a linear combination to approximate a probability
+distribution. The answer is that the linear combination of simple distributions
+is a flexible model that can approximate a wide variety of probability
+distributions.
 
-Consider your dataset that exhibits a multimodal distribution (i.e. multiple modes), then a single Gaussian distribution will not be able to capture the distribution of the data.
+Consider your dataset that exhibits a multimodal distribution (i.e. multiple
+modes), then a single Gaussian distribution will not be able to capture the
+distribution of the data.
 
 ## Intuition
 
@@ -99,15 +104,23 @@ Consider your dataset that exhibits a multimodal distribution (i.e. multiple mod
 
 The code below does the following:
 
-1. `x_axis` is created as a NumPy array of evenly spaced values ranging from -15 to 15 with a step size of 0.001.
+1. `x_axis` is created as a NumPy array of evenly spaced values ranging from -15
+   to 15 with a step size of 0.001.
 
-2. `gaussian_1` and `gaussian_2` are defined as dictionaries representing two normal distributions with given means and standard deviations:
-   - Distribution 1 has a mean of -4 and a standard deviation of 2.
-   - Distribution 2 has a mean of 4 and a standard deviation of 2.
+2. `gaussian_1` and `gaussian_2` are defined as dictionaries representing two
+   normal distributions with given means and standard deviations:
 
-3. The probability density functions (PDFs) for `gaussian_1` and `gaussian_2` are calculated using the `norm.pdf` function from the SciPy library. The PDFs are computed for each value in `x_axis`, with the respective mean and standard deviation for each distribution.
+    - Distribution 1 has a mean of -4 and a standard deviation of 2.
+    - Distribution 2 has a mean of 4 and a standard deviation of 2.
 
-4. The `pdf_merged` variable is created by adding the PDFs of `gaussian_1` and `gaussian_2` element-wise, which represents the combined probability density function of both distributions.
+3. The probability density functions (PDFs) for `gaussian_1` and `gaussian_2`
+   are calculated using the `norm.pdf` function from the SciPy library. The PDFs
+   are computed for each value in `x_axis`, with the respective mean and
+   standard deviation for each distribution.
+
+4. The `pdf_merged` variable is created by adding the PDFs of `gaussian_1` and
+   `gaussian_2` element-wise, which represents the combined probability density
+   function of both distributions.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -145,7 +158,11 @@ pdf_merged = merge_gaussian_pdf(
 )  # weights_1 * pdf_1 + weights_2 * pdf_2
 ```
 
-This code below will create a figure with three subplots, where the first subplot (`ax1`) contains Distribution 1 and Distribution 2, the second subplot (`ax2`) contains the Merged Distribution, and the third subplot (`ax3`) contains Distribution 1 and Distribution 2 as dotted lines and the Merged Distribution as a solid line. All subplots share the same x-axis.
+This code below will create a figure with three subplots, where the first
+subplot (`ax1`) contains Distribution 1 and Distribution 2, the second subplot
+(`ax2`) contains the Merged Distribution, and the third subplot (`ax3`) contains
+Distribution 1 and Distribution 2 as dotted lines and the Merged Distribution as
+a solid line. All subplots share the same x-axis.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -178,7 +195,8 @@ $$
 \mathbb{P}\left[\mathbf{X} ; \boldsymbol{\theta} = \left(\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right)\right] = \textcolor{red}{0.5 \mathcal{N}\left(x \mid -4, 2\right)} + \textcolor{blue}{0.5 \mathcal{N}(x \mid 4, 2)}
 $$
 
-where this distribution is a mixture of two normal distributions with equal weights of 0.5.
+where this distribution is a mixture of two normal distributions with equal
+weights of 0.5.
 
 The mixture components are:
 
@@ -202,24 +220,36 @@ $$
 
 Now the generative story of such a mixture model is as follows.
 
-If we have a mixture model with $K$ components, then we can sample from the mixture model by first sampling a component $k$ from the categorical distribution with parameters $\boldsymbol{\pi}$, and then sampling from the $k$-th component distribution with parameters $\boldsymbol{\mu}_k$ and $\boldsymbol{\Sigma}_k$.
+If we have a mixture model with $K$ components, then we can sample from the
+mixture model by first sampling a component $k$ from the categorical
+distribution with parameters $\boldsymbol{\pi}$, and then sampling from the
+$k$-th component distribution with parameters $\boldsymbol{\mu}_k$ and
+$\boldsymbol{\Sigma}_k$.
 
 More concretely, if we know the following parameters:
 
-- $\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 \end{bmatrix} = \begin{bmatrix} 0.5 & 0.5 \end{bmatrix}$
-- $\boldsymbol{\mu} = \begin{bmatrix} \mu_1 & \mu_2 \end{bmatrix} = \begin{bmatrix} 2 & -2 \end{bmatrix}$
-- $\boldsymbol{\Sigma} = \begin{bmatrix} \Sigma_1 & \Sigma_2 \end{bmatrix} = \begin{bmatrix} 3 & 1 \end{bmatrix}$
+-   $\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 \end{bmatrix} = \begin{bmatrix} 0.5 & 0.5 \end{bmatrix}$
+-   $\boldsymbol{\mu} = \begin{bmatrix} \mu_1 & \mu_2 \end{bmatrix} = \begin{bmatrix} 2 & -2 \end{bmatrix}$
+-   $\boldsymbol{\Sigma} = \begin{bmatrix} \Sigma_1 & \Sigma_2 \end{bmatrix} = \begin{bmatrix} 3 & 1 \end{bmatrix}$
 
 then we can sample from the mixture model by
 
-- first sampling a component $k$ from the categorical distribution with parameters $\boldsymbol{\pi}$, which means
-    either $k = 1$ or $k = 2$ with equal probability of 0.5.
-- then once we know which component we sampled from, we can sample from the component distribution, which in this case is a normal distribution with mean $\mu_k$ and standard deviation $\Sigma_k$. For example, if we sampled $k = 1$, then we can sample from the first component distribution with mean $\mu_1 = 2$ and standard deviation $\Sigma_1 = 3$.
+-   first sampling a component $k$ from the categorical distribution with
+    parameters $\boldsymbol{\pi}$, which means either $k = 1$ or $k = 2$ with
+    equal probability of 0.5.
+-   then once we know which component we sampled from, we can sample from the
+    component distribution, which in this case is a normal distribution with
+    mean $\mu_k$ and standard deviation $\Sigma_k$. For example, if we sampled
+    $k = 1$, then we can sample from the first component distribution with mean
+    $\mu_1 = 2$ and standard deviation $\Sigma_1 = 3$.
 
-Note very carefully, this is the "generative" side, in machine learning we are interested in the "inference" side, which is to infer the parameters of the mixture model from the dataset $\mathcal{S}$!
+Note very carefully, this is the "generative" side, in machine learning we are
+interested in the "inference" side, which is to infer the parameters of the
+mixture model from the dataset $\mathcal{S}$!
 
-Let's see in code how we can sample from a mixture model, and that if we sample enough
-data points, the empirical distribution of the samples will converge to the true distribution of the mixture model.
+Let's see in code how we can sample from a mixture model, and that if we sample
+enough data points, the empirical distribution of the samples will converge to
+the true distribution of the mixture model.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -286,58 +316,93 @@ plt.tight_layout()
 plt.show()
 ```
 
-In this code, we're using a Gaussian Mixture Model (GMM) to generate and visualize samples from a mixture of two Gaussian distributions. The purpose of the visualization is to demonstrate how the GMM can approximate the true underlying distribution as the number of samples increases.
+In this code, we're using a Gaussian Mixture Model (GMM) to generate and
+visualize samples from a mixture of two Gaussian distributions. The purpose of
+the visualization is to demonstrate how the GMM can approximate the true
+underlying distribution as the number of samples increases.
 
 Here's a step-by-step explanation of the code:
 
-1. We define sample_sizes as a list containing the number of samples to generate for each subplot (100, 500, and 10000).
+1. We define sample_sizes as a list containing the number of samples to generate
+   for each subplot (100, 500, and 10000).
 
-2. We create a 2x2 grid of subplots with shared x and y axes, with a figure size of 12x10.
+2. We create a 2x2 grid of subplots with shared x and y axes, with a figure size
+   of 12x10.
 
-3. We plot the mixture PDF on the first subplot (axes[0]). This represents the true underlying distribution that we are trying to approximate with our GMM.
+3. We plot the mixture PDF on the first subplot (axes[0]). This represents the
+   true underlying distribution that we are trying to approximate with our GMM.
 
-4. We iterate over the sample_sizes list, and for each sample size, we use the generate_x function to generate samples from the GMM. The generate_x function takes the prior probabilities, the means and standard deviations of the Gaussians, the number of samples, and the number of Gaussians as input arguments.
+4. We iterate over the sample_sizes list, and for each sample size, we use the
+   generate_x function to generate samples from the GMM. The generate_x function
+   takes the prior probabilities, the means and standard deviations of the
+   Gaussians, the number of samples, and the number of Gaussians as input
+   arguments.
 
-5. For each sample size, we plot a histogram of the generated samples on the corresponding subplot. We normalize the histogram to match the density of the true underlying distribution. We also plot the mixture PDF on the same subplot to compare the generated samples with the true distribution.
+5. For each sample size, we plot a histogram of the generated samples on the
+   corresponding subplot. We normalize the histogram to match the density of the
+   true underlying distribution. We also plot the mixture PDF on the same
+   subplot to compare the generated samples with the true distribution.
 
-6. We set the titles, x-axis labels, and y-axis labels for all subplots, and add a legend to each subplot.
+6. We set the titles, x-axis labels, and y-axis labels for all subplots, and add
+   a legend to each subplot.
 
-7. We use plt.tight_layout() to adjust the spacing between subplots, and finally display the figure using plt.show().
+7. We use plt.tight_layout() to adjust the spacing between subplots, and finally
+   display the figure using plt.show().
 
-In the context of GMM, this code demonstrates how the GMM can be used to generate samples from a mixture of Gaussian distributions. The generated samples are visualized as histograms, which are compared to the true underlying distribution (the mixture PDF) to show how well the GMM approximates the true distribution. As the number of samples increases, the histograms of the generated samples become closer to the mixture PDF, indicating that the GMM is effectively approximating the true distribution.
+In the context of GMM, this code demonstrates how the GMM can be used to
+generate samples from a mixture of Gaussian distributions. The generated samples
+are visualized as histograms, which are compared to the true underlying
+distribution (the mixture PDF) to show how well the GMM approximates the true
+distribution. As the number of samples increases, the histograms of the
+generated samples become closer to the mixture PDF, indicating that the GMM is
+effectively approximating the true distribution.
 
-Note carefully again that this is under the assumption that we already know the parameters of the mixture model, which is not the case in machine learning. In machine learning, we are interested in the "inference" side, which is to infer the parameters of the mixture model from the dataset $\mathcal{S}$!
+Note carefully again that this is under the assumption that we already know the
+parameters of the mixture model, which is not the case in machine learning. In
+machine learning, we are interested in the "inference" side, which is to infer
+the parameters of the mixture model from the dataset $\mathcal{S}$!
 
 ### Inference Story
 
-Now let's flip the table and see how we can infer the parameters of the mixture model from the dataset $\mathcal{S}$.
+Now let's flip the table and see how we can infer the parameters of the mixture
+model from the dataset $\mathcal{S}$.
 
 The code above does the following:
 
-1. Import necessary libraries: NumPy, Matplotlib, and GaussianMixture from scikit-learn.
+1. Import necessary libraries: NumPy, Matplotlib, and GaussianMixture from
+   scikit-learn.
 
 2. Generate a synthetic dataset with three clusters:
-   - Set a random seed to ensure reproducibility.
-   - Define the number of samples (500).
-   - Create a dataset by concatenating samples from three normal distributions with different means (0, 5, and 10) and the same standard deviation (1). The dataset is reshaped into a 2D array.
+
+    - Set a random seed to ensure reproducibility.
+    - Define the number of samples (500).
+    - Create a dataset by concatenating samples from three normal distributions
+      with different means (0, 5, and 10) and the same standard deviation (1).
+      The dataset is reshaped into a 2D array.
 
 3. Fit a Gaussian Mixture Model (GMM) to the data:
-   - Instantiate a GaussianMixture object with three components and a fixed random state.
-   - Fit the GMM to the dataset `X`.
+
+    - Instantiate a GaussianMixture object with three components and a fixed
+      random state.
+    - Fit the GMM to the dataset `X`.
 
 4. Plot the data and the Gaussian Mixture Model:
-   - Create an array `x_plot` of 1000 linearly spaced values between -5 and 15.
-   - Calculate the density of the GMM for each value in `x_plot` using the `score_samples` method.
-   - Plot a histogram of the dataset with 30 bins, normalized by the total area.
-   - Plot the GMM density estimation using a red line.
-   - Add labels for the x-axis, y-axis, and a title for the plot.
+
+    - Create an array `x_plot` of 1000 linearly spaced values between -5 and 15.
+    - Calculate the density of the GMM for each value in `x_plot` using the
+      `score_samples` method.
+    - Plot a histogram of the dataset with 30 bins, normalized by the total
+      area.
+    - Plot the GMM density estimation using a red line.
+    - Add labels for the x-axis, y-axis, and a title for the plot.
 
 5. Display the plot using `plt.show()`.
 
-
-A reminder, we know the true distribution because we defined them ourselves. In reality,
-we don't know the true distribution, and we want to infer the parameters of the mixture model from the dataset $\mathcal{S}$.
-The purpose of defining the true distribution is for pedagogical purposes, so that we can compare the true distribution with the estimated distribution from the GMM.
+A reminder, we know the true distribution because we defined them ourselves. In
+reality, we don't know the true distribution, and we want to infer the
+parameters of the mixture model from the dataset $\mathcal{S}$. The purpose of
+defining the true distribution is for pedagogical purposes, so that we can
+compare the true distribution with the estimated distribution from the GMM.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -380,16 +445,17 @@ print("Mean:", gmm.means_.ravel())
 print("Std:", np.sqrt(gmm.covariances_.ravel()))
 ```
 
-When rounded to the nearest integer/decimal, the parameters inferred from our `GMM` model has the following:
+When rounded to the nearest integer/decimal, the parameters inferred from our
+`GMM` model has the following:
 
-- $\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \pi_3 \end{bmatrix} = \begin{bmatrix} 0.398, 0.4, 0.202 \end{bmatrix}$
-- $\boldsymbol{\mu} = \begin{bmatrix} \mu_1 & \mu_2 & \mu_3 \end{bmatrix} = \begin{bmatrix} 0.0, 5.0, 10.0 \end{bmatrix}$
-- $\boldsymbol{\Sigma} = \begin{bmatrix} \Sigma_1 & \Sigma_2 & \Sigma_3 \end{bmatrix} = \begin{bmatrix} 1.02, 0.99, 0.98 \end{bmatrix}$
+-   $\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \pi_3 \end{bmatrix} = \begin{bmatrix} 0.398, 0.4, 0.202 \end{bmatrix}$
+-   $\boldsymbol{\mu} = \begin{bmatrix} \mu_1 & \mu_2 & \mu_3 \end{bmatrix} = \begin{bmatrix} 0.0, 5.0, 10.0 \end{bmatrix}$
+-   $\boldsymbol{\Sigma} = \begin{bmatrix} \Sigma_1 & \Sigma_2 & \Sigma_3 \end{bmatrix} = \begin{bmatrix} 1.02, 0.99, 0.98 \end{bmatrix}$
 
 Almost spot on with the true parameters!!!
 
-The plot shows promising results, which is not surprising since our
-estimated parameters are very close to the true parameters.
+The plot shows promising results, which is not surprising since our estimated
+parameters are very close to the true parameters.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -414,11 +480,11 @@ When you `predict` on the samples `X`, you get the cluster/component in which
 each sample belongs to. In this case, the samples are generated from three
 clusters, so the predicted labels are either 0, 1, or 2.
 
-When you `predict_proba` on the samples `X`, you get the (log) probability
-of each sample belonging to each cluster/component. In this case, the samples
-are generated from three clusters, so the predicted probabilities are a 2D array
-with shape `(n_samples, n_components)`.
-Then the highest probability is the cluster/component in which the sample belongs to, which is the predicted label.
+When you `predict_proba` on the samples `X`, you get the (log) probability of
+each sample belonging to each cluster/component. In this case, the samples are
+generated from three clusters, so the predicted probabilities are a 2D array
+with shape `(n_samples, n_components)`. Then the highest probability is the
+cluster/component in which the sample belongs to, which is the predicted label.
 
 ```{code-cell} ipython3
 :tags: [hide-input]
@@ -552,20 +618,30 @@ plt.show()
 
 ### Prior is a Latent Variable
 
-The weights we have defined for each gaussian component are called the **prior** of the mixture model.
-This just means if we draw a sample $\mathbf{x}$ from the mixture model, the probability of it belonging to the $k$-th component is $\pi_k$.
+The weights we have defined for each gaussian component are called the **prior**
+of the mixture model. This just means if we draw a sample $\mathbf{x}$ from the
+mixture model, the probability of it belonging to the $k$-th component is
+$\pi_k$.
 
-In our case above, we have defined the prior as $\boldsymbol{\pi} = \begin{bmatrix} 0.4, 0.4, 0.2 \end{bmatrix}$, which means if we draw a sample $\mathbf{x}$ from the mixture model, the probability of it belonging to the
-1st component is 0.4, the probability of it belonging to the 2nd component is 0.4, and the probability of it belonging to the 3rd component is 0.2.
+In our case above, we have defined the prior as
+$\boldsymbol{\pi} = \begin{bmatrix} 0.4, 0.4, 0.2 \end{bmatrix}$, which means if
+we draw a sample $\mathbf{x}$ from the mixture model, the probability of it
+belonging to the 1st component is 0.4, the probability of it belonging to the
+2nd component is 0.4, and the probability of it belonging to the 3rd component
+is 0.2.
 
-The prior is a latent variable, which means it is not observed in the dataset $\mathcal{S}$, but it is inferred from the dataset $\mathcal{S}$. This may sound magical, but it actually is just the number of data points in each
-component, divided by the total number of data points.
+The prior is a latent variable, which means it is not observed in the dataset
+$\mathcal{S}$, but it is inferred from the dataset $\mathcal{S}$. This may sound
+magical, but it actually is just the number of data points in each component,
+divided by the total number of data points.
 
-Recall our `samples` consist of 10000 data points with $3$ components. We defined the `prior = [0.4, 0.4, 0.2]`, which means the number of data points in each component is $4000$, $4000$, and $2000$ respectively.
-This variable is unobserved, because we really do not know what it is when we were handed the dataset $\mathcal{S}$.
+Recall our `samples` consist of 10000 data points with $3$ components. We
+defined the `prior = [0.4, 0.4, 0.2]`, which means the number of data points in
+each component is $4000$, $4000$, and $2000$ respectively. This variable is
+unobserved, because we really do not know what it is when we were handed the
+dataset $\mathcal{S}$.
 
 Let's see an example.
-
 
 ## Problem Formulation
 
@@ -590,7 +666,8 @@ $$
 \mathcal{S} = \left\{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}, \dots, \mathbf{x}^{(N)}\right\} \subset \mathbb{R}^{D}
 $$
 
-where the vector $\mathbf{x}^{(n)}$ is the $n$-th sample with $D$ number of features, given by:
+where the vector $\mathbf{x}^{(n)}$ is the $n$-th sample with $D$ number of
+features, given by:
 
 $$
 \mathbf{x}^{(n)} \in \mathbb{R}^{D} = \begin{bmatrix} x_1^{(n)} & x_2^{(n)} & \cdots & x_D^{(n)} \end{bmatrix}^{\mathrm{T}} \quad \text{where } n = 1, \ldots, N.
@@ -623,8 +700,13 @@ As we have seen from the examples earlier, it is desirable to quantify the degre
 
 Consequently, we can define for each data point $\mathbf{x}^{(n)} \in \mathcal{S}$, an associated cluster assignment vector $\widehat{\mathbf{y}}^{(n)}$ as follows:
 
+
 $$
-\widehat{\mathbf{y}}^{(n)} = \begin{bmatrix} \hat{y}_1^{(n)} & \hat{y}_2^{(n)} & \cdots & \hat{y}_K^{(n)} \end{bmatrix}^{\mathrm{T}} \quad \text{where } n = 1, \ldots, N.
+
+\widehat{\mathbf{y}}^{(n)} = \begin{bmatrix} \hat{y}\_1^{(n)} & \hat{y}\_2^{(n)}
+& \cdots & \hat{y}\_K^{(n)} \end{bmatrix}^{\mathrm{T}} \quad \text{where } n =
+1, \ldots, N.
+
 $$
 
 where $\hat{y}_k^{(n)}$ is the degree of belonging of the $n$-th data point $\mathbf{x}^{(n)}$ to the $k$-th cluster $C_k$. This is reminiscent of the your
@@ -633,10 +715,12 @@ usual classification problem, where we have a set of $K$ classes, and we want to
 In this case, we can think of $\widehat{\mathbf{y}}^{(n)}$ as the **posterior probability** of the $n$-th data point $\mathbf{x}^{(n)}$ belonging to the $k$-th cluster $C_k$,
 or with our current setup, the **posterior probability** of the $n$-th data point $\mathbf{x}^{(n)}$ given the cluster assignment $z^{(n)} = k$.
 
+
 $$
-\begin{aligned}
-\widehat{\mathbf{y}}^{(n)} &= \mathbb{P}\left(z^{(n)} = k \mid \mathbf{x}^{(n)}\right) \\
-\end{aligned}
+
+\begin{aligned} \widehat{\mathbf{y}}^{(n)} &= \mathbb{P}\left(z^{(n)} = k \mid
+\mathbf{x}^{(n)}\right) \\ \end{aligned}
+
 $$
 
 
@@ -645,10 +729,12 @@ $$
 
 Consider the following example:
 
+
 $$
-\begin{aligned}
-\widehat{\mathbf{y}}^{(1)} &= \begin{bmatrix} 0.1 & 0.7 & 0.2 \end{bmatrix}^{\mathrm{T}} \\
-\end{aligned}
+
+\begin{aligned} \widehat{\mathbf{y}}^{(1)} &= \begin{bmatrix} 0.1 & 0.7 & 0.2
+\end{bmatrix}^{\mathrm{T}} \\ \end{aligned}
+
 $$
 
 then it can be interpreted as the degree of belonging of the first data point $\mathbf{x}^{(1)}$ to each of the three clusters $C_1, C_2, C_3$ respectively.
@@ -668,12 +754,16 @@ A widely used soft clustering method is the [**Gaussian Mixture Model (GMM)**](h
 
 A Gaussian mixture model is a density model where we combine a finite number of $K$ Gaussian distributions $\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\right)$ so that
 
+
 $$
-\begin{aligned}
-& p(\boldsymbol{x} ; \boldsymbol{\theta})=\sum_{k=1}^K \pi_k \mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \mathbf{\Sigma}_k\right) && (\star) \\
-& 0 \leqslant \pi_k \leqslant 1, \quad \sum_{k=1}^K \pi_k=1, && (\star\star) \\
-\end{aligned}
-$$ (eq:gmm-def-1)
+
+\begin{aligned} & p(\boldsymbol{x} ; \boldsymbol{\theta})=\sum*{k=1}^K \pi_k
+\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}\_k,
+\mathbf{\Sigma}\_k\right) && (\star) \\ & 0 \leqslant \pi_k \leqslant 1, \quad
+\sum*{k=1}^K \pi_k=1, && (\star\star) \\ \end{aligned}
+
+$$
+(eq:gmm-def-1)
 
 where we defined $\boldsymbol{\theta}:=\left\{\boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k, \pi_k: k=1, \ldots, K\right\}$ as the collection of all parameters of the model. This convex combination of Gaussian distribution gives us significantly more flexibility for modeling complex densities than a simple Gaussian distribution (which we recover from $(\star \star)$ for $K=1$) {cite}`deisenroth_ong_faisal_2021`.
 
@@ -684,59 +774,91 @@ To elaborate further the setup defined in {eq}`eq:gmm-def-1`, we have:
 - The probability distribution above means that the (*joint*) probability of observing a data point $\boldsymbol{x}^{(n)}$ is the sum of the probability of observing $\boldsymbol{x}^{(n)}$ from each of the $K$ clusters, parametrized by the mean and covariance vector/matrix, weighted by the probability of the cluster assignment $z^{(n)} = k$, parameterized by $\pi_k$. This is a mouthful, we will break it down further in the sections below.
   Notation wise, we can write this as:
 
-    $$
+
+$$
+
     \mathbb{P}\left(\boldsymbol{X} ; \boldsymbol{\theta}\right) := \mathbb{P}_{\boldsymbol{\theta}}\left(\boldsymbol{X}\right) = \mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right\}}\left(\boldsymbol{X}\right)
     $$
 
-- The first constraint $(\star\star)$ ensures that the probability of observing a data point $\boldsymbol{x}^{(n)}$ from any of the $K$ clusters is $1$. This is a normalization constraint, and is necessary to ensure that the probability distribution is a valid probability distribution.
+-   The first constraint $(\star\star)$ ensures that the probability of
+    observing a data point $\boldsymbol{x}^{(n)}$ from any of the $K$ clusters
+    is $1$. This is a normalization constraint, and is necessary to ensure that
+    the probability distribution is a valid probability distribution.
 
-- The shape and dimensions for the parameters are given:
-    - $\boldsymbol{\pi}$ is a vector of mixing coefficients (prior weights):
+-   The shape and dimensions for the parameters are given:
 
-      $$
-      \boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_k \end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^K
-      $$
-    - $\boldsymbol{\mu}_k$ is a vector of means for the $k$-th cluster:
+    -   $\boldsymbol{\pi}$ is a vector of mixing coefficients (prior weights):
 
-      $$
-      \boldsymbol{\mu}_k = \begin{bmatrix} \mu_{k1} & \mu_{k2} & \cdots & \mu_{kD} \end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^D
-      $$
-    - $\boldsymbol{\Sigma}_k$ is a covariance matrix for the $k$-th cluster:
+        $$
+        \boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_k \end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^K
+        $$
 
-      $$
-      \boldsymbol{\Sigma}_k = \begin{bmatrix} \Sigma_{k11} & \Sigma_{k12} & \cdots & \Sigma_{k1D} \\ \Sigma_{k21} & \Sigma_{k22} & \cdots & \Sigma_{k2D} \\ \vdots & \vdots & \ddots & \vdots \\ \Sigma_{kD1} & \Sigma_{kD2} & \cdots & \Sigma_{kDD} \end{bmatrix} \in \mathbb{R}^{D \times D}
-      $$
+    -   $\boldsymbol{\mu}_k$ is a vector of means for the $k$-th cluster:
+
+        $$
+        \boldsymbol{\mu}_k = \begin{bmatrix} \mu_{k1} & \mu_{k2} & \cdots & \mu_{kD} \end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^D
+        $$
+
+    -   $\boldsymbol{\Sigma}_k$ is a covariance matrix for the $k$-th cluster:
+
+        $$
+        \boldsymbol{\Sigma}_k = \begin{bmatrix} \Sigma_{k11} & \Sigma_{k12} & \cdots & \Sigma_{k1D} \\ \Sigma_{k21} & \Sigma_{k22} & \cdots & \Sigma_{k2D} \\ \vdots & \vdots & \ddots & \vdots \\ \Sigma_{kD1} & \Sigma_{kD2} & \cdots & \Sigma_{kDD} \end{bmatrix} \in \mathbb{R}^{D \times D}
+        $$
 
 ### The Perpectives
 
-There are two interpretations of the Gaussian mixture model: the latent variable perspective and the data likelihood perspective.
+There are two interpretations of the Gaussian mixture model: the latent variable
+perspective and the data likelihood perspective.
 
 #### The Mixture Model Perspective
 
-Mixture model perspective: In this perspective, GMM is seen as a simple mixture of multiple Gaussian distributions. The goal is to model the probability density function (PDF) of the observed data as a weighted sum of the individual Gaussian PDFs. Each Gaussian component has its own mean and covariance matrix, and the model learns the weights, means, and covariances that best fit the data. This perspective focuses on the density estimation aspect of GMM and is less concerned with the underlying latent variables.
+Mixture model perspective: In this perspective, GMM is seen as a simple mixture
+of multiple Gaussian distributions. The goal is to model the probability density
+function (PDF) of the observed data as a weighted sum of the individual Gaussian
+PDFs. Each Gaussian component has its own mean and covariance matrix, and the
+model learns the weights, means, and covariances that best fit the data. This
+perspective focuses on the density estimation aspect of GMM and is less
+concerned with the underlying latent variables.
 
 #### The Latent Variable Perspective
 
-Latent variable perspective: In this perspective, GMM is viewed as a generative probabilistic model that assumes there are some hidden (latent) variables responsible for generating the observed data points. Each hidden variable corresponds to one of the Gaussian components in the mixture. The data points are assumed to be generated by first sampling the latent variable (component) from a categorical distribution and then sampling the data point from the corresponding Gaussian distribution. This perspective is closely related to the Expectation-Maximization (EM) algorithm, which alternates between estimating the component assignments (latent variables) and updating the Gaussian parameters (mean, covariance) to maximize the likelihood of the observed data.
+Latent variable perspective: In this perspective, GMM is viewed as a generative
+probabilistic model that assumes there are some hidden (latent) variables
+responsible for generating the observed data points. Each hidden variable
+corresponds to one of the Gaussian components in the mixture. The data points
+are assumed to be generated by first sampling the latent variable (component)
+from a categorical distribution and then sampling the data point from the
+corresponding Gaussian distribution. This perspective is closely related to the
+Expectation-Maximization (EM) algorithm, which alternates between estimating the
+component assignments (latent variables) and updating the Gaussian parameters
+(mean, covariance) to maximize the likelihood of the observed data.
 
 #### Summary
 
-Both perspectives ultimately lead to the same model, but they highlight different aspects of GMM and can be useful in different contexts. For example, the latent variable perspective is more suitable for clustering and classification tasks, while the mixture model perspective is more useful for density estimation and generating new samples from the modeled distribution.
+Both perspectives ultimately lead to the same model, but they highlight
+different aspects of GMM and can be useful in different contexts. For example,
+the latent variable perspective is more suitable for clustering and
+classification tasks, while the mixture model perspective is more useful for
+density estimation and generating new samples from the modeled distribution.
 
-In the next few sections, we will discuss the latent variable perspective, but note there
-may be some mix of the two perspectives in the following sections. For example,
-when we discuss about the posterior probability of the latent variables, we will
-also mention that it is the "responsibilities" in the mixture model perspective.
+In the next few sections, we will discuss the latent variable perspective, but
+note there may be some mix of the two perspectives in the following sections.
+For example, when we discuss about the posterior probability of the latent
+variables, we will also mention that it is the "responsibilities" in the mixture
+model perspective.
 
 ## The Mixture Model Perspective
 
-In [the previous section on](gmm-problem-formulation-gaussian-mixture-model),
-we have actually already defined the Mixture Model Perspective of the Gaussian
+In [the previous section on](gmm-problem-formulation-gaussian-mixture-model), we
+have actually already defined the Mixture Model Perspective of the Gaussian
 Mixture Model.
 
 ### The Gaussian Mixture Model
 
-To recap, a Gaussian mixture model is a density model where we combine a finite number of $K$ Gaussian distributions $\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\right)$ so that
+To recap, a Gaussian mixture model is a density model where we combine a finite
+number of $K$ Gaussian distributions
+$\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\right)$
+so that
 
 $$
 \begin{aligned}
@@ -755,12 +877,19 @@ Overall, the main goal is to find the 3 parameters of the mixture model that bes
 Another quantity that will play an important role is the conditional probability of $\boldsymbol{z}$ given $\boldsymbol{x}$. We shall denote this quantity as the responsibility of the $k$-th component for generating the data point $\boldsymbol{x}$, and denote it as
 $r^{(n)}_k$:
 
+
 $$
-\begin{aligned}
-r^{(n)}_k \equiv p\left(z^{(n)}=k \mid \boldsymbol{x}\right) & = \frac{p\left(\boldsymbol{x} \mid z^{(n)}=k\right) p\left(z^{(n)}=k\right)}{p\left(\boldsymbol{x}\right)} \\
-& =\frac{\pi_k \mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\right)}{\sum_{k=1}^K \pi_k \mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k\right)}
-\end{aligned}
-$$ (eq:gmm-responsibility)
+
+\begin{aligned} r^{(n)}_k \equiv p\left(z^{(n)}=k \mid \boldsymbol{x}\right) & =
+\frac{p\left(\boldsymbol{x} \mid z^{(n)}=k\right)
+p\left(z^{(n)}=k\right)}{p\left(\boldsymbol{x}\right)} \\ & =\frac{\pi_k
+\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}\_k,
+\boldsymbol{\Sigma}\_k\right)}{\sum_{k=1}^K \pi_k
+\mathcal{N}\left(\boldsymbol{x} \mid \boldsymbol{\mu}\_k,
+\boldsymbol{\Sigma}\_k\right)} \end{aligned}
+
+$$
+(eq:gmm-responsibility)
 
 Therefore, mixture components have a high responsibility for a data point when the data point could be a plausible sample from that mixture component.
 
@@ -769,19 +898,29 @@ Note that $\boldsymbol{r}^{(n)}$ is a $K$ dimensional vector:
 $$\boldsymbol{r}^{(n)} = \begin{bmatrix} r^{(n)}_1 \\ r^{(n)}_2 \\ \vdots \\ r^{(n)}_K \end{bmatrix} \in \mathbb{R}^K
 $$
 
-is a (normalized) probability vector, i.e., $\sum_{k} r^{(n)}_{k}=1$ with $r^{(n)}_{k} \geqslant 0$. This probability vector distributes probability mass among the $K$ mixture components, and we can think of $\boldsymbol{r}^{(n)}$ as a "soft assignment" of $\boldsymbol{x}^{(n)}$ to the $K$ mixture components. Therefore, the responsibility $r^{(n)}_{k}$ from {eq}`eq:gmm-responsibility` represents the probability that $\boldsymbol{x}^{(n)}$ has been generated by the $k$ th mixture component.
+is a (normalized) probability vector, i.e., $\sum_{k} r^{(n)}_{k}=1$ with
+$r^{(n)}_{k} \geqslant 0$. This probability vector distributes probability mass
+among the $K$ mixture components, and we can think of $\boldsymbol{r}^{(n)}$ as
+a "soft assignment" of $\boldsymbol{x}^{(n)}$ to the $K$ mixture components.
+Therefore, the responsibility $r^{(n)}_{k}$ from {eq}`eq:gmm-responsibility`
+represents the probability that $\boldsymbol{x}^{(n)}$ has been generated by the
+$k$ th mixture component.
 
 ## The Latent Variable Perspective
 
-Notice that if we approach the GMM from the latent variable perspective, we are more
-interested in the probability of the latent variable
-$\boldsymbol{z}^{(n)}$ given the data $\boldsymbol{x}^{(n)}$, as we will see later.
+Notice that if we approach the GMM from the latent variable perspective, we are
+more interested in the probability of the latent variable $\boldsymbol{z}^{(n)}$
+given the data $\boldsymbol{x}^{(n)}$, as we will see later.
 
 Within this model, we assume the following.
 
 ### The Generative Process
 
-Consider a mental model that there are $K$ gaussian distributions, each representing a cluster. The data point $\boldsymbol{x}^{(n)}$ is generated by first sampling the latent variable $\boldsymbol{z}^{(n)}$ from a categorical distribution and then sampling the data point $\boldsymbol{x}^{(n)}$ from the corresponding Gaussian distribution. This is the generative process of the GMM.
+Consider a mental model that there are $K$ gaussian distributions, each
+representing a cluster. The data point $\boldsymbol{x}^{(n)}$ is generated by
+first sampling the latent variable $\boldsymbol{z}^{(n)}$ from a categorical
+distribution and then sampling the data point $\boldsymbol{x}^{(n)}$ from the
+corresponding Gaussian distribution. This is the generative process of the GMM.
 
 More concretely, the sampling process can be described below.
 
@@ -799,22 +938,37 @@ In the first step, we select a mixture component $k$ at random according to $p(\
 
 This generative process prompts a few questions:
 
-- How do we define the categorical distribution $p(\boldsymbol{z})$ (i.e. the prior distribution of the latent variable $\boldsymbol{z}$)?
-- How do we define the Gaussian distribution $p\left(\boldsymbol{x} \mid z^{(n)}\right)$ (i.e. the conditional distribution of the data $\boldsymbol{x}$ given the latent variable $\boldsymbol{z}$, also known as the likelihood)?
-- How do we define the joint distribution $p\left(\boldsymbol{x}, \boldsymbol{z}\right)$ (i.e. the joint distribution of the data $\boldsymbol{x}$ and the latent variable $\boldsymbol{z}$)?
-- How do we define the marginal distribution $p\left(\boldsymbol{x}\right)$ (i.e. the marginal distribution of the data $\boldsymbol{x}$)?
-- How do we define the posterior distribution $p\left(\boldsymbol{z} \mid \boldsymbol{x}\right)$ (i.e. the posterior distribution of the latent variable $\boldsymbol{z}$ given the data $\boldsymbol{x}$)?
+-   How do we define the categorical distribution $p(\boldsymbol{z})$ (i.e. the
+    prior distribution of the latent variable $\boldsymbol{z}$)?
+-   How do we define the Gaussian distribution
+    $p\left(\boldsymbol{x} \mid z^{(n)}\right)$ (i.e. the conditional
+    distribution of the data $\boldsymbol{x}$ given the latent variable
+    $\boldsymbol{z}$, also known as the likelihood)?
+-   How do we define the joint distribution
+    $p\left(\boldsymbol{x}, \boldsymbol{z}\right)$ (i.e. the joint distribution
+    of the data $\boldsymbol{x}$ and the latent variable $\boldsymbol{z}$)?
+-   How do we define the marginal distribution $p\left(\boldsymbol{x}\right)$
+    (i.e. the marginal distribution of the data $\boldsymbol{x}$)?
+-   How do we define the posterior distribution
+    $p\left(\boldsymbol{z} \mid \boldsymbol{x}\right)$ (i.e. the posterior
+    distribution of the latent variable $\boldsymbol{z}$ given the data
+    $\boldsymbol{x}$)?
 
 ### Assumption 1: The Distribution of the Data Point $\boldsymbol{x}^{(n)}$ given the Latent Variable $\boldsymbol{z}^{(n)}$
 
-Consider a mental model that there are $K$ gaussian distributions, each representing a cluster $C_k$. The data point $\boldsymbol{x}^{(n)}$ is generated by first sampling the latent variable $\boldsymbol{z}^{(n)}$ from a categorical distribution and then sampling the data point $\boldsymbol{x}^{(n)}$ from the corresponding Gaussian distribution. This is the generative process of the GMM.
+Consider a mental model that there are $K$ gaussian distributions, each
+representing a cluster $C_k$. The data point $\boldsymbol{x}^{(n)}$ is generated
+by first sampling the latent variable $\boldsymbol{z}^{(n)}$ from a categorical
+distribution and then sampling the data point $\boldsymbol{x}^{(n)}$ from the
+corresponding Gaussian distribution. This is the generative process of the GMM.
 
 We first start by defining the $K$ clusters, each represented by a different
 (multivariate) gaussian distribution.
 
 #### The Latent Clusters
 
-Each cluster $C_k$ for $k=1, \ldots, K$ is represented by a multivariate gaussian distribution:
+Each cluster $C_k$ for $k=1, \ldots, K$ is represented by a multivariate
+gaussian distribution:
 
 $$
 \begin{aligned}
@@ -836,20 +990,27 @@ next.
 
 Any data point $\boldsymbol{x}$ can be generated by sampling from one of the $K$ clusters:
 
+
 $$
-\begin{aligned}
-\boldsymbol{x}^{(n)} \in C_k &\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{x}^{(n)} \in C_k &\sim \mathcal{N}(\boldsymbol{x} ;
+\boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k) \\ \end{aligned}
+
 $$
 
 which means the following:
 
+
 $$
-\begin{aligned}
-\boldsymbol{x}^{(n)} \in C_k &:= \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\
-&= \frac{1}{\sqrt{(2\pi)^D \det{\boldsymbol{\Sigma}_k}}} \exp\left(-\frac{1}{2}(\boldsymbol{x} - \boldsymbol{\mu}_k)^{\mathrm{T}} \boldsymbol{\Sigma}_k^{-1} (\boldsymbol{x} - \boldsymbol{\mu}_k)\right) \quad \text{for } k = 1, \ldots, K.
-\end{aligned}
-$$ (eq:cluster-def-gmm-3)
+
+\begin{aligned} \boldsymbol{x}^{(n)} \in C_k &:= \mathcal{N}(\boldsymbol{x} ;
+\boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k) \\ &= \frac{1}{\sqrt{(2\pi)^D
+\det{\boldsymbol{\Sigma}\_k}}} \exp\left(-\frac{1}{2}(\boldsymbol{x} -
+\boldsymbol{\mu}\_k)^{\mathrm{T}} \boldsymbol{\Sigma}\_k^{-1} (\boldsymbol{x} -
+\boldsymbol{\mu}\_k)\right) \quad \text{for } k = 1, \ldots, K. \end{aligned}
+
+$$
+(eq:cluster-def-gmm-3)
 
 where this distribution is parametrized by $\boldsymbol{\mu}_k$ is the mean vector of the $k$-th cluster, and $\boldsymbol{\Sigma}_k$ is the covariance matrix of the $k$-th cluster.
 
@@ -858,17 +1019,21 @@ This formulation further allows us to interpret a specific data point $\boldsymb
 We can represent the distribution defined in {eq}`eq:cluster-def-gmm-3`
 more concisely as:
 
+
 $$
-\begin{aligned}
-\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = k &\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
-\begin{cases}
-\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = 1 &\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) \\
-\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = 2 &\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) \\
-&\vdots \\
-\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = K &\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \\
-\end{cases}
-\end{aligned}
-$$ (eq:cluster-def-gmm-4)
+
+\begin{aligned} \boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = k
+&\sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k)
+\begin{cases} \boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = 1 &\sim
+\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}\_1, \boldsymbol{\Sigma}\_1) \\
+\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = 2 &\sim
+\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}\_2, \boldsymbol{\Sigma}\_2) \\
+&\vdots \\ \boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = K &\sim
+\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}\_K, \boldsymbol{\Sigma}\_K) \\
+\end{cases} \end{aligned}
+
+$$
+(eq:cluster-def-gmm-4)
 
 Notice the similarity between the expression {eq}`eq:cluster-def-gmm-4` and the likelihood
 expression in a Naive Bayes model? Yes, indeed this expression is none other than the
@@ -880,35 +1045,48 @@ likelihood of observing the data point $\boldsymbol{x}^{(n)}$ given the latent v
 - Let $z^{(n)}$ denote the latent variable corresponding to the $n$-th data point, representing the Gaussian component it belongs to. $z^{(n)}$ can take on values $1, \dots, K$, where $K$ is the number of Gaussian components.
 - The likelihood of the $n$-th data point belonging to the $k$-th Gaussian component can be denoted as
 
-  $$
-  p(x^{(n)} | z^{(n)} = k ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \quad \text{for } k = 1, \dots, K
-  $$
+
+$$
+
+p(x^{(n)} | z^{(n)} = k ; \boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k) \quad
+\text{for } k = 1, \dots, K
+
+$$
 
 - Since each $p(x^{(n)} | z^{(n)} = k)$ is parametrized by the mean and covariance vector/matrix, we can write the below without ambiguity:
 
-    $$
+
+$$
+
     p(x^{(n)} | z^{(n)} = k) = \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)
     $$
 
     where $\mathcal{N}$ is the multivariate Gaussian distribution.
 
-  Consequently, we obtain all $K$ components of the likelihood vector:
+Consequently, we obtain all $K$ components of the likelihood vector:
 
-  $$
-  \begin{aligned}
-  \boldsymbol{L}^{(n)} &= \begin{bmatrix} p(x^{(n)} | z^{(n)} = 1) \\ p(x^{(n)} | z^{(n)} = 2) \\ \vdots \\ p(x^{(n)} | z^{(n)} = K) \end{bmatrix}_{K \times 1} \\
-  &= \begin{bmatrix} \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) \\ \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) \\ \vdots \\ \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \end{bmatrix}_{K \times 1} \\
-  &= \begin{bmatrix} L_1^{(n)} \\ L_2^{(n)} \\ \vdots \\ L_K^{(n)} \end{bmatrix}_{K \times 1}
-  \end{aligned}
-  $$
+$$
+\begin{aligned}
+\boldsymbol{L}^{(n)} &= \begin{bmatrix} p(x^{(n)} | z^{(n)} = 1) \\ p(x^{(n)} | z^{(n)} = 2) \\ \vdots \\ p(x^{(n)} | z^{(n)} = K) \end{bmatrix}_{K \times 1} \\
+&= \begin{bmatrix} \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) \\ \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) \\ \vdots \\ \mathcal{N}(x^{(n)} | \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \end{bmatrix}_{K \times 1} \\
+&= \begin{bmatrix} L_1^{(n)} \\ L_2^{(n)} \\ \vdots \\ L_K^{(n)} \end{bmatrix}_{K \times 1}
+\end{aligned}
+$$
 
-  and all elements sum to 1, fully representing the likelihood of the $n$-th data point belonging to each of the $K$ Gaussian components.
+and all elements sum to 1, fully representing the likelihood of the $n$-th data
+point belonging to each of the $K$ Gaussian components.
 
 #### The Likelihood of the Entire Dataset $\boldsymbol{X}$
 
-We are only talking about the likelihood of a single data point $\boldsymbol{x}^{(n)}$ belonging to a specific cluster $C_k$ ($z^{(n)} = k$). We will now discuss how to compute the likelihood of the entire dataset $\boldsymbol{X}$ belonging to a specific cluster $C_k$.
+We are only talking about the likelihood of a single data point
+$\boldsymbol{x}^{(n)}$ belonging to a specific cluster $C_k$ ($z^{(n)} = k$). We
+will now discuss how to compute the likelihood of the entire dataset
+$\boldsymbol{X}$ belonging to a specific cluster $C_k$.
 
-Given $\mathcal{S} = \left\{ \boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \ldots, \boldsymbol{x}^{(N)} \right\}$, the likelihood of the entire dataset $\boldsymbol{X}$ belonging to a specific cluster $C_k$ can be written as:
+Given
+$\mathcal{S} = \left\{ \boldsymbol{x}^{(1)}, \boldsymbol{x}^{(2)}, \ldots, \boldsymbol{x}^{(N)} \right\}$,
+the likelihood of the entire dataset $\boldsymbol{X}$ belonging to a specific
+cluster $C_k$ can be written as:
 
 $$
 \begin{aligned}
@@ -920,26 +1098,43 @@ $$
 
 ### Assumption 2: The Latent Variable $\boldsymbol{z}$
 
-We have discussed about the likelihood of a single data point $\boldsymbol{x}^{(n)}$ belonging to a specific cluster $C_k$ ($z^{(n)} = k$). The next logical question is to ask: what is the probability distribution of $\boldsymbol{z}$?
+We have discussed about the likelihood of a single data point
+$\boldsymbol{x}^{(n)}$ belonging to a specific cluster $C_k$ ($z^{(n)} = k$).
+The next logical question is to ask: what is the probability distribution of
+$\boldsymbol{z}$?
 
-Similar to the feature vectors $\boldsymbol{x}^{(n)}$, the cluster assignment $z^{(n)}$ can also be
-interpreted as realization drawn from a **latent** discrete random variable $Z$.
+Similar to the feature vectors $\boldsymbol{x}^{(n)}$, the cluster assignment
+$z^{(n)}$ can also be interpreted as realization drawn from a **latent**
+discrete random variable $Z$.
 
 #### The Prior Distribution of $\boldsymbol{z}$
 
-In contrast to the feature vectors $\boldsymbol{x}^{(n)}$, we do not observe (know) the true cluster indices $z^{(n)}$. After all, the goal of soft clustering is to estimate the cluster indices $z^{(n)}$. We obtain a soft clustering
-method by estimating the cluster indices $z^{(n)}$ based solely on the data points in $\mathcal{S}$. To compute these estimates we assume that the (true) cluster indices $z^{(n)}$ are realizations of iid RVs with the common probability distribution (or probability mass function):
+In contrast to the feature vectors $\boldsymbol{x}^{(n)}$, we do not observe
+(know) the true cluster indices $z^{(n)}$. After all, the goal of soft
+clustering is to estimate the cluster indices $z^{(n)}$. We obtain a soft
+clustering method by estimating the cluster indices $z^{(n)}$ based solely on
+the data points in $\mathcal{S}$. To compute these estimates we assume that the
+(true) cluster indices $z^{(n)}$ are realizations of iid RVs with the common
+probability distribution (or probability mass function):
 
 $$
 \pi_k := \mathbb{P}\left(Z^{(n)} = k ; \boldsymbol{\pi}\right) \quad \text{for } k = 1, \ldots, K.
 $$
 
-where $\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \ldots & \pi_K \end{bmatrix}^{\mathrm{T}}$ is a $K$-dimensional vector of probabilities. It is also common to denote the prior distribution as a one-hot vector.
+where
+$\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \ldots & \pi_K \end{bmatrix}^{\mathrm{T}}$
+is a $K$-dimensional vector of probabilities. It is also common to denote the
+prior distribution as a one-hot vector.
 
-As mentioned in the previous step, one will soon realize that this is the **prior** in a Bayes model.
-With this, we have answered the question of what the probability distribution of $Z$ is.
+As mentioned in the previous step, one will soon realize that this is the
+**prior** in a Bayes model. With this, we have answered the question of what the
+probability distribution of $Z$ is.
 
-The (prior) probabilities are either assumed known or estimated from data. The choice for the probabilities $\pi_k$ could reflect some prior knowledge about different sizes of the clusters. For example, if cluster $C_1$ is known to be larger than cluster $C_2$, we might choose the prior probabilities such that $\pi_1 > \pi_2$ {cite}`jung_2023`.
+The (prior) probabilities are either assumed known or estimated from data. The
+choice for the probabilities $\pi_k$ could reflect some prior knowledge about
+different sizes of the clusters. For example, if cluster $C_1$ is known to be
+larger than cluster $C_2$, we might choose the prior probabilities such that
+$\pi_1 > \pi_2$ {cite}`jung_2023`.
 
 #### The Categorical Distribution
 
@@ -964,7 +1159,11 @@ $$
 where $I\{Z = k\}$ is the indicator function that is equal to 1 if $Z = k$ and 0 otherwise.
 ```
 
-More often, we use the [one-hot encoding](https://en.wikipedia.org/wiki/One-hot) to represent the categorical distribution. The one-hot encoding is a vector of size $K$ where all elements are 0 except for the $k$-th element which is 1. For example, if $K = 3$, the one-hot encoding of $k = 2$ is $\mathbf{y} = \begin{bmatrix} 0 & 1 & 0 \end{bmatrix}^{\mathrm{T}}$.
+More often, we use the [one-hot encoding](https://en.wikipedia.org/wiki/One-hot)
+to represent the categorical distribution. The one-hot encoding is a vector of
+size $K$ where all elements are 0 except for the $k$-th element which is 1. For
+example, if $K = 3$, the one-hot encoding of $k = 2$ is
+$\mathbf{y} = \begin{bmatrix} 0 & 1 & 0 \end{bmatrix}^{\mathrm{T}}$.
 
 ```{prf:definition} Categorical (Multinomial) Distribution
 :label: categorical-multinomial-distribution-gmm
@@ -992,28 +1191,38 @@ the [likelihood function](https://en.wikipedia.org/wiki/Likelihood_function) in 
 
 #### Prior Distribution of the Entire Dataset $\mathcal{S}$
 
-The prior distribution $\boldsymbol{\pi}$ is shared by all the data points in $\mathcal{S}$.
+The prior distribution $\boldsymbol{\pi}$ is shared by all the data points in
+$\mathcal{S}$.
 
-- Let $z^{(n)}$ denote the latent variable corresponding to the $n$-th data point, representing the Gaussian component it belongs to. $z^{(n)}$ can take on values $1, \dots, K$, where $K$ is the number of Gaussian components.
-- The prior probability of the $k$-th Gaussian component can be denoted as $P(Z^{(n)} = k)$, for $k = 1, \dots, K$.
-- These probabilities can be represented as a vector
+-   Let $z^{(n)}$ denote the latent variable corresponding to the $n$-th data
+    point, representing the Gaussian component it belongs to. $z^{(n)}$ can take
+    on values $1, \dots, K$, where $K$ is the number of Gaussian components.
+-   The prior probability of the $k$-th Gaussian component can be denoted as
+    $P(Z^{(n)} = k)$, for $k = 1, \dots, K$.
+-   These probabilities can be represented as a vector
 
     $$
     \boldsymbol{\pi} = \begin{bmatrix} p(z^{(n)} = 1) \\ p(z^{(n)} = 2) \\ \vdots \\ p(z^{(n)} = K) \end{bmatrix}_{K \times 1} = \begin{bmatrix} \pi_1 \\ \pi_2 \\ \vdots \\ \pi_K \end{bmatrix}_{K \times 1}
     $$
 
-- The sum of all prior probabilities should be equal to 1, as they represent probabilities: $\sum_{k=1}^K p(z^{(n)} = k) = 1$.
+-   The sum of all prior probabilities should be equal to 1, as they represent
+    probabilities: $\sum_{k=1}^K p(z^{(n)} = k) = 1$.
 
+In the context of GMM, the prior probabilities can be interpreted as the
+probability that a randomly chosen sample belongs to the $k$-th Gaussian
+component.
 
-In the context of GMM, the prior probabilities can be interpreted as the probability that a randomly chosen sample belongs to the $k$-th Gaussian component.
-
-Note that this prior is a global one shared across all data points. In other words, the prior probability of a data point belonging to a Gaussian component is the same as the prior probability of any other data point belonging to the same Gaussian component.
+Note that this prior is a global one shared across all data points. In other
+words, the prior probability of a data point belonging to a Gaussian component
+is the same as the prior probability of any other data point belonging to the
+same Gaussian component.
 
 ### Assumption 3: The Joint Distribution of $\boldsymbol{x}^{(n)}$ and $\boldsymbol{z}^{(n)}$
 
-So far, what have we gotten? We have defined two distributions, one is the likelihood of
-observation $\boldsymbol{x}^{(n)}$ given the cluster assignment $z^{(n)}$ and the other is the prior
-distribution of the cluster assignment $z^{(n)}$.
+So far, what have we gotten? We have defined two distributions, one is the
+likelihood of observation $\boldsymbol{x}^{(n)}$ given the cluster assignment
+$z^{(n)}$ and the other is the prior distribution of the cluster assignment
+$z^{(n)}$.
 
 $$
 \begin{aligned}
@@ -1022,9 +1231,9 @@ z^{(n)}=k &\sim \text{Cat}(\boldsymbol{\pi}) && \text{for } k = 1, \ldots, K.
 \end{aligned}
 $$
 
-Now, recall that when the likelihood and prior are
-multiplied together, we obtain the **joint distribution** of the data and the cluster assignment,
-as follows:
+Now, recall that when the likelihood and prior are multiplied together, we
+obtain the **joint distribution** of the data and the cluster assignment, as
+follows:
 
 $$
 \begin{aligned}
@@ -1040,12 +1249,19 @@ $$
 
 where
 
-- $\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = k \sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) $ is the probability distribution of the data points $\boldsymbol{x}^{(n)}$ given the cluster assignment $z^{(n)}=k$. This is also known as the mixture component.
-- $Z = k \sim \text{Cat}(\boldsymbol{\pi})$ is the probability distribution of the cluster assignment $z^{(n)}=k$, also known as the mixing coefficient $\pi_k$.
+-   $\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = k \sim \mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) $ is the probability distribution of the data points $\boldsymbol{x}^{(n)}$
+    given the cluster assignment $z^{(n)}=k$. This is also known as the mixture
+    component.
+-   $Z = k \sim \text{Cat}(\boldsymbol{\pi})$ is the probability distribution of
+    the cluster assignment $z^{(n)}=k$, also known as the mixing coefficient
+    $\pi_k$.
 
 #### Why is the Joint Distribution the Product of the Likelihood and Prior?
 
-One question that might come to mind is why the joint distribution is the product of the likelihood and prior. The answer is that the joint distribution is the product of the likelihood and prior because of the [chain rule](https://en.wikipedia.org/wiki/Chain_rule_(probability)).
+One question that might come to mind is why the joint distribution is the
+product of the likelihood and prior. The answer is that the joint distribution
+is the product of the likelihood and prior because of the
+[chain rule](<https://en.wikipedia.org/wiki/Chain_rule_(probability)>).
 
 Let's just state the base case to see why.
 
@@ -1061,15 +1277,24 @@ $$
 P(x^{(n)} | z^{(n)} = k) = \frac{P(x^{(n)}, z^{(n)} = k)}{P(z^{(n)} = k)} \implies P(x^{(n)} ,z^{(n)} = k) = P(x^{(n)} | z^{(n)} = k) P(z^{(n)} = k)
 $$
 
-and $\cap$ is the intersection symbol, so we have the joint probability of the data point $x^{(n)}$ and the latent label $z^{(n)} = k$.
+and $\cap$ is the intersection symbol, so we have the joint probability of the
+data point $x^{(n)}$ and the latent label $z^{(n)} = k$.
 
 #### Weighted Likelihood
 
-Recall that we defined the prior, $\boldsymbol{\pi}$, as the probability of a data point belonging to a Gaussian component, and the likelihood as the probability of a data point given the Gaussian component it belongs to, $\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$.
+Recall that we defined the prior, $\boldsymbol{\pi}$, as the probability of a
+data point belonging to a Gaussian component, and the likelihood as the
+probability of a data point given the Gaussian component it belongs to,
+$\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)$.
 
-Then we have just seen that the joint distribution of the data and the cluster assignment is the product of the prior and the likelihood. This is also known as the **weighted likelihood**.
+Then we have just seen that the joint distribution of the data and the cluster
+assignment is the product of the prior and the likelihood. This is also known as
+the **weighted likelihood**.
 
-The weighted likelihood is the joint probability of the data point $x^{(n)}$ and the latent label $z^{(n)} = k$. Basically it answers the question: "What is the probability of observing the data point $x^{(n)}$ and the latent label $z^{(n)} = k$?"
+The weighted likelihood is the joint probability of the data point $x^{(n)}$ and
+the latent label $z^{(n)} = k$. Basically it answers the question: "What is the
+probability of observing the data point $x^{(n)}$ and the latent label
+$z^{(n)} = k$?"
 
 To see why, first consider how we define the **weighted likelihood**:
 
@@ -1077,15 +1302,29 @@ $$
 P(x^{(n)}, z^{(n)} = k) = P(x^{(n)} | z^{(n)} = k) P(z^{(n)} = k)
 $$
 
-where $P(x^{(n)} | z^{(n)} = k)$ is the likelihood of the $n$-th data point belonging to the $k$-th Gaussian component, and $P(z^{(n)} = k)$ is the prior probability of the $k$-th Gaussian component.
+where $P(x^{(n)} | z^{(n)} = k)$ is the likelihood of the $n$-th data point
+belonging to the $k$-th Gaussian component, and $P(z^{(n)} = k)$ is the prior
+probability of the $k$-th Gaussian component.
 
-First, some intuition, it is called weighted because the likelihood is weighted by the prior probability of the latent label $z^{(n)} = k$. In other words, if we have likelihoods $P(x^{(n)} | z^{(n)} = 2)$ for $k=2$
-to be say $0.2$ and the prior probability of $z^{(n)} = 2$ to be $0.9$, then the weighted likelihood is $0.2 \times 0.9 = 0.18$ because we have super high confidence that the data point $x^{(n)}$ belongs to the $k=2$ Gaussian component. However, if the prior probability of $z^{(n)} = 2$ is $0.1$, then the weighted likelihood is $0.2 \times 0.1 = 0.02$ because we have low confidence that the data point $x^{(n)}$ belongs to the $k=2$ Gaussian component so the "likelihood" got weighed down by the low prior probability.
-
+First, some intuition, it is called weighted because the likelihood is weighted
+by the prior probability of the latent label $z^{(n)} = k$. In other words, if
+we have likelihoods $P(x^{(n)} | z^{(n)} = 2)$ for $k=2$ to be say $0.2$ and the
+prior probability of $z^{(n)} = 2$ to be $0.9$, then the weighted likelihood is
+$0.2 \times 0.9 = 0.18$ because we have super high confidence that the data
+point $x^{(n)}$ belongs to the $k=2$ Gaussian component. However, if the prior
+probability of $z^{(n)} = 2$ is $0.1$, then the weighted likelihood is
+$0.2 \times 0.1 = 0.02$ because we have low confidence that the data point
+$x^{(n)}$ belongs to the $k=2$ Gaussian component so the "likelihood" got
+weighed down by the low prior probability.
 
 #### Weighted Likelihood of One Single Data Point $\boldsymbol{x}^{(n)}$
 
-The weighted likelihood of a single data point $\boldsymbol{x}^{(n)}$ is obtained by multiplying the likelihood of the data point belonging to each Gaussian component by the corresponding mixing coefficient (weight) of that component. Let $\boldsymbol{\pi}$ be the vector of mixing coefficients, with $\pi_k$ representing the weight of the $k$-th Gaussian component. Then, the weighted likelihood of the data point $\boldsymbol{x}^{(n)}$ can be written as:
+The weighted likelihood of a single data point $\boldsymbol{x}^{(n)}$ is
+obtained by multiplying the likelihood of the data point belonging to each
+Gaussian component by the corresponding mixing coefficient (weight) of that
+component. Let $\boldsymbol{\pi}$ be the vector of mixing coefficients, with
+$\pi_k$ representing the weight of the $k$-th Gaussian component. Then, the
+weighted likelihood of the data point $\boldsymbol{x}^{(n)}$ can be written as:
 
 $$
 \begin{aligned}
@@ -1095,11 +1334,19 @@ $$
 \end{aligned}
 $$
 
-Here, $\boldsymbol{W}^{(n)}$ is the vector of weighted likelihoods of the data point $\boldsymbol{x}^{(n)}$ belonging to each of the $K$ Gaussian components, and $W_k^{(n)}$ represents the weighted likelihood of the data point $\boldsymbol{x}^{(n)}$ belonging to the $k$-th Gaussian component.
+Here, $\boldsymbol{W}^{(n)}$ is the vector of weighted likelihoods of the data
+point $\boldsymbol{x}^{(n)}$ belonging to each of the $K$ Gaussian components,
+and $W_k^{(n)}$ represents the weighted likelihood of the data point
+$\boldsymbol{x}^{(n)}$ belonging to the $k$-th Gaussian component.
 
 #### Weighted Likelihood of the Entire Dataset $\boldsymbol{X}$
 
-To compute the weighted likelihood of the entire dataset $\boldsymbol{X}$, we need to calculate the weighted likelihood for each data point $\boldsymbol{x}^{(n)}$ and then combine them. For this purpose, we can represent the weighted likelihood of the entire dataset as a matrix $\boldsymbol{W}$ of size $N \times K$, where $N$ is the number of data points and $K$ is the number of Gaussian components:
+To compute the weighted likelihood of the entire dataset $\boldsymbol{X}$, we
+need to calculate the weighted likelihood for each data point
+$\boldsymbol{x}^{(n)}$ and then combine them. For this purpose, we can represent
+the weighted likelihood of the entire dataset as a matrix $\boldsymbol{W}$ of
+size $N \times K$, where $N$ is the number of data points and $K$ is the number
+of Gaussian components:
 
 $$
 \boldsymbol{W} = \begin{bmatrix}
@@ -1110,10 +1357,16 @@ W_1^{(N)} & W_2^{(N)} & \cdots & W_K^{(N)}
 \end{bmatrix}_{N \times K}
 $$
 
-Each row of the matrix $\boldsymbol{W}$ corresponds to the weighted likelihood vector $\boldsymbol{W}^{(n)}$ for a data point $\boldsymbol{x}^{(n)}$. To obtain the weighted likelihood of the entire dataset, we can either sum or compute the product of all elements in the matrix $\boldsymbol{W}$, depending on the desired objective (e.g., maximizing the log-likelihood).
+Each row of the matrix $\boldsymbol{W}$ corresponds to the weighted likelihood
+vector $\boldsymbol{W}^{(n)}$ for a data point $\boldsymbol{x}^{(n)}$. To obtain
+the weighted likelihood of the entire dataset, we can either sum or compute the
+product of all elements in the matrix $\boldsymbol{W}$, depending on the desired
+objective (e.g., maximizing the log-likelihood).
 
-
-Now the returned is a matrix of shape $(N, K)$, where $N$ is the number of data points and $K$ is the number of Gaussian components. The $n$-th row and $k$-th column element is the weighted likelihood of the $n$-th data point belonging to the $k$-th Gaussian component.
+Now the returned is a matrix of shape $(N, K)$, where $N$ is the number of data
+points and $K$ is the number of Gaussian components. The $n$-th row and $k$-th
+column element is the weighted likelihood of the $n$-th data point belonging to
+the $k$-th Gaussian component.
 
 $$
 \begin{aligned}
@@ -1123,22 +1376,29 @@ $$
 \end{aligned}
 $$
 
-In code, we need to separate the weighted likelihood matrix $\boldsymbol{W}$ into two matrices,
-as follows:
+In code, we need to separate the weighted likelihood matrix $\boldsymbol{W}$
+into two matrices, as follows:
 
-1. Mixing coefficients matrix, $\boldsymbol{\Pi}$, of shape $(N \times K)$, where each row contains the mixing coefficients $\boldsymbol{\pi}$ repeated for each data point:
+1. Mixing coefficients matrix, $\boldsymbol{\Pi}$, of shape $(N \times K)$,
+   where each row contains the mixing coefficients $\boldsymbol{\pi}$ repeated
+   for each data point:
 
 $$
 \boldsymbol{\Pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_K \\ \pi_1 & \pi_2 & \cdots & \pi_K \\ \vdots & \vdots & \ddots & \vdots \\ \pi_1 & \pi_2 & \cdots & \pi_K \end{bmatrix}_{N \times K}
 $$
 
-2. Likelihood matrix, $\boldsymbol{L}$, of shape $(N \times K)$, where each element $(i, j)$ represents the likelihood of the $i$-th data point belonging to the $j$-th Gaussian component:
+2. Likelihood matrix, $\boldsymbol{L}$, of shape $(N \times K)$, where each
+   element $(i, j)$ represents the likelihood of the $i$-th data point belonging
+   to the $j$-th Gaussian component:
 
 $$
 \boldsymbol{L} = \begin{bmatrix} \mathcal{N}(x^{(1)} | \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) & \mathcal{N}(x^{(1)} | \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) & \cdots & \mathcal{N}(x^{(1)} | \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \\ \mathcal{N}(x^{(2)} | \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) & \mathcal{N}(x^{(2)} | \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) & \cdots & \mathcal{N}(x^{(2)} | \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \\ \vdots & \vdots & \ddots & \vdots \\ \mathcal{N}(x^{(N)} | \boldsymbol{\mu}_1, \boldsymbol{\Sigma}_1) & \mathcal{N}(x^{(N)} | \boldsymbol{\mu}_2, \boldsymbol{\Sigma}_2) & \cdots & \mathcal{N}(x^{(N)} | \boldsymbol{\mu}_K, \boldsymbol{\Sigma}_K) \end{bmatrix}_{N \times K}
 $$
 
-Now, you can obtain the weighted likelihood matrix $\boldsymbol{W}$ by performing element-wise multiplication (Hadamard product) of the mixing coefficients matrix $\boldsymbol{\Pi}$ and the likelihood matrix $\boldsymbol{L}$:
+Now, you can obtain the weighted likelihood matrix $\boldsymbol{W}$ by
+performing element-wise multiplication (Hadamard product) of the mixing
+coefficients matrix $\boldsymbol{\Pi}$ and the likelihood matrix
+$\boldsymbol{L}$:
 
 $$
 \boldsymbol{W} = \boldsymbol{\Pi} \odot \boldsymbol{L}
@@ -1146,36 +1406,47 @@ $$
 
 ### Joint Distribution Fully Determines the Model
 
-With the joint distribution defined, the model is fully determined. Why do we say so?
-Because the joint distribution of the data point $\boldsymbol{x}^{(n)}$ and the latent variable $z^{(n)}$ is fully determined by the parameters $\boldsymbol{\theta}$, which are the model parameters.
+With the joint distribution defined, the model is fully determined. Why do we
+say so? Because the joint distribution of the data point $\boldsymbol{x}^{(n)}$
+and the latent variable $z^{(n)}$ is fully determined by the parameters
+$\boldsymbol{\theta}$, which are the model parameters.
 
-Consequently, if we want to find the marginal, we need to integrate out the latent variable $z^{(n)}$ from the joint distribution. Then subsequently, we can also find the posterior distribution of the latent variable $z^{(n)}$ by using Bayes' rule. Therefore, when we say the joint distribution fully determines
-the model, what is really means is that we have all the necessary tools to find anything related
-to the random variables $z^{(n)}$ and $\boldsymbol{x}^{(n)}$.
+Consequently, if we want to find the marginal, we need to integrate out the
+latent variable $z^{(n)}$ from the joint distribution. Then subsequently, we can
+also find the posterior distribution of the latent variable $z^{(n)}$ by using
+Bayes' rule. Therefore, when we say the joint distribution fully determines the
+model, what is really means is that we have all the necessary tools to find
+anything related to the random variables $z^{(n)}$ and $\boldsymbol{x}^{(n)}$.
 
 ### The Gaussian Mixture Model and the Marginal Distribution
 
 #### The Gaussian Mixture Model
 
-Recall that we defined our Gaussian Mixture Model as a linear combination of $K$ multivariate Gaussian distributions:
+Recall that we defined our Gaussian Mixture Model as a linear combination of $K$
+multivariate Gaussian distributions:
 
 $$
 \overbrace{\mathbb{P}\left(\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right)}^{\text{marginal distribution}} = \sum_{k=1}^K \overbrace{\mathbb{P}\left(Z^{(n)} = k ; \boldsymbol{\pi}\right)}^{\text{prior}=\text{Cat}(\boldsymbol{\pi})}\overbrace{\mathbb{P}\left(\boldsymbol{X}^{(n)} = \boldsymbol{x}^{(n)} \mid Z^{(n)} = k ; \boldsymbol{\mu}, \boldsymbol{\Sigma}\right)}^{\text{likelihood}=\mathcal{N}(\boldsymbol{x} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}
 $$
 
-We now claim that the mixture of $K$ multivariate Gaussian distributions is a valid distribution,
-and it is none other than the marginal distribution of $\boldsymbol{X}^{(n)}$.
+We now claim that the mixture of $K$ multivariate Gaussian distributions is a
+valid distribution, and it is none other than the marginal distribution of
+$\boldsymbol{X}^{(n)}$.
 
 #### The Marginal Distribution
 
-We go back to fundamentals and ask what is the marginal distribution of a random variable $X$?
+We go back to fundamentals and ask what is the marginal distribution of a random
+variable $X$?
 
 In our setting, it is the probability of the data point $x^{(n)}$. Basically it
-answers the question: "What is the probability of observing the data point $x^{(n)}$?"
+answers the question: "What is the probability of observing the data point
+$x^{(n)}$?"
 
-Since $\boldsymbol{x}^{(n)}$ is a $D$-dimensional vector, we can think of it as a point in a $D$-dimensional space. The marginal distribution is the probability of observing this point in this space.
-Since it is in high dimensions usually, $\boldsymbol{x}^{(n)}$ is usually a point in a high-dimensional space,
-and hence follow a multi-variate distribution.
+Since $\boldsymbol{x}^{(n)}$ is a $D$-dimensional vector, we can think of it as
+a point in a $D$-dimensional space. The marginal distribution is the probability
+of observing this point in this space. Since it is in high dimensions usually,
+$\boldsymbol{x}^{(n)}$ is usually a point in a high-dimensional space, and hence
+follow a multi-variate distribution.
 
 The **marginal distribution** of the data points $\mathbf{x}^{(n)}$:
 
@@ -1194,10 +1465,12 @@ One question is how do we get this marginal distribution? We can get it by margi
 
 Recall marginal distribution is none other than the denominator of the posterior distribution in Bayes' rule:
 
+
 $$
-\begin{aligned}
-\mathbb{P}(Y \mid X) = \frac{\mathbb{P}(X \mid Y) \mathbb{P}(Y)}{\mathbb{P}(X)}.
-\end{aligned}
+
+\begin{aligned} \mathbb{P}(Y \mid X) = \frac{\mathbb{P}(X \mid Y)
+\mathbb{P}(Y)}{\mathbb{P}(X)}. \end{aligned}
+
 $$
 
 and the denominator is called the marginal distribution. The expansion of the denominator
@@ -1224,28 +1497,52 @@ as we can make use of the **expectation-maximization (EM) algorithm** to solve t
 
 The marginal of a single data point $\boldsymbol{x}^{(n)}$ is obtained by summing the weighted likelihoods of the data point belonging to each Gaussian component. Mathematically, it can be written as:
 
+
 $$
-\boldsymbol{M}^{(n)} = \begin{bmatrix} p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right) \end{bmatrix} = \begin{bmatrix} \sum_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(n)} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \end{bmatrix}
+
+\boldsymbol{M}^{(n)} = \begin{bmatrix} p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right) \end{bmatrix} =
+\begin{bmatrix} \sum\_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k) \end{bmatrix}
+
 $$
 
 #### Marginal of the Entire Dataset $\boldsymbol{X}$
 
 The marginal of the entire dataset $\boldsymbol{X}$ is collated as follows:
 
+
 $$
-\boldsymbol{M} = \begin{bmatrix} \boldsymbol{M}^{(1)} \\ \vdots \\ \boldsymbol{M}^{(N)} \end{bmatrix} = \begin{bmatrix} \sum_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(1)} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \\ \vdots \\ \sum_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(N)} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k) \end{bmatrix}
+
+\boldsymbol{M} = \begin{bmatrix} \boldsymbol{M}^{(1)} \\ \vdots \\
+\boldsymbol{M}^{(N)} \end{bmatrix} = \begin{bmatrix} \sum*{k=1}^K \pi_k
+\mathcal{N}(\boldsymbol{x}^{(1)} ; \boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k)
+\\ \vdots \\ \sum*{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(N)} ;
+\boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k) \end{bmatrix}
+
 $$
 
 ### The Posterior Distribution
 
 Now we can answer the posterior distribution of the cluster assignment $z^{(n)}$ given the data points $\mathbf{x}^{(n)}$.
 
+
 $$
-\begin{aligned}
-\overbrace{p\left(z^{(n)}=k \mid \mathbf{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right)}^{\text {posterior }} &= \frac{\overbrace{p\left(z^{(n)}=k ; \boldsymbol{\pi}\right)}^{\text {prior }} \cdot \overbrace{p\left(\mathbf{x}^{(n)} \mid z^{(n)}=k ; \boldsymbol{\mu}, \boldsymbol{\Sigma}\right)}^{\text {likelihood }}}{\underbrace{p\left(\mathbf{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right)}_{\text {marginal }}} \\
-&= \frac{\pi_k \mathcal{N}(\boldsymbol{x}^{(n)} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)}{\sum_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(n)} ; \boldsymbol{\mu}_k, \boldsymbol{\Sigma}_k)} \\
-\end{aligned}
-$$ (eq-cluster-gmm-posterior)
+
+\begin{aligned} \overbrace{p\left(z^{(n)}=k \mid \mathbf{x}^{(n)} ;
+\boldsymbol{\mu}, \boldsymbol{\Sigma}, \boldsymbol{\pi}\right)}^{\text
+{posterior }} &= \frac{\overbrace{p\left(z^{(n)}=k ;
+\boldsymbol{\pi}\right)}^{\text {prior }} \cdot
+\overbrace{p\left(\mathbf{x}^{(n)} \mid z^{(n)}=k ; \boldsymbol{\mu},
+\boldsymbol{\Sigma}\right)}^{\text {likelihood
+}}}{\underbrace{p\left(\mathbf{x}^{(n)} ; \boldsymbol{\mu}, \boldsymbol{\Sigma},
+\boldsymbol{\pi}\right)}_{\text {marginal }}} \\ &= \frac{\pi_k
+\mathcal{N}(\boldsymbol{x}^{(n)} ; \boldsymbol{\mu}\_k,
+\boldsymbol{\Sigma}\_k)}{\sum_{k=1}^K \pi_k \mathcal{N}(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\mu}\_k, \boldsymbol{\Sigma}\_k)} \\ \end{aligned}
+
+$$
+(eq-cluster-gmm-posterior)
 
 This is the degree of belonging is none other than the posterior distribution!
 
@@ -1254,13 +1551,14 @@ This is the degree of belonging is none other than the posterior distribution!
 
 Using the posterior distribution equation {eq}`eq-cluster-gmm-posterior`, we can calculate the posterior probability of a single data point $\boldsymbol{x}^{(n)}$ belonging to each of the $K$ Gaussian components. The result is a vector of size $K \times 1$, where the $k$-th element represents the posterior probability of the data point $\boldsymbol{x}^{(n)}$ belonging to the $k$-th Gaussian component:
 
+
 $$
-\boldsymbol{R}^{(n)}=\left[\begin{array}{c}
-p\left(z^{(n)}=1 \mid \boldsymbol{x}^{(n)}\right) \\
-p\left(z^{(n)}=2 \mid \boldsymbol{x}^{(n)}\right) \\
-\vdots \\
-p\left(z^{(n)}=K \mid \boldsymbol{x}^{(n)}\right)
-\end{array}\right]_{K \times 1}
+
+\boldsymbol{R}^{(n)}=\left[\begin{array}{c} p\left(z^{(n)}=1 \mid
+\boldsymbol{x}^{(n)}\right) \\ p\left(z^{(n)}=2 \mid \boldsymbol{x}^{(n)}\right)
+\\ \vdots \\ p\left(z^{(n)}=K \mid \boldsymbol{x}^{(n)}\right)
+\end{array}\right]\_{K \times 1}
+
 $$
 
 Here, $\boldsymbol{R}^{(n)}$ is the posterior probability vector for the data point $\boldsymbol{x}^{(n)}$.
@@ -1273,10 +1571,19 @@ also known as the **responsibility** of the $k$-th Gaussian component for the da
 
 To compute the posterior probability of the entire dataset $\boldsymbol{X}$, we need to calculate the posterior probability for each data point $\boldsymbol{x}^{(n)}$ and then combine them. For this purpose, we can represent the posterior probability of the entire dataset as a matrix $\boldsymbol{R}$ of size $N \times K$, where $N$ is the number of data points and $K$ is the number of Gaussian components:
 
+
 $$
-\begin{aligned}
-\boldsymbol{R} &= \begin{bmatrix} p\left(z^{(1)}=1 \mid \boldsymbol{x}^{(1)}\right) & p\left(z^{(1)}=2 \mid \boldsymbol{x}^{(1)}\right) & \cdots & p\left(z^{(1)}=K \mid \boldsymbol{x}^{(1)}\right) \\ p\left(z^{(2)}=1 \mid \boldsymbol{x}^{(2)}\right) & p\left(z^{(2)}=2 \mid \boldsymbol{x}^{(2)}\right) & \cdots & p\left(z^{(2)}=K \mid \boldsymbol{x}^{(2)}\right) \\ \vdots & \vdots & \ddots & \vdots \\ p\left(z^{(N)}=1 \mid \boldsymbol{x}^{(N)}\right) & p\left(z^{(N)}=2 \mid \boldsymbol{x}^{(N)}\right) & \cdots & p\left(z^{(N)}=K \mid \boldsymbol{x}^{(N)}\right) \end{bmatrix} \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{R} &= \begin{bmatrix} p\left(z^{(1)}=1 \mid
+\boldsymbol{x}^{(1)}\right) & p\left(z^{(1)}=2 \mid \boldsymbol{x}^{(1)}\right)
+& \cdots & p\left(z^{(1)}=K \mid \boldsymbol{x}^{(1)}\right) \\ p\left(z^{(2)}=1
+\mid \boldsymbol{x}^{(2)}\right) & p\left(z^{(2)}=2 \mid
+\boldsymbol{x}^{(2)}\right) & \cdots & p\left(z^{(2)}=K \mid
+\boldsymbol{x}^{(2)}\right) \\ \vdots & \vdots & \ddots & \vdots \\
+p\left(z^{(N)}=1 \mid \boldsymbol{x}^{(N)}\right) & p\left(z^{(N)}=2 \mid
+\boldsymbol{x}^{(N)}\right) & \cdots & p\left(z^{(N)}=K \mid
+\boldsymbol{x}^{(N)}\right) \end{bmatrix} \\ \end{aligned}
+
 $$
 
 Each row of the matrix $\boldsymbol{P}$ corresponds to the posterior probability vector $\boldsymbol{P}^{(n)}$ for a data point $\boldsymbol{x}^{(n)}$. The posterior probability of the entire dataset can be used to assess the overall clustering quality, assign data points to the most probable cluster, or update the model parameters in an iterative manner (e.g., using the Expectation-Maximization algorithm).
@@ -1286,34 +1593,47 @@ Each row of the matrix $\boldsymbol{P}$ corresponds to the posterior probability
 
 Assume we are given a dataset $\mathcal{S}$
 
+
 $$
+
 \mathcal{S}=\left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(N)}\right\}
+
 $$
 
 where each data point $\boldsymbol{x}_{n}$ are drawn i.i.d. from an unknown distribution $\mathcal{D}$ defined as:
 
+
 $$
-\begin{aligned}
-\mathcal{D} &= \mathbb{P}\left(\mathcal{X}, \mathcal{Z} ; \boldsymbol{\theta} \right) \\
-            &= \mathbb{P}_{\boldsymbol{\theta}}\left(\mathcal{X}, \mathcal{Z} \right) \\
-            &= \mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right\}}\left(\mathcal{X}, \mathcal{Z} \right) \\
+
+\begin{aligned} \mathcal{D} &= \mathbb{P}\left(\mathcal{X}, \mathcal{Z} ;
+\boldsymbol{\theta} \right) \\ &=
+\mathbb{P}_{\boldsymbol{\theta}}\left(\mathcal{X}, \mathcal{Z} \right) \\ &=
+\mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu},
+\boldsymbol{\Sigma}\right\}}\left(\mathcal{X}, \mathcal{Z} \right) \\
 \end{aligned}
+
 $$
 
 but since $\mathcal{Z}$ is treated as a latent variable, we only have information to:
 
+
 $$
-\begin{aligned}
-\mathcal{D} &= \mathbb{P}\left(\mathcal{X} ; \boldsymbol{\theta} \right) \\
-            &= \mathbb{P}_{\boldsymbol{\theta}}\left(\mathcal{X} \right) \\
-            &= \mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right\}}\left(\mathcal{X} \right) \\
-\end{aligned}
+
+\begin{aligned} \mathcal{D} &= \mathbb{P}\left(\mathcal{X} ; \boldsymbol{\theta}
+\right) \\ &= \mathbb{P}_{\boldsymbol{\theta}}\left(\mathcal{X} \right) \\ &=
+\mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu},
+\boldsymbol{\Sigma}\right\}}\left(\mathcal{X} \right) \\ \end{aligned}
+
 $$
 
 Our objective is to find a good approximation/representation of this unknown distribution $\mathbb{P}_{\left\{\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right\}}\left(\mathcal{X} \right)$ by means of a GMM with $K$ mixture components. The parameters of the GMM are the $K$ means $\boldsymbol{\mu}_{k}$, the covariances $\boldsymbol{\Sigma}_{k}$, and mixture weights $\pi_{k}$. We summarize all these free parameters in the symbol $\boldsymbol{\theta}$:
 
+
 $$
-\boldsymbol{\theta}:=\left\{\pi_{k}, \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}: k=1, \ldots, K\right\}
+
+\boldsymbol{\theta}:=\left\{\pi*{k}, \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}\_{k}: k=1, \ldots, K\right\}
+
 $$
 
 See [the section here](https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm#The_symbols) for more information.
@@ -1322,22 +1642,35 @@ See [the section here](https://en.wikipedia.org/wiki/Expectation%E2%80%93maximiz
 
 However, to facilitate the notation, we will use the following vectorized representation of the parameters:
 
+
 $$
-\boldsymbol{\theta}:=\left\{\boldsymbol{\pi}, \boldsymbol{\mu}, \boldsymbol{\Sigma}\right\}
+
+\boldsymbol{\theta}:=\left\{\boldsymbol{\pi}, \boldsymbol{\mu},
+\boldsymbol{\Sigma}\right\}
+
 $$
 
 #### The Mixture Weights $\boldsymbol{\pi}$
 
 $\boldsymbol{\pi}$ is a $K$-dimensional vector of mixture weights:
 
+
 $$
-\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_K \end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^K
+
+\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_K
+\end{bmatrix}^{\mathrm{T}} \in \mathbb{R}^K
+
 $$
 
 and can be broadcasted to
 
+
 $$
-\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_K \\ \pi_1 & \pi_2 & \cdots & \pi_K \\ \vdots & \vdots & \ddots & \vdots \\ \pi_1 & \pi_2 & \cdots & \pi_K \end{bmatrix} \in \mathbb{R}^{N \times K}
+
+\boldsymbol{\pi} = \begin{bmatrix} \pi_1 & \pi_2 & \cdots & \pi_K \\ \pi_1 &
+\pi_2 & \cdots & \pi_K \\ \vdots & \vdots & \ddots & \vdots \\ \pi_1 & \pi_2 &
+\cdots & \pi_K \end{bmatrix} \in \mathbb{R}^{N \times K}
+
 $$
 
 for Hamadard product with $\boldsymbol{R}$.
@@ -1348,42 +1681,69 @@ These are the means of the Gaussian components in the Gaussian Mixture Model.
 
 Let
 
+
 $$
-\boldsymbol{\mu}_1, \boldsymbol{\mu}_2, \dots, \boldsymbol{\mu}_K
+
+\boldsymbol{\mu}\_1, \boldsymbol{\mu}\_2, \dots, \boldsymbol{\mu}\_K
+
 $$
 
 be the mean vectors of the Gaussian components, with
 
+
 $$
-\boldsymbol{\mu}_k = \begin{bmatrix} \mu_{k1} \\ \mu_{k2} \\ \vdots \\ \mu_{kD} \end{bmatrix}_{D \times 1} \in \mathbb{R}^D
+
+\boldsymbol{\mu}_k = \begin{bmatrix} \mu_{k1} \\ \mu*{k2} \\ \vdots \\ \mu*{kD}
+\end{bmatrix}\_{D \times 1} \in \mathbb{R}^D
+
 $$
 
 being a column vector representing the mean of the $k$-th Gaussian component and $D$ being the number of features.
 
 Thus collating all $K$ mean vectors $\boldsymbol{\mu}_1, \boldsymbol{\mu}_2, \dots, \boldsymbol{\mu}_K$ into a matrix $M$ of dimensions $(K, D)$, we have
 
+
 $$
-\boldsymbol{M} = \begin{bmatrix} \boldsymbol{\mu}_1^T \\ \boldsymbol{\mu}_2^T \\ \vdots \\ \boldsymbol{\mu}_K^T \end{bmatrix}_{K \times D} = \begin{bmatrix} \mu_{11} & \mu_{12} & \cdots & \mu_{1D} \\ \mu_{21} & \mu_{22} & \cdots & \mu_{2D} \\ \vdots & \vdots & \ddots & \vdots \\ \mu_{K1} & \mu_{K2} & \cdots & \mu_{KD} \end{bmatrix}_{K \times D}.
+
+\boldsymbol{M} = \begin{bmatrix} \boldsymbol{\mu}_1^T \\ \boldsymbol{\mu}\_2^T
+\\ \vdots \\ \boldsymbol{\mu}\_K^T \end{bmatrix}_{K \times D} = \begin{bmatrix}
+\mu*{11} & \mu*{12} & \cdots & \mu*{1D} \\ \mu*{21} & \mu*{22} & \cdots &
+\mu*{2D} \\ \vdots & \vdots & \ddots & \vdots \\ \mu*{K1} & \mu*{K2} & \cdots &
+\mu*{KD} \end{bmatrix}*{K \times D}.
+
 $$
 
 #### The Covariances $\boldsymbol{\Sigma}$
 
 `self.covariances_`: These are the covariance matrices of the Gaussian components in the Gaussian Mixture Model. In the context of GMM, `self.covariances_` is a 3D array of shape `(num_components, num_features, num_features)`, where each "slice" along the first axis represents the covariance matrix of the corresponding Gaussian component. Let
 
+
 $$
-\boldsymbol{\Sigma}_1, \boldsymbol{\Sigma}_2, \dots, \boldsymbol{\Sigma}_K
+
+\boldsymbol{\Sigma}\_1, \boldsymbol{\Sigma}\_2, \dots, \boldsymbol{\Sigma}\_K
+
 $$
 
 be the covariance matrices of the Gaussian components, with each $\boldsymbol{\Sigma}_k$ being a symmetric positive-definite matrix of dimensions $(D, D)$:
 
+
 $$
-\boldsymbol{\Sigma}_k = \begin{bmatrix} \sigma_{k11} & \sigma_{k12} & \cdots & \sigma_{k1D} \\ \sigma_{k21} & \sigma_{k22} & \cdots & \sigma_{k2D} \\ \vdots & \vdots & \ddots & \vdots \\ \sigma_{kD1} & \sigma_{kD2} & \cdots & \sigma_{kDD} \end{bmatrix}.
+
+\boldsymbol{\Sigma}_k = \begin{bmatrix} \sigma_{k11} & \sigma*{k12} & \cdots &
+\sigma*{k1D} \\ \sigma*{k21} & \sigma*{k22} & \cdots & \sigma*{k2D} \\ \vdots &
+\vdots & \ddots & \vdots \\ \sigma*{kD1} & \sigma*{kD2} & \cdots & \sigma*{kDD}
+\end{bmatrix}.
+
 $$
 
 The `self.covariances_` array can be represented as a tensor $\boldsymbol{C}$ with dimensions $(K, D, D)$, where the $k$-th "slice" is the covariance matrix $\boldsymbol{\Sigma}_k$.
 
+
 $$
-\boldsymbol{C} = \begin{bmatrix} \boldsymbol{\Sigma}_1 \\ \boldsymbol{\Sigma}_2 \\ \vdots \\ \boldsymbol{\Sigma}_K \end{bmatrix}_{K \times D \times D}
+
+\boldsymbol{C} = \begin{bmatrix} \boldsymbol{\Sigma}_1 \\ \boldsymbol{\Sigma}\_2
+\\ \vdots \\ \boldsymbol{\Sigma}\_K \end{bmatrix}_{K \times D \times D}
+
 $$
 
 ### Likelihood and Log-Likelihood of Marginal Distribution
@@ -1392,24 +1752,41 @@ As with any probabilistic model that requires parameter estimation, we need to d
 
 In the following, we detail how to obtain a maximum likelihood estimate $\widehat{\boldsymbol{\theta}}$ of the model parameters $\boldsymbol{\theta}$. We start by writing down the likelihood of the **marginal likelihood of the observing the data**, i.e., the predictive distribution of the training data given the parameters. We exploit our i.i.d. assumption, which leads to the factorized likelihood
 
+
 $$
-\begin{aligned}
-& \overbrace{p\left(\mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(n)}\right\};\boldsymbol{\theta}\right)}^{\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(n)}\right\}\right)} &&= \prod_{n=1}^{N} p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\
-& p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) &&= \sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right),
-\end{aligned}
-$$ (eq-gmm-likelihood-1)
+
+\begin{aligned} & \overbrace{p\left(\mathcal{S} = \left\{\boldsymbol{x}^{(1)},
+\ldots,
+\boldsymbol{x}^{(n)}\right\};\boldsymbol{\theta}\right)}^{\mathcal{L}\left(\boldsymbol{\theta}
+\mid \mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots,
+\boldsymbol{x}^{(n)}\right\}\right)} &&= \prod*{n=1}^{N}
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\ &
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) &&= \sum*{k=1}^{K}
+\pi*{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}\_{k}\right), \end{aligned}
+
+$$
+(eq-gmm-likelihood-1)
 
 where every individual likelihood term $p\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\theta}\right)$ is a Gaussian mixture density.
 
 Then we obtain the log-likelihood as
 
+
 $$
-\begin{aligned}
-\log p\left(\mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(n)}\right\};\boldsymbol{\theta}\right) &= \log \prod_{n=1}^{N} p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\
-&= \sum_{n=1}^{N} \log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\
-&= \underbrace{\sum_{n=1}^{N} \log \sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}_{\log\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(n)}\right\}\right)} .
-\end{aligned}
-$$ (eq-gmm-log-likelihood-1)
+
+\begin{aligned} \log p\left(\mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots,
+\boldsymbol{x}^{(n)}\right\};\boldsymbol{\theta}\right) &= \log \prod*{n=1}^{N}
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\ &= \sum*{n=1}^{N}
+\log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) \\ &=
+\underbrace{\sum*{n=1}^{N} \log \sum*{k=1}^{K} \pi*{k}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}_{k}\right)}_{\log\mathcal{L}\left(\boldsymbol{\theta} \mid
+\mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots,
+\boldsymbol{x}^{(n)}\right\}\right)} . \end{aligned}
+
+$$
+(eq-gmm-log-likelihood-1)
 
 We will abbreviate the log-likelihood as $\mathcal{L}\left(\boldsymbol{\theta} \mid \mathcal{S} = \left\{\boldsymbol{x}^{(1)}, \ldots, \boldsymbol{x}^{(n)}\right\}\right)$ when the context is clear.
 
@@ -1422,8 +1799,14 @@ We aim to find parameters $\widehat{\boldsymbol{\theta}}^{*}$ that maximize the 
 
 If we were to consider a single Gaussian as the desired density, the sum over $k$ in {eq}`eq-gmm-log-likelihood-1` vanishes, and the log can be applied directly to the Gaussian component, such that we get
 
+
 $$
-\log \mathcal{N}(\boldsymbol{x} \mid \boldsymbol{\mu}, \boldsymbol{\Sigma})=-\frac{D}{2} \log (2 \pi)-\frac{1}{2} \log \operatorname{det}(\boldsymbol{\Sigma})-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^{\top} \boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})
+
+\log \mathcal{N}(\boldsymbol{x} \mid \boldsymbol{\mu},
+\boldsymbol{\Sigma})=-\frac{D}{2} \log (2 \pi)-\frac{1}{2} \log
+\operatorname{det}(\boldsymbol{\Sigma})-\frac{1}{2}(\boldsymbol{x}-\boldsymbol{\mu})^{\top}
+\boldsymbol{\Sigma}^{-1}(\boldsymbol{x}-\boldsymbol{\mu})
+
 $$
 
 This simple form allows us to find closed-form maximum likelihood estimates of $\boldsymbol{\mu}$ and $\boldsymbol{\Sigma}$, as discussed in [the chapter on maximum likelihood estimation](estimation-theory-mle-common-distributions). In {eq}`eq-gmm-log-likelihood-1`, we cannot move the log into the sum over $k$ so that we cannot obtain a simple closed-form maximum likelihood solution {cite}`deisenroth_ong_faisal_2021`.
@@ -1441,12 +1824,20 @@ Any local optimum of a function exhibits the property that its gradient with res
 
 In our case, we obtain the following necessary conditions when we optimize the log-likelihood in {eq}`eq-gmm-log-likelihood-1` with respect to the GMM parameters $\boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}, \pi_{k}$ :
 
+
 $$
-\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_{k}} & =\mathbf{0}^{\top} &&\Longleftrightarrow&& \sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}=\mathbf{0}^{\top}, \\
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_{k}} & =\mathbf{0} &&\Longleftrightarrow&& \sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}=\mathbf{0}, \\
-\frac{\partial \mathcal{L}}{\partial \pi_{k}} & =0 &&\Longleftrightarrow&& \sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\theta}\right)}{\partial \pi_{k}}=0 .
-\end{aligned}
+
+\begin{aligned} \frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_{k}} &
+=\mathbf{0}^{\top} &&\Longleftrightarrow&& \sum_{n=1}^{N} \frac{\partial \log
+p\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\theta}\right)}{\partial
+\boldsymbol{\mu}_{k}}=\mathbf{0}^{\top}, \\ \frac{\partial \mathcal{L}}{\partial
+\boldsymbol{\Sigma}_{k}} & =\mathbf{0} &&\Longleftrightarrow&& \sum*{n=1}^{N}
+\frac{\partial \log p\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}*{k}}=\mathbf{0}, \\
+\frac{\partial \mathcal{L}}{\partial \pi*{k}} & =0 &&\Longleftrightarrow&&
+\sum*{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\theta}\right)}{\partial \pi\_{k}}=0 . \end{aligned}
+
 $$
 
 
@@ -1454,35 +1845,42 @@ In matrix/vector form, we have
 
 the derivative of the log-likelihood with respect to the mean parameters $\boldsymbol{\mu}_1, \boldsymbol{\mu}_2 \ldots, \boldsymbol{\mu}_K$ is
 
+
 $$
-\nabla_{\boldsymbol{\mu}_1, \boldsymbol{\mu}_2 \ldots, \boldsymbol{\mu}_K} \mathcal{L} = \mathbf{0}_{K \times D} \Longleftrightarrow \begin{bmatrix}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_1} \\
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_2} \\
-\vdots \\
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_K}
-\end{bmatrix} = \mathbf{0}_{K \times D}
+
+\nabla*{\boldsymbol{\mu}\_1, \boldsymbol{\mu}\_2 \ldots, \boldsymbol{\mu}\_K}
+\mathcal{L} = \mathbf{0}*{K \times D} \Longleftrightarrow \begin{bmatrix}
+\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_1} \\ \frac{\partial
+\mathcal{L}}{\partial \boldsymbol{\mu}\_2} \\ \vdots \\ \frac{\partial
+\mathcal{L}}{\partial \boldsymbol{\mu}\_K} \end{bmatrix} = \mathbf{0}_{K \times
+D}
+
 $$
 
 the derivative of the log-likelihood with respect to the covariance parameters $\boldsymbol{\Sigma}_1, \boldsymbol{\Sigma}_2 \ldots, \boldsymbol{\Sigma}_K$ is
 
+
 $$
-\nabla_{\boldsymbol{\Sigma}_1, \boldsymbol{\Sigma}_2 \ldots, \boldsymbol{\Sigma}_K} \mathcal{L} = \mathbf{0}_{K \times D \times D} \Longleftrightarrow \begin{bmatrix}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_1} \\
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_2} \\
-\vdots \\
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_K}
-\end{bmatrix} = \mathbf{0}_{K \times D \times D}
+
+\nabla*{\boldsymbol{\Sigma}\_1, \boldsymbol{\Sigma}\_2 \ldots,
+\boldsymbol{\Sigma}\_K} \mathcal{L} = \mathbf{0}*{K \times D \times D}
+\Longleftrightarrow \begin{bmatrix} \frac{\partial \mathcal{L}}{\partial
+\boldsymbol{\Sigma}_1} \\ \frac{\partial \mathcal{L}}{\partial
+\boldsymbol{\Sigma}\_2} \\ \vdots \\ \frac{\partial \mathcal{L}}{\partial
+\boldsymbol{\Sigma}\_K} \end{bmatrix} = \mathbf{0}_{K \times D \times D}
+
 $$
 
 the derivative of the log-likelihood with respect to the mixing coefficients $\pi_1, \pi_2 \ldots, \pi_K$ is
 
+
 $$
-\nabla_{\pi_1, \pi_2 \ldots, \pi_K} \mathcal{L} = \mathbf{0}_{K} \Longleftrightarrow \begin{bmatrix}
-\frac{\partial \mathcal{L}}{\partial \pi_1} \\
-\frac{\partial \mathcal{L}}{\partial \pi_2} \\
-\vdots \\
-\frac{\partial \mathcal{L}}{\partial \pi_K}
-\end{bmatrix} = \mathbf{0}_{K}
+
+\nabla*{\pi_1, \pi_2 \ldots, \pi_K} \mathcal{L} = \mathbf{0}*{K}
+\Longleftrightarrow \begin{bmatrix} \frac{\partial \mathcal{L}}{\partial \pi*1}
+\\ \frac{\partial \mathcal{L}}{\partial \pi_2} \\ \vdots \\ \frac{\partial
+\mathcal{L}}{\partial \pi_K} \end{bmatrix} = \mathbf{0}*{K}
+
 $$
 
 ### The Chain Rule (Matrix Calculus)
@@ -1491,15 +1889,29 @@ See section 5.2.2. Chain Rule of Mathematics for Machine Learning, written by De
 
 For all three necessary conditions, by applying the chain rule, we require partial derivatives of the form
 
+
 $$
-\frac{\partial \log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\theta}}=\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ; \theta\right)} } \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\theta}}} ,
-$$ (eq-gmm-chain-rule-1)
+
+\frac{\partial \log p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial
+\boldsymbol{\theta}}=\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ;
+\theta\right)} } \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\theta}}} ,
+
+$$
+(eq-gmm-chain-rule-1)
 
 where $\boldsymbol{\theta}=\left\{\boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}, \pi_{k}, k=1, \ldots, K\right\}$ are the model parameters and
 
+
 $$
-\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ; \theta\right)}=\frac{1}{\sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} ; \mu_{k}, \Sigma_{k}\right)}} .
-$$ (eq-gmm-chain-rule-2)
+
+\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ;
+\theta\right)}=\frac{1}{\sum*{k=1}^{K} \pi*{k}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} ; \mu*{k}, \Sigma*{k}\right)}} .
+
+$$
+(eq-gmm-chain-rule-2)
 
 ### Running Example
 
@@ -1511,12 +1923,12 @@ is from {cite}`deisenroth_ong_faisal_2021`.
 
 We consider a one-dimensional dataset $\mathcal{S}=\{-3,-2.5,-1,0,2,4,5\}$ consisting of seven data points and wish to find a GMM with $K=3$ components that models the density of the data. We initialize the mixture components as
 
+
 $$
-\begin{aligned}
-& p_{1}(x)=\mathcal{N}(x \mid-4,1) \\
-& p_{2}(x)=\mathcal{N}(x \mid 0,0.2) \\
-& p_{3}(x)=\mathcal{N}(x \mid 8,3)
-\end{aligned}
+
+\begin{aligned} & p*{1}(x)=\mathcal{N}(x \mid-4,1) \\ & p*{2}(x)=\mathcal{N}(x
+\mid 0,0.2) \\ & p\_{3}(x)=\mathcal{N}(x \mid 8,3) \end{aligned}
+
 $$
 
 and assign them equal weights $\pi_{1}=\pi_{2}=\pi_{3}=\frac{1}{3}$. The corresponding model (and the data points) are shown below.
@@ -1565,16 +1977,13 @@ Next, we can calculate the responsibilities $r^{(n)}_{k}$ for each data point $x
 
 For our example from {prf:ref}`example-gmm-initialization`, we compute the responsibilities $r^{(n)}_{k}$
 
+
 $$
-\boldsymbol{R} = \left[\begin{array}{ccc}
-1.0 & 0.0 & 0.0 \\
-1.0 & 0.0 & 0.0 \\
-0.057 & 0.943 & 0.0 \\
-0.001 & 0.999 & 0.0 \\
-0.0 & 0.066 & 0.934 \\
-0.0 & 0.0 & 1.0 \\
-0.0 & 0.0 & 1.0
-\end{array}\right] \in \mathbb{R}^{N \times K} \text {. }
+
+\boldsymbol{R} = \left[\begin{array}{ccc} 1.0 & 0.0 & 0.0 \\ 1.0 & 0.0 & 0.0 \\
+0.057 & 0.943 & 0.0 \\ 0.001 & 0.999 & 0.0 \\ 0.0 & 0.066 & 0.934 \\ 0.0 & 0.0 &
+1.0 \\ 0.0 & 0.0 & 1.0 \end{array}\right] \in \mathbb{R}^{N \times K} \text {. }
+
 $$
 
 Here the $n$th row tells us the responsibilities of all mixture components for $x^{(n)}$. The sum of all $K$ responsibilities for a data point (sum of every row) is 1 . The $k$ th column gives us an overview of the responsibility of the $k$ th mixture component. We can see that the third mixture component (third column) is not responsible for any of the first four data points, but takes much responsibility of the remaining data points. The sum of all entries of a column gives us the values $N_{k}$, i.e., the total responsibility of the $k$ th mixture component. In our example, we get $N_{1}=2.058, N_{2}=$ $2.008, N_{3}=2.934$ {cite}`deisenroth_ong_faisal_2021`.
@@ -1586,12 +1995,15 @@ Here the $n$th row tells us the responsibilities of all mixture components for $
 
 The update of the mean parameters $\boldsymbol{\mu}_{k}, k=1, \ldots, K$, of the $G M M$ is given by
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_{k}^{n e w} &= \frac{\sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)}}{\sum_{n=1}^{N} r^{(n)}_{k}} \\
-&= \frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)}
-\end{aligned}
-$$ (eq:gmm-update-means-1)
+
+\begin{aligned} \boldsymbol{\mu}_{k}^{n e w} &= \frac{\sum_{n=1}^{N} r^{(n)}_{k}
+\boldsymbol{x}^{(n)}}{\sum_{n=1}^{N} r^{(n)}_{k}} \\ &= \frac{1}{N_{k}}
+\sum*{n=1}^{N} r^{(n)}*{k} \boldsymbol{x}^{(n)} \end{aligned}
+
+$$
+(eq:gmm-update-means-1)
 
 where
 
@@ -1612,38 +2024,74 @@ What this means is that in order to update the means, we need to first compute t
 
 From {eq}`eq-gmm-chain-rule-1` we see that the gradient of the log-likelihood with respect to the mean parameters $\boldsymbol{\mu}_{k}, k=1, \ldots, K$, requires us to compute the partial derivative
 
+
 $$
-\begin{aligned}
-\textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}} & =\sum_{j=1}^{K} \pi_{j} \frac{\partial \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j}, \boldsymbol{\Sigma}_{j}\right)}{\partial \boldsymbol{\mu}_{k}}=\pi_{k} \frac{\partial \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}{\partial \boldsymbol{\mu}_{k}} && (a) \\
-& = \textcolor{blue}{\pi_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)} && (b) \\
-\end{aligned}
+
+\begin{aligned} \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}} & =\sum_{j=1}^{K}
+\pi*{j} \frac{\partial \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\mu}*{j}, \boldsymbol{\Sigma}_{j}\right)}{\partial
+\boldsymbol{\mu}_{k}}=\pi*{k} \frac{\partial
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}_{k}\right)}{\partial \boldsymbol{\mu}_{k}} && (a) \\ & =
+\textcolor{blue}{\pi*{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}*{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}\_{k}\right)} && (b) \\ \end{aligned}
+
 $$
 
 where we exploited that only the $k$ th mixture component depends on $\boldsymbol{\mu}_{k}$.
 
 We use our result from (b) in {eq}`eq-gmm-chain-rule-1` and put everything together so that the desired partial derivative of $\mathcal{L}$ with respect to $\boldsymbol{\mu}_{k}$ is given as
 
+
 $$
-\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_{k}} & =\sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}=\sum_{n=1}^{N} \textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}}  \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}} && (c) \\
-& =\sum_{n=1}^{N} \textcolor{blue}{\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}} \underbrace{\boxed{\frac{\textcolor{blue}{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}}{\textcolor{orange}{\sum_{j=1}^{K} \pi_{j} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \mu_{j}, \boldsymbol{\Sigma}_{j}\right)}}}}_{=r^{(n)}_{k}} && (d) \\
-& =\sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1} && (e)  \\
-\end{aligned}
-$$ (eq:gmm-update-means-2)
+
+\begin{aligned} \frac{\partial \mathcal{L}}{\partial \boldsymbol{\mu}_{k}} &
+=\sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\mu}_{k}}=\sum_{n=1}^{N}
+\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}} \textcolor{blue}{\frac{\partial
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial
+\boldsymbol{\mu}_{k}}} && (c) \\ & =\sum_{n=1}^{N}
+\textcolor{blue}{\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}} \underbrace{\boxed{\frac{\textcolor{blue}{\pi*{k}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}_{k}\right)}}{\textcolor{orange}{\sum_{j=1}^{K} \pi*{j}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \mu*{j},
+\boldsymbol{\Sigma}_{j}\right)}}}}_{=r^{(n)}_{k}} && (d) \\ & =\sum_{n=1}^{N}
+r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}\_{k}^{-1} && (e) \\ \end{aligned}
+
+$$
+(eq:gmm-update-means-2)
 
 Here we used the identity from {eq}`eq-gmm-chain-rule-2` and the result of the partial derivative in (b) to get to (d). The values $r^{(n)}_{k}$ are the responsibilities we defined in {eq}`eq:gmm-responsibility`.
 
 We now solve (e) for $\boldsymbol{\mu}_{k}^{\text {new }}$ so that $\frac{\partial \mathcal{L}\left(\boldsymbol{\mu}_{k}^{\mathrm{new}}\right)}{\partial \boldsymbol{\mu}_{k}}=\mathbf{0}^{\top}$ and obtain
 
+
 $$
-\sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)}=\sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{\mu}_{k}^{\mathrm{new}} \Longleftrightarrow \boldsymbol{\mu}_{k}^{\mathrm{new}}=\frac{\sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)}}{\boxed{\sum_{n=1}^{N} r^{(n)}_{k}}}=\frac{1}{\boxed{N_{k}}} \sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)},
-$$ (eq:gmm-update-means-3)
+
+\sum*{n=1}^{N} r^{(n)}*{k} \boldsymbol{x}^{(n)}=\sum*{n=1}^{N} r^{(n)}*{k}
+\boldsymbol{\mu}_{k}^{\mathrm{new}} \Longleftrightarrow
+\boldsymbol{\mu}_{k}^{\mathrm{new}}=\frac{\sum*{n=1}^{N} r^{(n)}*{k}
+\boldsymbol{x}^{(n)}}{\boxed{\sum*{n=1}^{N}
+r^{(n)}*{k}}}=\frac{1}{\boxed{N*{k}}} \sum*{n=1}^{N} r^{(n)}\_{k}
+\boldsymbol{x}^{(n)},
+
+$$
+(eq:gmm-update-means-3)
 
 where we defined
 
+
 $$
-N_{k}:=\sum_{n=1}^{N} r^{(n)}_{k}
-$$ (eq:nk-1)
+
+N*{k}:=\sum*{n=1}^{N} r^{(n)}\_{k}
+
+$$
+(eq:nk-1)
 
 as the total responsibility of the $k$ th mixture component for the entire dataset. This concludes the proof of {prf:ref}`theorem-gmm-update-means`.
 ```
@@ -1664,15 +2112,23 @@ Update of the mean parameter of mixture component in a GMM. The mean $\boldsymbo
 
 We can also interpret the mean update in {eq}`eq:gmm-update-means-1` as the expected value of all data points under the distribution given by
 
+
 $$
-\boldsymbol{r}_{k}:=\left[r_{1 k}, \ldots, r_{N k}\right]^{\top} / N_{k}
-$$ (eq:responsibility-vector-1)
+
+\boldsymbol{r}_{k}:=\left[r_{1 k}, \ldots, r*{N k}\right]^{\top} / N*{k}
+
+$$
+(eq:responsibility-vector-1)
 
 which is a normalized probability vector, i.e.,
 
+
 $$
-\boldsymbol{\mu}_{k} \leftarrow \mathbb{E}_{\boldsymbol{r}_{k}}[\mathcal{S}]
-$$ (eq:responsibility-vector-2)
+
+\boldsymbol{\mu}_{k} \leftarrow \mathbb{E}_{\boldsymbol{r}\_{k}}[\mathcal{S}]
+
+$$
+(eq:responsibility-vector-2)
 
 #### Update Mean of Running Example
 
@@ -1681,12 +2137,12 @@ $$ (eq:responsibility-vector-2)
 
 In our example from {prf:ref}`example-gmm-initialization`, the mean values are updated as follows:
 
+
 $$
-\begin{aligned}
-& \mu_{1}:-4 \rightarrow-2.7 \\
-& \mu_{2}: 0 \rightarrow-0.4 \\
-& \mu_{3}: 8 \rightarrow 3.7
-\end{aligned}
+
+\begin{aligned} & \mu*{1}:-4 \rightarrow-2.7 \\ & \mu*{2}: 0 \rightarrow-0.4 \\
+& \mu\_{3}: 8 \rightarrow 3.7 \end{aligned}
+
 $$
 
 Here we see that the means of the first and third mixture component move toward the regime of the data, whereas the mean of the second component does not change so dramatically. Figure 11.3 illustrates this change, where Figure 11.3(a) shows the GMM density prior to updating the means and Figure 11.3(b) shows the GMM density after updating the mean values $\mu_{k}$.
@@ -1735,13 +2191,19 @@ where
 
 Why? Because if you look at equation {eq}`eq:gmm-update-means-1`:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_{k}^{n e w} &= \frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)} \\
-&= \frac{1}{N_{k}} \left[r^{(1)}_{k} \boldsymbol{x}^{(1)} + \ldots + r^{(N)}_{k} \boldsymbol{x}^{(N)}\right] \\
-&= \frac{1}{N_{k}} \underbrace{\begin{bmatrix} r^{(1)}_{k} & \ldots & r^{(N)}_{k} \end{bmatrix}}_{\left(\boldsymbol{r}_k\right)^{T}} \underbrace{\begin{bmatrix} \boldsymbol{x}^{(1)} \\ \vdots \\ \boldsymbol{x}^{(N)} \end{bmatrix}}_{\boldsymbol{X}} \\
-\end{aligned}
-$$ (eq:gmm-update-means-1-repeated)
+
+\begin{aligned} \boldsymbol{\mu}_{k}^{n e w} &= \frac{1}{N_{k}} \sum*{n=1}^{N}
+r^{(n)}*{k} \boldsymbol{x}^{(n)} \\ &= \frac{1}{N*{k}} \left[r^{(1)}*{k}
+\boldsymbol{x}^{(1)} + \ldots + r^{(N)}_{k} \boldsymbol{x}^{(N)}\right] \\ &=
+\frac{1}{N_{k}} \underbrace{\begin{bmatrix} r^{(1)}_{k} & \ldots & r^{(N)}_{k}
+\end{bmatrix}}_{\left(\boldsymbol{r}\_k\right)^{T}} \underbrace{\begin{bmatrix}
+\boldsymbol{x}^{(1)} \\ \vdots \\ \boldsymbol{x}^{(N)}
+\end{bmatrix}}_{\boldsymbol{X}} \\ \end{aligned}
+
+$$
+(eq:gmm-update-means-1-repeated)
 
 where the last equality leads is:
 
@@ -1751,11 +2213,15 @@ responsibilities[:, k].T @ X
 
 so in order to find all $K$ mean parameters $\boldsymbol{\mu}_{k}$, we just need to repeat the above code snippet for all $k=1, \ldots, K$:
 
+
 $$
-\begin{aligned}
-\boldsymbol{M} = \begin{bmatrix} \boldsymbol{\mu}_{1}^{n e w} \\ \vdots \\ \boldsymbol{\mu}_{K}^{n e w} \end{bmatrix} &= \frac{1}{N_{k}} \begin{bmatrix} \boldsymbol{r}_{1}^{T} \boldsymbol{X} \\ \vdots \\ \boldsymbol{r}_{K}^{T} \boldsymbol{X} \end{bmatrix} \\
-&= \frac{1}{N_k} \boldsymbol{R}^{T} \boldsymbol{X} \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{M} = \begin{bmatrix} \boldsymbol{\mu}_{1}^{n e w} \\
+\vdots \\ \boldsymbol{\mu}_{K}^{n e w} \end{bmatrix} &= \frac{1}{N*{k}}
+\begin{bmatrix} \boldsymbol{r}*{1}^{T} \boldsymbol{X} \\ \vdots \\
+\boldsymbol{r}\_{K}^{T} \boldsymbol{X} \end{bmatrix} \\ &= \frac{1}{N_k}
+\boldsymbol{R}^{T} \boldsymbol{X} \\ \end{aligned}
+
 $$
 
 where $\boldsymbol{M}$ is a $K \times D$ matrix of mean parameters $\boldsymbol{\mu}_{k}$
@@ -1785,9 +2251,14 @@ and we are done finding the new mean parameters $\boldsymbol{\mu}_{k}$ in Python
 
 The update of the covariance parameters $\boldsymbol{\Sigma}_{k}, k=1, \ldots, K$ of the $G M M$ is given by
 
+
 $$
-\boldsymbol{\Sigma}_{k}^{n e w}=\frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
-$$ (eq:gmm-update-covariance-1)
+
+\boldsymbol{\Sigma}_{k}^{n e w}=\frac{1}{N_{k}} \sum*{n=1}^{N}
+r^{(n)}*{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+
+$$
+(eq:gmm-update-covariance-1)
 
 where $r^{(n)}_{k}$ and $N_{k}$ are defined in {eq}`eq:gmm-responsibility` and {eq}`eq:nk-1`, respectively.
 ```
@@ -1795,67 +2266,138 @@ where $r^{(n)}_{k}$ and $N_{k}$ are defined in {eq}`eq:gmm-responsibility` and {
 ```{prf:proof}
 To prove {prf:ref}`theorem-gmm-update-covariance`, our approach is to compute the partial derivatives of the log-likelihood $\mathcal{L}$ with respect to the covariances $\boldsymbol{\Sigma}_{k}$, set them to $\mathbf{0}$, and solve for $\boldsymbol{\Sigma}_{k}$. We start with our general approach
 
+
 $$
-\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_{k}} = \sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}=\sum_{n=1}^{N} \textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}} \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}} .
-\end{aligned}
-$$ (eq:gmm-update-covariance-2)
+
+\begin{aligned} \frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_{k}} =
+\sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}=\sum_{n=1}^{N}
+\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}} \textcolor{blue}{\frac{\partial
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial
+\boldsymbol{\Sigma}\_{k}}} . \end{aligned}
+
+$$
+(eq:gmm-update-covariance-2)
 
 
 We already know $1 / p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)$ from (11.16). To obtain the remaining partial derivative $\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right) / \partial \boldsymbol{\Sigma}_{k}$, we write down the definition of the Gaussian distribution $p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)$ (see (11.9)) and drop all terms but the $k$ th. We then obtain
 
+
 $$
-\begin{aligned}
-& \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}} && (a) \\
-& =\frac{\partial}{\partial \boldsymbol{\Sigma}_{k}}\left(\pi_{k}(2 \pi)^{-\frac{D}{2}} \operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}} \exp \left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right) && (b) \\
-& =\pi_{k}(2 \pi)^{-\frac{D}{2}}\left[\textcolor{red}{\frac{\partial}{\partial \boldsymbol{\Sigma}_{k}} \operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}} \exp \left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right. && (c) \\
-& \left.+\operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}} \frac{\partial}{\partial \boldsymbol{\Sigma}_{k}} \exp \left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right] \text {. } && (d)
-\end{aligned}
-$$ (eq:gmm-update-covariance-3)
+
+\begin{aligned} & \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}} && (a) \\ &
+=\frac{\partial}{\partial \boldsymbol{\Sigma}_{k}}\left(\pi*{k}(2
+\pi)^{-\frac{D}{2}}
+\operatorname{det}\left(\boldsymbol{\Sigma}*{k}\right)^{-\frac{1}{2}} \exp
+\left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right)
+&& (b) \\ & =\pi_{k}(2
+\pi)^{-\frac{D}{2}}\left[\textcolor{red}{\frac{\partial}{\partial
+\boldsymbol{\Sigma}_{k}}
+\operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}} \exp
+\left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right.
+&& (c) \\ &
+\left.+\operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}
+\frac{\partial}{\partial \boldsymbol{\Sigma}_{k}} \exp
+\left(-\frac{1}{2}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\right)\right]
+\text {. } && (d) \end{aligned}
+
+$$
+(eq:gmm-update-covariance-3)
 
 We now use the identities
 
+
 $$
-\begin{aligned}
-& \textcolor{red}{\frac{\partial}{\partial \boldsymbol{\Sigma}_{k}} \operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}}  \stackrel{(5.101)}{=} \textcolor{red}{-\frac{1}{2} \operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}} \boldsymbol{\Sigma}_{k}^{-1}} \\
-& \frac{\partial}{\partial \boldsymbol{\Sigma}_{k}}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right) \stackrel{(5.103)}{=}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}
-\end{aligned}
+
+\begin{aligned} & \textcolor{red}{\frac{\partial}{\partial
+\boldsymbol{\Sigma}_{k}}
+\operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}}
+\stackrel{(5.101)}{=} \textcolor{red}{-\frac{1}{2}
+\operatorname{det}\left(\boldsymbol{\Sigma}_{k}\right)^{-\frac{1}{2}}
+\boldsymbol{\Sigma}_{k}^{-1}} \\ & \frac{\partial}{\partial
+\boldsymbol{\Sigma}_{k}}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)
+\stackrel{(5.103)}{=}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1} \end{aligned}
+
 $$
 
 and obtain (after some rearranging) the desired partial derivative required in {eq}`eq:gmm-update-covariance-2` as
 
+
 $$
-\begin{aligned}
-\textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}}= & \textcolor{blue}{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)  \cdot\left[-\frac{1}{2}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\right)\right]}
-\end{aligned}
-$$ (eq:gmm-update-covariance-4)
+
+\begin{aligned} \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}}= &
+\textcolor{blue}{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)
+\cdot\left[-\frac{1}{2}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\right)\right]} \end{aligned}
+
+$$
+(eq:gmm-update-covariance-4)
 
 Putting everything together, the partial derivative of the log-likelihood with respect to $\boldsymbol{\Sigma}_{k}$ is given by (do pay attention to color coding):
 
+
 $$
-\begin{aligned}
-\frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_{k}} & =\sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}} = \sum_{n=1}^{N} \textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}} \textcolor{blue}{\frac{\partial p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}}} \\
-& =\sum_{n=1}^{N} \underbrace{\frac{\textcolor{blue}{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}}{\textcolor{orange}{\sum_{j=1}^{K} \pi_{j} \mathcal{N}\left(x_{n} \mid \mu_{j}, \boldsymbol{\Sigma}_{j}\right)}}}_{=r^{(n)}_{k}}  \cdot \textcolor{blue}{\left[-\frac{1}{2}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\right)\right]} \\
-& =-\frac{1}{2} \sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top} \boldsymbol{\Sigma}_{k}^{-1}\right) \\
-= & -\frac{1}{2} \boldsymbol{\Sigma}_{k}^{-1} \underbrace{\sum_{n=1}^{N} r^{(n)}_{k}}_{=N_{k}}+\frac{1}{2} \boldsymbol{\Sigma}_{k}^{-1}\left(\sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right) \boldsymbol{\Sigma}_{k}^{-1} .
-\end{aligned}
-$$ (eq:gmm-update-covariance-5)
+
+\begin{aligned} \frac{\partial \mathcal{L}}{\partial \boldsymbol{\Sigma}_{k}} &
+=\sum_{n=1}^{N} \frac{\partial \log p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}{\partial \boldsymbol{\Sigma}_{k}} = \sum_{n=1}^{N}
+\textcolor{orange}{\frac{1}{p\left(\boldsymbol{x}^{(n)} ;
+\boldsymbol{\theta}\right)}} \textcolor{blue}{\frac{\partial
+p\left(\boldsymbol{x}^{(n)} ; \boldsymbol{\theta}\right)}{\partial
+\boldsymbol{\Sigma}_{k}}} \\ & =\sum_{n=1}^{N}
+\underbrace{\frac{\textcolor{blue}{\pi*{k} \mathcal{N}\left(\boldsymbol{x}^{(n)}
+\mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}_{k}\right)}}{\textcolor{orange}{\sum_{j=1}^{K} \pi*{j}
+\mathcal{N}\left(x*{n} \mid \mu*{j},
+\boldsymbol{\Sigma}*{j}\right)}}}_{=r^{(n)}_{k}} \cdot
+\textcolor{blue}{\left[-\frac{1}{2}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\right)\right]} \\ & =-\frac{1}{2} \sum*{n=1}^{N}
+r^{(n)}*{k}\left(\boldsymbol{\Sigma}_{k}^{-1}-\boldsymbol{\Sigma}_{k}^{-1}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}
+\boldsymbol{\Sigma}_{k}^{-1}\right) \\ = & -\frac{1}{2}
+\boldsymbol{\Sigma}_{k}^{-1} \underbrace{\sum*{n=1}^{N}
+r^{(n)}*{k}}_{=N_{k}}+\frac{1}{2}
+\boldsymbol{\Sigma}_{k}^{-1}\left(\sum_{n=1}^{N}
+r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right)
+\boldsymbol{\Sigma}_{k}^{-1} . \end{aligned}
+
+$$
+(eq:gmm-update-covariance-5)
 
 We see that the responsibilities $r^{(n)}_{k}$ also appear in this partial derivative. Setting this partial derivative to $\mathbf{0}$, we obtain the necessary optimality condition
 
+
 $$
-\begin{aligned}
-& N_{k} \boldsymbol{\Sigma}_{k}^{-1}=\boldsymbol{\Sigma}_{k}^{-1}\left(\sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right) \boldsymbol{\Sigma}_{k}^{-1} \\
-& \Longleftrightarrow N_{k} \boldsymbol{I}=\left(\sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right) \boldsymbol{\Sigma}_{k}^{-1}
-\end{aligned}
-$$ (eq:gmm-update-covariance-6)
+
+\begin{aligned} & N*{k}
+\boldsymbol{\Sigma}*{k}^{-1}=\boldsymbol{\Sigma}_{k}^{-1}\left(\sum_{n=1}^{N}
+r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right)
+\boldsymbol{\Sigma}_{k}^{-1} \\ & \Longleftrightarrow N*{k}
+\boldsymbol{I}=\left(\sum*{n=1}^{N}
+r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}\right)
+\boldsymbol{\Sigma}_{k}^{-1} \end{aligned}
+
+$$
+(eq:gmm-update-covariance-6)
 
 where $\boldsymbol{I}$ is the identity matrix.
 
 By solving for $\boldsymbol{\Sigma}_{k}$, we obtain
 
+
 $$
-\boldsymbol{\Sigma}_{k}^{\mathrm{new}}=\frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top},
+
+\boldsymbol{\Sigma}_{k}^{\mathrm{new}}=\frac{1}{N_{k}} \sum*{n=1}^{N}
+r^{(n)}*{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top},
+
 $$
 
 where $\boldsymbol{r}_{k}$ is the probability vector defined in {eq}`eq:responsibility-vector-1`. This gives us a simple update rule for $\boldsymbol{\Sigma}_{k}$ for $k=1, \ldots, K$ and proves {prf:ref}`theorem-gmm-update-covariance`.
@@ -1870,12 +2412,12 @@ Similar to the update of $\boldsymbol{\mu}_{k}$ in {eq}`eq:gmm-update-means-1`, 
 
 In our example from {prf:ref}`example-gmm-initialization`, the (co)variance values are updated as follows:
 
+
 $$
-\begin{aligned}
-& \sigma_{1}^{2}: 1 \rightarrow 0.14 \\
-& \sigma_{2}^{2}: 0.2 \rightarrow 0.44 \\
-& \sigma_{3}^{2}: 3 \rightarrow 1.53
-\end{aligned}
+
+\begin{aligned} & \sigma*{1}^{2}: 1 \rightarrow 0.14 \\ & \sigma*{2}^{2}: 0.2
+\rightarrow 0.44 \\ & \sigma\_{3}^{2}: 3 \rightarrow 1.53 \end{aligned}
+
 $$
 
 Here we see that the means of the first and third mixture component move toward the regime of the data, whereas the mean of the second component does not change so dramatically.
@@ -1934,8 +2476,13 @@ where
 
 Why? Because if you look at the equation for updating the covariance matrices:
 
+
 $$
-\boldsymbol{\Sigma}_k^{n e w}=\frac{1}{N_k} \sum_{n=1}^N r_k^{(n)}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_k^{\text {new }}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_k^{\text {new }}\right)^T
+
+\boldsymbol{\Sigma}_k^{n e w}=\frac{1}{N_k} \sum_{n=1}^N
+r_k^{(n)}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}\_k^{\text {new
+}}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}\_k^{\text {new }}\right)^T
+
 $$
 
 For each Gaussian component $k$, we compute the difference between the data points `X` and the updated mean `means[k]`. This results in a $(N, D)$ matrix `diff`, where $N$ is the number of data points.
@@ -1952,30 +2499,46 @@ This Python code snippet computes the updated covariance matrices $\boldsymbol{\
 
 We will derive the matrix justification for updating the covariance matrices $\boldsymbol{\Sigma}_{k}$:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\Sigma}_{k}^{new} &= \frac{1}{N_k}\sum_{n=1}^N r^{(n)}_{k}\left(\boldsymbol{x}^{(n)} - \boldsymbol{\mu}_{k}^{new}\right)\left(\boldsymbol{x}^{(n)} - \boldsymbol{\mu}_{k}^{new}\right)^T \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\Sigma}_{k}^{new} &= \frac{1}{N_k}\sum_{n=1}^N
+r^{(n)}_{k}\left(\boldsymbol{x}^{(n)} -
+\boldsymbol{\mu}_{k}^{new}\right)\left(\boldsymbol{x}^{(n)} -
+\boldsymbol{\mu}\_{k}^{new}\right)^T \\ \end{aligned}
+
 $$
 
 We will rewrite the summation as a matrix product. First, let's define the difference matrix $\boldsymbol{D}_k$:
 
+
 $$
-\boldsymbol{D}_k = \begin{bmatrix} \boldsymbol{x}^{(1)} - \boldsymbol{\mu}_{k}^{new} \\ \vdots \\ \boldsymbol{x}^{(N)} - \boldsymbol{\mu}_{k}^{new} \end{bmatrix} \in \mathbb{R}^{N \times D}
+
+\boldsymbol{D}_k = \begin{bmatrix} \boldsymbol{x}^{(1)} -
+\boldsymbol{\mu}_{k}^{new} \\ \vdots \\ \boldsymbol{x}^{(N)} -
+\boldsymbol{\mu}\_{k}^{new} \end{bmatrix} \in \mathbb{R}^{N \times D}
+
 $$
 
 Now, let's define a diagonal matrix $\boldsymbol{W}_k$ with the $r^{(n)}_{k}$ values on its diagonal:
 
+
 $$
-\boldsymbol{W}_k = \begin{bmatrix} r^{(1)}_{k} & 0 & \cdots & 0 \\ 0 & r^{(2)}_{k} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & r^{(N)}_{k} \end{bmatrix} \in \mathbb{R}^{N \times N}
+
+\boldsymbol{W}_k = \begin{bmatrix} r^{(1)}_{k} & 0 & \cdots & 0 \\ 0 &
+r^{(2)}_{k} & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots
+& r^{(N)}_{k} \end{bmatrix} \in \mathbb{R}^{N \times N}
+
 $$
 
 Now we can rewrite the covariance matrix update equation as:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\Sigma}_{k}^{new} &= \frac{1}{N_k} \boldsymbol{D}_k^T \boldsymbol{W}_k \boldsymbol{D}_k \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\Sigma}\_{k}^{new} &= \frac{1}{N_k}
+\boldsymbol{D}\_k^T \boldsymbol{W}\_k \boldsymbol{D}\_k \\ \end{aligned}
+
 $$
 
 The Python code snippet computes the same equation as described above:
@@ -1999,9 +2562,13 @@ The only slighly difference is the code uses `*` which is the Hadamard product (
 
 The mixture weights of the GMM are updated as
 
+
 $$
-\pi_{k}^{\text {new }}=\frac{N_{k}}{N}, \quad k=1, \ldots, K
-$$ (eq:gmm-update-mixture-weights-1)
+
+\pi*{k}^{\text {new }}=\frac{N*{k}}{N}, \quad k=1, \ldots, K
+
+$$
+(eq:gmm-update-mixture-weights-1)
 
 where $N$ is the number of data points and $N_{k}$ is defined in {eq}`eq:nk-1`.
 ```
@@ -2009,48 +2576,79 @@ where $N$ is the number of data points and $N_{k}$ is defined in {eq}`eq:nk-1`.
 ```{prf:proof}
 To find the partial derivative of the log-likelihood with respect to the weight parameters $\pi_{k}, k=1, \ldots, K$, we account for the constraint $\sum_{k} \pi_{k}=1$ by using Lagrange multipliers (see Section 7.2 of Mathematics for Machine Learning {cite}`deisenroth_ong_faisal_2021`). The Lagrangian is
 
+
 $$
-\begin{aligned}
-\mathfrak{L}&=\mathcal{L}+\lambda\left(\sum_{k=1}^{K} \pi_{k}-1\right) \\
-&=\sum_{n=1}^{N} \log \sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)+\lambda\left(\sum_{k=1}^{K} \pi_{k}-1\right) \\
+
+\begin{aligned} \mathfrak{L}&=\mathcal{L}+\lambda\left(\sum*{k=1}^{K}
+\pi*{k}-1\right) \\ &=\sum*{n=1}^{N} \log \sum*{k=1}^{K} \pi*{k}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}_{k}\right)+\lambda\left(\sum_{k=1}^{K} \pi\_{k}-1\right) \\
 \end{aligned}
-$$ (eq:gmm-update-mixture-weights-2)
+
+$$
+(eq:gmm-update-mixture-weights-2)
 
 where $\mathcal{L}$ is the log-likelihood from {eq}`eq-gmm-log-likelihood-1` and the second term encodes for the equality constraint that all the mixture weights need to sum up to 1. We obtain the partial derivative with respect to $\pi_{k}$ as
 
+
 $$
-\begin{aligned}
-\frac{\partial \mathfrak{L}}{\partial \pi_{k}} & =\sum_{n=1}^{N} \frac{\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}{\sum_{j=1}^{K} \pi_{j} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j}, \boldsymbol{\Sigma}_{j}\right)}+\lambda \\
-& =\frac{1}{\pi_{k}} \underbrace{\sum_{n=1}^{N} \frac{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}{\sum_{j=1}^{K} \pi_{j} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j}, \boldsymbol{\Sigma}_{j}\right)}}_{=N_{k}}+\lambda=\frac{N_{k}}{\pi_{k}}+\lambda,
+
+\begin{aligned} \frac{\partial \mathfrak{L}}{\partial \pi*{k}} & =\sum*{n=1}^{N}
+\frac{\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k},
+\boldsymbol{\Sigma}_{k}\right)}{\sum*{j=1}^{K} \pi*{j}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j},
+\boldsymbol{\Sigma}_{j}\right)}+\lambda \\ & =\frac{1}{\pi*{k}}
+\underbrace{\sum*{n=1}^{N} \frac{\pi*{k} \mathcal{N}\left(\boldsymbol{x}^{(n)}
+\mid \boldsymbol{\mu}*{k}, \boldsymbol{\Sigma}_{k}\right)}{\sum_{j=1}^{K}
+\pi*{j} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{j},
+\boldsymbol{\Sigma}_{j}\right)}}_{=N*{k}}+\lambda=\frac{N*{k}}{\pi\_{k}}+\lambda,
 \end{aligned}
-$$ (eq:gmm-update-mixture-weights-3)
+
+$$
+(eq:gmm-update-mixture-weights-3)
 
 and the partial derivative with respect to the Lagrange multiplier $\lambda$ as
 
+
 $$
-\frac{\partial \mathfrak{L}}{\partial \lambda}=\sum_{k=1}^{K} \pi_{k}-1
-$$ (eq:gmm-update-mixture-weights-4)
+
+\frac{\partial \mathfrak{L}}{\partial \lambda}=\sum*{k=1}^{K} \pi*{k}-1
+
+$$
+(eq:gmm-update-mixture-weights-4)
 
 Setting both partial derivatives to $\mathbf{0}$ (necessary condition for optimum) yields the system of equations
 
+
 $$
-\begin{aligned}
-& \pi_{k}=-\frac{N_{k}}{\lambda} && (a)\\
-& 1=\sum_{k=1}^{K} \pi_{k} && (b)
-\end{aligned}
-$$ (eq:gmm-update-mixture-weights-5)
+
+\begin{aligned} & \pi*{k}=-\frac{N*{k}}{\lambda} && (a)\\ & 1=\sum*{k=1}^{K}
+\pi*{k} && (b) \end{aligned}
+
+$$
+(eq:gmm-update-mixture-weights-5)
 
 Using (a) in (b) and solving for $\pi_{k}$, we obtain
 
+
 $$
-\sum_{k=1}^{K} \pi_{k}=1 \Longleftrightarrow-\sum_{k=1}^{K} \frac{N_{k}}{\lambda}=1 \Longleftrightarrow-\frac{N}{\lambda}=1 \Longleftrightarrow \lambda=-N .
-$$ (eq:gmm-update-mixture-weights-6)
+
+\sum*{k=1}^{K} \pi*{k}=1 \Longleftrightarrow-\sum*{k=1}^{K}
+\frac{N*{k}}{\lambda}=1 \Longleftrightarrow-\frac{N}{\lambda}=1
+\Longleftrightarrow \lambda=-N .
+
+$$
+(eq:gmm-update-mixture-weights-6)
 
 This allows us to substitute $-N$ for $\lambda$ in (a) to obtain
 
+
 $$
-\pi_{k}^{\mathrm{new}}=\frac{N_{k}}{N}
-$$ (eq:gmm-update-mixture-weights-7)
+
+\pi*{k}^{\mathrm{new}}=\frac{N*{k}}{N}
+
+$$
+(eq:gmm-update-mixture-weights-7)
 
 which gives us the update for the weight parameters $\pi_{k}$ and proves {prf:ref}`thm:gmm-update-mixture-weights`.
 ```
@@ -2072,12 +2670,13 @@ Since $N_{k}=\sum_{i=1}^{N} r^{(n)}_{k}$, the update equation (11.42) for the mi
 
 In our running example from Figure 11.1, the mixture weights are updated as follows:
 
+
 $$
-\begin{aligned}
-& \pi_{1}: \frac{1}{3} \rightarrow 0.29 \\
-& \pi_{2}: \frac{1}{3} \rightarrow 0.29 \\
-& \pi_{3}: \frac{1}{3} \rightarrow 0.42
+
+\begin{aligned} & \pi*{1}: \frac{1}{3} \rightarrow 0.29 \\ & \pi*{2}:
+\frac{1}{3} \rightarrow 0.29 \\ & \pi\_{3}: \frac{1}{3} \rightarrow 0.42
 \end{aligned}
+
 $$
 
 Here we see that the third component gets more weight/importance, while the other components become slightly less important. The figure below illustrates the effect of updating the mixture weights. The left figure below shows the GMM density and its individual components prior to updating the mixture weights. The right figure shows the GMM density after updating the mixture weights.
@@ -2189,18 +2788,27 @@ Every step in the EM algorithm increases the log-likelihood function (Neal and H
 
 2. E-step: Evaluate responsibilities $r^{(n)}_{k}$ for every data point $\boldsymbol{x}^{(n)}$ using current parameters $\pi_{k}, \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}$ :
 
+
 $$
-r^{(n)}_{k}=\frac{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}{\sum_{j} \pi_{j} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j}, \boldsymbol{\Sigma}_{j}\right)} .
+
+r^{(n)}_{k}=\frac{\pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid
+\boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)}{\sum*{j} \pi*{j}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{j},
+\boldsymbol{\Sigma}_{j}\right)} .
+
 $$
 
 3. M-step: Reestimate parameters $\pi_{k}, \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}$ using the current responsibilities $r^{(n)}_{k}$ (from E-step):
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_{k} & =\frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k} \boldsymbol{x}^{(n)}, \\
-\boldsymbol{\Sigma}_{k} & =\frac{1}{N_{k}} \sum_{n=1}^{N} r^{(n)}_{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top}, \\
-\pi_{k} & =\frac{N_{k}}{N} .
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\mu}_{k} & =\frac{1}{N_{k}} \sum*{n=1}^{N}
+r^{(n)}*{k} \boldsymbol{x}^{(n)}, \\ \boldsymbol{\Sigma}_{k} & =\frac{1}{N_{k}}
+\sum*{n=1}^{N}
+r^{(n)}*{k}\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)\left(\boldsymbol{x}^{(n)}-\boldsymbol{\mu}_{k}\right)^{\top},
+\\ \pi*{k} & =\frac{N*{k}}{N} . \end{aligned}
+
 $$
 
 4. **Convergence**: Check if the log-likelihood has increased. More concretely,
@@ -2209,7 +2817,11 @@ See my code for this.
 
 
 $$
-\frac{1}{N} \sum_{n=1}^{N} \log \sum_{k=1}^{K} \pi_{k} \mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}_{k}, \boldsymbol{\Sigma}_{k}\right)
+
+\frac{1}{N} \sum*{n=1}^{N} \log \sum*{k=1}^{K} \pi*{k}
+\mathcal{N}\left(\boldsymbol{x}^{(n)} \mid \boldsymbol{\mu}*{k},
+\boldsymbol{\Sigma}\_{k}\right)
+
 $$
 ```
 
@@ -2222,30 +2834,48 @@ Given a joint distribution $p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol{\theta})$ 
 3. M step Evaluate $\boldsymbol{\theta}^{\text {new }}$ given by
 4.
 $$
-\boldsymbol{\theta}^{\text {new }}=\underset{\boldsymbol{\theta}}{\arg \max } \mathcal{Q}\left(\boldsymbol{\theta}, \boldsymbol{\theta}^{\text {old }}\right)
+
+\boldsymbol{\theta}^{\text {new }}=\underset{\boldsymbol{\theta}}{\arg \max }
+\mathcal{Q}\left(\boldsymbol{\theta}, \boldsymbol{\theta}^{\text {old }}\right)
+
 $$
 
 where
 
+
 $$
-\mathcal{Q}\left(\boldsymbol{\theta}, \boldsymbol{\theta}^{\text {old }}\right)=\sum_{\mathbf{Z}} p\left(\mathbf{Z} \mid \mathbf{X}, \boldsymbol{\theta}^{\text {old }}\right) \ln p(\mathbf{X}, \mathbf{Z} \mid \boldsymbol{\theta}) .
+
+\mathcal{Q}\left(\boldsymbol{\theta}, \boldsymbol{\theta}^{\text {old
+}}\right)=\sum\_{\mathbf{Z}} p\left(\mathbf{Z} \mid \mathbf{X},
+\boldsymbol{\theta}^{\text {old }}\right) \ln p(\mathbf{X}, \mathbf{Z} \mid
+\boldsymbol{\theta}) .
+
 $$
 
 and in a more general sense, we have:
 
+
 $$
-\begin{aligned}
-\mathcal{Q}\left(\boldsymbol{\theta} \mid \boldsymbol{\theta}^{\text{old}}\right) & =\mathbb{E}_{\boldsymbol{z} \mid \boldsymbol{x}, \boldsymbol{\theta}^{\text{old}}}[\log p(\boldsymbol{x}, \boldsymbol{z} \mid \boldsymbol{\theta})] \\
-& =\int \log p(\boldsymbol{x}, \boldsymbol{z} \mid \boldsymbol{\theta}) p\left(\boldsymbol{z} \mid \boldsymbol{x}, \boldsymbol{\theta}^{\text{old}}\right) \mathrm{d} \boldsymbol{z}
-\end{aligned}
+
+\begin{aligned} \mathcal{Q}\left(\boldsymbol{\theta} \mid
+\boldsymbol{\theta}^{\text{old}}\right) & =\mathbb{E}\_{\boldsymbol{z} \mid
+\boldsymbol{x}, \boldsymbol{\theta}^{\text{old}}}[\log p(\boldsymbol{x},
+\boldsymbol{z} \mid \boldsymbol{\theta})] \\ & =\int \log p(\boldsymbol{x},
+\boldsymbol{z} \mid \boldsymbol{\theta}) p\left(\boldsymbol{z} \mid
+\boldsymbol{x}, \boldsymbol{\theta}^{\text{old}}\right) \mathrm{d}
+\boldsymbol{z} \end{aligned}
+
 $$
 
 for the continuous case.
 
 5. Check for convergence of either the log likelihood or the parameter values. If the convergence criterion is not satisfied, then let
 
+
 $$
+
 \boldsymbol{\theta}^{\text {old }} \leftarrow \boldsymbol{\theta}^{\text {new }}
+
 $$
 
 and return to step 2 .
@@ -2268,8 +2898,12 @@ More information can be found in chapter 9.3.2 of Bishop's book, Pattern Recogni
 
 Consider a scenario where $N = 10$, $D = 2$, and $K = 3$ where the data points are as follows:
 
+
 $$
-\mathbf{X} = \begin{bmatrix}  1 &  3 \\ 2 &  4 \\ 3 &  5 \\ 4 &  6 \\ 5 &  7 \\ 6 &  8 \\ 7 &  9 \\ 8 & 10 \\ 9 & 11 \\ 10 & 12 \end{bmatrix}_{10 \times 2}
+
+\mathbf{X} = \begin{bmatrix} 1 & 3 \\ 2 & 4 \\ 3 & 5 \\ 4 & 6 \\ 5 & 7 \\ 6 & 8
+\\ 7 & 9 \\ 8 & 10 \\ 9 & 11 \\ 10 & 12 \end{bmatrix}\_{10 \times 2}
+
 $$
 
 ### Random Initialization
@@ -2296,12 +2930,12 @@ defined by the mean $\boldsymbol{\mu}_{k}$.
 
 For example, let's assume a hypothetical where we have assigned the data points to the following clusters:
 
+
 $$
-\begin{aligned}
-C_1 &= \{1, 2, 3, 4, 5\}, \\
-C_2 &= \{6, 7, 8\}, \\
-C_3 &= \{9, 10\}.
-\end{aligned}
+
+\begin{aligned} C_1 &= \{1, 2, 3, 4, 5\}, \\ C_2 &= \{6, 7, 8\}, \\ C_3 &= \{9,
+10\}. \end{aligned}
+
 $$
 
 where $C_k$ is the set of data points in cluster $k$ and $N_k$ is the number of data points in cluster $k$.
@@ -2312,20 +2946,24 @@ We can define the assignments above as a matrix of posterior probabilities, wher
 
 What the posterior means is the probability that a data point $n$ belongs to cluster $k$ given the data $\mathbf{X}$ and the parameters $\boldsymbol{\theta}$. In this case, we have:
 
+
 $$
-\mathbf{R} = \begin{bmatrix} 1 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 1 \end{bmatrix}_{10 \times 3}
+
+\mathbf{R} = \begin{bmatrix} 1 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \\ 1 & 0 & 0 \\
+1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \\ 0 & 0 & 1
+\end{bmatrix}\_{10 \times 3}
+
 $$
 
 where each row sums to 1 and each column $k$ sums to $N_k$.
 
 So we have:
 
+
 $$
-\begin{aligned}
-N_1 &= 5, \\
-N_2 &= 3, \\
-N_3 &= 2.
-\end{aligned}
+
+\begin{aligned} N_1 &= 5, \\ N_2 &= 3, \\ N_3 &= 2. \end{aligned}
+
 $$
 
 Then the next step that follows is the M-Step, where we need to update the parameters of the K-Means model, which are the means $\boldsymbol{\mu}_{k}$.
@@ -2337,21 +2975,28 @@ And it turns out our mean update is very similar, just the mean of the data poin
 
 Therefore, computing the mean of each component/cluster is as follows:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_k = \frac{1}{N_k} \sum_{n \in C_k} \boldsymbol{x}^{(n)}
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\mu}_k = \frac{1}{N_k} \sum_{n \in C_k}
+\boldsymbol{x}^{(n)} \end{aligned}
+
 $$
 
 where $N_k$ is the number of data points in cluster $k$.
 
 
 $$
-\begin{aligned}
-\boldsymbol{\mu}_1 &= \frac{1}{5} \sum_{n=1}^5 \boldsymbol{x}_n = \frac{1}{5} \begin{bmatrix} 1 + 2 + 3 + 4 + 5 \\ 3 + 4 + 5 + 6 + 7 \end{bmatrix} = \begin{bmatrix} 3 \\ 5 \end{bmatrix} \\
-\boldsymbol{\mu}_2 &= \frac{1}{3} \sum_{n=6}^8 \boldsymbol{x}_n = \frac{1}{3} \begin{bmatrix} 6 + 7 + 8 \\ 8 + 9 + 10 \end{bmatrix} = \begin{bmatrix} 7 \\ 9 \end{bmatrix} \\
-\boldsymbol{\mu}_3 &= \frac{1}{2} \sum_{n=9}^{10} \boldsymbol{x}_n = \frac{1}{2} \begin{bmatrix} 9 + 10 \\ 11 + 12 \end{bmatrix} = \begin{bmatrix} 9.5 \\ 11.5 \end{bmatrix}
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\mu}_1 &= \frac{1}{5} \sum_{n=1}^5 \boldsymbol{x}_n
+= \frac{1}{5} \begin{bmatrix} 1 + 2 + 3 + 4 + 5 \\ 3 + 4 + 5 + 6 + 7
+\end{bmatrix} = \begin{bmatrix} 3 \\ 5 \end{bmatrix} \\ \boldsymbol{\mu}\_2 &=
+\frac{1}{3} \sum_{n=6}^8 \boldsymbol{x}_n = \frac{1}{3} \begin{bmatrix} 6 + 7 +
+8 \\ 8 + 9 + 10 \end{bmatrix} = \begin{bmatrix} 7 \\ 9 \end{bmatrix} \\
+\boldsymbol{\mu}\_3 &= \frac{1}{2} \sum_{n=9}^{10} \boldsymbol{x}\_n =
+\frac{1}{2} \begin{bmatrix} 9 + 10 \\ 11 + 12 \end{bmatrix} = \begin{bmatrix}
+9.5 \\ 11.5 \end{bmatrix} \end{aligned}
+
 $$
 
 where each $\boldsymbol{\mu}_k$ is a $D \times 1$ vector.
@@ -2363,12 +3008,14 @@ This mean formula is intuitive because we are taking the average of the data poi
 Recall the formula for updating the means, covariances and weights of Gaussian mixture model,
 as follows:
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_k & =\frac{1}{N_k} \sum_{n=1}^N r^{(n)}_{k} \boldsymbol{x}_n, \\
-\boldsymbol{\Sigma}_k & =\frac{1}{N_k} \sum_{n=1}^N r^{(n)}_{k}\left(\boldsymbol{x}_n-\boldsymbol{\mu}_k\right)\left(\boldsymbol{x}_n-\boldsymbol{\mu}_k\right)^{\top}, \\
-\pi_k & =\frac{N_k}{N} .
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\mu}_k & =\frac{1}{N_k} \sum_{n=1}^N r^{(n)}_{k}
+\boldsymbol{x}\_n, \\ \boldsymbol{\Sigma}\_k & =\frac{1}{N_k} \sum_{n=1}^N
+r^{(n)}\_{k}\left(\boldsymbol{x}\_n-\boldsymbol{\mu}\_k\right)\left(\boldsymbol{x}\_n-\boldsymbol{\mu}\_k\right)^{\top},
+\\ \pi_k & =\frac{N_k}{N} . \end{aligned}
+
 $$
 
 Now, we only talk about the mean update, to have a comparison with K-Means's mean update.
@@ -2380,18 +3027,29 @@ matrix defined just now.
 
 Given some random initial parameters, we can compute the posterior probabilities matrix $\mathbf{R}$. Say
 
+
 $$
-\mathbf{R} = \begin{bmatrix} 0.9 & 0.1 & 0 \\ 0.8 & 0.2 & 0 \\ 0.7 & 0.3 & 0 \\ 0.75 & 0.25 & 0 \\ 0.85 & 0.15 & 0 \\ 0 & 0.9 & 0.1 \\ 0 & 0.8 & 0.2 \\ 0 & 0.85 & 0.15 \\ 0 & 0 & 1 \\ 0 & 0 & 1 \end{bmatrix}_{10 \times 3}
+
+\mathbf{R} = \begin{bmatrix} 0.9 & 0.1 & 0 \\ 0.8 & 0.2 & 0 \\ 0.7 & 0.3 & 0 \\
+0.75 & 0.25 & 0 \\ 0.85 & 0.15 & 0 \\ 0 & 0.9 & 0.1 \\ 0 & 0.8 & 0.2 \\ 0 & 0.85
+& 0.15 \\ 0 & 0 & 1 \\ 0 & 0 & 1 \end{bmatrix}\_{10 \times 3}
+
 $$
 
 where each row sums to 1 and each column $k$ sums to $N_k$ but this $N_k$ is not the number of data points in cluster $k$ but the sum of the soft assignments of all data points to cluster $k$. Note each row is just the $p(\boldsymbol{z}^{(n)}| \boldsymbol{x}^{(n)}, \boldsymbol{\pi})$ over all $K$ components.
 
 In other words, we have the following equation for the posterior probability of the latent label $z^{(n)} = k$ given the data point $x^{(n)}$.
 
+
 $$
-\begin{aligned}
-\boldsymbol{R} &= \begin{bmatrix} P(z^{(1)} = 1 \mid x^{(1)}) & P(z^{(1)} = 2 \mid x^{(1)}) & \cdots & P(z^{(1)} = K \mid x^{(1)}) \\ P(z^{(2)} = 1 \mid x^{(2)}) & P(z^{(2)} = 2 \mid x^{(2)}) & \cdots & P(z^{(2)} = K \mid x^{(2)}) \\ \vdots & \vdots & \ddots & \vdots \\ P(z^{(N)} = 1 \mid x^{(N)}) & P(z^{(N)} = 2 \mid x^{(N)}) & \cdots & P(z^{(N)} = K \mid x^{(N)}) \end{bmatrix}_{N \times K} \\
-\end{aligned}
+
+\begin{aligned} \boldsymbol{R} &= \begin{bmatrix} P(z^{(1)} = 1 \mid x^{(1)}) &
+P(z^{(1)} = 2 \mid x^{(1)}) & \cdots & P(z^{(1)} = K \mid x^{(1)}) \\ P(z^{(2)}
+= 1 \mid x^{(2)}) & P(z^{(2)} = 2 \mid x^{(2)}) & \cdots & P(z^{(2)} = K \mid
+x^{(2)}) \\ \vdots & \vdots & \ddots & \vdots \\ P(z^{(N)} = 1 \mid x^{(N)}) &
+P(z^{(N)} = 2 \mid x^{(N)}) & \cdots & P(z^{(N)} = K \mid x^{(N)})
+\end{bmatrix}\_{N \times K} \\ \end{aligned}
+
 $$
 
 and each row of $\boldsymbol{R}$ sums to 1. Why?
@@ -2407,12 +3065,14 @@ To this end, our $N_k$ is also different from the one we had in K-Means.
 
 $N_k$ is not the number of data points in cluster $k$ but the sum of the soft assignments of all data points to cluster $k$. Let's see the $N_k$ for each cluster:
 
+
 $$
-\begin{aligned}
-N_1 &= \sum_{n=1}^5 r^{(n)}_{1} = 0.9 + 0.8 + 0.7 + 0.75 + 0.85 + 0 + 0 + 0 + 0 + 0 = 4 \\
-N_2 &= \sum_{n=6}^8 r^{(n)}_{2} = 0.1 + 0.2 + 0.3 + 0.25 + 0.15 + 0.9 + 0.8 + 0.85 + 0 + 0 = 3.55 \\
-N_3 &= \sum_{n=9}^{10} r^{(n)}_{3} = 0 + 0 + 0 + 0 + 0 + 0.1 + 0.2 + 0.15 + 1 + 1 = 2.45
-\end{aligned}
+
+\begin{aligned} N*1 &= \sum*{n=1}^5 r^{(n)}_{1} = 0.9 + 0.8 + 0.7 + 0.75 +
+0.85 + 0 + 0 + 0 + 0 + 0 = 4 \\ N_2 &= \sum_{n=6}^8 r^{(n)}_{2} = 0.1 + 0.2 +
+0.3 + 0.25 + 0.15 + 0.9 + 0.8 + 0.85 + 0 + 0 = 3.55 \\ N_3 &= \sum_{n=9}^{10}
+r^{(n)}\_{3} = 0 + 0 + 0 + 0 + 0 + 0.1 + 0.2 + 0.15 + 1 + 1 = 2.45 \end{aligned}
+
 $$
 
 Notice that $N_1 + N_2 + N_3 = 10$ but intuitively each $N_k$ is a soft representation of the number of data points in cluster $k$. So you can still interpret $N_k$ as the number of data points in cluster $k$ if
@@ -2426,8 +3086,11 @@ We only focus on the mean update here. The other two are similar.
 
 The mean update is given by the following formula:
 
+
 $$
-\boldsymbol{\mu}_k =\frac{1}{N_k} \sum_{n=1}^N r^{(n)}_{k} \boldsymbol{x}^{(n)}
+
+\boldsymbol{\mu}_k =\frac{1}{N_k} \sum_{n=1}^N r^{(n)}\_{k} \boldsymbol{x}^{(n)}
+
 $$
 
 
@@ -2440,12 +3103,29 @@ Now there is one more thing to note, the numerator is also not the sum of all th
 points $x^{(n)}$ in cluster $k$ but the sum of the soft assignments of **all** data points to cluster $k$.
 It is now the weighted sum of all the data points $x^{(n)}$ in cluster $k$.
 
+
 $$
-\begin{aligned}
-\boldsymbol{\mu}_1 &= \frac{1}{N_1} \sum_{n=1}^{10} r^{(n)}_{1} \boldsymbol{x}^{(n)} = \frac{1}{N_1} \begin{bmatrix} 0.9 \times 1 + 0.8 \times 2 + 0.7 \times 3 + 0.75 \times 4 + 0.85 \times 5 + 0 \times 6 + 0 \times 7 + 0 \times 8 + 0 \times 9 + 0 \times 10 \\ 0.9 \times 3 + 0.8 \times 4 + 0.7 \times 5 + 0.75 \times 6 + 0.85 \times 7 + 0 \times 8 + 0 \times 9 + 0 \times 10 + 0 \times 11 + 0 \times 12 \end{bmatrix} = \begin{bmatrix} 3.75 \\ 5.75 \end{bmatrix} \\
-\boldsymbol{\mu}_2 &= \frac{1}{N_2} \sum_{n=1}^{10} r^{(n)}_{2} \boldsymbol{x}^{(n)} = \frac{1}{N_2} \begin{bmatrix} 0.1 \times 1 + 0.2 \times 2 + 0.3 \times 3 + 0.25 \times 4 + 0.15 \times 5 + 0.9 \times 6 + 0.8 \times 7 + 0.85 \times 8 + 0 \times 9 + 0 \times 10 \\ 0.1 \times 3 + 0.2 \times 4 + 0.3 \times 5 + 0.25 \times 6 + 0.15 \times 7 + 0.9 \times 8 + 0.8 \times 9 + 0.85 \times 10 + 0 \times 11 + 0 \times 12 \end{bmatrix} = \begin{bmatrix} 6.95 \\ 8.95 \end{bmatrix} \\
-\boldsymbol{\mu}_3 &= \frac{1}{N_3} \sum_{n=1}^{10} r^{(n)}_{3} \boldsymbol{x}^{(n)} = \frac{1}{N_3} \begin{bmatrix} 0 \times 1 + 0 \times 2 + 0 \times 3 + 0 \times 4 + 0 \times 5 + 0.1 \times 6 + 0.2 \times 7 + 0.15 \times 8 + 1 \times 9 + 1 \times 10 \\ 0 \times 3 + 0 \times 4 + 0 \times 5 + 0 \times 6 + 0 \times 7 + 0.1 \times 8 + 0.2 \times 9 + 0.15 \times 10 + 1 \times 11 + 1 \times 12 \end{bmatrix} = \begin{bmatrix} 9.5 \\ 11.5 \end{bmatrix}
-\end{aligned}
+
+\begin{aligned} \boldsymbol{\mu}_1 &= \frac{1}{N_1} \sum_{n=1}^{10} r^{(n)}_{1}
+\boldsymbol{x}^{(n)} = \frac{1}{N_1} \begin{bmatrix} 0.9 \times 1 + 0.8 \times
+2 + 0.7 \times 3 + 0.75 \times 4 + 0.85 \times 5 + 0 \times 6 + 0 \times 7 + 0
+\times 8 + 0 \times 9 + 0 \times 10 \\ 0.9 \times 3 + 0.8 \times 4 + 0.7 \times
+5 + 0.75 \times 6 + 0.85 \times 7 + 0 \times 8 + 0 \times 9 + 0 \times 10 + 0
+\times 11 + 0 \times 12 \end{bmatrix} = \begin{bmatrix} 3.75 \\ 5.75
+\end{bmatrix} \\ \boldsymbol{\mu}\_2 &= \frac{1}{N_2} \sum_{n=1}^{10}
+r^{(n)}_{2} \boldsymbol{x}^{(n)} = \frac{1}{N_2} \begin{bmatrix} 0.1 \times 1 +
+0.2 \times 2 + 0.3 \times 3 + 0.25 \times 4 + 0.15 \times 5 + 0.9 \times 6 + 0.8
+\times 7 + 0.85 \times 8 + 0 \times 9 + 0 \times 10 \\ 0.1 \times 3 + 0.2 \times
+4 + 0.3 \times 5 + 0.25 \times 6 + 0.15 \times 7 + 0.9 \times 8 + 0.8 \times 9 +
+0.85 \times 10 + 0 \times 11 + 0 \times 12 \end{bmatrix} = \begin{bmatrix} 6.95
+\\ 8.95 \end{bmatrix} \\ \boldsymbol{\mu}\_3 &= \frac{1}{N_3} \sum_{n=1}^{10}
+r^{(n)}\_{3} \boldsymbol{x}^{(n)} = \frac{1}{N_3} \begin{bmatrix} 0 \times 1 + 0
+\times 2 + 0 \times 3 + 0 \times 4 + 0 \times 5 + 0.1 \times 6 + 0.2 \times 7 +
+0.15 \times 8 + 1 \times 9 + 1 \times 10 \\ 0 \times 3 + 0 \times 4 + 0 \times
+5 + 0 \times 6 + 0 \times 7 + 0.1 \times 8 + 0.2 \times 9 + 0.15 \times 10 + 1
+\times 11 + 1 \times 12 \end{bmatrix} = \begin{bmatrix} 9.5 \\ 11.5
+\end{bmatrix} \end{aligned}
+
 $$
 
 so you can treat the numerator as the weighted sum of all the data points $x^{(n)}$ in cluster $k$.
@@ -2877,3 +3557,4 @@ wide array of examples in python code and it is very easy to follow.
 - Jung, Alexander. "Chapter 8.2. Soft Clustering with Gaussian Mixture Models." In Machine Learning: The Basics. Singapore: Springer Nature Singapore, 2023.
 - Murphy, Kevin P. "Chapter 3.5 Mixture Models" and "Chapter 21.4 Clustering using mixture models." In Probabilistic Machine Learning: An Introduction. MIT Press, 2022.
 - Vincent Tan, "Lecture 14-16." In Data Modelling and Computation (MA4270).
+$$

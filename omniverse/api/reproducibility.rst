@@ -5,7 +5,7 @@ Seed Module
 -----------
 Seed.
 
-.. automodule:: omnivault.utils.reproducibility.seed
+.. automodule:: reproducibility.seed
     :members:
 
 

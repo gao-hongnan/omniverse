@@ -54,9 +54,9 @@ def calculate_class_weights_and_stats(labels: List[int]) -> Dict[str, Any]:
     }
 
     result = {
-        "class_counts": dict(zip(classes, class_counts)),
-        "normalized_class_counts": dict(zip(classes, normalized_class_counts)),
-        "class_weights_dict": dict(zip(classes, class_weights)),
+        "class_counts": dict(zip(classes, class_counts, strict=False)),
+        "normalized_class_counts": dict(zip(classes, normalized_class_counts, strict=False)),
+        "class_weights_dict": dict(zip(classes, class_weights, strict=False)),
         "class_weights": list(class_weights),
         "class_count_stats": class_count_stats,
     }

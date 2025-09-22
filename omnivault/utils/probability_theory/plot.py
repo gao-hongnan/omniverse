@@ -425,7 +425,7 @@ def plot_binomial_pmfs(
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
 
-    for n, p in zip(ns, ps):
+    for n, p in zip(ns, ps, strict=False):
         X = stats.binom(n, p)
         states = np.arange(0, n + 1)
 

@@ -19,11 +19,11 @@ import random
 from pathlib import Path
 
 from faker import Faker
+from reproducibility.seed import seed_all
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
-from omnivault.utils.reproducibility.seed import seed_all
 from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models import Base
 from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models.account import Account
 from omnixamples.software_engineering.serving.restful_api.banking.simple.api.models.transaction import Transaction

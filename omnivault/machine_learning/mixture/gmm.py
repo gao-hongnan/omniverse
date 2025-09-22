@@ -6,12 +6,12 @@ from typing import Any, Literal, Tuple, cast
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
+from reproducibility.seed import seed_all
 from scipy.stats import multivariate_normal
 from tqdm import tqdm
 
 from omnivault.machine_learning.clustering.kmeans import KMeansLloyd
 from omnivault.machine_learning.estimator import BaseEstimator
-from omnivault.utils.reproducibility.seed import seed_all
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -524,7 +524,7 @@ class GaussianMixtureModel(BaseEstimator):
             """
             Plot the Gaussian contours for each component in the GMM.
             """
-            for mean, cov in zip(means, covariances):
+            for mean, cov in zip(means, covariances, strict=False):
                 pdf = grid_gaussian_pdf(xx, yy, mean, cov)
                 ax.contour(xx, yy, pdf, levels=10, colors="k")
 

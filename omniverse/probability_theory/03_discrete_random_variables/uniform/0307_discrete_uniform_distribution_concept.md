@@ -73,7 +73,7 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.probability_theory.plot import plot_discrete_uniform_pmf, plot_empirical_discrete_uniform
     from omnivault.utils.visualization.style import use_svg_display
-    from omnivault.utils.reproducibility.seed import seed_all
+    from reproducibility.seed import seed_all
 else:
     raise ImportError("Root directory not found.")
 

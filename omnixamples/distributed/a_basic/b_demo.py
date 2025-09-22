@@ -37,11 +37,11 @@ import os
 import torch
 import torch.distributed
 import torch.multiprocessing as mp
+from reproducibility.seed import seed_all
 from rich.pretty import pprint
 from torch._C._distributed_c10d import ReduceOp
 
 from omnivault.distributed.core import find_free_port, is_free_port
-from omnivault.utils.reproducibility.seed import seed_all
 from omnixamples.distributed.a_basic.a_setup import init_process
 from omnixamples.distributed.a_basic.config import get_args_parser
 

@@ -13,6 +13,7 @@ import torch
 from keras.saving import deserialize_keras_object, serialize_keras_object
 from keras_nlp.samplers import Sampler
 from numpy.typing import NDArray
+from reproducibility.seed import seed_all
 from tensorflow.python.framework.ops import EagerTensor
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
@@ -40,7 +41,6 @@ from omnivault.transformer.core.trainer import Trainer, TrainerEvent
 from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.modules.attention.core import ScaledDotProductAttention
 from omnivault.transformer.utils.visualization import save_plot_history
-from omnivault.utils.reproducibility.seed import seed_all
 from omnivault.utils.torch_utils.cleanup import purge_global_scope
 
 seed_all(set_torch_deterministic=False)  # set to False since it may cause a slight increase in memory usage
@@ -216,9 +216,9 @@ class TFDatasetWrapper(Dataset):
 
 
 def custom_collate_fn(
-    batch: List[Tuple[torch.Tensor, torch.Tensor]]
+    batch: List[Tuple[torch.Tensor, torch.Tensor]],
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    sources, targets = zip(*batch)
+    sources, targets = zip(*batch, strict=False)
 
     sources = torch.stack(sources)
     targets = torch.stack(targets)

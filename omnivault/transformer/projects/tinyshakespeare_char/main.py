@@ -7,6 +7,7 @@ import time
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
+from reproducibility.seed import seed_all
 from torch.utils.data import Subset
 
 from omnivault._types._alias import Missing
@@ -33,7 +34,6 @@ from omnivault.transformer.decoder.core import GPTDecoder
 from omnivault.transformer.projects.tinyshakespeare_char.callbacks import evaluate_generate_on_train_batch_end
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
-from omnivault.utils.reproducibility.seed import seed_all
 
 
 def main(cfg: DictConfig | ListConfig) -> None:

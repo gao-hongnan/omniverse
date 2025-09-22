@@ -79,7 +79,9 @@ def add_text_annotations(
                 plotter.add_text(x=x_end, y=y_end, text=label, **endpoint_kwargs)
 
         if include_vector_label and vector.label:
-            midpoint = tuple(origin + direction / 2 for origin, direction in zip(vector.origin, vector.direction))
+            midpoint = tuple(
+                origin + direction / 2 for origin, direction in zip(vector.origin, vector.direction, strict=False)
+            )
             # Label with vector label
             if dim == 3:
                 plotter.add_text(

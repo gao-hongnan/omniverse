@@ -223,7 +223,8 @@ class GPTDecoder(BaseDecoder):
         target_padding_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         future_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         # fmt: off
-        encoder_hidden_states: torch.Tensor | NotGiven = NOT_GIVEN,  # that's memory in torch code base and is ensured not used here
+        encoder_hidden_states: torch.Tensor
+        | NotGiven = NOT_GIVEN,  # that's memory in torch code base and is ensured not used here
         encoder_hidden_states_masks: torch.BoolTensor | NotGiven = NOT_GIVEN,
         # that's memory_mask in torch code base and is ensured not used here
         # fmt: on

@@ -8,12 +8,12 @@ from datetime import datetime
 from typing import Any, Iterable, Tuple
 
 import torch
+from reproducibility.seed import seed_all
 from torch import nn
 from torch._C._profiler import _ExperimentalConfig
 from torch.profiler import ProfilerActivity, profile, record_function
 
 from omnivault.modules.loss import CrossEntropyLoss
-from omnivault.utils.reproducibility.seed import seed_all
 from omnixamples.profiling.common import GPT, General, GPTConfig, device, get_random_batch
 
 seed_all(42, True, False)

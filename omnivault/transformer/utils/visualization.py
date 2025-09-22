@@ -113,7 +113,7 @@ def show_attention_heatmaps(
     plot_kwargs = plot_kwargs or {"cmap": "viridis"}
     if B == 1:
         attention_weight = attention_weights[0]
-        for h, (ax, head_attention) in enumerate(zip(axes, attention_weight)):
+        for h, (ax, head_attention) in enumerate(zip(axes, attention_weight, strict=False)):
             sns.heatmap(head_attention, ax=ax, annot=show_values, fmt=f".{value_dp}f", **plot_kwargs)
             ax.set_xlabel(xlabel)
             ax.set_ylabel(ylabel)
@@ -127,8 +127,8 @@ def show_attention_heatmaps(
             if show_title:
                 ax.set_title(f"Head {h + 1}")
     else:
-        for b, (row_axes, attention_weight) in enumerate(zip(axes, attention_weights)):
-            for h, (ax, head_attention) in enumerate(zip(row_axes, attention_weight)):
+        for b, (row_axes, attention_weight) in enumerate(zip(axes, attention_weights, strict=False)):
+            for h, (ax, head_attention) in enumerate(zip(row_axes, attention_weight, strict=False)):
                 sns.heatmap(head_attention, ax=ax, annot=show_values, fmt=f".{value_dp}f", **plot_kwargs)
                 if b == B - 1:
                     ax.set_xlabel(xlabel)  # Only the last batch will have the xlabel

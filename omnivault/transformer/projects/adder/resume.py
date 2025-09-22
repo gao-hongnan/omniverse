@@ -9,6 +9,7 @@ from pathlib import Path
 from hydra.utils import instantiate
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
+from reproducibility.seed import seed_all
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING
@@ -36,7 +37,6 @@ from omnivault.transformer.utils.general_utils import create_directory, download
 from omnivault.transformer.utils.visualization import save_plot_history
 from omnivault.utils.config_management.omegaconf import load_yaml_config, merge_configs
 from omnivault.utils.general.paths import find_root_dir
-from omnivault.utils.reproducibility.seed import seed_all
 
 warnings.filterwarnings("ignore", category=UserWarning)  # usually related to deterministic behavior of pytorch
 

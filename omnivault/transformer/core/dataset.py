@@ -326,7 +326,7 @@ def collate_fn(
     # padding_masks: Tuple[torch.Tensor, ...]
     # future_masks: Tuple[torch.Tensor, ...]
 
-    inputs, targets, padding_masks, future_masks = zip(*batch)
+    inputs, targets, padding_masks, future_masks = zip(*batch, strict=False)
 
     # Padding sequences to the same length: convert to list to appease typing
     # of pad_sequence as it expects a list of tensors or tensors, not tuple.
