@@ -1025,7 +1025,7 @@ GPU time recorded for it since the real cuda operation is done in the
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[[</span><span class="s1">&#39;key&#39;</span><span class="p">,</span><span class="s1">&#39;self_cpu_time_total&#39;</span><span class="p">,</span><span class="s1">&#39;cpu_time_total&#39;</span><span class="p">,</span> <span class="s1">&#39;self_cuda_time_total&#39;</span><span class="p">,</span><span class="s1">&#39;cuda_time_total&#39;</span><span class="p">,</span> <span class="s1">&#39;device_type&#39;</span><span class="p">]]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="p">[[</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;self_cpu_time_total&quot;</span><span class="p">,</span> <span class="s2">&quot;cpu_time_total&quot;</span><span class="p">,</span> <span class="s2">&quot;self_cuda_time_total&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda_time_total&quot;</span><span class="p">,</span> <span class="s2">&quot;device_type&quot;</span><span class="p">]]</span>
 </pre></div>
 </div>
 </div>
@@ -1415,16 +1415,15 @@ STAGE:2024-08-12 04:45:05 34:34 ActivityProfilerController.cpp:322] Completed St
 <span class="c1"># on different iterations of the training loop;</span>
 <span class="c1"># trace_handler is called every time a new trace becomes available</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">trace_handler</span><span class="p">(</span><span class="n">prof</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">key_averages</span><span class="p">()</span><span class="o">.</span><span class="n">table</span><span class="p">(</span>
-        <span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;self_cuda_time_total&quot;</span><span class="p">,</span> <span class="n">row_limit</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">key_averages</span><span class="p">()</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">sort_by</span><span class="o">=</span><span class="s2">&quot;self_cuda_time_total&quot;</span><span class="p">,</span> <span class="n">row_limit</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">prof</span><span class="o">.</span><span class="n">export_chrome_trace</span><span class="p">(</span><span class="s2">&quot;non_default_trace_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">prof</span><span class="o">.</span><span class="n">step_num</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+
 
 <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span>
     <span class="n">activities</span><span class="o">=</span><span class="p">[</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CPU</span><span class="p">,</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">ProfilerActivity</span><span class="o">.</span><span class="n">CUDA</span><span class="p">,</span>
     <span class="p">],</span>
-
     <span class="c1"># In this example with wait=1, warmup=1, active=2, repeat=1,</span>
     <span class="c1"># profiler will skip the first step/iteration,</span>
     <span class="c1"># start warming up on the second, record</span>
@@ -1432,20 +1431,15 @@ STAGE:2024-08-12 04:45:05 34:34 ActivityProfilerController.cpp:322] Completed St
     <span class="c1"># after which the trace will become available</span>
     <span class="c1"># and on_trace_ready (when set) is called;</span>
     <span class="c1"># the cycle repeats starting with the next step</span>
-
-    <span class="n">schedule</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span>
-        <span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">active</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-        <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">on_trace_ready</span><span class="o">=</span><span class="n">trace_handler</span>
+    <span class="n">schedule</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">profiler</span><span class="o">.</span><span class="n">schedule</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">on_trace_ready</span><span class="o">=</span><span class="n">trace_handler</span><span class="p">,</span>
     <span class="c1"># on_trace_ready=torch.profiler.tensorboard_trace_handler(&#39;./log&#39;)</span>
     <span class="c1"># used when outputting for tensorboard</span>
-    <span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
-        <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">())</span>
-            <span class="c1"># send a signal to the profiler that the next iteration has started</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+    <span class="k">for</span> <span class="nb">iter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">())</span>
+        <span class="c1"># send a signal to the profiler that the next iteration has started</span>
+        <span class="n">p</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>

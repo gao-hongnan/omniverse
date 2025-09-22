@@ -864,7 +864,8 @@ document.write(`
 <span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &#39;svg&#39;
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="k">def</span><span class="w"> </span><span class="nf">find_root_dir</span><span class="p">(</span><span class="n">current_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;.git&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_root_dir</span><span class="p">(</span><span class="n">current_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.git&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the root directory by searching for a directory or file that serves as a</span>
 <span class="sd">    marker.</span>
@@ -890,13 +891,14 @@ document.write(`
             <span class="k">return</span> <span class="n">parent</span>
     <span class="k">return</span> <span class="kc">None</span>
 
+
 <span class="n">current_file_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;__file__&quot;</span><span class="p">)</span>
-<span class="n">root_dir</span>          <span class="o">=</span> <span class="n">find_root_dir</span><span class="p">(</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;omnivault&#39;</span><span class="p">)</span>
+<span class="n">root_dir</span> <span class="o">=</span> <span class="n">find_root_dir</span><span class="p">(</span><span class="n">current_file_path</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;omnivault&quot;</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">root_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">root_dir</span><span class="p">))</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.visualization.style</span><span class="w"> </span><span class="kn">import</span> <span class="n">use_svg_display</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Root directory not found.&quot;</span><span class="p">)</span>
 
@@ -1022,14 +1024,13 @@ An important reminder is that in real world, we often won’t know the true popu
         <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
         <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
         <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
     <span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Covid Status&quot;</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Probability&quot;</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of the true population&quot;</span><span class="p">)</span>
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">bins</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span>
-    <span class="c1">#ax.set_xticklabels([&quot;Negative&quot;, &quot;Positive&quot;])</span>
+    <span class="c1"># ax.set_xticklabels([&quot;Negative&quot;, &quot;Positive&quot;])</span>
 
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
 </pre></div>
@@ -1043,7 +1044,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/07196d64a4c07f5339a6e5615030fad1c990e956329948f0645e355a98585059.svg" src="../../../_images/07196d64a4c07f5339a6e5615030fad1c990e956329948f0645e355a98585059.svg" />
+<img alt="../../../_images/6a3b00c7ae4b5f94a44b5775fdb7e1c9fc74a3244fc4f8db66ce90cb852c2153.svg" src="../../../_images/6a3b00c7ae4b5f94a44b5775fdb7e1c9fc74a3244fc4f8db66ce90cb852c2153.svg" />
 </div>
 </div>
 <p>The true pmf (ideal histogram) gives the answer that out of the true population, <span class="math notranslate nohighlight">\(80\%\)</span> has no covid, and <span class="math notranslate nohighlight">\(20\%\)</span> has covid.</p>
@@ -1085,7 +1086,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/ef536948e0e34cfc80de93676a68243b6800caf247609dd2e671bd4bfcd48f09.svg" src="../../../_images/ef536948e0e34cfc80de93676a68243b6800caf247609dd2e671bd4bfcd48f09.svg" />
+<img alt="../../../_images/05b95c42b02bd5ce45d32187058b7c16bb6174c0e0f7c9abc71e4d45cf731a5b.svg" src="../../../_images/05b95c42b02bd5ce45d32187058b7c16bb6174c0e0f7c9abc71e4d45cf731a5b.svg" />
 </div>
 </div>
 <p>The CDF is plotted below.</p>
@@ -1098,7 +1099,7 @@ An important reminder is that in real world, we often won’t know the true popu
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/3ef7fbc950bae60dc255f07e35af7ca4b2e75c049d8e4598af2793e4289f2227.svg" src="../../../_images/3ef7fbc950bae60dc255f07e35af7ca4b2e75c049d8e4598af2793e4289f2227.svg" />
+<img alt="../../../_images/0da662f32e77cbce0c4bc27bb0c3e5e19f1a0e053a152c447c0df83ba9b77d1b.svg" src="../../../_images/0da662f32e77cbce0c4bc27bb0c3e5e19f1a0e053a152c447c0df83ba9b77d1b.svg" />
 </div>
 </div>
 </section>
@@ -1134,7 +1135,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sample_1000</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span> <span class="c1"># ok surprisingly quite close..</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>  <span class="c1"># ok surprisingly quite close..</span>
 </pre></div>
 </div>
 </div>
@@ -1164,7 +1165,6 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of the true population&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Covid Status&quot;</span><span class="p">)</span>
@@ -1186,7 +1186,6 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 1000&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Covid Status&quot;</span><span class="p">)</span>
@@ -1208,7 +1207,6 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 5000&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Covid Status&quot;</span><span class="p">)</span>
@@ -1230,7 +1228,6 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 9000&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Covid Status&quot;</span><span class="p">)</span>
@@ -1240,7 +1237,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../../../_images/761b083934699e37436633dcb22ee39d1311d3fd6af37faf8ad74ba573e229bd.svg" src="../../../_images/761b083934699e37436633dcb22ee39d1311d3fd6af37faf8ad74ba573e229bd.svg" />
+<img alt="../../../_images/8f5468e38429228ec0cdbb291e17cb8e19d750ffd5ee19e86a87d9896eed65e8.svg" src="../../../_images/8f5468e38429228ec0cdbb291e17cb8e19d750ffd5ee19e86a87d9896eed65e8.svg" />
 </div>
 </div>
 <p>It is quite clear that as number of samples go up, the empirical histograms become more accurate. This is not surprisingly as intuitively, as your samples become large, your distribution will be more accurate to the true population.</p>
@@ -1249,7 +1246,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <p>The method to do this is called <code class="docutils literal notranslate"><span class="pre">rvs</span></code>. If it is called with no argument, then it generates a single value of that random variable <span id="id3">[<a class="reference internal" href="../../../bibliography.html#id35" title="John M. Shea. Foundations of data science with python. 2021. URL: https://jmshea.github.io/Foundations-of-Data-Science-with-Python/intro.html.">Shea, 2021</a>]</span>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span> <span class="c1"># 1 sample</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">()</span>  <span class="c1"># 1 sample</span>
 </pre></div>
 </div>
 </div>
@@ -1261,7 +1258,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="c1"># 10 samples from the distribution</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>  <span class="c1"># 10 samples from the distribution</span>
 </pre></div>
 </div>
 </div>
@@ -1276,7 +1273,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_sims</span> <span class="o">=</span> <span class="mi">1000</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">num_sims</span><span class="p">)</span>
-<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span> <span class="c1"># how many no covid vs covid</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>  <span class="c1"># how many no covid vs covid</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The relative freqs are </span><span class="si">{</span><span class="n">counts</span><span class="o">/</span><span class="n">num_sims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">num_sims</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -1288,14 +1285,14 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.821 0.179]
 </pre></div>
 </div>
-<img alt="../../../_images/1c9548001f23e2bca9dae6833adeaa2c403785807f98ea84e74c9d8af451ea23.svg" src="../../../_images/1c9548001f23e2bca9dae6833adeaa2c403785807f98ea84e74c9d8af451ea23.svg" />
+<img alt="../../../_images/544bbe0dd9330e932a6dc95ed4d6475bb4c35e8b9095d029cf5392ea900e40a7.svg" src="../../../_images/544bbe0dd9330e932a6dc95ed4d6475bb4c35e8b9095d029cf5392ea900e40a7.svg" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_sims</span> <span class="o">=</span> <span class="mi">5000</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">num_sims</span><span class="p">)</span>
-<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span> <span class="c1"># how many no covid vs covid</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>  <span class="c1"># how many no covid vs covid</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The relative freqs are </span><span class="si">{</span><span class="n">counts</span><span class="o">/</span><span class="n">num_sims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">num_sims</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -1307,14 +1304,14 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.8018 0.1982]
 </pre></div>
 </div>
-<img alt="../../../_images/3ce6ecdd678fa571ec3bd3d377904d132c88873be8d10b1b9e2b8984aed7af73.svg" src="../../../_images/3ce6ecdd678fa571ec3bd3d377904d132c88873be8d10b1b9e2b8984aed7af73.svg" />
+<img alt="../../../_images/347f0a20c1cc7c38392e3850ec320ab1188582a9ede537932d490f151385ba30.svg" src="../../../_images/347f0a20c1cc7c38392e3850ec320ab1188582a9ede537932d490f151385ba30.svg" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">num_sims</span> <span class="o">=</span> <span class="mi">9000</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">num_sims</span><span class="p">)</span>
-<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span> <span class="c1"># how many no covid vs covid</span>
+<span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">)])</span>  <span class="c1"># how many no covid vs covid</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The relative freqs are </span><span class="si">{</span><span class="n">counts</span><span class="o">/</span><span class="n">num_sims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">counts</span> <span class="o">/</span> <span class="n">num_sims</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -1326,7 +1323,7 @@ will tend to the true distribution/PMF. See <span id="id2">[<a class="reference 
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The relative freqs are [0.79922222 0.20077778]
 </pre></div>
 </div>
-<img alt="../../../_images/d416e3873dde135ae128f00ef28a5bce06b23697a24d8bcbdf84be792195992e.svg" src="../../../_images/d416e3873dde135ae128f00ef28a5bce06b23697a24d8bcbdf84be792195992e.svg" />
+<img alt="../../../_images/12a2cc78172696d623b479683addf60ff07b856c8778eee45980a7a9670dfce6.svg" src="../../../_images/12a2cc78172696d623b479683addf60ff07b856c8778eee45980a7a9670dfce6.svg" />
 </div>
 </div>
 </section>

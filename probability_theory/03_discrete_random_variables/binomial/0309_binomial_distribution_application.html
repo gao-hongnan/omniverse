@@ -853,6 +853,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
 <span class="n">parent_dir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">)</span>
 
@@ -866,7 +867,8 @@ document.write(`
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">true_pmf</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">population</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;PMF of the true population: map X(\S) to a probability.</span>
@@ -1113,8 +1115,8 @@ to get the average number of successful conversion per day.</p>
 <span class="n">revenue_per_successful_call</span> <span class="o">=</span> <span class="mi">90</span>
 
 <span class="n">expected_total_conversions</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">*</span> <span class="n">num_employees</span>
-<span class="n">expected_total_revenue</span>     <span class="o">=</span> <span class="n">revenue_per_successful_call</span> <span class="o">*</span> <span class="n">expected_total_conversions</span>
-<span class="n">expected_total_profits</span>     <span class="o">=</span> <span class="n">expected_total_revenue</span> <span class="o">-</span> <span class="n">salary_per_employee</span> <span class="o">*</span> <span class="n">num_employees</span>
+<span class="n">expected_total_revenue</span> <span class="o">=</span> <span class="n">revenue_per_successful_call</span> <span class="o">*</span> <span class="n">expected_total_conversions</span>
+<span class="n">expected_total_profits</span> <span class="o">=</span> <span class="n">expected_total_revenue</span> <span class="o">-</span> <span class="n">salary_per_employee</span> <span class="o">*</span> <span class="n">num_employees</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected Total Conversions Per Day: </span><span class="si">{</span><span class="n">expected_total_conversions</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected Total Revenue Per Day: </span><span class="si">{</span><span class="n">expected_total_revenue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1154,7 +1156,7 @@ can be any member from the population.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># generate states from binomial distribution</span>
-<span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1244,18 +1246,18 @@ to be the random variable <span class="math notranslate nohighlight">\(Z = 90Y\)
 <span class="n">yearly_salary_paid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="mi">20000</span>
 
 <span class="k">for</span> <span class="n">each_day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">365</span><span class="p">):</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="c1"># 100 employees&#39; revenue [90, 180, 0, ...]</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># 100 employees&#39; revenue [90, 180, 0, ...]</span>
     <span class="n">daily_revenue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
     <span class="n">yearly_revenue</span><span class="p">[</span><span class="n">each_day</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_revenue</span>
 
-<span class="n">yearly_profits</span> <span class="o">=</span> <span class="n">yearly_revenue</span> <span class="o">-</span>  <span class="n">yearly_salary_paid</span>
+<span class="n">yearly_profits</span> <span class="o">=</span> <span class="n">yearly_revenue</span> <span class="o">-</span> <span class="n">yearly_salary_paid</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#bins = np.arange(0, yearly_revenue.max() + 1.5) - 0.5</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># bins = np.arange(0, yearly_revenue.max() + 1.5) - 0.5</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
@@ -1270,7 +1272,7 @@ to be the random variable <span class="math notranslate nohighlight">\(Z = 90Y\)
 
 <span class="c1"># plt.plot(y, f, &quot;bo&quot;, ms=10)</span>
 <span class="c1"># plt.vlines(y, 0, f, colors=&quot;b&quot;, lw=5, alpha=0.5)</span>
-<span class="c1">#plt.xticks(y)</span>
+<span class="c1"># plt.xticks(y)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1292,18 +1294,18 @@ to be the random variable <span class="math notranslate nohighlight">\(Z = 90Y\)
 <span class="n">yearly_salary_paid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="mi">365</span><span class="p">)</span> <span class="o">*</span> <span class="mi">20000</span>
 
 <span class="k">for</span> <span class="n">each_day</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">365</span><span class="p">):</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="c1"># 100 employees&#39; revenue [90, 180, 0, ...]</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="mi">90</span> <span class="o">*</span> <span class="n">Y</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># 100 employees&#39; revenue [90, 180, 0, ...]</span>
     <span class="n">daily_revenue</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
     <span class="n">yearly_revenue</span><span class="p">[</span><span class="n">each_day</span><span class="p">]</span> <span class="o">=</span> <span class="n">daily_revenue</span>
 
-<span class="n">yearly_profits_improved</span> <span class="o">=</span> <span class="n">yearly_revenue</span> <span class="o">-</span>  <span class="n">yearly_salary_paid</span>
+<span class="n">yearly_profits_improved</span> <span class="o">=</span> <span class="n">yearly_revenue</span> <span class="o">-</span> <span class="n">yearly_salary_paid</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#bins = np.arange(0, yearly_revenue.max() + 1.5) - 0.5</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># bins = np.arange(0, yearly_revenue.max() + 1.5) - 0.5</span>
 <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
@@ -1329,7 +1331,7 @@ to be the random variable <span class="math notranslate nohighlight">\(Z = 90Y\)
 
 <span class="c1"># plt.plot(y, f, &quot;bo&quot;, ms=10)</span>
 <span class="c1"># plt.vlines(y, 0, f, colors=&quot;b&quot;, lw=5, alpha=0.5)</span>
-<span class="c1">#plt.xticks(y)</span>
+<span class="c1"># plt.xticks(y)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

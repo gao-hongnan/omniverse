@@ -941,13 +941,17 @@ the number of FLOPs, parameters, peak memory footprint, checkpoint size, etc.</p
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flops</span> <span class="o">=</span> <span class="n">flops</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">A100</span><span class="p">(</span><span class="n">GPU</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="s2">&quot;A100&quot;</span><span class="p">,</span> <span class="p">{</span>
-            <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">FP32</span><span class="p">:</span> <span class="mf">19.5e12</span><span class="p">,</span>
-            <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">FP16</span><span class="p">:</span> <span class="mf">312e12</span><span class="p">,</span>
-            <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">BFLOAT16</span><span class="p">:</span> <span class="mf">312e12</span>
-        <span class="p">})</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="s2">&quot;A100&quot;</span><span class="p">,</span>
+            <span class="p">{</span>
+                <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">FP32</span><span class="p">:</span> <span class="mf">19.5e12</span><span class="p">,</span>
+                <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">FP16</span><span class="p">:</span> <span class="mf">312e12</span><span class="p">,</span>
+                <span class="n">FloatingPointPrecision</span><span class="o">.</span><span class="n">BFLOAT16</span><span class="p">:</span> <span class="mf">312e12</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1380,7 +1384,7 @@ c_{ij} = \sum_{k=1}^{n} a_{ik} b_{kj}
 <p>and therefore there are a total of <span class="math notranslate nohighlight">\(m \times n \times p\)</span> multiplications and
 <span class="math notranslate nohighlight">\(m \times (n-1) \times p\)</span> additions. This amounts to roughly:</p>
 <div class="math notranslate nohighlight" id="equation-playbook-transformer-flops-approximation">
-<span class="eqno">(171)<a class="headerlink" href="#equation-playbook-transformer-flops-approximation" title="Link to this equation">#</a></span>\[
+<span class="eqno">(142)<a class="headerlink" href="#equation-playbook-transformer-flops-approximation" title="Link to this equation">#</a></span>\[
 m \times n \times p + m \times (n-1) \times p \approx 2 \times m \times n \times p
 \]</div>
 <p>FLOPs. Note this is basically because matrix multiplication is a series of dot
@@ -1463,7 +1467,7 @@ respectively. For simplicity, we assume that <span class="math notranslate nohig
 root of the dimension of the query matrix and is of shape <span class="math notranslate nohighlight">\(T \times T\)</span>. However,
 recall that ultimately the matrix multiplication of the two matrices
 <span class="math notranslate nohighlight">\(\mathbf{Q}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{K}^{\top}\)</span> is of shape <span class="math notranslate nohighlight">\(T \times D\)</span> and <span class="math notranslate nohighlight">\(D \times T\)</span>,
-and by our earlier equation <a class="reference internal" href="#equation-playbook-transformer-flops-approximation">(171)</a>, this
+and by our earlier equation <a class="reference internal" href="#equation-playbook-transformer-flops-approximation">(142)</a>, this
 would be a total of <span class="math notranslate nohighlight">\(2 \times T \times T \times D\)</span> FLOPs, coinciding with the
 code.</p>
 <div class="cell docutils container">
@@ -1705,7 +1709,7 @@ the percentage utilization of the A100 GPU’s computational capability.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># here is what we currently roughly measure</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">*</span> <span class="mi">5</span>  <span class="c1"># 5 is grad_accum, so total batch size is 100</span>
 <span class="n">measured_time</span> <span class="o">=</span> <span class="mf">0.755</span>  <span class="c1"># in seconds per iteration</span>
-<span class="n">measured_throughput</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="n">measured_time</span> <span class="c1"># number of samples processed per second</span>
+<span class="n">measured_throughput</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="n">measured_time</span>  <span class="c1"># number of samples processed per second</span>
 <span class="n">flops_achieved_per_second</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">measured_throughput</span>
 
 <span class="c1"># A100 is cited to be 312 TFLOPS of bfloat16 running on tensor cores</span>

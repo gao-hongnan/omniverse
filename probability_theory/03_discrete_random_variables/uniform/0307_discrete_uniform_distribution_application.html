@@ -857,7 +857,7 @@ document.write(`
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
 </pre></div>
 </div>
 </div>
@@ -892,6 +892,7 @@ document.write(`
 <span class="sd">        The PMF is completely determined if we know the true distribution.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">population</span> <span class="o">==</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">)</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">empirical_pmf</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sample</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Empirical distribution of the sample.&quot;&quot;&quot;</span>
@@ -964,7 +965,6 @@ since the sample space <span class="math notranslate nohighlight">\(\Omega\)</sp
         <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
         <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
         <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
     <span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>
@@ -1016,7 +1016,9 @@ the true population, our “universe”, has enumerated all the possible states 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X=1) = </span><span class="si">{</span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># 2. What is the probability of selecting a person that is taller than 5cm?</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X&gt;5) = </span><span class="si">{</span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;P(X&gt;5) = </span><span class="si">{</span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">true_pmf</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">true_population</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1082,7 +1084,6 @@ empirical dataset.</p>
         <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
         <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
         <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
     <span class="p">)</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>
@@ -1127,7 +1128,6 @@ empirical dataset.</p>
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of the true population&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>
@@ -1149,7 +1149,6 @@ empirical dataset.</p>
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 100&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>
@@ -1171,7 +1170,6 @@ empirical dataset.</p>
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 500&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>
@@ -1193,7 +1191,6 @@ empirical dataset.</p>
     <span class="n">linefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
     <span class="n">markerfmt</span><span class="o">=</span><span class="s2">&quot;C3o&quot;</span><span class="p">,</span>
     <span class="n">basefmt</span><span class="o">=</span><span class="s2">&quot;C3-&quot;</span><span class="p">,</span>
-
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PMF of a sample of size 900&quot;</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Height (cm)&quot;</span><span class="p">)</span>

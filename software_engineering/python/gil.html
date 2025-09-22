@@ -948,6 +948,7 @@ and the program “races” to an incorrect outcome.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="n">offset</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">worker</span><span class="p">(</span><span class="n">thread_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">total_iterations</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">counter</span><span class="p">:</span> <span class="n">Counter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The barrier is used to synchronize the threads so that they all start counting</span>
 <span class="sd">    at the same time. This makes it easier to get a race condition since we wait for</span>
@@ -1034,6 +1035,7 @@ the block and releases it when exiting.</p></li>
 
 <span class="n">NUM_THREADS</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="n">BARRIER</span> <span class="o">=</span> <span class="n">Barrier</span><span class="p">(</span><span class="n">NUM_THREADS</span><span class="p">)</span>
+
 
 <span class="k">class</span><span class="w"> </span><span class="nc">CounterLock</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1239,6 +1241,7 @@ for cpu-bound tasks, the time taken is almost the same.</p>
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
 
+
 <span class="c1"># NOTE: CPU-bound tasks</span>
 <span class="n">num_tasks</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CPU-bound task comparison:&quot;</span><span class="p">)</span>
@@ -1267,6 +1270,7 @@ because there is no GIL in multi-process.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">run_tasks_multi_process</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">num_processes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run tasks using multiple processes&quot;&quot;&quot;</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -1282,6 +1286,7 @@ because there is no GIL in multi-process.</p>
 
     <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+
 
 <span class="c1"># Comparison of all three approaches</span>
 <span class="n">num_tasks</span> <span class="o">=</span> <span class="mi">4</span>
@@ -1358,6 +1363,7 @@ this <a class="reference external" href="https://stackoverflow.com/questions/129
     <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://api.github.com&quot;</span>
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+
 
 <span class="c1"># NOTE: IO-bound tasks</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IO-bound task comparison:&quot;</span><span class="p">)</span>

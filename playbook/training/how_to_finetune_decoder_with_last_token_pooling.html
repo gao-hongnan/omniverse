@@ -927,7 +927,7 @@ decoder-only model entails.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.attention.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiHeadedAttention</span><span class="p">,</span> <span class="n">ScaledDotProductAttention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.layers.addnorm</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddNorm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.layers.mlp</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositionwiseFeedForward</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.torch_utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">total_trainable_parameters</span>
 </pre></div>
 </div>
@@ -953,7 +953,7 @@ decoder-only model entails.</p>
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
 </pre></div>
@@ -962,7 +962,7 @@ decoder-only model entails.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 
 <span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">64</span>
 <span class="n">PADDING</span> <span class="o">=</span> <span class="s2">&quot;longest&quot;</span>
@@ -978,7 +978,7 @@ decoder-only model entails.</p>
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">Dataset</a><a class="headerlink" href="#dataset" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;financial_phrasebank&#39;</span><span class="p">,</span> <span class="s1">&#39;sentences_allagree&#39;</span><span class="p">,</span> <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;financial_phrasebank&quot;</span><span class="p">,</span> <span class="s2">&quot;sentences_allagree&quot;</span><span class="p">,</span> <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
 <span class="n">dataset</span>
 </pre></div>
@@ -1001,8 +1001,8 @@ decoder-only model entails.</p>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ordered_label_counts</span><span class="p">)</span>
 
 
-<span class="n">sentences_allagree</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;sentence&#39;</span><span class="p">]</span>
-<span class="n">labels_allagree</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span>
+<span class="n">sentences_allagree</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">]</span>
+<span class="n">labels_allagree</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
 
 <span class="n">label_counts</span> <span class="o">=</span> <span class="n">count_labels</span><span class="p">(</span><span class="n">labels_allagree</span><span class="p">)</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">label_counts</span><span class="p">)</span>
@@ -1016,9 +1016,9 @@ decoder-only model entails.</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_valid_split</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stratify_by_column</span><span class="o">=</span><span class="s1">&#39;labels&#39;</span><span class="p">)</span>
-<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s1">&#39;train&#39;</span><span class="p">]</span>
-<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_valid_split</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">train_test_split</span><span class="p">(</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stratify_by_column</span><span class="o">=</span><span class="s2">&quot;labels&quot;</span><span class="p">)</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">train_valid_split</span><span class="p">[</span><span class="s2">&quot;test&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1061,7 +1061,7 @@ decoder-only model entails.</p>
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Tokenizer</a><a class="headerlink" href="#tokenizer" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">GPT2Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s1">&#39;gpt2&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">GPT2Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;gpt2&quot;</span><span class="p">)</span>
 <span class="n">pprint</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">special_tokens_map</span><span class="p">)</span>
 
 <span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token</span>
@@ -1083,8 +1083,12 @@ decoder-only model entails.</p>
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Data Collator And DataLoader</a><a class="headerlink" href="#data-collator-and-dataloader" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">)</span>
-<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span><span class="n">valid_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span>
+<span class="p">)</span>
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span>
+    <span class="n">valid_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1102,10 +1106,11 @@ decoder-only model entails.</p>
     <span class="n">causal_masks</span> <span class="o">=</span> <span class="n">causal_masks</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">(</span><span class="n">causal_masks</span><span class="p">)</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">collate_for_unidirectional</span><span class="p">(</span>
     <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-    <span class="n">max_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span> <span class="c1"># 25</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;input_ids&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">)</span>  <span class="c1"># 25</span>
     <span class="n">input_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="n">max_length</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
 
@@ -1239,9 +1244,7 @@ decoder-only model entails.</p>
                 <span class="n">std_dev</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">config</span><span class="o">.</span><span class="n">num_decoder_blocks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
                 <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">normal_</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">std_dev</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">input_tokens</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">causal_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_tokens</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">causal_masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">BoolTensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">:</span>
         <span class="n">seq_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">input_tokens</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># note seq_len &lt;= context_length in decoder</span>
         <span class="n">causal_masks</span> <span class="o">=</span> <span class="n">causal_masks</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">input_tokens</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># type: ignore[assignment]</span>
 
@@ -1255,6 +1258,7 @@ decoder-only model entails.</p>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">z</span>
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">LastTokenPooling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pre_head_pooling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -1266,7 +1270,9 @@ decoder-only model entails.</p>
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_hidden_state</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span> <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">last_hidden_state</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">last_hidden_state</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Forward pass for the pooling layer.</span>
 
 <span class="sd">        Parameters</span>
@@ -1293,6 +1299,7 @@ decoder-only model entails.</p>
             <span class="k">assert</span> <span class="n">logits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;logits must be provided when pre_head is False&quot;</span>
             <span class="n">pooled_logits</span> <span class="o">=</span> <span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
             <span class="k">return</span> <span class="n">pooled_logits</span>
+
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GPTForSequenceClassification</span><span class="p">(</span><span class="n">GPTPretrainedModel</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DecoderForSequenceClassificationConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1690,10 +1697,28 @@ the classification task. For our current example we got the logits to be:</p>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span><span class="n">train_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">)</span>
-<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span><span class="n">valid_df</span><span class="p">,</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span> <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">)</span>
-<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_for_unidirectional</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">valid_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_for_unidirectional</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span>
+    <span class="n">train_df</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
+    <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span>
+    <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">FinancialDataset</span><span class="p">(</span>
+    <span class="n">valid_df</span><span class="p">,</span>
+    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
+    <span class="n">padding</span><span class="o">=</span><span class="n">PADDING</span><span class="p">,</span>
+    <span class="n">truncation</span><span class="o">=</span><span class="n">TRUNCATION</span><span class="p">,</span>
+    <span class="n">return_tensors</span><span class="o">=</span><span class="n">RETURN_TENSORS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_for_unidirectional</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">valid_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_for_unidirectional</span><span class="p">,</span> <span class="n">pin_memory</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1767,7 +1792,12 @@ the classification task. For our current example we got the logits to be:</p>
 
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Epoch </span><span class="si">%d</span><span class="s2">/</span><span class="si">%d</span><span class="s2"> - Training loss: </span><span class="si">%.4f</span><span class="s2">, Training accuracy: </span><span class="si">%.4f</span><span class="s2"> - Validation loss: </span><span class="si">%.4f</span><span class="s2">, Validation accuracy: </span><span class="si">%.4f</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_epochs</span><span class="p">,</span> <span class="n">train_loss</span><span class="p">,</span> <span class="n">train_accuracy</span><span class="p">,</span> <span class="n">val_loss</span><span class="p">,</span> <span class="n">val_accuracy</span>
+            <span class="n">epoch</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">num_epochs</span><span class="p">,</span>
+            <span class="n">train_loss</span><span class="p">,</span>
+            <span class="n">train_accuracy</span><span class="p">,</span>
+            <span class="n">val_loss</span><span class="p">,</span>
+            <span class="n">val_accuracy</span><span class="p">,</span>
         <span class="p">)</span>
 </pre></div>
 </div>
@@ -1916,17 +1946,17 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
     <span class="n">per_device_eval_batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">num_train_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">report_to</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span> <span class="o">=</span> <span class="s1">&#39;./artifacts&#39;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./artifacts&quot;</span><span class="p">,</span>
     <span class="n">overwrite_output_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">gradient_accumulation_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">logging_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
-    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s1">&#39;epoch&#39;</span><span class="p">,</span>
+    <span class="n">evaluation_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">eval_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
     <span class="n">save_strategy</span><span class="o">=</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
     <span class="n">save_steps</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
     <span class="n">load_best_model_at_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span>
-    <span class="n">lr_scheduler_type</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">,</span>
+    <span class="n">metric_for_best_model</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
+    <span class="n">lr_scheduler_type</span><span class="o">=</span><span class="s2">&quot;cosine&quot;</span><span class="p">,</span>
     <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="n">save_total_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
     <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
@@ -1934,7 +1964,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
     <span class="n">half_precision_backend</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
     <span class="n">optim</span><span class="o">=</span><span class="s2">&quot;adamw_torch&quot;</span><span class="p">,</span>
     <span class="n">label_smoothing_factor</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">max_grad_norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">max_grad_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

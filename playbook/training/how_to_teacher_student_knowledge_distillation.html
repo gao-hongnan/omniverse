@@ -912,7 +912,7 @@ P100<span class="w"> </span>16GB
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.attention.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiHeadedAttention</span><span class="p">,</span> <span class="n">ScaledDotProductAttention</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.layers.addnorm</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddNorm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.transformer.modules.layers.mlp</span><span class="w"> </span><span class="kn">import</span> <span class="n">PositionwiseFeedForward</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.torch_utils.model_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">total_trainable_parameters</span>
 </pre></div>
 </div>
@@ -938,7 +938,7 @@ P100<span class="w"> </span>16GB
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 <span class="n">handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
-<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> - </span><span class="si">%(name)s</span><span class="s1"> - </span><span class="si">%(levelname)s</span><span class="s1"> - </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">formatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> - </span><span class="si">%(name)s</span><span class="s2"> - </span><span class="si">%(levelname)s</span><span class="s2"> - </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">formatter</span><span class="p">)</span>
 <span class="n">LOGGER</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
 </pre></div>
@@ -947,7 +947,7 @@ P100<span class="w"> </span>16GB
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 
 <span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">64</span>
 <span class="n">PADDING</span> <span class="o">=</span> <span class="s2">&quot;longest&quot;</span>
@@ -1121,11 +1121,7 @@ P100<span class="w"> </span>16GB
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">collator</span> <span class="o">=</span> <span class="n">FinancialPhraseCollator</span><span class="p">(</span>
-    <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span>
-    <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span>
-    <span class="n">padding_side</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">padding_side</span>
-<span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">collator</span> <span class="o">=</span> <span class="n">FinancialPhraseCollator</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="n">MAX_LENGTH</span><span class="p">,</span> <span class="n">padding_side</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">padding_side</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1134,19 +1130,9 @@ P100<span class="w"> </span>16GB
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seed_all</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">2024</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">train_dataset</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">collate_fn</span><span class="o">=</span><span class="n">collator</span>
-<span class="p">)</span>
+<span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collator</span><span class="p">)</span>
 
-<span class="n">valid_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
-    <span class="n">valid_dataset</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">collate_fn</span><span class="o">=</span><span class="n">collator</span>
-<span class="p">)</span>
+<span class="n">valid_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collator</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">train_dataloader</span><span class="p">:</span>
     <span class="n">pprint</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
@@ -1295,7 +1281,9 @@ P100<span class="w"> </span>16GB
 <span class="n">student_scheduler</span> <span class="o">=</span> <span class="n">get_linear_schedule_with_warmup</span><span class="p">(</span>
     <span class="n">student_optimizer</span><span class="p">,</span> <span class="n">num_warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_training_steps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">)</span> <span class="o">*</span> <span class="n">NUM_EPOCHS</span>
 <span class="p">)</span>
-<span class="n">_</span> <span class="o">=</span> <span class="n">train_model</span><span class="p">(</span><span class="n">student_model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">valid_dataloader</span><span class="p">,</span> <span class="n">student_optimizer</span><span class="p">,</span> <span class="n">student_scheduler</span><span class="p">,</span> <span class="n">NUM_EPOCHS</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">train_model</span><span class="p">(</span>
+    <span class="n">student_model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">valid_dataloader</span><span class="p">,</span> <span class="n">student_optimizer</span><span class="p">,</span> <span class="n">student_scheduler</span><span class="p">,</span> <span class="n">NUM_EPOCHS</span><span class="p">,</span> <span class="n">DEVICE</span>
+<span class="p">)</span>
 
 <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
@@ -1351,7 +1339,9 @@ Validation loss: 0.6428, Validation accuracy: 0.8018
 <span class="n">teacher_scheduler</span> <span class="o">=</span> <span class="n">get_linear_schedule_with_warmup</span><span class="p">(</span>
     <span class="n">teacher_optimizer</span><span class="p">,</span> <span class="n">num_warmup_steps</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_training_steps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataloader</span><span class="p">)</span> <span class="o">*</span> <span class="n">NUM_EPOCHS</span>
 <span class="p">)</span>
-<span class="n">teacher_model</span> <span class="o">=</span><span class="n">train_model</span><span class="p">(</span><span class="n">teacher_model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">valid_dataloader</span><span class="p">,</span> <span class="n">teacher_optimizer</span><span class="p">,</span> <span class="n">teacher_scheduler</span><span class="p">,</span> <span class="n">NUM_EPOCHS</span><span class="p">,</span> <span class="n">DEVICE</span><span class="p">)</span>
+<span class="n">teacher_model</span> <span class="o">=</span> <span class="n">train_model</span><span class="p">(</span>
+    <span class="n">teacher_model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">valid_dataloader</span><span class="p">,</span> <span class="n">teacher_optimizer</span><span class="p">,</span> <span class="n">teacher_scheduler</span><span class="p">,</span> <span class="n">NUM_EPOCHS</span><span class="p">,</span> <span class="n">DEVICE</span>
+<span class="p">)</span>
 
 <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
@@ -1618,7 +1608,7 @@ function is defined as
     <span class="n">NUM_EPOCHS</span><span class="p">,</span>
     <span class="n">DEVICE</span><span class="p">,</span>
     <span class="n">temperature</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

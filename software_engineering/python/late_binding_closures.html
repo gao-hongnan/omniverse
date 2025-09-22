@@ -845,8 +845,10 @@ functions.</p>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">rich.pretty</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">create_multipliers_lambda</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
-    <span class="k">return</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -934,11 +936,14 @@ all multipliers.</p></li>
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">create_multipliers_inner</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]:</span>
     <span class="n">multipliers</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">multiplier</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="c1"># this is lambda x: i * x</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">multiplier</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>  <span class="c1"># this is lambda x: i * x</span>
             <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x</span>
+
         <span class="n">multipliers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">multiplier</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">multipliers</span>
 </pre></div>
@@ -1008,7 +1013,8 @@ current value of <code class="docutils literal notranslate"><span class="pre">i<
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_multipliers</span><span class="p">():</span>
-    <span class="k">return</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+
 
 <span class="k">for</span> <span class="n">multiplier</span> <span class="ow">in</span> <span class="n">create_multipliers</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">multiplier</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
@@ -1032,8 +1038,10 @@ creation, effectively binding the current value of <code class="docutils literal
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">mul</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">create_multipliers</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+
 
 <span class="k">for</span> <span class="n">multiplier</span> <span class="ow">in</span> <span class="n">create_multipliers</span><span class="p">():</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">multiplier</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>

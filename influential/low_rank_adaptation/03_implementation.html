@@ -906,7 +906,7 @@ document.write(`
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">transformers.trainer_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvalPrediction</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">omnivault.utils.reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">reproducibility.seed</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_all</span>
 </pre></div>
 </div>
 </div>
@@ -925,7 +925,7 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">seed_all</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">seed_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">set_torch_deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="n">DEVICE</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
 
 <span class="n">MAX_LENGTH</span> <span class="o">=</span> <span class="mi">32</span>
 <span class="n">PADDING</span> <span class="o">=</span> <span class="s2">&quot;longest&quot;</span>
@@ -951,10 +951,13 @@ document.write(`
     <span class="n">attention_mask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 
+
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Qwen2Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;Qwen/Qwen1.5-0.5B&quot;</span><span class="p">,</span> <span class="n">padding_side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">preprocess_function</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TokenizedBatch</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;sentence&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;financial_phrasebank&quot;</span><span class="p">,</span> <span class="s2">&quot;sentences_allagree&quot;</span><span class="p">,</span> <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="s2">&quot;train&quot;</span><span class="p">]</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">)</span>
@@ -1058,6 +1061,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the total number of parameters in the model, including non-trainable.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
 
+
 <span class="n">base_model_total_trainable</span> <span class="o">=</span> <span class="n">total_trainable_parameters</span><span class="p">(</span><span class="n">base_model</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total trainable parameters before LoRA: </span><span class="si">{</span><span class="n">base_model_total_trainable</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1092,7 +1096,7 @@ You should probably TRAIN this model on a down-stream task to be able to use it 
         <span class="s2">&quot;eval_f1_score_micro&quot;</span><span class="p">:</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
         <span class="s2">&quot;eval_confusion_matrix&quot;</span><span class="p">:</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
         <span class="s2">&quot;eval_roc_auc&quot;</span><span class="p">:</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">multi_class</span><span class="o">=</span><span class="s2">&quot;ovr&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;eval_pr_auc&quot;</span><span class="p">:</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">)</span>
+        <span class="s2">&quot;eval_pr_auc&quot;</span><span class="p">:</span> <span class="n">average_precision_score</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span><span class="p">),</span>
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">num_classes</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -1425,7 +1429,7 @@ model.layers.23.self_attn.v_proj
         <span class="c1"># [1024, R] @ [R, 2816]</span>
         <span class="c1"># torch.Size([1024, 2816]) torch.Size([2816, 1024])</span>
 
-        <span class="n">lora_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="c1"># [D1, R] @ [R, D2] = [D1, D2]</span>
+        <span class="n">lora_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_a</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">lora_b</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># [D1, R] @ [R, D2] = [D1, D2]</span>
         <span class="n">lora_weight</span> <span class="o">=</span> <span class="n">lora_weight</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">weight</span> <span class="o">+=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">)</span> <span class="o">*</span> <span class="n">lora_weight</span><span class="o">.</span><span class="n">T</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span>
@@ -1441,6 +1445,7 @@ model.layers.23.self_attn.v_proj
         <span class="k">else</span><span class="p">:</span>
             <span class="n">merge_and_unload_model</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_lora_to_base_model</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">target_modules</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1616,9 +1621,9 @@ You also see that currently the total trainable parameters are more than base mo
 <span class="n">rank</span> <span class="o">=</span> <span class="n">lora_config</span><span class="o">.</span><span class="n">r</span>
 <span class="n">num_target_modules</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lora_config</span><span class="o">.</span><span class="n">target_modules</span><span class="p">)</span>
 
-<span class="n">qkv_lora_weight_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">dim</span> <span class="o">*</span> <span class="n">rank</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">layers</span> <span class="o">*</span> <span class="n">num_target_modules</span> <span class="c1"># 2 is the AB 1 each</span>
+<span class="n">qkv_lora_weight_params</span> <span class="o">=</span> <span class="p">(</span><span class="n">dim</span> <span class="o">*</span> <span class="n">rank</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">layers</span> <span class="o">*</span> <span class="n">num_target_modules</span>  <span class="c1"># 2 is the AB 1 each</span>
 
-<span class="n">base_model_with_adapter_total_trainable</span> <span class="o">-</span> <span class="n">base_model_total_trainable</span> <span class="o">==</span>  <span class="n">qkv_lora_weight_params</span>
+<span class="n">base_model_with_adapter_total_trainable</span> <span class="o">-</span> <span class="n">base_model_total_trainable</span> <span class="o">==</span> <span class="n">qkv_lora_weight_params</span>
 </pre></div>
 </div>
 </div>

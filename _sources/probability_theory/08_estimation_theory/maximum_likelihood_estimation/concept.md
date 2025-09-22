@@ -581,7 +581,7 @@ root_dir          = find_root_dir(current_file_path, marker='omnivault')
 if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
-    from omnivault.utils.reproducibility.seed import seed_all
+    from reproducibility.seed import seed_all
 else:
     raise ImportError("Root directory not found.")
 

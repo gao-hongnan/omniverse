@@ -223,7 +223,7 @@ sys.path.append(parent_dir)
 import numpy as np
 import scipy.stats as stats
 
-from omnivault.utils.reproducibility.seed import seed_all
+from reproducibility.seed import seed_all
 from omnivault.utils.probability_theory.plot import plot_continuous_pdf_and_cdf
 seed_all()
 
