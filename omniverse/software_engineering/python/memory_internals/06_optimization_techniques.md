@@ -2196,4 +2196,4 @@ Continue practicing these techniques:
 **Tutorial Series Navigation:**
 - **Previous:** [05 - ctypes Inspection](05_ctypes_inspection.md)
 - **Current:** 06 - Optimization Techniques
-- **Next:** [07 - Advanced Topics](07_advanced_topics.md) *(coming soon)*
+- **Next:** 07 - Advanced Topics *(planned)*
