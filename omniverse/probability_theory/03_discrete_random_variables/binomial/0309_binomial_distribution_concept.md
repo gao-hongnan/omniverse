@@ -120,12 +120,6 @@ plot_empirical_binomial(n=10, p=0.5, size=5000, ax=ax)
 plt.show()
 ```
 
-The below plot shows the CDF and its Empirical ECDF distribution for parameters
-$n=10$ and $p=0.5$, with the latter consisting of 5000 samples drawn from a
-binomial distribution.
-
-**TODO**.
-
 The below plots show the PMF and CDF of binomial distribution for different
 values of $n$ and $p$. More specifically, when we fix $n=60$ and $p$ varies, and
 when we fix $p=0.5$ and $n$ varies.

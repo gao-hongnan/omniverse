@@ -106,7 +106,25 @@ $$ (eq:pmf_normalization)
 ```
 
 ```{prf:proof}
-**TODO**
+Since $X$ is a discrete random variable, its range $X(\S)$ is countable.
+The events $\lset X = x \rset$ for $x \in X(\S)$ partition $\S$: every
+sample point $\xi \in \S$ is mapped by the function $X$ to exactly one
+state $x = X(\xi)$, so the pre-images
+$X^{-1}\lpar \lset x \rset \rpar = \lset \xi \in \S \st X(\xi) = x \rset$
+are pairwise disjoint, and their union over all $x \in X(\S)$ recovers
+$\S$.
+
+By countable additivity of the probability law $\P$,
+
+$$
+\sum_{x \in X(\S)} \pmf(x)
+= \sum_{x \in X(\S)} \P \lsq X = x \rsq
+= \P \lsq \bigcup_{x \in X(\S)} \lset X = x \rset \rsq
+= \P \lsq \S \rsq
+= 1
+$$
+
+where the last equality is the normalization axiom of $\P$.
 ```
 
 ## Sturges' Rule and Cross Validation
