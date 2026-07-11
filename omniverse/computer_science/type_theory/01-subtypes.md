@@ -276,7 +276,7 @@ class Sized(metaclass=ABCMeta):
         return 0
 
     @classmethod
-    def __subclasshook__(cls: Type[Sized], C: Type) -> bool:
+    def __subclasshook__(cls: type[Sized], C: type) -> bool:
         if cls is Sized:
             return _check_methods(C, "__len__")
         return NotImplemented
