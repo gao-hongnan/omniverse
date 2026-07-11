@@ -204,12 +204,56 @@ footnotes, label stability (§5.3).
 
 ## 7. Verification and Python-version mechanics
 
-- **Spike (first implementation task)**: attempt `requires-python
-  ">=3.14"` + `uv lock` regen + book kernel on 3.14 (3.14.6 installed).
-  If a core dependency (torch et al.) fails to resolve/build, land on
-  `">=3.13"`. Either way: `pyrightconfig.json` `pythonVersion` bumped to
-  match; mypy pin (currently 1.13.0) upgraded as needed for full
-  PEP 695/696 support; `make all` must pass.
+### 7.1 Why the bump is safe to attempt (probe evidence, 2026-07-11)
+
+The version dependence lives in **four `pyproject.toml` lines, not in the
+code**:
+
+- Code pre-cleared by grep: zero imports of stdlib modules removed in
+  3.12/3.13 (PEP 594 sweep) and zero numpy-1.x-only APIs
+  (`np.float_`, `np.NaN`, …) across `omnivault/`, `omnixamples/`,
+  `tests/`.
+- `torchtext` is imported by **nothing** (no .py file, no notebook) and is
+  archived upstream with wheels capped at Python 3.12 → delete the
+  dependency.
+- Era caps force uninstallable versions on 3.13+: `numpy<2.0.0` (1.26.4
+  has no 3.13/3.14 wheels), `scikit-learn==1.5.0`, `matplotlib<3.9.1`.
+- Throwaway-worktree probe: with those four edits, the full 207-package
+  set **resolves under `requires-python >=3.14`** → numpy 2.5.1,
+  scikit-learn 1.9.0, matplotlib 3.11.0, pandas 2.3.2,
+  reproducibility 8.0.0.
+- Wheel reality check (a lock can resolve versions that cannot install):
+  torch 2.8.0 — picked from stale local cache — ships **0** cp314 wheels;
+  torch 2.9.0 and 2.13.0 (current) ship them. The spike therefore sets
+  `torch>=2.9` and locks with `--refresh`.
+
+### 7.2 Spike procedure and failure ladder
+
+1. **Edits**: `requires-python = ">=3.14"`; delete `torchtext`;
+   `numpy>=2.1`; `scikit-learn>=1.6`; `matplotlib>=3.10`; `torch>=2.9`.
+2. **Gate 1 — resolve**: `uv lock --refresh`. A failure names the
+   offending pin → bump or remove it. Only if a genuinely needed
+   dependency has no 3.14-compatible release: fall back to `">=3.13"`
+   (every version above already satisfies 3.13).
+3. **Gate 2 — install**: `uv sync --all-groups`. An sdist-build failure
+   means the chosen version predates the interpreter → raise that
+   dependency's floor and re-lock.
+4. **Gate 3 — behave**: `make all` (mypy 1.13.0 upgraded for the 3.13/3.14
+   target and full PEP 695/696; `pyrightconfig.json` `pythonVersion`
+   bumped to match) + `jupyter-book build` (executes non-excluded
+   notebooks — numpy 2.x behavioral differences surface here; fixes are
+   per-page and localized).
+5. **Containment valve**: a notebook that resists is added to
+   `_config.yml` `execute:exclude_patterns` (an existing, already-used
+   pattern — its cached outputs still render) instead of blocking the
+   bump.
+6. **Decoupling valve (last resort)**: the typing series can execute on
+   its own registered 3.14 ipykernel — myst-nb honors each page's
+   jupytext `kernelspec` — even if the repo-wide bump stalls entirely.
+   The pilot never blocks on the package upgrade.
+
+### 7.3 Authoring verification
+
 - Executed `{code-cell}`s must run on the book's kernel. If the repo lands
   on 3.13: PEP 695/696 cells execute (3.12/3.13 features); deferred-
   annotation (3.14-only) demos use static blocks + pasted output.
@@ -260,7 +304,11 @@ footnotes, label stability (§5.3).
 - **PEP 661 / `typing_extensions.Sentinel` status** — verify current state
   when writing ch. 11 (knowledge here dates to mid-2025).
 - **PEP 728 (closed TypedDicts)** — verify landed status for ch. 10.
-- **torch on 3.14** — unknown until the spike; fallback path defined.
+- **numpy 2.x behavior** — code greps clean, but executed notebooks may
+  hit behavioral differences (dtype promotion, reprs); caught at Gate 3,
+  fixed per page or contained via `exclude_patterns`.
+- **Stale uv cache** — the probe's resolver chose torch 2.8.0 while PyPI
+  is at 2.13.0; always lock with `--refresh` during the spike.
 - **mypy upgrade ripple** — a newer mypy may flag existing `omnivault/`
   code; scope any fixes to what `make all` requires, not a package-wide
   retype.
