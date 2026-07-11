@@ -33,8 +33,6 @@ kernelspec:
 
 %config InlineBackend.figure_format = 'svg'
 
-from __future__ import annotations
-
 from collections.abc import Sequence, Sized
 from typing import Any
 ```
@@ -330,11 +328,30 @@ for obj in objects:
         print(f"{obj.__class__.__name__} cannot fly.")
 ```
 
-While manual checks like the one above illustrate the core idea of structural
-subtyping, Python offers a more streamlined approach through the `typing`
-module. By defining a [protocol](https://peps.python.org/pep-0544/) via the
-`Protocol` class, you can specify the required methods and properties for a
-type,
+The cell runs happily — at runtime the duck check does its job. But watch what
+happens when we hand the same code to the static type checkers. The guard
+`is_flyable` returns a plain `bool`, which tells a checker *nothing* about
+`obj` inside the `if` branch, and the heterogeneous list gives the two
+checkers room to disagree about `obj` itself. `mypy --strict` joins the
+element type of `objects` up to `object` (the only common ancestor of `Bird`,
+`Airplane`, and `Car`) and rejects the call:
+
+```text
+duck_check.py:26: error: "object" has no attribute "fly"  [attr-defined]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+`pyright`, in its default mode, infers the element type as `Unknown` (an
+implicit `Any`) and stays silent — `0 errors, 0 warnings, 0 informations` —
+though its strict mode flags the unknown-ness instead. Neither checker
+*understands* the duck check; they differ only in how loudly they shrug.
+(Teaching a checker to trust a boolean predicate is possible, but it must be
+declared with `TypeIs` or `TypeGuard` — the subject of a later chapter.)
+
+This gap is precisely what `typing` closes. By defining a
+[protocol](https://peps.python.org/pep-0544/) via the `Protocol` class, you can
+specify the required methods and properties for a type — making the structural
+relationship visible at static-analysis time,
 
 ```{code-cell} ipython3
 from typing import Protocol
