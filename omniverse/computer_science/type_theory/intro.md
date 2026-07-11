@@ -1,7 +1,7 @@
 # Type Theory, A Very Rudimentary Introduction
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
-[![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
+[![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
 [![GitHub Profile](https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&logo=github)](https://github.com/gao-hongnan)
 ![Tag](https://img.shields.io/badge/Tag-Structured_Musings-purple)
 
@@ -12,9 +12,9 @@ a **type theory** is the formal presentation of a specific
 theory can be traced back to after the development of
 [set theory](https://en.wikipedia.org/wiki/Set_theory) in the late 19th century
 where it is born out of the need to avoid the
-[Russell's paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox). Muñoz
-[2] gives a gentle survey of this history and of type theory's applications in
-computer science.
+[Russell's paradox](https://en.wikipedia.org/wiki/Russell%27s_paradox).
+Muñoz[^munoz2007] gives a gentle survey of this history and of type theory's
+applications in computer science.
 
 In the context of computer science and programming, it is known that
 [static program analysis](https://en.wikipedia.org/wiki/Static_program_analysis),
@@ -95,17 +95,19 @@ Conventions used throughout the series:
 
 ```
 
-## Citations and Further Reading
+## Further Reading
 
--   [1] Z. Luo, S. Soloviev, and T. Xue,
+-   Z. Luo, S. Soloviev, and T. Xue,
     ["Coercive subtyping: Theory and implementation"](https://www.sciencedirect.com/science/article/pii/S0890540112001757),
     Information and Computation, vol. 223, pp. 18–42, Feb. 2013.
     doi:10.1016/j.ic.2012.10.020 — formal treatment of the coercive
     implementation of subtyping discussed at the end of the
     {doc}`subtypes chapter <01-subtypes>`.
--   [2] C. Muñoz,
-    ["Type Theory and Its Applications to Computer Science"](https://shemesh.larc.nasa.gov/fm/papers/ICASE1999-QNews.pdf),
-    National Institute of Aerospace, Hampton, VA, Tech. Rep., Apr. 10, 2007.
 -   [Python typing specification](https://typing.python.org/en/latest/spec/) —
     the living, canonical description of the type system the checkers
     implement.
+
+[^munoz2007]:
+    C. Muñoz,
+    ["Type Theory and Its Applications to Computer Science"](https://shemesh.larc.nasa.gov/fm/papers/ICASE1999-QNews.pdf),
+    National Institute of Aerospace, Hampton, VA, Tech. Rep., Apr. 10, 2007.
