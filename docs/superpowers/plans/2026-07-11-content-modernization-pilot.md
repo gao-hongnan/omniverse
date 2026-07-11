@@ -756,9 +756,9 @@ Outline: (1) why annotations were strings — the old eager-evaluation problem a
 
 If Task 3 landed on 3.13 instead of 3.14: demos in (2)–(3) become static blocks with pasted 3.14 output (obtained via `uv run --python 3.14 python ...`), per spec §7.3.
 
-- [ ] **Step 2: The sweep**
+- [ ] **Step 2: The sweep (amended 2026-07-11: verification, not removal)**
 
-Remove `from __future__ import annotations` from the setup cells of all 12 other series files (only where present; 08 has it twice). Rebuild; every executed cell must still pass.
+Per-chapter removal is now the policy — each rewrite task drops `from __future__ import annotations` from its own setup cell as it lands. This step VERIFIES none remain anywhere in the series (`grep -rn "from __future__" omniverse/computer_science/type_theory/` → no output) and the capstone's changelog section documents the per-chapter removals. Rebuild; every executed cell must still pass.
 
 - [ ] **Step 3: Verify; wire TOC + intro link; build**
 

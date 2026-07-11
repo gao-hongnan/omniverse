@@ -181,14 +181,25 @@ Applied per article; this is the artifact that survives the pilot.
 - ABC generics from `collections.abc`, not deprecated `typing` aliases.
 - Type aliases via the `type` statement; `Self` for fluent/classmethod
   returns; `@override` on overrides.
-- Setup cells import only what the article uses; no
-  `from __future__ import annotations` in 3.14-only executed code (per
-  the capstone chapter; keep if the repo lands on 3.13).
+- Setup cells import only what the article uses; `from __future__ import
+  annotations` is REMOVED from each chapter as its rewrite lands (repo is
+  3.14/PEP 649; the capstone chapter documents the story rather than
+  performing a sweep). *(Amended 2026-07-11 from capstone-sweep to
+  per-chapter removal, by author decision.)*
+- Quoted upstream code is verbatim only for what upstream actually wrote;
+  editorial additions layered on top (annotations, comments, elisions)
+  follow the modern idiom. *(Amended 2026-07-11.)*
 
 **Factual verification**
 
 - Every "checker says X" claim reproduced against current pyright and mypy
   before it is written; outputs pasted, not remembered.
+- **Strict bar** *(amended 2026-07-11)*: the tutorial's own code is
+  exemplary — every executed cell passes `mypy --strict` and pyright, and
+  every article function is fully annotated including returns. A cell that
+  intentionally fails a checker is a documented exhibit: both checkers'
+  real outputs appear beside it. Checker divergences (one accepts, one
+  rejects) are surfaced as teaching material, never left silent.
 - Every PEP status claim checked against peps.python.org at writing time;
   prefer the maintained typing spec over historical PEPs as the cited
   authority.
