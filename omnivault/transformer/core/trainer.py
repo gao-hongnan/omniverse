@@ -197,6 +197,7 @@ class Trainer:
         self.callbacks: Dict[TrainerEvent, List[Tuple[TrainerCallback, CallbackPriority]]] = defaultdict(list)
 
         # additional metrics, ideally metrics is implemented as callback and injected into trainer
+        assert isinstance(state.criterion, nn.CrossEntropyLoss)  # narrow for typed ignore_index
         self.perplexity = Perplexity(ignore_index=state.criterion.ignore_index).to(device=self.device)
         # fmt: on
         self.register_default_callbacks()

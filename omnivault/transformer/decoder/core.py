@@ -102,7 +102,7 @@ class GPTDecoder(BaseDecoder):
             # NOTE: W_O is also projection but I did not have foresight to name it as such.
             if parameter_name.endswith(context_projections):
                 mean = 0.0
-                std_dev = 0.02 / torch.sqrt(torch.tensor(2 * config.num_decoder_blocks, dtype=torch.float))
+                std_dev = (0.02 / torch.sqrt(torch.tensor(2 * config.num_decoder_blocks, dtype=torch.float))).item()
                 torch.nn.init.normal_(parameter, mean=mean, std=std_dev)
 
     @property
@@ -120,7 +120,7 @@ class GPTDecoder(BaseDecoder):
         normal_init_modules = (nn.Linear, nn.Embedding)
         if isinstance(module, normal_init_modules):
             torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
-            if hasattr(module, "bias") and module.bias is not None:
+            if isinstance(module, nn.Linear) and module.bias is not None:
                 torch.nn.init.zeros_(module.bias)
 
     @overload

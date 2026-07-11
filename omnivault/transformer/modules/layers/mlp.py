@@ -51,13 +51,17 @@ class PositionwiseFeedForward(nn.Module):
 
     def _init_weights(self) -> None:
         """Initialize parameters of the linear layers."""
-        nn.init.xavier_uniform_(self.ffn["context_fc"].weight)
-        if self.ffn["context_fc"].bias is not None:
-            nn.init.constant_(self.ffn["context_fc"].bias, 0)
+        context_fc = self.ffn["context_fc"]
+        context_projection = self.ffn["context_projection"]
+        assert isinstance(context_fc, nn.Linear)
+        assert isinstance(context_projection, nn.Linear)
+        nn.init.xavier_uniform_(context_fc.weight)
+        if context_fc.bias is not None:
+            nn.init.constant_(context_fc.bias, 0)
 
-        nn.init.xavier_uniform_(self.ffn["context_projection"].weight)
-        if self.ffn["context_projection"].bias is not None:
-            nn.init.constant_(self.ffn["context_projection"].bias, 0)
+        nn.init.xavier_uniform_(context_projection.weight)
+        if context_projection.bias is not None:
+            nn.init.constant_(context_projection.bias, 0)
 
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         z = self.ffn["context_fc"](z)

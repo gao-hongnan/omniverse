@@ -66,6 +66,7 @@ def evaluate_and_generate_on_valid_epoch_end(
     EOS = vocabulary.token_to_index[vocabulary.EOS]
 
     model = trainer.model_or_module
+    assert isinstance(model, GPTDecoder)
     model.eval()
 
     dataloader = trainer.test_loader
@@ -108,7 +109,7 @@ def evaluate_and_generate_on_valid_epoch_end(
         equal_indices = torch.where(equations == EQUAL)[1]  # .view(batch_size, -1)[:, 0]
 
         # [batch_size, 7] because each starting token is <BOS>AB+CD=
-        starting_tokens_batch = torch.zeros(
+        starting_tokens_batch: torch.LongTensor = torch.zeros(  # type: ignore[assignment]  # long-dtype tensor is a LongTensor
             batch_size, int(equal_indices[0].item()) + 1, dtype=torch.long, device=trainer.device
         )
         for i in range(batch_size):

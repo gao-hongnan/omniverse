@@ -42,7 +42,9 @@ def maybe_resize_token_embeddings(
     """
     try:
         embedding_module: torch.nn.Module = model.get_input_embeddings()
-        embedding_size: int = embedding_module.weight.shape[0]
+        weight = embedding_module.weight
+        assert isinstance(weight, torch.Tensor)
+        embedding_size: int = weight.shape[0]
     except AttributeError as exc:
         raise AttributeError("`weight` attribute not found in the model's input embeddings. ") from exc
     tokenizer_vocab_size = len(tokenizer)

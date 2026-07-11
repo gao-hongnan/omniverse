@@ -149,4 +149,5 @@ def show_attention_heatmaps(
 
     plt.show()  # type: ignore[no-untyped-call]
 
+    assert isinstance(fig, plt.Figure)
     return fig

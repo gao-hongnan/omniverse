@@ -64,7 +64,7 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
         return cast(SyncAsyncDecoratorFactory[P, T], instance)
 
     @contextmanager
-    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[Tuple[P.args, P.kwargs] | None, None, None]:
+    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[Tuple[P.args, P.kwargs] | None, None, None]:  # type: ignore[valid-type]  # PEP 612: ParamSpec not valid in Tuple
         raise NotImplementedError
 
     @classmethod
@@ -164,8 +164,8 @@ class TimedExecutionMetadata(BaseModel):
     initial_memory_usage: int
     final_memory_usage: int | None = None
     memory_usage_change: int | None = None
-    initial_cpu_time: psutil._common.pcputimes
-    final_cpu_time: psutil._common.pcputimes | None = None
+    initial_cpu_time: tuple[float, ...]
+    final_cpu_time: tuple[float, ...] | None = None
     caller_function_name: str
     caller_module_name: str
     caller_module_path: str

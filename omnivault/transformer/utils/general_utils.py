@@ -60,7 +60,7 @@ def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str, N
     temp_dir = tempfile.mkdtemp()
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=30)
         response.raise_for_status()
 
         temp_file_path = os.path.join(temp_dir, f"{dataset_name}.txt")

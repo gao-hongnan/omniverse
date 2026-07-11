@@ -70,4 +70,4 @@ def pickle_load(filepath: str) -> Any:
         The deserialized Python object.
     """
     with open(filepath, "rb") as file:
-        return pickle.load(file)
+        return pickle.load(file)  # nosec B301  # trusted local artifact, not untrusted input

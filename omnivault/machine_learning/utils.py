@@ -149,8 +149,8 @@ def plot_decision_regions(
     Z = Z.reshape(xx1.shape)  # reshape to match xx1 and xx2 to plot contour
 
     contour = plot_contour(ax, xx1, xx2, Z, cmap=cmap, **kwargs)
-    ax.set_xlim(xx1.min(), xx1.max())
-    ax.set_ylim(xx2.min(), xx2.max())
+    ax.set_xlim(float(xx1.min()), float(xx1.max()))
+    ax.set_ylim(float(xx2.min()), float(xx2.max()))
     ax.set_xlabel("x1")
     ax.set_ylabel("x2")
 

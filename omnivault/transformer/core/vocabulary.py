@@ -115,7 +115,7 @@ class TextCharacterVocabulary(Vocabulary):
 
         filepath = dest_folder_path / f"{dataset_name}.txt"
 
-        response = requests.get(url, stream=True)  # TODO: add timeout
+        response = requests.get(url, stream=True, timeout=30)
         response.raise_for_status()
 
         with open(filepath, "wb") as f:
@@ -142,7 +142,7 @@ class TextCharacterVocabulary(Vocabulary):
         cls: Type[TextCharacterVocabulary], url: str, dataset_name: str, dest_folder: str | Path | None = None
     ) -> TextCharacterVocabulary:
         if not dest_folder:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             response.raise_for_status()
             corpus = response.text
             return cls.from_corpus(corpus)

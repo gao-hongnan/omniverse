@@ -5,7 +5,6 @@ import asyncio
 import time
 from typing import Any, Dict, Final
 
-import psutil
 import pytest
 from pydantic import ValidationError
 
@@ -15,12 +14,7 @@ from omnivault.benchmark.timer import TimedExecution, TimedExecutionMetadata, Ti
 @pytest.fixture
 def sample_metadata() -> Dict[str, Any]:
     """Fixture providing sample metadata for testing."""
-    cpu_times = psutil._common.pcputimes(
-        user=0.0,
-        system=0.0,
-        children_user=0.0,
-        children_system=0.0,
-    )
+    cpu_times = (0.0, 0.0, 0.0, 0.0)
     return {
         "thread_id": 123,
         "process_id": 456,

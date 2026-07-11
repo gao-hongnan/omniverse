@@ -19,7 +19,7 @@ class LoraConfig(BaseModel):
     r: int = Field(..., description="Lora attention dimension (the 'rank').")
     lora_alpha: int = Field(..., description="The alpha parameter for Lora scaling.")
     lora_dropout: float = Field(..., description="The dropout probability for Lora layers.")
-    target_modules: List[str] = Field(
+    target_modules: List[str] | None = Field(
         default=None,
         description=(
             "The names of the modules to apply the adapter to. If specified, only the modules with the specified "
@@ -30,7 +30,7 @@ class LoraConfig(BaseModel):
             "is unknown, an error will be raised—manual specification of target modules is required in such cases."
         ),
     )
-    modules_to_save: List[str] = Field(
+    modules_to_save: List[str] | None = Field(
         default=None,
         description=(
             """List of modules apart from adapter layers to be set as

@@ -100,7 +100,7 @@ def load_vocab(vocab_file: str) -> List[str]:
     """Load the vocabulary from a serialized file."""
     try:
         with open(vocab_file, "rb") as f:
-            vocab_config = pickle.load(f)
+            vocab_config = pickle.load(f)  # nosec B301  # trusted local artifact, not untrusted input
     except FileNotFoundError:
         raise Exception(f"Vocabulary file not found: {vocab_file}") from None
     except Exception as err:
@@ -307,10 +307,10 @@ if __name__ == "__main__":
 
     if LOAD_DATASET_FROM_PICKLE:
         with open(TRAIN_DATASET_PICKLED_PATH, "rb") as file:
-            train_ds_as_list_of_numpy = pickle.load(file)
+            train_ds_as_list_of_numpy = pickle.load(file)  # nosec B301  # trusted local artifact, not untrusted input
 
         with open(VALID_DATASET_PICKLED_PATH, "rb") as file:
-            valid_ds_as_list_of_numpy = pickle.load(file)
+            valid_ds_as_list_of_numpy = pickle.load(file)  # nosec B301  # trusted local artifact, not untrusted input
 
     if SAVE_DATASET_AS_PICKLE and not LOAD_DATASET_FROM_PICKLE:
         train_ds_as_list_of_numpy = list(tfds.as_numpy(train_ds))

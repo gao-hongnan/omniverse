@@ -19,10 +19,10 @@ class State(BaseModel):
     `state` in a sense of how model or optimizers have. However, we can inherit
     `State` with `Serializable` and force the dataloaders to be included."""
 
-    model: nn.Module = Field(default=None, description="Model.")
+    model: nn.Module = Field(..., description="Model.")
 
-    criterion: nn.Module = Field(default=None, description="Loss function.")
-    optimizer: torch.optim.Optimizer = Field(default=None, description="Optimizer.")
+    criterion: nn.Module = Field(..., description="Loss function.")
+    optimizer: torch.optim.Optimizer = Field(..., description="Optimizer.")
     scheduler: Union[torch.optim.lr_scheduler.LRScheduler, None] = Field(default=None, description="Scheduler.")
 
     epoch_index: int = Field(default=0, description="Current epoch index.")
@@ -39,7 +39,7 @@ class State(BaseModel):
     vocabulary: Any = Field(default=None, description="Vocabulary.")
     tokenizer: Any = Field(default=None, description="Tokenizer.")
 
-    tokens_per_iter: int = Field(default=None, description="Tokens per iter/step.")
+    tokens_per_iter: int | None = Field(default=None, description="Tokens per iter/step.")
 
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""
@@ -104,7 +104,7 @@ class State(BaseModel):
         scheduler: torch.optim.lr_scheduler.LRScheduler,
     ) -> State:
         """Load state dictionaries from a file and return a new State instance."""
-        state = torch.load(filepath, map_location=device)
+        state = torch.load(filepath, map_location=device)  # nosec B614  # trusted local checkpoint produced by this repo
 
         epoch_index = state["epoch_index"]
         train_batch_index = state["train_batch_index"]

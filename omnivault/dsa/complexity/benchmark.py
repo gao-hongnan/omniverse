@@ -66,7 +66,7 @@ class DataFactory:
         Raises:
             ValueError: If data_type is not supported
         """
-        factories = {
+        factories: Dict[str | None, Callable[[int], SupportedDataTypes]] = {
             "string": lambda n: "a" * n,
             "array": lambda n: list(range(n)),
             "dict": lambda n: {i: i for i in range(n)},

@@ -104,7 +104,7 @@ class GaussianMixtureModel(BaseEstimator):
 
             labels = kmeans.labels
             # take kmeans labels and use them to initialize the GMM
-            self.weights_ = np.bincount(labels) / self.num_samples
+            self.weights_ = np.bincount(labels.astype(int)) / self.num_samples
             # means is the centroids of the kmeans
             self.means_ = kmeans.centroids
             # covariances is the covariance of each cluster k

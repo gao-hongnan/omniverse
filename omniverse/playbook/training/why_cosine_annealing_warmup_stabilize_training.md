@@ -391,7 +391,6 @@ def get_cosine_annealing_with_warmup(
     num_training_steps: int,
     alpha_f: float = 0.1,
     last_epoch: int = -1,
-    verbose: bool = False,
 ) -> LambdaLR:
     lr_lambda = partial(
         _get_cosine_schedule_with_warmup_lr_lambda,
@@ -399,7 +398,7 @@ def get_cosine_annealing_with_warmup(
         num_training_steps=num_training_steps,
         alpha_f=alpha_f,
     )
-    return LambdaLR(optimizer, lr_lambda, last_epoch, verbose)
+    return LambdaLR(optimizer, lr_lambda, last_epoch)
 
 # Experiment 1
 num_warmup_steps = 5

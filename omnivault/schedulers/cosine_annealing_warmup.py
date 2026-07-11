@@ -52,7 +52,6 @@ def get_cosine_annealing_with_warmup(
     num_training_steps: int,
     alpha_f: float = 0.1,
     last_epoch: int = -1,
-    verbose: bool = False,
 ) -> LambdaLR:
     """
     Create a schedule with a learning rate that decreases following the values
@@ -72,8 +71,6 @@ def get_cosine_annealing_with_warmup(
         The minimum learning rate at the end of the schedule, by default 0.1.
     last_epoch: int
         The index of the last epoch when resuming training, by default -1.
-    verbose: bool
-        Whether to print the learning rate at every update, by default False.
 
     Returns
     -------
@@ -96,7 +93,7 @@ def get_cosine_annealing_with_warmup(
         num_training_steps=num_training_steps,
         alpha_f=alpha_f,
     )
-    return LambdaLR(optimizer, lr_lambda, last_epoch, verbose)
+    return LambdaLR(optimizer, lr_lambda, last_epoch)
 
 
 def _cosine_schedule_with_warmup_and_post_annealing_lr_lambda(

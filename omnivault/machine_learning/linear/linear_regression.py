@@ -291,7 +291,7 @@ class LinearRegression(BaseEstimator):
 
         # Set coefficients and intercept
         if self.has_intercept:
-            self.intercept_ = float(self.optimal_betas[0])
+            self.intercept_ = float(self.optimal_betas[0].item())
             self.coef_ = self.optimal_betas[1:].flatten()
             logging.info("Set intercept and coefficients.")
         else:

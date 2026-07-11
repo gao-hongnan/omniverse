@@ -116,7 +116,7 @@ class ImmutableProxy(ImmutableT[T_co]):
         if not hasattr(self._obj, "__iter__"):
             raise TypeError(f"'{type(self._obj).__name__}' object is not iterable")
 
-        obj = cast(Iterable, self._obj)
+        obj = cast(Iterable[object], self._obj)
         for item in obj:
             yield self._wrap_if_needed(item)
 
@@ -149,10 +149,10 @@ class ImmutableProxy(ImmutableT[T_co]):
         """
         if not hasattr(self._obj, "__contains__"):
             if hasattr(self._obj, "__iter__"):
-                return any(val == item for val in cast(Iterable, self._obj))
+                return any(val == item for val in cast(Iterable[object], self._obj))
             raise TypeError(f"'{type(self._obj).__name__}' object is not a container")
 
-        obj = cast(Container, self._obj)
+        obj = cast(Container[object], self._obj)
         return item in obj
 
     def __getattr__(self, item: str) -> Any:
