@@ -57,7 +57,7 @@ coverage: .uv
 
 .PHONY: docs
 docs: .uv
-	cd $(DOCS_DIR) && uv run jupyter book start .
+	cd $(DOCS_DIR) && uv run jupyter-book build .
 
 .PHONY: ci
 ci: lint security typecheck test coverage
