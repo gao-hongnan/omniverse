@@ -1,0 +1,109 @@
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/runner/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets, linear_model
+from sklearn.datasets import make_regression
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from rich.pretty import pprint
+
+
+def regression_test(solver: str = "Closed Form Solution") -> None:
+    np.random.seed(1930)
+    X, y_true = make_regression(
+        n_samples=10000, n_features=10, random_state=1930, coef=False
+    )  # returns 2-d array of 1000 by 10
+    x_train, x_val, y_train, y_val = train_test_split(X, y_true, test_size=0.3, random_state=1930)
+
+    lr_SKLEARN = LinearRegression(fit_intercept=True).fit(x_train, y_train)
+    lr_CUSTOM = MyLinearRegression(solver=solver, has_intercept=True, num_epochs=10000).fit(x_train, y_train)
+
+    # Debugged, the intercept is the one with major difference why? Answer: https://stackoverflow.com/questions/66881829/implementation-of-linear-regression-closed-form-solution/66886954?noredirect=1#comment118259946_66886954
+
+    pprint(lr_CUSTOM.intercept_)
+    pprint(lr_SKLEARN.intercept_)
+    pprint(lr_CUSTOM.coef_)
+    pprint(lr_SKLEARN.coef_)
+
+    pred_CUSTOM = lr_CUSTOM.predict(x_val)
+    pred_SKLEARN = lr_SKLEARN.predict(x_val)
+    print("First Value HN", pred_CUSTOM[0])
+    print("First Value SKLEARN", pred_SKLEARN[0])
+    print("HN MSE", mean_squared_error(y_val, pred_CUSTOM))
+    print("SKLEARN MSE", mean_squared_error(y_val, pred_SKLEARN))
+
+
+regression_test()
+------------------
+
+----- stderr -----
+2026-07-18 03:58:01,426 - INFO - Reshaped y_true to 2D array with shape (7000, 1).
+----- stderr -----
+2026-07-18 03:58:01,427 - INFO - Added intercept term to X.
+----- stderr -----
+2026-07-18 03:58:01,428 - INFO - Fitting model with 7000 samples and 11 features.
+----- stderr -----
+2026-07-18 03:58:01,429 - INFO - Computed optimal betas using Closed Form Solution.
+------------------
+
+[31m---------------------------------------------------------------------------[39m
+[31mTypeError[39m                                 Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[2][39m[32m, line 36[39m
+[32m     32[39m     print([33m"HN MSE"[39m, mean_squared_error(y_val, pred_CUSTOM))
+[32m     33[39m     print([33m"SKLEARN MSE"[39m, mean_squared_error(y_val, pred_SKLEARN))
+[32m     34[39m 
+[32m     35[39m 
+[32m---> [39m[32m36[39m regression_test()
+
+[36mCell[39m[36m [39m[32mIn[2][39m[32m, line 19[39m, in [36mregression_test[39m[34m(solver)[39m
+[32m     15[39m     )  [38;5;66;03m# returns 2-d array of 1000 by 10[39;00m
+[32m     16[39m     x_train, x_val, y_train, y_val = train_test_split(X, y_true, test_size=[32m0.3[39m, random_state=[32m1930[39m)
+[32m     17[39m 
+[32m     18[39m     lr_SKLEARN = LinearRegression(fit_intercept=[38;5;28;01mTrue[39;00m).fit(x_train, y_train)
+[32m---> [39m[32m19[39m     lr_CUSTOM = MyLinearRegression(solver=solver, has_intercept=[38;5;28;01mTrue[39;00m, num_epochs=[32m10000[39m).fit(x_train, y_train)
+[32m     20[39m 
+[32m     21[39m     [38;5;66;03m# Debugged, the intercept is the one with major difference why? Answer: https://stackoverflow.com/questions/66881829/implementation-of-linear-regression-closed-form-solution/66886954?noredirect=1#comment118259946_66886954[39;00m
+[32m     22[39m 
+
+[36mCell[39m[36m [39m[32mIn[1][39m[32m, line 292[39m, in [36mMyLinearRegression.fit[39m[34m(self, X, y_true)[39m
+[32m    288[39m                     logging.info([33m"Epoch %d | Loss: %.4f"[39m, epoch, loss)
+[32m    289[39m 
+[32m    290[39m         [38;5;66;03m# Set coefficients and intercept[39;00m
+[32m    291[39m         [38;5;28;01mif[39;00m self.has_intercept:
+[32m--> [39m[32m292[39m             self.intercept_ = float(self.optimal_betas[[32m0[39m])
+[32m    293[39m             self.coef_ = self.optimal_betas[[32m1[39m:].flatten()
+[32m    294[39m             logging.info([33m"Set intercept and coefficients."[39m)
+[32m    295[39m         [38;5;28;01melse[39;00m:
+
+[31mTypeError[39m: only 0-dimensional arrays can be converted to Python scalars
+

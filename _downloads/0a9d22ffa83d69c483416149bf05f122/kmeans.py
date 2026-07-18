@@ -83,7 +83,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         self.t: int  # iteration counter
         self._labels: NDArray[np.floating[Any]]  # N labels np.zeros(shape=(self._N))
         self._centroids: NDArray[np.floating[Any]]  # np.zeros(shape=(self._K, self.num_features)) KxD matrix
-        self._inertia: NDArray[np.floating[Any]]
+        self._inertia: np.floating[Any]
         self._inertias: NDArray[np.floating[Any]]  # np.zeros(shape=(self._N)) N inertias
 
     @property
@@ -117,7 +117,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         return self._centroids
 
     @property
-    def inertia(self) -> NDArray[np.floating[Any]]:
+    def inertia(self) -> np.floating[Any]:
         """Property to get the inertia."""
         return self._inertia
 

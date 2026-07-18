@@ -1,0 +1,68 @@
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/runner/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+# Field offsets
+print(f"Offset of x: {Point.x.offset} bytes")
+print(f"Offset of y: {Point.y.offset} bytes")
+
+# Field sizes
+print(f"Size of x: {ctypes.sizeof(ctypes.c_int)} bytes")
+print(f"Size of y: {ctypes.sizeof(ctypes.c_int)} bytes")
+
+# Memory inspection
+from omnivault.utils.memory.inspector import inspect_structure_layout
+
+layout = inspect_structure_layout(Point)
+print("\nDetailed Layout:")
+for field in layout:
+    print(f"  {field.field_name}: offset={field.offset}, size={field.size}, type={field.type_name}")
+------------------
+
+----- stdout -----
+Offset of x: 0 bytes
+Offset of y: 4 bytes
+Size of x: 4 bytes
+Size of y: 4 bytes
+------------------
+
+[31m---------------------------------------------------------------------------[39m
+[31mModuleNotFoundError[39m                       Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[6][39m[32m, line 10[39m
+[32m      6[39m print(f"Size of x: {ctypes.sizeof(ctypes.c_int)} bytes")
+[32m      7[39m print(f"Size of y: {ctypes.sizeof(ctypes.c_int)} bytes")
+[32m      8[39m 
+[32m      9[39m [38;5;66;03m# Memory inspection[39;00m
+[32m---> [39m[32m10[39m [38;5;28;01mfrom[39;00m omnivault.utils.memory.inspector [38;5;28;01mimport[39;00m inspect_structure_layout
+[32m     11[39m 
+[32m     12[39m layout = inspect_structure_layout(Point)
+[32m     13[39m print([33m"\nDetailed Layout:"[39m)
+
+[31mModuleNotFoundError[39m: No module named 'omnivault.utils.memory'
+

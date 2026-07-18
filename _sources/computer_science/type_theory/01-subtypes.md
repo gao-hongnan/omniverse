@@ -33,12 +33,8 @@ kernelspec:
 
 %config InlineBackend.figure_format = 'svg'
 
-from __future__ import annotations
-
-import math
-from io import TextIOBase, TextIOWrapper
-from typing import Any, BinaryIO, Dict, Generator, Generic, List, Literal, Sized, Tuple, TypeVar, Union, Sequence, Type
-from rich.pretty import pprint
+from collections.abc import Sequence, Sized
+from typing import Any
 ```
 
 In
@@ -86,10 +82,9 @@ class inheritance), while **_structural subtyping_** determines it based on the
 actual **structure** (methods and properties) of the types.
 
 This distinction is particularly important for static type checkers, which
-checks the types at
-[**compile time**](https://stackoverflow.com/questions/71616237/in-general-static-languages-are-type-checked-at-compile-time-is-typescript-als),
-and rely on the subtyping schemes to determine if one type, $\mathcal{A}$, is a
-subtype of another type, $\mathcal{B}$.
+check the types at **static-analysis time** (i.e., before the program ever
+runs), and rely on the subtyping schemes to determine if one type,
+$\mathcal{A}$, is a subtype of another type, $\mathcal{B}$.
 
 In **nominal subtyping**, the static type checker searches for **_explicit
 declarations of inheritance_** (e.g., class `A` extends `B`), clearly indicating
@@ -104,15 +99,17 @@ of this relationship. For instance, the checker would examine if the subtype
 implements all the _methods_ present in the supertype, ensuring _compatibility_
 based solely on structural _characteristics_.
 
-```{admonition} Declaration, Compile, and Run Time
+```{admonition} Declaration, Static-Analysis, and Run Time
 :class: note
 
 **Nominal subtype relationships** are established at **declaration time** (i.e.,
-when a new subclass is declared), and checked at **compile time**, whereas
+when a new subclass is declared), and checked at **static-analysis time**, whereas
 **structural subtype relationships** are established at the **point of use**,
-and checked at **runtime**. However, when defining via `mypy`'s `Protocol`,
-the structural subtyping is actually checked at **compile time**. We will see
-the difference later.
+and checked at **runtime**. However, when defining via `typing.Protocol`
+([PEP 544](https://peps.python.org/pep-0544/), in the standard library since
+Python 3.8 — a language feature, not a `mypy` one, so any type checker
+understands it), the structural subtyping is actually checked at
+**static-analysis time**. We will see the difference later.
 ```
 
 ### Nominal Subtyping - Class Hierarchy Determines Subtypes
@@ -152,6 +149,7 @@ similar implementation in Python below, detailing how `Dog` and `Cat` are both
 subtypes of their parent class `Animal` through inheritance.
 
 ```{code-cell} ipython3
+# Canonical fixture for this series — reused by later chapters
 class Animal:
     def describe(self) -> str:
         return str(self.__class__.__name__)
@@ -187,7 +185,7 @@ dog = Dog()
 rob = Robot()
 print(isinstance(cat, Animal))  # True,  Cat is a nominal subtype of Animal
 print(isinstance(dog, Animal))  # True,  Dog is a nominal subtype of Animal
-print(isinstance(rob, Animal))  # False, Robit is not a nominal subtype of Animal
+print(isinstance(rob, Animal))  # False, Robot is not a nominal subtype of Animal
 ```
 
 In this example, `Dog` and `Cat` are nominal subtypes of `Animal` because they
@@ -219,18 +217,18 @@ to interact seamlessly as long as they fulfill the structural criteria.
 Sometimes you would like to enable loose coupling and subclass (nominal) may
 just add unwanted complexity.
 
-Consider a toy example below, where we construct `Dataset` to hold a `Sequence`
-containing elements of type `T`. The current implementation does not have any
+Consider a toy example below, where we construct a generic `Dataset` to hold a
+`Sequence` containing elements of type `T` (the `class Dataset[T]:`
+type-parameter syntax comes from
+[PEP 695](https://peps.python.org/pep-0695/) — we unpack it properly in
+{doc}`Generics <04-generics>`). The current implementation does not have any
 subtyping schemes to it, and therefore, if we try to check if this `Dataset` is
 an instance of
 [`Sized`](https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399),
 we would get `False`.
 
 ```{code-cell} ipython3
-T = TypeVar("T")
-
-
-class Dataset:
+class Dataset[T]:
     def __init__(self, elements: Sequence[T]) -> None:
         self.elements = elements
 
@@ -245,7 +243,7 @@ specific class that implements Sized, the mere presence of the said method
 adheres to the structural expectations of being "sizable".
 
 ```{code-cell} ipython3
-class Dataset:
+class Dataset[T]:
     def __init__(self, elements: Sequence[T]) -> None:
         self.elements = elements
 
@@ -261,8 +259,9 @@ It is worth noting that the `Sized` protocol is not really the `Protocol` we
 know of, instead they use `__subclasshook__` for the **_structural typing dark
 magic_** to happen.
 
-```{code-block} md
+```{code-block} python
 ---
+caption: Reproduced from CPython's Lib/_collections_abc.py (quoted source; annotations added for exposition)
 linenos: true
 emphasize-lines: 9-13
 ---
@@ -275,7 +274,7 @@ class Sized(metaclass=ABCMeta):
         return 0
 
     @classmethod
-    def __subclasshook__(cls: Type[Sized], C: Type) -> bool:
+    def __subclasshook__(cls: type[Sized], C: type) -> bool:
         if cls is Sized:
             return _check_methods(C, "__len__")
         return NotImplemented
@@ -329,11 +328,30 @@ for obj in objects:
         print(f"{obj.__class__.__name__} cannot fly.")
 ```
 
-While manual checks like the one above illustrate the core idea of structural
-subtyping, Python offers a more streamlined approach through the `typing`
-module. By defining a [protocol](https://peps.python.org/pep-0544/) via the
-`Protocol` class, you can specify the required methods and properties for a
-type,
+The cell runs happily — at runtime the duck check does its job. But watch what
+happens when we hand the same code to the static type checkers. The guard
+`is_flyable` returns a plain `bool`, which tells a checker *nothing* about
+`obj` inside the `if` branch, and the heterogeneous list gives the two
+checkers room to disagree about `obj` itself. `mypy --strict` joins the
+element type of `objects` up to `object` (the only common ancestor of `Bird`,
+`Airplane`, and `Car`) and rejects the call:
+
+```text
+duck_check.py:26: error: "object" has no attribute "fly"  [attr-defined]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+`pyright`, in its default mode, infers the element type as `Unknown` (an
+implicit `Any`) and stays silent — `0 errors, 0 warnings, 0 informations` —
+though its strict mode flags the unknown-ness instead. Neither checker
+*understands* the duck check; they differ only in how loudly they shrug.
+(Teaching a checker to trust a boolean predicate is possible, but it must be
+declared with `TypeIs` or `TypeGuard` — the subject of a later chapter.)
+
+This gap is precisely what `typing` closes. By defining a
+[protocol](https://peps.python.org/pep-0544/) via the `Protocol` class, you can
+specify the required methods and properties for a type — making the structural
+relationship visible at static-analysis time,
 
 ```{code-cell} ipython3
 from typing import Protocol
@@ -349,9 +367,10 @@ bird = Bird()
 airplane = Airplane()
 car = Car()
 
-can_we_fly(bird)       # No error, Bird is a structural subtype of Flyable
-can_we_fly(airplane)   # No error, Airplane is a structural subtype of Flyable
-can_we_fly(car)        # Error, Car is not a structural subtype of Flyable
+can_we_fly(bird)       # OK: Bird is a structural subtype of Flyable
+can_we_fly(airplane)   # OK: Airplane is a structural subtype of Flyable
+can_we_fly(car)        # runs fine at runtime; rejected at static-analysis time
+print("All three calls executed without a runtime error.")
 ```
 
 Here, both `Bird` and `Airplane` are considered structural subtypes of the
@@ -360,10 +379,26 @@ they don't explicitly inherit from `Flyable`. The `Car` class, on the other
 hand, does not implement the `fly` method and is not considered a structural
 subtype of `Flyable`.
 
-It is worth noting that `mypy` is a static type checker, and hence if you run
-`mypy` on the above code, the code is checked at **compile time** to ensure that
-the `Bird` and `Airplane` classes are structural subtypes of the `Flyable`
-protocol and that the `Car` class is not.
+Notice that the cell above executes without a single complaint — annotations
+are not enforced while the program runs, so even `can_we_fly(car)` sails
+through at runtime. The rejection happens at **static-analysis time**: save the
+`Bird`/`Airplane`/`Car` definitions together with the cell above as
+`flyable.py` and run a static type checker over it, and the `car` call — and
+only the `car` call — is flagged. `pyright` reports
+
+```text
+flyable.py:34:12 - error: Argument of type "Car" cannot be assigned to parameter "obj" of type "Flyable" in function "can_we_fly"
+    "Car" is incompatible with protocol "Flyable"
+      "fly" is not present (reportArgumentType)
+1 error, 0 warnings, 0 informations
+```
+
+and `mypy --strict` agrees:
+
+```text
+flyable.py:34: error: Argument 1 to "can_we_fly" has incompatible type "Car"; expected "Flyable"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
 
 If you want to ensure that the check is done at runtime with `isinstance`, you
 can use the decorator `runtime_checkable` to enable runtime instance
@@ -383,7 +418,7 @@ print(isinstance(airplane, Flyable))    # True, Airplane is a structural subtype
 print(isinstance(car, Flyable))         # False, Car is not a structural subtype of Flyable
 ```
 
-### Pros and Cons of Nominal and Structural Subtyping
+### When Structural Subtyping Backfires: LSP
 
 In the nominal subtyping example, the subtype relationship is established
 through explicit class inheritance. In the structural subtyping example, the
@@ -405,13 +440,13 @@ Consider the same example from nominal subtyping, but with an added
 a class is a structural subtype of `Animal` by checking if it implements the
 `describe` and `make_sound` methods.
 
-```{code-block} md
+```{code-block} python
 ---
 linenos: true
 emphasize-lines: 14,17,42,45
 ---
 
-def _check_methods(C: Type, *methods: str) -> bool:
+def _check_methods(C: type, *methods: str) -> bool:
     mro = C.__mro__
     for method in methods:
         for B in mro:
@@ -431,7 +466,7 @@ class Animal:
         return "Generic Animal Sound!"
 
     @classmethod
-    def __subclasshook__(cls: Type[Animal], C: Type) -> bool:
+    def __subclasshook__(cls: type[Animal], C: type) -> bool:
         if cls is Animal:
             return _check_methods(C, "describe", "make_sound")
         return NotImplemented
@@ -469,127 +504,80 @@ In practice, this can be avoided by adhering to good design patterns for your
 type protocols or interfaces. Golang is a famous language that relies almost
 exclusively on structural subtyping, here's a good
 [post](https://appmaster.io/blog/interface-implementation-go) that summarizes
-some of thees rules.
+some of these rules.
 
 ## Inclusive vs. Coercive Implementations
 
 While nominal and structural subtyping focus on _how_ type relationships are
 defined, **inclusive** and **coercive** implementations concern themselves with
-_what happens_ when types **interact** in a program, specifically how values of
-one type are treated or converted to another type within the subtype
-relationship[^subtype-schemes-wikipedia].
+_what happens_ to a value when types **interact** in a
+program[^subtype-schemes-wikipedia]. In an **inclusive** implementation, the
+internal representation of a subtype value is already a valid representation of
+the supertype value, so nothing needs to change or be converted — think of it
+as direct **"plug-and-play"**. A `Dog` object passed to a function expecting an
+`Animal` is not transformed into an `Animal`; it is simply _used_, because its
+representation already **includes all necessary aspects** of an `Animal`. This
+is the reading that pairs naturally with the subtyping schemes above: every
+value of the subtype $\mathcal{A}$ _is_ a value of the supertype $\mathcal{B}$.
 
-### Inclusive Implementations
+In a **coercive** implementation, the internal representations differ, and the
+language inserts an "adapter": the value is automatically converted before it
+is used. The canonical example is numeric. In `5 + 2.5`, the `int` value `5` is
+implicitly converted to the `float` value `5.0` before the addition — `int` and
+`float` have different internal representations in CPython — and the result
+`7.5` is a `float`. The integer is not used _as_ a float; it is _turned into_
+one.
 
-The **basic idea** of _inclusive implementations_ is that the internal
-representation of a value from a subtype is compatible with that of its
-supertype. This means that the value itself doesn't need to change or be
-converted when treated as a value of the supertype.
+```{prf:remark} Coercion is a conversion function
+:label: type-theory-01-subtypes-remark-coercive-conversion
 
-Think of this as direct **"plug-and-play"**. A subtype is a special case of the
-supertype and can directly be used in any context where the supertype is
-expected. No transformation or special handling is needed; the system inherently
-understands that the subtype fits because its representation **includes all
-necessary aspects** of the supertype.
-
-In other words, if you have a subtype $\mathcal{A}$ and a supertype
-$\mathcal{B}$, any value that belongs to $\mathcal{A}$ is also valid as a value
-of $\mathcal{B}$. The representation of the value in $\mathcal{A}$ is sufficient
-to represent it in $\mathcal{B}$ as well.
-
-```{prf:example} Inclusive Implementations in Object-Oriented Languages
-:label: type-theory-01-subtypes-example-inclusive-impl-oop
-
-Consider a class hierarchy where `Dog` extends `Animal`. A `Dog` object has all
-the characteristics (fields, methods) of an `Animal` and possibly more. When you
-treat a `Dog` object as an `Animal` (for example, passing it to a function that
-expects an `Animal`), no conversion is needed - the `Dog` object 'fits' into the
-`Animal` type because it already includes all aspects of an `Animal`. This very
-much sounds like the nominal subtyping we discussed earlier.
-```
-
-### Coercive Implementations
-
-On the other hand, coercive implementations involve automatically converting a
-value from one type to another when necessary. This conversion is typically
-needed when the internal representations of the types are different. Imagine
-this as needing an "adapter" to make one type fit into the context of another.
-The system recognizes that while the two types are not the same, there's a known
-way to convert from one to the other so that interactions can proceed smoothly.
-
-To formalize the concept of coercive implementations in the context of subtypes
-and supertypes with mathematical logic, we consider two types, $\mathcal{A}$ and
-$\mathcal{B}$, not necessary subtype of each other. The coercive implementation
-implies that values of type $\mathcal{A}$ may need to be converted to type
-$\mathcal{B}$ to be treated as values of $\mathcal{B}$.
-
-Let $\mathcal{A}$ and $\mathcal{B}$ be two types within a type system. We define
-a coercive conversion process as a function $f$ that maps values from
-$\mathcal{A}$ to $\mathcal{B}$:
+Formally, a coercive implementation between two types $\mathcal{A}$ and
+$\mathcal{B}$ (not necessarily subtypes of each other) supplies a conversion
+function
 
 $$
 f: \mathcal{A} \rightarrow \mathcal{B}
+\quad \text{such that} \quad
+\forall \mathcal{V}_{\mathcal{A}} \in \mathcal{A}, \exists \mathcal{V}_{\mathcal{B}} \in \mathcal{B} : \mathcal{V}_{\mathcal{B}} = f(\mathcal{V}_{\mathcal{A}}),
 $$
 
-This function $f$ takes a value $\mathcal{V}_{\mathcal{A}}$ of type
-$\mathcal{A}$ and converts it into a value $\mathcal{V}_{\mathcal{B}}$ of type
-$\mathcal{B}$, such that:
-
-$$
-\forall \mathcal{V}_{\mathcal{A}} \in \mathcal{A}, \exists \mathcal{V}_{\mathcal{B}} \in \mathcal{B} : \mathcal{V}_{\mathcal{B}} = f(\mathcal{V}_{\mathcal{A}})
-$$
-
-````{prf:example} Coercive and Primitive Types
-:label: type-theory-01-subtypes-example-coercive-impl-primitive-types
-
-A common example is numeric types, like integers and floating-point numbers. In
-many languages, an integer can be used where a floating-point number is
-expected. The integer (type `A`) is automatically converted (coerced) into a
-floating-point number (type `B`). For instance, in a language like Python, if
-you have a function that expects a float but you pass an integer, the integer
-will be automatically converted to a float.
-
-```{code-block} md
----
-linenos: true
----
-# Integer (type A)
-int_value = 5
-
-# Floating-point number (type B)
-float_value = 2.5
-
-# Adding an integer to a floating-point number
-result = int_value + float_value # 7.5
+which the language applies implicitly wherever a $\mathcal{B}$ is expected but
+an $\mathcal{A}$ is supplied — in `5 + 2.5`, $f$ is the `int`-to-`float`
+conversion. An inclusive implementation is the degenerate case where $f$ is the
+identity. Note that coercion is a statement about _runtime values_, not about
+the subtype relation itself: whether Python's `int` should count as a subtype
+of `float` at static-analysis time is a different (and subtler) question, which
+we take up in {doc}`Type Safety <02-type-safety>`.
 ```
 
-Even though `int_value` is an integer and `float_value` is a float, the
-programming language automatically converts `int_value` to a float during the
-addition operation. This is coercive implementation: the integer is
-automatically converted to a float (a related but different type) to make the
-operation possible.
+## Summary
 
-In this context:
+If I had to compress this chapter into a single sentence, it would be the one
+we opened with: a subtype is a type whose values can **stand in** for values of
+its supertype without the surrounding program noticing. Types are sets of
+values, and subtyping is a _substitutability_ promise over those sets — every
+program element written to operate on the supertype must keep working when
+handed the subtype. Nominal and structural subtyping are not two different
+promises; they are two different ways of _establishing_ the same promise. And
+as the `Robot` example showed, the structural route can extend the promise to
+types that match an interface's letter while violating its spirit, which is
+why the Liskov substitution principle remains the semantic yardstick behind
+both schemes.
 
--   $\mathcal{A}$ corresponds to the type `int`.
--   $\mathcal{B}$ corresponds to the type `float`.
--   The function $f$ represents the implicit conversion process that Python
-    performs to convert `int` to `float` before performing the addition.
+|                           | Nominal subtyping                                     | Structural subtyping                                                     |
+| ------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| Relationship established  | By explicit declaration (`class Dog(Animal):`)        | By shape — the required methods and properties are present               |
+| Declared where            | At declaration time, in the class definition          | Nowhere — it holds implicitly at the point of use                        |
+| Python mechanism          | Class inheritance                                     | `typing.Protocol` (PEP 544); ABCs via `__subclasshook__`                 |
+| Static-analysis check     | Walks the declared class hierarchy                    | Matches members against the protocol                                     |
+| Runtime check             | `isinstance(obj, Animal)`                             | `isinstance` only via `@runtime_checkable` or `__subclasshook__`         |
+| Characteristic risk       | Rigidity — conformant-but-unrelated types excluded    | Accidental conformance — semantically wrong subtypes slip in (LSP)       |
 
-So, when `int_value` (of type `int`, or $\mathcal{A}$) and `float_value` (of
-type `float`, or $\mathcal{B}$) are added, Python implicitly applies the
-conversion function $f$ to `int_value` to convert it into a `float` (type
-$\mathcal{B}$) before the addition. This can be thought of as:
-
--   $\mathcal{V}_{\mathcal{A}} = \text{int_value}$
--   $\mathcal{V}_{\mathcal{B}} = f(\text{int_value}) = \text{float_value}$
-
-Here, $f(\text{int_value})$ effectively "coerces" or converts the integer value
-to a floating-point value, ensuring that the addition operation occurs between
-two values of the same type ($\mathcal{B}$, or `float`). The result of this
-operation is a `float`, demonstrating how the coercive conversion aligns with
-the formalism.
-````
+The next two chapters make the promise precise:
+{doc}`Type Safety <02-type-safety>` examines what can go wrong when
+substitution is allowed — and why the static type checker exists to stop it —
+while {doc}`Subsumption <03-subsumption>` states the formal criterion a
+checker applies when it lets a subtype stand in for its supertype.
 
 ## References and Further Readings
 
