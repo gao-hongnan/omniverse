@@ -182,7 +182,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
             The distance metric function.
         """
         if self.metric == "euclidean":
-            return partial(euclidean_distance, squared=False)
+            return partial(euclidean_distance, squared=True)
         if self.metric == "manhattan":
             return manhattan_distance
         raise ValueError(f"{self.metric} is not supported. The metric must be 'euclidean' or 'manhattan'.")

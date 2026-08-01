@@ -35,16 +35,11 @@ def test_manhattan_distance(vectors_1d: _VectorPair) -> None:
 @pytest.mark.parametrize(
     argnames=("squared", "expected"),
     argvalues=[
-        pytest.param(True, math.sqrt(11.0), id="squared-true-returns-root-distance"),
-        pytest.param(False, 11.0, id="squared-false-returns-squared-distance"),
+        pytest.param(False, math.sqrt(11.0), id="squared-false-returns-root-distance"),
+        pytest.param(True, 11.0, id="squared-true-returns-squared-distance"),
     ],
 )
 def test_euclidean_distance_squared(vectors_1d: _VectorPair, squared: bool, expected: float) -> None:
-    """Characterization: the implementation inverts the ``squared`` flag
-    (``squared=True`` returns the root distance, ``squared=False`` the squared
-    distance), contradicting its docstring. Pinned deliberately so changing the
-    semantics is a visible, intentional act.
-    """
     x_1, x_2 = vectors_1d
 
     assert euclidean_distance(x_1, x_2, squared) == expected
