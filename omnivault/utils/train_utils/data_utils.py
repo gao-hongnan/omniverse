@@ -1,24 +1,22 @@
-from __future__ import annotations
-
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 from sklearn.utils.class_weight import compute_class_weight
 
 
-def calculate_class_weights_and_stats(labels: List[int]) -> Dict[str, Any]:
+def calculate_class_weights_and_stats(labels: list[int]) -> dict[str, Any]:
     """
     Calculate class counts, normalized class counts, class weights, and return relevant statistics
     for a given list of class labels in the training set.
 
     Parameters
     ----------
-    labels : List[int]
+    labels : list[int]
         List of class labels in the training dataset.
 
     Returns
     -------
-    Dict[str, Any]
+    dict[str, Any]
         A dictionary containing:
         - class_counts: Dictionary mapping each class to its count in `labels`.
         - normalized_class_counts: Dictionary mapping each class to its normalized count based on `labels`.

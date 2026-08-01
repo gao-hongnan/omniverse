@@ -29,11 +29,9 @@ NOTE:
     4. Try to implement predict_proba and predict_log_proba following sklearn.
 """
 
-from __future__ import annotations
-
 import logging
 import math
-from typing import Any
+from typing import Any, Self, override
 
 import numpy as np
 from numpy.typing import NDArray
@@ -63,7 +61,8 @@ class NaiveBayesGaussian(BaseEstimator):
         # num_samples unused since we vectorized when estimating parameters
         self.num_samples, self.num_features = X.shape
 
-    def fit(self, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]) -> NaiveBayesGaussian:
+    @override
+    def fit(self, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]) -> Self:
         """Fit Naive Bayes classifier according to X, y.
 
         Note:
@@ -177,6 +176,7 @@ class NaiveBayesGaussian(BaseEstimator):
         """Predict the posterior of one sample x."""
         return self._calculate_posterior(x)
 
+    @override
     def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the class labels of all the samples in X. Note
         that X can be any data (i.e. unseen data)."""
@@ -247,6 +247,7 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
             log_probs[sample_index] = log_posterior - np.log(np.sum(np.exp(log_posterior)))
         return log_probs
 
+    @override
     def predict_proba(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict the probabilities of all the samples in X.
 
@@ -259,4 +260,4 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
             NDArray[np.floating[Any]]: N x K matrix with probabilities for each sample.
         """
         log_probs = self.predict_log_proba(X)
-        return np.exp(log_probs)  # type: ignore[no-any-return]
+        return np.exp(log_probs)

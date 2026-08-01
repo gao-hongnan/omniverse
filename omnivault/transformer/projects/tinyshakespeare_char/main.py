@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-import logging
 import sys
 import time
 
@@ -16,6 +13,7 @@ from omnivault.core.logger import RichLogger
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
+from omnivault.transformer.config.data import DatasetSource
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
@@ -49,10 +47,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # logger
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
-    assert isinstance(logger, logging.Logger)
 
+    source = DatasetSource.from_data_config(data)
     vocabulary = TextCharacterVocabulary.from_url(
-        url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir
+        url=source.dataset_url, dataset_name=source.dataset_name, dest_folder=source.dataset_dir
     )
     tokenizer = TextCharacterTokenizer(vocabulary=vocabulary)
 
@@ -77,13 +75,15 @@ def main(cfg: DictConfig | ListConfig) -> None:
         trainer=trainer_config,
         generator=generator_config,
     )
-    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
-    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
-    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
+    if (
+        isinstance(composer.model, Missing)
+        or isinstance(composer.optimizer, Missing)
+        or isinstance(composer.criterion, Missing)
+    ):
+        raise ValueError("model, optimizer and criterion configs are required")
 
     # TODO: consider classmethod from file_path
-    assert composer.data.dataset_path is not None
-    with open(composer.data.dataset_path, "r") as file:
+    with open(source.dataset_path, "r") as file:
         corpus = file.read()
 
     dataset = TextCharacterDataset(corpus=corpus, context_length=composer.data.context_length, tokenizer=tokenizer)
@@ -101,8 +101,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         valid_dataset = None
         test_dataset = None
 
-    assert composer.data.train_loader is not None
-    assert composer.data.collate_fn is not None
+    if composer.data.train_loader is None or composer.data.collate_fn is None:
+        raise ValueError("tinyshakespeare training requires train_loader and collate_fn configs")
 
     train_loader = create_loader(
         dataset=train_dataset,
@@ -111,7 +111,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     )
 
     if valid_dataset is not None:
-        assert composer.data.valid_loader is not None
+        if composer.data.valid_loader is None:
+            raise ValueError("valid_loader config is required when a validation split exists")
         valid_loader = create_loader(  # noqa: F841
             dataset=valid_dataset,
             loader_config=composer.data.valid_loader,
@@ -119,7 +120,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         )
 
     if test_dataset is not None:
-        assert composer.data.test_loader is not None
+        if composer.data.test_loader is None:
+            raise ValueError("test_loader config is required when a test split exists")
         test_loader = create_loader(  # noqa: F841
             dataset=test_dataset,
             loader_config=composer.data.test_loader,
@@ -135,7 +137,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         assert hasattr(composer.optimizer, "weight_decay")
         optimizer = optimizer_pydantic_config.build(
             params=apply_weight_decay_to_different_param_groups(
-                model=model, weight_decay=composer.optimizer.weight_decay
+                model=model,
+                weight_decay=getattr(composer.optimizer, "weight_decay"),  # noqa: B009  # dynamic OptimizerConfig field not visible to pyright; getattr keeps it sound
             )
         )
     else:
@@ -147,7 +150,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # Create scheduler
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
-    scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
+    scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)
     assert composer.scheduler is MISSING  # now it is MISSING for us to fill up.
     composer.scheduler = scheduler_pydantic_config
     scheduler = scheduler_pydantic_config.build(optimizer=optimizer)
@@ -173,7 +176,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         state=state,
         composer=composer,
         logger=logger,
-        device=device,  # type: ignore[arg-type]
+        device=device,
     )
     trainer.add_callback(TrainerEvent.ON_TRAIN_BATCH_END, evaluate_generate_on_train_batch_end)
     trainer.add_callback(TrainerEvent.ON_TRAIN_EPOCH_END, save_state)

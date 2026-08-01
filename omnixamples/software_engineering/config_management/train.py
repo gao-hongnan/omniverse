@@ -43,7 +43,7 @@ def train(config: Any) -> None:
 
     for epoch in range(config.train.num_epochs):
         model.train()
-        with tqdm(dataloader, desc=f"Epoch [{epoch+1}/{config.train.num_epochs}]", unit="batch") as tepoch:
+        with tqdm(dataloader, desc=f"Epoch [{epoch + 1}/{config.train.num_epochs}]", unit="batch") as tepoch:
             for images, labels in tepoch:
                 images = images.to(config.train.device)
                 labels = labels.to(config.train.device)

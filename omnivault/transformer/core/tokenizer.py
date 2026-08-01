@@ -1,17 +1,13 @@
-from __future__ import annotations
-
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar, Union
+from typing import override
 
 import torch
 
 from omnivault.transformer.core.vocabulary import AdderVocabulary, TextCharacterVocabulary, Vocabulary
 
-Vocabulary_t = TypeVar("Vocabulary_t", bound=Vocabulary)
 
-
-class Tokenizer(ABC, Generic[Vocabulary_t]):
+class Tokenizer[VocabularyT: Vocabulary](ABC):
     def __init__(self, vocabulary: Vocabulary):
         self.vocabulary = vocabulary
 
@@ -20,7 +16,7 @@ class Tokenizer(ABC, Generic[Vocabulary_t]):
     # something I want to worry about in a naive implementation.
 
     @abstractmethod
-    def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
+    def tokenize(self, sequence: str, add_special_tokens: bool = True) -> list[str]:
         """
         Tokenizes a sequence into a sequence (list) of tokens.
 
@@ -39,12 +35,12 @@ class Tokenizer(ABC, Generic[Vocabulary_t]):
 
         Returns
         -------
-        List[str]
+        list[str]
             The sequence of tokens.
         """
 
     @abstractmethod
-    def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
+    def encode(self, sequence: str, add_special_tokens: bool = True) -> list[int]:
         """
         Encodes a sequence to its corresponding integer index.
 
@@ -55,12 +51,12 @@ class Tokenizer(ABC, Generic[Vocabulary_t]):
 
         Returns
         -------
-        List[int]
+        list[int]
             The integer index corresponding to the token.
         """
 
     @abstractmethod
-    def decode(self, encoded_sequence: List[int] | torch.Tensor, remove_special_tokens: bool = True) -> str:
+    def decode(self, encoded_sequence: list[int] | torch.Tensor, remove_special_tokens: bool = True) -> str:
         """
         Decodes an integer index back to its corresponding token.
 
@@ -80,24 +76,27 @@ class AdderTokenizer(Tokenizer[AdderVocabulary]):
     def __init__(self, vocabulary: AdderVocabulary) -> None:
         super().__init__(vocabulary)
 
-    def tokenize(self, sequence: str, add_special_tokens: bool = True) -> List[str]:
+    @override
+    def tokenize(self, sequence: str, add_special_tokens: bool = True) -> list[str]:
         tokens = [char for char in sequence]  # noqa: C416
         if add_special_tokens:
             tokens = [AdderVocabulary.BOS] + tokens + [AdderVocabulary.EOS]
         return tokens
 
-    def encode(self, sequence: str, add_special_tokens: bool = True) -> List[int]:
-        tokens: List[str] = self.tokenize(sequence, add_special_tokens=add_special_tokens)
-        encoded_sequence: List[int] = [
+    @override
+    def encode(self, sequence: str, add_special_tokens: bool = True) -> list[int]:
+        tokens: list[str] = self.tokenize(sequence, add_special_tokens=add_special_tokens)
+        encoded_sequence: list[int] = [
             self.vocabulary.token_to_index.get(token, self.vocabulary.token_to_index[AdderVocabulary.UNK])
             for token in tokens
         ]
         return encoded_sequence
 
-    def encode_batch(self, sequences: List[str], add_special_tokens: bool = True) -> List[List[int]]:
+    def encode_batch(self, sequences: list[str], add_special_tokens: bool = True) -> list[list[int]]:
         return [self.encode(sequence, add_special_tokens=add_special_tokens) for sequence in sequences]
 
-    def decode(self, encoded_sequence: List[int] | torch.Tensor, remove_special_tokens: bool = True) -> str:
+    @override
+    def decode(self, encoded_sequence: list[int] | torch.Tensor, remove_special_tokens: bool = True) -> str:
         if isinstance(encoded_sequence, torch.Tensor):
             encoded_sequence = encoded_sequence.tolist()
         decoded = "".join([self.vocabulary.index_to_token.get(char, AdderVocabulary.UNK) for char in encoded_sequence])
@@ -111,8 +110,8 @@ class AdderTokenizer(Tokenizer[AdderVocabulary]):
         return decoded
 
     def decode_batch(
-        self, encoded_sequences: List[List[int]] | torch.Tensor, remove_special_tokens: bool = True
-    ) -> List[str]:
+        self, encoded_sequences: list[list[int]] | torch.Tensor, remove_special_tokens: bool = True
+    ) -> list[str]:
         return [
             self.decode(encoded_sequence, remove_special_tokens=remove_special_tokens)
             for encoded_sequence in encoded_sequences
@@ -125,17 +124,20 @@ class TextCharacterTokenizer(Tokenizer[TextCharacterVocabulary]):
     encoding, and decoding text sequences using a given character vocabulary.
     """
 
-    def tokenize(self, sequence: str, add_special_tokens: bool = False) -> List[str]:
+    @override
+    def tokenize(self, sequence: str, add_special_tokens: bool = False) -> list[str]:
         tokens = list(sequence)  # Tokenizes the text into a list of characters
         if add_special_tokens:
             tokens = [TextCharacterVocabulary.BOS] + tokens + [TextCharacterVocabulary.EOS]
         return tokens
 
-    def encode(self, sequence: str, add_special_tokens: bool = False) -> List[int]:
+    @override
+    def encode(self, sequence: str, add_special_tokens: bool = False) -> list[int]:
         tokens = self.tokenize(sequence, add_special_tokens=add_special_tokens)
         return [self.vocabulary.token_to_index.get(char, -1) for char in tokens]  # -1 for unknown characters
 
-    def decode(self, encoded_sequence: List[int] | torch.Tensor, remove_special_tokens: bool = False) -> str:
+    @override
+    def decode(self, encoded_sequence: list[int] | torch.Tensor, remove_special_tokens: bool = False) -> str:
         if isinstance(encoded_sequence, torch.Tensor):
             encoded_sequence = encoded_sequence.tolist()
 
@@ -149,4 +151,4 @@ class TextCharacterTokenizer(Tokenizer[TextCharacterVocabulary]):
         return decoded_sequence
 
 
-Tokenizers = Union[AdderTokenizer, TextCharacterTokenizer]
+type Tokenizers = AdderTokenizer | TextCharacterTokenizer

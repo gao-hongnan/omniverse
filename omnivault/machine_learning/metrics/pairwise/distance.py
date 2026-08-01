@@ -96,7 +96,7 @@ def euclidean_distance(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[
     >>> euclidean_distance(x_1, x_2, squared=True)
     5.0
     """
-    _euclidean_distance = np.sum(np.square(x_1 - x_2)) if not squared else np.sqrt(np.sum(np.square(x_1 - x_2)))
+    _euclidean_distance = np.sqrt(np.sum(np.square(x_1 - x_2))) if not squared else np.sum(np.square(x_1 - x_2))
     return float(_euclidean_distance)
 
 
@@ -150,7 +150,7 @@ def cosine_similarity(x_1: NDArray[np.floating[Any]], x_2: NDArray[np.floating[A
     norm_x1 = np.linalg.norm(x_1)
     norm_x2 = np.linalg.norm(x_2)
 
-    np.testing.assert_allclose(norm_x1, euclidean_distance(x_1, origin, squared=True))
+    np.testing.assert_allclose(norm_x1, euclidean_distance(x_1, origin, squared=False))
 
     denominator = norm_x1 * norm_x2
     _cosine_similarity = numerator / denominator

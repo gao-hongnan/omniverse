@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-import logging
 import sys
 import time
 import warnings
@@ -17,6 +14,7 @@ from omnivault.core.logger import RichLogger
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
+from omnivault.transformer.config.data import DatasetSource
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
@@ -57,10 +55,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # logger
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
-    assert isinstance(logger, logging.Logger)
 
-    create_directory(data.dataset_dir)
-    download_file(url=data.dataset_url, output_path=data.dataset_path)
+    source = DatasetSource.from_data_config(data)
+    create_directory(source.dataset_dir)
+    download_file(url=source.dataset_url, output_path=source.dataset_path)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
@@ -87,16 +85,20 @@ def main(cfg: DictConfig | ListConfig) -> None:
         trainer=trainer_config,
         generator=generator_config,
     )
-    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
-    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
-    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
+    if (
+        isinstance(composer.model, Missing)
+        or isinstance(composer.optimizer, Missing)
+        or isinstance(composer.criterion, Missing)
+    ):
+        raise ValueError("model, optimizer and criterion configs are required")
 
     # TODO: consider classmethod from file_path
-    assert composer.data.dataset_path is not None
-    with open(composer.data.dataset_path, "r") as file:
+    with open(source.dataset_path, "r") as file:
         sequences = [line.strip() for line in file]
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
+    valid_dataset = None
+    test_dataset = None
     if composer.data.split:
         train_dataset, valid_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
@@ -105,14 +107,13 @@ def main(cfg: DictConfig | ListConfig) -> None:
         # no need to cater to mypy as either Subset or Dataset is fine.
         train_dataset = dataset  # type: ignore[assignment]
 
-    # you do these asserts to make sure that the loaders are not None
-    # because create loader expects non-None loaders and collate_fn.
-    # if you don't do these asserts, mypy cannot guarantee that the loaders are not None
-    # so they cannot infer properly.
-    assert composer.data.train_loader is not None
-    assert composer.data.valid_loader is not None
-    assert composer.data.test_loader is not None
-    assert composer.data.collate_fn is not None
+    if (
+        composer.data.train_loader is None
+        or composer.data.valid_loader is None
+        or composer.data.test_loader is None
+        or composer.data.collate_fn is None
+    ):
+        raise ValueError("adder training requires train, valid and test loader configs and a collate_fn config")
 
     train_loader = create_loader(
         dataset=train_dataset,
@@ -120,6 +121,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         collate_fn_config=composer.data.collate_fn,
     )
 
+    valid_loader = None
+    test_loader = None
     if valid_dataset is not None:
         valid_loader = create_loader(
             dataset=valid_dataset,
@@ -143,7 +146,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         assert hasattr(composer.optimizer, "weight_decay")
         optimizer = optimizer_pydantic_config.build(
             params=apply_weight_decay_to_different_param_groups(
-                model=model, weight_decay=composer.optimizer.weight_decay
+                model=model,
+                weight_decay=getattr(composer.optimizer, "weight_decay"),  # noqa: B009  # dynamic OptimizerConfig field not visible to pyright; getattr keeps it sound
             )
         )
     else:
@@ -159,12 +163,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
-    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)  # noqa: E731
+    # `composer.model` is `model_pydantic_config` (see Composer construction above);
+    # reading it directly keeps `d_model` visible instead of the widened Missing union.
+    noam = lambda step: noam_lr_decay(step, d_model=model_pydantic_config.d_model, warmup_steps=warmup_steps)  # noqa: E731
 
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
 
     if issubclass(scheduler_config_cls, LambdaLRConfig):
-        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)  # pyright: ignore[reportCallIssue]  # pydantic lr_lambda field not resolved by pyright via DynamicClassFactory
     else:
         scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
 
@@ -187,7 +193,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     loaded_state = State.load_snapshots(
         filepath=resume_from_state_path,
-        device=device,  # type: ignore[arg-type]
+        device=device,
         model=model,
         criterion=criterion,
         optimizer=optimizer,
@@ -199,7 +205,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         state=loaded_state,
         composer=composer,
         logger=logger,
-        device=device,  # type: ignore[arg-type]
+        device=device,
         resume_from_rng_path=resume_from_rng_state_path,
     )
     trainer.add_callback(

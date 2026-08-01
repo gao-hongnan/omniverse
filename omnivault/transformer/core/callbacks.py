@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
@@ -32,7 +30,9 @@ def update_state(trainer: Trainer) -> None:
         "history",
         "tokens_per_iter",
     ]
-    trainer.state.__dict__.update({attr: getattr(trainer, attr) for attr in relevant_attrs})
+    # State is a pydantic BaseModel; mutate its instance dict directly (via
+    # vars()) to bypass validation for arbitrary-type fields like nn.Module.
+    vars(trainer.state).update({attr: getattr(trainer, attr) for attr in relevant_attrs})
 
 
 def save_state(trainer: Trainer) -> None:
@@ -188,5 +188,8 @@ def set_dataloader_epoch_for_ddp_on_epoch_start(trainer: Trainer, phase: Literal
         assert trainer.test_loader is not None
         data_loader = trainer.test_loader
 
-    if hasattr(data_loader.sampler, "set_epoch"):
-        data_loader.sampler.set_epoch(trainer.epoch_index)
+    # `set_epoch` is optional (e.g. DistributedSampler); resolve it defensively
+    # rather than relying on hasattr-based narrowing of the Sampler type.
+    set_epoch = getattr(data_loader.sampler, "set_epoch", None)
+    if callable(set_epoch):
+        set_epoch(trainer.epoch_index)

@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 import torch
 from torch.utils.data import Subset
@@ -15,8 +13,8 @@ def test_construct_future_mask(adder_dataset: AdderDataset, adder_ground_truth: 
 
 
 @pytest.mark.parametrize(
-    argnames="input,expected_padding_mask",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks, strict=False)),
+    argnames=("input", "expected_padding_mask"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks, strict=True)),
 )
 def test_construct_padding_mask(
     adder_dataset: AdderDataset, input: torch.LongTensor, expected_padding_mask: torch.BoolTensor
@@ -27,11 +25,11 @@ def test_construct_padding_mask(
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_target",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets, strict=False)),
+    argnames=("encoded_sequence", "expected_target"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets, strict=True)),
 )
 def test_construct_target(
-    adder_dataset: AdderDataset, encoded_sequence: List[int], expected_target: torch.LongTensor
+    adder_dataset: AdderDataset, encoded_sequence: list[int], expected_target: torch.LongTensor
 ) -> None:
     """Test that the target is constructed correctly. Here we only test the first sequence."""
     target = adder_dataset.construct_target_tensor(torch.LongTensor(encoded_sequence))
@@ -39,8 +37,8 @@ def test_construct_target(
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_input",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs, strict=False)),
+    argnames=("encoded_sequence", "expected_input"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs, strict=True)),
 )
 def test_construct_input(
     adder_dataset: AdderDataset, encoded_sequence: torch.LongTensor, expected_input: torch.LongTensor
@@ -80,7 +78,7 @@ def test_dataset_integration_with_getitem(adder_dataset: AdderDataset, adder_gro
             break
 
 
-def test_collate_fn(adder_mock_batch: List[AdderDatasetYield], adder_ground_truth: AdderGroundTruth) -> None:
+def test_collate_fn(adder_mock_batch: list[AdderDatasetYield], adder_ground_truth: AdderGroundTruth) -> None:
     # Call your collate_fn function with the adder_mock_batch
 
     assert isinstance(data.collate_fn, dict)
@@ -116,7 +114,7 @@ def test_collate_fn(adder_mock_batch: List[AdderDatasetYield], adder_ground_trut
 
 @pytest.mark.parametrize(argnames="split", argvalues=[[0.7, 0.1, 0.2], [0.8, 0.1, 0.1], [0.6, 0.2, 0.2]])
 @pytest.mark.parametrize(argnames="seed", argvalues=[42, 1992])
-def test_split_dataset(adder_dataset_but_larger: AdderDataset, split: List[float], seed: int) -> None:
+def test_split_dataset(adder_dataset_but_larger: AdderDataset, split: list[float], seed: int) -> None:
     """Test splitting the dataset into train, validation, and test sets."""
     # Perform the split
     train_dataset, val_dataset, test_dataset = split_dataset(adder_dataset_but_larger, split, seed)

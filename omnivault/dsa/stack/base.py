@@ -1,12 +1,13 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Generic, Iterable, Iterator, List, overload
+from collections.abc import Iterable, Iterator
+from typing import overload
 
-from omnivault._types._generic import T
+
+class EmptyStackError(IndexError):
+    """Raised when an operation requires a non-empty stack."""
 
 
-class Stack(ABC, Generic[T]):
+class Stack[ItemT](ABC):
     """
     This interface defines the contract for a stack data structure.
     """
@@ -15,33 +16,33 @@ class Stack(ABC, Generic[T]):
     def __init__(self) -> None: ...
 
     @overload
-    def __init__(self, iterable: Iterable[T]) -> None: ...
+    def __init__(self, iterable: Iterable[ItemT]) -> None: ...
 
-    def __init__(self, iterable: Iterable[T] | None = None) -> None:
+    def __init__(self, iterable: Iterable[ItemT] | None = None) -> None:
         """Construct a new stack object.
 
         Parameters
         ----------
-        iterable : Iterable[T] | None
+        iterable : Iterable[ItemT] | None
             An iterable to initialize the stack with, by default None
         """
-        self._stack_items: List[T] = []
+        self._stack_items: list[ItemT] = []
         if iterable is not None:
             for item in iterable:
                 self.push(item)
 
     @abstractmethod
-    def push(self, item: T) -> None:
+    def push(self, item: ItemT) -> None:
         """Push an item on top of the stack."""
         raise NotImplementedError
 
     @abstractmethod
-    def pop(self) -> T:
+    def pop(self) -> ItemT:
         """Pop an item from the top of the stack."""
         raise NotImplementedError
 
     @abstractmethod
-    def peek(self) -> T:
+    def peek(self) -> ItemT:
         """Return the top most item in the stack without modifying the stack."""
         raise NotImplementedError
 
@@ -56,6 +57,6 @@ class Stack(ABC, Generic[T]):
         raise NotImplementedError
 
     @abstractmethod
-    def __iter__(self) -> Iterator[T]:
+    def __iter__(self) -> Iterator[ItemT]:
         """Return an iterator for the stack."""
         raise NotImplementedError

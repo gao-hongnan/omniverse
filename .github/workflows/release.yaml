@@ -157,7 +157,7 @@ jobs:
           # Get the current and previous tags
           CURRENT_TAG=${GITHUB_REF#refs/tags/}
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 ${CURRENT_TAG}^ 2>/dev/null || echo "")
-          
+
           if [ -z "$PREVIOUS_TAG" ]; then
             echo "No previous tag found, this is the first release"
             CHANGELOG="Initial release of Omniverse"
@@ -165,30 +165,30 @@ jobs:
             # Generate changelog using commitizen
             CHANGELOG=$(uv run cz changelog --dry-run $PREVIOUS_TAG..$CURRENT_TAG || echo "See commit history for changes")
           fi
-          
+
           # Write to file for release body
           cat > release_notes.md << EOF
           ## What's Changed
-          
+
           $CHANGELOG
-          
+
           ## Installation
-          
+
           \`\`\`bash
           pip install omniverse==$CURRENT_TAG
           \`\`\`
-          
+
           Or with uv:
-          
+
           \`\`\`bash
           uv pip install omniverse==$CURRENT_TAG
           \`\`\`
-          
+
           ## Full Changelog
-          
+
           ${PREVIOUS_TAG:+https://github.com/${{ github.repository }}/compare/${PREVIOUS_TAG}...${CURRENT_TAG}}
           EOF
-          
+
           echo "current_tag=$CURRENT_TAG" >> $GITHUB_OUTPUT
 
       - name: Sign distribution packages with Sigstore

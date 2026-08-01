@@ -2,8 +2,6 @@
 https://github.com/mosaicml/composer/blob/dev/composer/callbacks/speed_monitor.py
 """
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
@@ -104,7 +102,7 @@ def estimate_training_days(
     mfu_result: MFUEstimationResult,
     gpu_promised_flops: float = 312e12,  # Default A100 GPU peak FLOPs
     num_gpus: int = 8,  # Default number of GPUs
-    assumed_mfu: Optional[float] = None,  # Optional manual MFU override
+    assumed_mfu: float | None = None,  # Optional manual MFU override
 ) -> float:
     """
     Estimate the total training time in days based on the model FLOPs

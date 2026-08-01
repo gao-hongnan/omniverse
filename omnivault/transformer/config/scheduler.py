@@ -1,25 +1,25 @@
 """Module for creating PyTorch scheduler instances dynamically."""
 
-from __future__ import annotations
-
-from typing import Any, Callable, Dict, Literal, Type
+from collections.abc import Callable
+from typing import Any, Final, Literal
 
 import torch
+from pydantic import ConfigDict
 
 from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
-RegisteredSchedulers = Literal[
+type RegisteredSchedulers = Literal[
     "torch.optim.lr_scheduler.StepLR",
     "torch.optim.lr_scheduler.CosineAnnealingLR",
     "torch.optim.lr_scheduler.LambdaLR",
     "torch.optim.lr_scheduler.CosineAnnealingWarmRestarts",
     "torch.optim.lr_scheduler.OneCycleLR",
 ]
-SCHEDULER_REGISTRY: Dict[str, Type[SchedulerConfig]] = {}
+SCHEDULER_REGISTRY: Final[dict[str, type[SchedulerConfig]]] = {}
 
 
-def register_scheduler(name: str) -> Callable[[Type[SchedulerConfig]], Type[SchedulerConfig]]:
-    def register_scheduler_cls(cls: Type[SchedulerConfig]) -> Type[SchedulerConfig]:
+def register_scheduler(name: str) -> Callable[[type[SchedulerConfig]], type[SchedulerConfig]]:
+    def register_scheduler_cls(cls: type[SchedulerConfig]) -> type[SchedulerConfig]:
         if name in SCHEDULER_REGISTRY:
             raise ValueError(f"Cannot register duplicate scheduler {name}")
         if not issubclass(cls, SchedulerConfig):
@@ -43,14 +43,13 @@ class SchedulerConfig(DynamicClassFactory[torch.optim.lr_scheduler.LRScheduler])
         Creates and returns a scheduler instance with the specified optimizer.
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     name: str
 
     def build(self, optimizer: torch.optim.Optimizer, **kwargs: Any) -> torch.optim.lr_scheduler.LRScheduler:
         """Builder method for creating a scheduler instance."""
         return self.create_instance(optimizer=optimizer, **kwargs)
-
-    class Config:
-        extra = "forbid"
 
 
 @register_scheduler("torch.optim.lr_scheduler.StepLR")
@@ -58,7 +57,6 @@ class StepLRConfig(SchedulerConfig):
     step_size: int
     gamma: float = 0.1
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.CosineAnnealingLR")
@@ -66,7 +64,6 @@ class CosineAnnealingLRConfig(SchedulerConfig):
     T_max: int
     eta_min: float = 0
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.CosineAnnealingWarmRestarts")
@@ -80,7 +77,6 @@ class CosineAnnealingWarmRestartsConfig(SchedulerConfig):
     T_mult: int = 1
     eta_min: float = 0
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.OneCycleLR")
@@ -107,7 +103,6 @@ class OneCycleLRConfig(SchedulerConfig):
     final_div_factor: float = 10000.0
     three_phase: bool = False
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.LambdaLR")

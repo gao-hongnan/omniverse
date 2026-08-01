@@ -1,93 +1,109 @@
-# from __future__ import annotations
+"""Tests for RichLogger.
 
-# import logging
-# import shutil
-# from pathlib import Path
-# from typing import Generator
-# from unittest.mock import MagicMock, patch
+``RichLogger`` is a ``Singleton`` (a second construction returns the first
+instance, ignoring its arguments) and attaches handlers to process-global
+``logging`` loggers — both are ambient state, so every test runs behind the
+isolation fixture below.
+"""
 
-# import pytest
+import logging
+from collections.abc import Iterator
+from pathlib import Path
+from typing import Final
 
-# from omnivault.core.logger import RichLogger
+import pytest
+from rich.logging import RichHandler
 
+from omnivault._types._sentinel import Singleton
+from omnivault.core.logger import RichLogger
 
-# @pytest.fixture(scope="function")
-# def log_dir() -> Generator[str, None, None]:
-#     """
-#     Fixture to create and remove a test log folder for tests.
-
-#     Yields
-#     ------
-#     test_log_dir : str
-#         The path of the test log folder.
-#     """
-#     test_log_dir: str = "test_outputs"
-#     Path(test_log_dir).mkdir(parents=True, exist_ok=True)
-#     yield test_log_dir
-#     shutil.rmtree(test_log_dir)
+_MODULE_LOGGER_NAME: Final = "omnivault-test-logger"
+# Names of every process-global logger these tests attach handlers to;
+# "omnivault.core.logger" is the fallback name when module_name is omitted.
+_TOUCHED_LOGGER_NAMES: Final = (_MODULE_LOGGER_NAME, "omnivault.core.logger")
 
 
-# @pytest.mark.parametrize(
-#     argnames="module_name, propagate",
-#     argvalues=[
-#         (None, False),
-#         ("test_module", True),
-#         ("test_module", False),
-#     ],
-# )
-# def test_logger_init(log_dir: str, module_name: str | None, propagate: bool) -> None:
-#     logger_obj: RichLogger = RichLogger(
-#         log_file="test_log.txt",
-#         module_name=module_name,
-#         propagate=propagate,
-#         log_root_dir=log_dir,
-#     )
+@pytest.fixture(autouse=True)
+def _isolated_logging_state() -> Iterator[None]:
+    """Reset the singleton registry and strip handlers the test attached.
 
-#     expected_level = logging.getLevelName(logger_obj.rich_handler_config["level"])
-#     assert logger_obj.logger.level == expected_level
-#     assert logger_obj.logger.propagate == propagate
-
-#     with patch("omnivault.core.logger.__name__", "__main__"):
-#         logger_obj = RichLogger(
-#             log_file="test_log.txt",
-#             module_name=module_name,
-#             propagate=propagate,
-#             log_root_dir=log_dir,
-#         )
-
-#     assert logger_obj.logger.name == (module_name or "__main__")
-
-#     assert logger_obj.session_log_dir is not None
-#     assert Path(logger_obj.session_log_dir).exists()
-#     assert Path(logger_obj.session_log_dir).is_dir()
-#     assert logger_obj.log_file is not None
-#     log_file_path: Path = Path(logger_obj.session_log_dir) / Path(logger_obj.log_file)
-#     assert log_file_path.exists()
+    Without this, the first test's ``RichLogger`` instance (and its open file
+    handlers on process-global loggers) leaks into every later test, making
+    the file order-dependent and constructor arguments silently ignored.
+    """
+    registry = Singleton._instances  # type: ignore[misc]  # deliberate white-box access to the metaclass registry for isolation
+    saved = dict(registry)
+    registry.clear()
+    yield
+    registry.clear()
+    registry.update(saved)
+    for name in _TOUCHED_LOGGER_NAMES:
+        touched_logger = logging.getLogger(name)
+        for handler in touched_logger.handlers[:]:
+            handler.close()
+            touched_logger.removeHandler(handler)
 
 
-# @pytest.mark.parametrize(
-#     argnames="message",
-#     argvalues=[
-#         "Test info message",
-#         "Test warning message",
-#         "Test error message",
-#         "Test critical message",
-#     ],
-# )
-# def test_logger_messages(log_dir: str, message: str) -> None:
-#     logger_obj: RichLogger = RichLogger(
-#         log_file="test_log.txt",
-#         module_name="test_module",
-#         propagate=False,
-#         log_root_dir=log_dir,
-#     )
+def test_console_only_logger_configuration() -> None:
+    """A logger built without file arguments logs to the console only."""
+    rich_logger = RichLogger(module_name=_MODULE_LOGGER_NAME)
 
-#     logger_obj.logger.log(logging.INFO, message)
+    assert rich_logger.logger.name == _MODULE_LOGGER_NAME
+    assert rich_logger.logger.level == logging.INFO
+    assert rich_logger.session_log_dir is None
+    assert sum(isinstance(handler, RichHandler) for handler in rich_logger.logger.handlers) == 1
+    assert not any(isinstance(handler, logging.FileHandler) for handler in rich_logger.logger.handlers)
 
-#     assert logger_obj.session_log_dir is not None
-#     assert logger_obj.log_file is not None
 
-#     log_file_path: Path = Path(logger_obj.session_log_dir) / Path(logger_obj.log_file)
-#     with log_file_path.open("r") as log_file:
-#         log_content: str = log_file.read()
-#         assert message in log_content
+@pytest.mark.parametrize("propagate", [pytest.param(True, id="propagate-on"), pytest.param(False, id="propagate-off")])
+def test_propagate_flag_is_applied(propagate: bool) -> None:
+    rich_logger = RichLogger(module_name=_MODULE_LOGGER_NAME, propagate=propagate)
+
+    assert rich_logger.logger.propagate is propagate
+
+
+def test_module_name_defaults_to_defining_module() -> None:
+    rich_logger = RichLogger()
+
+    assert rich_logger.logger.name == "omnivault.core.logger"
+
+
+def test_rich_logger_is_a_singleton() -> None:
+    first = RichLogger(module_name=_MODULE_LOGGER_NAME)
+
+    second = RichLogger(module_name="ignored-on-second-construction")
+
+    assert second is first
+    assert second.logger.name == _MODULE_LOGGER_NAME
+
+
+def test_file_logger_creates_session_dir_and_file(tmp_path: Path) -> None:
+    """File logging creates a timestamped session dir under the root with the log file."""
+    rich_logger = RichLogger(log_file="test_log.txt", module_name=_MODULE_LOGGER_NAME, log_root_dir=str(tmp_path))
+
+    assert rich_logger.session_log_dir is not None
+    session_dir = Path(rich_logger.session_log_dir)
+    assert session_dir.is_dir()
+    assert session_dir.parent == tmp_path
+    assert (session_dir / "test_log.txt").is_file()
+    assert sum(isinstance(handler, logging.FileHandler) for handler in rich_logger.logger.handlers) == 1
+
+
+def test_logged_message_is_written_to_file(tmp_path: Path) -> None:
+    rich_logger = RichLogger(log_file="test_log.txt", module_name=_MODULE_LOGGER_NAME, log_root_dir=str(tmp_path))
+
+    rich_logger.logger.info("Message for the file handler")
+
+    assert rich_logger.session_log_dir is not None
+    log_content = (Path(rich_logger.session_log_dir) / "test_log.txt").read_text()
+    assert "Message for the file handler" in log_content
+
+
+def test_log_file_without_root_dir_raises() -> None:
+    with pytest.raises(AssertionError, match="Both log_file and log_root_dir must be provided"):
+        RichLogger(log_file="orphan.log", module_name=_MODULE_LOGGER_NAME)
+
+
+def test_log_root_dir_without_file_raises(tmp_path: Path) -> None:
+    with pytest.raises(AssertionError, match="Both log_file and log_root_dir must be provided"):
+        RichLogger(log_root_dir=str(tmp_path), module_name=_MODULE_LOGGER_NAME)

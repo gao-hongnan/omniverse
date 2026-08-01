@@ -1,10 +1,9 @@
 # mypy: disable-error-code="no-untyped-call"
-from __future__ import annotations
 
 import inspect
 import logging
 from collections import defaultdict
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import torch
 from torch import nn
@@ -59,7 +58,7 @@ class Trainer:
         self.optimizer        = state.optimizer
         self.scheduler        = state.scheduler
 
-        self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
+        self.device: torch.device = composer.trainer.device if device is None else device
 
         # logger
         self.logger = logger or get_default_logger()
@@ -92,16 +91,16 @@ class Trainer:
         self.mode = composer.trainer.mode
         self.monitor = composer.trainer.monitor
         self.best_monitored_score: None | float = None  # or -float('inf') if higher metric indicates better performance
-        self.metrics_dict: Dict[str, float] = {}
+        self.metrics_dict: dict[str, float] = {}
         self.best_checkpoint_path: str = "" # NOTE: not in __init__ constructor and not in composer, set in callback
-        self.history: Dict[str, List[float]] = defaultdict(list) # NOTE: not in __init__ constructor and not in composer, set in callback
+        self.history: dict[str, list[float]] = defaultdict(list) # NOTE: not in __init__ constructor and not in composer, set in callback
 
         # attributes not in __init__ constructor
         self.epoch_index = self.rng_state["epoch_index"] if resume_from_rng_path else 0
         self.train_batch_index = 0
         self.step_index = 0
         self.tokens_per_iter = composer.data.train_loader["batch_size"] * composer.data.context_length * self.gradient_accumulation_steps * self.composer.distributed.world_size
-        self.callbacks: Dict[TrainerEvent, List[Tuple[TrainerCallback, CallbackPriority]]] = defaultdict(list)
+        self.callbacks: dict[TrainerEvent, list[tuple[TrainerCallback, CallbackPriority]]] = defaultdict(list)
 
         # additional metrics, ideally metrics is implemented as callback and injected into trainer
         assert isinstance(state.criterion, nn.CrossEntropyLoss)  # narrow for typed ignore_index
@@ -165,18 +164,18 @@ class Trainer:
         return self.model
 
     def update_metrics_and_history(
-        self, metric_name_or_names: str | List[str], metric_value_or_values: float | List[float]
+        self, metric_name_or_names: str | list[str], metric_value_or_values: float | list[float]
     ) -> None:
         metric_names = [metric_name_or_names] if isinstance(metric_name_or_names, str) else metric_name_or_names
-        metric_values = (
-            [metric_value_or_values] if isinstance(metric_value_or_values, float) else metric_value_or_values
+        metric_values: list[float] = (
+            metric_value_or_values if isinstance(metric_value_or_values, list) else [metric_value_or_values]
         )
 
         for metric_name, metric_value in zip(metric_names, metric_values, strict=False):
             self.metrics_dict[metric_name] = metric_value
             self.history[metric_name].append(metric_value)
 
-    def _train_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
+    def _train_one_batch(self, batch: DatasetYield) -> tuple[float, float, float]:
         self.trigger_callbacks(TrainerEvent.ON_TRAIN_BATCH_START)
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
         batch_size = inputs.size(0)
@@ -254,7 +253,7 @@ class Trainer:
         total_samples: int = 0
         this_epoch_total_running_loss: float = 0.0
         num_batches: int = len(dataloader)
-        progress_bar: tqdm[Tuple[int, DatasetYield]] = tqdm(
+        progress_bar: tqdm[tuple[int, DatasetYield]] = tqdm(
             enumerate(dataloader, start=1), total=num_batches, leave=False
         )
 
@@ -293,7 +292,7 @@ class Trainer:
         return this_epoch_average_loss
 
     @torch.no_grad()
-    def _valid_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
+    def _valid_one_batch(self, batch: DatasetYield) -> tuple[float, float, float]:
         self.trigger_callbacks(TrainerEvent.ON_VALID_BATCH_START)
         inputs, targets, target_padding_masks, future_masks = move_to_device(batch, self.device)
         batch_size = inputs.size(0)
@@ -384,7 +383,7 @@ class Trainer:
             "Please override this method in a subclass or use a custom callback."
         )
 
-    def _get_current_lr_or_lrs(self) -> float | List[float]:
+    def _get_current_lr_or_lrs(self) -> float | list[float]:
         """Get current learning rate."""
         if len(self.optimizer.param_groups) == 1:
             # we are sure the key "lr" should return a float
@@ -412,7 +411,7 @@ class Trainer:
             # fmt: off
             self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
             torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
-            if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+            if torch.cuda.is_available() and torch.cuda.is_initialized():
                 torch.cuda.manual_seed_all(self.epoch_index)
             # fmt: on
 

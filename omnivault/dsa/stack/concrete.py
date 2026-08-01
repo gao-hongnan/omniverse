@@ -1,12 +1,10 @@
-from __future__ import annotations
+from collections.abc import Iterator
+from typing import override
 
-from typing import Iterator, List
-
-from omnivault._types._generic import T
-from omnivault.dsa.stack.base import Stack
+from omnivault.dsa.stack.base import EmptyStackError, Stack
 
 
-class StackList(Stack[T]):
+class StackList[ItemT](Stack[ItemT]):
     """Creates a stack that uses python's default list as the underlying
     data structure.
 
@@ -17,16 +15,18 @@ class StackList(Stack[T]):
 
     Attributes
     ----------
-    _stack_items : List[T]
+    _stack_items : List[ItemT]
         The list that stores the items in the stack. We treat the end of the
         list as the top of the stack.
     """
 
+    @override
     def __len__(self) -> int:
         """Return the size of the stack."""
         return len(self.stack_items)
 
-    def __iter__(self) -> Iterator[T]:
+    @override
+    def __iter__(self) -> Iterator[ItemT]:
         """Iterate over the stack items.
 
         Note
@@ -37,7 +37,7 @@ class StackList(Stack[T]):
         iterator.
 
         ```python
-        def __next__(self) -> StackList[T]:
+        def __next__(self) -> StackList[ItemT]:
             if self.is_empty():
                 raise StopIteration
             return self.pop()
@@ -45,7 +45,7 @@ class StackList(Stack[T]):
 
         Returns
         -------
-        StackList[T]
+        StackList[ItemT]
             The stack.
         """
 
@@ -57,7 +57,7 @@ class StackList(Stack[T]):
         return f"StackList(stack_items={self.stack_items})"
 
     @property
-    def stack_items(self) -> List[T]:
+    def stack_items(self) -> list[ItemT]:
         """Read only property for the stack items."""
         return self._stack_items
 
@@ -78,6 +78,7 @@ class StackList(Stack[T]):
         """
         return len(self)
 
+    @override
     def is_empty(self) -> bool:
         """Check if stack is empty.
 
@@ -88,7 +89,8 @@ class StackList(Stack[T]):
         """
         return not self.stack_items
 
-    def peek(self) -> T:
+    @override
+    def peek(self) -> ItemT:
         """Return the top most item in the stack without modifying the stack.
 
         This is different from pop in that it does not remove the item from the
@@ -96,12 +98,13 @@ class StackList(Stack[T]):
 
         Returns
         -------
-        T
+        ItemT
             The top most item in the stack.
         """
         return self.stack_items[-1]
 
-    def pop(self) -> T:
+    @override
+    def pop(self) -> ItemT:
         """Pop an item from the top of the stack.
 
         In this implementation, the item at the end of the list is returned
@@ -113,21 +116,22 @@ class StackList(Stack[T]):
 
         Returns
         -------
-        T
+        ItemT
             The top most item in the stack.
         """
         if self.is_empty():
-            raise Exception("Stack is empty")
+            raise EmptyStackError("Stack is empty")
         return self.stack_items.pop()
 
-    def push(self, item: T) -> None:
+    @override
+    def push(self, item: ItemT) -> None:
         """Push an item on top of the stack.
 
         In this implementation, the item is appended to the end of the list.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The current item pushed into the stack.
         """
         self.stack_items.append(item)

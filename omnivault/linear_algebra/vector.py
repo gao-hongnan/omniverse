@@ -1,7 +1,4 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
-from typing import Optional, Tuple
 
 import numpy as np
 
@@ -10,10 +7,10 @@ import numpy as np
 class Vector:
     """Base class for vectors."""
 
-    origin: Tuple[float, ...]
-    direction: Tuple[float, ...]
-    color: Optional[str] = "black"
-    label: Optional[str] = None
+    origin: tuple[float, ...]
+    direction: tuple[float, ...]
+    color: str | None = "black"
+    label: str | None = None
 
     def __len__(self) -> int:
         """Return the dimension of the vector."""
@@ -52,11 +49,11 @@ class Vector:
 # Vector2D and Vector3D inherit from Vector and remember Vec is bound to Vector
 @dataclass
 class Vector2D(Vector):
-    origin: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
-    direction: Tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
+    origin: tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
+    direction: tuple[float, float] = field(default_factory=lambda: (0.0, 0.0))
 
 
 @dataclass
 class Vector3D(Vector):
-    origin: Tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))
-    direction: Tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))
+    origin: tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))
+    direction: tuple[float, float, float] = field(default_factory=lambda: (0.0, 0.0, 0.0))

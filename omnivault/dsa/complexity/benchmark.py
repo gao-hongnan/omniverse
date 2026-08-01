@@ -1,15 +1,11 @@
-from __future__ import annotations
-
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from functools import wraps
-from typing import Any, Callable, Dict, List, Protocol, TypeVar, Union
+from typing import Any, Protocol
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-T = TypeVar("T")
-R = TypeVar("R")
 
 
 class DataStructure(Protocol):
@@ -21,22 +17,22 @@ class DataStructure(Protocol):
 class TimingResult(Protocol):
     """Protocol for objects that can store timing results."""
 
-    sizes: List[int]
-    avg_times: List[float]
-    median_times: List[float]
-    best_times: List[float]
-    worst_times: List[float]
+    sizes: list[int]
+    avg_times: list[float]
+    median_times: list[float]
+    best_times: list[float]
+    worst_times: list[float]
 
 
 @dataclass
 class TimingMeasurement:
     """Data class to store timing measurement results."""
 
-    sizes: List[int]
-    avg_times: List[float]
-    median_times: List[float]
-    best_times: List[float]
-    worst_times: List[float]
+    sizes: list[int]
+    avg_times: list[float]
+    median_times: list[float]
+    best_times: list[float]
+    worst_times: list[float]
 
     def __post_init__(self) -> None:
         """Validate that all time lists have the same length as sizes."""
@@ -45,7 +41,7 @@ class TimingMeasurement:
             raise ValueError("All time lists must have the same length as sizes list")
 
 
-SupportedDataTypes = Union[List[int], Dict[int, int], str, DataStructure, None]
+type SupportedDataTypes = list[int] | dict[int, int] | str | DataStructure | None
 
 
 class DataFactory:
@@ -66,7 +62,7 @@ class DataFactory:
         Raises:
             ValueError: If data_type is not supported
         """
-        factories: Dict[str | None, Callable[[int], SupportedDataTypes]] = {
+        factories: dict[str | None, Callable[[int], SupportedDataTypes]] = {
             "string": lambda n: "a" * n,
             "array": lambda n: list(range(n)),
             "dict": lambda n: {i: i for i in range(n)},
@@ -114,8 +110,8 @@ def time_complexity_analyzer(
 
     def decorator(func: Callable[..., Any]) -> Callable[..., TimingMeasurement]:
         @wraps(func)
-        def wrapper(n_sizes: List[int], *args: Any, **kwargs: Any) -> TimingMeasurement:
-            measurements: Dict[str, List[float]] = {
+        def wrapper(n_sizes: list[int], *args: Any, **kwargs: Any) -> TimingMeasurement:
+            measurements: dict[str, list[float]] = {
                 "avg_times": [],
                 "median_times": [],
                 "best_times": [],

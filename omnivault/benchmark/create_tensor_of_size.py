@@ -24,8 +24,8 @@ def create_tensor_of_vram_size(dtype: torch.dtype, vram_size_in_bytes: int) -> t
 
     # 3. Create 1D tensor with the required number of elements.
     tensor = torch.empty(total_elements_needed, dtype=dtype)
-    assert tensor.size() == (
-        total_elements_needed,
-    ), f"Expected tensor size {total_elements_needed} but got {tensor.size()}."
+    assert tensor.size() == (total_elements_needed,), (
+        f"Expected tensor size {total_elements_needed} but got {tensor.size()}."
+    )
 
     return tensor

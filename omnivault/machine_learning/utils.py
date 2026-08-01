@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Optional, Tuple, TypeVar
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,17 +14,15 @@ from omnivault.utils.probability_theory.plot import plot_contour, plot_scatter  
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-TEstimator = TypeVar("TEstimator", bound=BaseEstimator)
 
-
-def run_classifier(
-    estimator: TEstimator,  # this type hint is the same name as scikit-learn
+def run_classifier[EstimatorT: BaseEstimator](
+    estimator: EstimatorT,  # this type hint is the same name as scikit-learn
     X: NDArray[np.floating[Any]],
     y: NDArray[np.floating[Any]],
     test_size: float = 0.2,
     random_state: int = 1992,
-    class_names: Optional[List[str]] = None,
-) -> TEstimator:
+    class_names: list[str] | None = None,
+) -> EstimatorT:
     """Run a generic classifier on a dataset and returns the fitted classifier."""
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -51,16 +49,16 @@ def run_classifier(
 
     logger.info(f"Train Classification report: \n{train_report}")
     logger.info("")
-    print_mislabeled_points(y_train, y_preds_train)
+    print_mislabeled_points(cast(NDArray[np.floating[Any]], y_train), cast(NDArray[np.floating[Any]], y_preds_train))
     logger.info("")
     logger.info(f"Test Classification report: \n{test_report}")
-    print_mislabeled_points(y_test, y_preds_test)
+    print_mislabeled_points(cast(NDArray[np.floating[Any]], y_test), cast(NDArray[np.floating[Any]], y_preds_test))
 
     return estimator
 
 
 def plot_classifier_decision_boundary(
-    estimator: TEstimator, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
+    estimator: BaseEstimator, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
 ) -> None:
     """Plot the decision boundary of a classifier."""
     assert X.shape[1] == 2, "Can only plot decision boundary for 2 features."
@@ -94,7 +92,7 @@ def print_mislabeled_points(y_trues: NDArray[np.floating[Any]], y_preds: NDArray
 
 def make_meshgrid(
     x1: NDArray[np.floating[Any]], x2: NDArray[np.floating[Any]], step: float = 0.02
-) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
     """Create a mesh of points to plot in
 
     Parameters
@@ -122,10 +120,10 @@ def plot_decision_regions(
     y: NDArray[np.floating[Any]],
     classifier: BaseEstimator,
     # test_idx: Optional[int] = None,
-    markers: Optional[Tuple[str, ...]] = None,
-    colors: Optional[Tuple[str, ...]] = None,
-    cmap: Optional[ListedColormap] = None,
-    ax: Optional[plt.Axes] = None,
+    markers: tuple[str, ...] | None = None,
+    colors: tuple[str, ...] | None = None,
+    cmap: ListedColormap | None = None,
+    ax: plt.Axes | None = None,
     **kwargs: Any,
 ) -> None:
     """Plot decision regions.

@@ -1,8 +1,9 @@
 # type: ignore
 import os
 import pickle
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable, List, Tuple
+from typing import Any
 
 import keras
 import keras_nlp
@@ -96,7 +97,7 @@ def load_and_prepare_dataset(
     return dataset
 
 
-def load_vocab(vocab_file: str) -> List[str]:
+def load_vocab(vocab_file: str) -> list[str]:
     """Load the vocabulary from a serialized file."""
     try:
         with open(vocab_file, "rb") as f:
@@ -109,7 +110,7 @@ def load_vocab(vocab_file: str) -> List[str]:
     return deserialize_keras_object(vocab_config)
 
 
-def create_tokenizer(vocabulary: List[str], seq_len: int) -> keras_nlp.tokenizers.WordPieceTokenizer:
+def create_tokenizer(vocabulary: list[str], seq_len: int) -> keras_nlp.tokenizers.WordPieceTokenizer:
     """
     Create a WordPiece tokenizer and a StartEnd packer using the given
     vocabulary and sequence length.
@@ -131,7 +132,7 @@ def create_start_packer(tokenizer: keras_nlp.tokenizers.WordPieceTokenizer) -> k
     )
 
 
-def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
+def preprocess(inputs: tf.Tensor) -> tuple[tf.Tensor, tf.Tensor]:
     """
     Preprocess the input data by tokenizing and then packing with start tokens.
 
@@ -142,7 +143,7 @@ def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
 
     Returns
     -------
-    Tuple[tf.Tensor, tf.Tensor]
+    tuple[tf.Tensor, tf.Tensor]
         A tuple containing:
         - features: Tokenized and packed input sequences.
         - labels: Tokenized output sequences (identical to `outputs` from tokenizer).
@@ -154,7 +155,7 @@ def preprocess(inputs: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
 
 
 def prepare_and_preprocess_dataset(
-    dataset: tf.data.Dataset, preprocess_fn: Callable[[tf.Tensor], Tuple[tf.Tensor, tf.Tensor]]
+    dataset: tf.data.Dataset, preprocess_fn: Callable[[tf.Tensor], tuple[tf.Tensor, tf.Tensor]]
 ) -> tf.data.Dataset:
     """
     Prepares the dataset by applying preprocessing, batching, and prefetching.
@@ -176,18 +177,18 @@ def prepare_and_preprocess_dataset(
     return dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE).prefetch(tf.data.AUTOTUNE)
 
 
-def flatten_dataset(dataset: List[Tuple[np.ndarray, np.ndarray]]) -> List[Tuple[np.ndarray, np.ndarray]]:
+def flatten_dataset(dataset: list[tuple[np.ndarray, np.ndarray]]) -> list[tuple[np.ndarray, np.ndarray]]:
     """
     Flatten each pair of source and target arrays in the dataset from shape [B, L] to [B*L].
 
     Parameters
     ----------
-    dataset : List[Tuple[np.ndarray, np.ndarray]]
+    dataset : list[tuple[np.ndarray, np.ndarray]]
         The dataset to be flattened, consisting of tuples of source and target numpy arrays.
 
     Returns
     -------
-    List[Tuple[np.ndarray, np.ndarray]]
+    list[tuple[np.ndarray, np.ndarray]]
         The flattened dataset, where each source and target array is reshaped to [B*L].
     """
     flattened_data = [
@@ -199,11 +200,11 @@ def flatten_dataset(dataset: List[Tuple[np.ndarray, np.ndarray]]) -> List[Tuple[
 
 
 class TFDatasetWrapper(Dataset):
-    def __init__(self, tf_dataset_as_numpy: List[int]) -> None:
+    def __init__(self, tf_dataset_as_numpy: list[int]) -> None:
         super().__init__()
         self.tf_dataset_as_numpy = tf_dataset_as_numpy
 
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
         source, target = self.tf_dataset_as_numpy[index]
 
         # Convert from list to tensors
@@ -216,8 +217,8 @@ class TFDatasetWrapper(Dataset):
 
 
 def custom_collate_fn(
-    batch: List[Tuple[torch.Tensor, torch.Tensor]],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    batch: list[tuple[torch.Tensor, torch.Tensor]],
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     sources, targets = zip(*batch, strict=False)
 
     sources = torch.stack(sources)
@@ -231,7 +232,7 @@ def custom_collate_fn(
     return sources, targets, future_masks, target_padding_masks
 
 
-def next(prompt: tf.Tensor, cache: Tuple[Any, ...], index: EagerTensor) -> Tuple[tf.Tensor, None, Tuple[Any, ...]]:
+def next(prompt: tf.Tensor, cache: tuple[Any, ...], index: EagerTensor) -> tuple[tf.Tensor, None, tuple[Any, ...]]:
     prompt: NDArray[np.int32] = prompt.numpy()
     prompt: torch.LongTensor = torch.from_numpy(prompt).to(composer.trainer.device)
 
@@ -252,7 +253,7 @@ def generate_on_train_epoch_end(trainer: Trainer) -> None:
     model = trainer.model
     model.eval()
 
-    def get_samplers() -> List[Sampler]:
+    def get_samplers() -> list[Sampler]:
         samplers = [
             keras_nlp.samplers.GreedySampler(temperature=1.0),
             keras_nlp.samplers.BeamSampler(num_beams=10, temperature=1.0),

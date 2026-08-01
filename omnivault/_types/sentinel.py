@@ -4,12 +4,9 @@ Reference:
 - https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py
 """
 
-from __future__ import annotations
-
 import sys as _sys
 from threading import Lock as _Lock
 from types import FrameType
-from typing import Tuple, Type
 
 __all__ = ["Sentinel"]
 
@@ -53,16 +50,17 @@ class Sentinel:
     _module_name: str
 
     def __new__(  # noqa: PYI034
-        cls: Type[Sentinel],
+        cls: type[Sentinel],
         name: str,
         repr: str | None = None,
         module_name: str | None = None,
     ) -> Sentinel:
         name = str(name)
-        repr = str(repr) if repr else f'<{name.split(".")[-1]}>'
+        repr = str(repr) if repr else f"<{name.split('.')[-1]}>"
         if not module_name:
             parent_frame = _get_parent_frame()
             module_name = parent_frame.f_globals.get("__name__", "__main__") if parent_frame is not None else __name__
+        assert module_name is not None  # resolved: caller's non-empty value or the frame/module fallback above
 
         # Include the class's module and fully qualified name in the
         # registry key to support sub-classing.
@@ -70,7 +68,7 @@ class Sentinel:
         sentinel = _registry.get(registry_key, None)
         if sentinel is not None:
             return sentinel
-        sentinel = super().__new__(cls)
+        sentinel = object.__new__(cls)
         sentinel._name = name
         sentinel._repr = repr
         sentinel._module_name = module_name
@@ -80,7 +78,7 @@ class Sentinel:
     def __repr__(self) -> str:
         return self._repr
 
-    def __reduce__(self) -> Tuple[Type[Sentinel], Tuple[str, str, str]]:
+    def __reduce__(self) -> tuple[type[Sentinel], tuple[str, str, str]]:
         return (
             self.__class__,
             (
@@ -105,27 +103,19 @@ _registry: dict[str, Sentinel] = {}
 # For reference, see the implementation of namedtuple:
 # https://github.com/python/cpython/blob/67444902a0f10419a557d0a2d3b8675c31b075a9/Lib/collections/__init__.py#L503
 def _get_parent_frame() -> FrameType | None:
-    """Return the frame object for the caller's parent stack frame."""
+    """Return the frame object for the caller's parent stack frame.
+
+    Falls back for Python implementations without ``sys._getframe`` (e.g.
+    Jython, IronPython), mirroring CPython's ``namedtuple`` implementation.
+    """
     try:
         # Two frames up = the parent of the function which called this.
         return _sys._getframe(2)
-    except (AttributeError, ValueError):
-        global _get_parent_frame
-
-        def _get_parent_frame() -> FrameType | None:
-            """Return the frame object for the caller's parent stack frame."""
+    except AttributeError, ValueError:
+        try:
+            raise Exception
+        except Exception:
             try:
-                raise Exception
+                return _sys.exc_info()[2].tb_frame.f_back.f_back  # type: ignore[union-attr]
             except Exception:
-                try:
-                    return _sys.exc_info()[2].tb_frame.f_back.f_back  # type: ignore[union-attr]
-                except Exception:
-                    global _get_parent_frame
-
-                    def _get_parent_frame() -> None:
-                        """Return the frame object for the caller's parent stack frame."""
-                        return None
-
-                    return _get_parent_frame()
-
-        return _get_parent_frame()
+                return None

@@ -1,11 +1,11 @@
-# type: ignore
+# type: ignore  # legacy matplotlib-heavy plotting module excluded from strict checking
 
-from __future__ import annotations
 
 import random
 from abc import ABC
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any
 
 import matplotlib.pyplot as plt
 import mpl_toolkits
@@ -18,8 +18,7 @@ from matplotlib.quiver import Quiver
 from matplotlib_inline import backend_inline
 from scipy import stats
 
-T = TypeVar("T", str, int, float)
-FigAxParams = Dict[str, Dict[str, T]]
+type FigAxParams[ValueT: (str, int, float)] = dict[str, dict[str, ValueT]]
 
 
 # FIXME:
@@ -107,7 +106,7 @@ class Plot(ABC):
     default_ax_params: FigAxParams = field(init=False)  # default
     custom_ax_params: FigAxParams = field(default_factory=dict)
     custom_fig_params: FigAxParams = field(default_factory=dict)
-    color_index: List[int] = field(default_factory=lambda: list(range(10)))
+    color_index: list[int] = field(default_factory=lambda: list(range(10)))
 
     @property
     def low(self) -> int:
@@ -132,7 +131,7 @@ class Plot(ABC):
                 self.default_ax_params.update({ax_attr: ax_params})
 
     @staticmethod
-    def shuffle(container: List[int]) -> None:
+    def shuffle(container: list[int]) -> None:
         """Randomly shuffle a list in place."""
         random.shuffle(container)
 
@@ -157,7 +156,7 @@ class PMF(Plot):
 @dataclass(frozen=False, init=True)
 class EmpiricalHistogram(Plot):
     # center the bins on the states, for discrete distributions.
-    bins: Optional[Union[List[float], np.ndarray]] = None
+    bins: list[float] | np.ndarray | None = None
     size: int = 1000  # number of samples to draw from the distribution
 
     def __post_init__(self) -> None:
@@ -180,9 +179,9 @@ class EmpiricalHistogram(Plot):
 def plot_discrete_empirical_histogram(
     distribution: Callable,
     plot_params: EmpiricalHistogram,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-    **hist_kwargs: Dict[str, Any],
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+    **hist_kwargs: dict[str, Any],
 ) -> plt.Axes:
     """Takes in a distribution (population or sample values), and plots the empirical distribution."""
     fig = fig or plt.gcf()
@@ -219,9 +218,9 @@ def plot_discrete_empirical_histogram(
 def plot_discrete_pmf(
     distribution: Callable,
     plot_params: PMF,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-    **stem_kwargs: Dict[str, Any],
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+    **stem_kwargs: dict[str, Any],
 ) -> StemContainer:
     """Plot the PMF of a discrete distribution.
 
@@ -229,9 +228,9 @@ def plot_discrete_pmf(
         distribution (Callable): A function that takes in a state and returns the probability of that state.
             Typically called from a scipy.stats distribution object.
         plot_params (PMF): A dataclass that contains the default and custom parameters for the ax.
-        fig (Optional[plt.Figure]): The figure to plot on. Defaults to None.
-        ax (Optional[plt.Axes]): The axes to plot on. Defaults to None.
-        **stem_kwargs (Dict[str, Any]): Keyword arguments to pass to the stem.
+        fig (plt.Figure | None): The figure to plot on. Defaults to None.
+        ax (plt.Axes | None): The axes to plot on. Defaults to None.
+        **stem_kwargs (dict[str, Any]): Keyword arguments to pass to the stem.
     """
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -269,7 +268,7 @@ def plot_discrete_pmf(
 
 
 def plot_discrete_uniform_pmf(
-    a: int, b: int, fig: Optional[plt.Figure] = None, ax: Optional[plt.Axes] = None
+    a: int, b: int, fig: plt.Figure | None = None, ax: plt.Axes | None = None
 ) -> StemContainer:
     """Plot the PMF of a Uniform distribution."""
     # X is now an object that represents a Uniform random variable with parameter $a$ and $b$.
@@ -299,9 +298,9 @@ def plot_empirical_discrete_uniform(
     a: int,
     b: int,
     size: int = 5000,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-) -> Union[BarContainer, plt.Axes]:
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+) -> BarContainer | plt.Axes:
     """Plot the empirical distribution of a Discrete Uniform distribution."""
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -339,7 +338,7 @@ def plot_empirical_discrete_uniform(
     return hist
 
 
-def plot_bernoulli_pmf(p: float, fig: Optional[plt.Figure] = None, ax: Optional[plt.Axes] = None) -> StemContainer:
+def plot_bernoulli_pmf(p: float, fig: plt.Figure | None = None, ax: plt.Axes | None = None) -> StemContainer:
     """Plot the PMF of a Bernoulli distribution."""
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -361,9 +360,9 @@ def plot_bernoulli_pmf(p: float, fig: Optional[plt.Figure] = None, ax: Optional[
 def plot_empirical_bernoulli(
     p: float,
     size: int = 1000,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-) -> Union[BarContainer, plt.Axes]:
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+) -> BarContainer | plt.Axes:
     """Plot the empirical distribution of a Bernoulli distribution."""
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -407,17 +406,17 @@ def plot_empirical_bernoulli(
 
 
 def plot_binomial_pmfs(
-    ns: List[int],
-    ps: List[float],
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
+    ns: list[int],
+    ps: list[float],
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
 ) -> StemContainer:
     """Plot the PMFs of multiple Binomial distributions on the same axes.
 
     Args:
-        ns (List[int]): The number of trials for each Binomial distribution.
-        ps (List[float]): The probability of success for each Binomial distribution.
-        ax (Optional[plt.Axes], optional): The axes to plot on. Defaults to None.
+        ns (list[int]): The number of trials for each Binomial distribution.
+        ps (list[float]): The probability of success for each Binomial distribution.
+        ax (plt.Axes | None, optional): The axes to plot on. Defaults to None.
 
     Returns:
         stem (StemContainer): The stem plot.
@@ -458,9 +457,9 @@ def plot_empirical_binomial(
     p: float,
     n: int,
     size: int = 1000,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-) -> Union[BarContainer, plt.Axes]:
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+) -> BarContainer | plt.Axes:
     """Plot the empirical distribution of a Bernoulli distribution."""
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -505,9 +504,9 @@ def plot_empirical_binomial(
 
 
 def plot_poisson_pmfs(
-    lambdas: List[float],
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
+    lambdas: list[float],
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
 ) -> StemContainer:
     """Plot the PMFs of multiple Poisson distributions on the same axes."""
     fig = fig or plt.gcf()
@@ -543,11 +542,11 @@ def plot_poisson_pmfs(
 
 
 def plot_empirical_poisson(
-    lambdas: List[int],
+    lambdas: list[int],
     size: int = 1000,
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
-) -> Union[BarContainer, plt.Axes]:
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
+) -> BarContainer | plt.Axes:
     """Plot the empirical distribution of a Bernoulli distribution."""
     fig = fig or plt.gcf()
     ax = ax or plt.gca()
@@ -591,9 +590,9 @@ def plot_empirical_poisson(
 
 
 def plot_geometric_pmfs(
-    ps: List[float],
-    fig: Optional[plt.Figure] = None,
-    ax: Optional[plt.Axes] = None,
+    ps: list[float],
+    fig: plt.Figure | None = None,
+    ax: plt.Axes | None = None,
 ) -> StemContainer:
     """Plot the PMFs of multiple Geometric distributions on the same axes."""
     fig = fig or plt.gcf()
@@ -687,9 +686,9 @@ def plot_continuous_pdf_and_cdf(
     lw: int = 3,
     alpha: float = 0.7,
     color: str = "darkred",
-    xlim: Optional[Tuple[float, float]] = None,
-    ylim: Optional[Tuple[float, float]] = None,
-    figsize: Tuple[float, float] = (10, 5),
+    xlim: tuple[float, float] | None = None,
+    ylim: tuple[float, float] | None = None,
+    figsize: tuple[float, float] = (10, 5),
 ) -> None:
     """Plots the PDF and CDF of a continuous distribution."""
     x = np.linspace(low, high, 5000)

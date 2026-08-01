@@ -1,11 +1,9 @@
 """State...Metadata...See how composer does it, quite elegant I'd say."""
 
-from __future__ import annotations
-
-from typing import Any, Dict, List, Type, Union
+from typing import Annotated, Any, Self, override
 
 import torch
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from rich.pretty import pprint
 from torch import nn
 from torch.nn.parallel import DistributedDataParallel
@@ -19,28 +17,33 @@ class State(BaseModel):
     `state` in a sense of how model or optimizers have. However, we can inherit
     `State` with `Serializable` and force the dataloaders to be included."""
 
-    model: nn.Module = Field(..., description="Model.")
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    criterion: nn.Module = Field(..., description="Loss function.")
-    optimizer: torch.optim.Optimizer = Field(..., description="Optimizer.")
-    scheduler: Union[torch.optim.lr_scheduler.LRScheduler, None] = Field(default=None, description="Scheduler.")
+    model: Annotated[nn.Module, Field(description="Model.")]
 
-    epoch_index: int = Field(default=0, description="Current epoch index.")
-    train_batch_index: int = Field(
-        default=0, description="Current batch index and is only referring to the training batch index."
-    )
-    step_index: int = Field(
-        default=0,
-        description="We do not add prefix train because it is understood and implied that the step number is the train due to how many gradients been stepped. Current step index and is only referring to the training step index. What is the difference between step and batch? In general, they coincide for when the epoch number is 1, but after the first epoch, we usually reset the batch index to 0, while the step index keeps increasing to the next epoch.",
-    )
-    history: Dict[str, List[float]] = Field(default={}, description="History of metrics.")
+    criterion: Annotated[nn.Module, Field(description="Loss function.")]
+    optimizer: Annotated[torch.optim.Optimizer, Field(description="Optimizer.")]
+    scheduler: Annotated[torch.optim.lr_scheduler.LRScheduler | None, Field(description="Scheduler.")] = None
+
+    epoch_index: Annotated[int, Field(description="Current epoch index.")] = 0
+    train_batch_index: Annotated[
+        int, Field(description="Current batch index and is only referring to the training batch index.")
+    ] = 0
+    step_index: Annotated[
+        int,
+        Field(
+            description="We do not add prefix train because it is understood and implied that the step number is the train due to how many gradients been stepped. Current step index and is only referring to the training step index. What is the difference between step and batch? In general, they coincide for when the epoch number is 1, but after the first epoch, we usually reset the batch index to 0, while the step index keeps increasing to the next epoch."
+        ),
+    ] = 0
+    history: dict[str, list[float]] = Field(default_factory=dict, description="History of metrics.")
 
     # FIXME: loosen `Vocabularies` and `Tokenizers` to `Any` for now as it is too strict.
-    vocabulary: Any = Field(default=None, description="Vocabulary.")
-    tokenizer: Any = Field(default=None, description="Tokenizer.")
+    vocabulary: Annotated[Any, Field(description="Vocabulary.")] = None
+    tokenizer: Annotated[Any, Field(description="Tokenizer.")] = None
 
-    tokens_per_iter: int | None = Field(default=None, description="Tokens per iter/step.")
+    tokens_per_iter: Annotated[int | None, Field(description="Tokens per iter/step.")] = None
 
+    @override
     def __eq__(self, other: object) -> bool:
         """Check if two State instances are equal."""
         assert isinstance(other, State), "Can only compare State instances."
@@ -59,11 +62,6 @@ class State(BaseModel):
         #     and self.epoch_index == other.epoch_index
         #     and self.train_batch_index == other.train_batch_index
         # )
-
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True
 
     @property
     def model_or_module(self) -> nn.Module:
@@ -94,7 +92,7 @@ class State(BaseModel):
 
     @classmethod
     def load_snapshots(
-        cls: Type[State],
+        cls: type[Self],
         filepath: str,
         device: torch.device,
         *,
@@ -102,9 +100,19 @@ class State(BaseModel):
         criterion: nn.Module,
         optimizer: torch.optim.Optimizer,
         scheduler: torch.optim.lr_scheduler.LRScheduler,
-    ) -> State:
-        """Load state dictionaries from a file and return a new State instance."""
-        state = torch.load(filepath, map_location=device)  # nosec B614  # trusted local checkpoint produced by this repo
+    ) -> Self:
+        """Load state dictionaries from a file and return a new State instance.
+
+        Warnings
+        --------
+        This unpickles arbitrary Python objects and must only be pointed at a
+        checkpoint produced by :meth:`save_snapshots`, never at an untrusted file.
+        ``weights_only=True`` (torch>=2.6's default) cannot be used here because a
+        snapshot deliberately stores non-tensor state -- ``history`` is a
+        ``defaultdict`` and ``vocabulary``/``tokenizer`` are project-specific
+        classes -- none of which are allowlisted by the safe unpickler.
+        """
+        state = torch.load(filepath, map_location=device, weights_only=False)  # nosec B614  # trusted local checkpoint produced by this repo
 
         epoch_index = state["epoch_index"]
         train_batch_index = state["train_batch_index"]

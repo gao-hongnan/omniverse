@@ -1,4 +1,4 @@
-from matplotlib_inline import backend_inline  # type: ignore
+from matplotlib_inline import backend_inline
 
 
 def use_svg_display() -> None:

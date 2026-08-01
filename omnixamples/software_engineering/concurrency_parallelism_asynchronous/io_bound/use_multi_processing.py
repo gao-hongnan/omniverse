@@ -1,7 +1,7 @@
 import concurrent.futures
 import logging
 import multiprocessing
-from typing import List, Optional
+from typing import List
 
 import requests
 
@@ -27,7 +27,7 @@ logger = create_logger()
 NUM_PROCESSES = multiprocessing.cpu_count()
 logger.info("NUM_PROCESSES: %d", NUM_PROCESSES)
 
-session: Optional[requests.Session] = None
+session: requests.Session | None = None
 
 
 def set_global_session() -> None:

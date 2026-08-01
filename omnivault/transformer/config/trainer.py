@@ -1,11 +1,9 @@
-from __future__ import annotations
-
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Type, Union
+from typing import Any, Self
 
 import torch
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from omnivault.transformer.utils.general_utils import PYTORCH_DTYPE_MAP
 from omnivault.utils.torch_utils.device import get_device
@@ -14,6 +12,8 @@ __all__ = ["TrainerConfig"]
 
 
 class TrainerConfig(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     device: torch.device = Field(default_factory=get_device, description="Device to use for training.")
 
     # general
@@ -29,12 +29,12 @@ class TrainerConfig(BaseModel):
 
     # mixed precision training
     use_amp: bool = Field(default=False, description="Whether to use automatic mixed precision training.")
-    autocast_config: Dict[str, Any] = Field(
-        default={"enabled": False, "dtype": None, "cache_enabled": None},
+    autocast_config: dict[str, Any] = Field(
+        default_factory=lambda: {"enabled": False, "dtype": None, "cache_enabled": None},
         description="Autocast configuration, for details of the params, see `torch.cuda.amp.autocast`.",
     )
-    scaler_config: Dict[str, Any] = Field(
-        default={
+    scaler_config: dict[str, Any] = Field(
+        default_factory=lambda: {
             "enabled": False,
             "init_scale": 2.0**16,
             "growth_factor": 2.0,
@@ -51,8 +51,8 @@ class TrainerConfig(BaseModel):
 
     # training stability
     # 1. gradient clipping
-    clip_grad_norm: Union[Dict[str, Any], None] = Field(
-        default={"max_norm": 1.0, "norm_type": 2.0, "error_if_nonfinite": False, "foreach": None},
+    clip_grad_norm: dict[str, Any] | None = Field(
+        default_factory=lambda: {"max_norm": 1.0, "norm_type": 2.0, "error_if_nonfinite": False, "foreach": None},
         description="Gradient clipping, for details of the params, see `torch.nn.utils.clip_grad_norm_`.",
     )
 
@@ -83,21 +83,21 @@ class TrainerConfig(BaseModel):
 
     @field_validator("device", mode="before")
     @classmethod
-    def set_device(cls: Type[TrainerConfig], v: str) -> torch.device:
+    def set_device(cls: type[Self], v: str) -> torch.device:
         if v == "auto":
             return get_device()
         return torch.device(v)
 
     @field_validator("save_dir")
     @classmethod
-    def set_and_create_timestamped_save_dir(cls: Type[TrainerConfig], v: str) -> str:
+    def set_and_create_timestamped_save_dir(cls: type[Self], v: str) -> str:
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         v = f"{v}/{timestamp}"
         Path(v).mkdir(parents=True, exist_ok=True)
         return v
 
     @model_validator(mode="after")
-    def validate_autocast_config(self) -> TrainerConfig:
+    def validate_autocast_config(self) -> Self:
         use_amp = self.use_amp
         autocast_config = self.autocast_config
         if use_amp and not autocast_config["enabled"]:
@@ -107,8 +107,3 @@ class TrainerConfig(BaseModel):
             if key == "dtype" and value in PYTORCH_DTYPE_MAP:
                 autocast_config[key] = PYTORCH_DTYPE_MAP[value]
         return self
-
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True

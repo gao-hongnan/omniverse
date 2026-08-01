@@ -1,11 +1,11 @@
 from typing import Protocol
 
-from omnivault._types._generic import T, T_co
 
-# T_co = TypeVar("T_co", covariant=True)  # Covariant type for read-only operations
+class EmptyQueueError(IndexError):
+    """Raised when an operation requires a non-empty queue."""
 
 
-class QueueProtocol(Protocol[T_co]):
+class QueueProtocol[ItemT](Protocol):
     """Protocol defining the interface for a basic queue.
 
     This protocol defines the minimum interface that any queue implementation
@@ -14,7 +14,7 @@ class QueueProtocol(Protocol[T_co]):
 
     Type Parameters
     --------------
-    T_co
+    ItemT
         The type of items stored in the queue, covariant since items are only
         retrieved, not stored through the base protocol methods
     """
@@ -40,12 +40,12 @@ class QueueProtocol(Protocol[T_co]):
         """
         ...
 
-    def peek(self) -> T_co:
+    def peek(self) -> ItemT:
         """View the next item to be dequeued without removing it.
 
         Returns
         -------
-        T_co
+        ItemT
             The item at the front of the queue
 
         Raises
@@ -56,7 +56,7 @@ class QueueProtocol(Protocol[T_co]):
         ...
 
 
-class MutableQueueProtocol(QueueProtocol[T], Protocol[T]):
+class MutableQueueProtocol[ItemT](QueueProtocol[ItemT], Protocol):
     """Protocol defining a mutable queue interface.
 
     Extends the basic QueueProtocol to include methods for modifying the queue.
@@ -65,26 +65,26 @@ class MutableQueueProtocol(QueueProtocol[T], Protocol[T]):
 
     Type Parameters
     --------------
-    T
+    ItemT
         The type of items stored in the queue
     """
 
-    def enqueue(self, item: T) -> None:
+    def enqueue(self, item: ItemT) -> None:
         """Add an item to the rear of the queue.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add
         """
         ...
 
-    def dequeue(self) -> T:
+    def dequeue(self) -> ItemT:
         """Remove and return the item at the front of the queue.
 
         Returns
         -------
-        T
+        ItemT
             The item at the front of the queue
 
         Raises
@@ -95,7 +95,7 @@ class MutableQueueProtocol(QueueProtocol[T], Protocol[T]):
         ...
 
 
-class DequeProtocol(Protocol[T_co]):
+class DequeProtocol[ItemT](Protocol):
     """Protocol defining the interface for a basic double-ended queue.
 
     This protocol defines the minimum read-only interface that any deque
@@ -103,7 +103,7 @@ class DequeProtocol(Protocol[T_co]):
 
     Type Parameters
     --------------
-    T_co
+    ItemT
         The type of items stored in the deque, covariant since items are only
         retrieved, not stored through the base protocol methods
     """
@@ -129,12 +129,12 @@ class DequeProtocol(Protocol[T_co]):
         """
         ...
 
-    def peek_front(self) -> T_co:
+    def peek_front(self) -> ItemT:
         """View the item at the front without removing it.
 
         Returns
         -------
-        T_co
+        ItemT
             The item at the front of the deque
 
         Raises
@@ -144,12 +144,12 @@ class DequeProtocol(Protocol[T_co]):
         """
         ...
 
-    def peek_rear(self) -> T_co:
+    def peek_rear(self) -> ItemT:
         """View the item at the rear without removing it.
 
         Returns
         -------
-        T_co
+        ItemT
             The item at the rear of the deque
 
         Raises
@@ -160,7 +160,7 @@ class DequeProtocol(Protocol[T_co]):
         ...
 
 
-class MutableDequeProtocol(DequeProtocol[T], Protocol[T]):
+class MutableDequeProtocol[ItemT](DequeProtocol[ItemT], Protocol):
     """Protocol defining a mutable double-ended queue interface.
 
     Extends the basic DequeProtocol to include methods for modifying the deque.
@@ -169,36 +169,36 @@ class MutableDequeProtocol(DequeProtocol[T], Protocol[T]):
 
     Type Parameters
     --------------
-    T
+    ItemT
         The type of items stored in the deque
     """
 
-    def add_front(self, item: T) -> None:
+    def add_front(self, item: ItemT) -> None:
         """Add an item to the front of the deque.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add to the front
         """
         ...
 
-    def add_rear(self, item: T) -> None:
+    def add_rear(self, item: ItemT) -> None:
         """Add an item to the rear of the deque.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add to the rear
         """
         ...
 
-    def remove_front(self) -> T:
+    def remove_front(self) -> ItemT:
         """Remove and return the item from the front.
 
         Returns
         -------
-        T
+        ItemT
             The item from the front
 
         Raises
@@ -208,12 +208,12 @@ class MutableDequeProtocol(DequeProtocol[T], Protocol[T]):
         """
         ...
 
-    def remove_rear(self) -> T:
+    def remove_rear(self) -> ItemT:
         """Remove and return the item from the rear.
 
         Returns
         -------
-        T
+        ItemT
             The item from the rear
 
         Raises

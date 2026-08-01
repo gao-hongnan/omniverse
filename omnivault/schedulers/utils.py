@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, List
+from typing import Any
 
 import matplotlib.pyplot as plt
 from torch.optim import Optimizer
@@ -9,7 +7,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 __all__ = ["get_learning_rates", "plot_learning_rates"]
 
 
-def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int) -> List[float]:
+def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int) -> list[float]:
     """
     Retrieves a list of learning rates from an optimizer and scheduler over a
     specified number of steps.
@@ -28,7 +26,7 @@ def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int
 
     Returns
     -------
-    lrs : List[float]
+    lrs : list[float]
         A list of learning rates corresponding to each step.
 
     Examples
@@ -52,14 +50,14 @@ def get_learning_rates(optimizer: Optimizer, scheduler: _LRScheduler, steps: int
 
 
 def plot_learning_rates(
-    lrs: List[float], title: str = "LR", marker: str = "o", ax: plt.Axes | None = None, **kwargs: Any
+    lrs: list[float], title: str = "LR", marker: str = "o", ax: plt.Axes | None = None, **kwargs: Any
 ) -> None:
     """
     Plot learning rates on either a given Axes object or the current axes.
 
     Parameters
     ----------
-    lrs : List[float]
+    lrs : list[float]
         A list of learning rate values to plot.
     title : str
         The title of the plot.

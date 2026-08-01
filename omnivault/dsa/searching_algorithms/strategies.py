@@ -9,13 +9,11 @@ class in context.py, demonstrating the flexibility and decoupling offered by the
 Strategy Pattern.
 """
 
-from __future__ import annotations
-
 import math
-from typing import Literal, Sequence, Union
+from collections.abc import Sequence
+from typing import Literal, override
 
 from omnivault._types._alias import NonNegativeInt
-from omnivault._types._generic import Real
 from omnivault.dsa.searching_algorithms.base import Search
 
 
@@ -29,7 +27,8 @@ class LinearSearchForLoop(Search):
     sequentially until the target is found or the end of the sequence is reached.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
         for index, item in enumerate(container):
             if item == target:
                 return index
@@ -46,7 +45,8 @@ class LinearSearchWhileLoop(Search):
     of the sequence is reached.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
         index = 0
         length = len(container)
         while index < length:
@@ -71,8 +71,9 @@ class LinearSearchRecursive(Search):
     approach may not be efficient for very large sequences.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
-        def recursive(container: Sequence[Real], target: Real, index: int = 0) -> int:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
+        def recursive(container: Sequence[RealT], target: RealT, index: int = 0) -> int:
             if not container:
                 return -1
             if container[0] == target:
@@ -92,8 +93,9 @@ class LinearSearchTailRecursive(Search):
     benefits of tail recursion and behaves similarly to regular recursion.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
-        def recursive(container: Sequence[Real], target: Real, index: int = 0) -> Union[NonNegativeInt, Literal[-1]]:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
+        def recursive(container: Sequence[RealT], target: RealT, index: int = 0) -> NonNegativeInt | Literal[-1]:
             if not container:
                 return -1
             if container[0] == target:
@@ -115,7 +117,8 @@ class IterativeBinarySearchExactMatch(Search):
     with each step, until the target element is found or the search space is exhausted.
     """
 
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
         """Search for a target from a sorted array container."""
 
         left_index = 0
@@ -149,24 +152,25 @@ class IterativeBinarySearchExactMatch(Search):
 class RecursiveBinarySearchExactMatch(Search):
     """Template 1 but recursive."""
 
-    def search(self, container: Sequence[Real], target: Real) -> int:
+    @override
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> int:
         """Search for a target from a sorted array container."""
 
-        def recursive(l: NonNegativeInt, r: NonNegativeInt) -> Union[NonNegativeInt, Literal[-1]]:
-            if l > r:  # base case
+        def recursive(left: NonNegativeInt, right: NonNegativeInt) -> NonNegativeInt | Literal[-1]:
+            if left > right:  # base case
                 return -1
 
-            mid_index = self.mid_strategy(l, r)
+            mid_index = self.mid_strategy(left, right)
 
             if container[mid_index] < target:
-                return recursive(l=mid_index + 1, r=r)
+                return recursive(left=mid_index + 1, right=right)
             elif container[mid_index] > target:
-                return recursive(l=l, r=mid_index - 1)
+                return recursive(left=left, right=mid_index - 1)
             else:  # base case
                 return mid_index
 
-        l, r = 0, len(container) - 1
-        return recursive(l, r)
+        left, right = 0, len(container) - 1
+        return recursive(left, right)
 
     def mid_strategy(self, left: NonNegativeInt, right: NonNegativeInt) -> NonNegativeInt:
         """Strategy for calculating the middle index."""

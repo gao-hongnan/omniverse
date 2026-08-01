@@ -8,9 +8,8 @@ searching task to it. This allows for dynamic swapping of search algorithms at
 runtime, adhering to the principles of the Strategy Pattern.
 """
 
-from typing import Sequence
+from collections.abc import Sequence
 
-from omnivault._types._generic import Real
 from omnivault.dsa.searching_algorithms.base import Search
 
 
@@ -34,7 +33,7 @@ class SearchContext:
         """Usually, the Context allows replacing a Strategy object at runtime."""
         self._strategy = strategy
 
-    def execute_search(self, container: Sequence[Real], target: Real) -> int:
+    def execute_search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> int:
         """Here the context delegates some work to the strategy object instead
         of implementing multiple versions of the algorithm on its own."""
         return self.strategy.search(container, target)

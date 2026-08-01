@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from omnivault.transformer.core.tokenizer import AdderTokenizer
@@ -7,10 +5,10 @@ from omnivault.transformer.projects.adder.snapshot import ADDER_GROUND_TRUTH, Ad
 
 
 @pytest.mark.parametrize(
-    argnames="sequence,expected_tokens",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.tokenized_sequences, strict=False)),
+    argnames=("sequence", "expected_tokens"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.tokenized_sequences, strict=True)),
 )
-def test_adder_tokenizer_tokenize(adder_tokenizer: AdderTokenizer, sequence: str, expected_tokens: List[str]) -> None:
+def test_adder_tokenizer_tokenize(adder_tokenizer: AdderTokenizer, sequence: str, expected_tokens: list[str]) -> None:
     """Test that the sequence is tokenized as expected.
 
     See `AdderGroundTruth` for the expected tokens given a sequence.
@@ -19,10 +17,10 @@ def test_adder_tokenizer_tokenize(adder_tokenizer: AdderTokenizer, sequence: str
 
 
 @pytest.mark.parametrize(
-    argnames="sequence,expected_encoded",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.encoded_sequences, strict=False)),
+    argnames=("sequence", "expected_encoded"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.encoded_sequences, strict=True)),
 )
-def test_adder_tokenizer_encode(adder_tokenizer: AdderTokenizer, sequence: str, expected_encoded: List[int]) -> None:
+def test_adder_tokenizer_encode(adder_tokenizer: AdderTokenizer, sequence: str, expected_encoded: list[int]) -> None:
     """Test that the sequence is encoded as expected.
 
     See `AdderGroundTruth` for the expected encoded sequence given a sequence.
@@ -31,11 +29,11 @@ def test_adder_tokenizer_encode(adder_tokenizer: AdderTokenizer, sequence: str, 
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_decoded",
-    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.decoded_sequences, strict=False)),
+    argnames=("encoded_sequence", "expected_decoded"),
+    argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.decoded_sequences, strict=True)),
 )
 def test_adder_tokenizer_decode(
-    adder_tokenizer: AdderTokenizer, encoded_sequence: List[int], expected_decoded: str
+    adder_tokenizer: AdderTokenizer, encoded_sequence: list[int], expected_decoded: str
 ) -> None:
     """Test that the sequence is decoded as expected.
 

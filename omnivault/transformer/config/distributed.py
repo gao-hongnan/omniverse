@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import logging
-from typing import Type
+from typing import Self
 
 from pydantic import BaseModel, field_validator
 
@@ -23,5 +21,5 @@ class DistributedConfig(BaseModel):
 
     @field_validator("master_port", mode="plain")
     @classmethod
-    def coerce_str_to_int(cls: Type[DistributedConfig], v: str) -> int:
+    def coerce_str_to_int(cls: type[Self], v: str) -> int:
         return int(v)

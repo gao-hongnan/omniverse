@@ -1,12 +1,7 @@
-from __future__ import annotations
-
-from typing import Generic, List
-
-from omnivault._types._generic import T
-from omnivault.dsa.queue.base import MutableDequeProtocol, MutableQueueProtocol
+from omnivault.dsa.queue.base import EmptyQueueError, MutableDequeProtocol, MutableQueueProtocol
 
 
-class QueueList(Generic[T], MutableQueueProtocol[T]):
+class QueueList[ItemT](MutableQueueProtocol[ItemT]):
     """A queue implementation using Python's built-in list.
 
     This implementation treats the end of the list as the start of the queue and
@@ -18,7 +13,7 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
 
     Attributes
     ----------
-    _queue_items : List[T]
+    _queue_items : list[ItemT]
         The list storing the queue items
 
     Example
@@ -38,7 +33,7 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
     1
     """
 
-    _queue_items: List[T]
+    _queue_items: list[ItemT]
 
     def __init__(self) -> None:
         self._queue_items = []
@@ -53,22 +48,22 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
         """
         return len(self._queue_items)
 
-    def __iter__(self) -> QueueList[T]:
+    def __iter__(self) -> QueueList[ItemT]:
         """Make the queue iterable.
 
         Returns
         -------
-        QueueList[T]
+        QueueList[ItemT]
             The queue iterator
         """
         return self
 
-    def __next__(self) -> T:
+    def __next__(self) -> ItemT:
         """Get the next item during iteration.
 
         Returns
         -------
-        T
+        ItemT
             The next item in the queue
 
         Raises
@@ -81,12 +76,12 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
         return self.dequeue()
 
     @property
-    def queue_items(self) -> List[T]:
+    def queue_items(self) -> list[ItemT]:
         """Get the queue items.
 
         Returns
         -------
-        List[T]
+        list[ItemT]
             The list of queue items
         """
         return self._queue_items
@@ -112,34 +107,34 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
         """
         return self.size == 0
 
-    def peek(self) -> T:
+    def peek(self) -> ItemT:
         """Get the item at the start of the queue without removing it.
 
         Returns
         -------
-        T
+        ItemT
             The item at the start of the queue
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[-1]
 
-    def enqueue(self, item: T) -> None:
+    def enqueue(self, item: ItemT) -> None:
         """Add an item to the end of the queue.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add to the queue
         """
         self._queue_items.insert(0, item)
 
-    def dequeue(self) -> T:
+    def dequeue(self) -> ItemT:
         """Remove and return the item at the start of the queue.
 
         Returns
         -------
-        T
+        ItemT
             The item at the start of the queue
 
         Raises
@@ -148,11 +143,11 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop()
 
 
-class DeQueueList(Generic[T], MutableDequeProtocol[T]):
+class DeQueueList[ItemT](MutableDequeProtocol[ItemT]):
     """A double-ended queue implementation using Python's built-in list.
 
     This implementation allows adding and removing items from both ends of the queue.
@@ -163,11 +158,11 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
 
     Attributes
     ----------
-    _queue_items : List[T]
+    _queue_items : list[ItemT]
         The list storing the queue items
     """
 
-    _queue_items: List[T]
+    _queue_items: list[ItemT]
 
     def __init__(self) -> None:
         self._queue_items = []
@@ -183,12 +178,12 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
         return len(self._queue_items)
 
     @property
-    def queue_items(self) -> List[T]:
+    def queue_items(self) -> list[ItemT]:
         """Get the queue items.
 
         Returns
         -------
-        List[T]
+        list[ItemT]
             The list of queue items
         """
         return self._queue_items
@@ -214,12 +209,12 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
         """
         return self.size == 0
 
-    def peek_front(self) -> T:
+    def peek_front(self) -> ItemT:
         """Get the item at the front of the queue without removing it.
 
         Returns
         -------
-        T
+        ItemT
             The item at the front of the queue
 
         Raises
@@ -228,47 +223,47 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[-1]
 
-    def peek_rear(self) -> T:
+    def peek_rear(self) -> ItemT:
         """Get the item at the rear of the queue without removing it.
 
         Returns
         -------
-        T
+        ItemT
             The item at the rear of the queue
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[0]
 
-    def add_front(self, item: T) -> None:
+    def add_front(self, item: ItemT) -> None:
         """Add an item to the front of the queue.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add to the front
         """
         self._queue_items.append(item)
 
-    def add_rear(self, item: T) -> None:
+    def add_rear(self, item: ItemT) -> None:
         """Add an item to the rear of the queue.
 
         Parameters
         ----------
-        item : T
+        item : ItemT
             The item to add to the rear
         """
         self._queue_items.insert(0, item)
 
-    def remove_front(self) -> T:
+    def remove_front(self) -> ItemT:
         """Remove and return the item from the front of the queue.
 
         Returns
         -------
-        T
+        ItemT
             The item from the front
 
         Raises
@@ -277,15 +272,15 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop()
 
-    def remove_rear(self) -> T:
+    def remove_rear(self) -> ItemT:
         """Remove and return the item from the rear of the queue.
 
         Returns
         -------
-        T
+        ItemT
             The item from the rear
 
         Raises
@@ -294,5 +289,5 @@ class DeQueueList(Generic[T], MutableDequeProtocol[T]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop(0)

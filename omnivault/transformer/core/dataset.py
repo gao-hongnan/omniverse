@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, Dict, List, Literal, Tuple, TypeVar, Union, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -15,12 +13,9 @@ from omnivault.transformer.core.vocabulary import AdderVocabulary
 # TODO: if both yield are same, then no point having the union of them except for semantics.
 #       to fix this simply only use DatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
 #       and remove the union and the typevar.
-AdderDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
-TextCharacterDatasetYield = Tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
-DatasetYield = Union[AdderDatasetYield, TextCharacterDatasetYield]
-Dataset_co = TypeVar(
-    "Dataset_co", bound=DatasetYield, covariant=True
-)  # using covariant as pytorch Dataset is covariant in its type parameter
+type AdderDatasetYield = tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
+type TextCharacterDatasetYield = tuple[torch.LongTensor, torch.LongTensor, torch.BoolTensor, torch.BoolTensor]
+type DatasetYield = AdderDatasetYield | TextCharacterDatasetYield
 
 
 def get_batch(
@@ -30,7 +25,7 @@ def get_batch(
     context_length: int,
     generator: torch.Generator | None = None,
     device_type: Literal["cpu", "cuda"] = "cpu",  # exclude mps
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
     Generates a batch of input-output pairs from the given dataset.
 
@@ -51,7 +46,7 @@ def get_batch(
 
     Returns
     -------
-    Tuple[torch.Tensor, torch.Tensor]
+    tuple[torch.Tensor, torch.Tensor]
         A tuple containing two tensors:
         - x: The input tensor of shape (batch_size, context_length).
         - y: The output tensor of shape (batch_size, context_length), where each element
@@ -97,9 +92,9 @@ def get_batch(
     return x, y
 
 
-class BaseDataset(Dataset[Dataset_co]):
+class BaseDataset[DatasetT: DatasetYield](Dataset[DatasetT]):
     """Dataset base class, currently not filled in, but act as a conveyor for
-    us to use Dataset[Dataset_co] as type hinting."""
+    us to use Dataset[DatasetT] as type hinting."""
 
 
 # TODO: ideally splitting data should be done within the dataset class to
@@ -115,7 +110,7 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
 
     Parameters
     ----------
-    data : List[str]
+    data : list[str]
         A list of strings, each representing an addition problem, e.g., "15+57=072".
     tokenizer : AdderTokenizer
         A `AdderTokenizer` object used for encoding the strings into numerical tokens
@@ -131,7 +126,7 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
         The numerical token ID for the padding token.
     """
 
-    def __init__(self, data: List[str], tokenizer: AdderTokenizer) -> None:
+    def __init__(self, data: list[str], tokenizer: AdderTokenizer) -> None:
         super().__init__()
 
         self.data = data
@@ -176,7 +171,7 @@ class AdderDataset(BaseDataset[AdderDatasetYield]):
         y takes all but first token
         """
         raw_sequence: str = self.data[index]
-        encoded_sequence: List[int] = self.tokenizer.encode(raw_sequence)
+        encoded_sequence: list[int] = self.tokenizer.encode(raw_sequence)
 
         input_sequence: torch.LongTensor = torch.tensor(encoded_sequence, dtype=torch.long)  # type: ignore[assignment]
 
@@ -200,7 +195,7 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
     ----------
     text_corpus : str
         A string representing the entire text corpus.
-    vocabulary : List[str]
+    vocabulary : list[str]
         A list of unique characters representing the vocabulary.
     context_length : int
         The length of the context window used for creating each training example.
@@ -240,7 +235,7 @@ class TextCharacterDataset(BaseDataset[TextCharacterDatasetYield]):
 
         Returns
         -------
-        Tuple[torch.LongTensor, torch.LongTensor]
+        tuple[torch.LongTensor, torch.LongTensor]
             A tuple containing the input and target tensors.
         """
         context = self.corpus[index : index + self.context_length + 1]
@@ -277,7 +272,7 @@ def construct_dummy_batch_target_padding_masks(batch_size: int, seq_len: int) ->
 
 
 def collate_fn(
-    batch: List[DatasetYield],
+    batch: list[DatasetYield],
     batch_first: bool = True,
     pad_token_id: int = 0,
 ) -> DatasetYield:
@@ -291,7 +286,7 @@ def collate_fn(
 
     Parameters
     ----------
-    batch : List[DatasetYield]
+    batch : list[DatasetYield]
         A batch of data, where each item is a tuple containing input, target,
         padding mask, and future mask tensors.
     batch_first : bool, default=True
@@ -349,19 +344,19 @@ def collate_fn(
     )
 
     # future mask has shape (L, L) but we want it to be (B, L, L) then (B, 1, L, L)
-    future_masks: torch.BoolTensor = torch.stack(future_masks)  # type: ignore[assignment,no-redef]
+    future_masks_stacked: torch.BoolTensor = torch.stack(future_masks)  # type: ignore[assignment]
 
-    future_masks_expanded = future_masks.expand(batch_size, -1, -1).unsqueeze(1)  # type: ignore[attr-defined]
+    future_masks_expanded = future_masks_stacked.expand(batch_size, -1, -1).unsqueeze(1)
     return cast(
         AdderDatasetYield, (inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded)
     )
 
 
-def create_loader(
-    dataset: Dataset[Dataset_co],
-    loader_config: Dict[str, Any],
-    collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
-) -> DataLoader[Dataset_co]:
+def create_loader[DatasetT: DatasetYield](
+    dataset: Dataset[DatasetT],
+    loader_config: dict[str, Any],
+    collate_fn_config: dict[str, Any] | NotGiven = NOT_GIVEN,
+) -> DataLoader[DatasetT]:
     if collate_fn_config is NOT_GIVEN:
         return DataLoader(
             dataset=dataset,
@@ -374,9 +369,9 @@ def create_loader(
     )
 
 
-def split_dataset(
-    dataset: Dataset[Dataset_co], split: List[float], seed: int
-) -> Tuple[
+def split_dataset[DatasetT: DatasetYield](
+    dataset: Dataset[DatasetT], split: list[float], seed: int
+) -> tuple[
     Subset[DatasetYield], Subset[DatasetYield], Subset[DatasetYield]
 ]:  # TODO: unclean since it should return AdderDataset[AdderDatasetYield] but mypy is not happy
     train_dataset, val_dataset, test_dataset = torch.utils.data.random_split(

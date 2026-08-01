@@ -1,19 +1,9 @@
-from __future__ import annotations
-
-from typing import Any, Protocol, TypeVar, runtime_checkable
-
-import numpy as np
-import torch
-from numpy.typing import NDArray
-
-# indicates that the input type and the output type are the same
-# i.e. predict(self, X: T) -> T means torch.Tensor -> torch.Tensor
-NumpyTorch = TypeVar("NumpyTorch", NDArray[np.floating[Any]], torch.Tensor)
+from typing import Any, Protocol, Self, runtime_checkable
 
 
 @runtime_checkable
 class Fittable(Protocol):
-    def fit(self, *args: Any, **kwargs: Any) -> Fittable: ...
+    def fit(self, *args: Any, **kwargs: Any) -> Self: ...
 
 
 @runtime_checkable

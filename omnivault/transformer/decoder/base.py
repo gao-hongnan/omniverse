@@ -1,7 +1,5 @@
 """Base classes for decoders in transformer-like architectures. Template design pattern."""
 
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
 
 import torch

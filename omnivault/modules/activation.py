@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import math
-from typing import Literal
+from typing import Literal, override
 
 import torch
 from torch import nn
@@ -55,6 +53,7 @@ class Softmax(Activation):
     >>> torch.testing.assert_close(result, individual_results)
     """
 
+    @override
     def __call__(self, z: torch.Tensor) -> torch.Tensor:
         r"""
         Compute the softmax function for a given input.
@@ -74,6 +73,7 @@ class Softmax(Activation):
         g = numerator / denominator
         return g
 
+    @override
     def gradient(self, z: torch.Tensor) -> torch.Tensor:
         r"""
         Use the Jacobian matrix to compute the gradient.
@@ -99,6 +99,7 @@ class Softmax(Activation):
 
 
 class SoftmaxStable(Softmax):
+    @override
     def __call__(self, z: torch.Tensor) -> torch.Tensor:
         assert self.dim is not None
         max_z = torch.max(z, dim=self.dim, keepdim=True).values
@@ -170,6 +171,7 @@ class GELU(nn.Module):
         super().__init__()
         self.approximate = approximate
 
+    @override
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.approximate == "tanh":
             x_out_BTD = 0.5 * x * (1.0 + torch.tanh(math.sqrt(2.0 / math.pi) * (x + 0.044715 * torch.pow(x, 3.0))))

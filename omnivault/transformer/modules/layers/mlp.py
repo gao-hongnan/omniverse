@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import override
 
 import torch
 from torch import nn
@@ -29,8 +29,8 @@ class PositionwiseFeedForward(nn.Module):
     def __init__(
         self,
         d_model: int,
-        d_ff: Optional[int] = None,
-        activation: nn.Module = nn.ReLU(),
+        d_ff: int | None = None,
+        activation: nn.Module | None = None,
         dropout: float = 0.1,
         bias: bool = True,
     ) -> None:
@@ -38,6 +38,9 @@ class PositionwiseFeedForward(nn.Module):
         # fmt: off
         if d_ff is None:
             d_ff = 4 * d_model # typical value for d_ff in Transformer models
+
+        if activation is None:
+            activation = nn.ReLU()
 
         self.ffn = nn.ModuleDict({
             'context_fc': nn.Linear(d_model, d_ff, bias=bias),
@@ -63,6 +66,7 @@ class PositionwiseFeedForward(nn.Module):
         if context_projection.bias is not None:
             nn.init.constant_(context_projection.bias, 0)
 
+    @override
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         z = self.ffn["context_fc"](z)
         z = self.ffn["activation"](z)

@@ -1,17 +1,17 @@
-from __future__ import annotations
-
-from typing import Callable, Dict, Literal, Type, Union
+from collections.abc import Callable
+from typing import Final, Literal
 
 import torch
+from pydantic import ConfigDict
 from torch import nn
 
 from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
-RegisteredCriterion = Literal["torch.nn.CrossEntropyLoss", "torch.nn.MSELoss"]
-CRITERION_REGISTRY: Dict[RegisteredCriterion, Type[CriterionConfig]] = {}
+type RegisteredCriterion = Literal["torch.nn.CrossEntropyLoss", "torch.nn.MSELoss"]
+CRITERION_REGISTRY: Final[dict[RegisteredCriterion, type[CriterionConfig]]] = {}
 
 
-def register_criterion(name: RegisteredCriterion) -> Callable[[Type[CriterionConfig]], Type[CriterionConfig]]:
+def register_criterion(name: RegisteredCriterion) -> Callable[[type[CriterionConfig]], type[CriterionConfig]]:
     """
     Decorator factory for registering criterion configurations.
 
@@ -22,11 +22,11 @@ def register_criterion(name: RegisteredCriterion) -> Callable[[Type[CriterionCon
 
     Returns
     -------
-    Callable[[Type[CriterionConfig]], Type[CriterionConfig]]
+    Callable[[type[CriterionConfig]], type[CriterionConfig]]
         A decorator that registers the criterion configuration class.
     """
 
-    def register_criterion_cls(cls: Type[CriterionConfig]) -> Type[CriterionConfig]:
+    def register_criterion_cls(cls: type[CriterionConfig]) -> type[CriterionConfig]:
         if name in CRITERION_REGISTRY:
             raise ValueError(f"Cannot register duplicate criterion {name}")
 
@@ -52,18 +52,15 @@ class CriterionConfig(DynamicClassFactory[nn.Module]):
         Creates and returns a loss function instance with the specified parameters.
     """
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     name: str
-
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True
 
 
 @register_criterion(name="torch.nn.CrossEntropyLoss")
 class CrossEntropyLossConfig(CriterionConfig):
-    weight: Union[torch.Tensor, None] = None
-    size_average: Union[bool, None] = None
+    weight: torch.Tensor | None = None
+    size_average: bool | None = None
     ignore_index: int = -100
     reduction: str = "mean"
     label_smoothing: float = 0.0
@@ -71,5 +68,5 @@ class CrossEntropyLossConfig(CriterionConfig):
 
 @register_criterion(name="torch.nn.MSELoss")
 class MSELossConfig(CriterionConfig):
-    size_average: Union[bool, None] = None
+    size_average: bool | None = None
     reduction: str = "mean"

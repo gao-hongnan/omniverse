@@ -1,7 +1,3 @@
-from __future__ import annotations
-
-from typing import List
-
 import pytest
 
 from omnivault.transformer.config.constants import MaybeConstant
@@ -24,7 +20,7 @@ def adder_ground_truth() -> AdderGroundTruth:
 
 
 @pytest.fixture(scope="module")
-def adder_mock_batch() -> List[AdderDatasetYield]:
+def adder_mock_batch() -> list[AdderDatasetYield]:
     return adder_mock_batch_
 
 

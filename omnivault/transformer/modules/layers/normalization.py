@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import override
 
 import torch
 from torch import nn
@@ -80,17 +80,17 @@ class LayerNorm(nn.Module):
 
     __constants__ = ["normalized_shape", "eps", "elementwise_affine"]
 
-    normalized_shape: Union[int, Tuple[int, ...]]
+    normalized_shape: int | tuple[int, ...]
     eps: float
     elementwise_affine: bool
 
     def __init__(
         self,
-        normalized_shape: Union[int, Tuple[int, ...]],
+        normalized_shape: int | tuple[int, ...],
         eps: float = 1e-5,
         elementwise_affine: bool = True,
-        device: Optional[Union[_device, str, None]] = None,
-        dtype: Optional[_dtype] = None,
+        device: None | _device | str = None,
+        dtype: _dtype | None = None,
     ) -> None:
         super().__init__()
         factory_kwargs = {"device": device, "dtype": dtype}
@@ -116,6 +116,7 @@ class LayerNorm(nn.Module):
             nn.init.ones_(self.gamma)
             nn.init.zeros_(self.beta)
 
+    @override
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         mean = x.mean(dim=-1, keepdim=True)
         std = x.std(dim=-1, keepdim=True, unbiased=False)  # `unbiased=False` as according to PyTorch documentation.
@@ -227,7 +228,7 @@ class RMSNorm(nn.Module):
         The data type for the module's parameters. Default: None.
     gain : torch.nn.Parameter
         The learnable scaling parameter of shape `(D,)`.
-    normalized_shape : Tuple[int]
+    normalized_shape : tuple[int]
         The shape of the normalized tensor, which is `(D,)`.
 
     Examples
@@ -243,8 +244,8 @@ class RMSNorm(nn.Module):
         self,
         d_model: int,
         eps: float = 1e-5,
-        device: Optional[Union[_device, str, None]] = None,
-        dtype: Optional[_dtype] = None,
+        device: None | _device | str = None,
+        dtype: _dtype | None = None,
     ) -> None:
         super().__init__()
 
@@ -265,6 +266,7 @@ class RMSNorm(nn.Module):
         """
         nn.init.ones_(self.gain)
 
+    @override
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Applies the RMSNorm transformation to the input tensor.
 

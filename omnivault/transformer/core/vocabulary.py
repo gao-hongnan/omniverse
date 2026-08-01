@@ -1,11 +1,8 @@
-from __future__ import annotations
-
 from abc import ABC
 from pathlib import Path
-from typing import Dict, List, Type, Union
+from typing import Self, override
 
 import requests
-from typing_extensions import override
 
 
 class Vocabulary(ABC):  # noqa: B024
@@ -19,8 +16,8 @@ class Vocabulary(ABC):  # noqa: B024
 
     def __init__(
         self,
-        token_to_index: Dict[str, int],
-        index_to_token: Dict[int, str],
+        token_to_index: dict[str, int],
+        index_to_token: dict[int, str],
     ) -> None:
         self.token_to_index = token_to_index
         self.index_to_token = index_to_token
@@ -49,7 +46,7 @@ class Vocabulary(ABC):  # noqa: B024
         return len(self)
 
     @classmethod
-    def from_tokens(cls: Type[Vocabulary], tokens: List[str]) -> Vocabulary:
+    def from_tokens(cls: type[Self], tokens: list[str]) -> Self:
         token_to_index = {token: idx for idx, token in enumerate(tokens)}
         index_to_token = {idx: token for token, idx in token_to_index.items()}
         return cls(token_to_index, index_to_token)
@@ -80,13 +77,13 @@ class AdderVocabulary(Vocabulary):
         "<UNK>",
     ]
 
-    def __init__(self, token_to_index: Dict[str, int], index_to_token: Dict[int, str], num_digits: int) -> None:
+    def __init__(self, token_to_index: dict[str, int], index_to_token: dict[int, str], num_digits: int) -> None:
         super().__init__(token_to_index, index_to_token)
         self.num_digits = num_digits
 
     @override
     @classmethod  # NOTE: why does overriding a classmethod with different signature not violate LSP?
-    def from_tokens(cls: Type[AdderVocabulary], tokens: List[str], num_digits: int = 2) -> AdderVocabulary:
+    def from_tokens(cls: type[Self], tokens: list[str], num_digits: int = 2) -> Self:
         token_to_index = {token: idx for idx, token in enumerate(tokens)}
         index_to_token = {idx: token for token, idx in token_to_index.items()}
         return cls(token_to_index, index_to_token, num_digits)
@@ -103,7 +100,7 @@ class TextCharacterVocabulary(Vocabulary):
 
     PAD = "<PAD>"
 
-    def __init__(self, token_to_index: Dict[str, int], index_to_token: Dict[int, str]) -> None:
+    def __init__(self, token_to_index: dict[str, int], index_to_token: dict[int, str]) -> None:
         self.token_to_index = token_to_index
         self.index_to_token = index_to_token
 
@@ -125,22 +122,20 @@ class TextCharacterVocabulary(Vocabulary):
         return filepath
 
     @classmethod
-    def from_corpus(cls: Type[TextCharacterVocabulary], corpus: str) -> TextCharacterVocabulary:
+    def from_corpus(cls: type[Self], corpus: str) -> Self:
         vocabulary = sorted(set(corpus))
         token_to_index = {token: idx for idx, token in enumerate(vocabulary)}
         index_to_token = {idx: token for token, idx in token_to_index.items()}
         return cls(token_to_index, index_to_token)
 
     @classmethod
-    def from_file(cls: Type[TextCharacterVocabulary], file_path: str | Path) -> TextCharacterVocabulary:
+    def from_file(cls: type[Self], file_path: str | Path) -> Self:
         with open(file_path, "r") as f:
             corpus = f.read()
         return cls.from_corpus(corpus)
 
     @classmethod
-    def from_url(
-        cls: Type[TextCharacterVocabulary], url: str, dataset_name: str, dest_folder: str | Path | None = None
-    ) -> TextCharacterVocabulary:
+    def from_url(cls: type[Self], url: str, dataset_name: str, dest_folder: str | Path | None = None) -> Self:
         if not dest_folder:
             response = requests.get(url, timeout=30)
             response.raise_for_status()
@@ -151,4 +146,4 @@ class TextCharacterVocabulary(Vocabulary):
         return cls.from_file(file_path)
 
 
-Vocabularies = Union[AdderVocabulary, TextCharacterVocabulary]
+type Vocabularies = AdderVocabulary | TextCharacterVocabulary

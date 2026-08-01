@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 import pandas as pd
 from sklearn import model_selection
@@ -11,7 +9,7 @@ def create_folds(
     df: pd.DataFrame,
     *,
     resample_strategy: str,
-    resample_params: Dict[str, Any],
+    resample_params: dict[str, Any],
     group_by: str | None = None,
     stratify_by: str | None = None,
     fold_column: Literal["fold"] = "fold",
@@ -50,6 +48,6 @@ def create_folds(
     groups = df[group_by].values if group_by else None
 
     for _fold, (_train_idx, valid_idx) in enumerate(cv.split(df, stratify, groups)):
-        df.loc[valid_idx, fold_column] = _fold
+        df.loc[valid_idx, fold_column] = _fold  # pyright: ignore[reportArgumentType, reportCallIssue]  # pandas-stub mistypes .loc[row_indexer, column] tuple assignment
     df[fold_column] = df[fold_column].astype(int)
     return df

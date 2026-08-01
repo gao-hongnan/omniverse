@@ -1,9 +1,10 @@
 # pytest tests/omnivault/unit/_types/test_sentinel.py -v
 import threading
+from collections.abc import Iterator
 from threading import Thread
-from typing import Generic, List
 
-from omnivault._types._generic import T
+import pytest
+
 from omnivault._types._sentinel import Singleton
 
 
@@ -14,7 +15,7 @@ class SingletonExample(metaclass=Singleton):
         self.value: int = 0
 
 
-class GenericSingleton(Generic[T], metaclass=Singleton):
+class GenericSingleton[T](metaclass=Singleton):
     """Generic singleton class for testing type parameters."""
 
     def __init__(self, value: T) -> None:
@@ -31,53 +32,57 @@ class MutableSingleton(metaclass=Singleton):
         self.counter += 1
 
 
+@pytest.fixture(autouse=True)
+def _isolated_singleton_registry() -> Iterator[None]:
+    """Run every test against an empty singleton registry.
+
+    ``Singleton._instances`` is module-global state: without this reset, a test
+    observes instances (and mutated state) created by whichever test ran first,
+    making the file order-dependent. Pre-existing registrations from other test
+    modules are restored on teardown.
+    """
+    registry = Singleton._instances  # type: ignore[misc]  # deliberate white-box access to the metaclass registry for isolation
+    saved = dict(registry)
+    registry.clear()
+    yield
+    registry.clear()
+    registry.update(saved)
+
+
 def test_singleton_identity() -> None:
     """Test that multiple instantiations return the same instance."""
     first = SingletonExample()
     second = SingletonExample()
+
     assert first is second
-    assert id(first) == id(second)
 
 
 def test_singleton_state() -> None:
     """Test that singleton maintains state across instances."""
     first = SingletonExample()
     first.value = 42
+
     second = SingletonExample()
+
     assert second.value == 42
-
-
-# def test_generic_singleton_type_safety() -> None:
-#     """Test generic singleton with different type parameters."""
-#     int_singleton = GenericSingleton[int](42)
-#     str_singleton = GenericSingleton[str]("test")
-
-#     assert isinstance(int_singleton.value, int)
-#     assert isinstance(str_singleton.value, str)
-
-#     # Verify type consistency
-#     same_int_singleton = GenericSingleton[int](100)
-#     assert same_int_singleton is int_singleton
-#     assert same_int_singleton.value == 42  # Original value preserved
 
 
 def test_singleton_thread_safety() -> None:
     """Test thread safety of singleton creation."""
-    singleton_instances: List[MutableSingleton] = []
+    thread_count = 10
+    singleton_instances: list[MutableSingleton] = []
 
     def create_singleton() -> None:
         singleton_instances.append(MutableSingleton())
 
-    threads = [Thread(target=create_singleton) for _ in range(10)]
+    threads = [Thread(target=create_singleton) for _ in range(thread_count)]
     for thread in threads:
         thread.start()
     for thread in threads:
         thread.join()
 
-    # Verify all instances are the same
-    first_instance = singleton_instances[0]
-    for instance in singleton_instances[1:]:
-        assert instance is first_instance
+    assert len(singleton_instances) == thread_count
+    assert all(instance is singleton_instances[0] for instance in singleton_instances)
 
 
 def test_singleton_concurrent_state_modification() -> None:
@@ -116,6 +121,7 @@ def test_singleton_inheritance() -> None:
 def test_singleton_args_ignored() -> None:
     """Test that subsequent instantiations ignore constructor arguments."""
     first = GenericSingleton[int](42)
+
     second = GenericSingleton[int](99)  # Different argument
 
     assert first is second
@@ -123,16 +129,13 @@ def test_singleton_args_ignored() -> None:
     assert second.value == 42
 
 
-# def test_singleton_type_errors() -> None:
-#     """Test type-related errors with generic singleton."""
-#     with pytest.raises(TypeError):
-#         # This should fail static type checking, but we test runtime behavior
-#         GenericSingleton[int]("wrong type")  # type: ignore
-
-
 def test_singleton_metaclass_instances() -> None:
-    """Test the singleton metaclass instance storage."""
+    """White-box test of the singleton metaclass instance storage."""
     singleton_instance = SingletonExample()
+
     metaclass_instance = type(singleton_instance)
-    assert isinstance(metaclass_instance._instances, dict)
+
+    # `_instances` is declared on the generic metaclass `Singleton[T]`; reading it off
+    # the class object is what this test asserts, which pyright flags as ambiguous.
+    assert isinstance(metaclass_instance._instances, dict)  # pyright: ignore[reportGeneralTypeIssues]
     assert isinstance(metaclass_instance._lock, type(threading.Lock()))
