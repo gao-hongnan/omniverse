@@ -84,6 +84,7 @@ def _train_one_batch(self, batch: DatasetYield) -> Tuple[float, float, float]:
     batch_size = inputs.size(0)
     if self.epoch_index < 5 and self.train_batch_index == 0:
         from rich.pretty import pprint
+
         pprint(inputs[0])
 ```
 
@@ -190,9 +191,11 @@ def fit(
 
     # start the training loop
     for _ in range(1, self.max_epochs + 1):
-        self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
-        torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
-        if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+        self.epoch_index += 1  # to match range(1, max_epochs + 1) because we start from 1
+        torch.manual_seed(
+            self.epoch_index
+        )  # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
+        if torch.cuda.is_available() and torch.cuda.is_initialized():  # type: ignore[no-untyped-call]
             torch.cuda.manual_seed_all(self.epoch_index)
 ```
 
@@ -244,9 +247,9 @@ Firstly, the `Trainer` object will set the `rng` state globally first, as seen
 below.
 
 ```python
-self.resume_from_rng_path = resume_from_rng_path # resume from rng state
+self.resume_from_rng_path = resume_from_rng_path  # resume from rng state
 if resume_from_rng_path:
-    self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path) # set RNG globally first
+    self.rng_state = load_and_set_rng_state(rng_state_path=resume_from_rng_path)  # set RNG globally first
 ```
 
 Secondly, the `Trainer` object will set the `rng` state at the beginning of each
@@ -285,10 +288,10 @@ original training loop for 10 epochs.
 
 ```python
 {
-    "train_this_epoch_average_loss":       [0.270275697350502,  0.23284611753055026, 0.18166282841137477],
-    "train_this_epoch_average_perplexity": [1.3103256225585938, 1.2621872425079346,  1.1992098093032837 ],
-    "valid_this_epoch_average_loss":       [0.1755179933309555, 0.11549221700429917, 0.12722234988212586],
-    "valid_this_epoch_average_perplexity": [1.1918634176254272, 1.1224257946014404,  1.135669469833374  ],
+    "train_this_epoch_average_loss": [0.270275697350502, 0.23284611753055026, 0.18166282841137477],
+    "train_this_epoch_average_perplexity": [1.3103256225585938, 1.2621872425079346, 1.1992098093032837],
+    "valid_this_epoch_average_loss": [0.1755179933309555, 0.11549221700429917, 0.12722234988212586],
+    "valid_this_epoch_average_perplexity": [1.1918634176254272, 1.1224257946014404, 1.135669469833374],
 }
 ```
 
@@ -1687,7 +1690,7 @@ other words given `nnodes`, `nproc_per_node`, `node_rank` we can derive
 `world_size`, `local_world_size`, `local_rank` and `global_rank`.h
 
 ```python
-ddp_global_rank = int(os.environ['RANK'])
-ddp_local_rank = int(os.environ['LOCAL_RANK'])
-ddp_world_size = int(os.environ['WORLD_SIZE'])
+ddp_global_rank = int(os.environ["RANK"])
+ddp_local_rank = int(os.environ["LOCAL_RANK"])
+ddp_world_size = int(os.environ["WORLD_SIZE"])
 ```

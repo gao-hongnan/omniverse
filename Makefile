@@ -41,8 +41,10 @@ security: .uv
 typecheck: .uv
 	uv run mypy $(SOURCES)
 	uv run pyright $(SOURCES)
-	# @echo "Running ty (experimental)..."
-	# uv run ty check $(SOURCES) || echo "ty check failed (expected for pre-release)"
+	@echo "Running ty (informational, pre-1.0 -- not gating)..."
+	-uv run ty check $(SOURCES)
+	@echo "Running pyrefly (informational -- not gating)..."
+	-uv run pyrefly check $(SOURCES)
 
 .PHONY: test
 test: .uv
