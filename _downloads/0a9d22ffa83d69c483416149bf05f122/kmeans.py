@@ -5,11 +5,10 @@ References:
 - https://github.com/rushter/MLAlgorithms/blob/master/mla/kmeans.py
 """
 
-from __future__ import annotations
-
 import logging
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Tuple
+from typing import Any, Literal, Self, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,10 +73,13 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
         self.random_state = random_state
         seed_all(self.random_state, seed_torch=False, set_torch_deterministic=False)
+        # Seed our own Generator explicitly: `seed_all` only seeds NumPy's legacy
+        # global state, which `default_rng()` does not consult.
+        self._rng = np.random.default_rng(self.random_state)
 
         self._reset_clusters()  # initializes self._C = {C_1=[], C_2=[], ..., C_k=[]}
 
-        self._C: Dict[int, List[int]]  # clusters
+        self._C: dict[int, list[int]]  # clusters
         self._N: int
         self._D: int
         self.t: int  # iteration counter
@@ -102,7 +104,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         return self._N
 
     @property
-    def clusters(self) -> Dict[int, List[int]]:
+    def clusters(self) -> dict[int, list[int]]:
         """Property to get the clusters, this is our C."""
         return self._C
 
@@ -123,7 +125,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
     def _reset_clusters(self) -> None:
         """Reset clusters."""
-        self._C = {k: [] for k in range(self._K)}  # type: ignore[misc]
+        self._C = {k: [] for k in range(self._K)}
 
     def _reset_inertias(self) -> None:
         """
@@ -165,7 +167,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         self._centroids = np.zeros(shape=(self._K, self._D))  # KxD matrix
         if self.init == "random":
             for k in range(self._K):
-                self._centroids[k] = X[np.random.choice(range(self._N))]
+                self._centroids[k] = X[self._rng.choice(self._N)]
         elif self.init == "k-means++":
             raise NotImplementedError("k-means++ initialization is not implemented.")
         else:
@@ -180,14 +182,14 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
             The distance metric function.
         """
         if self.metric == "euclidean":
-            return partial(euclidean_distance, squared=False)
+            return partial(euclidean_distance, squared=True)
         if self.metric == "manhattan":
             return manhattan_distance
         raise ValueError(f"{self.metric} is not supported. The metric must be 'euclidean' or 'manhattan'.")
 
     def _compute_argmin_assignment(
         self, x: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]
-    ) -> Tuple[int, float]:
+    ) -> tuple[int, float]:
         """Compute the argmin assignment for a single sample x.
 
         In other words, for a single sample x, compute the distance between x and
@@ -208,7 +210,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
         Returns
         -------
-        Tuple[int, float]
+        tuple[int, float]
             The index of the closest centroid and the distance to it.
         """
         min_index = -100  # some random number
@@ -284,7 +286,8 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         """
         return np.allclose(updated_centroids, old_centroids, atol=self.tol)
 
-    def fit(self, X: NDArray[np.floating[Any]]) -> KMeansLloyd:
+    @override
+    def fit(self, X: NDArray[np.floating[Any]]) -> Self:
         """
         Fit the K-Means clustering model to the data.
 
@@ -341,6 +344,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         # fmt: on
         return self
 
+    @override
     def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict cluster labels for samples in X where X can be new data or training data."""
         y_preds = np.array([self._compute_argmin_assignment(x, self._centroids)[0] for x in X])
@@ -428,7 +432,10 @@ def plot_kmeans(
 
 
 def kmeans_vectorized(
-    X: NDArray[np.floating[Any]], num_clusters: int, max_iter: int = 500
+    X: NDArray[np.floating[Any]],
+    num_clusters: int,
+    max_iter: int = 500,
+    random_state: int | np.random.Generator | None = None,
 ) -> NDArray[np.floating[Any]]:
     """
     Perform K-Means clustering using vectorized operations.
@@ -448,13 +455,17 @@ def kmeans_vectorized(
     max_iter : int, optional
         The maximum number of iterations of the K-Means
         clustering algorithm (default is 500).
+    random_state : int | np.random.Generator | None, optional
+        Seed or Generator controlling centroid initialization. Pass an int
+        for reproducible results; ``None`` (default) draws from OS entropy.
 
     Returns
     -------
     NDArray[np.floating[Any]]
         A 2D array where each row is a cluster center.
     """
-    indices = np.random.choice(X.shape[0], num_clusters, replace=False)
+    rng = np.random.default_rng(random_state)
+    indices = rng.choice(X.shape[0], size=num_clusters, replace=False)
     centroids = X[indices]
 
     for _ in range(max_iter):
@@ -471,7 +482,7 @@ def kmeans_vectorized(
 
         centroids = new_centroids
 
-    return centroids  # type: ignore[no-any-return]
+    return centroids
 
 
 def display_results(

@@ -1,0 +1,164 @@
+Traceback (most recent call last):
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+    ~~~~~~~~~^
+        nb,
+        ^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1323, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/home/runner/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+        cell, index, execution_count=self.code_cells_executed + 1
+    )
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/home/runner/work/omniverse/omniverse/.venv/lib/python3.14/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+from __future__ import annotations
+
+import math
+from IPython.display import display
+from typing import Generator, List, Union, Any
+from rich.pretty import pprint
+
+import sys
+from pathlib import Path
+
+def find_root_dir(current_path: Path | None = None, marker: str = '.git') -> Path | None:
+    """
+    Find the root directory by searching for a directory or file that serves as a
+    marker.
+
+    Parameters
+    ----------
+    current_path : Path | None
+        The starting path to search from. If None, the current working directory
+        `Path.cwd()` is used.
+    marker : str
+        The name of the file or directory that signifies the root.
+
+    Returns
+    -------
+    Path | None
+        The path to the root directory. Returns None if the marker is not found.
+    """
+    if not current_path:
+        current_path = Path.cwd()
+    current_path = current_path.resolve()
+    for parent in [current_path, *current_path.parents]:
+        if (parent / marker).exists():
+            return parent
+    return None
+
+root_dir = find_root_dir(marker='omnivault')
+
+if root_dir is not None:
+    sys.path.append(str(root_dir))
+    from omnivault.dsa.stack.concrete import StackList
+    from omnivault._types._generic import T
+else:
+    raise ImportError("Root directory not found.")
+
+
+class MyQueue:
+    """
+    Class that implements queue using two stacks (enqueue and dequeue).
+
+    Attributes
+    ----------
+    enqueue : StackList[int]
+        Stack for enqueue operation (push to back of queue).
+    dequeue : StackList[int]
+        Stack for dequeue operation (remove from front of queue).
+    """
+
+    def __init__(self) -> None:
+        """Initializes an empty queue."""
+        self.enqueue: StackList[int] = StackList()
+        self.dequeue: StackList[int] = StackList()
+
+    def push(self, x: int) -> None:
+        """
+        Pushes an integer x to the back of the queue.
+
+        Parameters
+        ----------
+        x : int
+            The integer to be added to the back of the queue.
+        """
+        self.enqueue.push(x)
+
+    def move(self) -> None:
+        """
+        Transfers elements from the enqueue stack to the dequeue stack.
+        """
+        while not self.enqueue.is_empty():
+            self.dequeue.push(self.enqueue.pop())
+
+    def pop(self) -> int:
+        """
+        Removes an integer from the front of the queue and returns it.
+
+        Returns
+        -------
+        int
+            The integer at the front of the queue.
+        """
+        if self.dequeue.is_empty():
+            self.move()
+        return self.dequeue.pop()
+
+    def peek(self) -> int:
+        """
+        Returns the integer at the front of the queue without removing it.
+
+        Returns
+        -------
+        int
+            The integer at the front of the queue.
+        """
+        if self.dequeue.is_empty():
+            self.move()
+        return self.dequeue.peek()
+
+    def empty(self) -> bool:
+        """
+        Checks if the queue is empty.
+
+        Returns
+        -------
+        bool
+            True if the queue is empty, False otherwise.
+        """
+        return self.enqueue.is_empty() and self.dequeue.is_empty()
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mModuleNotFoundError[39m                       Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[3][39m[32m, line 42[39m
+[32m     38[39m 
+[32m     39[39m [38;5;28;01mif[39;00m root_dir [38;5;28;01mis[39;00m [38;5;28;01mnot[39;00m [38;5;28;01mNone[39;00m:
+[32m     40[39m     sys.path.append(str(root_dir))
+[32m     41[39m     [38;5;28;01mfrom[39;00m omnivault.dsa.stack.concrete [38;5;28;01mimport[39;00m StackList
+[32m---> [39m[32m42[39m     [38;5;28;01mfrom[39;00m omnivault._types._generic [38;5;28;01mimport[39;00m T
+[32m     43[39m [38;5;28;01melse[39;00m:
+[32m     44[39m     [38;5;28;01mraise[39;00m ImportError([33m"Root directory not found."[39m)
+[32m     45[39m 
+
+[31mModuleNotFoundError[39m: No module named 'omnivault._types._generic'
+
