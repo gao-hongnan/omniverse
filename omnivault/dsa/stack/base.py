@@ -3,6 +3,10 @@ from collections.abc import Iterable, Iterator
 from typing import overload
 
 
+class EmptyStackError(IndexError):
+    """Raised when an operation requires a non-empty stack."""
+
+
 class Stack[ItemT](ABC):
     """
     This interface defines the contract for a stack data structure.

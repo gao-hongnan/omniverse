@@ -1,4 +1,4 @@
-from omnivault.dsa.queue.base import MutableDequeProtocol, MutableQueueProtocol
+from omnivault.dsa.queue.base import EmptyQueueError, MutableDequeProtocol, MutableQueueProtocol
 
 
 class QueueList[ItemT](MutableQueueProtocol[ItemT]):
@@ -116,7 +116,7 @@ class QueueList[ItemT](MutableQueueProtocol[ItemT]):
             The item at the start of the queue
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[-1]
 
     def enqueue(self, item: ItemT) -> None:
@@ -143,7 +143,7 @@ class QueueList[ItemT](MutableQueueProtocol[ItemT]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop()
 
 
@@ -223,7 +223,7 @@ class DeQueueList[ItemT](MutableDequeProtocol[ItemT]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[-1]
 
     def peek_rear(self) -> ItemT:
@@ -235,7 +235,7 @@ class DeQueueList[ItemT](MutableDequeProtocol[ItemT]):
             The item at the rear of the queue
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items[0]
 
     def add_front(self, item: ItemT) -> None:
@@ -272,7 +272,7 @@ class DeQueueList[ItemT](MutableDequeProtocol[ItemT]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop()
 
     def remove_rear(self) -> ItemT:
@@ -289,5 +289,5 @@ class DeQueueList[ItemT](MutableDequeProtocol[ItemT]):
             If the queue is empty
         """
         if self.is_empty():
-            raise Exception("Queue is empty")
+            raise EmptyQueueError("Queue is empty")
         return self._queue_items.pop(0)

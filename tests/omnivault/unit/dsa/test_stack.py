@@ -1,5 +1,6 @@
 import pytest
 
+from omnivault.dsa.stack.base import EmptyStackError
 from omnivault.dsa.stack.concrete import StackList
 
 
@@ -79,9 +80,7 @@ class TestStackList:
 
     def test_pop_empty_stack(self, empty_stack: StackList[int]) -> None:
         """Test popping from an empty stack raises with the exact message."""
-        # The source raises a bare `Exception("Stack is empty")`, so Exception
-        # is the narrowest type available; the match pins the exact message.
-        with pytest.raises(Exception, match="Stack is empty"):
+        with pytest.raises(EmptyStackError, match="Stack is empty"):
             empty_stack.pop()
 
     def test_peek_empty_stack(self, empty_stack: StackList[int]) -> None:

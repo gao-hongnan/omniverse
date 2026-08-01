@@ -1,6 +1,10 @@
 from typing import Protocol
 
 
+class EmptyQueueError(IndexError):
+    """Raised when an operation requires a non-empty queue."""
+
+
 class QueueProtocol[ItemT](Protocol):
     """Protocol defining the interface for a basic queue.
 

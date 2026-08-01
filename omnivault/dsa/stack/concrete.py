@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from typing import override
 
-from omnivault.dsa.stack.base import Stack
+from omnivault.dsa.stack.base import EmptyStackError, Stack
 
 
 class StackList[ItemT](Stack[ItemT]):
@@ -120,7 +120,7 @@ class StackList[ItemT](Stack[ItemT]):
             The top most item in the stack.
         """
         if self.is_empty():
-            raise Exception("Stack is empty")
+            raise EmptyStackError("Stack is empty")
         return self.stack_items.pop()
 
     @override
