@@ -44,3 +44,10 @@ in the machine learning lifecycle chapter.
 ```{tableofcontents}
 
 ```
+
+## References and Further Readings
+
+-   [scikit-learn user guide: model selection and evaluation](https://scikit-learn.org/stable/model_selection.html#model-selection)
+-   Raschka, Sebastian. "Model Evaluation, Model Selection, and Algorithm
+    Selection in Machine Learning." arXiv, 2018.
+    <https://arxiv.org/abs/1811.12808>
