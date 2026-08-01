@@ -41,11 +41,9 @@ but it is slightly more complicated for this project.
 from __future__ import annotations
 
 import threading
-from typing import Any, Dict, Generic, Literal, Type
+from typing import Any, Dict, Literal, Type
 
 from typing_extensions import override
-
-from omnivault._types._generic import _T
 
 
 class _NotGiven:
@@ -202,7 +200,7 @@ class _Omit:
 OMIT = _Omit()
 
 
-class Singleton(type, Generic[_T]):
+class Singleton[T](type):
     """Singleton metaclass for creating singleton classes.
 
     References
@@ -211,10 +209,10 @@ class Singleton(type, Generic[_T]):
     [2] https://stackoverflow.com/questions/75307905/python-typing-for-a-metaclass-singleton
     """
 
-    _instances: Dict[Singleton[_T], _T] = {}
+    _instances: Dict[Singleton[T], T] = {}
     _lock: threading.Lock = threading.Lock()
 
-    def __call__(cls: Singleton[_T], *args: Any, **kwargs: Any) -> _T:
+    def __call__(cls: Singleton[T], *args: Any, **kwargs: Any) -> T:
         # Lock the block of code where the instance is checked and created
         # This is necessary to avoid race conditions when multiple threads try to
         # create the same singleton instance at the same time.

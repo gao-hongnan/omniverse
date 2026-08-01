@@ -5,7 +5,7 @@ import inspect
 import logging
 import warnings
 from collections import defaultdict
-from enum import Enum
+from enum import StrEnum
 from typing import Any, Dict, List, Protocol, Tuple, no_type_check, runtime_checkable
 
 import torch
@@ -38,7 +38,7 @@ class TrainerCallback(Protocol):
     def __call__(self, trainer: Trainer, *args: Any, **kwargs: Any) -> None: ...
 
 
-class TrainerEvent(str, Enum):
+class TrainerEvent(StrEnum):
     """Callback events for the trainer."""
 
     ON_TRAIN_EPOCH_START = "on_train_epoch_start"
@@ -56,7 +56,7 @@ class TrainerEvent(str, Enum):
         return str.__str__(self)
 
 
-class TrainerPhase(str, Enum):
+class TrainerPhase(StrEnum):
     """Phase of training."""
 
     TRAIN = "train"
@@ -67,7 +67,7 @@ class TrainerPhase(str, Enum):
         return str.__str__(self)
 
 
-class MetricNames(str, Enum):
+class MetricNames(StrEnum):
     """Metric names for the trainer."""
 
     TRAIN_THIS_BATCH_AVERAGE_LOSS = "train_this_batch_average_loss"
@@ -153,7 +153,7 @@ class Trainer:
         self.optimizer        = state.optimizer
         self.scheduler        = state.scheduler
 
-        self.device: torch.device = composer.trainer.device if device is None else device # type: ignore[assignment]
+        self.device: torch.device = composer.trainer.device if device is None else device
 
         # logger
         self.logger = logger or get_default_logger()
@@ -261,8 +261,8 @@ class Trainer:
         self, metric_name_or_names: str | List[str], metric_value_or_values: float | List[float]
     ) -> None:
         metric_names = [metric_name_or_names] if isinstance(metric_name_or_names, str) else metric_name_or_names
-        metric_values = (
-            [metric_value_or_values] if isinstance(metric_value_or_values, float) else metric_value_or_values
+        metric_values: List[float] = (
+            metric_value_or_values if isinstance(metric_value_or_values, list) else [metric_value_or_values]
         )
 
         for metric_name, metric_value in zip(metric_names, metric_values, strict=False):
@@ -505,7 +505,7 @@ class Trainer:
             # fmt: off
             self.epoch_index += 1               # to match range(1, max_epochs + 1) because we start from 1
             torch.manual_seed(self.epoch_index) # TODO: to replace with the full `load_and_set_rng_state` function for even stronger reproducibility
-            if torch.cuda.is_available() and torch.cuda.is_initialized(): # type: ignore[no-untyped-call]
+            if torch.cuda.is_available() and torch.cuda.is_initialized():
                 torch.cuda.manual_seed_all(self.epoch_index)
             # fmt: on
 

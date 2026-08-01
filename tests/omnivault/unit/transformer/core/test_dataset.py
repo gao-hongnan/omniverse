@@ -15,7 +15,7 @@ def test_construct_future_mask(adder_dataset: AdderDataset, adder_ground_truth: 
 
 
 @pytest.mark.parametrize(
-    argnames="input,expected_padding_mask",
+    argnames=("input", "expected_padding_mask"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.inputs, ADDER_GROUND_TRUTH.padding_masks, strict=False)),
 )
 def test_construct_padding_mask(
@@ -27,7 +27,7 @@ def test_construct_padding_mask(
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_target",
+    argnames=("encoded_sequence", "expected_target"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.targets, strict=False)),
 )
 def test_construct_target(
@@ -39,7 +39,7 @@ def test_construct_target(
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_input",
+    argnames=("encoded_sequence", "expected_input"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.inputs, strict=False)),
 )
 def test_construct_input(

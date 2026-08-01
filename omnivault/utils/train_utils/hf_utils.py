@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Dict, List
 
 import numpy as np
@@ -19,7 +20,7 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from transformers import PreTrainedModel, PreTrainedTokenizerBase, PreTrainedTokenizerFast
+from transformers import AddedToken, PreTrainedModel, PreTrainedTokenizerBase, PreTrainedTokenizerFast
 from transformers.trainer_utils import EvalPrediction
 
 
@@ -54,7 +55,7 @@ def maybe_resize_token_embeddings(
 def smart_tokenizer_and_embedding_resize(
     model: PreTrainedModel,
     tokenizer: PreTrainedTokenizerBase | PreTrainedTokenizerFast,
-    special_tokens_dict: Dict[str, int],
+    special_tokens_dict: dict[str, str | AddedToken | Sequence[str | AddedToken]],
 ) -> None:
     """Resize tokenizer and embedding.
 
@@ -68,15 +69,21 @@ def smart_tokenizer_and_embedding_resize(
         The model to check for token embeddings.
     tokenizer : PreTrainedTokenizerBase | PreTrainedTokenizerFast
         The tokenizer to check for vocabulary size.
-    special_tokens_dict : Dict[str, int]
+    special_tokens_dict : dict[str, str | AddedToken | Sequence[str | AddedToken]]
         Dictionary containing special tokens to add.
     """
     num_new_tokens = tokenizer.add_special_tokens(special_tokens_dict)
     model.resize_token_embeddings(len(tokenizer))
 
     if num_new_tokens > 0:
-        input_embeddings_data = model.get_input_embeddings().weight.data
-        output_embeddings_data = model.get_output_embeddings().weight.data
+        input_embeddings = model.get_input_embeddings()
+        output_embeddings = model.get_output_embeddings()
+        assert isinstance(input_embeddings, torch.nn.Embedding)
+        # The output head is an `nn.Linear` on most causal LMs, and only an
+        # `nn.Embedding` on weight-tied architectures -- accept both.
+        assert isinstance(output_embeddings, (torch.nn.Embedding, torch.nn.Linear))
+        input_embeddings_data = input_embeddings.weight.data
+        output_embeddings_data = output_embeddings.weight.data
 
         input_embeddings_avg = input_embeddings_data[:-num_new_tokens].mean(dim=0, keepdim=True)
         output_embeddings_avg = output_embeddings_data[:-num_new_tokens].mean(dim=0, keepdim=True)
@@ -87,6 +94,8 @@ def smart_tokenizer_and_embedding_resize(
 
 def compute_metrics_for_single_label_classification(eval_prediction: EvalPrediction) -> Dict[str, float | List[float]]:
     logits, labels = eval_prediction.predictions, eval_prediction.label_ids
+    assert isinstance(logits, np.ndarray)
+    assert isinstance(labels, np.ndarray)
     probs = softmax(logits, axis=-1)
 
     num_classes = logits.shape[1]
@@ -95,12 +104,12 @@ def compute_metrics_for_single_label_classification(eval_prediction: EvalPredict
     metrics = {
         "eval_log_loss": log_loss(labels, probs),
         "eval_accuracy": accuracy_score(labels, preds),
-        "eval_precision_macro": precision_score(labels, preds, average="macro", zero_division=0),
-        "eval_recall_macro": recall_score(labels, preds, average="macro", zero_division=0),
-        "eval_f1_score_macro": f1_score(labels, preds, average="macro", zero_division=0),
-        "eval_precision_micro": precision_score(labels, preds, average="micro", zero_division=0),
-        "eval_recall_micro": recall_score(labels, preds, average="micro", zero_division=0),
-        "eval_f1_score_micro": f1_score(labels, preds, average="micro", zero_division=0),
+        "eval_precision_macro": precision_score(labels, preds, average="macro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
+        "eval_recall_macro": recall_score(labels, preds, average="macro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
+        "eval_f1_score_macro": f1_score(labels, preds, average="macro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
+        "eval_precision_micro": precision_score(labels, preds, average="micro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
+        "eval_recall_micro": recall_score(labels, preds, average="micro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
+        "eval_f1_score_micro": f1_score(labels, preds, average="micro", zero_division=0),  # pyright: ignore[reportArgumentType]  # sklearn stub types zero_division as str; int 0 is valid at runtime
         "eval_confusion_matrix": confusion_matrix(labels, preds).tolist(),
         "eval_roc_auc": roc_auc_score(labels, probs, multi_class="ovr"),
         "eval_pr_auc": average_precision_score(labels, probs, average="macro"),

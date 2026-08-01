@@ -259,4 +259,4 @@ class NaiveBayesGaussianLogLikelihood(NaiveBayesGaussian):
             NDArray[np.floating[Any]]: N x K matrix with probabilities for each sample.
         """
         log_probs = self.predict_log_proba(X)
-        return np.exp(log_probs)  # type: ignore[no-any-return]
+        return np.exp(log_probs)

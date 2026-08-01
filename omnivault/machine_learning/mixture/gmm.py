@@ -320,7 +320,7 @@ class GaussianMixtureModel(BaseEstimator):
         """
         # calculate the posterior probability of each cluster for each sample
         responsibilities, marginals = self._estimate_responsibilities(X)
-        mean_marginals = np.mean(marginals)
+        mean_marginals = float(np.mean(marginals))
         return responsibilities, mean_marginals
 
     def _m_step(
@@ -492,7 +492,7 @@ class GaussianMixtureModel(BaseEstimator):
                 The reshaped Gaussian PDF values on the grid.
             """
             X_full = np.vstack((xx.ravel(), yy.ravel())).T
-            rv = multivariate_normal(mean, cov)
+            rv = multivariate_normal(mean, cov)  # pyright: ignore[reportArgumentType]  # scipy stub mistypes cov (default=1) as int; NDArray is valid
             pdf = rv.pdf(X_full)
             pdf_reshaped = pdf.reshape(xx.shape)
             return cast(NDArray[np.floating[Any]], pdf_reshaped)

@@ -1,3 +1,10 @@
+# Hook environments must be built on 3.14: this project uses PEP 758
+# (`except A, B:`), which the AST-parsing hooks cannot compile on older
+# interpreters. Both pre-commit and prek otherwise default to whatever
+# interpreter they find (3.12/3.13), and check-ast fails there.
+default_language_version:
+  python: python3.14
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -14,6 +21,11 @@ repos:
       - id: check-vcs-permalinks
       - id: check-xml
       - id: check-yaml
+        # prek's Rust YAML parser rejects this file with "too many consecutive
+        # comments before resolving collection entry" -- it holds ~68 lines of
+        # commented-out jobs. PyYAML parses it fine and GitHub Actions runs it,
+        # so this is a parser limitation rather than a malformed file.
+        exclude: ^\.github/workflows/cicd_deploy_jupyterbook\.yaml$
       - id: debug-statements
       - id: destroyed-symlinks
       - id: mixed-line-ending

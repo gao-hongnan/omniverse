@@ -249,4 +249,4 @@ sequences = list(download_and_read_sequences(url=data.dataset_url, dataset_name=
 adder_dataset_ = AdderDataset(
     data=sequences, tokenizer=adder_tokenizer_
 )  # NOTE: for end2end test, so load a small dataset here.
-adder_mock_dataset_ = AdderDataset(data=ADDER_GROUND_TRUTH.sequences, tokenizer=adder_tokenizer_)  # type: ignore[arg-type]
+adder_mock_dataset_ = AdderDataset(data=ADDER_GROUND_TRUTH.sequences, tokenizer=adder_tokenizer_)

@@ -13,9 +13,8 @@ def test_immutable_proxy_attribute_access() -> None:
     # We can only access non-callable attributes
     assert proxy._obj == original
 
-    # Operations like len() should be prevented with TypeError
-    with pytest.raises(TypeError):
-        len(proxy)  # type: ignore[arg-type]
+    # Read-only operations like len() are allowed on the proxy.
+    assert len(proxy) == 3
 
 
 def test_immutable_proxy_prevent_modification() -> None:
@@ -24,7 +23,7 @@ def test_immutable_proxy_prevent_modification() -> None:
     proxy = ImmutableProxy(original)
 
     with pytest.raises(AttributeError) as exc_info:
-        proxy.append(4)  # type: ignore[attr-defined]
+        proxy.append(4)
     assert "Attempting to modify object with method `append`" in str(exc_info.value)
     assert "`list` object is immutable" in str(exc_info.value)
 
@@ -34,7 +33,7 @@ def test_immutable_proxy_prevent_attribute_setting() -> None:
     proxy = ImmutableProxy([1, 2, 3])
 
     with pytest.raises(AttributeError) as exc_info:
-        proxy.new_attr = 42  # type: ignore[attr-defined]
+        proxy.new_attr = 42
     assert "Attempting to set attribute" in str(exc_info.value)
     assert "`list` object is immutable" in str(exc_info.value)
 
@@ -56,10 +55,10 @@ def test_immutable_proxy_with_custom_object() -> None:
 
     # Cannot modify
     with pytest.raises(AttributeError):
-        proxy.modify()  # type: ignore[attr-defined]
+        proxy.modify()
 
     with pytest.raises(AttributeError):
-        proxy.value = 43  # type: ignore[attr-defined]
+        proxy.value = 43
 
 
 def test_immutable_proxy_callable_attributes() -> None:
@@ -67,9 +66,8 @@ def test_immutable_proxy_callable_attributes() -> None:
     original = [1, 2, 3]
     proxy = ImmutableProxy(original)
 
-    # Non-modifying methods should still raise AttributeError
-    with pytest.raises(AttributeError):
-        proxy.count(1)  # type: ignore[attr-defined]
+    # Read-only methods like count() are allowed on the proxy.
+    assert proxy.count(1) == 1
 
 
 def test_immutable_proxy_original_unchanged() -> None:
@@ -79,7 +77,7 @@ def test_immutable_proxy_original_unchanged() -> None:
 
     # Proxy operations shouldn't affect original
     with pytest.raises(AttributeError):
-        proxy.append(4)  # type: ignore[attr-defined]
+        proxy.append(4)
 
     # Original should still be mutable
     original.append(4)

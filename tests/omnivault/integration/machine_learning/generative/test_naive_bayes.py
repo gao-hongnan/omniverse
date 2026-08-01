@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 from sklearn.datasets import make_classification
 from sklearn.naive_bayes import GaussianNB
 
@@ -9,7 +10,7 @@ from omnivault.machine_learning.generative.naive_bayes import NaiveBayesGaussian
 @pytest.mark.parametrize(argnames="num_classes", argvalues=[2, 3, 4])
 def test_naive_bayes_vs_sklearn(num_classes: int) -> None:
     # Generate synthetic data
-    X, y = make_classification(
+    X_raw, y_raw = make_classification(
         n_samples=1000,
         n_features=4,
         n_informative=3,
@@ -17,6 +18,8 @@ def test_naive_bayes_vs_sklearn(num_classes: int) -> None:
         n_classes=num_classes,
         random_state=1992,
     )
+    X: NDArray[np.float64] = np.asarray(X_raw, dtype=np.float64)
+    y: NDArray[np.float64] = np.asarray(y_raw, dtype=np.float64)
 
     nb_custom = NaiveBayesGaussianLogLikelihood(num_classes=num_classes, random_state=1992)
     nb_custom.fit(X, y)

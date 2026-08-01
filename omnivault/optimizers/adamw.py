@@ -1,14 +1,13 @@
 import math
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, Tuple, Union
 
 import torch
-from typing_extensions import TypeAlias
 
 # from torch.optim.optimizer import params_t as ParamsT
 
 __all__ = ["AdamW"]
 
-ParamsT: TypeAlias = Union[Iterable[torch.Tensor], Iterable[Dict[str, Any]]]
+type ParamsT = Union[Iterable[torch.Tensor], Iterable[Dict[str, Any]]]
 
 
 class AdamW(torch.optim.Optimizer):
@@ -45,10 +44,10 @@ class AdamW(torch.optim.Optimizer):
         if not 0.0 <= betas[0] < 1.0 and 0.0 <= betas[1] < 1.0:
             raise ValueError(f"Invalid beta values: {betas}, must be in [0, 1).")
 
-    def step(self, closure: Optional[Callable[[], float]] = None) -> Optional[float]:  # type: ignore[override]
+    def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         loss = None
         if closure is not None:
-            with torch.enable_grad():  # type: ignore[no-untyped-call]
+            with torch.enable_grad():
                 loss = closure()
 
         for group in self.param_groups:

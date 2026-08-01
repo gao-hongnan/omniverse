@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Generic, List
+from typing import List
 
 from omnivault._types._generic import T
 from omnivault.dsa.queue.base import MutableDequeProtocol, MutableQueueProtocol
 
 
-class QueueList(Generic[T], MutableQueueProtocol[T]):
+class QueueList[T](MutableQueueProtocol[T]):
     """A queue implementation using Python's built-in list.
 
     This implementation treats the end of the list as the start of the queue and
@@ -152,7 +152,7 @@ class QueueList(Generic[T], MutableQueueProtocol[T]):
         return self._queue_items.pop()
 
 
-class DeQueueList(Generic[T], MutableDequeProtocol[T]):
+class DeQueueList[T](MutableDequeProtocol[T]):
     """A double-ended queue implementation using Python's built-in list.
 
     This implementation allows adding and removing items from both ends of the queue.

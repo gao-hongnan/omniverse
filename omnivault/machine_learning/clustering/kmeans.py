@@ -74,6 +74,9 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
         self.random_state = random_state
         seed_all(self.random_state, seed_torch=False, set_torch_deterministic=False)
+        # Seed our own Generator explicitly: `seed_all` only seeds NumPy's legacy
+        # global state, which `default_rng()` does not consult.
+        self._rng = np.random.default_rng(self.random_state)
 
         self._reset_clusters()  # initializes self._C = {C_1=[], C_2=[], ..., C_k=[]}
 
@@ -123,7 +126,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
     def _reset_clusters(self) -> None:
         """Reset clusters."""
-        self._C = {k: [] for k in range(self._K)}  # type: ignore[misc]
+        self._C = {k: [] for k in range(self._K)}
 
     def _reset_inertias(self) -> None:
         """
@@ -165,7 +168,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         self._centroids = np.zeros(shape=(self._K, self._D))  # KxD matrix
         if self.init == "random":
             for k in range(self._K):
-                self._centroids[k] = X[np.random.choice(range(self._N))]
+                self._centroids[k] = X[self._rng.choice(self._N)]
         elif self.init == "k-means++":
             raise NotImplementedError("k-means++ initialization is not implemented.")
         else:
@@ -428,7 +431,10 @@ def plot_kmeans(
 
 
 def kmeans_vectorized(
-    X: NDArray[np.floating[Any]], num_clusters: int, max_iter: int = 500
+    X: NDArray[np.floating[Any]],
+    num_clusters: int,
+    max_iter: int = 500,
+    random_state: int | np.random.Generator | None = None,
 ) -> NDArray[np.floating[Any]]:
     """
     Perform K-Means clustering using vectorized operations.
@@ -448,13 +454,17 @@ def kmeans_vectorized(
     max_iter : int, optional
         The maximum number of iterations of the K-Means
         clustering algorithm (default is 500).
+    random_state : int | np.random.Generator | None, optional
+        Seed or Generator controlling centroid initialization. Pass an int
+        for reproducible results; ``None`` (default) draws from OS entropy.
 
     Returns
     -------
     NDArray[np.floating[Any]]
         A 2D array where each row is a cluster center.
     """
-    indices = np.random.choice(X.shape[0], num_clusters, replace=False)
+    rng = np.random.default_rng(random_state)
+    indices = rng.choice(X.shape[0], size=num_clusters, replace=False)
     centroids = X[indices]
 
     for _ in range(max_iter):
@@ -471,7 +481,7 @@ def kmeans_vectorized(
 
         centroids = new_centroids
 
-    return centroids  # type: ignore[no-any-return]
+    return centroids
 
 
 def display_results(

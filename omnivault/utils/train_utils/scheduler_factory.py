@@ -4,8 +4,9 @@ version."""
 from __future__ import annotations
 
 import math
-from enum import Enum
-from typing import Any, Dict, Type
+from collections.abc import Callable
+from enum import Enum, StrEnum
+from typing import Any, Dict
 
 import torch
 from transformers import (
@@ -19,13 +20,13 @@ from transformers import (
 )
 
 
-class ExplicitEnum(str, Enum):
+class ExplicitEnum(StrEnum):
     """
     Enum with more explicit error message for missing values.
     """
 
     @classmethod
-    def _missing_(cls: Type[Enum], value: object) -> Enum:
+    def _missing_(cls: type[Enum], value: object) -> Enum:
         raise ValueError(
             f"{value} is not a valid {cls.__name__}, please select one of {list(cls._value2member_map_.keys())}"
         )
@@ -45,7 +46,7 @@ class SchedulerType(ExplicitEnum):
 
 
 # transformers/optimization.py
-TYPE_TO_SCHEDULER_FUNCTION: Dict[SchedulerType, Type[torch.optim.lr_scheduler._LRScheduler]] = {
+TYPE_TO_SCHEDULER_FUNCTION: Dict[SchedulerType, Callable[..., torch.optim.lr_scheduler.LRScheduler]] = {
     SchedulerType.LINEAR: get_linear_schedule_with_warmup,
     SchedulerType.COSINE: get_cosine_schedule_with_warmup,
     SchedulerType.COSINE_WITH_RESTARTS: get_cosine_with_hard_restarts_schedule_with_warmup,
@@ -69,7 +70,7 @@ def get_scheduler(
     num_warmup_steps: int | None = None,
     num_training_steps: int | None = None,
     scheduler_specific_kwargs: Dict[str, Any] | None = None,
-) -> torch.optim.lr_scheduler._LRScheduler:
+) -> torch.optim.lr_scheduler.LRScheduler:
     """
     Unified API to get any scheduler from its name.
 
@@ -102,16 +103,16 @@ def get_scheduler(
         raise ValueError(f"{name} requires `num_warmup_steps`, please provide that argument.")
 
     if name == SchedulerType.CONSTANT_WITH_WARMUP:
-        return schedule_func(optimizer, num_warmup_steps=num_warmup_steps)  # type: ignore[call-arg]
+        return schedule_func(optimizer, num_warmup_steps=num_warmup_steps)
 
     if name == SchedulerType.INVERSE_SQRT:
-        return schedule_func(optimizer, num_warmup_steps=num_warmup_steps)  # type: ignore[call-arg]
+        return schedule_func(optimizer, num_warmup_steps=num_warmup_steps)
 
     # All other schedulers require `num_training_steps`
     if num_training_steps is None:
         raise ValueError(f"{name} requires `num_training_steps`, please provide that argument.")
 
-    return schedule_func(  # type: ignore[call-arg]
+    return schedule_func(
         optimizer,
         num_warmup_steps=num_warmup_steps,
         num_training_steps=num_training_steps,

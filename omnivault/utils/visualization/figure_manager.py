@@ -5,7 +5,7 @@ process of figure and axes creation and customization in matplotlib, making
 it easier to create and manage plots in a reusable manner.
 """
 
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Union
 
 import matplotlib.pyplot as plt
 
@@ -22,9 +22,9 @@ class FigureManager:
 
     def __init__(
         self,
-        fig: Optional[plt.Figure] = None,
-        ax: Optional[plt.Axes] = None,
-        ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
+        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
     ) -> None:
         # fmt: off
         self.fig       = fig or plt.gcf()
@@ -49,7 +49,7 @@ class FigureManager:
         if self.fig:
             self.fig.show()
         else:
-            plt.show()  # type: ignore[no-untyped-call]
+            plt.show()
 
     def save(
         self,
@@ -59,4 +59,4 @@ class FigureManager:
         format: str = "svg",
         **kwargs: Any,
     ) -> None:
-        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)  # type: ignore[arg-type]
+        self.fig.savefig(path, dpi=dpi, format=format, **kwargs)

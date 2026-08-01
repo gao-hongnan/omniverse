@@ -2,7 +2,7 @@ from typing import Any, Tuple
 
 import numpy as np
 import pytest
-import scipy.spatial.distance  # type: ignore[import-untyped]
+import scipy.spatial.distance
 from _pytest.fixtures import FixtureRequest
 from numpy.typing import NDArray
 
@@ -41,7 +41,7 @@ def test_manhattan_distance(request: FixtureRequest, fixture: str) -> None:
     assert manhattan_distance(x_1, x_2) == expected, f"{fixture} test failed"
 
 
-@pytest.mark.parametrize(argnames="fixture,squared", argvalues=[("vectors_1d", True), ("vectors_1d", False)])
+@pytest.mark.parametrize(argnames=("fixture", "squared"), argvalues=[("vectors_1d", True), ("vectors_1d", False)])
 def test_euclidean_distance_squared(request: FixtureRequest, fixture: str, squared: bool) -> None:
     x_1, x_2 = request.getfixturevalue(fixture)
     expected = scipy.spatial.distance.minkowski(x_1, x_2, p=2)
@@ -70,6 +70,6 @@ def test_cosine_similarity_zero_vector_error(request: FixtureRequest, fixture: s
     x_1, x_2 = request.getfixturevalue(fixture)
     with pytest.raises(ValueError) as exc_info:
         cosine_similarity(x_1, x_2)
-    assert "Cosine similarity is undefined for zero-length vectors." in str(
-        exc_info.value
-    ), "Error message does not match expected text"
+    assert "Cosine similarity is undefined for zero-length vectors." in str(exc_info.value), (
+        "Error message does not match expected text"
+    )

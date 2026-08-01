@@ -35,7 +35,7 @@ def save_rng_state(save_dir: str, epoch_index: int) -> None:
         "torch_random_state": torch.random.get_rng_state(),
         "epoch_index": epoch_index,
     }
-    if torch.cuda.is_available() and torch.cuda.is_initialized():  # type: ignore[no-untyped-call]
+    if torch.cuda.is_available() and torch.cuda.is_initialized():
         # This will not be compatible with model parallelism
         rng_state["cuda"] = torch.cuda.get_rng_state()
 
@@ -63,7 +63,10 @@ def load_and_set_rng_state(rng_state_path: str) -> Dict[str, Any]:
         module (`numpy_random_state`), PyTorch's global RNG (`torch_random_state`),
         and, if applicable, PyTorch's CUDA RNG state (`cuda_rng_state`).
     """
-    rng_state: Dict[str, Any] = torch.load(rng_state_path)  # nosec B614  # trusted local RNG snapshot produced by save_rng_state
+    # `weights_only=True` (torch>=2.6's default) cannot be used: an RNG snapshot
+    # stores NumPy's state tuple and Python's `random` state, which the safe
+    # unpickler rejects. Only load snapshots produced by `save_rng_state`.
+    rng_state: Dict[str, Any] = torch.load(rng_state_path, weights_only=False)  # nosec B614  # trusted local RNG snapshot produced by save_rng_state
 
     random.setstate(rng_state["python_random_state"])
     np.random.set_state(rng_state["numpy_random_state"])  # noqa: NPY002

@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Tuple, Union
 
 import torch
 from torch import nn
@@ -89,8 +89,8 @@ class LayerNorm(nn.Module):
         normalized_shape: Union[int, Tuple[int, ...]],
         eps: float = 1e-5,
         elementwise_affine: bool = True,
-        device: Optional[Union[_device, str, None]] = None,
-        dtype: Optional[_dtype] = None,
+        device: Union[None, _device, str] = None,
+        dtype: _dtype | None = None,
     ) -> None:
         super().__init__()
         factory_kwargs = {"device": device, "dtype": dtype}
@@ -243,8 +243,8 @@ class RMSNorm(nn.Module):
         self,
         d_model: int,
         eps: float = 1e-5,
-        device: Optional[Union[_device, str, None]] = None,
-        dtype: Optional[_dtype] = None,
+        device: Union[None, _device, str] = None,
+        dtype: _dtype | None = None,
     ) -> None:
         super().__init__()
 

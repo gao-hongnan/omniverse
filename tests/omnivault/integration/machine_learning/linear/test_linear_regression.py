@@ -15,6 +15,7 @@ problem.
 
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 from sklearn.datasets import make_regression
 from sklearn.linear_model import LinearRegression as SklearnLinearRegression
 from sklearn.model_selection import train_test_split
@@ -26,13 +27,14 @@ from omnivault.machine_learning.linear.linear_regression import LinearRegression
 @pytest.mark.parametrize("solver", ["Closed Form Solution", "Batch Gradient Descent"])
 def test_linear_regression_vs_sklearn(n_features: int, solver: str) -> None:
     # Generate synthetic data
-    X, y = make_regression(
-        n_samples=1000,
-        n_features=n_features,
-        noise=0.1,
-        random_state=1992,
-    )
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3, random_state=1930)
+    dataset = make_regression(n_samples=1000, n_features=n_features, noise=0.1, random_state=1992)
+    X: NDArray[np.float64] = np.asarray(dataset[0], dtype=np.float64)
+    y: NDArray[np.float64] = np.asarray(dataset[1], dtype=np.float64)
+    split = train_test_split(X, y, test_size=0.3, random_state=1930)
+    X_train: NDArray[np.float64] = np.asarray(split[0], dtype=np.float64)
+    X_val: NDArray[np.float64] = np.asarray(split[1], dtype=np.float64)
+    y_train: NDArray[np.float64] = np.asarray(split[2], dtype=np.float64)
+    y_val: NDArray[np.float64] = np.asarray(split[3], dtype=np.float64)
 
     # Fit custom model
     lr_custom = CustomLinearRegression(

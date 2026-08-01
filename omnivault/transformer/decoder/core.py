@@ -362,28 +362,28 @@ class GPTDecoder(BaseDecoder):
         # not batched! It is a single sequence of tokens so in order for it to be compatible
         # with the model, we need to expand the first dimension to 1 - making it a batch.
         if isinstance(starting_tokens, list):
-            starting_tokens = cast(torch.LongTensor, torch.as_tensor(starting_tokens, dtype=torch.long)[None, ...])
-
-        if starting_tokens.dim() == 1:
-            starting_tokens = cast(torch.LongTensor, torch.as_tensor(starting_tokens, dtype=torch.long)[None, ...])  # type: ignore[no-redef]
-        assert starting_tokens.dim() == 2, "starting_tokens must be a 1D or 2D tensor"
+            tokens = torch.as_tensor(starting_tokens, dtype=torch.long)
+        else:
+            tokens = starting_tokens
+        assert isinstance(tokens, torch.Tensor)
+        if tokens.dim() == 1:
+            tokens = tokens.unsqueeze(0)
+        assert tokens.dim() == 2, "starting_tokens must be a 1D or 2D tensor"
 
         for _ in range(max_tokens):
             # if the sequence context is growing too long we must crop it at context_length
-            starting_tokens_cropped = (
-                starting_tokens[:, -self.config.context_length :]
-                if starting_tokens.size(1) > self.config.context_length
-                else starting_tokens
+            tokens_cropped = (
+                tokens[:, -self.config.context_length :] if tokens.size(1) > self.config.context_length else tokens
             )
 
-            batch_size = starting_tokens_cropped.size(0)
-            seq_len = starting_tokens_cropped.size(1)  # this must be less than or equal to self.config.context_length
+            batch_size = tokens_cropped.size(0)
+            seq_len = tokens_cropped.size(1)  # this must be less than or equal to self.config.context_length
 
             target_padding_masks = construct_dummy_batch_target_padding_masks(batch_size, seq_len)
             future_masks = construct_dummy_batch_future_masks(batch_size, seq_len)
 
             logits = self(
-                starting_tokens_cropped,
+                tokens_cropped,
                 target_padding_masks=target_padding_masks,
                 future_masks=future_masks,
             )
@@ -441,5 +441,5 @@ class GPTDecoder(BaseDecoder):
 
             # append the next token to the input tokens, aka append sampled index
             # to the running sequence context and continue the generation
-            starting_tokens = torch.cat([starting_tokens, next_token], dim=1)  # type: ignore[assignment]
-        return starting_tokens
+            tokens = torch.cat([tokens, next_token], dim=1)
+        return cast(torch.LongTensor, tokens)

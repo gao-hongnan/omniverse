@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, Iterable, Iterator, List, overload
+from typing import Iterable, Iterator, List, overload
 
 from omnivault._types._generic import T
 
 
-class Stack(ABC, Generic[T]):
+class Stack[T](ABC):
     """
     This interface defines the contract for a stack data structure.
     """

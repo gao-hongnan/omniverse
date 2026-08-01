@@ -28,7 +28,7 @@ this to support vectorized plotting.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Sequence
 
 import matplotlib.pyplot as plt
 
@@ -56,8 +56,8 @@ def add_text_annotations(
     vectors: Sequence[Vec],
     include_endpoint_label: bool = True,
     include_vector_label: bool = True,
-    endpoint_kwargs: Optional[Dict[str, Any]] = None,
-    vector_kwargs: Optional[Dict[str, Any]] = None,
+    endpoint_kwargs: Dict[str, Any] | None = None,
+    vector_kwargs: Dict[str, Any] | None = None,
 ) -> None:
     endpoint_kwargs = endpoint_kwargs or {"fontsize": 12}
     vector_kwargs = vector_kwargs or {"fontsize": 12}
@@ -98,10 +98,10 @@ def add_text_annotations(
 class VectorPlotter2D(VectorPlotter[Vector2D]):
     def __init__(
         self,
-        fig: Optional[plt.Figure] = None,
-        ax: Optional[plt.Axes] = None,
-        ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
-        quiver_kwargs: Optional[Dict[str, Any]] = None,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
+        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
+        quiver_kwargs: Dict[str, Any] | None = None,
     ) -> None:
         super().__init__(fig, ax, ax_kwargs)
 
@@ -122,7 +122,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         x: float,
         y: float,
         text: str,
-        z: Optional[float] = None,  # noqa: ARG002
+        z: float | None = None,  # noqa: ARG002
         fontsize: int = 16,
         **kwargs: Any,
     ) -> None:
@@ -133,7 +133,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         x: float,
         y: float,
         text: str,
-        arrow_props: Optional[Dict[str, Any]] = None,
+        arrow_props: Dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         self.ax.annotate(
@@ -142,7 +142,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
             xytext=(x, y),
             arrowprops=arrow_props,
             fontsize=16,
-            **kwargs,  # type: ignore[arg-type]
+            **kwargs,
         )
 
     def add_vector(self, vector: Vector2D) -> None:
@@ -166,14 +166,14 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
 
 
 class VectorPlotter3D(VectorPlotter[Vector3D]):
-    from mpl_toolkits.mplot3d import Axes3D  # type: ignore[import-untyped]
+    from mpl_toolkits.mplot3d import Axes3D
 
     def __init__(
         self,
-        fig: Optional[plt.Figure] = None,
-        ax: Optional[plt.Axes] = None,
-        ax_kwargs: Optional[Dict[str, Dict[str, Any]]] = None,
-        quiver_kwargs: Optional[Dict[str, Any]] = None,
+        fig: plt.Figure | None = None,
+        ax: plt.Axes | None = None,
+        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
+        quiver_kwargs: Dict[str, Any] | None = None,
     ) -> None:
         super().__init__(fig, ax, ax_kwargs)
 
@@ -197,7 +197,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         x: float,
         y: float,
         text: str,
-        z: Optional[float] = None,
+        z: float | None = None,
         fontsize: int = 16,
         **kwargs: Any,
     ) -> None:
@@ -209,7 +209,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         y: float,
         z: float,
         text: str,
-        arrow_props: Optional[Dict[str, Any]] = None,
+        arrow_props: Dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         self.ax.annotate(
@@ -218,7 +218,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
             xytext=(x, y, z),  # type: ignore[arg-type]
             arrowprops=arrow_props,
             fontsize=16,
-            **kwargs,  # type: ignore[arg-type]
+            **kwargs,
         )
 
     def add_vector(self, vector: Vector3D) -> None:

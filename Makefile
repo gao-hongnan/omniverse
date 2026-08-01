@@ -12,8 +12,8 @@ SOURCES := $(PACKAGE_NAME) $(TEST_DIR)
 .PHONY: install
 install: .uv
 	uv sync --frozen --all-extras --all-packages --all-groups
-	uv run pre-commit install
-	uv run pre-commit install --hook-type commit-msg
+	uv run prek install --overwrite
+	uv run prek install --hook-type commit-msg --overwrite
 
 .PHONY: lock
 lock: .uv

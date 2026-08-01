@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Optional, Tuple, TypeVar
+from typing import Any, List, Tuple, TypeVar, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,13 +17,13 @@ logger = logging.getLogger(__name__)
 TEstimator = TypeVar("TEstimator", bound=BaseEstimator)
 
 
-def run_classifier(
+def run_classifier[TEstimator: BaseEstimator](
     estimator: TEstimator,  # this type hint is the same name as scikit-learn
     X: NDArray[np.floating[Any]],
     y: NDArray[np.floating[Any]],
     test_size: float = 0.2,
     random_state: int = 1992,
-    class_names: Optional[List[str]] = None,
+    class_names: List[str] | None = None,
 ) -> TEstimator:
     """Run a generic classifier on a dataset and returns the fitted classifier."""
 
@@ -51,15 +51,15 @@ def run_classifier(
 
     logger.info(f"Train Classification report: \n{train_report}")
     logger.info("")
-    print_mislabeled_points(y_train, y_preds_train)
+    print_mislabeled_points(cast(NDArray[np.floating[Any]], y_train), cast(NDArray[np.floating[Any]], y_preds_train))
     logger.info("")
     logger.info(f"Test Classification report: \n{test_report}")
-    print_mislabeled_points(y_test, y_preds_test)
+    print_mislabeled_points(cast(NDArray[np.floating[Any]], y_test), cast(NDArray[np.floating[Any]], y_preds_test))
 
     return estimator
 
 
-def plot_classifier_decision_boundary(
+def plot_classifier_decision_boundary[TEstimator: BaseEstimator](
     estimator: TEstimator, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
 ) -> None:
     """Plot the decision boundary of a classifier."""
@@ -122,10 +122,10 @@ def plot_decision_regions(
     y: NDArray[np.floating[Any]],
     classifier: BaseEstimator,
     # test_idx: Optional[int] = None,
-    markers: Optional[Tuple[str, ...]] = None,
-    colors: Optional[Tuple[str, ...]] = None,
-    cmap: Optional[ListedColormap] = None,
-    ax: Optional[plt.Axes] = None,
+    markers: Tuple[str, ...] | None = None,
+    colors: Tuple[str, ...] | None = None,
+    cmap: ListedColormap | None = None,
+    ax: plt.Axes | None = None,
     **kwargs: Any,
 ) -> None:
     """Plot decision regions.

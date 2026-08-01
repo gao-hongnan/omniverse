@@ -2,7 +2,7 @@ import functools
 import inspect
 from collections.abc import Container, Iterable, Sized
 from functools import lru_cache
-from typing import Any, Generic, Iterator, Protocol, TypeVar, cast, overload
+from typing import Any, Iterator, Protocol, TypeVar, cast, overload
 
 # NOTE: inside frostbound
 
@@ -25,7 +25,7 @@ class SupportsGetItem(Protocol):
     def __getitem__(self, key: Any) -> Any: ...
 
 
-"""Methods that are considered safe (non-mutating) for common container types"""
+# Methods that are considered safe (non-mutating) for common container types
 _SAFE_LIST_METHODS = frozenset(["__iter__", "__len__", "__contains__", "__getitem__", "count", "index"])
 _SAFE_DICT_METHODS = frozenset(
     [
@@ -42,7 +42,7 @@ _SAFE_DICT_METHODS = frozenset(
 _SAFE_SET_METHODS = frozenset(["__iter__", "__len__", "__contains__", "issubset", "issuperset"])
 
 
-class ImmutableT(Generic[T_co]):
+class ImmutableT[T_co: Any]:
     """Type for immutable proxy objects that wrap another object."""
 
     _obj: T_co
@@ -348,7 +348,7 @@ class ImmutableProxy(ImmutableT[T_co]):
         return obj
 
 
-def make_immutable(obj: T) -> ImmutableT[T]:
+def make_immutable[T](obj: T) -> ImmutableT[T]:
     """Create an immutable view of a mutable object.
 
     This is a convenience function for creating ImmutableProxy instances.

@@ -775,7 +775,7 @@ $$
                 \vdots & \vdots & \vdots & \vdots & \vdots \\
                 1 &  x_1^{(m)} & x_2^{(m)} & \cdots & x_n^{(m)} \end{bmatrix}_{m \times (n+1)} \begin{bmatrix} \beta_0 \\ \beta_ 1 \\ \beta_2 \\ \vdots \\ \beta_n\end{bmatrix}_{(n+1) \times 1} + \begin{bmatrix} \varepsilon^{(1)} \\ \varepsilon^{(2)} \\ \varepsilon^{(3)} \\ \vdots \\ \varepsilon^{(m)} \end{bmatrix}_{m \times 1}$$
 
-We then write the above system of linear equations more compactly as **y** = **Xβ** + $\boldsymbol{\varepsilon}$   where $ε\sim^{\text{i.i.d}}N(0, σ^2)$ recovering back the equation at the start.
+We then write the above system of linear equations more compactly as **y** = **Xβ** + $\boldsymbol{\varepsilon}$   where $\varepsilon \sim^{\text{i.i.d}}N(0, \sigma^2)$ recovering back the equation at the start.
 
 In what follows, we will restate some definitions again, and use the matrix representation
 in {eq}`eq-linear-regression-matrix-2` to derive the closed-form solution for the coefficients $\boldsymbol{\beta}$.
@@ -902,9 +902,7 @@ optimal weight vector $\hat{\boldsymbol{\beta}}$ by taking the derivative of the
 We now formulate the optimization problem in terms of the objective function.
 
 $$
-\begin{alignat}{1}
-\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) &= \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2
 $$ (eq-linear-regression-objective-function-1)
 
 where $\boldsymbol{\Theta}$ is the set of all possible weight vectors $\boldsymbol{\beta}$.
@@ -912,9 +910,7 @@ where $\boldsymbol{\Theta}$ is the set of all possible weight vectors $\boldsymb
 Equivalently, we are finding the below:
 
 $$
-\begin{alignat}{1}
-\hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+\hat{\boldsymbol{\beta}} = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2
 $$ (eq-linear-regression-objective-function-2)
 
 where $\hat{\boldsymbol{\beta}}$ is the optimal estimate of the weight vector $\boldsymbol{\beta}$.
@@ -1041,9 +1037,7 @@ $$
 We will minimize {eq}`eq-linear-regression-objective-function-1` with respect to $\boldsymbol{\beta}$.
 
 $$
-\begin{alignat}{1}
-\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) &= \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+\underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2
 $$
 
 With some matrix calculus, we can derive that:
@@ -1202,20 +1196,18 @@ Since likelihood function, we can maximize it to find the optimal parameters $\h
 Recall in the objective function in {eq}`eq-linear-regression-objective-function-2` below, we are minimizing the cost function.
 
 $$
-\begin{alignat}{1}
-\hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} &\quad&\widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2 \\
-\end{alignat}
+\hat{\boldsymbol{\beta}} = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \widehat{\mathcal{J}}\left(\boldsymbol{\beta} \mid \mathcal{S}\right) = \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{1}{N} \left\| \mathbf{y} - \mathbf{X} \boldsymbol{\beta} \right\|_2^2
 $$
 
 To do the same, instead of maximizing the log-likelihood function, we can minimize the negative log-likelihood function,
 which yields the same optimal parameters.
 
 $$
-\begin{alignat}{1}
+\begin{aligned}
 \hat{\boldsymbol{\beta}} &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmax}} \quad \log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\
 &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad -\log \mathcal{L}(\boldsymbol{\beta} \mid \mathcal{S}) \\
 &= \underset{\boldsymbol{\beta} \in \boldsymbol{\Theta}}{\operatorname{argmin}} \quad \frac{N}{2} \log \left(2 \pi \sigma^2\right) + \frac{1}{2 \sigma^2} \left\|\mathbf{y} - \mathbf{X} \boldsymbol{\beta}\right\|_2^2 \\
-\end{alignat}
+\end{aligned}
 $$ (eq-linear-regression-maximum-likelihood-estimation-1)
 
 We seek to find the optimal parameters $\hat{\boldsymbol{\beta}}$ that minimize the negative log-likelihood function.

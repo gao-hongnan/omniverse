@@ -1,7 +1,7 @@
 # pytest tests/omnivault/unit/_types/test_sentinel.py -v
 import threading
 from threading import Thread
-from typing import Generic, List
+from typing import List
 
 from omnivault._types._generic import T
 from omnivault._types._sentinel import Singleton
@@ -14,7 +14,7 @@ class SingletonExample(metaclass=Singleton):
         self.value: int = 0
 
 
-class GenericSingleton(Generic[T], metaclass=Singleton):
+class GenericSingleton[T](metaclass=Singleton):
     """Generic singleton class for testing type parameters."""
 
     def __init__(self, value: T) -> None:
@@ -134,5 +134,7 @@ def test_singleton_metaclass_instances() -> None:
     """Test the singleton metaclass instance storage."""
     singleton_instance = SingletonExample()
     metaclass_instance = type(singleton_instance)
-    assert isinstance(metaclass_instance._instances, dict)
+    # `_instances` is declared on the generic metaclass `Singleton[T]`; reading it off
+    # the class object is what this test asserts, which pyright flags as ambiguous.
+    assert isinstance(metaclass_instance._instances, dict)  # pyright: ignore[reportGeneralTypeIssues]
     assert isinstance(metaclass_instance._lock, type(threading.Lock()))

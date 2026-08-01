@@ -24,7 +24,7 @@ class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lo
     constants: MaybeConstant = Field(default_factory=MaybeConstant)
     logger: LoggerConfig = Field(default_factory=LoggerConfig)
     global_: MaybeGlobal = Field(default_factory=MaybeGlobal)
-    data: DataConfig = Field(default_factory=DataConfig)
+    data: DataConfig = Field(default_factory=lambda: DataConfig())
     model: Union[DecoderConfig, Missing] = Field(default=MISSING, description="The model config.")
     optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
     criterion: Union[CriterionConfig, Missing] = Field(default=MISSING, description="The criterion config.")

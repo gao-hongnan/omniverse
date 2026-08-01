@@ -97,6 +97,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         sequences = [line.strip() for line in file]
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
+    valid_dataset = None
+    test_dataset = None
     if composer.data.split:
         train_dataset, valid_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
@@ -120,6 +122,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         collate_fn_config=composer.data.collate_fn,
     )
 
+    valid_loader = None
+    test_loader = None
     if valid_dataset is not None:
         valid_loader = create_loader(
             dataset=valid_dataset,
@@ -143,7 +147,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
         assert hasattr(composer.optimizer, "weight_decay")
         optimizer = optimizer_pydantic_config.build(
             params=apply_weight_decay_to_different_param_groups(
-                model=model, weight_decay=composer.optimizer.weight_decay
+                model=model,
+                weight_decay=getattr(composer.optimizer, "weight_decay"),  # noqa: B009  # dynamic OptimizerConfig field not visible to pyright; getattr keeps it sound
             )
         )
     else:
@@ -159,12 +164,14 @@ def main(cfg: DictConfig | ListConfig) -> None:
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
-    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)  # noqa: E731
+    # `composer.model` is `model_pydantic_config` (see Composer construction above);
+    # reading it directly keeps `d_model` visible instead of the widened Missing union.
+    noam = lambda step: noam_lr_decay(step, d_model=model_pydantic_config.d_model, warmup_steps=warmup_steps)  # noqa: E731
 
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
 
     if issubclass(scheduler_config_cls, LambdaLRConfig):
-        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)  # pyright: ignore[reportCallIssue]  # pydantic lr_lambda field not resolved by pyright via DynamicClassFactory
     else:
         scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
 
@@ -187,7 +194,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     loaded_state = State.load_snapshots(
         filepath=resume_from_state_path,
-        device=device,  # type: ignore[arg-type]
+        device=device,
         model=model,
         criterion=criterion,
         optimizer=optimizer,
@@ -199,7 +206,7 @@ def main(cfg: DictConfig | ListConfig) -> None:
         state=loaded_state,
         composer=composer,
         logger=logger,
-        device=device,  # type: ignore[arg-type]
+        device=device,
         resume_from_rng_path=resume_from_rng_state_path,
     )
     trainer.add_callback(

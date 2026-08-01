@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import functools
 import logging
-from typing import Any, Callable, List, Optional, TypeVar
+from typing import Any, Callable, List, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
@@ -35,7 +35,9 @@ P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def not_fitted(func: Callable[Concatenate[LinearRegression, P], T]) -> Callable[Concatenate[LinearRegression, P], T]:
+def not_fitted[**P, T](
+    func: Callable[Concatenate[LinearRegression, P], T],
+) -> Callable[Concatenate[LinearRegression, P], T]:
     @functools.wraps(func)
     def wrapper(self: LinearRegression, *args: P.args, **kwargs: P.kwargs) -> T:
         if not self._fitted:
@@ -84,10 +86,10 @@ class LinearRegression(BaseEstimator):
         has_intercept: bool = True,
         solver: str = "Closed Form Solution",
         learning_rate: float = 0.1,
-        loss_function: Optional[Any] = None,
-        regularization: Optional[str] = None,
-        C: Optional[float] = None,
-        num_epochs: Optional[int] = 1000,
+        loss_function: Any | None = None,
+        regularization: str | None = None,
+        C: float | None = None,
+        num_epochs: int | None = 1000,
     ) -> None:
         """
         Initialize the Linear Regression model with specified parameters.
@@ -138,7 +140,7 @@ class LinearRegression(BaseEstimator):
 
     @staticmethod
     def l2_loss(y_true: NDArray[np.floating[Any]], y_pred: NDArray[np.floating[Any]]) -> float:
-        return np.square(y_true - y_pred).mean()  # type: ignore[no-any-return]
+        return np.square(y_true - y_pred).mean()
 
     def _add_regularization(self, loss: float, w: NDArray[np.floating[Any]]) -> float:
         """
@@ -271,6 +273,8 @@ class LinearRegression(BaseEstimator):
                             gradient[1:] += self.C * np.sign(self.optimal_betas[1:])
                         self.optimal_betas -= self.learning_rate * gradient
                     continue  # Skip the rest of the loop for SGD
+                else:
+                    raise ValueError(f"Unsupported solver: {self.solver!r}")
 
                 error = y_pred - y_true
                 loss = self.loss_function(y_true=y_true, y_pred=y_pred)

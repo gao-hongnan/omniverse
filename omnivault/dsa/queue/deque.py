@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import MutableSequence
-from typing import Generic, Iterable, List, cast, overload
+from typing import Iterable, List, cast, overload
 
 from omnivault._types._generic import T
 
@@ -11,7 +11,7 @@ from omnivault._types._generic import T
 # TODO: this is the "more formal" version, compare with from queue import Queue also
 
 
-class Deque(MutableSequence[T], Generic[T]):
+class Deque[T](MutableSequence[T]):
     def __init__(self, iterable: Iterable[T] | None = None, maxlen: int | None = None):
         self.maxlen = maxlen
         self._data = list(iterable) if iterable is not None else []
@@ -19,12 +19,12 @@ class Deque(MutableSequence[T], Generic[T]):
         if self.maxlen is not None and len(self._data) > self.maxlen:
             self._data = self._data[-self.maxlen :]
 
-    def append(self, item: T) -> None:
+    def append(self, value: T) -> None:
         if self.maxlen is None or len(self._data) < self.maxlen:
-            self._data.append(item)
+            self._data.append(value)
         else:
             self._data.pop(0)
-            self._data.append(item)
+            self._data.append(value)
 
     def appendleft(self, item: T) -> None:
         if self.maxlen is None or len(self._data) < self.maxlen:
@@ -62,7 +62,7 @@ class Deque(MutableSequence[T], Generic[T]):
 
     def __setitem__(self, index: int | slice, value: T | Iterable[T]) -> None:
         if isinstance(index, slice):
-            self._data[index] = list(value) if hasattr(value, "__iter__") else [value]
+            self._data[index] = list(value) if isinstance(value, Iterable) else [value]
         else:
             self._data[index] = cast(T, value)
 

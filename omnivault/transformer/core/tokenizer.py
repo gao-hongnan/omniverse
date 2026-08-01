@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from typing import Generic, List, TypeVar, Union
+from typing import List, TypeVar, Union
 
 import torch
 
@@ -11,7 +11,7 @@ from omnivault.transformer.core.vocabulary import AdderVocabulary, TextCharacter
 Vocabulary_t = TypeVar("Vocabulary_t", bound=Vocabulary)
 
 
-class Tokenizer(ABC, Generic[Vocabulary_t]):
+class Tokenizer[Vocabulary_t: Vocabulary](ABC):
     def __init__(self, vocabulary: Vocabulary):
         self.vocabulary = vocabulary
 

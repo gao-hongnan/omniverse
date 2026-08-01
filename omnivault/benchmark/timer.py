@@ -13,7 +13,7 @@ import time
 import timeit
 import types
 from contextlib import contextmanager
-from typing import Any, Callable, Coroutine, Dict, Generator, Generic, Tuple, Type, TypeVar, cast, overload
+from typing import Any, Callable, Coroutine, Dict, Generator, Tuple, Type, TypeVar, cast, overload
 
 import psutil
 from pydantic import BaseModel
@@ -35,7 +35,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-class SyncAsyncDecoratorFactory(Generic[P, T]):
+class SyncAsyncDecoratorFactory[**P, T]:
     """
     Factory creates decorator which can wrap either a coroutine or function.
     To return something from wrapper use self._return
@@ -54,9 +54,7 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
         cls: Type[SyncAsyncDecoratorFactory[P, T]], func: Callable[P, T]
     ) -> SyncAsyncDecoratorFactory[P, T]: ...
 
-    def __new__(
-        cls: Type[SyncAsyncDecoratorFactory[P, T]], *args: Any, **kwargs: Any
-    ) -> SyncAsyncDecoratorFactory[P, T]:
+    def __new__(cls: type[Self], *args: Any, **kwargs: Any) -> SyncAsyncDecoratorFactory[P, T]:
         instance = super().__new__(cls)
         if len(args) == 1 and not kwargs and (inspect.iscoroutinefunction(args[0]) or inspect.isfunction(args[0])):
             instance.__init__()  # type: ignore[misc]
@@ -64,7 +62,7 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
         return cast(SyncAsyncDecoratorFactory[P, T], instance)
 
     @contextmanager
-    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[Tuple[P.args, P.kwargs] | None, None, None]:  # type: ignore[valid-type]  # PEP 612: ParamSpec not valid in Tuple
+    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[Tuple[P.args, P.kwargs] | None]:  # type: ignore[valid-type]  # PEP 612: ParamSpec not valid in Tuple
         raise NotImplementedError
 
     @classmethod
@@ -72,8 +70,7 @@ class SyncAsyncDecoratorFactory(Generic[P, T]):
         raise cls.ReturnValue(value)
 
     @overload
-    def __call__(self, func: Callable[P, T]) -> Callable[P, T]:  # type: ignore[misc]
-        ...
+    def __call__(self, func: Callable[P, T]) -> Callable[P, T]: ...
 
     @overload
     def __call__(self, func: Callable[P, Coroutine[Any, Any, T]]) -> Callable[P, Coroutine[Any, Any, T]]: ...
@@ -112,7 +109,7 @@ class TimerDecorator(SyncAsyncDecoratorFactory[P, T]):
     """This decorator might be too complicated, for learning purposes only."""
 
     @contextmanager
-    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[None, None, None]:
+    def wrapper(self, *args: P.args, **kwargs: P.kwargs) -> Generator[None]:
         start_time = timeit.default_timer()
         yield
         end_time = timeit.default_timer()

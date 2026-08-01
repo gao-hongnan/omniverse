@@ -349,15 +349,15 @@ def collate_fn(
     )
 
     # future mask has shape (L, L) but we want it to be (B, L, L) then (B, 1, L, L)
-    future_masks: torch.BoolTensor = torch.stack(future_masks)  # type: ignore[assignment,no-redef]
+    future_masks_stacked: torch.BoolTensor = torch.stack(future_masks)  # type: ignore[assignment]
 
-    future_masks_expanded = future_masks.expand(batch_size, -1, -1).unsqueeze(1)  # type: ignore[attr-defined]
+    future_masks_expanded = future_masks_stacked.expand(batch_size, -1, -1).unsqueeze(1)
     return cast(
         AdderDatasetYield, (inputs_padded, targets_padded, padding_masks_padded_and_expanded, future_masks_expanded)
     )
 
 
-def create_loader(
+def create_loader[Dataset_co: DatasetYield](
     dataset: Dataset[Dataset_co],
     loader_config: Dict[str, Any],
     collate_fn_config: Dict[str, Any] | NotGiven = NOT_GIVEN,
@@ -374,7 +374,7 @@ def create_loader(
     )
 
 
-def split_dataset(
+def split_dataset[Dataset_co: DatasetYield](
     dataset: Dataset[Dataset_co], split: List[float], seed: int
 ) -> Tuple[
     Subset[DatasetYield], Subset[DatasetYield], Subset[DatasetYield]

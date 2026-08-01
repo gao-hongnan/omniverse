@@ -56,7 +56,7 @@ def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Lo
     return logger
 
 
-def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str, None, None]:
+def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str]:
     temp_dir = tempfile.mkdtemp()
 
     try:
@@ -116,9 +116,9 @@ def validate_and_cleanup(
         logger = get_default_logger()
 
     try:
-        assert (
-            state_1 == state_2
-        ), "If this fails, then the loaded state has a different checkpoint from the last state of Trainer."
+        assert state_1 == state_2, (
+            "If this fails, then the loaded state has a different checkpoint from the last state of Trainer."
+        )
     except AssertionError as err:
         logger.exception(err)
     finally:

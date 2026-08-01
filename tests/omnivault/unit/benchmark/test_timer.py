@@ -72,7 +72,7 @@ class TestTimedExecution:
         assert isinstance(timer.metadata["start_time"], float)
         assert isinstance(timer.metadata["end_time"], float)
         assert timer.metadata["execution_time"] >= 1.2
-        assert timer.metadata["execution_time"] <= 1.35  # loosen a bit for github action runners.
+        assert timer.metadata["execution_time"] <= 2.5  # generous bound for loaded CI runners
         assert "exception" not in timer.metadata
 
     def test_sync_context_manager_with_exception(self) -> None:

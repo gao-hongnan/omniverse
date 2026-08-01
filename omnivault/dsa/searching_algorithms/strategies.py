@@ -152,21 +152,21 @@ class RecursiveBinarySearchExactMatch(Search):
     def search(self, container: Sequence[Real], target: Real) -> int:
         """Search for a target from a sorted array container."""
 
-        def recursive(l: NonNegativeInt, r: NonNegativeInt) -> Union[NonNegativeInt, Literal[-1]]:
-            if l > r:  # base case
+        def recursive(left: NonNegativeInt, right: NonNegativeInt) -> Union[NonNegativeInt, Literal[-1]]:
+            if left > right:  # base case
                 return -1
 
-            mid_index = self.mid_strategy(l, r)
+            mid_index = self.mid_strategy(left, right)
 
             if container[mid_index] < target:
-                return recursive(l=mid_index + 1, r=r)
+                return recursive(left=mid_index + 1, right=right)
             elif container[mid_index] > target:
-                return recursive(l=l, r=mid_index - 1)
+                return recursive(left=left, right=mid_index - 1)
             else:  # base case
                 return mid_index
 
-        l, r = 0, len(container) - 1
-        return recursive(l, r)
+        left, right = 0, len(container) - 1
+        return recursive(left, right)
 
     def mid_strategy(self, left: NonNegativeInt, right: NonNegativeInt) -> NonNegativeInt:
         """Strategy for calculating the middle index."""

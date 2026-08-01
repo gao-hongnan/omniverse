@@ -7,7 +7,7 @@ from omnivault.transformer.projects.adder.snapshot import ADDER_GROUND_TRUTH, Ad
 
 
 @pytest.mark.parametrize(
-    argnames="sequence,expected_tokens",
+    argnames=("sequence", "expected_tokens"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.tokenized_sequences, strict=False)),
 )
 def test_adder_tokenizer_tokenize(adder_tokenizer: AdderTokenizer, sequence: str, expected_tokens: List[str]) -> None:
@@ -19,7 +19,7 @@ def test_adder_tokenizer_tokenize(adder_tokenizer: AdderTokenizer, sequence: str
 
 
 @pytest.mark.parametrize(
-    argnames="sequence,expected_encoded",
+    argnames=("sequence", "expected_encoded"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.sequences, ADDER_GROUND_TRUTH.encoded_sequences, strict=False)),
 )
 def test_adder_tokenizer_encode(adder_tokenizer: AdderTokenizer, sequence: str, expected_encoded: List[int]) -> None:
@@ -31,7 +31,7 @@ def test_adder_tokenizer_encode(adder_tokenizer: AdderTokenizer, sequence: str, 
 
 
 @pytest.mark.parametrize(
-    argnames="encoded_sequence,expected_decoded",
+    argnames=("encoded_sequence", "expected_decoded"),
     argvalues=list(zip(ADDER_GROUND_TRUTH.encoded_sequences, ADDER_GROUND_TRUTH.decoded_sequences, strict=False)),
 )
 def test_adder_tokenizer_decode(

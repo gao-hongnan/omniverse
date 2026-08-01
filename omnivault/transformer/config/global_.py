@@ -18,5 +18,5 @@ class MaybeGlobal(BaseModel):
     @classmethod
     def seed_non_negative_and_within_32_bit_unsigned_integer(cls: Type[MaybeGlobal], v: int) -> int:
         if not (0 <= v <= 2**32 - 1):
-            raise ValueError(f"Seed must be within 0 and {2 ** 32 - 1} inclusive.")
+            raise ValueError(f"Seed must be within 0 and {2**32 - 1} inclusive.")
         return v

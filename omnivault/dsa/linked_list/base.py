@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Generic, Iterator, Protocol, Sequence, TypeVar, runtime_checkable
+from typing import Any, Iterator, Protocol, Sequence, runtime_checkable
 
 from pydantic import BaseModel
 
@@ -18,10 +18,7 @@ class LinkedNode(Protocol[T]):
     value: T
 
 
-N = TypeVar("N", bound=LinkedNode[Any])  # Node type variable
-
-
-class SinglyNode(BaseModel, Generic[T]):
+class SinglyNode[T](BaseModel):
     """Concrete implementation of a singly-linked node.
 
     A node implementation for singly linked lists that contains value and a reference
@@ -50,7 +47,7 @@ class SinglyNode(BaseModel, Generic[T]):
     next: SinglyNode[T] | None = None
 
 
-class DoublyNode(BaseModel, Generic[T]):
+class DoublyNode[T](BaseModel):
     """Concrete implementation of a doubly-linked node.
 
     A node implementation for doubly linked lists that contains value and references
@@ -103,7 +100,7 @@ class LinkedListProtocol(Protocol[T]):
     def clear(self) -> None: ...
 
 
-class AbstractLinkedList(ABC, Generic[T, N]):
+class AbstractLinkedList[T, N: LinkedNode[Any]](ABC):
     """
     Abstract base class for linked list implementations.
 
@@ -147,7 +144,7 @@ class AbstractLinkedList(ABC, Generic[T, N]):
     def traverse(self) -> str:
         """Traverse through each node in the linked list and return a string."""
 
-    def add_multiple_nodes(self) -> None:
+    def add_multiple_nodes(self) -> None:  # noqa: B027  # optional override hook; no-op default is intentional.
         """Add multiple nodes to the linked list.
         Useful when initializing a linked list with multiple values."""
 

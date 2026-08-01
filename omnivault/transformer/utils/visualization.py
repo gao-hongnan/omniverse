@@ -33,7 +33,7 @@ def save_plot_history(history: Dict[str, List[float]], plot: bool = False, save_
     plt.tight_layout()
 
     if plot:
-        plt.show()  # type: ignore[no-untyped-call]
+        plt.show()
 
     if save_path is not None:
         plt.savefig(save_path, bbox_inches="tight", dpi=300)
@@ -147,7 +147,7 @@ def show_attention_heatmaps(
 
     fig.subplots_adjust(wspace=0.2, hspace=0.2)  # Adjust subplot spacing
 
-    plt.show()  # type: ignore[no-untyped-call]
+    plt.show()
 
     assert isinstance(fig, plt.Figure)
     return fig

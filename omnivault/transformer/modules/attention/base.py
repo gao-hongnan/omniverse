@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple
+from typing import Tuple
 
 import torch
 from torch import nn
@@ -35,7 +35,7 @@ class Attention(ABC, nn.Module):
         query: torch.Tensor,
         key: torch.Tensor,
         value: torch.Tensor,
-        mask: Optional[torch.BoolTensor] = None,
+        mask: torch.BoolTensor | None = None,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Perform the forward pass for the attention mechanism."""
         raise NotImplementedError("The `forward` method must be implemented by the subclass.")

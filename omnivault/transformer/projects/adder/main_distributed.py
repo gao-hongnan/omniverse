@@ -17,6 +17,8 @@ from torch.distributed import destroy_process_group
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler
 
+from omnivault._types._alias import Missing
+from omnivault._types._sentinel import MISSING
 from omnivault.distributed.core import find_free_port, is_free_port
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
@@ -52,7 +54,9 @@ warnings.filterwarnings("ignore", category=UserWarning)  # usually related to de
 def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     """Main driver."""
     distributed_config = DistributedConfig(**cfg.distributed)
-    logger, dist_info_per_process = init_process(local_rank, args=distributed_config)
+    # `init_process` annotates `args` as `argparse.Namespace` but only reads
+    # nnodes/nproc_per_node/node_rank/world_size, all of which DistributedConfig provides.
+    logger, dist_info_per_process = init_process(local_rank, args=distributed_config)  # pyright: ignore[reportArgumentType]
     logger.info(f"{dist_info_per_process.model_dump_json(indent=4)}")
     is_distributed = dist_info_per_process.world_size > 1  # guardrail to handle if not ddp mode
 
@@ -97,11 +101,17 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
         generator=generator_config,
         distributed=distributed_config,
     )
+    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
+    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
+    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
 
+    assert composer.data.dataset_path is not None
     with open(composer.data.dataset_path, "r") as file:
         sequences = [line.strip() for line in file]
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
+    valid_dataset = None
+    test_dataset = None
     if composer.data.split:
         train_dataset, valid_dataset, test_dataset = split_dataset(
             dataset=dataset, split=composer.data.split, seed=composer.global_.seed
@@ -122,12 +132,21 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     data.train_loader["sampler"] = train_sampler
     data.train_loader["shuffle"] = train_sampler is None  # Need false for ddp
 
+    # `create_loader` expects non-None loader configs and collate_fn; assert so the
+    # optional fields narrow (mirrors `main.py`).
+    assert composer.data.train_loader is not None
+    assert composer.data.valid_loader is not None
+    assert composer.data.test_loader is not None
+    assert composer.data.collate_fn is not None
+
     train_loader = create_loader(
         dataset=train_dataset,
         loader_config=composer.data.train_loader,
         collate_fn_config=composer.data.collate_fn,
     )
 
+    valid_loader = None
+    test_loader = None
     if valid_dataset is not None:
         valid_loader = create_loader(
             dataset=valid_dataset,
@@ -157,7 +176,8 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
         assert hasattr(composer.optimizer, "weight_decay")
         optimizer = optimizer_pydantic_config.build(
             params=apply_weight_decay_to_different_param_groups(
-                model=model, weight_decay=composer.optimizer.weight_decay
+                model=model,
+                weight_decay=getattr(composer.optimizer, "weight_decay"),  # noqa: B009  # dynamic OptimizerConfig field not visible to pyright; getattr keeps it sound
             )
         )
     else:
@@ -173,12 +193,14 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     warmup_steps = 3 * len(train_loader)
 
     # lr first increases in the warmup steps, and then decays
-    noam = lambda step: noam_lr_decay(step, d_model=composer.model.d_model, warmup_steps=warmup_steps)  # noqa: E731
+    # `composer.model` is `model_pydantic_config` (see Composer construction above);
+    # reading it directly keeps `d_model` visible instead of the widened Missing union.
+    noam = lambda step: noam_lr_decay(step, d_model=model_pydantic_config.d_model, warmup_steps=warmup_steps)  # noqa: E731
 
     scheduler_config_cls = SCHEDULER_REGISTRY[cfg.scheduler.name]
 
     if issubclass(scheduler_config_cls, LambdaLRConfig):
-        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)
+        scheduler_pydantic_config = scheduler_config_cls(lr_lambda=noam, **cfg.scheduler)  # pyright: ignore[reportCallIssue]  # pydantic lr_lambda field not resolved by pyright via DynamicClassFactory
     else:
         scheduler_pydantic_config = scheduler_config_cls(**cfg.scheduler)  # type: ignore[assignment]
 

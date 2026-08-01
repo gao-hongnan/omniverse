@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional, Tuple
+from typing import Tuple
 
 import numpy as np
 
@@ -12,8 +12,8 @@ class Vector:
 
     origin: Tuple[float, ...]
     direction: Tuple[float, ...]
-    color: Optional[str] = "black"
-    label: Optional[str] = None
+    color: str | None = "black"
+    label: str | None = None
 
     def __len__(self) -> int:
         """Return the dimension of the vector."""

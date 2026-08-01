@@ -63,9 +63,7 @@ def apply_weight_decay_to_different_param_groups(
             elif parameter_name.endswith("weight") and isinstance(module, blacklist_weight_modules):
                 # weights of blacklisted modules are not decayed
                 no_decay.add(full_parameter_name)
-            elif (parameter_name.endswith("gamma") or parameter_name.endswith("beta")) and isinstance(
-                module, LayerNorm
-            ):
+            elif (parameter_name.endswith(("gamma", "beta"))) and isinstance(module, LayerNorm):
                 # weights of LayerNorm modules are not decayed
                 # TODO: why do I need to do this is because my custom LayerNorm has gamma and beta
                 # as their "weight" and "bias" attributes, respectively.
@@ -77,9 +75,9 @@ def apply_weight_decay_to_different_param_groups(
     inter_params = decay & no_decay
     union_params = decay | no_decay
     assert not inter_params, f"Parameters {inter_params} are in both decay and no_decay sets."
-    assert not (
-        param_dict.keys() - union_params
-    ), f"Parameters {param_dict.keys() - union_params} were not categorized."
+    assert not (param_dict.keys() - union_params), (
+        f"Parameters {param_dict.keys() - union_params} were not categorized."
+    )
 
     optim_groups: List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]] = [
         {"params": [param_dict[parameter_name] for parameter_name in sorted(decay)], "weight_decay": weight_decay},

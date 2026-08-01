@@ -1,13 +1,13 @@
 import importlib
 from types import ModuleType
-from typing import Dict, Generic, Tuple, Type
+from typing import Dict, Tuple, Type
 
 from pydantic import BaseModel, Field
 
 from omnivault._types._generic import DynamicClass, T, V
 
 
-class DynamicClassFactory(BaseModel, Generic[DynamicClass]):
+class DynamicClassFactory[DynamicClass](BaseModel):
     r"""
     A factory class for dynamic instantiation of classes based on a configuration.
 

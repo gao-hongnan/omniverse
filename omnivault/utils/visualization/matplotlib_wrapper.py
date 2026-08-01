@@ -5,10 +5,9 @@ TODO
 2. Integrate with FigureManager.
 """
 
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union
 
 import matplotlib.pyplot as plt
-import mpl_toolkits
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.collections import PathCollection
@@ -16,6 +15,7 @@ from matplotlib.container import BarContainer
 from matplotlib.lines import Line2D
 from matplotlib.quiver import Quiver
 from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Line3DCollection
 from numpy.typing import NDArray
 
 
@@ -35,10 +35,10 @@ def plot_quiver(
     y: NDArray[np.float64],
     u: NDArray[np.float64],
     v: NDArray[np.float64],
-    z: Optional[NDArray[np.float64]] = None,  # For 3D
-    w: Optional[NDArray[np.float64]] = None,  # For 3D
+    z: NDArray[np.float64] | None = None,  # For 3D
+    w: NDArray[np.float64] | None = None,  # For 3D
     **kwargs: Any,
-) -> Union[Quiver, mpl_toolkits.mplot3d.art3d.Line3DCollection]:
+) -> Union[Quiver, Line3DCollection]:
     """Plot quiver (2D or 3D depending on the ax type)."""
     if isinstance(ax, Axes3D):
         if z is None or w is None:

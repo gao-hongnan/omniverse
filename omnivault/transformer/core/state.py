@@ -103,8 +103,18 @@ class State(BaseModel):
         optimizer: torch.optim.Optimizer,
         scheduler: torch.optim.lr_scheduler.LRScheduler,
     ) -> State:
-        """Load state dictionaries from a file and return a new State instance."""
-        state = torch.load(filepath, map_location=device)  # nosec B614  # trusted local checkpoint produced by this repo
+        """Load state dictionaries from a file and return a new State instance.
+
+        Warnings
+        --------
+        This unpickles arbitrary Python objects and must only be pointed at a
+        checkpoint produced by :meth:`save_snapshots`, never at an untrusted file.
+        ``weights_only=True`` (torch>=2.6's default) cannot be used here because a
+        snapshot deliberately stores non-tensor state -- ``history`` is a
+        ``defaultdict`` and ``vocabulary``/``tokenizer`` are project-specific
+        classes -- none of which are allowlisted by the safe unpickler.
+        """
+        state = torch.load(filepath, map_location=device, weights_only=False)  # nosec B614  # trusted local checkpoint produced by this repo
 
         epoch_index = state["epoch_index"]
         train_batch_index = state["train_batch_index"]
