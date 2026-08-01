@@ -13,7 +13,7 @@ To run the script with command-line arguments:
 
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass, field
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 import rich
 from rich.pretty import pprint
@@ -67,7 +67,7 @@ def quicksort(items: List[Product], key: Callable[[Product], float]) -> List[Pro
     return quicksort(less_than_pivot, key) + [pivot] + quicksort(greater_than_pivot, key)
 
 
-def find_product_by_id(inventory: Inventory, product_id: int, high_traffic: bool = False) -> Optional[Product]:
+def find_product_by_id(inventory: Inventory, product_id: int, high_traffic: bool = False) -> Product | None:
     """Finds a product in the inventory by its ID."""
     if high_traffic:
         inventory.items = quicksort(inventory.items, key=lambda product: product.id)
@@ -99,7 +99,7 @@ def parse_args() -> Namespace:
     return parser.parse_args()
 
 
-def main() -> Optional[Product]:
+def main() -> Product | None:
     """Main driver."""
     args = parse_args()
     # Creating an instance of Inventory
