@@ -4,6 +4,7 @@ import torch
 
 from omnivault.transformer.config.composer import DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
+from omnivault.transformer.config.data import DatasetSource
 from omnivault.transformer.core.dataset import AdderDataset, AdderDatasetYield
 from omnivault.transformer.core.tokenizer import AdderTokenizer
 from omnivault.transformer.core.vocabulary import AdderVocabulary
@@ -244,9 +245,9 @@ data = DataConfig(
 )
 
 
-assert data.dataset_url is not None
-assert data.dataset_name is not None
-sequences = list(download_and_read_sequences(url=data.dataset_url, dataset_name=data.dataset_name))
+source = DatasetSource.from_data_config(data)
+
+sequences = list(download_and_read_sequences(url=source.dataset_url, dataset_name=source.dataset_name))
 adder_dataset_ = AdderDataset(
     data=sequences, tokenizer=adder_tokenizer_
 )  # NOTE: for end2end test, so load a small dataset here.

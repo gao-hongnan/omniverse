@@ -79,3 +79,26 @@ class DataConfig(BaseModel):
             return {}
         else:
             return v
+
+
+class DatasetSource(BaseModel):
+    """The fully-specified source of a dataset.
+
+    Extracted from a ``DataConfig`` at project entrypoints that download or
+    read a dataset, so a missing source field fails fast with a
+    ``ValidationError`` naming the field and every downstream read is
+    honestly typed ``str`` with no narrowing.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    dataset_name: str
+    dataset_path: str
+    dataset_dir: str
+    dataset_url: str
+
+    @classmethod
+    def from_data_config(cls: type[Self], data: DataConfig) -> Self:
+        return cls.model_validate(
+            data.model_dump(include={"dataset_name", "dataset_path", "dataset_dir", "dataset_url"})
+        )

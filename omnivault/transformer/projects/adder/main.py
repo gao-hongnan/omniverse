@@ -1,5 +1,4 @@
 import copy
-import logging
 import sys
 import time
 import warnings
@@ -18,6 +17,7 @@ from omnivault.core.logger import RichLogger
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
+from omnivault.transformer.config.data import DatasetSource
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.generator import GeneratorConfig
 from omnivault.transformer.config.global_ import MaybeGlobal
@@ -57,20 +57,24 @@ def evaluate_and_generate_on_valid_epoch_end(
     assert generator_config.greedy is True, "We should use greedy generation for this task in particular."
 
     vocabulary = trainer.state.vocabulary
-    assert isinstance(vocabulary, AdderVocabulary)
+    if not isinstance(vocabulary, AdderVocabulary):
+        raise TypeError(f"adder evaluation requires an AdderVocabulary, got {type(vocabulary).__name__}")
 
     tokenizer = trainer.state.tokenizer
-    assert isinstance(tokenizer, AdderTokenizer)
+    if not isinstance(tokenizer, AdderTokenizer):
+        raise TypeError(f"adder evaluation requires an AdderTokenizer, got {type(tokenizer).__name__}")
 
     EQUAL = vocabulary.token_to_index[vocabulary.EQUAL]
     EOS = vocabulary.token_to_index[vocabulary.EOS]
 
     model = trainer.model_or_module
-    assert isinstance(model, GPTDecoder)
+    if not isinstance(model, GPTDecoder):
+        raise TypeError(f"adder evaluation requires a GPTDecoder, got {type(model).__name__}")
     model.eval()
 
     dataloader = trainer.test_loader
-    assert dataloader is not None
+    if dataloader is None:
+        raise ValueError("adder evaluation requires trainer.test_loader to be configured")
     total_samples = 0
     num_batches = len(dataloader)
 
@@ -171,13 +175,10 @@ def main(cfg: DictConfig | ListConfig) -> None:
 
     # logger
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
-    assert isinstance(logger, logging.Logger)
 
-    assert data.dataset_dir is not None
-    assert data.dataset_url is not None
-    assert data.dataset_path is not None
-    create_directory(data.dataset_dir)
-    download_file(url=data.dataset_url, output_path=data.dataset_path)
+    source = DatasetSource.from_data_config(data)
+    create_directory(source.dataset_dir)
+    download_file(url=source.dataset_url, output_path=source.dataset_path)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
@@ -204,17 +205,19 @@ def main(cfg: DictConfig | ListConfig) -> None:
         trainer=trainer_config,
         generator=generator_config,
     )
-    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
-    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
-    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
+    if (
+        isinstance(composer.model, Missing)
+        or isinstance(composer.optimizer, Missing)
+        or isinstance(composer.criterion, Missing)
+    ):
+        raise ValueError("model, optimizer and criterion configs are required")
 
     # Bind to a local so pyright keeps the narrowed type over the long distance
     # to where ``d_model`` is read below.
     model_config = composer.model
 
     # TODO: consider classmethod from file_path
-    assert composer.data.dataset_path is not None
-    with open(composer.data.dataset_path, "r") as file:
+    with open(source.dataset_path, "r") as file:
         sequences = [line.strip() for line in file]
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
@@ -228,14 +231,13 @@ def main(cfg: DictConfig | ListConfig) -> None:
         # no need to cater to mypy as either Subset or Dataset is fine.
         train_dataset = dataset  # type: ignore[assignment]
 
-    # you do these asserts to make sure that the loaders are not None
-    # because create loader expects non-None loaders and collate_fn.
-    # if you don't do these asserts, mypy cannot guarantee that the loaders are not None
-    # so they cannot infer properly.
-    assert composer.data.train_loader is not None
-    assert composer.data.valid_loader is not None
-    assert composer.data.test_loader is not None
-    assert composer.data.collate_fn is not None
+    if (
+        composer.data.train_loader is None
+        or composer.data.valid_loader is None
+        or composer.data.test_loader is None
+        or composer.data.collate_fn is None
+    ):
+        raise ValueError("adder training requires train, valid and test loader configs and a collate_fn config")
 
     train_loader = create_loader(
         dataset=train_dataset,

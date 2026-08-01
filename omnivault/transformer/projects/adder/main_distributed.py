@@ -17,11 +17,11 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler
 
 from omnivault._types._alias import Missing
-from omnivault._types._sentinel import MISSING
 from omnivault.distributed.core import find_free_port, is_free_port
 from omnivault.transformer.config.composer import Composer, DataConfig
 from omnivault.transformer.config.constants import MaybeConstant
 from omnivault.transformer.config.criterion import CRITERION_REGISTRY
+from omnivault.transformer.config.data import DatasetSource
 from omnivault.transformer.config.decoder import DecoderConfig
 from omnivault.transformer.config.distributed import DistributedConfig
 from omnivault.transformer.config.generator import GeneratorConfig
@@ -71,11 +71,9 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     trainer_config = TrainerConfig(**cfg.trainer)
     generator_config = GeneratorConfig(**cfg.generator)
 
-    assert data.dataset_dir is not None
-    assert data.dataset_url is not None
-    assert data.dataset_path is not None
-    create_directory(data.dataset_dir)
-    download_file(url=data.dataset_url, output_path=data.dataset_path)
+    source = DatasetSource.from_data_config(data)
+    create_directory(source.dataset_dir)
+    download_file(url=source.dataset_url, output_path=source.dataset_path)
 
     vocabulary = AdderVocabulary.from_tokens(tokens=constants.TOKENS, num_digits=constants.NUM_DIGITS)  # type: ignore[attr-defined]
     tokenizer = AdderTokenizer(vocabulary=vocabulary)
@@ -103,12 +101,14 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
         generator=generator_config,
         distributed=distributed_config,
     )
-    assert composer.model is not MISSING and not isinstance(composer.model, Missing)
-    assert composer.optimizer is not MISSING and not isinstance(composer.optimizer, Missing)
-    assert composer.criterion is not MISSING and not isinstance(composer.criterion, Missing)
+    if (
+        isinstance(composer.model, Missing)
+        or isinstance(composer.optimizer, Missing)
+        or isinstance(composer.criterion, Missing)
+    ):
+        raise ValueError("model, optimizer and criterion configs are required")
 
-    assert composer.data.dataset_path is not None
-    with open(composer.data.dataset_path, "r") as file:
+    with open(source.dataset_path, "r") as file:
         sequences = [line.strip() for line in file]
 
     dataset = AdderDataset(data=sequences, tokenizer=tokenizer)
@@ -134,12 +134,13 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     data.train_loader["sampler"] = train_sampler
     data.train_loader["shuffle"] = train_sampler is None  # Need false for ddp
 
-    # `create_loader` expects non-None loader configs and collate_fn; assert so the
-    # optional fields narrow (mirrors `main.py`).
-    assert composer.data.train_loader is not None
-    assert composer.data.valid_loader is not None
-    assert composer.data.test_loader is not None
-    assert composer.data.collate_fn is not None
+    if (
+        composer.data.train_loader is None
+        or composer.data.valid_loader is None
+        or composer.data.test_loader is None
+        or composer.data.collate_fn is None
+    ):
+        raise ValueError("adder training requires train, valid and test loader configs and a collate_fn config")
 
     train_loader = create_loader(
         dataset=train_dataset,
