@@ -57,7 +57,6 @@ class StepLRConfig(SchedulerConfig):
     step_size: int
     gamma: float = 0.1
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.CosineAnnealingLR")
@@ -65,7 +64,6 @@ class CosineAnnealingLRConfig(SchedulerConfig):
     T_max: int
     eta_min: float = 0
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.CosineAnnealingWarmRestarts")
@@ -79,7 +77,6 @@ class CosineAnnealingWarmRestartsConfig(SchedulerConfig):
     T_mult: int = 1
     eta_min: float = 0
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.OneCycleLR")
@@ -106,7 +103,6 @@ class OneCycleLRConfig(SchedulerConfig):
     final_div_factor: float = 10000.0
     three_phase: bool = False
     last_epoch: int = -1
-    verbose: bool = False
 
 
 @register_scheduler("torch.optim.lr_scheduler.LambdaLR")
