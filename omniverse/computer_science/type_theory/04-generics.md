@@ -13,9 +13,18 @@ kernelspec:
     display_name: Python 3
     language: python
     name: python3
+myst:
+    html_meta:
+        "description lang=en":
+            "Generics in Python let one class or function serve every type
+            without Any: PEP 695, type variables, and parameterized types,
+            with mypy and pyright evidence."
+        "keywords":
+            "python, generics, type variables, PEP 695, TypeVar,
+            parameterized types"
 ---
 
-# Generics and Type Variables
+# Generics in Python: Type Variables and Parameterized Types
 
 [![Twitter Handle](https://img.shields.io/badge/Twitter-@gaohongnan-blue?style=social&logo=twitter)](https://twitter.com/gaohongnan)
 [![LinkedIn Profile](https://img.shields.io/badge/@gaohongnan-blue?style=social&logo=linkedin)](https://linkedin.com/in/gao-hongnan)
@@ -32,73 +41,70 @@ kernelspec:
 
 %config InlineBackend.figure_format = 'svg'
 
-from __future__ import annotations
-
-import math
-from typing import Generator, List, Union, Any, Generic, Literal, TypeVar, Dict, Tuple, TYPE_CHECKING
-from typing_extensions import reveal_type
-from rich.pretty import pprint
+from dataclasses import dataclass
+from typing import Any
 ```
 
-This article is closely aligned with and draws inspiration from the materials
-provided in
-[Unit 20: Generics](https://nus-cs2030s.github.io/2021-s2/20-generics.html) of
-the CS2030S course at the National University of Singapore. Some sections have
-been adapted and rephrased for clarity and context, in particular translating
-the Java code to Python.
+A `Pair` class that holds two `int`s takes five lines. The moment you need a
+pair of `float`s, a pair of `str`s, or a `str`-and-`int` pair, Python offers
+a bad menu: copy the class once per element type, or annotate the fields as
+`Any` and watch every checker guarantee evaporate. This chapter is about the
+third option — **generics**, definitions written against types you have not
+chosen yet.
 
-## The Motivation
+We stage the failure first: an `Any`-typed `Pair` that both checkers wave
+through while it silently computes `"164"` where `20` was intended. Then the
+repair in Python 3.14's modern syntax from
+[PEP 695](https://peps.python.org/pep-0695/) — `class Pair[S, T]:`,
+`def first[T](items: list[T]) -> T:` — the vocabulary of type variables,
+parameters, and arguments, and the formal view of `list[int]` as a type
+constructor applied to a type. A clearly labeled section then covers the
+legacy `TypeVar`/`Generic` spelling you will keep meeting in real code.
 
-In some scenarios, crafting a simple class to aggregate a duo of variables
-proves beneficial, especially when a method needs to output two distinct values.
-Consider, for instance, the `IntPair` class, which groups two integer variables.
-This class serves merely as a utility, lacking any complex semantics or methods,
-and thus, its internal workings are left exposed for simplicity.
+By the end you can write generic functions and classes that the checkers
+enforce, read both checkers' diagnostics about them — including where the two
+disagree — and see exactly where a bare type parameter runs out of power,
+the problem the next chapter's bounds and constraints exist to solve.
+
+```{admonition} Prerequisites
+:class: note
+
+This chapter uses the subtype relation $S <: T$ ("an $S$ can stand in for a
+$T$") from {doc}`Subtypes <01-subtypes>` and the substitution criterion from
+{doc}`Subsumption <03-subsumption>`. The checker silence we stage below is
+gradual typing at work, covered in {doc}`Type Safety <02-type-safety>`. Every
+piece of checker output on this page comes from `mypy 2.2.0` (run with
+`--strict`) and `pyright 1.1.411` (standard mode, except one output labeled
+as strict) on Python 3.14.
+```
+
+## Why Not Just Use `Any`?
+
+Start with the smallest useful aggregate: a class that carries two values,
+so a function can return both a minimum and a maximum at once.
 
 ```{code-cell} ipython3
-from dataclasses import dataclass
-
 @dataclass
 class IntPair:
     first: int
     second: int
 
-    def get_first(self) -> int:
-        return self.first
 
-    def get_second(self) -> int:
-        return self.second
+def min_max(values: list[int]) -> IntPair:
+    return IntPair(min(values), max(values))
+
+
+print(min_max([3, 1, 4, 1, 5]))
 ```
 
-Such a class is ideal for use cases like a function that needs to return a pair
-of integers, exemplified by a hypothetical `find_min_max` function that
-determines the minimum and maximum values in an array of integers. However, this
-raises a question: what if the need arises to identify the minimum and maximum
-in an array of floats?
+`IntPair` does its one job well — and does exactly one job. The day you need
+the extremes of a list of floats, you need a `FloatPair`; lexicographic
+extremes of strings, a `StrPair`; a username with its numeric id, yet another
+class. Every copy has the same body; only the annotations change. The logic
+was never `int`-specific, but the class is.
 
-```{code-cell} ipython3
-def find_min_max(array: List[int]) -> IntPair:
-    min_val = sys.maxsize  # Largest possible int
-    max_val = -sys.maxsize - 1  # Smallest possible int
-
-    for num in array:
-        if num < min_val:
-            min_val = num
-        if num > max_val:
-            max_val = num
-
-    return IntPair(min_val, max_val)
-```
-
-To address a broader range of types, one could theorize the creation of
-additional pair classes, such as `DoublePair` for floats or `BooleanPair` for
-booleans. Alternatively, designing a pair class that accommodates a combination
-of different types, like pairing a `Customer` object with a `ServiceCounter`, or
-a string with an integer, could offer more versatility.
-
-However, it's impractical and inefficient to design a separate class for each
-potential type pairing. A more elegant solution is to design a generic pair
-class capable of encapsulating any two types.
+The tempting exit is `Any`, the special type that is compatible with
+everything:
 
 ```{code-cell} ipython3
 @dataclass
@@ -106,805 +112,600 @@ class Pair:
     first: Any
     second: Any
 
-    def get_first(self) -> Any:
-        return self.first
 
-    def get_second(self) -> Any:
-        return self.second
+pair = Pair("16", "4")  # strings slipped in where ints were intended
+total: int = pair.first + pair.second
+print(total, type(total).__name__)
 ```
 
-This generic `Pair` class can encompass any two types designated upon its
-instantiation, providing a versatile structure that can hold any value types,
-mirroring the flexibility previously applied in methods to accommodate various
-object types.
-
-Nevertheless, this approach is not without its drawbacks, notably the issue of
-type conversion narrowing and the potential for runtime errors. For example, if
-a function mistakenly returns a `Pair` with a string and an integer but treats
-it inversely, static type checking at compile-time won't catch this discrepancy,
-possibly leading to errors or crashes during execution. This highlights the
-importance of careful type management and the limitations of relying solely on
-runtime type identification.
-
-```{code-cell} ipython3
-def create_misleading_pair() -> Pair:
-    """This function creates a Pair with a string and an integer."""
-    return Pair("hello", 4)
-
-def process_misleading_pair(pair: Pair) -> None:
-    """
-    Process elements of the pair, with incorrect assumptions about their types.
-    """
-
-    # The programmer incorrectly assumes the first element is an integer
-    # and the second element is a string.
-    try:
-        first_element = int(pair.get_first())  # Mistakenly assuming it's an int
-        second_element = str(pair.get_second())  # Mistakenly assuming it's a str
-        if TYPE_CHECKING:
-            reveal_type(pair.get_first())
-            reveal_type(pair.get_second())
-            reveal_type(first_element)
-            reveal_type(second_element)
-            reveal_locals()
-
-    except ValueError as err:
-        print(f"Error: {err}")
-
-# Example Usage
-pair = create_misleading_pair()
-process_misleading_pair(pair)
-```
-
-Why does the compiler not be able to detect the type mismatch and stop the
-program from crashing during run-time? In fact, if you run the type checker
-`mypy` on the above code, it will not raise any error. You can also add
-`reveal_type` and `reveal_locals` to the code to see the type of `first_element`
-and `second_element` and the local variables.
+One class now holds any two values — and the printed line is the bill for
+it. The intent was to add `16 + 4` and get `20`; two strings slipped in,
+`+` concatenated them, and a variable annotated `int` now holds the `str`
+`"164"`. No exception was raised, at any point. Collect the same code, with
+two `reveal_type` probes, into `pair_any.py` and both checkers pass it
+wholesale:
 
 ```python
-16: note: Revealed type is "builtins.int"
-17: note: Revealed type is "builtins.str"
-18: note: Revealed local types are:
-18: note:     first_element: builtins.int
-18: note:     pair: Pair
-18: note:     second_element: builtins.str
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass
+class Pair:
+    first: Any
+    second: Any
+
+
+pair = Pair("16", "4")  # strings slipped in where ints were intended
+total: int = pair.first + pair.second
+reveal_type(pair.first)
+reveal_type(total)
 ```
 
-Only when you run the code, then the error occur. What's worse, is that the
-error is silent in both compile and run time.
+`mypy --strict`:
 
-```{code-cell} ipython3
-def create_silent_error_pair() -> Pair:
-    """This function creates a Pair with a string and an integer."""
-    return Pair('16', '4')
-
-def process_silent_error_pair(pair: Pair) -> str:
-    """
-    Process elements of the pair, with incorrect assumptions about their types.
-    """
-
-    try:
-        first_element = str(pair.get_first())
-        second_element = str(pair.get_second())
-        if TYPE_CHECKING:
-            reveal_type(first_element)
-            reveal_type(second_element)
-            reveal_locals()
-
-    except ValueError as err:
-        print(f"Error: {err}")
-
-    return first_element + second_element
+```text
+pair_any.py:13: note: Revealed type is "Any"
+pair_any.py:14: note: Revealed type is "int"
+Success: no issues found in 1 source file
 ```
 
-And what is wrong in this code? The programmer actually wanted to create a pair
-of `int` but mistakenly created a pair of `str` and want to add them together.
-Instead of getting `20`, the result is `164`.
+`pyright`:
 
-Running `mypy` on the above code will not raise any error as well, as they
-inferred "correctly" here.
+```text
+pair_any.py:13:13 - information: Type of "pair.first" is "Any"
+pair_any.py:14:13 - information: Type of "total" is "int"
+0 errors, 0 warnings, 2 informations
+```
 
-The problem here is that `Any` is too "generic" literally. When the programmer
-write the return type of `create_misleading_pair` and `create_silent_error_pair`
-as `Pair`, the there is no type binding to the `Pair` class for the type of
-`first` and `second` attribute.
+Name the phenomenon before fixing it. `Any` does not mean "any type, chosen
+consistently"; it means _unchecked_. It is
+{doc}`gradual typing's <02-type-safety>` escape hatch: a value of static
+type `Any` may flow into a slot of any other type — here, straight into
+`total: int` — without complaint. Worse, the checker then _believes_ the
+annotation: `total` reveals as `int` even though a `str` sits in it at
+runtime, so the false belief propagates to everything downstream.
 
-If there is a way to parameterize the `Pair` class, then the type checker can
-detect the type mismatch and stop the program from crashing during run-time. If
-we can create two _generic_ type variables, `S` and `T`, both not necessarily
-the same, then we can have a contract that the `first` attribute of `Pair` is of
-type `S` and the `second` attribute of `Pair` is of type `T`, then necessarily,
-the return type of `get_first` and `get_second` will be `S` and `T`. If we can
-do that, our problems may be solved.
+What we actually want is to keep the single class but state a contract: the
+first field has _some_ fixed type $S$, the second _some_ fixed type $T$, the
+same $S$ and $T$ every time that particular pair is touched. That requires a
+variable that ranges over types the way an ordinary variable ranges over
+values — a **type variable**.
 
-## Containers are Generics
+```{prf:remark} A type variable is not `Any`
+:label: type-theory-04-generics-remark-typevar-vs-any
 
-Let's defer the solution to the motivation above and first understand some
-practical examples of generics in Python. This is adapted from
-[Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
+Both promise flexibility, but in opposite currencies. A type variable $T$
+stands for a _specific but unspecified_ type: within one use of the
+definition, every occurrence of $T$ refers to the same type, so a checker
+can enforce consistency without knowing what $T$ is. `Any` abandons the
+question: it is compatible with everything in both directions, so every
+occurrence is independent and nothing is enforced. Flexibility via `Any`
+costs the guarantees; flexibility via $T$ keeps them[^pep483-any].
+```
+
+## One Class for Every Type: PEP 695 Type Parameters
+
+Since Python 3.12, [PEP 695](https://peps.python.org/pep-0695/) lets a class
+declare **type parameters** — the type variables it is defined over —
+directly in its header, in square brackets. This is the modern spelling the
+whole series targets:
 
 ```{code-cell} ipython3
 @dataclass
-class Employee:
-    name: str
-    id: int
-
-    def __str__(self) -> str:
-        return f"{self.name} ({self.id})"
-
-    def unique_id(self) -> str:
-        return self.__str__()
-```
-
-Python's list is a dynamic array that can hold any type of object. This has its
-advantages, but it also means that the type of the elements in the list is not
-enforced. This can lead to bugs and errors that are difficult to track down.
-
-For example, consider the following list of dynamic types:
-
-```{code-cell} ipython3
-list_of_dynamic_types: List = [Employee("Alice", 1), 1, "hello", 3.14]
-
-try:
-    for item in list_of_dynamic_types:
-        print(item.__str__())
-        print(item.unique_id())
-except AttributeError as err:
-    print(f"Error: {err}")
-```
-
-In the above code, the `list_of_dynamic_types` contains a mix of `Employee`,
-`int`, `str`, and `float` objects. When we try to call the `__str__` and
-`unique_id` methods on each item in the list, we get an `AttributeError` because
-not all the items in the list have these methods.
-
-To address this issue, we can use Python's type hinting system to specify the
-type of the elements in the list. This will allow the type checker to catch
-errors at compile time, rather than at run time.
-
-```{code-cell} ipython3
-list_of_employees: List[Employee] = [Employee("Alice", 1), Employee("Bob", 2)]
-list_of_ints: List[int] = [1, 2, 3, 4]
-list_of_strings: List[str] = ["hello", "world"]
-
-if TYPE_CHECKING:
-    reveal_type(list_of_employees)  # Revealed type is 'List[Employee]'
-    reveal_type(list_of_ints)  # Revealed type is 'List[int]'
-    reveal_type(list_of_strings)  # Revealed type is 'List[str]'
-
-for employee in list_of_employees:
-    print(employee.unique_id()) # this will not raise any error because mypy knows each employee is of type Employee and has unique_id method
-```
-
-And if you append `Employee` to `list_of_ints`:
-
-```{code-cell} ipython3
-list_of_ints.append(Employee("Charlie", 3))  # Error: Argument 1 to "append" of "list" has incompatible type "Employee"; expected "int"
-```
-
-Running `mypy` will yield:
-
-```bash
-150: error: Argument 1 to "append" of "list" has incompatible type "Employee"; expected "int"  [arg-type]
-    list_of_ints.append(Employee("Charlie", 3))  # Error: Argument 1 to "append" of "list" has incompatible type "Employee"; expected "int"
-```
-
-So why do we say containers are generics? If you notice, when we type hint
-`list_of_employees`, `list_of_ints`, and `list_of_strings`, we are actually
-using a generic type `List` with a type parameter `Employee`, `int`, and `str`
-respectively via `List[Employee]`, `List[int]`, and `List[str]`. This is the
-same as the `Pair` class we defined in the motivation above. The `List` class is
-a generic class that can hold any type of object, and the type parameter
-specifies the type of the elements in the list.
-
-How do we use generics and typevar in this context?
-
-Consider a very simple function that just want to append an `int` element to a
-list and return the list:
-
-```{code-cell} ipython3
-def append_int_and_return_list(list_: List[int], element: int) -> List[int]:
-    list_.append(element)
-    return list_
-
-list_of_ints = [1, 2, 3]
-new_list_of_ints = append_int_and_return_list(list_of_ints, 4)
-print(new_list_of_ints)
-```
-
-and another function that just want to append a `str` element to a list and
-return the list:
-
-```{code-cell} ipython3
-def append_str_and_return_list(list_: List[str], element: str) -> List[str]:
-    list_.append(element)
-    return list_
-
-list_of_strings = ["hello", "world"]
-new_list_of_strings = append_str_and_return_list(list_of_strings, "!")
-print(new_list_of_strings)
-```
-
-The above two functions are very similar, and the only difference is the type of
-the list and the type of the element. We really do not want two functions doing
-the same thing as the `append` method is well defined for the `List` class. We
-can use `Any` as the type of the list and the element, but this will not catch
-type errors at compile time if we silently slip in a `str` to a list of `int` or
-vice versa.
-
-```{code-cell} ipython3
-def append_and_return_list(list_: List[Any], element: Any) -> List[Any]:
-    list_.append(element)
-    return list_
-
-list_of_ints: List[int] = [1, 2, 3]
-new_list_of_ints: List[Any] = append_and_return_list(list_of_ints, "hello")
-print(new_list_of_ints)
-```
-
-In comes the type variable.
-
-```{code-cell} ipython3
-T = TypeVar('T')
-
-def append_and_return_list(list_: List[T], element: T) -> List[T]:
-    list_.append(element)
-    return list_
-
-list_of_ints: List[int] = [1, 2, 3, 4, 5]
-
-# This will cause a mypy error
-new_list_of_ints: List[int] = append_and_return_list(list_=list_of_ints, element="abcedf")
-print(new_list_of_ints)
-```
-
-Running `mypy` on the above code will yield:
-
-```bash
-10: error: Argument "element" to "append_and_return_list" has incompatible type "str"; expected "int"  [arg-type]
-    new_list_of_ints: List[int] = append_and_return_list(list_=list_of_ints, element="abcedf")
-```
-
-By now, we can spot the pattern from the examples above. Our list is a
-container, it is called a generic container because it can hold any type of
-object parameterized by the type parameter/variable `T`. The `T` is a type
-variable, and it is a placeholder for the actual type that will be used when the
-function is called.
-
-`T` _generalizes_ the type in the list: `List[int]`, `List[str]`,
-`List[Employee]`, etc and `T` is called a variable because it is literally a
-_variable of types_. `List[str]` is a _specific_ type, and `List[T]` is a
-_generic_ type that can represent any specific type. Consequently, `List[T]` is
-a _generic type_ and `T` is a _type variable_[^1].
-
-```{prf:remark} Why not just use Any?
-:label: computer-science-type-theory-generics-why-use-t
-
-You might wonder why we use a type variable `T` to denote generality in types,
-rather than simply using `Any`, given that both seem to imply a kind of
-universality. However, there's a crucial distinction between them in terms of
-type safety.
-
-The type variable `T` is generic, meaning it represents a specific but
-unspecified type across the context in which it's used. This specificity allows
-for type consistency within a given scope. For example, if a function is defined
-to accept a list of type `List[T]` and an element of type `T`, `T` will be the
-same type for both the list and the element. This generic but consistent typing
-ensures that the function can operate on a list and an element of the same,
-though unspecified, type, thereby maintaining type safety by preventing type
-mismatches.
-
-On the other hand, `Any` is indeed "more generic" but in a way that bypasses
-type safety checks. Declaring a list as `List[Any]` tells the type checker that
-the list can contain elements of any type, effectively disabling type safety for
-elements of that list. This means that both integers and strings (and any other
-type) can coexist in such a list without raising type errors at compile-time or
-during static analysis. While this provides flexibility, it sacrifices the
-guarantees that come with stricter type checking.
-
-Using `Any` indiscriminately can lead to silent type errors where, for instance,
-a string is accidentally added to a list of integers. The type system won't
-catch this mix-up at compile-time or during static analysis with `mypy`, leading
-to potential runtime errors or bugs that are harder to trace and fix.
-```
-
-You can find another custom example on implementing a stack using generics in
-the
-[Stack - Omniverse](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
-page.
-
-## Generics and Type Variables
-
-### Generics
-
-Generics enable the construction of new, more specific types from abstract type
-definitions by using what are known as **generic type constructors**. These
-constructors operate at the type level, similar to how functions operate at the
-value level.
-
--   **Generic Type**: A generic type is a type definition that includes one or
-    more type variables. It's a template from which concrete types can be
-    constructed. For example, `Tuple[T]` or more broadly `Tuple[T, ...]` (using
-    Python's typing syntax) is the generic type. It's not `Tuple` itself that's
-    the generic type, but rather `Tuple` parameterized with type variables like
-    `T` or with specific types (we usually call the realization of the generic
-    type as a _parameterized type_[^2] (concrete type)).
-
--   **Generic Type Constructor**: This term refers to the mechanism by which
-    generic types like `Tuple[T, ...]` are used to create new, parameterized
-    types. The constructor takes a type (or types) as an argument and "returns"
-    a new parameterized type based on the generic definition. For instance, when
-    you use `Tuple[float, ...]`, you're invoking the generic type constructor of
-    `Tuple` with `float` as the argument, resulting in a new parameterized type
-    that can be thought of as a vector of floats.
-
-Here are two examples illustrating this concept:
-
-1. **Vector Example**: When `Tuple` is parameterized with `float` and an
-   ellipsis (`...`) indicating a variable length, `Tuple[float, ...]` acts as a
-   parameterized type that could represent a mathematical vector of floats. In
-   this scenario, `Tuple[float, ...]` is a parameterized type derived from the
-   generic type `Tuple[T, ...]` by specifying `float` as the type argument.
-
-2. **Registry Example**: Similarly, by parameterizing `Tuple` with another type,
-   such as `UserID` (assuming `UserID` is a type you've defined elsewhere),
-   `Tuple[UserID, ...]` becomes a parameterized type that could represent a
-   registry of user IDs. Again, `Tuple[UserID, ...]` is a parameterized type
-   constructed from the generic type `Tuple[T, ...]` using `UserID` as the type
-   argument.
-
-Such semantics is known as _generic type constructor_, which is similar to the
-semantics of functions, where a function takes a value and returns a value. In
-this case, a generic type constructor takes a type and returns a type[^3].
-
-### Type Variable and Type Parameter
-
-A **type variable** is a placeholder used in generic programming to denote a
-type that is not specified at the point of declaration but will be determined
-later, at the time of use. Type variables allow the definition of generic types
-or functions that can operate on any data type. They are essentially the
-variables of type expressions.
-
-A **type parameter** is similar to a type variable, but the term is often used
-in the context of defining generic classes, interfaces, or methods. The type
-parameter is declared as a part of a generic type or method definition and
-specifies a placeholder that will be replaced with an actual type when the
-generic type is instantiated or the generic method is invoked. It allows for the
-creation of parameterized types or methods where the specific type(s) to be used
-are specified when a class is instantiated or a method is called.
-
-The `T` defined via `TypeVar` is a type variable, and it is a placeholder for
-the actual type that will be used when the function is called. For instance,
-looking at the function below:
-
-```python
-T = TypeVar('T')
-
-def append_and_return_list(list_: List[T], element: T) -> List[T]:
-    list_.append(element)
-    return list_
-```
-
-We do not know what `T` is at the time of defining the function, but we know
-that `T` will be a type of the list and the element when the function is called.
-
-### Type Argument
-
-A **type argument** refers to the concrete type that is supplied in place of a
-type variable or parameter when a generic class, interface, or method is
-actually used. It effectively "fills in" the generic placeholder with a specific
-type, thereby instantiating or invoking the generic entity with that specific
-type. The type argument provides the actual type information that allows the
-generic mechanism to operate on specific data types, ensuring type safety and
-consistency.
-
-For example, in a generic class `List[T]`, if you create a new instance with
-`new List[int]()`, the `int` is the type argument replacing the type parameter
-`T` for that specific instance.
-
-Consider the earlier example of the `append_and_return_list` function:
-
-```python
-T = TypeVar('T')
-
-def append_and_return_list(list_: List[T], element: T) -> List[T]:
-    list_.append(element)
-    return list_
-```
-
-When we invoke this function, we supply type arguments through the types of the
-arguments passed to the function. If we call `append_and_return_list` with a
-list of integers and an integer element:
-
-```python
-list_of_ints: List[int] = [1, 2, 3, 4, 5]
-new_list_of_ints: List[int] = append_and_return_list(list_=list_of_ints, element=6)
-```
-
-In this case, `int` serves as the type argument for `T`. The generic `T` in the
-function's definition is replaced by `int`, making the function operate
-specifically on a list of integers. The type argument ensures that the generic
-function can be applied to a specific data type, in this context, integers,
-thereby tailoring the generic function to a particular use case while preserving
-type safety.
-
-### Pair Problem Revisited
-
-To resolve the issues with the `Pair` class in the motivation, we can use type
-variables to parameterize the `Pair` class. This will allow us to specify the
-types of the `first` and `second` attributes, as well as the return types of the
-`get_first` and `get_second` methods.
-
-```{code-cell} ipython3
-S = TypeVar("S")
-T = TypeVar("T")
-
-@dataclass
-class Pair(Generic[S, T]):
+class Pair[S, T]:
     first: S
     second: T
 
-    def get_first(self) -> S:
-        return self.first
 
-    def get_second(self) -> T:
-        return self.second
-
-def create_misleading_pair() -> Pair[str, int]: # 101: error: Missing type parameters for generic type "Pair"  [type-arg]
-    """This function creates a Pair with a string and an integer."""
-    return Pair("hello", 4)
-
-def process_misleading_pair(pair: Pair[str, int]) -> None:
-    """
-    Process elements of the pair, with incorrect assumptions about their types.
-    """
-
-    # The programmer incorrectly assumes the first element is an integer
-    # and the second element is a string.
-    try:
-        first_element = int(pair.get_first())  # Mistakenly assuming it's an int
-        second_element = str(pair.get_second())  # Mistakenly assuming it's a str
-
-        if TYPE_CHECKING:
-            reveal_type(pair.get_first())
-            reveal_type(pair.get_second())
-            reveal_type(first_element)
-            reveal_type(second_element)
-            reveal_locals()
-
-    except ValueError as err:
-        print(f"Error: {err}")
-
-# Example Usage
-pair = create_misleading_pair()
-process_misleading_pair(pair)
+user = Pair("john_doe", 12345)
+print(user)
 ```
 
-To recap:
+The header `class Pair[S, T]:` introduces two type parameters, `S` and `T`,
+scoped to the class body; the field annotations then _use_ them. The
+runtime behavior is unchanged — the payoff is entirely static. When you
+construct `Pair("john_doe", 12345)`, the checker infers the **type
+arguments** from the constructor call — $S \mapsto$ `str`,
+$T \mapsto$ `int` — and the value gets the **parameterized type**
+`Pair[str, int]`.
 
--   `S` and `T` are type variables/parameters that represent the types of the
-    `first` and `second` attributes, respectively.
--   `Pair[S, T]` is a generic class that is parameterized with `S` and `T`,
-    allowing the `first` and `second` attributes to be of different types.
--   `Pair[str, int]` is a parameterized type that represents a pair of a string
-    and an integer. This just means "subsitution" of `S` and `T` with `str` and
-    `int` respectively, just like how we assign normal variables.
-
-However, `mypy` actually does not raise any issue on line `27` because Python
-allows a string type to be _dynamically converted_ to an integer type if and
-only if the string is a valid "integer" string.
-
-But the example, if set in Java, will allow the type checker to catch the type
-mismatch and stop the program from crashing during run-time. Why? Because Java
-does not allow a string type to be coerced to an integer type. Below I show a
-small snippet of Java code that will raise a `ClassCastException` at run-time.
-
-```java
-public class Main {
-
-    public static void main(String[] args) {
-        // Create a String object
-        String stringValue = "hello";
-
-        // Attempt to cast the String to an Integer
-        Integer intValue = (Integer) stringValue;
-        System.out.println(intValue);
-    }
-}
-```
-
-````{prf:example} I came all the way just for a Moot Example
-:label: computer-science-type-theory-generics-moot-example
-
-I converted the notes of CS2030S from Java to Python, just to reach a moot point
-where the type checker does not raise any issue on line 27. But the point should
-be clear. If we do not parameterize the `Pair` class and use `Any` instead, then
-even in a strongly typed language like Java, the type mismatch may not be caught
-at compile time.
-
-Let's just construct another simple example where `mypy` will actually raise an
-error.
+That inference is exactly what turns the earlier silent bug into a loud one.
+In `pair_generic.py`, a function demands `Pair[str, int]` and the caller
+builds the pair with its arguments swapped:
 
 ```python
-K = TypeVar("K")
-V = TypeVar("V")
+from dataclasses import dataclass
+
 
 @dataclass
-class Pair(Generic[K, V]):
-    key: K
-    value: V
+class Pair[S, T]:
+    first: S
+    second: T
 
-    def get_key(self) -> K:
-        return self.key
 
-    def get_value(self) -> V:
-        return self.value
+def log_user(user: Pair[str, int]) -> None:
+    print(f"User: {user.first}, ID: {user.second}")
 
-def log_user_info(user_info: Pair[str, int]) -> None:
-    """
-    Logs user information, expecting a username (str) and user ID (int).
-    """
-    username: str = user_info.get_key()
-    user_id: int = user_info.get_value()
-    print(f"User: {username}, ID: {user_id}")
 
-def create_incorrect_pair() -> Pair[int, str]:
-    """
-    Incorrectly creates a pair intended to represent user info,
-    but swaps the types of the key and value.
-    """
-    # Mistakenly swapped the order of types, creating a Pair[int, str] instead of Pair[str, int]
-    return Pair(12345, "john_doe")
-
-# Example Usage
-incorrect_pair = create_incorrect_pair()
-log_user_info(user_info=incorrect_pair)
+record = Pair(12345, "john_doe")  # swapped: Pair[int, str]
+reveal_type(record)
+log_user(record)
 ```
 
-Indeed, running `mypy` on the above code will yield:
+`mypy --strict`:
 
-```bash
-33: error: Argument 1 to "log_user_info" has incompatible type "Pair[int, str]"; expected "Pair[str, int]"  [arg-type]
-    log_user_info(incorrect_pair)
+```text
+pair_generic.py:15: note: Revealed type is "pair_generic.Pair[int, str]"
+pair_generic.py:16: error: Argument 1 to "log_user" has incompatible type "Pair[int, str]"; expected "Pair[str, int]"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
 ```
-````
 
-## Scope of Generic Methods and Functions
+`pyright`:
 
-In the course
-[Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html),
-it is written in Java, so there is only mention of generic methods. But in
-Python, we can also define generic functions where the function signature and
-return type (need not be both) are parameterized by type variables.
+```text
+pair_generic.py:15:13 - information: Type of "record" is "Pair[int, str]"
+pair_generic.py:16:10 - error: Argument of type "Pair[int, str]" cannot be assigned to parameter "user" of type "Pair[str, int]" in function "log_user"
+    "Pair[int, str]" is not assignable to "Pair[str, int]"
+      Type parameter "S@Pair" is invariant, but "int" is not the same as "str"
+      Type parameter "T@Pair" is invariant, but "str" is not the same as "int" (reportArgumentType)
+1 error, 0 warnings, 1 information
+```
 
-(computer-science-type-theory-04-generics-generic-functions)=
+The mistake that `Any` let crash — or worse, not crash — at runtime is now
+rejected at static-analysis time. Read pyright's explanation closely: it
+says each type parameter is **invariant**, meaning `Pair[int, str]` and
+`Pair[str, int]` are simply different types, neither substitutable for the
+other. When, if ever, one application of a generic class may stand in for
+another is _variance_, the subject of
+{doc}`Invariance, Covariance and Contravariance <06-invariance-covariance-contravariance>`.
 
-### Generic Functions
+Three terms did the work in this section, and they are worth pinning down —
+they recur through the rest of the series:
 
-It is possible to use `TypeVar` (type variables) to parameterize the types of
-the arguments and return type of a **function** _without_ the need to define a
-`Generic` (generic) class. This is because functions are **_naturally and
-automatically_** scoped to the type variables defined in the function. What does
-that mean?
+| Term           | What it names                                          | In the example                       |
+| -------------- | ------------------------------------------------------ | ------------------------------------ |
+| Type variable  | A variable that ranges over types, not values          | `S`, `T`                             |
+| Type parameter | A type variable declared in a definition's header      | the `[S, T]` in `class Pair[S, T]:`  |
+| Type argument  | The concrete type supplied (or inferred) at a use site | `str`, `int` in `Pair[str, int]`     |
 
-Let's walk through an example[^4] to find out.
+Under PEP 695 the first two coincide: declaring the parameter _is_ creating
+the variable. In the legacy spelling — covered in its own section below —
+type variables are standalone `TypeVar` objects created before, and
+independently of, the definitions that use them.
 
-Consider a function that adds two _things_ (not necessarily numbers) together.
-In this particular case, if we want to find out the answer of `3 + 4`, we can
-use the `add` function to add `3` and `4` together.
+## What Is a Generic Type, Formally?
+
+You have been consuming generics since your first annotation. `list[int]`
+is the generic class `list` applied to the type argument `int`, and it
+polices its elements exactly the way `Pair[str, int]` polices its fields
+(`list_append.py`):
 
 ```python
-def add():
-    return 3 + 4
+nums: list[int] = [1, 2, 3]
+nums.append("four")
 ```
 
-Adding two _literal_ things together is **valid** but **restricted** and
-obviously is a bad pattern. Polymorphism taught us to _parameterize_ the the two
-_things_ to add:
+`mypy --strict`:
 
-```python
-def add(x, y):
-    return x + y
+```text
+list_append.py:2: error: Argument 1 to "append" of "list" has incompatible type "str"; expected "int"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
 ```
 
-And injecting `x` and `y` is the act of parameterizing the function with what we
-call the **_regular variables_**.
+`pyright`:
 
-Now, we want to type hint the `add` function. You may likely do the following:
-
-```python
-def add(x: int, y: int) -> int:
-    return x + y
+```text
+list_append.py:2:13 - error: Argument of type "Literal['four']" cannot be assigned to parameter "object" of type "int" in function "append"
+    "Literal['four']" is not assignable to "int" (reportArgumentType)
+1 error, 0 warnings, 0 informations
 ```
 
-This is again **valid** but **restricted**. The `add` function is now restricted
-to adding two integers together. What if we want to add two strings together?
-What if we want to add two floats together? What if we want to add two `Item`
-objects with `__add__` method defined together?
+The pattern underneath — _give a type, get a type_ — deserves a precise
+statement, because the variance rules of
+{doc}`the variance chapter <06-invariance-covariance-contravariance>`
+quantify over exactly this structure.
 
-This is where you would consider using **_type variables_** to parameterize the
-types of the arguments and return type of the function.
+```{prf:definition} Type Constructor and Parameterized Type
+:label: type-theory-04-generics-definition-type-constructor
 
-```python
-T = TypeVar('T')
+Let $\mathbf{Type}$ denote the universe of types. A **type constructor** of
+arity $n \geq 1$ is a mapping
 
-def add(x: T, y: T) -> T:
-    return x + y
+$$
+C : \underbrace{\mathbf{Type} \times \cdots \times \mathbf{Type}}_{n}
+\;\to\; \mathbf{Type},
+\qquad
+(T_1, \ldots, T_n) \;\mapsto\; C[T_1, \ldots, T_n],
+$$
+
+that takes $n$ type arguments and yields a type. A **generic type** (in
+Python, a generic class) is a definition that introduces one or more type
+parameters; its name denotes the constructor $C$. Subscripting the name —
+`Pair[str, int]`, `list[int]` — is _application_ of the constructor, and
+the resulting type $C[T_1, \ldots, T_n]$ is called a **parameterized
+type**.
+
+Type constructors are to types what functions are to values: a function
+maps values to a value, a type constructor maps types to a
+type[^pep483-constructor].
 ```
 
-This means that `x` and `y` can be of any type, and the return type of the
-function will be the same as the type of `x` and `y`. A contract is born because
-now if `x` is defined as an `int` type, then `y` must also be an `int` type, and
-the return type of the function will be an `int` type.
+Concretely: `list` is a constructor of arity 1, so `list[int]` and
+`list[str]` are two of its (infinitely many) applications; `dict` has
+arity 2, giving `dict[str, int]`; our `Pair` has arity 2 as well. Note what
+this makes of the bare name: `Pair` on its own is the constructor awaiting
+arguments, not a finished type. Annotate with it unapplied and strict
+`mypy` objects (`Missing type arguments for generic type "Pair"
+[type-arg]`) because the parameters silently default to `Any` — the very
+hole we just climbed out of. Pyright's standard mode accepts the bare form,
+tracking the unknown parameters internally; this asymmetry previews the
+divergence admonition below.
 
-Note however, running mypy above will yield two particular errors:
+```{prf:remark} Applying a constructor does not preserve subtyping
+:label: type-theory-04-generics-remark-no-automatic-lifting
 
-```bash
-4: error: Returning Any from function declared to return "T"  [no-any-return]
-        return x + y
-        ^~~~~~~~~~~~
-4: error: Unsupported left operand type for + ("T")  [operator]
-        return x + y
-               ^~~~~
+Given $S <: T$, nothing follows automatically about the relationship
+between $C[S]$ and $C[T]$:
+
+$$
+S <: T \quad\not\Longrightarrow\quad C[S] <: C[T].
+$$
+
+Whether a constructor preserves the subtype relation, reverses it, or
+discards it entirely is a property of the constructor itself, called its
+**variance**. You have already seen evidence: pyright justified rejecting
+the swapped pair by declaring `Pair`'s parameters invariant — different
+arguments, unrelated types. The full classification is the subject of
+{doc}`Invariance, Covariance and Contravariance <06-invariance-covariance-contravariance>`.
 ```
 
-This is because there is no guarantee that the `+` operator is defined for the
-type `T`. What if `T` is a `Dict[int, int]` type, then adding two dictionaries
-together is not defined (likely no `__add__` method defined for the `dict`
-type). But let's ignore this and appreciate the bigger picture.
+## Generic Functions: One Binding per Call
 
-We will talk about bound and constraints later, which will easily solve this
-problem:
-
-```python
-T = TypeVar('T', int, float, complex)
-
-def add(x: T, y: T) -> T:
-    return x + y # yields no error from mypy
-```
-
-In conclusion, the `add` function is now a **_generic function_** because it can
-operate on any type of object, and the type of the arguments and return type of
-the function are parameterized by type variables. But note that the type
-variables are **only** scoped to the function, and they are not available
-outside the function.
-
-### Generic Methods
-
-In the context of classes, it is also possible to define **_generic methods_**
-where the method signature and return type (need not both) are parameterized by
-type variables.
-
-We first look at another violation of type safety via the `Stack` class.
+The same square-bracket syntax works on functions. A generic function
+declares its type parameters between the name and the argument list:
 
 ```{code-cell} ipython3
-from typing import Any, Generic, List, TypeVar
+def first[T](items: list[T]) -> T:
+    return items[0]
 
-from rich.pretty import pprint
+
+print(first(["Alice", "Bob"]), first([3, 1, 4]))
+```
+
+Here `T` is scoped to the function alone, and it is bound afresh at every
+call: pass a `list[str]` and $T \mapsto$ `str` for that call; pass a
+`list[int]` and $T \mapsto$ `int` for the next. Probing the two calls above
+with `reveal_type` (`first_infer.py`) shows both checkers agreeing:
+
+`mypy --strict`:
+
+```text
+first_infer.py:6: note: Revealed type is "str"
+first_infer.py:8: note: Revealed type is "int"
+```
+
+`pyright`:
+
+```text
+first_infer.py:6:13 - information: Type of "first(names)" is "str"
+first_infer.py:8:13 - information: Type of "first(nums)" is "int"
+```
+
+The binding is a contract across the whole signature. This function promises
+"a list of some type $T$, plus one more $T$, gives back a list of the same
+$T$" — so feeding a `str` into a `list[int]` call makes the contract
+unsatisfiable (`append_mix.py`):
+
+```python
+def append_and_return[T](items: list[T], item: T) -> list[T]:
+    items.append(item)
+    return items
 
 
-class Stack:
+ints: list[int] = [1, 2, 3]
+append_and_return(ints, "four")
+```
+
+`mypy --strict`:
+
+```text
+append_mix.py:7: error: Cannot infer value of type parameter "T" of "append_and_return"  [misc]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+`pyright`:
+
+```text
+append_mix.py:7:25 - error: Argument of type "Literal['four']" cannot be assigned to parameter "item" of type "T@append_and_return" in function "append_and_return"
+    "Literal['four']" is not assignable to "int" (reportArgumentType)
+1 error, 0 warnings, 0 informations
+```
+
+Same verdict, different diagnosis: `mypy` declines to solve for `T` at all,
+while `pyright` solves $T \mapsto$ `int` from the list and then rejects the
+string. Keep that split in mind — the admonition at the end of the next
+section shows a case where the two checkers' solving strategies produce
+_different accepted types_, not just different error messages.
+
+## Generic Classes: One Binding per Instance
+
+Where a generic function binds its type parameter per call, a generic class
+binds it per _instance_, and the binding is shared by every attribute and
+method that mentions it:
+
+```{code-cell} ipython3
+class Stack[T]:
     def __init__(self) -> None:
-        self._container: List[Any] = []
+        self._items: list[T] = []
 
-    def push(self, item: Any) -> None:
-        self._container.append(item)
+    def push(self, item: T) -> None:
+        self._items.append(item)
 
-    def contains(self, item: Any) -> bool:  # __contains__ method
-        for curr in self._container:
-            if curr == item:
-                return True
-        return False
+    def pop(self) -> T:
+        return self._items.pop()
 
 
-stack = Stack()
+stack = Stack[str]()
 stack.push("hello")
 stack.push("world")
-pprint(stack._container)
+print(stack.pop())
 ```
 
-As you can see, the `contains` method is not type safe. The `item` parameter is
-of type `Any`, and the method will return `True` if the `item` is found in the
-stack. The problem with `Any`, as repeated many times, is that it is too generic
-and does not provide a contract to abide by. For example, our stack above as we
-see it, contains strings, and only strings. Now if we want to search for an
-integer `to_find = 123` in the stack, the `contains` method will return `False`
-because the `item` is not found in the stack. The problem is that the integer
-type will never be found in the stack because the stack only contains strings.
-However, because both the `self._container` and `item` are of type `Any`, the
-type checker will not raise any error.
+Writing `Stack[str]()` applies the constructor first — producing the
+parameterized type `Stack[str]` — and instantiates it second. For this
+object's whole lifetime, $T \mapsto$ `str`: `push` only accepts `str`, `pop`
+returns `str`, and the private `list[T]` is a `list[str]`. Unlike `Pair`,
+the type argument here must be written explicitly, because `__init__` takes
+no argument from which the checker could infer it. Collect the class cell
+and three lines of use into `stack.py`, and the contract bites exactly as
+it did for `list`:
 
-```{code-cell} ipython3
-to_find: int = 123
-result: bool = stack.contains(to_find)
-pprint(result)
+```python
+stack = Stack[str]()
+stack.push("hello")
+stack.push(123)
 ```
 
-We want to bind a contract such that if the `self._container` is of type
-`List[str]`, then the `item` must also be of type `str`. If the
-`self._container` is of type `List[int]`, then the `item` must also be of type
-`int`. This is where we can use type variables to parameterize the types of the
-arguments and return type of the method.
+`mypy --strict`:
 
-```{code-cell} ipython3
-from typing import Any, Generic, List, TypeVar
+```text
+stack.py:14: error: Argument 1 to "push" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
 
-from rich.pretty import pprint
+`pyright`:
+
+```text
+stack.py:14:12 - error: Argument of type "Literal[123]" cannot be assigned to parameter "item" of type "str" in function "push"
+    "Literal[123]" is not assignable to "str" (reportArgumentType)
+1 error, 0 warnings, 0 informations
+```
+
+The [Stack page](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
+in the data-structures section builds this class out into a full,
+production-shaped container if you want a longer worked example.
+
+````{admonition} Where mypy 2.2.0 and pyright 1.1.411 diverge on generics
+:class: attention
+
+The typing specification standardizes what generic types _mean_, not how a
+checker must infer type arguments — and on two inference questions from
+this chapter, the flagship checkers part ways.
+
+**Bare instantiation.** Drop the type argument (`stack_bare.py`) and `mypy`
+refuses to guess, demanding an annotation:
+
+```text
+stack_bare.py:9: error: Need type annotation for "stack"  [var-annotated]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+`pyright` (standard mode) reports `0 errors, 0 warnings, 0 informations`,
+silently tracking the instance as `Stack[Unknown]`; only its strict mode
+surfaces the gap:
+
+```text
+stack_bare_strict.py:12:1 - error: Type of "stack" is partially unknown
+    Type of "stack" is "Stack[Unknown]" (reportUnknownVariableType)
+```
+
+**Mixed-argument solving.** Call `def same[T](x: T, y: T) -> T:` with
+`same(1, "a")` (`same_solve.py`) and _both_ checkers accept the call — but
+they disagree on what `T` became. `mypy --strict`:
+
+```text
+same_solve.py:5: note: Revealed type is "object"
+```
+
+`pyright`:
+
+```text
+same_solve.py:5:13 - information: Type of "same(1, "a")" is "int | str"
+```
+
+`mypy` solves by _join_ — the nearest common supertype of `int` and `str`,
+which is `object` — while `pyright` solves by _union_, keeping `int | str`.
+Neither is wrong, but the downstream code they permit differs sharply: an
+`object` supports almost nothing without narrowing, while a union keeps the
+two-case structure. Code that must behave identically under both checkers
+should not lean on the inferred `T` of a deliberately mixed call — and if
+your intent is that mixing be _rejected_, plain type parameters cannot
+express that; the
+{doc}`constrained type variables of the next chapter <05-typevar-bound-constraints>` can.
+````
+
+## The Legacy Spelling: `TypeVar` and `Generic`
+
+Everything above uses PEP 695 syntax, which landed in Python 3.12. Code
+older than that — most production code, most tutorials, and
+{doc}`the next chapter <05-typevar-bound-constraints>` of this series —
+spells the same ideas with machinery from the `typing` module, and you need
+to read both dialects fluently even if you only write the new one. This
+section is exactly that legacy sidebar. The `Stack` above, in the old
+spelling (`stack_legacy.py`):
+
+```python
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
 
 class Stack(Generic[T]):
     def __init__(self) -> None:
-        self._container: List[T] = []
+        self._items: list[T] = []
 
     def push(self, item: T) -> None:
-        self._container.append(item)
-
-    def contains(self, item: T) -> bool:  # __contains__ method
-        for curr in self._container:
-            if curr == item:
-                return True
-        return False
+        self._items.append(item)
 
 
-stack_of_strings = Stack[str]()
-stack_of_strings.push("hello")
-stack_of_strings.push("world")
-pprint(stack_of_strings._container)
-
-to_find: int = 123
-result: bool = stack_of_strings.contains(to_find) # error from mypy
-pprint(result)
-
-to_find: str = "hello"
-result: bool = stack_of_strings.contains(to_find) # no error from mypy
+stack = Stack[str]()
+stack.push(123)
 ```
 
-Notably, if we define the `Stack` class as `Stack[str]`, then the `T` is now
-bound to `str`. This means that any type hints in the `Stack` class that uses
-`T` will now be bound to `str`. This would include the `item` parameter in the
-`contains` method. Consequently, the above code will actually yield an error
-from `mypy`:
+A `TypeVar` object is created as an ordinary module-level value, and the
+class inherits from `Generic[T]` to declare which variables parameterize
+it. To the checkers, the two spellings are interchangeable here: this file
+draws word-for-word the same diagnostics as the PEP 695 `Stack` —
 
-```bash
-28: error: Argument 1 to "contains" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
-    result: bool = stack.contains(to_find)
+```text
+stack_legacy.py:15: error: Argument 1 to "push" of "Stack" has incompatible type "int"; expected "str"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
 ```
 
-Similarly, you can define the `Stack` class as `Stack[int]`, and the `T` is now
-bound to `int`.
+— and both checkers accept the legacy definitions themselves without
+comment. The translation table:
 
-The above example **scopes** the type variable `T` to the `Stack` class in its
-entirety. Unlike functions, creating a generic class does not automatically
-scope the type variables across attributes and methods. You have to explicitly
-define the type hints yourself. Consequently, it is not uncommon to only scope
-the type variable to some attributes and methods to the generic class. How you
-scope them depends on the use cases.
+| Modern (PEP 695, Python ≥ 3.12)         | Legacy (PEP 484)                                           |
+| --------------------------------------- | ---------------------------------------------------------- |
+| `def first[T](items: list[T]) -> T:`    | `T = TypeVar("T")`, then `def first(items: List[T]) -> T:` |
+| `class Stack[T]:`                       | `class Stack(Generic[T]):`                                 |
+| `list[int]`, `dict[str, int]`           | `typing.List[int]`, `typing.Dict[str, int]`                |
+| `int \| None`, `str \| bytes`           | `Optional[int]`, `Union[str, bytes]`                       |
+
+Two differences run deeper than spelling. First, a legacy `TypeVar` is a
+reusable value — one `T` can parameterize many definitions, with scoping
+rules subtle enough that [PEP 484 devotes a
+section](https://peps.python.org/pep-0484/#scoping-rules-for-type-variables)
+to them — whereas a PEP 695 parameter exists only inside its definition's
+header and body. Second, the `TypeVar(...)` call accepts extra arguments
+that _restrict_ what the variable ranges over: an upper bound
+(`TypeVar("T", bound=...)`) or a set of constraints
+(`TypeVar("T", int, float)`). Those restrictions are the subject of
+{doc}`Bound and Constraint <05-typevar-bound-constraints>`, which teaches
+them in this legacy spelling — after this section you can read every line
+of it. The remaining machinery — PEP 695's scoping rules, the `type` alias
+statement, inferred-versus-declared variance, and when a `TypeVar` still
+earns its keep in modern code — gets a dedicated chapter on the
+{doc}`series roadmap <intro>`.
+
+## Where a Bare Type Parameter Runs Out of Power
+
+Generics look, so far, like a free lunch. Here is the bill. Try the obvious
+generic addition function (`add_unconstrained.py`):
+
+```python
+def add[T](x: T, y: T) -> T:
+    return x + y
+```
+
+`mypy --strict`:
+
+```text
+add_unconstrained.py:2: error: Returning Any from function declared to return "T"  [no-any-return]
+add_unconstrained.py:2: error: Unsupported left operand type for + ("T")  [operator]
+Found 2 errors in 1 file (checked 1 source file)
+```
+
+`pyright`:
+
+```text
+add_unconstrained.py:2:12 - error: Operator "+" not supported for types "T@add" and "T@add" (reportOperatorIssue)
+1 error, 0 warnings, 0 informations
+```
+
+The rejection is correct, and it is the mirror image of this chapter's
+lesson. A bare `T` ranges over _every_ type — `dict[str, int]`, `None`, an
+open file handle — and `+` is not defined for every type, so no checker can
+defend the body. `T` guarantees consistency ("both arguments and the result
+share one type") but promises nothing about what that type _supports_. The
+missing expressive power is the ability to shrink `T`'s range: "any type
+with `+`", or "one of `int`, `float`, `str` only". That is precisely what
+upper bounds and constraints provide, and
+{doc}`Bound and Constraint <05-typevar-bound-constraints>` opens with this
+very function — including why the fix is _not_ the `Union` you might reach
+for first.
+
+## Summary
+
+If this chapter compresses to a single sentence: a generic definition takes
+types as parameters the way a function takes values as arguments — `Pair`
+is a type constructor, `Pair[str, int]` is its application, and the checker
+holds every use to whatever binding it inferred. Along the way:
+
+-   `Any` buys flexibility by turning the checker off: both `mypy --strict`
+    and `pyright` blessed code that computed `"164"` where `20` was
+    intended. A type variable buys the same flexibility while keeping
+    every occurrence consistent.
+-   PEP 695 declares type parameters in the header — `class Pair[S, T]:`,
+    `def first[T](items: list[T]) -> T:` — and the checker infers type
+    arguments at each use, rejecting `Pair[int, str]` where
+    `Pair[str, int]` is demanded.
+-   Formally, a generic class names a type constructor
+    $C : \mathbf{Type}^n \to \mathbf{Type}$; subscripting applies it, and
+    the result is a parameterized type. Application does _not_ automatically
+    preserve $S <: T$ — that is variance.
+-   Functions bind their type parameters per call; classes per instance.
+    Where inference is underdetermined, the checkers diverge: join versus
+    union, refusal versus `Unknown`.
+-   The legacy `TypeVar`/`Generic` spelling is checker-equivalent for
+    everything shown here, and it is the dialect of most existing code.
+
+Two threads continue directly from here. A bare `T` cannot promise any
+behavior, so
+{doc}`Bound and Constraint in Generics <05-typevar-bound-constraints>`
+restricts a type variable's range with upper bounds and constraint sets —
+picking up the exact `add` function that failed above. And parameterizing a
+constructor raises the substitution question this chapter deliberately left
+open — when does $S <: T$ lift to $C[S] <: C[T]$? — which
+{doc}`Invariance, Covariance and Contravariance <06-invariance-covariance-contravariance>` answers in full.
 
 ## References and Further Readings
 
--   [Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
--   [Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
--   [Generics - Python Docs](https://docs.python.org/3/library/typing.html#generics)
--   [User-defined generic types - Python Docs](https://docs.python.org/3/library/typing.html#user-defined-generic-types)
--   [Use of Generic and TypeVar](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
--   [Stack - Omniverse](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
--   [Implementing Generics via Type Erasure - CS2030S](https://nus-cs2030s.github.io/2021-s2/21-erasure.html)
--   [python Generics (intermediate) anthony explains #430](https://www.youtube.com/watch?v=LcfxUU1A-RQ)
--   [Scoping rules for type variables](https://peps.python.org/pep-0484/#scoping-rules-for-type-variables)
+The motivating arc of this chapter — the `IntPair` duplication problem, the
+`Any`-typed `Pair`, and its generic repair — is adapted from
+[Unit 20: Generics](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
+of the CS2030S course at the National University of Singapore, translated
+from Java to Python and re-verified against Python's checkers. The debt is
+genuine: their staging of duplication-versus-erasure is what this chapter
+modernizes onto PEP 695. The `add` example follows a
+[Stack Overflow answer on `Generic` and `TypeVar`](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar).
+
+```{admonition} References
+:class: seealso
+
+-   [PEP 695 – Type Parameter Syntax](https://peps.python.org/pep-0695/)
 -   [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
 -   [PEP 484 – Type Hints](https://peps.python.org/pep-0484/)
+-   [Python typing specification – Generics](https://typing.python.org/en/latest/spec/generics.html)
+-   [Generics - Python Docs](https://docs.python.org/3/library/typing.html#generics)
+-   [User-defined generic types - Python Docs](https://docs.python.org/3/library/typing.html#user-defined-generic-types)
+-   [Scoping rules for type variables - PEP 484](https://peps.python.org/pep-0484/#scoping-rules-for-type-variables)
+-   [Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
+-   [Implementing Generics via Type Erasure - CS2030S](https://nus-cs2030s.github.io/2021-s2/21-erasure.html)
+-   [Type Hinting: Generics & Inheritance - Playful Python](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
+-   [Use of Generic and TypeVar - Stack Overflow](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
+-   [Stack - Omniverse](https://www.gaohongnan.com/dsa/stack/concept.html#the-importance-of-generic-types)
+-   [python Generics (intermediate) anthony explains #430](https://www.youtube.com/watch?v=LcfxUU1A-RQ)
+```
 
-[^1]:
-    [Type Hinting: Generics & Inheritance](https://www.playfulpython.com/python-type-hinting-generics-inheritance/)
+[^pep483-any]:
+    [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/)
+    introduces `Any` as consistent with every type, and type variables as
+    the mechanism that preserves relationships between annotations.
 
-[^2]:
-    [Unit 20: Generics - CS2030S](https://nus-cs2030s.github.io/2021-s2/20-generics.html)
-
-[^3]:
-    [PEP 483 – The Theory of Type Hints](https://peps.python.org/pep-0483/#generic-types)
-
-[^4]:
-    [Use of Generic and TypeVar](https://stackoverflow.com/questions/68739824/use-of-generic-and-typevar)
+[^pep483-constructor]:
+    The function analogy is PEP 483's own: "a function takes a value and
+    returns a value, while generic type constructor takes a type and
+    'returns' a type" —
+    [PEP 483, Generic types](https://peps.python.org/pep-0483/#generic-types).
