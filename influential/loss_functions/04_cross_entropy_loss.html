@@ -1,0 +1,1831 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Cross Entropy Loss &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'influential/loss_functions/04_cross_entropy_loss';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/influential/loss_functions/04_cross_entropy_loss.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Decision Boundary" href="../decision_boundary/01_intro.html" />
+    <link rel="prev" title="Entropy and Information Gain" href="03_entropy_and_information_gain.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/gao-hongnan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/in/gao-hongnan/" title="LinkedIn" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/gaohongnan" title="X" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-x-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">X</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notations/mathematics.html">Mathematical Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notations/deep_learning.html">Deep Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../cove/cove.html">Chain-of-Verification Reduces Hallucination in Large Language Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/01_intro.html">Vector Semantics and Embeddings</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/words_and_vectors/intro.html">Words and Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/words_and_vectors/concept.html">Concept: Words and Vectors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/tf_idf/intro.html">Term Frequency-Inverse Document Frequency (TF-IDF)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/tf_idf/application.html">TF-IDF Application: IMDB Recommender System</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/intro.html">Cosine Similarity and Notion of Closeness</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/concept.html">Concept: Cosine Similarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/implementation.html">Cosine Similarity Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/word_similarity.html">Cosine Similarity Application: Word Similarity</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../machine_learning_framework/01_framework.html">The Machine Learning Framework</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../machine_learning_framework/02_faq.html">FAQ: The Machine Learning Framework</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Loss Functions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="02_concept.html">Concept: Loss Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_entropy_and_information_gain.html">Entropy and Information Gain</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Cross Entropy Loss</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../decision_boundary/01_intro.html">Decision Boundary</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../decision_boundary/02_concept.html">Concept: Decision Boundary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../k_nearest_neighbours/01_intro.html">K-Nearest Neighbours</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../k_nearest_neighbours/02_different_k_visualizations.html">K-Nearest Neighbours: Effect of K</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../k_nearest_neighbours/03_decision_boundary.html">K-Nearest Neighbours: Decision Boundaries</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../principal_component_analysis/01_intro.html">Principal Component Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../principal_component_analysis/02_implementation.html">Principal Component Analysis Implementation</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gradient_descent/01_intro.html">Gradient Descent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gradient_descent/02_concept.html">Concept: Gradient Descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradient_descent/03_implementation.html">Gradient Descent Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../evaluation_metrics/01_intro.html">Metrics and Scoring Rules</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/classification/intro.html">Classification Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/accuracy.html">Accuracy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/precision_recall_f1.html">Precision, Recall and F1 Score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/brier_score.html">Brier Score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/regression/intro.html">Regression Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/regression/mae.html">Mean Absolute Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/regression/mape.html">Mean Absolute Percentage Error</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/computer_vision/intro.html">Computer Vision Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/intersection_over_union.html">Intersection Over Union (IOU)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/precision_recall_revisited.html">Precision and Recall Revisited: Object Detection</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/gil.html">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/is_vs_equality.html">Is vs Equality</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../software_engineering/python/memory_internals/00_introduction.html">Introduction: Why Python Objects Are “Heavier”</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/01_c_memory_basics.html">C Memory Basics: The Foundation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/02_python_object_model.html">Python Object Model: Everything is a PyObject</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/03_integer_internals.html">Integer Internals: PyLongObject and Arbitrary Precision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/04_string_internals.html">String Internals: PyUnicodeObject and Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/05_ctypes_inspection.html">Section 5: Hands-On ctypes Memory Inspection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/06_optimization_techniques.html">Section 6: Optimization Techniques</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-overload.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/stack/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/232-implement-queue-using-stacks.html">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/queue/intro.html">Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/queue/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/queue/dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/influential/loss_functions/04_cross_entropy_loss.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Finfluential/loss_functions/04_cross_entropy_loss.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/influential/loss_functions/04_cross_entropy_loss.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Cross Entropy Loss</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy-as-a-loss-function">Cross-Entropy as a Loss Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy-setup">Cross-Entropy Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#z-logits">Z Logits</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#categorical-cross-entropy-loss">Categorical Cross Entropy Loss</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-dot-product-to-calculate">Using Dot Product to Calculate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stackoverflow-answer">Stackoverflow answer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machinelearningmastery-example">MachineLearningMastery example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-readings">Further Readings</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="math notranslate nohighlight">
+\[
+\newcommand{\ytrue}{\mathbf{y_{\textbf{true}}}}
+\newcommand{\yprob}{\mathbf{y_{\textbf{prob}}}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\x}{\mathbf{x}}
+\]</div>
+<section class="tex2jax_ignore mathjax_ignore" id="cross-entropy-loss">
+<h1>Cross Entropy Loss<a class="headerlink" href="#cross-entropy-loss" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Organized_Chaos-orange" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#intuition" id="id3">Intuition</a></p></li>
+<li><p><a class="reference internal" href="#cross-entropy-as-a-loss-function" id="id4">Cross-Entropy as a Loss Function</a></p>
+<ul>
+<li><p><a class="reference internal" href="#cross-entropy-setup" id="id5">Cross-Entropy Setup</a></p></li>
+<li><p><a class="reference internal" href="#z-logits" id="id6">Z Logits</a></p></li>
+<li><p><a class="reference internal" href="#softmax" id="id7">Softmax</a></p></li>
+<li><p><a class="reference internal" href="#categorical-cross-entropy-loss" id="id8">Categorical Cross Entropy Loss</a></p>
+<ul>
+<li><p><a class="reference internal" href="#using-dot-product-to-calculate" id="id9">Using Dot Product to Calculate</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#stackoverflow-answer" id="id10">Stackoverflow answer</a></p></li>
+<li><p><a class="reference internal" href="#machinelearningmastery-example" id="id11">MachineLearningMastery example</a></p></li>
+<li><p><a class="reference internal" href="#further-readings" id="id12">Further Readings</a></p></li>
+</ul>
+</nav>
+<section id="intuition">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Intuition</a><a class="headerlink" href="#intuition" title="Link to this heading">#</a></h2>
+<p>We need to make sense of entropy in the form of a loss function, we have to just enhance our thinking a little.</p>
+<p>We define our target to be a one-hot encoded vector of class 0 and 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Intuitively, take the cat vs dog binary classification again, we made 11 predictions for ONLY ONE query image using different model, and find that after going through many layers, the <strong>softmax</strong> predictions on the logits are as such:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>where the first index corresponds to the logits of class 0 and second index corresponds to the logits of class 1.</p>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0]</span></code> means the model is 100 percent confident the prediction is a class 0 (cat), and obviously we need to punish the model for spitting nonsense like this.</p>
+<p>As we can see in the <code class="docutils literal notranslate"><span class="pre">binary_cross_entropy</span></code> function below, we only need to add up two things. And note that we are hinging on class 1 and therefore <code class="docutils literal notranslate"><span class="pre">y_true[0]</span> <span class="pre">*</span> <span class="pre">log(y_pred[0]+eps)</span></code> goes to 0 as we are just relying on our feedback of probability of class 1.</p>
+<p>And in our graph, we can see that as predictions gets more wrong, meaning to say, if the query image is a dog, but our predictions is <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0]</span></code>, which says it is a cat, our entropy loss will blow up to very high because</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">y_true</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">almost</span> <span class="n">infinity</span>
+</pre></div>
+</div>
+<p>Note again we do not calculate for class 0 because</p>
+<ol class="arabic simple">
+<li><p>We one-hot encoded.</p></li>
+<li><p>We only look at class 1’s probability and that’s enough as we can deduce class 0’s probability anyways.</p></li>
+</ol>
+<p>And conversely, note how the entropy loss goes to 0 if our prediction is say <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>. In general, as our probability for the query image gets close to 1, or in agreement with our class, then our entropy loss becomes smaller.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">__version__</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;2.13.0+cu130&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">torch_to_np</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a PyTorch tensor to a numpy array.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor (torch.Tensor): The PyTorch tensor to convert.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: The converted numpy array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_equality_two_tensors</span><span class="p">(</span>
+    <span class="n">tensor1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two PyTorch tensors for equality.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor1 (torch.Tensor): The first PyTorch tensor to compare.</span>
+<span class="sd">        tensor2 (torch.Tensor): The second PyTorch tensor to compare.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Whether the two tensors are equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compare_closeness_two_tensors</span><span class="p">(</span>
+    <span class="n">tensor1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">tensor2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two PyTorch tensors for closeness.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor1 (torch.Tensor): The first PyTorch tensor to compare.</span>
+<span class="sd">        tensor2 (torch.Tensor): The second PyTorch tensor to compare.</span>
+<span class="sd">        epsilon (float): The epsilon value to use for closeness.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: Whether the two tensors are close.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">tensor1</span><span class="p">,</span> <span class="n">tensor2</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">epsilon</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="cross-entropy-as-a-loss-function">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Cross-Entropy as a Loss Function</a><a class="headerlink" href="#cross-entropy-as-a-loss-function" title="Link to this heading">#</a></h2>
+<section id="cross-entropy-setup">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Cross-Entropy Setup</a><a class="headerlink" href="#cross-entropy-setup" title="Link to this heading">#</a></h3>
+<p>We first understand the idea and intuition of <strong>Cross-Entropy Loss</strong> on one single example. Consider a dataset of cat (class 0) and dogs (class 1) where after one hot encoding we have class 0 to be <span class="math notranslate nohighlight">\([1, 0]\)</span> and class 1 to be <span class="math notranslate nohighlight">\([0, 1]\)</span>.</p>
+<p>We first understand the idea and intuition of <strong>Cross-Entropy Loss</strong> on one single example. Consider a dataset of cat (class 0) and dogs (class 1) where after one hot encoding we have class 0 to be <span class="math notranslate nohighlight">\([1, 0]\)</span> and class 1 to be <span class="math notranslate nohighlight">\([0, 1]\)</span>.</p>
+<p>We are given the following:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{S}\)</span>: The dataset <span class="math notranslate nohighlight">\(\mathcal{S}\)</span> generated from the underlying distribution <span class="math notranslate nohighlight">\(\mathbb{P}_{\mathcal{D}}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{X}\)</span>: This is a <span class="math notranslate nohighlight">\(2 \times 3 \times 224 \times 224\)</span> tensor of the shape <span class="math notranslate nohighlight">\(B \times C \times H \times W\)</span>. This can be understood as 2 RGB images of size 224.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}\)</span>: This is the corresponding ground truth one-hot encoded matrix, we have cat, dog and pig respectively (3 classes):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+    \ytrue = \begin{bmatrix}  1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+    \end{split}\]</div>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span>: We represent each <span class="math notranslate nohighlight">\(x_{i}\)</span> as the <span class="math notranslate nohighlight">\(i\)</span>-th image. This can be a <strong>random variable</strong>. Image 1 is a cat, and Image 2 is a pig.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{y}_i\)</span>: The corresponding label for the <span class="math notranslate nohighlight">\(i\)</span>-th sample/image, for sample 1, it is <span class="math notranslate nohighlight">\(\begin{bmatrix} 1 &amp; 0 &amp; 0 \end{bmatrix}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span>: The probability distribution for the ground truth target - when it is <span class="math notranslate nohighlight">\([1, 0, 0]\)</span>, one can understand it as the distribution where cat’s probability is 1, and dog’s probability is 0 and pig 0.</p></li>
+<li><p><span class="math notranslate nohighlight">\(Q\)</span>: The probability distribtion of the estimate on the <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span>, which is say, <span class="math notranslate nohighlight">\([0.9, 0.01, 0.09]\)</span>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+<span class="n">y_true_ohe</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">y_true_ohe</span><span class="p">)</span>
+<span class="n">compare_equality_two_tensors</span><span class="p">(</span><span class="n">y_true_ohe</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[1, 0, 0],
+        [0, 0, 1]])
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="z-logits">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Z Logits</a><a class="headerlink" href="#z-logits" title="Link to this heading">#</a></h3>
+<p>Then we have the following, assume a hypothesis <span class="math notranslate nohighlight">\(h_{\theta}(\mathcal{X})\)</span> on the dataset <span class="math notranslate nohighlight">\(\mathcal{X}\)</span> and it outputs logits of the form, note that we are passing in inputs of shape <span class="math notranslate nohighlight">\((2, 3, 224, 224)\)</span> but after some transformations we have the logits to be shape <span class="math notranslate nohighlight">\((2, 3)\)</span>:</p>
+<ul class="simple">
+<li><p><strong>z_logits:</strong> $<span class="math notranslate nohighlight">\(\textbf{z_logits} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 2 &amp; 4 &amp; 6 \end{bmatrix}\)</span>$</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_logits</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">z_logits</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[1., 2., 3.],
+        [2., 4., 6.]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="softmax">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Softmax<a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></a><a class="headerlink" href="#softmax" title="Link to this heading">#</a></h3>
+<p>The softmax function takes as input a vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> of <span class="math notranslate nohighlight">\(K\)</span> real numbers, and normalizes it into a probability distribution consisting of <span class="math notranslate nohighlight">\(K\)</span> probabilities proportional to the exponentials of the input numbers. That is, prior to applying softmax, some vector components could be negative, or greater than one; and might not sum to 1; but after applying softmax, each component will be in the interval of 0 and 1, and the components will add up to 1, so that they can be interpreted as probabilities. Furthermore, the larger input components will correspond to larger probabilities.</p>
+<hr class="docutils" />
+<p>The standard (unit) softmax function</p>
+<div class="math notranslate nohighlight">
+\[\sigma : \mathbb{R}^K\to (0,1)^K\]</div>
+<p>is defined when <span class="math notranslate nohighlight">\(K\)</span> is greater than one by the formula:</p>
+<div class="math notranslate nohighlight">
+\[
+\sigma(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j=1}^K e^{z_j}} \ \ \ \ \text{ for } i = 1, \dotsc , K \text{ and } \mathbf z=(z_1,\dotsc,z_K) \in \mathbb{R}^K
+\]</div>
+<p>In linear algebra notation, the <span class="math notranslate nohighlight">\(\sigma\)</span> soft(arg)max function takes in a <strong>real vector</strong> <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> from the <span class="math notranslate nohighlight">\(K\)</span> dimensional space, indicating that the vector <span class="math notranslate nohighlight">\(\mathbf{z} \in \mathbb{R}^K\)</span> has <span class="math notranslate nohighlight">\(K\)</span> number of elements, and maps to the <span class="math notranslate nohighlight">\(K\)</span> dimensional <strong>0-1</strong> space, which is also a vector of <span class="math notranslate nohighlight">\(K\)</span> elements; in other words, given an input vector <span class="math notranslate nohighlight">\(\mathbf{z} \in \mathbb{R}^K\)</span>, the soft(arg)max maps it to <span class="math notranslate nohighlight">\(\sigma(\mathbf{z}) \in (0,1)^K\)</span>.</p>
+<p>Now we break down what the soft(arg)max function actually does. It applies the standard exponential function to <strong>each</strong> element <span class="math notranslate nohighlight">\(z_i\)</span> of the input vector <span class="math notranslate nohighlight">\(\mathbf{z}\)</span> and normalizes these values by dividing by the sum of all these exponentials; this normalization ensures that the sum of the components of the output vector <span class="math notranslate nohighlight">\(\sigma(\mathbf z)\)</span> is 1.</p>
+<p>After applying softmax to the logits we have:</p>
+<ul class="simple">
+<li><p><strong>y_prob = z_softargmax:</strong> $<span class="math notranslate nohighlight">\(\yprob = \textbf{z_softargmax} = \begin{bmatrix} 0.09 &amp; 0.2447 &amp; 0.6652 \\ 0.0159 &amp; 0.1173 &amp; 0.8668\end{bmatrix}\)</span>$</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_softargmax</span><span class="p">(</span><span class="n">z</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the softargmax of a PyTorch tensor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z (torch.Tensor): The PyTorch tensor to compute the softargmax of.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: The softargmax of the PyTorch tensor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># the output matrix should be the same size as the input matrix</span>
+    <span class="n">z_softargmax</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">z</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">row_index</span><span class="p">,</span> <span class="n">each_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">each_row</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">element_index</span><span class="p">,</span> <span class="n">each_element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">each_row</span><span class="p">):</span>
+            <span class="n">z_softargmax</span><span class="p">[</span><span class="n">row_index</span><span class="p">,</span> <span class="n">element_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">each_element</span><span class="p">)</span> <span class="o">/</span> <span class="n">denominator</span>
+            <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">compare_closeness_two_tensors</span><span class="p">(</span>
+        <span class="n">z_softargmax</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">z</span><span class="p">),</span> <span class="mf">1e-15</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">z_softargmax</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_softargmax</span> <span class="o">=</span> <span class="n">compute_softargmax</span><span class="p">(</span><span class="n">z_logits</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">z_softargmax</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[0.0900, 0.2447, 0.6652],
+        [0.0159, 0.1173, 0.8668]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="categorical-cross-entropy-loss">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Categorical Cross Entropy Loss</a><a class="headerlink" href="#categorical-cross-entropy-loss" title="Link to this heading">#</a></h3>
+<p>We will start with this because the Binary Cross Entropy Loss is merely a special case of this. Finding the full compact formula for this took me a while since most tutorials cover the binary case.</p>
+<p>Given <span class="math notranslate nohighlight">\(N\)</span> samples, and <span class="math notranslate nohighlight">\(C\)</span> classes, the <strong>Categorical Cross Entropy Loss</strong> is the average loss across <span class="math notranslate nohighlight">\(N\)</span> samples, given by:</p>
+<div class="math notranslate nohighlight">
+\[\textbf{CE}(\ytrue, \yprob) = -\dfrac{1}{N}\sum_{i=1}^N\sum_{c=1}^C \mathbb{1}_{\y_{i} \in C_c} \log\left(p_{\textbf{model}}[\y_i \in C_c]\right)\]</div>
+<p>where</p>
+<ul class="simple">
+<li><p>The outer loop <span class="math notranslate nohighlight">\(i\)</span> iterates over <span class="math notranslate nohighlight">\(N\)</span> observations/samples.</p></li>
+<li><p>The inner loop <span class="math notranslate nohighlight">\(c\)</span> iterates over <span class="math notranslate nohighlight">\(C\)</span> classes.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\y_i\)</span> represents the true label (in this formula it should be one-hot encoded) of the <span class="math notranslate nohighlight">\(i\)</span>-th sample.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{y_{i} \in C_c}\)</span> is an indicator function, simply put, for sample <span class="math notranslate nohighlight">\(i\)</span>, if the true label <span class="math notranslate nohighlight">\(\y_i\)</span> belongs to the <span class="math notranslate nohighlight">\(c\)</span>-th category, then we assign a <span class="math notranslate nohighlight">\(1\)</span>, else <span class="math notranslate nohighlight">\(0\)</span>. We can see it with an example later.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(p_{\textbf{model}}[\y_i \in C_c]\right)\)</span> means the probability predicted by the model for the <span class="math notranslate nohighlight">\(i\)</span>-th observation that belongs to the <span class="math notranslate nohighlight">\(c\)</span>-th class category.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\ytrue = \begin{bmatrix}  1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\textbf{z_logits} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 2 &amp; 4 &amp; 6 \end{bmatrix}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\yprob = \textbf{z_softargmax} = \begin{bmatrix} 0.09 &amp; 0.2447 &amp; 0.6652 \\ 0.0159 &amp; 0.1173 &amp; 0.8668\end{bmatrix}
+\end{split}\]</div>
+<ul class="simple">
+<li><p>We first look at the first sample, index <span class="math notranslate nohighlight">\(i = 1\)</span>:</p>
+<ul>
+<li><p>We have the one-hot encoded label for first sample to be <span class="math notranslate nohighlight">\(\y_1 = \begin{bmatrix} 1 &amp; 0 &amp; 0 \end{bmatrix}\)</span>. This means the label is a cat since the sequence is cat, dog and pig, and thus 1, 0, 0 corresponds to cat 1, dog 0 and pig 0.</p></li>
+<li><p>We have the one-hot encoded probability predicted by the model for the first sample to be <span class="math notranslate nohighlight">\(\hat{\y_1} = \begin{bmatrix} 0.09 &amp; 0.2447 &amp; 0.6652 \end{bmatrix}\)</span>. This means the probability associated with this sample <span class="math notranslate nohighlight">\(1\)</span> is probability of a cat from the model is <span class="math notranslate nohighlight">\(9\%\)</span>, a dog <span class="math notranslate nohighlight">\(24.47\%\)</span> and a pig <span class="math notranslate nohighlight">\(66.52\%\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<hr class="docutils" />
+<ul>
+<li><p>With these information, we go on to the first outer loop’s content:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\sum_{c=1}^C \mathbb{1}_{\y_{i} \in C_c} \log\left(p_{\textbf{model}}[\y_i \in C_c]\right)\)</span></p></li>
+<li><p>We are looping through the classes, which in this case is loop from <span class="math notranslate nohighlight">\(c=1\)</span> to <span class="math notranslate nohighlight">\(c=3\)</span> since <span class="math notranslate nohighlight">\(C=3\)</span> (3 classes).</p></li>
+<li><p><span class="math notranslate nohighlight">\(c = 1\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{1} \in C_1}\)</span>: The true label for the first sample is actually the first class, and hence belongs to the <span class="math notranslate nohighlight">\(c=1\)</span> category, so our indicator function returns me a <span class="math notranslate nohighlight">\(1\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log\left(p_{\textbf{model}}[\y_i \in C_c]\right) = \log\left(p_{\textbf{model}}[\y_1 \in C_1]\right)\)</span>: Applies the log function (natural log here) to the each probability associated with the class. So in this case, since <span class="math notranslate nohighlight">\(c=1\)</span>, we apply the log function to the first entry <span class="math notranslate nohighlight">\(0.09\)</span>. We get <span class="math notranslate nohighlight">\(\log(0.09) = -2.4079\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(c = 2\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{1} \in C_2}\)</span>: The true label for the first sample is actually the first class, and hence does not belong to the <span class="math notranslate nohighlight">\(c=2\)</span> category, so our indicator function returns me a <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p>Regardless, the log of this probability is <span class="math notranslate nohighlight">\(\log(0.2447) = -1.4076\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(c = 3\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{1} \in C_3}\)</span>: The true label for the first sample is actually the first class, and hence does not belong to the <span class="math notranslate nohighlight">\(c=3\)</span> category, so our indicator function returns me a <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p>Regardless, the log of this probability is <span class="math notranslate nohighlight">\(\log(0.6652) = -0.4076\)</span></p></li>
+</ul>
+</li>
+<li><p>Lastly, we sum them up and get <span class="math notranslate nohighlight">\(-2.4076 + 0 + 0 = -2.4076\)</span>, note here we only have the first entry! The second and third are <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p>In code, this corresponds to the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># loop = 1</span>
+    <span class="n">current_sample_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">each_y_true_element</span><span class="p">,</span> <span class="n">each_y_prob_element</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">each_y_true_one_hot_vector</span><span class="p">,</span> <span class="n">each_y_prob_one_hot_vector</span>
+    <span class="p">):</span>
+        <span class="c1"># Indicator Function</span>
+        <span class="k">if</span> <span class="n">each_y_true_element</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">each_y_prob_element</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+<li><p>Bonus: If you realize this is just a vector dot product: <span class="math notranslate nohighlight">\(\begin{bmatrix} 1 &amp; 0 &amp; 0 \end{bmatrix} \cdot \log\left(\begin{bmatrix} 0.09 \\ 0.2447 \\ 0.6652 \end{bmatrix}\right) = \begin{bmatrix} 1 &amp; 0 &amp; 0 \end{bmatrix} \cdot \left(\begin{bmatrix} -2.4076 \\ -1.4076 \\ -0.4076 \end{bmatrix}\right) = -2.4076\)</span></p></li>
+</ul>
+</li>
+</ul>
+<hr class="docutils" />
+<ul class="simple">
+<li><p>We now look at the second sample, index <span class="math notranslate nohighlight">\(i = 2\)</span>:</p>
+<ul>
+<li><p>We have the one-hot encoded label for second sample to be <span class="math notranslate nohighlight">\(\y_2 = \begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix}\)</span>. This means the label is a pig since the sequence is cat, dog and pig, and thus 0, 0, 1 corresponds to cat 0, dog 0 and pig 1.</p></li>
+<li><p>We have the one-hot encoded probability predicted by the model for the second sample to be <span class="math notranslate nohighlight">\(\hat{\y_2} = \begin{bmatrix} 0.0159 &amp; 0.1173 &amp; 0.8868 \end{bmatrix}\)</span>. This means the probability associated with this sample <span class="math notranslate nohighlight">\(2\)</span> is probability of a cat from the model is <span class="math notranslate nohighlight">\(1.59\%\)</span>, a dog <span class="math notranslate nohighlight">\(11.73\%\)</span> and a pig <span class="math notranslate nohighlight">\(88.68\%\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<hr class="docutils" />
+<ul>
+<li><p>With these information, we go on to the second outer loop’s content:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\sum_{c=2}^C \mathbb{1}_{\y_{i} \in C_c} \log\left(p_{\textbf{model}}[\y_i \in C_c]\right)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(c = 2\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{2} \in C_1}\)</span>: The true label for the second sample is actually the third class, and hence belongs to the <span class="math notranslate nohighlight">\(c=3\)</span> category, so our indicator function returns me a <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log\left(p_{\textbf{model}}[\y_i \in C_c]\right)\)</span>: Applies the log function (natural log here) to the each probability associated with the class. So in this case, since <span class="math notranslate nohighlight">\(c=1\)</span>, we apply the log function to the first entry <span class="math notranslate nohighlight">\(0.0159\)</span>. We get <span class="math notranslate nohighlight">\(\log(0.0159) = -4.1429\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(c = 2\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{2} \in C_2}\)</span>: The true label for the second sample is actually the third class, and hence does not belong to the <span class="math notranslate nohighlight">\(c=2\)</span> category, so our indicator function returns me a <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p>Regardless, the log of this probability is <span class="math notranslate nohighlight">\(\log(0.1173) = -2.1429\)</span></p></li>
+</ul>
+</li>
+<li><p><span class="math notranslate nohighlight">\(c = 3\)</span>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}_{\y_{i} \in C_c} = \mathbb{1}_{\y_{2} \in C_3}\)</span>: The true label for the second sample is actually the third class, so our indicator function returns me a <span class="math notranslate nohighlight">\(1\)</span>.</p></li>
+<li><p>The log of this probability is <span class="math notranslate nohighlight">\(\log(0.6652) = -0.1429\)</span></p></li>
+</ul>
+</li>
+<li><p>Lastly, we sum them up and get <span class="math notranslate nohighlight">\(0 + 0 + (-0.1429) = -0.1429\)</span>, note here we only have the third entry! The first and second entries are <span class="math notranslate nohighlight">\(0\)</span>.</p></li>
+<li><p>In code, this corresponds to the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># loop = 2</span>
+    <span class="n">current_sample_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">each_y_true_element</span><span class="p">,</span> <span class="n">each_y_prob_element</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">each_y_true_one_hot_vector</span><span class="p">,</span> <span class="n">each_y_prob_one_hot_vector</span>
+    <span class="p">):</span>
+        <span class="c1"># Indicator Function</span>
+        <span class="k">if</span> <span class="n">each_y_true_element</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">each_y_prob_element</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</li>
+<li><p>Bonus: If you realize this is just a vector dot product: <span class="math notranslate nohighlight">\(\begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix} \cdot \log\left(\begin{bmatrix} 0.0159 \\ 0.1173 \\ 0.8868\end{bmatrix}\right) = \begin{bmatrix} 0 &amp; 0 &amp; 1 \end{bmatrix} \cdot \left(\begin{bmatrix} -4.1429 \\ -2.1429 \\ -0.1429 \end{bmatrix}\right) = -0.1429\)</span></p></li>
+</ul>
+</li>
+</ul>
+<p>To summarize the whole process:</p>
+<ul class="simple">
+<li><p>set <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span> <span class="pre">=</span> <span class="pre">0</span></code></p></li>
+<li><p>Start Outer Loop:</p>
+<ul>
+<li><p>loop over first sample <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">=</span> <span class="pre">1</span></code> (actually index is 0 in python):</p>
+<ul>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span> <span class="pre">=</span> <span class="pre">0</span></code></p></li>
+<li><p>loop over <span class="math notranslate nohighlight">\(C=3\)</span> classes:</p>
+<ul>
+<li><p>when <span class="math notranslate nohighlight">\(c = 1\)</span>: the loss associated is <span class="math notranslate nohighlight">\(-2.4076\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+<li><p>when <span class="math notranslate nohighlight">\(c = 2\)</span>: the loss associated is <span class="math notranslate nohighlight">\(0\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+<li><p>when <span class="math notranslate nohighlight">\(c = 3\)</span>: the loss associated is <span class="math notranslate nohighlight">\(0\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+</ul>
+</li>
+<li><p>end first loop: update <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span></code> by adding <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code> to be <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span> <span class="pre">=</span> <span class="pre">-2.4076</span></code>.</p></li>
+</ul>
+</li>
+<li><p>loop over second sample <code class="docutils literal notranslate"><span class="pre">i</span> <span class="pre">=</span> <span class="pre">2</span></code> (actually index is 1 in python):</p>
+<ul>
+<li><p>set <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span> <span class="pre">=</span> <span class="pre">0</span></code></p></li>
+<li><p>loop over <span class="math notranslate nohighlight">\(C=3\)</span> classes:</p>
+<ul>
+<li><p>when <span class="math notranslate nohighlight">\(c = 1\)</span>: the loss associated is <span class="math notranslate nohighlight">\(0\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+<li><p>when <span class="math notranslate nohighlight">\(c = 2\)</span>: the loss associated is <span class="math notranslate nohighlight">\(0\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+<li><p>when <span class="math notranslate nohighlight">\(c = 3\)</span>: the loss associated is <span class="math notranslate nohighlight">\(-0.1429\)</span>. Add this to <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code>.</p></li>
+</ul>
+</li>
+<li><p>end second loop: update <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span></code> by adding <code class="docutils literal notranslate"><span class="pre">current_sample_loss</span></code> to be <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span> <span class="pre">=</span> <span class="pre">-2.4076</span> <span class="pre">+</span> <span class="pre">(-0.1429)</span> <span class="pre">=</span> <span class="pre">-2.5505</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>End all loops: You can multiply by negative <span class="math notranslate nohighlight">\(-1\)</span> to make <code class="docutils literal notranslate"><span class="pre">all_samples_loss</span></code> positive and get <code class="docutils literal notranslate"><span class="pre">all_samples_average_loss</span> <span class="pre">=</span> <span class="pre">all_samples_loss</span> <span class="pre">/</span> <span class="pre">num_of_samples</span> <span class="pre">=</span> <span class="pre">2.5505</span> <span class="pre">/</span> <span class="pre">2</span> <span class="pre">=</span> <span class="pre">1.2753</span></code>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_categorical_cross_entropy_loss</span><span class="p">(</span>
+    <span class="n">y_true</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the categorical cross entropy loss between two PyTorch tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (torch.Tensor): The true labels.</span>
+<span class="sd">        y_prob (torch.Tensor): The predicted labels.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: The categorical cross entropy loss.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">all_samples_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">each_y_true_one_hot_vector</span><span class="p">,</span> <span class="n">each_y_prob_one_hot_vector</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+        <span class="n">y_true</span><span class="p">,</span> <span class="n">y_prob</span>
+    <span class="p">):</span>
+        <span class="n">current_sample_loss</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">each_y_true_element</span><span class="p">,</span> <span class="n">each_y_prob_element</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="n">each_y_true_one_hot_vector</span><span class="p">,</span> <span class="n">each_y_prob_one_hot_vector</span>
+        <span class="p">):</span>
+            <span class="c1"># in case y_prob has elements that is 0 or very small, then torch.log(0) might go to -inf</span>
+            <span class="n">each_y_prob_element</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">each_y_prob_element</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">1.0e-20</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1.0</span><span class="o">-</span><span class="mf">1.0e-20</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> 
+            <span class="c1"># Indicator Function</span>
+            <span class="k">if</span> <span class="n">each_y_true_element</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">each_y_prob_element</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current_sample_loss</span> <span class="o">+=</span> <span class="mi">0</span>
+
+        <span class="n">all_samples_loss</span> <span class="o">+=</span> <span class="n">current_sample_loss</span>
+
+    <span class="n">all_samples_average_loss</span> <span class="o">=</span> <span class="n">all_samples_loss</span> <span class="o">/</span> <span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">all_samples_average_loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="using-dot-product-to-calculate">
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Using Dot Product to Calculate</a><a class="headerlink" href="#using-dot-product-to-calculate" title="Link to this heading">#</a></h4>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\textbf{CE}(\ytrue, \yprob) &amp;= -\dfrac{1}{N}\sum_{i=1}^N\sum_{c=1}^C \mathbb{1}_{\y_{i} \in C_c} \log\left(p_{\textbf{model}}[\y_i \in C_c]\right)\\
+                            &amp;= \textbf{SUM}\left[\textbf{diag}\left(\ytrue \cdot -\log(\yprob)^\top\right)\right]
+\end{aligned}\end{split}\]</div>
+<p>We can easily see</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\ytrue = \begin{bmatrix}  1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\textbf{z_logits} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 2 &amp; 4 &amp; 6 \end{bmatrix}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\yprob = \textbf{z_softargmax} = \begin{bmatrix} 0.09 &amp; 0.2447 &amp; 0.6652 \\ 0.0159 &amp; 0.1173 &amp; 0.8668\end{bmatrix}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}\log(\yprob) = \begin{bmatrix} 2.4076 &amp; 1.4076 &amp; 0.4076 \\ 4.1429 &amp; 2.1429 &amp; 0.1429 \end{bmatrix}\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\ytrue \cdot -\log(\yprob)^\top = \begin{bmatrix}  1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix} \cdot \begin{bmatrix} 2.4076 &amp; 4.1429 \\ 1.4076 &amp; 2.1429 \\ 0.4076  &amp; 0.1429 \end{bmatrix} = \begin{bmatrix} 2.4076 &amp; 4.1429 \\ 0.4076 &amp; 0.1429 \end{bmatrix}
+\end{split}\]</div>
+<p>The matrix <span class="math notranslate nohighlight">\(\ytrue \cdot -\log(\yprob)^\top\)</span> diagonals are what we need, where we sum them up and divide by the number of samples. That is <span class="math notranslate nohighlight">\(\frac{2.4076+0.1429}{2} = \frac{2.5505}{2} = 1.2753\)</span>.</p>
+<p>This makes sense because the one hot encoded <span class="math notranslate nohighlight">\(\ytrue\)</span> vector guarantees only the indicator functions 1 gets activated and the rest gets zeroed out. Furthermore, we are only interested in the diagonal of the matrix as we are only interested in the dot product between the <span class="math notranslate nohighlight">\(i\)</span>-th row and the <span class="math notranslate nohighlight">\(i\)</span>-th column of <span class="math notranslate nohighlight">\(\ytrue\)</span> and <span class="math notranslate nohighlight">\(-\log(\yprob)^\top\)</span> respectively.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_categorical_cross_entropy_loss_dot_product</span><span class="p">(</span>
+    <span class="n">y_true</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_prob</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the categorical cross entropy loss between two PyTorch tensors using dot product.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_true (torch.Tensor): The true labels in one-hot form.</span>
+<span class="sd">        y_prob (torch.Tensor): The predicted labels in one-hot form.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: The categorical cross entropy loss.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">y_true</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">torch</span><span class="o">.</span><span class="n">neg</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_prob</span><span class="o">.</span><span class="n">float</span><span class="p">())</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">all_loss_vector</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">all_loss_sum</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">all_loss_vector</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">average_loss</span> <span class="o">=</span> <span class="n">all_loss_sum</span> <span class="o">/</span> <span class="n">y_true</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">average_loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compute_categorical_cross_entropy_loss</span><span class="p">(</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">y_true_ohe</span><span class="p">,</span> <span class="n">y_prob</span> <span class="o">=</span> <span class="n">compute_softargmax</span><span class="p">(</span><span class="n">z_logits</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(1.2753)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">compute_categorical_cross_entropy_loss_dot_product</span><span class="p">(</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">y_true_ohe</span><span class="p">,</span> <span class="n">y_prob</span> <span class="o">=</span> <span class="n">compute_softargmax</span><span class="p">(</span><span class="n">z_logits</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(1.2753)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()(</span><span class="n">z_logits</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(1.2753)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">z_logits</span><span class="p">,</span> <span class="n">z_softargmax</span><span class="p">,</span> <span class="n">y_true_ohe</span><span class="p">,</span> <span class="n">y_true</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(tensor([[1., 2., 3.],
+         [2., 4., 6.]]),
+ tensor([[0.0900, 0.2447, 0.6652],
+         [0.0159, 0.1173, 0.8668]]),
+ tensor([[1, 0, 0],
+         [0, 0, 1]]),
+ tensor([0, 2]))
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z_softargmax</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[2.4076, 4.1429],
+        [1.4076, 2.1429],
+        [0.4076, 0.1429]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">y_true_ohe</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">matmul</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">z_softargmax</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor([[2.4076, 4.1429],
+        [0.4076, 0.1429]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tensor(2.5505)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="stackoverflow-answer">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Stackoverflow answer</a><a class="headerlink" href="#stackoverflow-answer" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">y_true</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-12</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        https://stackoverflow.com/questions/47377222/what-is-the-problem-with-my-implementation-of-the-cross-entropy-function</span>
+<span class="sd">        Computes cross entropy between targets (encoded as one-hot vectors)</span>
+<span class="sd">        and y_pred.</span>
+<span class="sd">        Input: y_pred (N, k) ndarray</span>
+<span class="sd">               y_true (N, k) ndarray</span>
+<span class="sd">        Returns: scalar</span>
+<span class="sd">        predictions = np.array([[0.25,0.25,0.25,0.25],</span>
+<span class="sd">                            [0.01,0.01,0.01,0.96]])</span>
+<span class="sd">    targets = np.array([[0,0,0,1],</span>
+<span class="sd">                       [0,0,0,1]])</span>
+<span class="sd">                       ans = 0.71355817782  #Correct answer</span>
+<span class="sd">    x = cross_entropy(predictions, targets)</span>
+<span class="sd">    print(np.isclose(x,ans))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">)</span>
+    <span class="c1"># take note that y_pred is of shape 1 x n_samples as stated in our framework</span>
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># cross entropy function</span>
+    <span class="n">cross_entropy_function</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_true</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">y_pred</span><span class="p">)</span>
+    <span class="c1"># cross entropy function here is same shape as y_true and y_pred since we are</span>
+    <span class="c1"># just performing element wise operations on both of them.</span>
+    <span class="k">assert</span> <span class="n">cross_entropy_function</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+
+    <span class="c1"># we sum up all the loss for each individual sample</span>
+    <span class="n">total_cross_entropy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cross_entropy_function</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">total_cross_entropy_loss</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+
+    <span class="c1"># we then average out the total loss across m samples, but we squeeze it to</span>
+    <span class="c1"># make it a scalar; squeeze along axis = None since there is no column axix</span>
+    <span class="n">average_cross_entropy_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">total_cross_entropy_loss</span> <span class="o">/</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># cross_entropy_loss = -np.sum(y_true * np.log(y_pred)) / n_samples</span>
+    <span class="c1"># print(np.isclose(average_cross_entropy_loss, cross_entropy_loss))</span>
+    <span class="k">return</span> <span class="n">average_cross_entropy_loss</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array(0.01005034)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="machinelearningmastery-example">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">MachineLearningMastery example</a><a class="headerlink" href="#machinelearningmastery-example" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">log</span>
+
+<span class="c1"># calculate cross-entropy</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cross_entropy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">ets</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="nb">sum</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">ets</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">))])</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">binary_cross_entropy</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-15</span><span class="p">):</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">y_true</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">eps</span><span class="p">)</span> <span class="o">+</span> <span class="n">y_true</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">eps</span><span class="p">))</span>
+
+<span class="c1"># define the target distribution for two events</span>
+<span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="c1"># define probabilities for the first event</span>
+<span class="n">probs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="c1"># cat is 0% and dog is 100% confidence</span>
+    <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="c1"># create probability distributions for the two events</span>
+<span class="c1"># dists = [[1.0 - p, p] for p in probs]</span>
+<span class="c1"># calculate cross-entropy for each distribution</span>
+<span class="n">ents</span> <span class="o">=</span> <span class="p">[</span><span class="n">binary_cross_entropy</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">]</span>
+<span class="c1"># plot probability distribution vs cross-entropy</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">probs</span><span class="p">],</span> <span class="n">ents</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Probability Distribution vs Cross-Entropy&#39;</span><span class="p">)</span>
+<span class="c1">#pyplot.xticks([1-p for p in probs], [&#39;[%.1f,%.1f]&#39;%(d[0],d[1]) for d in dists], rotation=70)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Probability Distribution for Query Image when ground truth is 1&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Cross-Entropy (nats)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../../_images/83e9a3d301923ae901474fccb88a5afbc4ff78b91782fe76fadc221696f10681.png" src="../../_images/83e9a3d301923ae901474fccb88a5afbc4ff78b91782fe76fadc221696f10681.png" />
+</div>
+</div>
+</section>
+<section id="further-readings">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Further Readings</a><a class="headerlink" href="#further-readings" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://medium.com/analytics-vidhya/understanding-entropy-the-golden-measurement-of-machine-learning-4ea97c663dc3#:~:text=By%20using%20entropy%20in%20machine,be%20desired%20in%20model%2Dbuilding.">analytics-vidhya-entropy-loss</a></p></li>
+<li><p><a class="reference external" href="https://machinelearningmastery.com/cross-entropy-for-machine-learning/">cross-entropy-loss-machine-learning-mastery</a></p></li>
+<li><p><a class="reference external" href="https://towardsdatascience.com/entropy-how-decision-trees-make-decisions-2946b9c18c8">entropy-how-decision-trees-make-decisions</a></p></li>
+<li><p><a class="reference external" href="https://ramsane.github.io/articles/cross-entropy-explained-with-entropy-and-kl-divergence">https://ramsane.github.io/articles/cross-entropy-explained-with-entropy-and-kl-divergence</a></p></li>
+<li><p><a class="reference external" href="https://neptune.ai/blog/cross-entropy-loss-and-its-applications-in-deep-learning">https://neptune.ai/blog/cross-entropy-loss-and-its-applications-in-deep-learning</a></p></li>
+</ul>
+<p><a class="reference external" href="https://stackoverflow.com/questions/41990250/what-is-cross-entropy/41990932">https://stackoverflow.com/questions/41990250/what-is-cross-entropy/41990932</a>
+<a class="reference external" href="https://towardsdatascience.com/cross-entropy-loss-function-f38c4ec8643e">https://towardsdatascience.com/cross-entropy-loss-function-f38c4ec8643e</a>
+<a class="reference external" href="https://neptune.ai/blog/cross-entropy-loss-and-its-applications-in-deep-learning">https://neptune.ai/blog/cross-entropy-loss-and-its-applications-in-deep-learning</a>
+<a class="reference external" href="https://machinelearningmastery.com/cross-entropy-for-machine-learning/">https://machinelearningmastery.com/cross-entropy-for-machine-learning/</a>
+<a class="reference external" href="https://d2l.ai/chapter_linear-networks/softmax-regression.html">https://d2l.ai/chapter_linear-networks/softmax-regression.html</a>
+<a class="reference external" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html#invertibility">https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html#invertibility</a>
+<a class="reference external" href="https://leimao.github.io/blog/Cross-Entropy-KL-Divergence-MLE/">https://leimao.github.io/blog/Cross-Entropy-KL-Divergence-MLE/</a>
+<a class="reference external" href="https://towardsdatascience.com/cross-entropy-for-classification-d98e7f974451">https://towardsdatascience.com/cross-entropy-for-classification-d98e7f974451</a>
+<a class="reference external" href="https://gist.github.com/yang-zhang/217dcc6ae9171d7a46ce42e215c1fee0">https://gist.github.com/yang-zhang/217dcc6ae9171d7a46ce42e215c1fee0</a>
+<a class="reference external" href="https://datascience.stackexchange.com/questions/20296/cross-entropy-loss-explanation">https://datascience.stackexchange.com/questions/20296/cross-entropy-loss-explanation</a>
+<a class="reference external" href="https://ramsane.github.io/articles/cross-entropy-explained-with-entropy-and-kl-divergence">https://ramsane.github.io/articles/cross-entropy-explained-with-entropy-and-kl-divergence</a></p>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Softmax_function">https://en.wikipedia.org/wiki/Softmax_function</a></p>
+</aside>
+</aside>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./influential/loss_functions"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03_entropy_and_information_gain.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Entropy and Information Gain</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../decision_boundary/01_intro.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Decision Boundary</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuition">Intuition</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy-as-a-loss-function">Cross-Entropy as a Loss Function</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-entropy-setup">Cross-Entropy Setup</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#z-logits">Z Logits</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#softmax">Softmax</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#categorical-cross-entropy-loss">Categorical Cross Entropy Loss</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#using-dot-product-to-calculate">Using Dot Product to Calculate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stackoverflow-answer">Stackoverflow answer</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#machinelearningmastery-example">MachineLearningMastery example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-readings">Further Readings</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
