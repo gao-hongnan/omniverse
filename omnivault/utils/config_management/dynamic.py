@@ -1,18 +1,17 @@
 import importlib
 from types import ModuleType
-from typing import Dict, Tuple, Type
+from typing import Annotated
 
 from pydantic import BaseModel, Field
 
-from omnivault._types._generic import DynamicClass, T, V
 
-
-class DynamicClassFactory[DynamicClass](BaseModel):
+class DynamicClassFactory[DynamicClassT](BaseModel):
     r"""
     A factory class for dynamic instantiation of classes based on a configuration.
 
-    Using a `TypeVar` for the generic type `DynamicClass` is better than using `Any`
-    since we really have no way to know the return type of `create_instance()`.
+    Using a type parameter for the generic type `DynamicClassT` is better than
+    using `Any` since we really have no way to know the return type of
+    `create_instance()`.
 
     This class serves as a base for configuration management, particularly useful
     in scenarios involving complex systems or large libraries where classes or
@@ -30,10 +29,10 @@ class DynamicClassFactory[DynamicClass](BaseModel):
 
     Methods
     -------
-    pop_name_and_return_remaining_kwargs() -> KwargsDict:
+    pop_name_and_return_remaining_kwargs() -> dict[str, object]:
         Extracts the configuration parameters excluding 'name' attribute.
 
-    create_instance() -> Any:
+    create_instance() -> DynamicClassT:
         Dynamically creates an instance of the class specified in 'name' attribute
         using the provided configuration parameters.
 
@@ -48,7 +47,7 @@ class DynamicClassFactory[DynamicClass](BaseModel):
     --------
     >>> class TextSplitterConfig(DynamicClassFactory):
     ...     name: str = "langchain.text_splitter.RecursiveCharacterTextSplitter"
-    ...     separators: List[str] = Field(default_factory=lambda: ["\n\n", "\n", " ", ""])
+    ...     separators: list[str] = Field(default_factory=lambda: ["\n\n", "\n", " ", ""])
     ...     chunk_size: int = 300
     ...     chunk_overlap: int = 50
     ...     length_function: Callable = Field(default_factory=lambda: len)
@@ -56,22 +55,24 @@ class DynamicClassFactory[DynamicClass](BaseModel):
     >>> text_splitter = splitter_config.create_instance()
     """
 
-    name: str = Field(
-        ...,
-        description=(
-            "The 'name' field should contain the fully qualified class name "
-            "that this factory will instantiate. This includes both the module "
-            "and the class name. For example, 'mymodule.MyClass'. The factory "
-            "will dynamically import the specified module, access the class, "
-            "and create an instance of it using the other configuration "
-            "parameters provided in the subclass."
+    name: Annotated[
+        str,
+        Field(
+            description=(
+                "The 'name' field should contain the fully qualified class name "
+                "that this factory will instantiate. This includes both the module "
+                "and the class name. For example, 'mymodule.MyClass'. The factory "
+                "will dynamically import the specified module, access the class, "
+                "and create an instance of it using the other configuration "
+                "parameters provided in the subclass."
+            )
         ),
-    )
+    ]
 
-    def pop_name_and_return_remaining_kwargs(self) -> Dict[str, V]:
+    def pop_name_and_return_remaining_kwargs(self) -> dict[str, object]:
         return {key: value for key, value in self.model_dump(mode="python").items() if key != "name"}
 
-    def split_class_name(self) -> Tuple[str, str]:
+    def split_class_name(self) -> tuple[str, str]:
         """Split the full class name into module and class names."""
         # pylint: disable=no-member
         if not self.name or self.name.startswith(".") or self.name.endswith("."):
@@ -90,14 +91,14 @@ class DynamicClassFactory[DynamicClass](BaseModel):
         except ImportError as err:
             raise ImportError(f"Module {module_name} cannot be imported") from err
 
-    def get_class_from_module(self, module: ModuleType, class_name: str) -> Type[DynamicClass]:
+    def get_class_from_module(self, module: ModuleType, class_name: str) -> type[DynamicClassT]:
         """Retrieve the class from the imported module."""
         try:
             return getattr(module, class_name)  # type: ignore[no-any-return]
         except AttributeError as err:
             raise AttributeError(f"Class {class_name} not found in module {module.__name__}") from err
 
-    def create_instance(self, *args: T, **kwargs: T) -> DynamicClass:
+    def create_instance(self, *args: object, **kwargs: object) -> DynamicClassT:
         """
         Note
         ----

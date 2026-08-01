@@ -1,16 +1,11 @@
-from __future__ import annotations
-
-from typing import Dict, List
-
-
-def format_lr(lr_or_lrs: float | List[float], precision: int) -> str:
+def format_lr(lr_or_lrs: float | list[float], precision: int) -> str:
     format_str = f"%.{precision}f"
     if isinstance(lr_or_lrs, list):
         return ", ".join([format_str % lr for lr in lr_or_lrs])
     return format_str % lr_or_lrs
 
 
-def create_markdown_table(data: Dict[str, List[int | float]]) -> str:
+def create_markdown_table(data: dict[str, list[int | float]]) -> str:
     """Create a markdown table from a dictionary of lists. Run through prettier
     for auto markdown formatting.
 

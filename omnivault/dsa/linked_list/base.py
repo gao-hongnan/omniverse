@@ -1,24 +1,21 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any, Iterator, Protocol, Sequence, runtime_checkable
+from collections.abc import Iterator, Sequence
+from typing import Any, Protocol, override, runtime_checkable
 
 from pydantic import BaseModel
 
-from omnivault._types._generic import T
-
 
 @runtime_checkable
-class LinkedNode(Protocol[T]):
+class LinkedNode[ValueT](Protocol):
     """
     Protocol defining the minimum interface for a linked list node.
     Using Protocol allows for structural typing and better flexibility.
     """
 
-    value: T
+    value: ValueT
 
 
-class SinglyNode[T](BaseModel):
+class SinglyNode[ValueT](BaseModel):
     """Concrete implementation of a singly-linked node.
 
     A node implementation for singly linked lists that contains value and a reference
@@ -26,9 +23,9 @@ class SinglyNode[T](BaseModel):
 
     Parameters
     ----------
-    value : T
+    value : ValueT
         The current value to be stored in the node.
-    next : SinglyNode[T] | None, optional
+    next : SinglyNode[ValueT] | None, optional
         Reference to the next node in the sequence, by default None.
 
     Examples
@@ -43,11 +40,11 @@ class SinglyNode[T](BaseModel):
     2
     """
 
-    value: T
-    next: SinglyNode[T] | None = None
+    value: ValueT
+    next: SinglyNode[ValueT] | None = None
 
 
-class DoublyNode[T](BaseModel):
+class DoublyNode[ValueT](BaseModel):
     """Concrete implementation of a doubly-linked node.
 
     A node implementation for doubly linked lists that contains value and references
@@ -55,11 +52,11 @@ class DoublyNode[T](BaseModel):
 
     Parameters
     ----------
-    value : T
+    value : ValueT
         The value to be stored in the node.
-    next : DoublyNode[T] | None, optional
+    next : DoublyNode[ValueT] | None, optional
         Reference to the next node in the sequence, by default None.
-    prev : DoublyNode[T] | None, optional
+    prev : DoublyNode[ValueT] | None, optional
         Reference to the previous node in the sequence, by default None.
 
     Examples
@@ -75,13 +72,13 @@ class DoublyNode[T](BaseModel):
     1
     """
 
-    value: T
-    next: DoublyNode[T] | None = None
-    prev: DoublyNode[T] | None = None
+    value: ValueT
+    next: DoublyNode[ValueT] | None = None
+    prev: DoublyNode[ValueT] | None = None
 
 
 @runtime_checkable
-class LinkedListProtocol(Protocol[T]):
+class LinkedListProtocol[ValueT](Protocol):
     """
     Protocol defining the public interface for linked lists.
     This ensures structural subtyping for any linked list implementation.
@@ -89,38 +86,38 @@ class LinkedListProtocol(Protocol[T]):
 
     def __len__(self) -> int: ...
 
-    def __iter__(self) -> Iterator[T]: ...
+    def __iter__(self) -> Iterator[ValueT]: ...
 
-    def append(self, value: T) -> None: ...
+    def append(self, value: ValueT) -> None: ...
 
-    def prepend(self, value: T) -> None: ...
+    def prepend(self, value: ValueT) -> None: ...
 
-    def remove(self, value: T) -> bool: ...
+    def remove(self, value: ValueT) -> bool: ...
 
     def clear(self) -> None: ...
 
 
-class AbstractLinkedList[T, N: LinkedNode[Any]](ABC):
+class AbstractLinkedList[ValueT, NodeT: LinkedNode[Any]](ABC):
     """
     Abstract base class for linked list implementations.
 
     Generic Parameters
     ------------------
-    T
+    ValueT
         Type of value stored in the list
-    N
+    NodeT
         Type of node used (must conform to LinkedNode protocol)
 
     Attributes
     ----------
-    head : SinglyNode[T] | None
+    head : SinglyNode[ValueT] | None
         The head node of the linked list.
     size : int
         The number of nodes in the linked list.
     """
 
-    def __init__(self, values: Sequence[T] | None = None) -> None:
-        self._head: N | None = None
+    def __init__(self, values: Sequence[ValueT] | None = None) -> None:
+        self._head: NodeT | None = None
         self._size: int = 0
 
         self._values = values
@@ -129,15 +126,15 @@ class AbstractLinkedList[T, N: LinkedNode[Any]](ABC):
             self.add_multiple_nodes()
 
     @abstractmethod
-    def append(self, value: T) -> None:
+    def append(self, value: ValueT) -> None:
         """Add an element to the end of the list."""
 
     @abstractmethod
-    def prepend(self, value: T) -> None:
+    def prepend(self, value: ValueT) -> None:
         """Add an element to the beginning of the list."""
 
     @abstractmethod
-    def remove(self, value: T) -> bool:
+    def remove(self, value: ValueT) -> bool:
         """Remove the first occurrence of value from the list."""
 
     @abstractmethod
@@ -176,13 +173,14 @@ class AbstractLinkedList[T, N: LinkedNode[Any]](ABC):
     def __bool__(self) -> bool:
         return bool(self._size)
 
+    @override
     def __repr__(self) -> str:
         return self.traverse()
 
     @abstractmethod
-    def __iter__(self) -> Iterator[T]: ...
+    def __iter__(self) -> Iterator[ValueT]: ...
 
     @property
-    def head(self) -> N | None:
+    def head(self) -> NodeT | None:
         """Get the head node of the list."""
         return self._head

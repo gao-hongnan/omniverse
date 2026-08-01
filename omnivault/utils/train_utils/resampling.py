@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 import pandas as pd
 from sklearn import model_selection
@@ -11,7 +9,7 @@ def create_folds(
     df: pd.DataFrame,
     *,
     resample_strategy: str,
-    resample_params: Dict[str, Any],
+    resample_params: dict[str, Any],
     group_by: str | None = None,
     stratify_by: str | None = None,
     fold_column: Literal["fold"] = "fold",

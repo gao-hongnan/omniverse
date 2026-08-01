@@ -1,20 +1,17 @@
-from __future__ import annotations
-
 import gc
 import sys
-from typing import List
 
 import torch
 
 
 # FIXME: this does not work actually because local scope is not deleted.
-def purge_global_scope(variable_name_or_names: str | List[str]) -> None:
+def purge_global_scope(variable_name_or_names: str | list[str]) -> None:
     """
     Deletes the provided objects and performs cleanup.
 
     Parameters
     ----------
-    objects: List[Any]
+    objects: list[Any]
         The list of objects to be deleted.
 
     Notes
@@ -23,7 +20,7 @@ def purge_global_scope(variable_name_or_names: str | List[str]) -> None:
     variables and are not really deleted.
 
     ```python
-    def purge_global_scope(object_or_objects: Any | List[Any]) -> None:
+    def purge_global_scope(object_or_objects: Any | list[Any]) -> None:
         if isinstance(object_or_objects, list):
             for obj in object_or_objects:
                 del obj

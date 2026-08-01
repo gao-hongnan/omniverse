@@ -1,10 +1,9 @@
-from __future__ import annotations
-
 import inspect
+from collections.abc import Callable
 from inspect import Parameter, Signature
-from typing import Any, Callable, get_type_hints
+from typing import Any, Final, get_type_hints
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # Sentinel type for empty parameter default
@@ -14,57 +13,53 @@ class _Empty:
     pass
 
 
-EMPTY = _Empty()
+EMPTY: Final = _Empty()
 
 
-class FieldInfo[T](BaseModel):
+class FieldInfo[ValueT](BaseModel):
     """Information about a function/method parameter with proper typing."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     name: str
     # Annotated as `object` rather than `type[object]`: a type hint is not
-    # necessarily a class. `Dict[str, Any]`, `int | None` and `Literal["a"]` are
+    # necessarily a class. `dict[str, Any]`, `int | None` and `Literal["a"]` are
     # all valid hints but none of them pass pydantic's `is_subclass_of` check,
     # so `type[object]` would reject exactly the signatures this module exists
     # to inspect.
     type_hint: object | None = None
-    default: T | _Empty = Field(default=EMPTY)
-    is_required: bool = Field(default=True)
-
-    class Config:
-        arbitrary_types_allowed = True
+    default: ValueT | _Empty = EMPTY
+    is_required: bool = True
 
 
 class FunctionSchema(BaseModel):
     """Schema for function/method signature with proper typing."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     fields: list[FieldInfo[Any]] = Field(default_factory=list)
     annotations: dict[str, object] = Field(default_factory=dict)
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class ClassFieldInfo(BaseModel):
     """Information about a class field including its source class."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     class_name: str
     field: FieldInfo[Any]
-
-    class Config:
-        arbitrary_types_allowed = True
 
 
 class ClassSchema(BaseModel):
     """Schema for class constructor signature including inheritance."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     fields: list[ClassFieldInfo] = Field(default_factory=list)
     annotations: dict[str, dict[str, object]] = Field(default_factory=dict)
 
-    class Config:
-        arbitrary_types_allowed = True
 
-
-def get_base_classes[T](cls: type[T], include_self: bool = False) -> set[type[T]]:
+def get_base_classes[ClassT](cls: type[ClassT], include_self: bool = False) -> set[type[ClassT]]:
     """Get the base classes of a class and all its base classes.
 
     Args:
@@ -77,7 +72,7 @@ def get_base_classes[T](cls: type[T], include_self: bool = False) -> set[type[T]
     return set(cls.__mro__[0:-1] if include_self else cls.__mro__[1:-1])
 
 
-def get_function_schema[P](func_or_method: Callable[..., P]) -> FunctionSchema:
+def get_function_schema[ReturnT](func_or_method: Callable[..., ReturnT]) -> FunctionSchema:
     """Extract function/method schema using Pydantic models.
 
     Args:
@@ -120,7 +115,7 @@ def get_function_schema[P](func_or_method: Callable[..., P]) -> FunctionSchema:
     return FunctionSchema(fields=fields, annotations=annotations)
 
 
-def get_class_schema[T](cls: type[T], include_bases: bool = True) -> ClassSchema:
+def get_class_schema[ClassT](cls: type[ClassT], include_bases: bool = True) -> ClassSchema:
     """Extract class constructor schema using Pydantic models.
 
     Args:

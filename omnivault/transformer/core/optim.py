@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Dict, List, Literal, Set, Tuple, Type
+from typing import Literal
 
 import torch
 from torch import nn
@@ -11,7 +9,7 @@ from omnivault.transformer.modules.layers.normalization import LayerNorm
 # FIXME: I have my own implementation of AddNorm, should I blacklist it or not?
 def apply_weight_decay_to_different_param_groups(
     model: nn.Module, weight_decay: float
-) -> List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]]:
+) -> list[dict[Literal["params", "weight_decay"], list[torch.nn.Parameter] | float]]:
     """
     Categorizes parameters of a PyTorch model into two groups based on weight decay.
 
@@ -33,7 +31,7 @@ def apply_weight_decay_to_different_param_groups(
 
     Returns
     -------
-    optim_groups: List[Dict[str, torch.nn.Parameter]]
+    optim_groups: list[dict[str, torch.nn.Parameter]]
         A list containing two dictionaries, one for parameters to decay and
         one for parameters not to decay.
 
@@ -43,10 +41,10 @@ def apply_weight_decay_to_different_param_groups(
         If any parameter is found in both decay and no_decay sets.
     """
 
-    decay: Set[str] = set()
-    no_decay: Set[str] = set()
-    whitelist_weight_modules: Tuple[Type[nn.Module], ...] = (nn.Linear,)
-    blacklist_weight_modules: Tuple[Type[nn.Module], ...] = (nn.LayerNorm, nn.Embedding, LayerNorm)
+    decay: set[str] = set()
+    no_decay: set[str] = set()
+    whitelist_weight_modules: tuple[type[nn.Module], ...] = (nn.Linear,)
+    blacklist_weight_modules: tuple[type[nn.Module], ...] = (nn.LayerNorm, nn.Embedding, LayerNorm)
 
     for module_name, module in model.named_modules():
         for parameter_name, _parameter in module.named_parameters():
@@ -79,7 +77,7 @@ def apply_weight_decay_to_different_param_groups(
         f"Parameters {param_dict.keys() - union_params} were not categorized."
     )
 
-    optim_groups: List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]] = [
+    optim_groups: list[dict[Literal["params", "weight_decay"], list[torch.nn.Parameter] | float]] = [
         {"params": [param_dict[parameter_name] for parameter_name in sorted(decay)], "weight_decay": weight_decay},
         {"params": [param_dict[parameter_name] for parameter_name in sorted(no_decay)], "weight_decay": 0.0},
     ]

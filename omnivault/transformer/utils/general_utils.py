@@ -1,12 +1,11 @@
-from __future__ import annotations
-
 import logging
 import os
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, List, Literal
+from typing import Literal
 
 import requests
 import torch
@@ -30,7 +29,7 @@ def get_default_logger(logger_type: Literal["rich"] | None = None) -> logging.Lo
         The name of the logger.
     level : str, optional
         Logging level, by default "INFO".
-    logger : Optional[logging.Logger], optional
+    logger : logging.Logger | None, optional
         An existing logger instance, by default None.
 
     Returns
@@ -76,7 +75,7 @@ def download_and_read_sequences(url: str, dataset_name: str) -> Generator[str]:
 
 
 def validate_and_cleanup(
-    state_1: State, state_2: State, objects: List[str], logger: logging.Logger | None = None
+    state_1: State, state_2: State, objects: list[str], logger: logging.Logger | None = None
 ) -> None:
     """
     Validates the equality of two State instances and performs cleanup by deleting
@@ -94,7 +93,7 @@ def validate_and_cleanup(
         The first State instance to compare.
     state_2 : State
         The second State instance to compare.
-    objects : List[Any]
+    objects : list[Any]
         A list of objects to be deleted during cleanup.
     logger : logging.Logger, optional
         The logger to use for logging any errors or exceptions. If not provided,

@@ -5,10 +5,8 @@ References
 [1] https://pytorch.org/torchtune/stable/tutorials/lora_finetune.html
 """
 
-from __future__ import annotations
-
 import math
-from typing import List
+from typing import Annotated, override
 
 import torch
 from pydantic import BaseModel, Field
@@ -16,27 +14,31 @@ from torch import nn
 
 
 class LoraConfig(BaseModel):
-    r: int = Field(..., description="Lora attention dimension (the 'rank').")
-    lora_alpha: int = Field(..., description="The alpha parameter for Lora scaling.")
-    lora_dropout: float = Field(..., description="The dropout probability for Lora layers.")
-    target_modules: List[str] | None = Field(
-        default=None,
-        description=(
-            "The names of the modules to apply the adapter to. If specified, only the modules with the specified "
-            "names will be replaced. When passing a string, a regex match will be performed. When passing a list of "
-            "strings, either an exact match will be performed or it is checked if the name of the module ends with any "
-            "of the passed strings. If specified as 'all-linear', all linear/Conv1D modules are chosen, excluding the "
-            "output layer. If not specified, modules are chosen according to the model architecture. If the architecture "
-            "is unknown, an error will be raised—manual specification of target modules is required in such cases."
+    r: Annotated[int, Field(description="Lora attention dimension (the 'rank').")]
+    lora_alpha: Annotated[int, Field(description="The alpha parameter for Lora scaling.")]
+    lora_dropout: Annotated[float, Field(description="The dropout probability for Lora layers.")]
+    target_modules: Annotated[
+        list[str] | None,
+        Field(
+            description=(
+                "The names of the modules to apply the adapter to. If specified, only the modules with the specified "
+                "names will be replaced. When passing a string, a regex match will be performed. When passing a list of "
+                "strings, either an exact match will be performed or it is checked if the name of the module ends with any "
+                "of the passed strings. If specified as 'all-linear', all linear/Conv1D modules are chosen, excluding the "
+                "output layer. If not specified, modules are chosen according to the model architecture. If the architecture "
+                "is unknown, an error will be raised—manual specification of target modules is required in such cases."
+            )
         ),
-    )
-    modules_to_save: List[str] | None = Field(
-        default=None,
-        description=(
-            """List of modules apart from adapter layers to be set as
+    ] = None
+    modules_to_save: Annotated[
+        list[str] | None,
+        Field(
+            description=(
+                """List of modules apart from adapter layers to be set as
                trainable and saved in the final checkpoint."""
+            )
         ),
-    )
+    ] = None
 
 
 def _lora_a_init_params(x: nn.Linear) -> None:
@@ -94,6 +96,7 @@ class LoRALinear(nn.Module):
         _lora_a_init_params(self.lora_a)
         _lora_b_init_params(self.lora_b)
 
+    @override
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the `LoRALinear` layer."""
         frozen_out = x @ self.linear.weight.T  # This would be the output of the original model
@@ -137,7 +140,7 @@ def merge_and_unload_model(model: nn.Module) -> nn.Module:
 
 
 def apply_lora_to_base_model(
-    model: nn.Module, rank: int, alpha: float, dropout: float, target_modules: List[str] | None = None
+    model: nn.Module, rank: int, alpha: float, dropout: float, target_modules: list[str] | None = None
 ) -> None:
     """Recursively apply LoRA to a model. Only supports applying on `nn.Linear` layers.
 

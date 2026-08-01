@@ -26,38 +26,36 @@ iterate over the vectors and plot them one by one. Maybe consider FIXME
 this to support vectorized plotting.
 """
 
-from __future__ import annotations
-
-from typing import Any, Dict, List, Sequence
+from collections.abc import Sequence
+from typing import Any, override
 
 import matplotlib.pyplot as plt
 
-from omnivault._types._generic import Vec
 from omnivault.linear_algebra.base import VectorPlotter
-from omnivault.linear_algebra.vector import Vector2D, Vector3D
+from omnivault.linear_algebra.vector import Vector, Vector2D, Vector3D
 
 
-def add_vectors_to_plotter(plotter: VectorPlotter[Vec], vectors: Sequence[Vec]) -> None:
+def add_vectors_to_plotter[VectorT: Vector](plotter: VectorPlotter[VectorT], vectors: Sequence[VectorT]) -> None:
     """Add vectors to a plotter.
 
     Type
     ----
-    The reason we use `Vec` instead of `Vector` is because `Vec` is a type
-    variable bounded to `Vector` and thus can represent `Vector` and any
-    of its subclasses. This means `Vec` is an upper bound for `Vector` and
+    The reason we use `VectorT` instead of `Vector` is because `VectorT` is a
+    type variable bounded to `Vector` and thus can represent `Vector` and any
+    of its subclasses. This means `Vector` is an upper bound for `VectorT` and
     its subclasses.
     """
     for vector in vectors:
         plotter.add_vector(vector)
 
 
-def add_text_annotations(
-    plotter: VectorPlotter[Vec],
-    vectors: Sequence[Vec],
+def add_text_annotations[VectorT: Vector](
+    plotter: VectorPlotter[VectorT],
+    vectors: Sequence[VectorT],
     include_endpoint_label: bool = True,
     include_vector_label: bool = True,
-    endpoint_kwargs: Dict[str, Any] | None = None,
-    vector_kwargs: Dict[str, Any] | None = None,
+    endpoint_kwargs: dict[str, Any] | None = None,
+    vector_kwargs: dict[str, Any] | None = None,
 ) -> None:
     endpoint_kwargs = endpoint_kwargs or {"fontsize": 12}
     vector_kwargs = vector_kwargs or {"fontsize": 12}
@@ -100,8 +98,8 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         self,
         fig: plt.Figure | None = None,
         ax: plt.Axes | None = None,
-        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
-        quiver_kwargs: Dict[str, Any] | None = None,
+        ax_kwargs: dict[str, dict[str, Any]] | None = None,
+        quiver_kwargs: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(fig, ax, ax_kwargs)
 
@@ -112,11 +110,12 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
             "alpha": 0.6,
         }
 
-        self.vectors: List[Vector2D] = []
-        self.colors: List[str] = []
+        self.vectors: list[Vector2D] = []
+        self.colors: list[str] = []
 
         self._apply_ax_customizations()  # may not need since in FigureManager
 
+    @override
     def add_text(
         self,
         x: float,
@@ -133,7 +132,7 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
         x: float,
         y: float,
         text: str,
-        arrow_props: Dict[str, Any] | None = None,
+        arrow_props: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         self.ax.annotate(
@@ -145,9 +144,11 @@ class VectorPlotter2D(VectorPlotter[Vector2D]):
             **kwargs,
         )
 
+    @override
     def add_vector(self, vector: Vector2D) -> None:
         self.vectors.append(vector)
 
+    @override
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
         """Currently only works in notebooks, if in script, please add
         `plt.show()` after calling this method."""
@@ -172,8 +173,8 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         self,
         fig: plt.Figure | None = None,
         ax: plt.Axes | None = None,
-        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
-        quiver_kwargs: Dict[str, Any] | None = None,
+        ax_kwargs: dict[str, dict[str, Any]] | None = None,
+        quiver_kwargs: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(fig, ax, ax_kwargs)
 
@@ -187,11 +188,12 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
             "linewidths": 3,
         }
 
-        self.vectors: List[Vector3D] = []
-        self.colors: List[str] = []
+        self.vectors: list[Vector3D] = []
+        self.colors: list[str] = []
 
         self._apply_ax_customizations()  # may not need since in FigureManager
 
+    @override
     def add_text(
         self,
         x: float,
@@ -209,7 +211,7 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
         y: float,
         z: float,
         text: str,
-        arrow_props: Dict[str, Any] | None = None,
+        arrow_props: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> None:
         self.ax.annotate(
@@ -221,9 +223,11 @@ class VectorPlotter3D(VectorPlotter[Vector3D]):
             **kwargs,
         )
 
+    @override
     def add_vector(self, vector: Vector3D) -> None:
         self.vectors.append(vector)
 
+    @override
     def plot(self, grid: bool = True, show_ticks: bool = False) -> None:
         for vector in self.vectors:
             # fmt: off

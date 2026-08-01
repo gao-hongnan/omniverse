@@ -13,6 +13,8 @@ ours. Note that there are many ways to solve the linear least squares
 problem.
 """
 
+from typing import Literal
+
 import numpy as np
 import pytest
 from numpy.typing import NDArray
@@ -22,10 +24,12 @@ from sklearn.model_selection import train_test_split
 
 from omnivault.machine_learning.linear.linear_regression import LinearRegression as CustomLinearRegression
 
+type _Solver = Literal["Closed Form Solution", "Batch Gradient Descent"]
+
 
 @pytest.mark.parametrize("n_features", [3, 5, 10])
 @pytest.mark.parametrize("solver", ["Closed Form Solution", "Batch Gradient Descent"])
-def test_linear_regression_vs_sklearn(n_features: int, solver: str) -> None:
+def test_linear_regression_vs_sklearn(n_features: int, solver: _Solver) -> None:
     # Generate synthetic data
     dataset = make_regression(n_samples=1000, n_features=n_features, noise=0.1, random_state=1992)
     X: NDArray[np.float64] = np.asarray(dataset[0], dtype=np.float64)

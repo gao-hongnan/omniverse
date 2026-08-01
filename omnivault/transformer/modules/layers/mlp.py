@@ -1,3 +1,5 @@
+from typing import override
+
 import torch
 from torch import nn
 
@@ -64,6 +66,7 @@ class PositionwiseFeedForward(nn.Module):
         if context_projection.bias is not None:
             nn.init.constant_(context_projection.bias, 0)
 
+    @override
     def forward(self, z: torch.Tensor) -> torch.Tensor:
         z = self.ffn["context_fc"](z)
         z = self.ffn["activation"](z)

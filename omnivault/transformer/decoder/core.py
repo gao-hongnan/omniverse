@@ -1,10 +1,7 @@
-from __future__ import annotations
-
-from typing import List, cast, overload
+from typing import cast, overload, override
 
 import torch
 from torch import nn
-from typing_extensions import override
 
 from omnivault._types._alias import NotGiven
 from omnivault._types._sentinel import NOT_GIVEN
@@ -43,6 +40,7 @@ class GPTDecoderBlock(BaseDecoderBlock):
         # self.feed_forward.register_forward_hook(forward_hook)
         # fmt: on
 
+    @override
     def forward(
         self,
         z: torch.Tensor,  # that's tgt in torch code base
@@ -216,6 +214,7 @@ class GPTDecoder(BaseDecoder):
             torch.logical_and(cast(torch.Tensor, target_padding_masks), cast(torch.Tensor, future_masks)).bool(),
         )
 
+    @override
     def forward(
         self,
         input_tokens: torch.LongTensor,
@@ -287,7 +286,7 @@ class GPTDecoder(BaseDecoder):
     @torch.no_grad()
     def generate(
         self,
-        starting_tokens: torch.LongTensor | List[int],
+        starting_tokens: torch.LongTensor | list[int],
         *,
         max_tokens: int = 100,  # max tokens to generate
         temperature: float = 1.0,  # temperature for sampling
@@ -306,7 +305,7 @@ class GPTDecoder(BaseDecoder):
 
         Parameters
         ----------
-        starting_tokens : Union[torch.LongTensor, List[int]]
+        starting_tokens : torch.LongTensor | list[int]
             The initial tokens / starting_tokens from which the generation begins.
             Can be a list of integers or a LongTensor. It can be a batch of sequences
             too.

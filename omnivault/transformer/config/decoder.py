@@ -1,37 +1,29 @@
 """We use dataclass here for easy instantiating with hydra"""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
 from torch import nn
 
 from omnivault.transformer.modules.attention.base import Attention
 
 
 class MultiHeadedAttentionConfig(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     attention: Attention
     d_model: int
     H: int
     dropout: float = 0.1
 
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True
-
 
 # TODO: add `field_validator` such that if `d_ff` is `None`, then `d_ff` is set to `4 * d_model`.
 class PositionwiseFeedForwardConfig(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     d_model: int
     d_ff: int
-    activation: nn.Module = Field(
-        default=nn.GELU(approximate="tanh")
-    )  # NOTE: https://github.com/facebookresearch/xformers/issues/759
+    activation: nn.Module = nn.GELU(approximate="tanh")  # NOTE: https://github.com/facebookresearch/xformers/issues/759
     dropout: float = 0.1
     bias: bool = True
-
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True
 
 
 class AddNormConfig(BaseModel):

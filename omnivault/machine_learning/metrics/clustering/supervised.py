@@ -1,8 +1,6 @@
 # NOTE: unit-tested
 """Utilities to evaluate the clustering performance of models."""
 
-from __future__ import annotations
-
 from typing import Any, Literal, overload
 
 import numpy as np
@@ -34,7 +32,7 @@ def contingency_matrix(
 
     Returns
     -------
-    Union[pd.DataFrame, NDArray[np.integer[Any]]]
+    pd.DataFrame | NDArray[np.integer[Any]]
         The contingency matrix as either a pandas DataFrame or a NumPy array, depending on the
         value of `as_dataframe`.
 
@@ -132,7 +130,7 @@ def purity_score(
 
     Returns
     -------
-    Union[float, NDArray[np.floating[Any]]]
+    float | NDArray[np.floating[Any]]
         If `per_cluster` is False, returns a single float
         value representing the overall purity of the
         clustering. If True, returns an array of purity

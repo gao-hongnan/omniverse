@@ -1,7 +1,4 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
-from typing import Dict, List
 
 import numpy as np
 import torch
@@ -92,7 +89,7 @@ def smart_tokenizer_and_embedding_resize(
         output_embeddings_data[-num_new_tokens:] = output_embeddings_avg
 
 
-def compute_metrics_for_single_label_classification(eval_prediction: EvalPrediction) -> Dict[str, float | List[float]]:
+def compute_metrics_for_single_label_classification(eval_prediction: EvalPrediction) -> dict[str, float | list[float]]:
     logits, labels = eval_prediction.predictions, eval_prediction.label_ids
     assert isinstance(logits, np.ndarray)
     assert isinstance(labels, np.ndarray)

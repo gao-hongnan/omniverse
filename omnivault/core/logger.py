@@ -3,14 +3,12 @@
 This module should be refactored one day.
 """
 
-from __future__ import annotations
-
 import logging
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from rich.console import Console
 from rich.logging import RichHandler
@@ -123,7 +121,7 @@ class RichLogger(metaclass=Singleton):
     module_name: str | None = None
     propagate: bool = False
     log_root_dir: str | None = None
-    rich_handler_config: Dict[str, Any] = field(
+    rich_handler_config: dict[str, Any] = field(
         default_factory=lambda: {
             "level": "INFO",  # logging.INFO,
             "console": MISSING,

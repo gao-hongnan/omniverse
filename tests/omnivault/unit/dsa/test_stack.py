@@ -1,17 +1,12 @@
-from typing import Any, List, TypeVar
-
 import pytest
 
 from omnivault.dsa.stack.concrete import StackList
 
-# Define a generic type variable for testing
-T = TypeVar("T")
-
 
 @pytest.fixture
-def empty_stack() -> StackList[Any]:
+def empty_stack() -> StackList[int]:
     """Fixture to create an empty StackList."""
-    return StackList()
+    return StackList[int]()
 
 
 @pytest.fixture
@@ -29,22 +24,24 @@ class TestStackList:
     @pytest.mark.parametrize(
         "initial_items",
         [
-            [],
-            [1],
-            [1, 2, 3],
-            ["a", "b", "c"],
-            [1.1, 2.2, 3.3],
+            pytest.param([], id="empty"),
+            pytest.param([1], id="single-int"),
+            pytest.param([1, 2, 3], id="ints"),
+            pytest.param(["a", "b", "c"], id="strs"),
+            pytest.param([1.1, 2.2, 3.3], id="floats"),
         ],
     )
-    def test_initialization(self, initial_items: List[T]) -> None:
+    def test_initialization[ItemT](self, initial_items: list[ItemT]) -> None:
         """Test initializing the stack with different initial items."""
-        stack = StackList[T]()
+        stack = StackList[ItemT]()
+
         for item in initial_items:
             stack.push(item)
+
         assert len(stack) == len(initial_items)
         assert stack.stack_items == initial_items
 
-    def test_is_empty_on_new_stack(self, empty_stack: StackList[Any]) -> None:
+    def test_is_empty_on_new_stack(self, empty_stack: StackList[int]) -> None:
         """Test that a new stack is empty."""
         assert empty_stack.is_empty() is True
         assert len(empty_stack) == 0
@@ -76,23 +73,26 @@ class TestStackList:
     def test_peek(self, populated_stack: StackList[int]) -> None:
         """Test peeking the top item of the stack."""
         top = populated_stack.peek()
+
         assert top == 5
         assert len(populated_stack) == 5  # Ensure size is unchanged
 
-    def test_pop_empty_stack(self, empty_stack: StackList[Any]) -> None:
-        """Test popping from an empty stack raises an exception."""
-        with pytest.raises(Exception) as exc_info:
+    def test_pop_empty_stack(self, empty_stack: StackList[int]) -> None:
+        """Test popping from an empty stack raises with the exact message."""
+        # The source raises a bare `Exception("Stack is empty")`, so Exception
+        # is the narrowest type available; the match pins the exact message.
+        with pytest.raises(Exception, match="Stack is empty"):
             empty_stack.pop()
-        assert str(exc_info.value) == "Stack is empty"
 
-    def test_peek_empty_stack(self, empty_stack: StackList[Any]) -> None:
-        """Test peeking an empty stack raises an exception."""
-        with pytest.raises(IndexError):
-            empty_stack.peek()  # This will raise IndexError as per list behavior
+    def test_peek_empty_stack(self, empty_stack: StackList[int]) -> None:
+        """Test peeking an empty stack raises IndexError from the backing list."""
+        with pytest.raises(IndexError, match="list index out of range"):
+            empty_stack.peek()
 
     def test_iteration(self, populated_stack: StackList[int]) -> None:
         """Test iterating over the stack."""
-        items: List[int] = list(populated_stack)
+        items: list[int] = list(populated_stack)
+
         assert items == [5, 4, 3, 2, 1]
         assert populated_stack.is_empty()
         assert len(populated_stack) == 0
@@ -100,24 +100,24 @@ class TestStackList:
     @pytest.mark.parametrize(
         "items",
         [
-            [1],
-            [1, 2],
-            [1, 2, 3],
-            ["x", "y", "z"],
-            [1.0, 2.0, 3.0],
+            pytest.param([1], id="single-int"),
+            pytest.param([1, 2], id="two-ints"),
+            pytest.param([1, 2, 3], id="three-ints"),
+            pytest.param(["x", "y", "z"], id="strs"),
+            pytest.param([1.0, 2.0, 3.0], id="floats"),
         ],
     )
-    def test_stack_with_various_types(self, items: List[T]) -> None:
+    def test_stack_with_various_types[ItemT](self, items: list[ItemT]) -> None:
         """Test stack operations with various data types."""
-        stack = StackList[T]()
+        stack = StackList[ItemT]()
         for item in items:
             stack.push(item)
+
         assert len(stack) == len(items)
         assert stack.peek() == items[-1]
 
-        for expected in reversed(items):
-            popped = stack.pop()
-            assert popped == expected
+        popped_items = [stack.pop() for _ in items]
+        assert popped_items == list(reversed(items))
         assert stack.is_empty()
 
     def test_size_property(self, populated_stack: StackList[int]) -> None:
@@ -135,13 +135,7 @@ class TestStackList:
         assert len(populated_stack) == 4
 
     def test_str_representation(self, populated_stack: StackList[int]) -> None:
-        """Optionally, test the string representation if __str__ or __repr__ is defined."""
-        # Assuming StackList has a __repr__ method
+        """Test the official string representation."""
         expected_repr = "StackList(stack_items=[1, 2, 3, 4, 5])"
-        assert repr(populated_stack) == expected_repr
 
-    def test_exception_message_on_pop_empty(self, empty_stack: StackList[Any]) -> None:
-        """Test the exception message when popping from an empty stack."""
-        with pytest.raises(Exception) as exc_info:
-            empty_stack.pop()
-        assert "Stack is empty" in str(exc_info.value)
+        assert repr(populated_stack) == expected_repr

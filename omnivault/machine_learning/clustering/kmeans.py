@@ -5,11 +5,10 @@ References:
 - https://github.com/rushter/MLAlgorithms/blob/master/mla/kmeans.py
 """
 
-from __future__ import annotations
-
 import logging
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, Dict, List, Literal, Tuple
+from typing import Any, Literal, Self, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -80,7 +79,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
         self._reset_clusters()  # initializes self._C = {C_1=[], C_2=[], ..., C_k=[]}
 
-        self._C: Dict[int, List[int]]  # clusters
+        self._C: dict[int, list[int]]  # clusters
         self._N: int
         self._D: int
         self.t: int  # iteration counter
@@ -105,7 +104,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         return self._N
 
     @property
-    def clusters(self) -> Dict[int, List[int]]:
+    def clusters(self) -> dict[int, list[int]]:
         """Property to get the clusters, this is our C."""
         return self._C
 
@@ -190,7 +189,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
     def _compute_argmin_assignment(
         self, x: NDArray[np.floating[Any]], centroids: NDArray[np.floating[Any]]
-    ) -> Tuple[int, float]:
+    ) -> tuple[int, float]:
         """Compute the argmin assignment for a single sample x.
 
         In other words, for a single sample x, compute the distance between x and
@@ -211,7 +210,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
 
         Returns
         -------
-        Tuple[int, float]
+        tuple[int, float]
             The index of the closest centroid and the distance to it.
         """
         min_index = -100  # some random number
@@ -287,7 +286,8 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         """
         return np.allclose(updated_centroids, old_centroids, atol=self.tol)
 
-    def fit(self, X: NDArray[np.floating[Any]]) -> KMeansLloyd:
+    @override
+    def fit(self, X: NDArray[np.floating[Any]]) -> Self:
         """
         Fit the K-Means clustering model to the data.
 
@@ -344,6 +344,7 @@ class KMeansLloyd(BaseEstimator, Fittable, Predictable):
         # fmt: on
         return self
 
+    @override
     def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Predict cluster labels for samples in X where X can be new data or training data."""
         y_preds = np.array([self._compute_argmin_assignment(x, self._centroids)[0] for x in X])

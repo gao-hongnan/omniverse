@@ -1,8 +1,6 @@
-from __future__ import annotations
+from typing import Annotated
 
-from typing import Union
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from rich.pretty import pprint
 
 from omnivault._types._alias import Missing
@@ -21,22 +19,19 @@ from omnivault.transformer.config.trainer import TrainerConfig
 
 
 class Composer(BaseModel):  # TODO: add generic subclassing - see if got time lols
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     constants: MaybeConstant = Field(default_factory=MaybeConstant)
     logger: LoggerConfig = Field(default_factory=LoggerConfig)
     global_: MaybeGlobal = Field(default_factory=MaybeGlobal)
     data: DataConfig = Field(default_factory=lambda: DataConfig())
-    model: Union[DecoderConfig, Missing] = Field(default=MISSING, description="The model config.")
-    optimizer: Union[OptimizerConfig, Missing] = Field(default=MISSING, description="The optimizer config.")
-    criterion: Union[CriterionConfig, Missing] = Field(default=MISSING, description="The criterion config.")
-    scheduler: Union[SchedulerConfig, Missing] = Field(default=MISSING, description="The scheduler config.")
+    model: Annotated[DecoderConfig | Missing, Field(description="The model config.")] = MISSING
+    optimizer: Annotated[OptimizerConfig | Missing, Field(description="The optimizer config.")] = MISSING
+    criterion: Annotated[CriterionConfig | Missing, Field(description="The criterion config.")] = MISSING
+    scheduler: Annotated[SchedulerConfig | Missing, Field(description="The scheduler config.")] = MISSING
     trainer: TrainerConfig = Field(default_factory=TrainerConfig)
     generator: GeneratorConfig = Field(default_factory=GeneratorConfig)
     distributed: DistributedConfig = Field(default_factory=DistributedConfig)
-
-    class Config:
-        """Pydantic config."""
-
-        arbitrary_types_allowed = True
 
     def pretty_print(self) -> None:
         """Pretty print the config."""

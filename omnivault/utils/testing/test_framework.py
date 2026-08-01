@@ -1,4 +1,5 @@
-from typing import Any, Callable, List
+from collections.abc import Callable
+from typing import Any
 
 from IPython.core.display import HTML, display_html
 
@@ -10,13 +11,13 @@ class TestFramework:
 
     Attributes
     ----------
-    tests: (List[Callable])
+    tests: (list[Callable])
         A list to store the test functions.
     """
 
     def __init__(self) -> None:
         """Initialize the TestFramework object."""
-        self.tests: List[Callable[[], None]] = []
+        self.tests: list[Callable[[], None]] = []
 
     def describe(self, description: str) -> Callable[[Callable[[], None]], None]:
         """

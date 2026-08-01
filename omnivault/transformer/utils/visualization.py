@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import math
-from typing import Any, Dict, List
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +7,7 @@ import seaborn as sns
 import torch
 
 
-def save_plot_history(history: Dict[str, List[float]], plot: bool = False, save_path: str | None = None) -> None:
+def save_plot_history(history: dict[str, list[float]], plot: bool = False, save_path: str | None = None) -> None:
     sns.set_theme(style="whitegrid")
     plt.rcParams["font.family"] = "DejaVu Sans"
 
@@ -43,13 +41,13 @@ def show_attention_heatmaps(
     attention_weights: torch.Tensor,
     xlabel: str = "Keys",
     ylabel: str = "Queries",
-    xticks: List[str] | None = None,
-    yticks: List[str] | None = None,
+    xticks: list[str] | None = None,
+    yticks: list[str] | None = None,
     show_title: bool = False,
     show_values: bool = False,
     value_dp: int = 2,
-    figure_kwargs: Dict[str, Any] | None = None,
-    plot_kwargs: Dict[str, Any] | None = None,
+    figure_kwargs: dict[str, Any] | None = None,
+    plot_kwargs: dict[str, Any] | None = None,
 ) -> plt.Figure:
     """
     Visualizes attention heatmaps for a given attention weight tensor.

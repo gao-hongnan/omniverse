@@ -5,7 +5,7 @@ process of figure and axes creation and customization in matplotlib, making
 it easier to create and manage plots in a reusable manner.
 """
 
-from typing import Any, Dict, Union
+from typing import Any
 
 import matplotlib.pyplot as plt
 
@@ -24,7 +24,7 @@ class FigureManager:
         self,
         fig: plt.Figure | None = None,
         ax: plt.Axes | None = None,
-        ax_kwargs: Dict[str, Dict[str, Any]] | None = None,
+        ax_kwargs: dict[str, dict[str, Any]] | None = None,
     ) -> None:
         # fmt: off
         self.fig       = fig or plt.gcf()
@@ -55,7 +55,7 @@ class FigureManager:
         self,
         path: str,
         *,
-        dpi: Union[float, str] = "figure",
+        dpi: float | str = "figure",
         format: str = "svg",
         **kwargs: Any,
     ) -> None:

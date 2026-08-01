@@ -1,14 +1,12 @@
-from __future__ import annotations
-
-from typing import Dict, List, Sequence, Tuple, Type
+from collections.abc import Sequence
 
 from torch import nn
 
 ALL_LAYERNORM_LAYERS = [nn.LayerNorm]
-BLACKLISTED: List[str] = ["bias", "LayerNorm.weight", "LayerNorm.bias"]  # CHANGE AS YOU WISH
+BLACKLISTED: list[str] = ["bias", "LayerNorm.weight", "LayerNorm.bias"]  # CHANGE AS YOU WISH
 
 
-def get_parameter_names(model: nn.Module, forbidden_layer_types: Sequence[Type[nn.Module]]) -> List[str]:
+def get_parameter_names(model: nn.Module, forbidden_layer_types: Sequence[type[nn.Module]]) -> list[str]:
     """
     Returns the names of the model parameters that are not inside a forbidden layer.
 
@@ -26,7 +24,7 @@ def get_parameter_names(model: nn.Module, forbidden_layer_types: Sequence[Type[n
     return result
 
 
-def get_decay_parameter_names(model: nn.Module, blacklisted: Sequence[Type[nn.Module]] | None = None) -> List[str]:
+def get_decay_parameter_names(model: nn.Module, blacklisted: Sequence[type[nn.Module]] | None = None) -> list[str]:
     """
     Get all parameter names that weight decay will be applied to
 
@@ -43,7 +41,7 @@ def get_decay_parameter_names(model: nn.Module, blacklisted: Sequence[Type[nn.Mo
 
 def get_huggingface_default_decay_and_optimizer_group(
     model: nn.Module, weight_decay: float = 0.01
-) -> Tuple[List[str], List[Dict[str, str | float | List[nn.Parameter]]]]:
+) -> tuple[list[str], list[dict[str, str | float | list[nn.Parameter]]]]:
     """This function fetches the default decay parameters and optimizer group for Hugging Face models.
     Weight decay is 0.01 for most models.
     """

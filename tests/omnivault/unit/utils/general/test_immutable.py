@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from omnivault.utils.general.immutable import ImmutableProxy
@@ -19,23 +17,23 @@ def test_immutable_proxy_attribute_access() -> None:
 
 def test_immutable_proxy_prevent_modification() -> None:
     """Test that modification attempts raise AttributeError."""
-    original: List[int] = [1, 2, 3]
+    original: list[int] = [1, 2, 3]
     proxy = ImmutableProxy(original)
 
-    with pytest.raises(AttributeError) as exc_info:
+    with pytest.raises(
+        AttributeError, match=r"Attempting to modify object with method `append`\. `list` object is immutable\."
+    ):
         proxy.append(4)
-    assert "Attempting to modify object with method `append`" in str(exc_info.value)
-    assert "`list` object is immutable" in str(exc_info.value)
 
 
 def test_immutable_proxy_prevent_attribute_setting() -> None:
     """Test that setting attributes raises AttributeError."""
     proxy = ImmutableProxy([1, 2, 3])
 
-    with pytest.raises(AttributeError) as exc_info:
+    with pytest.raises(
+        AttributeError, match=r"Attempting to set attribute `new_attr` with `42`\. `list` object is immutable\."
+    ):
         proxy.new_attr = 42
-    assert "Attempting to set attribute" in str(exc_info.value)
-    assert "`list` object is immutable" in str(exc_info.value)
 
 
 def test_immutable_proxy_with_custom_object() -> None:
@@ -54,10 +52,14 @@ def test_immutable_proxy_with_custom_object() -> None:
     assert proxy.value == 42
 
     # Cannot modify
-    with pytest.raises(AttributeError):
+    with pytest.raises(
+        AttributeError, match=r"Attempting to modify object with method `modify`\. `CustomClass` object is immutable\."
+    ):
         proxy.modify()
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(
+        AttributeError, match=r"Attempting to set attribute `value` with `43`\. `CustomClass` object is immutable\."
+    ):
         proxy.value = 43
 
 
@@ -76,7 +78,7 @@ def test_immutable_proxy_original_unchanged() -> None:
     proxy = ImmutableProxy(original)
 
     # Proxy operations shouldn't affect original
-    with pytest.raises(AttributeError):
+    with pytest.raises(AttributeError, match=r"Attempting to modify object with method `append`"):
         proxy.append(4)
 
     # Original should still be mutable

@@ -2,7 +2,6 @@
 
 # from typing import Iterator, Optional, Sequence
 
-# from omnivault._types._generic import T
 # from omnivault.dsa.linked_list.base import AbstractLinkedList, DoublyNode, SinglyNode
 
 

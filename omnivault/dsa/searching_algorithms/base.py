@@ -8,19 +8,17 @@ that are utilized by the concrete strategy classes in strategies.py and the
 context class in context.py.
 """
 
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Literal, Sequence, Union
+from collections.abc import Sequence
+from typing import Literal
 
 from omnivault._types._alias import NonNegativeInt
-from omnivault._types._generic import Real
 
 
 class Search(ABC):
     """Base class for Search Strategies (Strategy Design Pattern)."""
 
     @abstractmethod
-    def search(self, container: Sequence[Real], target: Real) -> Union[NonNegativeInt, Literal[-1]]:
+    def search[RealT: (int, float)](self, container: Sequence[RealT], target: RealT) -> NonNegativeInt | Literal[-1]:
         """Searches for the target in the container and returns the index of the
         target if found, otherwise returns -1."""

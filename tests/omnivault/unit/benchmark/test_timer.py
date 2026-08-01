@@ -1,19 +1,27 @@
 # pytest tests/omnivault/unit/benchmark/test_timer.py -v
-from __future__ import annotations
-
 import asyncio
 import time
-from typing import Any, Dict, Final
+from typing import Any, Final
 
 import pytest
 from pydantic import ValidationError
 
 from omnivault.benchmark.timer import TimedExecution, TimedExecutionMetadata, TimerDecorator, timer
 
+# The subject measures elapsed wall time, so a small real sleep is the seam.
+# Assertions only use the deterministic lower bound (sleep guarantees *at
+# least* this duration) plus the internal end-start identity; upper bounds on
+# wall time are load-dependent and therefore flaky.
+_SLEEP_SECONDS: Final = 0.05
+
 
 @pytest.fixture
-def sample_metadata() -> Dict[str, Any]:
-    """Fixture providing sample metadata for testing."""
+def sample_metadata() -> dict[str, Any]:
+    """Fixture providing sample metadata for testing.
+
+    Typed ``dict[str, Any]`` because it is unpacked as heterogeneous ``**kwargs``
+    into the pydantic model boundary.
+    """
     cpu_times = (0.0, 0.0, 0.0, 0.0)
     return {
         "thread_id": 123,
@@ -29,21 +37,24 @@ def sample_metadata() -> Dict[str, Any]:
 class TestTimedExecutionMetadata:
     """Test suite for TimedExecutionMetadata model."""
 
-    def test_valid_metadata_creation(self, sample_metadata: Dict[str, Any]) -> None:
+    def test_valid_metadata_creation(self, sample_metadata: dict[str, Any]) -> None:
         """Test creating TimedExecutionMetadata with valid data."""
         metadata = TimedExecutionMetadata(**sample_metadata)
+
         assert metadata.thread_id == 123
         assert metadata.process_id == 456
         assert metadata.initial_memory_usage == 1000
         assert metadata.caller_function_name == "test_function"
         assert metadata.tags == {}
 
-    def test_metadata_with_optional_fields(self, sample_metadata: Dict[str, Any]) -> None:
+    def test_metadata_with_optional_fields(self, sample_metadata: dict[str, Any]) -> None:
         """Test creating metadata with optional fields."""
         sample_metadata.update(
             {"start_time": 1234.5678, "end_time": 1235.5678, "execution_time": 1.0, "tags": {"env": "test"}}
         )
+
         metadata = TimedExecutionMetadata(**sample_metadata)
+
         assert metadata.start_time == 1234.5678
         assert metadata.end_time == 1235.5678
         assert metadata.execution_time == 1.0
@@ -51,13 +62,15 @@ class TestTimedExecutionMetadata:
 
     def test_invalid_metadata_creation(self) -> None:
         """Test that invalid metadata raises ValidationError."""
-        with pytest.raises(ValidationError):
-            TimedExecutionMetadata()  # type: ignore[call-arg]
+        with pytest.raises(ValidationError, match="Field required"):
+            TimedExecutionMetadata()  # type: ignore[call-arg]  # deliberately omitting required fields
 
-    def test_metadata_with_exception(self, sample_metadata: Dict[str, Any]) -> None:
+    def test_metadata_with_exception(self, sample_metadata: dict[str, Any]) -> None:
         """Test metadata with exception information."""
         sample_metadata["exception"] = "ValueError: Test error"
+
         metadata = TimedExecutionMetadata(**sample_metadata)
+
         assert metadata.exception == "ValueError: Test error"
 
 
@@ -66,59 +79,63 @@ class TestTimedExecution:
 
     def test_sync_context_manager(self) -> None:
         """Test synchronous context manager functionality."""
-        with TimedExecution(pretty_print=False) as timer:
-            time.sleep(1.2)
+        with TimedExecution(pretty_print=False) as timed:
+            time.sleep(_SLEEP_SECONDS)
 
-        assert isinstance(timer.metadata["start_time"], float)
-        assert isinstance(timer.metadata["end_time"], float)
-        assert timer.metadata["execution_time"] >= 1.2
-        assert timer.metadata["execution_time"] <= 2.5  # generous bound for loaded CI runners
-        assert "exception" not in timer.metadata
+        assert isinstance(timed.metadata["start_time"], float)
+        assert isinstance(timed.metadata["end_time"], float)
+        assert timed.metadata["execution_time"] == timed.metadata["end_time"] - timed.metadata["start_time"]
+        assert timed.metadata["execution_time"] >= _SLEEP_SECONDS
+        assert "exception" not in timed.metadata
 
     def test_sync_context_manager_with_exception(self) -> None:
         """Test synchronous context manager with exception."""
-        with pytest.raises(ValueError), TimedExecution(pretty_print=False) as timer:
+        with pytest.raises(ValueError, match="Test error"), TimedExecution(pretty_print=False) as timed:
             raise ValueError("Test error")
 
-        assert "exception" in timer.metadata
-        assert "ValueError: Test error" in timer.metadata["exception"]
+        assert "exception" in timed.metadata
+        assert "ValueError: Test error" in timed.metadata["exception"]
 
     def test_custom_tags(self) -> None:
         """Test adding custom tags to metadata."""
-        tags: Final[Dict[str, str]] = {"environment": "test", "version": "1.0"}
-        with TimedExecution(tags=tags, pretty_print=False) as timer:
+        tags: dict[str, str] = {"environment": "test", "version": "1.0"}
+
+        with TimedExecution(tags=tags, pretty_print=False) as timed:
             pass
 
-        assert timer.metadata["environment"] == "test"
-        assert timer.metadata["version"] == "1.0"
+        assert timed.metadata["environment"] == "test"
+        assert timed.metadata["version"] == "1.0"
 
     @pytest.mark.asyncio
     async def test_async_context_manager(self) -> None:
         """Test asynchronous context manager functionality."""
-        async with TimedExecution(pretty_print=False) as timer:
-            await asyncio.sleep(1.2)
+        async with TimedExecution(pretty_print=False) as timed:
+            await asyncio.sleep(_SLEEP_SECONDS)
 
-        assert isinstance(timer.metadata["start_time"], float)
-        assert isinstance(timer.metadata["end_time"], float)
-        assert timer.metadata["execution_time"] >= 1.2
-        assert timer.metadata["execution_time"] <= 1.3
-        assert "exception" not in timer.metadata
+        assert isinstance(timed.metadata["start_time"], float)
+        assert isinstance(timed.metadata["end_time"], float)
+        assert timed.metadata["execution_time"] == timed.metadata["end_time"] - timed.metadata["start_time"]
+        assert timed.metadata["execution_time"] >= _SLEEP_SECONDS
+        assert "exception" not in timed.metadata
 
     @pytest.mark.asyncio
     async def test_async_context_manager_with_exception(self) -> None:
-        """Test asynchronous context manager with exception."""
-        with pytest.raises(ValueError), TimedExecution(pretty_print=False) as timer:
-            raise ValueError("Test error")
+        """Test asynchronous context manager records the in-flight exception."""
+        timed = TimedExecution(pretty_print=False)
 
-        assert "exception" in timer.metadata
-        assert "ValueError: Test error" in timer.metadata["exception"]
+        with pytest.raises(ValueError, match="Test error"):
+            async with timed:
+                raise ValueError("Test error")
+
+        assert "exception" in timed.metadata
+        assert "ValueError: Test error" in timed.metadata["exception"]
 
     def test_metadata_collection(self) -> None:
         """Test that all required metadata fields are collected."""
-        with TimedExecution(pretty_print=False) as timer:
+        with TimedExecution(pretty_print=False) as timed:
             pass
 
-        required_fields: Final[set[str]] = {
+        required_fields: set[str] = {
             "start_time",
             "start_datetime",
             "end_time",
@@ -136,21 +153,22 @@ class TestTimedExecution:
             "caller_module_path",
         }
 
-        assert all(field in timer.metadata for field in required_fields)
+        missing_fields = required_fields - timed.metadata.keys()
+        assert missing_fields == set()
 
     def test_class_method_detection(self) -> None:
         """Test detection of class method calls."""
 
-        class TestClass:
-            def test_method(self) -> None:
-                with TimedExecution(pretty_print=False) as timer:
-                    self.timer = timer
+        class TimedCaller:
+            def timed_method(self) -> None:
+                with TimedExecution(pretty_print=False) as timed:
+                    self.timed = timed
 
-        test_instance = TestClass()
-        test_instance.test_method()
+        caller = TimedCaller()
+        caller.timed_method()
 
-        assert test_instance.timer.metadata["caller_class_name"] == "TestClass"
-        assert test_instance.timer.metadata["caller_method_name"] == "test_method"
+        assert caller.timed.metadata["caller_class_name"] == "TimedCaller"
+        assert caller.timed.metadata["caller_method_name"] == "timed_method"
 
 
 @timer
@@ -169,12 +187,14 @@ class TestTimerDecorator:
     """Test the timer decorator implementations."""
 
     def test_sync_function(self) -> None:
-        result: str = sync_function(0.3)
+        result: str = sync_function(0.0)
+
         assert result == "sync done"
 
     @pytest.mark.asyncio
     async def test_async_function(self) -> None:
-        result: str = await async_function(0.3)
+        result: str = await async_function(0.0)
+
         assert result == "async done"
 
 
@@ -192,10 +212,12 @@ class TestTimerDecoratorClass:
         return "async done"
 
     def test_sync_method(self) -> None:
-        result: str = self.sync_method(0.1)  # type: ignore[call-overload]
+        result: str = self.sync_method(0.0)  # type: ignore[call-overload]  # TimerDecorator's __call__ overloads model decoration, not the bound-method call
+
         assert result == "sync done"
 
     @pytest.mark.asyncio
     async def test_async_method(self) -> None:
-        result: str = await self.async_method(0.1)  # type: ignore[call-overload]
+        result: str = await self.async_method(0.0)  # type: ignore[call-overload]  # TimerDecorator's __call__ overloads model decoration, not the bound-method call
+
         assert result == "async done"

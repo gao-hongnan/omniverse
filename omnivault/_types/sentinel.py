@@ -4,12 +4,9 @@ Reference:
 - https://github.com/taleinat/python-stdlib-sentinels/blob/main/sentinels/sentinels.py
 """
 
-from __future__ import annotations
-
 import sys as _sys
 from threading import Lock as _Lock
 from types import FrameType
-from typing import Tuple, Type
 
 __all__ = ["Sentinel"]
 
@@ -53,7 +50,7 @@ class Sentinel:
     _module_name: str
 
     def __new__(  # noqa: PYI034
-        cls: Type[Sentinel],
+        cls: type[Sentinel],
         name: str,
         repr: str | None = None,
         module_name: str | None = None,
@@ -81,7 +78,7 @@ class Sentinel:
     def __repr__(self) -> str:
         return self._repr
 
-    def __reduce__(self) -> Tuple[Type[Sentinel], Tuple[str, str, str]]:
+    def __reduce__(self) -> tuple[type[Sentinel], tuple[str, str, str]]:
         return (
             self.__class__,
             (

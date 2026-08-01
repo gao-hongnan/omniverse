@@ -1,17 +1,17 @@
-from __future__ import annotations
-
-from typing import Any, Callable, Dict, Iterator, List, Literal, Tuple, Type
+from collections.abc import Callable, Iterator
+from typing import Any, Final, Literal
 
 import torch
+from pydantic import ConfigDict
 from torch import nn
 
 from omnivault.utils.config_management.dynamic import DynamicClassFactory
 
-RegisteredOptimizers = Literal["torch.optim.Adam", "torch.optim.AdamW", "torch.optim.SGD"]
-OPTIMIZER_REGISTRY: Dict[RegisteredOptimizers, Type[OptimizerConfig]] = {}
+type RegisteredOptimizers = Literal["torch.optim.Adam", "torch.optim.AdamW", "torch.optim.SGD"]
+OPTIMIZER_REGISTRY: Final[dict[RegisteredOptimizers, type[OptimizerConfig]]] = {}
 
 
-def register_optimizer(name: RegisteredOptimizers) -> Callable[[Type[OptimizerConfig]], Type[OptimizerConfig]]:
+def register_optimizer(name: RegisteredOptimizers) -> Callable[[type[OptimizerConfig]], type[OptimizerConfig]]:
     """
     Decorator factory for registering optimizer configurations.
 
@@ -22,11 +22,11 @@ def register_optimizer(name: RegisteredOptimizers) -> Callable[[Type[OptimizerCo
 
     Returns
     -------
-    Callable[[Type[OptimizerConfig]], Type[OptimizerConfig]]
+    Callable[[type[OptimizerConfig]], type[OptimizerConfig]]
         A decorator that registers the optimizer configuration class.
     """
 
-    def register_optimizer_cls(cls: Type[OptimizerConfig]) -> Type[OptimizerConfig]:
+    def register_optimizer_cls(cls: type[OptimizerConfig]) -> type[OptimizerConfig]:
         if name in OPTIMIZER_REGISTRY:
             raise ValueError(f"Cannot register duplicate optimizer {name}")
 
@@ -57,7 +57,7 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
         Defaults to 'torch.optim.Adam'.
     lr : float
         Learning rate for the optimizer. Defaults to 0.2.
-    betas : Tuple[float, float]
+    betas : tuple[float, float]
         Coefficients used for computing running averages of gradient and its square.
         Defaults to (0.9, 0.98).
     eps : float
@@ -88,6 +88,8 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
     method.
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     name: str
     lr: float  # assume all optimizers have this parameter
 
@@ -96,7 +98,7 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
         self,
         *,
         params: (
-            List[Dict[Literal["params", "weight_decay"], List[torch.nn.Parameter] | float]]
+            list[dict[Literal["params", "weight_decay"], list[torch.nn.Parameter] | float]]
             | nn.ParameterList
             | Iterator[nn.Parameter]
         ),
@@ -105,22 +107,17 @@ class OptimizerConfig(DynamicClassFactory[torch.optim.Optimizer]):
         """Builder method for creating an optimizer instance."""
         return self.create_instance(params=params, **kwargs)
 
-    class Config:
-        """Pydantic configuration for `OptimizerConfig`."""
-
-        extra = "forbid"
-
 
 @register_optimizer(name="torch.optim.Adam")
 class AdamConfig(OptimizerConfig):
-    betas: Tuple[float, float] = (0.9, 0.98)
+    betas: tuple[float, float] = (0.9, 0.98)
     eps: float = 1e-9
     weight_decay: float = 0.0
 
 
 @register_optimizer(name="torch.optim.AdamW")
 class AdamWConfig(OptimizerConfig):
-    betas: Tuple[float, float] = (0.9, 0.999)
+    betas: tuple[float, float] = (0.9, 0.999)
     eps: float = 1e-8
     weight_decay: float = 1e-2
     amsgrad: bool = False

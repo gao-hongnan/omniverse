@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import overload
+from typing import overload, override
 
 import torch
 from torch import nn
@@ -22,6 +20,7 @@ class LastTokenPooling(nn.Module):
     @overload
     def forward(self, last_hidden_state: None, logits: torch.Tensor) -> torch.Tensor: ...
 
+    @override
     def forward(
         self, last_hidden_state: torch.Tensor | None = None, logits: torch.Tensor | None = None
     ) -> torch.Tensor:
@@ -93,6 +92,7 @@ class MeanPooler(nn.Module):
             in other words we have 2 valid tokens in the sequence to be divided
     """
 
+    @override
     def forward(
         self,
         last_hidden_state: torch.Tensor,
@@ -125,6 +125,7 @@ class AttentionHead(nn.Module):
         self.V = nn.Linear(hidden_dim, 1)
         self.out_features = hidden_dim
 
+    @override
     def forward(self, features: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         weights_mask = attention_mask.unsqueeze(-1)
         att = torch.tanh(self.W(features))

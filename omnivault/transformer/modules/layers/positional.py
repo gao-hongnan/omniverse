@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import override
 
 import torch
 from torch import nn
@@ -44,6 +45,7 @@ class Sinusoid(PositionalEncoding):
             torch.arange(0, self.d_model, 2, dtype=torch.float32) / self.d_model,
         )
 
+    @override
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self._add_positional_encoding(x)
         x = self.dropout(x)

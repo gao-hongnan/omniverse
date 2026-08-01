@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 import logging
-from typing import Any, Literal, Tuple, cast
+from typing import Any, Literal, Self, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -235,7 +233,7 @@ class GaussianMixtureModel(BaseEstimator):
     # this is the posterior
     def _estimate_responsibilities(
         self, X: NDArray[np.floating[Any]]
-    ) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+    ) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
         """Estimate responsibilities using the current model parameters,
         pi, mu, and sigma."""
         # fmt: off
@@ -274,7 +272,7 @@ class GaussianMixtureModel(BaseEstimator):
 
     def _estimate_gaussian_parameters(
         self, X: NDArray[np.floating[Any]], responsibilities: NDArray[np.floating[Any]], nk: NDArray[np.floating[Any]]
-    ) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+    ) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
         # fmt: off
         means = responsibilities.T @ X / nk[:, np.newaxis]                                # (K, D)
         covariances = np.zeros(                                                           # (K, D, D)
@@ -294,7 +292,7 @@ class GaussianMixtureModel(BaseEstimator):
         weights = nk / nk.sum()
         return cast(NDArray[np.floating[Any]], weights)  # (K,)
 
-    def _e_step(self, X: NDArray[np.floating[Any]]) -> Tuple[NDArray[np.floating[Any]], float]:
+    def _e_step(self, X: NDArray[np.floating[Any]]) -> tuple[NDArray[np.floating[Any]], float]:
         """
         Perform the Expectation step of the EM algorithm for GMM.
 
@@ -325,7 +323,7 @@ class GaussianMixtureModel(BaseEstimator):
 
     def _m_step(
         self, X: NDArray[np.floating[Any]], responsibilities: NDArray[np.floating[Any]]
-    ) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+    ) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
         nk = self._get_nk(responsibilities)  # (K,)
         means, covariances = self._estimate_gaussian_parameters(X, responsibilities, nk)
         weights = self._estimate_weights(nk)
@@ -359,7 +357,8 @@ class GaussianMixtureModel(BaseEstimator):
         self.prev_marginals_ = marginals
         return False
 
-    def fit(self, X: NDArray[np.floating[Any]]) -> GaussianMixtureModel:
+    @override
+    def fit(self, X: NDArray[np.floating[Any]]) -> Self:
         """
         Fit the Gaussian Mixture Model to the input data using the
         Expectation-Maximization (EM) algorithm.
@@ -397,6 +396,7 @@ class GaussianMixtureModel(BaseEstimator):
 
         return self
 
+    @override
     def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """P[z^{(n)} = k | x^{(n)}] the posterior probability of
         cluster k given the sample x^{(n)}. But it is sufficient
@@ -428,7 +428,7 @@ class GaussianMixtureModel(BaseEstimator):
         if not (len(self.X.shape) == 2 and self.X.shape[1] == 2):
             raise AttributeError("Only support for visualizing 2D data.")
 
-        def _create_grid(X: NDArray[np.floating[Any]]) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+        def _create_grid(X: NDArray[np.floating[Any]]) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
             """
             Create a grid of points to compute the Gaussian PDF values.
 
@@ -439,7 +439,7 @@ class GaussianMixtureModel(BaseEstimator):
 
             Returns
             -------
-            xx, yy : Tuple[np.ndarray, np.ndarray]
+            xx, yy : tuple[np.ndarray, np.ndarray]
                 The grid of points in x and y dimensions.
             """
             x, y = X[:, 0], X[:, 1]

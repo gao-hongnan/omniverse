@@ -2,8 +2,6 @@
 This file contains aliases for common types.
 """
 
-from __future__ import annotations
-
 from omnivault._types._sentinel import _Missing, _NotGiven, _Omit
 
 type NonNegativeInt = int

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, List, Tuple, TypeVar, cast
+from typing import Any, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,17 +14,15 @@ from omnivault.utils.probability_theory.plot import plot_contour, plot_scatter  
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-TEstimator = TypeVar("TEstimator", bound=BaseEstimator)
 
-
-def run_classifier[TEstimator: BaseEstimator](
-    estimator: TEstimator,  # this type hint is the same name as scikit-learn
+def run_classifier[EstimatorT: BaseEstimator](
+    estimator: EstimatorT,  # this type hint is the same name as scikit-learn
     X: NDArray[np.floating[Any]],
     y: NDArray[np.floating[Any]],
     test_size: float = 0.2,
     random_state: int = 1992,
-    class_names: List[str] | None = None,
-) -> TEstimator:
+    class_names: list[str] | None = None,
+) -> EstimatorT:
     """Run a generic classifier on a dataset and returns the fitted classifier."""
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -59,8 +57,8 @@ def run_classifier[TEstimator: BaseEstimator](
     return estimator
 
 
-def plot_classifier_decision_boundary[TEstimator: BaseEstimator](
-    estimator: TEstimator, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
+def plot_classifier_decision_boundary(
+    estimator: BaseEstimator, X: NDArray[np.floating[Any]], y: NDArray[np.floating[Any]]
 ) -> None:
     """Plot the decision boundary of a classifier."""
     assert X.shape[1] == 2, "Can only plot decision boundary for 2 features."
@@ -94,7 +92,7 @@ def print_mislabeled_points(y_trues: NDArray[np.floating[Any]], y_preds: NDArray
 
 def make_meshgrid(
     x1: NDArray[np.floating[Any]], x2: NDArray[np.floating[Any]], step: float = 0.02
-) -> Tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
+) -> tuple[NDArray[np.floating[Any]], NDArray[np.floating[Any]]]:
     """Create a mesh of points to plot in
 
     Parameters
@@ -122,8 +120,8 @@ def plot_decision_regions(
     y: NDArray[np.floating[Any]],
     classifier: BaseEstimator,
     # test_idx: Optional[int] = None,
-    markers: Tuple[str, ...] | None = None,
-    colors: Tuple[str, ...] | None = None,
+    markers: tuple[str, ...] | None = None,
+    colors: tuple[str, ...] | None = None,
     cmap: ListedColormap | None = None,
     ax: plt.Axes | None = None,
     **kwargs: Any,

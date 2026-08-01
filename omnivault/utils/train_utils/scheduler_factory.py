@@ -1,12 +1,10 @@
 """See `transformers/optimization.py` for the original code. This is a distilled
 version."""
 
-from __future__ import annotations
-
 import math
 from collections.abc import Callable
 from enum import Enum, StrEnum
-from typing import Any, Dict
+from typing import Any
 
 import torch
 from transformers import (
@@ -46,7 +44,7 @@ class SchedulerType(ExplicitEnum):
 
 
 # transformers/optimization.py
-TYPE_TO_SCHEDULER_FUNCTION: Dict[SchedulerType, Callable[..., torch.optim.lr_scheduler.LRScheduler]] = {
+TYPE_TO_SCHEDULER_FUNCTION: dict[SchedulerType, Callable[..., torch.optim.lr_scheduler.LRScheduler]] = {
     SchedulerType.LINEAR: get_linear_schedule_with_warmup,
     SchedulerType.COSINE: get_cosine_schedule_with_warmup,
     SchedulerType.COSINE_WITH_RESTARTS: get_cosine_with_hard_restarts_schedule_with_warmup,
@@ -69,7 +67,7 @@ def get_scheduler(
     optimizer: torch.optim.Optimizer,
     num_warmup_steps: int | None = None,
     num_training_steps: int | None = None,
-    scheduler_specific_kwargs: Dict[str, Any] | None = None,
+    scheduler_specific_kwargs: dict[str, Any] | None = None,
 ) -> torch.optim.lr_scheduler.LRScheduler:
     """
     Unified API to get any scheduler from its name.

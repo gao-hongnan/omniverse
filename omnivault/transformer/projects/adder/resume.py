@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import sys
 import time
@@ -59,6 +57,9 @@ def main(cfg: DictConfig | ListConfig) -> None:
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
     assert isinstance(logger, logging.Logger)
 
+    assert data.dataset_dir is not None
+    assert data.dataset_url is not None
+    assert data.dataset_path is not None
     create_directory(data.dataset_dir)
     download_file(url=data.dataset_url, output_path=data.dataset_path)
 

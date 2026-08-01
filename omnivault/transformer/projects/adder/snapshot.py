@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Dict, List
 
 import torch
 
@@ -13,7 +12,7 @@ from omnivault.transformer.utils.general_utils import download_and_read_sequence
 
 @dataclass
 class AdderGroundTruth:
-    token_to_index: Dict[str, int] = field(  # TODO: consider using Literal
+    token_to_index: dict[str, int] = field(  # TODO: consider using Literal
         default_factory=lambda: {
             "0": 0,
             "1": 1,
@@ -35,7 +34,7 @@ class AdderGroundTruth:
             "<UNK>": 17,
         }
     )
-    index_to_token: Dict[int, str] = field(
+    index_to_token: dict[int, str] = field(
         default_factory=lambda: {
             0: "0",
             1: "1",
@@ -61,40 +60,40 @@ class AdderGroundTruth:
     # test bad sequences like 01+02=03?
     seq_len: int = 10  # all sequences are padded to this length in this test example
 
-    sequences: List[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
-    tokenized_sequences: List[List[str]] = field(
+    sequences: list[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
+    tokenized_sequences: list[list[str]] = field(
         default_factory=lambda: [
             ["<BOS>", "1", "5", "+", "5", "7", "=", "0", "7", "2", "<EOS>"],
             ["<BOS>", "0", "1", "+", "0", "2", "=", "0", "0", "3", "<EOS>"],
         ]
     )
-    encoded_sequences: List[List[int]] = field(
+    encoded_sequences: list[list[int]] = field(
         default_factory=lambda: [
             [14, 1, 5, 10, 5, 7, 13, 0, 7, 2, 15],
             [14, 0, 1, 10, 0, 2, 13, 0, 0, 3, 15],
         ]
     )
-    decoded_sequences: List[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
+    decoded_sequences: list[str] = field(default_factory=lambda: ["15+57=072", "01+02=003"])
 
-    inputs: List[torch.LongTensor] = field(
+    inputs: list[torch.LongTensor] = field(
         default_factory=lambda: [
             torch.LongTensor([14, 1, 5, 10, 5, 7, 13, 0, 7, 2]),
             torch.LongTensor([14, 0, 1, 10, 0, 2, 13, 0, 0, 3]),
         ]
     )
-    targets: List[torch.LongTensor] = field(
+    targets: list[torch.LongTensor] = field(
         default_factory=lambda: [
             torch.LongTensor([16, 16, 16, 16, 16, 16, 0, 7, 2, 15]),
             torch.LongTensor([16, 16, 16, 16, 16, 16, 0, 0, 3, 15]),
         ]
     )
-    padding_masks: List[torch.BoolTensor] = field(
+    padding_masks: list[torch.BoolTensor] = field(
         default_factory=lambda: [
             torch.BoolTensor([True, True, True, True, True, True, True, True, True, True]),
             torch.BoolTensor([True, True, True, True, True, True, True, True, True, True]),
         ]
     )
-    future_masks: List[torch.BoolTensor] = field(
+    future_masks: list[torch.BoolTensor] = field(
         default_factory=lambda: [
             torch.BoolTensor(
                 [
@@ -127,7 +126,7 @@ class AdderGroundTruth:
         ]
     )
 
-    mock_batch: List[AdderDatasetYield] = field(init=False)
+    mock_batch: list[AdderDatasetYield] = field(init=False)
 
     inputs_collated: torch.LongTensor = field(
         default_factory=lambda: torch.LongTensor([[14, 1, 5, 10, 5, 7, 13, 0, 7, 2], [14, 0, 1, 10, 0, 2, 13, 0, 0, 3]])
@@ -245,6 +244,8 @@ data = DataConfig(
 )
 
 
+assert data.dataset_url is not None
+assert data.dataset_name is not None
 sequences = list(download_and_read_sequences(url=data.dataset_url, dataset_name=data.dataset_name))
 adder_dataset_ = AdderDataset(
     data=sequences, tokenizer=adder_tokenizer_

@@ -1,5 +1,4 @@
 # mypy: ignore-errors
-from __future__ import annotations
 
 import copy
 import os
@@ -72,6 +71,9 @@ def main(local_rank: int, cfg: DictConfig | ListConfig) -> None:
     trainer_config = TrainerConfig(**cfg.trainer)
     generator_config = GeneratorConfig(**cfg.generator)
 
+    assert data.dataset_dir is not None
+    assert data.dataset_url is not None
+    assert data.dataset_path is not None
     create_directory(data.dataset_dir)
     download_file(url=data.dataset_url, output_path=data.dataset_path)
 

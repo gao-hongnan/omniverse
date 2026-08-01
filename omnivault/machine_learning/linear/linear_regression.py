@@ -15,31 +15,25 @@ NOTE:
     2. Ensure that input data does not contain NaN or infinite values.
 """
 
-from __future__ import annotations
-
 import functools
 import logging
-from typing import Any, Callable, List, TypeVar
+from collections.abc import Callable
+from typing import Any, Concatenate, Self, override
 
 import numpy as np
 from numpy.typing import NDArray
 from sklearn.exceptions import NotFittedError
-from typing_extensions import Concatenate, ParamSpec
 
 from omnivault.machine_learning.estimator import BaseEstimator
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-P = ParamSpec("P")
-T = TypeVar("T")
-
-
-def not_fitted[**P, T](
-    func: Callable[Concatenate[LinearRegression, P], T],
-) -> Callable[Concatenate[LinearRegression, P], T]:
+def not_fitted[**P, ReturnT](
+    func: Callable[Concatenate[LinearRegression, P], ReturnT],
+) -> Callable[Concatenate[LinearRegression, P], ReturnT]:
     @functools.wraps(func)
-    def wrapper(self: LinearRegression, *args: P.args, **kwargs: P.kwargs) -> T:
+    def wrapper(self: LinearRegression, *args: P.args, **kwargs: P.kwargs) -> ReturnT:
         if not self._fitted:
             raise NotFittedError
         else:
@@ -67,15 +61,15 @@ class LinearRegression(BaseEstimator):
         Learning rate for gradient descent solvers.
     loss_function : LossFunction
         Loss function to be minimized.
-    regularization : Optional[str]
+    regularization : str | None
         Type of regularization: {"l1", "l2"} or None.
-    C : Optional[float]
+    C : float | None
         Regularization strength. Must be a positive float.
     num_epochs : int
         Number of epochs for gradient descent solvers.
     _fitted : bool
         Flag indicating whether the model has been fitted.
-    loss_history : List[float]
+    loss_history : list[float]
         History of loss values during training.
     optimal_betas : NDArray[np.floating[Any]]
         Optimal beta coefficients after fitting.
@@ -104,9 +98,9 @@ class LinearRegression(BaseEstimator):
             Learning rate for gradient descent solvers.
         loss_function : LossFunction, default=LossFunction.l2_loss()
             Loss function to be minimized.
-        regularization : Optional[str], default=None
+        regularization : str | None, default=None
             Type of regularization: {"l1", "l2"} or None.
-        C : Optional[float], default=None
+        C : float | None, default=None
             Regularization strength. Must be a positive float.
         num_epochs : int, default=1000
             Number of epochs for gradient descent solvers.
@@ -124,7 +118,7 @@ class LinearRegression(BaseEstimator):
         self._fitted: bool = False
         self.optimal_betas: NDArray[np.floating[Any]]
 
-        self.loss_history: List[float] = []
+        self.loss_history: list[float] = []
 
         # Validate regularization parameters
         if self.regularization is not None and self.C is None:
@@ -212,7 +206,8 @@ class LinearRegression(BaseEstimator):
 
         return X, y_true
 
-    def fit(self, X: NDArray[np.floating[Any]], y_true: NDArray[np.floating[Any]]) -> LinearRegression:
+    @override
+    def fit(self, X: NDArray[np.floating[Any]], y_true: NDArray[np.floating[Any]]) -> Self:
         """
         Fit the Linear Regression model to the data.
 
@@ -309,6 +304,7 @@ class LinearRegression(BaseEstimator):
         return self
 
     @not_fitted
+    @override
     def predict(self, X: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """
         Predict target values using the fitted model.

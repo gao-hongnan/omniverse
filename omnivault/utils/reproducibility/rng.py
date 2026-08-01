@@ -3,7 +3,7 @@ reproducibility across different platforms.
 """
 
 import random
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 import torch
@@ -42,7 +42,7 @@ def save_rng_state(save_dir: str, epoch_index: int) -> None:
     torch.save(rng_state, f"{save_dir}/rng_state_epoch_{epoch_index}.pt")
 
 
-def load_and_set_rng_state(rng_state_path: str) -> Dict[str, Any]:
+def load_and_set_rng_state(rng_state_path: str) -> dict[str, Any]:
     """Load and set the state of various random number generators (RNGs) from a file,
     allowing the continuation of experiments or training processes from a specific
     point with reproducibility. This function restores the RNG states for Python's
@@ -57,7 +57,7 @@ def load_and_set_rng_state(rng_state_path: str) -> Dict[str, Any]:
 
     Returns
     -------
-    rng_state: Dict[str, Any]
+    rng_state: dict[str, Any]
         A dictionary containing the loaded RNG states. This includes states for
         Python's built-in `random` module (`python_random_state`), NumPy's random
         module (`numpy_random_state`), PyTorch's global RNG (`torch_random_state`),
@@ -66,7 +66,7 @@ def load_and_set_rng_state(rng_state_path: str) -> Dict[str, Any]:
     # `weights_only=True` (torch>=2.6's default) cannot be used: an RNG snapshot
     # stores NumPy's state tuple and Python's `random` state, which the safe
     # unpickler rejects. Only load snapshots produced by `save_rng_state`.
-    rng_state: Dict[str, Any] = torch.load(rng_state_path, weights_only=False)  # nosec B614  # trusted local RNG snapshot produced by save_rng_state
+    rng_state: dict[str, Any] = torch.load(rng_state_path, weights_only=False)  # nosec B614  # trusted local RNG snapshot produced by save_rng_state
 
     random.setstate(rng_state["python_random_state"])
     np.random.set_state(rng_state["numpy_random_state"])  # noqa: NPY002

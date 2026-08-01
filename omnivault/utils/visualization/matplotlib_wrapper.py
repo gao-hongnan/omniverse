@@ -5,7 +5,7 @@ TODO
 2. Integrate with FigureManager.
 """
 
-from typing import Any, List, Union
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,7 +24,7 @@ def plot_line(
     x: NDArray[np.float64],
     y: NDArray[np.float64],
     **kwargs: Any,
-) -> List[Line2D]:
+) -> list[Line2D]:
     """Plot line."""
     return ax.plot(x, y, **kwargs)
 
@@ -38,7 +38,7 @@ def plot_quiver(
     z: NDArray[np.float64] | None = None,  # For 3D
     w: NDArray[np.float64] | None = None,  # For 3D
     **kwargs: Any,
-) -> Union[Quiver, Line3DCollection]:
+) -> Quiver | Line3DCollection:
     """Plot quiver (2D or 3D depending on the ax type)."""
     if isinstance(ax, Axes3D):
         if z is None or w is None:
@@ -51,7 +51,7 @@ def plot_quiver(
 
 def plot_hist(ax: plt.Axes, x: NDArray[np.float64], **kwargs: Any) -> BarContainer:
     """Plot histogram."""
-    return ax.hist(x, **kwargs)  # type: ignore
+    return ax.hist(x, **kwargs)  # type: ignore[return-value]  # ax.hist returns (counts, bins, patches); legacy signature declares BarContainer
 
 
 def plot_bar(ax: plt.Axes, x: NDArray[np.float64], y: NDArray[np.float64], **kwargs: Any) -> BarContainer:

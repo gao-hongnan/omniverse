@@ -109,9 +109,7 @@ Notations
   the output of the encoder, and thus the lengths can be different.
 """
 
-from __future__ import annotations
-
-from typing import Tuple
+from typing import override
 
 import torch
 from torch import nn
@@ -166,13 +164,14 @@ class ScaledDotProductAttention(Attention):
     in the input sequence.
     """
 
+    @override
     def forward(
         self,
         query: torch.Tensor,
         key: torch.Tensor,
         value: torch.Tensor,
         mask: torch.BoolTensor | None = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """Perform the forward pass for scaled dot-product attention.
 
         This function applies the attention mechanism on the input tensors `query`,
@@ -237,7 +236,7 @@ class ScaledDotProductAttention(Attention):
 
         Returns
         -------
-        context_vector, attention_weights: Tuple[torch.Tensor, torch.Tensor]
+        context_vector, attention_weights: tuple[torch.Tensor, torch.Tensor]
             The context vectors and the attention weights. The context vectors are the weighted sum
             of the `value` vectors, representing the information to be attended to.
             The attention weights represent the attention probabilities.
@@ -310,6 +309,7 @@ class MultiHeadedAttention(nn.Module):
         # self._init_weights()
         # fmt: on
 
+    @override
     def forward(
         self,
         query: torch.Tensor,

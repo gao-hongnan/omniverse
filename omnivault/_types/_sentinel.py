@@ -38,12 +38,8 @@ but it is slightly more complicated for this project.
   apply, while `Omit` is about actively overriding a default.
 """
 
-from __future__ import annotations
-
 import threading
-from typing import Any, Dict, Literal, Type
-
-from typing_extensions import override
+from typing import Any, Literal, override
 
 
 class _NotGiven:
@@ -77,7 +73,7 @@ class _NotGiven:
     Example
     -------
     ```python
-    def get(timeout: Union[int, _NotGiven, None] = _NotGiven()) -> Response:
+    def get(timeout: int | _NotGiven | None = _NotGiven()) -> Response:
         if timeout is _NotGiven:
             # Default timeout behavior
         elif timeout is None:
@@ -94,7 +90,7 @@ class _NotGiven:
 
     _instance: _NotGiven | None = None
 
-    def __new__(cls: Type[_NotGiven]) -> _NotGiven:  # noqa: PYI034
+    def __new__(cls: type[_NotGiven]) -> _NotGiven:  # noqa: PYI034
         if cls._instance is None:
             cls._instance = super(_NotGiven, cls).__new__(cls)  # noqa: UP008
         return cls._instance
@@ -136,7 +132,7 @@ class _Missing:
 
     _instance: _Missing | None = None
 
-    def __new__(cls: Type[_Missing]) -> _Missing:  # noqa: PYI034
+    def __new__(cls: type[_Missing]) -> _Missing:  # noqa: PYI034
         if cls._instance is None:
             cls._instance = super(_Missing, cls).__new__(cls)  # noqa: UP008
         return cls._instance
@@ -179,7 +175,7 @@ class _Omit:
 
     _instance: _Omit | None = None
 
-    def __new__(cls: Type[_Omit]) -> _Omit:  # noqa: PYI034
+    def __new__(cls: type[_Omit]) -> _Omit:  # noqa: PYI034
         if cls._instance is None:
             cls._instance = super(_Omit, cls).__new__(cls)  # noqa: UP008
         return cls._instance
@@ -200,7 +196,7 @@ class _Omit:
 OMIT = _Omit()
 
 
-class Singleton[T](type):
+class Singleton[InstanceT](type):
     """Singleton metaclass for creating singleton classes.
 
     References
@@ -209,10 +205,10 @@ class Singleton[T](type):
     [2] https://stackoverflow.com/questions/75307905/python-typing-for-a-metaclass-singleton
     """
 
-    _instances: Dict[Singleton[T], T] = {}
+    _instances: dict[Singleton[InstanceT], InstanceT] = {}
     _lock: threading.Lock = threading.Lock()
 
-    def __call__(cls: Singleton[T], *args: Any, **kwargs: Any) -> T:
+    def __call__(cls: Singleton[InstanceT], *args: Any, **kwargs: Any) -> InstanceT:
         # Lock the block of code where the instance is checked and created
         # This is necessary to avoid race conditions when multiple threads try to
         # create the same singleton instance at the same time.

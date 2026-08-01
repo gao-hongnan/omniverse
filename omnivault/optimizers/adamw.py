@@ -1,5 +1,6 @@
 import math
-from typing import Any, Callable, Dict, Iterable, Tuple, Union
+from collections.abc import Callable, Iterable
+from typing import Any, override
 
 import torch
 
@@ -7,7 +8,7 @@ import torch
 
 __all__ = ["AdamW"]
 
-type ParamsT = Union[Iterable[torch.Tensor], Iterable[Dict[str, Any]]]
+type ParamsT = Iterable[torch.Tensor] | Iterable[dict[str, Any]]
 
 
 class AdamW(torch.optim.Optimizer):
@@ -15,7 +16,7 @@ class AdamW(torch.optim.Optimizer):
         self,
         params: ParamsT,
         lr: float = 1e-3,
-        betas: Tuple[float, float] = (0.9, 0.999),
+        betas: tuple[float, float] = (0.9, 0.999),
         eps: float = 1e-8,
         weight_decay: float = 0,
     ) -> None:
@@ -34,7 +35,7 @@ class AdamW(torch.optim.Optimizer):
         # self.param_groups: List[Dict[str, Any]] = []
 
     @staticmethod
-    def validate_params(lr: float, betas: Tuple[float, float], eps: float, weight_decay: float) -> None:
+    def validate_params(lr: float, betas: tuple[float, float], eps: float, weight_decay: float) -> None:
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}, must be >= 0.")
         if not 0.0 <= eps:
@@ -44,6 +45,7 @@ class AdamW(torch.optim.Optimizer):
         if not 0.0 <= betas[0] < 1.0 and 0.0 <= betas[1] < 1.0:
             raise ValueError(f"Invalid beta values: {betas}, must be in [0, 1).")
 
+    @override
     def step(self, closure: Callable[[], float] | None = None) -> float | None:  # type: ignore[override]
         loss = None
         if closure is not None:

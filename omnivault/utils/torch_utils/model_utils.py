@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import Any, Dict, List, Set, Tuple, TypedDict
+from typing import Any, TypedDict
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -36,7 +34,7 @@ def total_parameters(module: nn.Module) -> int:
     return sum(p.numel() for p in module.parameters())
 
 
-def get_named_modules(module: nn.Module, **kwargs: Any) -> List[Dict[str, str]]:
+def get_named_modules(module: nn.Module, **kwargs: Any) -> list[dict[str, str]]:
     """Obtain a list of named modules in the model/module.
 
     Return an iterator over all modules in the network, yielding both the name
@@ -51,7 +49,7 @@ def get_named_modules(module: nn.Module, **kwargs: Any) -> List[Dict[str, str]]:
 
     Returns
     -------
-    List[Dict[str, str]]
+    list[dict[str, str]]
         A list of dictionaries containing the name and type of each module in the model.
 
     Examples
@@ -113,7 +111,7 @@ def get_named_modules(module: nn.Module, **kwargs: Any) -> List[Dict[str, str]]:
     return named_modules
 
 
-def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.Parameter]]:
+def get_named_parameters(module: nn.Module, **kwargs: Any) -> list[dict[str, nn.Parameter]]:
     """Obtain a list of named parameters in the model/module.
 
     Return an iterator over all parameters in the network, yielding both the name
@@ -128,7 +126,7 @@ def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.
 
     Returns
     -------
-    List[Dict[str, nn.Parameter]]
+    list[dict[str, nn.Parameter]]
         A list of dictionaries containing the name and parameter of each parameter in the model.
 
     Examples
@@ -219,7 +217,7 @@ def get_named_parameters(module: nn.Module, **kwargs: Any) -> List[Dict[str, nn.
     return named_parameters
 
 
-def gather_weight_stats(module: nn.Module, lp: int = 2, epsilon: float = 1e-5, **kwargs: Any) -> Dict[str, Any]:
+def gather_weight_stats(module: nn.Module, lp: int = 2, epsilon: float = 1e-5, **kwargs: Any) -> dict[str, Any]:
     """Return the mean and standard deviation of weights and biases in the model. Sanity
     check to ensure that the weights and biases are initialized correctly.
 
@@ -236,7 +234,7 @@ def gather_weight_stats(module: nn.Module, lp: int = 2, epsilon: float = 1e-5, *
 
     Returns
     -------
-    Dict[str, Dict[str, float]]
+    dict[str, dict[str, float]]
         A dictionary containing the mean and standard deviation of weights and biases in the model.
 
     Examples
@@ -293,7 +291,7 @@ def gather_weight_stats(module: nn.Module, lp: int = 2, epsilon: float = 1e-5, *
     return stats
 
 
-def prepare_stats_dataframe(stats_dict: Dict[str, Any]) -> pd.DataFrame:
+def prepare_stats_dataframe(stats_dict: dict[str, Any]) -> pd.DataFrame:
     """Use in conjunction with the `gather_weight_stats` function to prepare a DataFrame
     for visualization of weight and bias statistics."""
     data = []
@@ -376,7 +374,7 @@ def compare_models(model_a: nn.Module, model_b: nn.Module) -> bool:
     )
 
 
-def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module) -> Tuple[bool, Any]:
+def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module) -> tuple[bool, Any]:
     """
     Compare two PyTorch models to check if they have identical parameters.
 
@@ -389,7 +387,7 @@ def compare_models_and_report_differences(model_a: nn.Module, model_b: nn.Module
 
     Returns
     -------
-    Tuple[bool, Any]
+    tuple[bool, Any]
         Returns a tuple with the first element as a boolean indicating if the
         models are identical. The second element is a dictionary containing the
         differences between the models if they are not identical.
@@ -543,7 +541,7 @@ class Freezer:
         constructor, and any modifications to the model will be reflected inplace.
         """
         self.model = model
-        self.frozen_status: Dict[str, bool] = {}
+        self.frozen_status: dict[str, bool] = {}
         self.update_freezing_status()
 
     def update_freezing_status(self) -> None:
@@ -554,13 +552,13 @@ class Freezer:
         for name, param in self.model.named_parameters():
             self.frozen_status[name] = not param.requires_grad
 
-    def freeze_by_index(self, indices: List[int], submodule_path: str | None = None) -> None:
+    def freeze_by_index(self, indices: list[int], submodule_path: str | None = None) -> None:
         """
         Freeze layers based on their index in the ordered list of model's children.
 
         Parameters
         ----------
-        indices: List[int]
+        indices: list[int]
             List of indices of the layers to freeze.
         submodule_path: str, optional
             The path to the submodule to freeze in the model. For example, if the model
@@ -579,13 +577,13 @@ class Freezer:
                     param.requires_grad = False
         self.update_freezing_status()
 
-    def freeze_by_name(self, names: List[str]) -> None:
+    def freeze_by_name(self, names: list[str]) -> None:
         """
         Freeze layers based on the names of the parameters.
 
         Parameters
         ----------
-        names: List[str]
+        names: list[str]
             List of substrings to match in the parameter names for freezing.
             This name can be obtained by calling `model.named_parameters()`.
         """
@@ -607,13 +605,13 @@ class Freezer:
             param.requires_grad = False
         self.update_freezing_status()
 
-    def report_freezing(self) -> Dict[str, bool]:
+    def report_freezing(self) -> dict[str, bool]:
         """
         Report the freezing status of all parameters in the model.
 
         Returns
         -------
-        Dict[str, bool]
+        dict[str, bool]
             Dictionary with parameter names and their freezing status.
         """
         return self.frozen_status
@@ -632,7 +630,7 @@ def freeze_layers(module: nn.Module) -> None:
         parameter.requires_grad = False
 
 
-def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> Dict[str, nn.Parameter]:
+def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> dict[str, nn.Parameter]:
     """
     Checks if all parameters in the given model are covered by the optimizer's
     parameter groups.
@@ -646,19 +644,19 @@ def check_optimizer_coverage(model: nn.Module, optimizer: optim.Optimizer) -> Di
 
     Returns
     -------
-    uncovered_params: Dict[str, nn.Parameter]
+    uncovered_params: dict[str, nn.Parameter]
         A dictionary containing all model parameters that are not covered by the
         optimizer's parameter groups. The keys are the parameter names and the
         values are the corresponding parameter tensors.
     """
     # 1. we gather all model parameters with names
-    model_params: Dict[str, nn.Parameter] = dict(model.named_parameters())
+    model_params: dict[str, nn.Parameter] = dict(model.named_parameters())
 
     # 2. we gather all optimizer parameters
-    optimizer_params: Set[nn.Parameter] = {param for group in optimizer.param_groups for param in group["params"]}
+    optimizer_params: set[nn.Parameter] = {param for group in optimizer.param_groups for param in group["params"]}
 
     # 3. we check if all parameters are covered
-    uncovered_params: Dict[str, nn.Parameter] = {
+    uncovered_params: dict[str, nn.Parameter] = {
         name: param for name, param in model_params.items() if param not in optimizer_params
     }
     return uncovered_params
@@ -671,7 +669,7 @@ class LayerInfo(TypedDict):
     trainable: bool
 
 
-def get_model_layer_info(model: nn.Module) -> List[LayerInfo]:
+def get_model_layer_info(model: nn.Module) -> list[LayerInfo]:
     """
     A utility function to get information about the layers in a PyTorch model.
 
@@ -682,7 +680,7 @@ def get_model_layer_info(model: nn.Module) -> List[LayerInfo]:
 
     Returns
     -------
-    List[LayerInfo]
+    list[LayerInfo]
         A list of dictionaries containing the layer name, number of parameters,
         dtype, and whether the layer is trainable or not.
 
@@ -692,7 +690,7 @@ def get_model_layer_info(model: nn.Module) -> List[LayerInfo]:
     >>> model = AutoModelForSequenceClassification.from_pretrained("microsoft/deberta-v3-small")
     >>> model_layers_info = get_model_layer_info(model)
     """
-    model_layers_info: List[LayerInfo] = []
+    model_layers_info: list[LayerInfo] = []
     for parameter_name, parameter in model.named_parameters():
         this_layer_num_parameters = int(torch.prod(torch.tensor(parameter.size())))
         model_layers_info.append(

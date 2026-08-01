@@ -1,20 +1,18 @@
-from typing import Dict, List
-
 import numpy as np
 
 
-def calculate_statistics(data: List[float], suffix: str = "") -> Dict[str, float]:
+def calculate_statistics(data: list[float], suffix: str = "") -> dict[str, float]:
     """
     Calculate statistics for a list of data.
 
     Parameters
     ----------
-    data : List[float]
+    data : list[float]
         List of 1D data such as a list of time taken in seconds on each rank.
 
     Returns
     -------
-    Dict[str, float]
+    dict[str, float]
         A dictionary containing the following statistics:
         - mean: The mean of the data.
         - median: The median of the data.

@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Self
 
 
 class BaseEstimator(ABC):
@@ -57,12 +55,12 @@ class BaseEstimator(ABC):
         return hash(tuple(sorted(self.__dict__.items())))
 
     @abstractmethod
-    def fit(self, *args: Any, **kwargs: Any) -> BaseEstimator:
+    def fit(self, *args: Any, **kwargs: Any) -> Self:
         """Fit the estimator.
 
         Returns
         -------
-        self : BaseEstimator
+        self : Self
             The fitted estimator.
         """
 

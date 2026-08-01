@@ -1,14 +1,10 @@
 import functools
 import inspect
-from collections.abc import Container, Iterable, Sized
+from collections.abc import Container, Iterable, Iterator, Sized
 from functools import lru_cache
-from typing import Any, Iterator, Protocol, TypeVar, cast, overload
+from typing import Any, Protocol, cast, overload
 
 # NOTE: inside frostbound
-
-T = TypeVar("T")
-T_co = TypeVar("T_co", bound=Any, covariant=True)
-U = TypeVar("U")
 
 
 class SupportsContainer(Protocol):
@@ -42,13 +38,13 @@ _SAFE_DICT_METHODS = frozenset(
 _SAFE_SET_METHODS = frozenset(["__iter__", "__len__", "__contains__", "issubset", "issuperset"])
 
 
-class ImmutableT[T_co: Any]:
+class ImmutableT[WrappedT]:
     """Type for immutable proxy objects that wrap another object."""
 
-    _obj: T_co
+    _obj: WrappedT
 
 
-class ImmutableProxy(ImmutableT[T_co]):
+class ImmutableProxy[WrappedT](ImmutableT[WrappedT]):
     """Immutable proxy object for wrapping mutable objects.
 
     This class creates an immutable view of a mutable object by intercepting
@@ -69,12 +65,12 @@ class ImmutableProxy(ImmutableT[T_co]):
     AttributeError: Attempting to modify object with method `append`. `list` object is immutable.
     """
 
-    def __init__(self, obj: T_co) -> None:
+    def __init__(self, obj: WrappedT) -> None:
         """Initialize the immutable proxy with the object to wrap.
 
         Parameters
         ----------
-        obj : T_co
+        obj : WrappedT
             The object to wrap with an immutable proxy
         """
         object.__setattr__(self, "_obj", obj)
@@ -90,7 +86,7 @@ class ImmutableProxy(ImmutableT[T_co]):
 
         Parameters
         ----------
-        index : Union[int, slice]
+        index : int | slice
             The index to access
 
         Returns
@@ -348,19 +344,19 @@ class ImmutableProxy(ImmutableT[T_co]):
         return obj
 
 
-def make_immutable[T](obj: T) -> ImmutableT[T]:
+def make_immutable[WrappedT](obj: WrappedT) -> ImmutableT[WrappedT]:
     """Create an immutable view of a mutable object.
 
     This is a convenience function for creating ImmutableProxy instances.
 
     Parameters
     ----------
-    obj : T
+    obj : WrappedT
         The object to make immutable
 
     Returns
     -------
-    ImmutableT[T]
+    ImmutableT[WrappedT]
         An immutable proxy for the object
     """
     return ImmutableProxy(obj)

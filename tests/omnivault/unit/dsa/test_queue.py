@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from omnivault.dsa.queue.concrete import DeQueueList, QueueList
@@ -50,6 +48,8 @@ class TestQueueList:
         assert populated_queue.size == 3  # Ensure peek doesn't remove item
 
     def test_empty_queue_operations(self, empty_queue: QueueList[int]) -> None:
+        # The source raises a bare `Exception("Queue is empty")`, so Exception
+        # is the narrowest type available; the match pins the exact message.
         with pytest.raises(Exception, match="Queue is empty"):
             empty_queue.peek()
 
@@ -57,13 +57,9 @@ class TestQueueList:
             empty_queue.dequeue()
 
     def test_iteration(self, populated_queue: QueueList[int]) -> None:
-        expected: List[int] = [1, 2, 3]
-        result: List[int] = []
+        result: list[int] = list(populated_queue)
 
-        for item in populated_queue:
-            result.append(item)  # noqa: PERF402
-
-        assert result == expected
+        assert result == [1, 2, 3]
         assert populated_queue.is_empty() is True  # Iterator should consume queue
 
     def test_generic_type_support(self) -> None:
@@ -130,6 +126,8 @@ class TestDeQueueList:
         assert populated_deque.size == 3  # Ensure peeks don't modify deque
 
     def test_empty_deque_operations(self, empty_deque: DeQueueList[int]) -> None:
+        # The source raises a bare `Exception("Queue is empty")`, so Exception
+        # is the narrowest type available; the match pins the exact message.
         with pytest.raises(Exception, match="Queue is empty"):
             empty_deque.peek_front()
 

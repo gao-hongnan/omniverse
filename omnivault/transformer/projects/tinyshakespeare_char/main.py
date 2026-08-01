@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import logging
 import sys
 import time
@@ -51,6 +49,8 @@ def main(cfg: DictConfig | ListConfig) -> None:
     logger = RichLogger(**logger_pydantic_config.model_dump(mode="python")).logger
     assert isinstance(logger, logging.Logger)
 
+    assert data.dataset_url is not None
+    assert data.dataset_name is not None
     vocabulary = TextCharacterVocabulary.from_url(
         url=data.dataset_url, dataset_name=data.dataset_name, dest_folder=data.dataset_dir
     )
