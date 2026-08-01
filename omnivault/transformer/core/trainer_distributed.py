@@ -1,5 +1,6 @@
 # mypy: disable-error-code="no-untyped-call"
 
+import annotationlib
 import inspect
 import logging
 from collections import defaultdict
@@ -152,7 +153,9 @@ class Trainer:
 
         callbacks = sorted(self.callbacks[event], key=lambda x: x[1].value)  # Sort by priority
         for callback, _ in callbacks:
-            sig = inspect.signature(callback)
+            # FORWARDREF: callbacks annotate `trainer: Trainer` where `Trainer` is a
+            # TYPE_CHECKING-only import, so evaluating annotations would raise NameError.
+            sig = inspect.signature(callback, annotation_format=annotationlib.Format.FORWARDREF)
             filtered_kwargs = {k: v for k, v in kwargs.items() if k in sig.parameters}
             callback(self, *args, **filtered_kwargs)  # type: ignore[arg-type]
 
