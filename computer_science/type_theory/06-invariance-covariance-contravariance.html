@@ -7,8 +7,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="Covariance, contravariance, and invariance in Python generics: why list[int] is not a list[float], from Guido's classic example to PEP 695 inferred variance." lang="en" name="description" xml:lang="en" />
+<meta content="python, covariance, contravariance, invariance, variance, generics, type theory" name="keywords" />
+<meta property="og:title" content="Covariance, Contravariance, and Invariance in Python Generics" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.gaohongnan.com/computer_science/type_theory/06-invariance-covariance-contravariance.html" />
+<meta property="og:site_name" content="Omniverse" />
+<meta property="og:description" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Why Is list[int] Not a list[float]?, Why Are Callable Parameter Types Contravariant?- Return types are covariant, Parameter types are contrava..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="https://www.gaohongnan.com/_images/social_previews/summary_computer_science_type_theory_06-invariance-covariance-contravariance_4976f2df.png" />
+<meta property="og:image:alt" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Why Is list[int] Not a list[float]?, Why Are Callable Parameter Types Contravariant?- Return types are covariant, Parameter types are contrava..." />
+<meta name="twitter:card" content="summary_large_image" />
 
-    <title>Invariance, Covariance and Contravariance &#8212; Omniverse</title>
+    <title>Covariance, Contravariance, and Invariance in Python Generics &#8212; Omniverse</title>
   
   
   
@@ -590,12 +602,12 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Type Theory, A Very Rudimentary Introduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01-subtypes.html">Subtypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-subtypes.html">Subtyping in Python: Nominal vs Structural Explained</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02-type-safety.html">Type Safety</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03-subsumption.html">Subsumption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics in Python: Type Variables and Parameterized Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Covariance, Contravariance, and Invariance in Python Generics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07-overload.html">Function Overloading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08-pep-661-sentinel-values.html">Sentinel Types</a></li>
 </ul>
@@ -920,7 +932,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Invariance, Covariance and Contravariance</h1>
+    <h1>Covariance, Contravariance, and Invariance in Python Generics</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -930,30 +942,14 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-motivation">The Motivation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-definitions">The Definitions</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance">Covariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariance">Contravariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#invariance">Invariance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-list-int-not-a-list-float">Why Is <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> Not a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-are-callable-parameter-types-contravariant">Why Are <code class="docutils literal notranslate"><span class="pre">Callable</span></code> Parameter Types Contravariant?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#return-types-are-covariant">Return types are covariant</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-types-are-contravariant">Parameter types are contravariant</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-is-invariant">List is Invariant</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Covariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Contravariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Invariance</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-connection-of-mutability-and-variance">The Connection of Mutability and Variance</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-vs-immutable-list">List vs Immutable List</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drawing-some-connection-to-ordinary-functions">Drawing Some Connection to Ordinary Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariant-and-callable-types">Contravariant and Callable Types</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callable-return-types-covariance">Callable Return Types (Covariance)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callable-argument-types-contravariance">Callable Argument Types (Contravariance)</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-examples-of-covariance-and-contravariance">Real World Examples of Covariance and Contravariance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-does-variance-show-up-in-the-wild">Where Does Variance Show Up in the Wild?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
             </nav>
@@ -966,8 +962,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="invariance-covariance-and-contravariance">
-<h1>Invariance, Covariance and Contravariance<a class="headerlink" href="#invariance-covariance-and-contravariance" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="covariance-contravariance-and-invariance-in-python-generics">
+<h1>Covariance, Contravariance, and Invariance in Python Generics<a class="headerlink" href="#covariance-contravariance-and-invariance-in-python-generics" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
@@ -975,88 +971,152 @@
 <img alt="Tag" src="https://img.shields.io/badge/Level-Beginner-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#the-motivation" id="id4">The Motivation</a></p></li>
-<li><p><a class="reference internal" href="#the-definitions" id="id5">The Definitions</a></p>
+<li><p><a class="reference internal" href="#why-is-list-int-not-a-list-float" id="id6">Why Is <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> Not a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>?</a></p></li>
+<li><p><a class="reference internal" href="#why-are-callable-parameter-types-contravariant" id="id7">Why Are <code class="docutils literal notranslate"><span class="pre">Callable</span></code> Parameter Types Contravariant?</a></p>
 <ul>
-<li><p><a class="reference internal" href="#covariance" id="id6">Covariance</a></p></li>
-<li><p><a class="reference internal" href="#contravariance" id="id7">Contravariance</a></p></li>
-<li><p><a class="reference internal" href="#invariance" id="id8">Invariance</a></p></li>
+<li><p><a class="reference internal" href="#return-types-are-covariant" id="id8">Return types are covariant</a></p></li>
+<li><p><a class="reference internal" href="#parameter-types-are-contravariant" id="id9">Parameter types are contravariant</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#list-is-invariant" id="id9">List is Invariant</a></p>
-<ul>
-<li><p><a class="reference internal" href="#id1" id="id10">Covariance</a></p></li>
-<li><p><a class="reference internal" href="#id2" id="id11">Contravariance</a></p></li>
-<li><p><a class="reference internal" href="#id3" id="id12">Invariance</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#the-connection-of-mutability-and-variance" id="id13">The Connection of Mutability and Variance</a></p>
-<ul>
-<li><p><a class="reference internal" href="#list-vs-immutable-list" id="id14">List vs Immutable List</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#drawing-some-connection-to-ordinary-functions" id="id15">Drawing Some Connection to Ordinary Functions</a></p></li>
-<li><p><a class="reference internal" href="#contravariant-and-callable-types" id="id16">Contravariant and Callable Types</a></p>
-<ul>
-<li><p><a class="reference internal" href="#callable-return-types-covariance" id="id17">Callable Return Types (Covariance)</a></p></li>
-<li><p><a class="reference internal" href="#callable-argument-types-contravariance" id="id18">Callable Argument Types (Contravariance)</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#real-world-examples-of-covariance-and-contravariance" id="id19">Real World Examples of Covariance and Contravariance</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id20">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#where-does-variance-show-up-in-the-wild" id="id10">Where Does Variance Show Up in the Wild?</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id11">Summary</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id12">References and Further Readings</a></p></li>
 </ul>
 </nav>
-<section id="the-motivation">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">The Motivation</a><a class="headerlink" href="#the-motivation" title="Link to this heading">#</a></h2>
-<p>This section is not particulary easy. So let’s open with an example, a classic
-one written by the author of Python, Guido van Rossum.</p>
+<p>Pass an <code class="docutils literal notranslate"><span class="pre">int</span></code> where a <code class="docutils literal notranslate"><span class="pre">float</span></code> is expected and the checkers stay silent. Wrap
+both sides in a list — pass a <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> where a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code> is expected —
+and <code class="docutils literal notranslate"><span class="pre">mypy</span></code> and <code class="docutils literal notranslate"><span class="pre">pyright</span></code> both object. This chapter answers the question that
+refusal raises: when does a subtyping relationship between two types carry
+over to the generic types built from them?</p>
+<p>The answer is <strong>variance</strong>: the rule attached to every generic type —
+<code class="docutils literal notranslate"><span class="pre">list[T]</span></code>, <code class="docutils literal notranslate"><span class="pre">Sequence[T]</span></code>, <code class="docutils literal notranslate"><span class="pre">Callable[[T],</span> <span class="pre">R]</span></code> — that says whether subtyping
+between type arguments lifts to subtyping between the constructed types
+(covariance), reverses direction (contravariance), or does not transfer at
+all (invariance). It is the corner of the type system a checker confronts
+you with earliest, and the one whose error messages are hardest to decode
+without the theory.</p>
+<p>By the end you can state the three variances formally and predict either
+checker’s verdict on any generic assignment. You will know why mutability
+forces <code class="docutils literal notranslate"><span class="pre">list</span></code> to be invariant while read-only <code class="docutils literal notranslate"><span class="pre">Sequence</span></code> gets to be
+covariant, how PEP 695 <em>infers</em> the variance of your own generic classes
+where legacy <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> <em>declared</em> it, and why <code class="docutils literal notranslate"><span class="pre">Callable</span></code> treats parameter
+types and return types in opposite directions.</p>
+<div class="note admonition">
+<p class="admonition-title">Prerequisites</p>
+<p>This chapter leans on the subtype relation <span class="math notranslate nohighlight">\(S &lt;: T\)</span> (“an <span class="math notranslate nohighlight">\(S\)</span> can stand in
+for a <span class="math notranslate nohighlight">\(T\)</span>”) from <a class="reference internal" href="01-subtypes.html"><span class="doc">Subtyping in Python</span></a>, the three-part
+<a class="reference internal" href="03-subsumption.html#type-theory-subtype-criterion">subtype criterion</a> from
+<a class="reference internal" href="03-subsumption.html"><span class="doc">Subsumption</span></a>, and generic classes and type variables
+from <a class="reference internal" href="04-generics.html"><span class="doc">Generics and Type Variables</span></a>. Examples run on
+Python 3.14; every checker claim is verified against <code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code> 2.2.0
+and <code class="docutils literal notranslate"><span class="pre">pyright</span></code> 1.1.411.</p>
+</div>
+<section id="why-is-list-int-not-a-list-float">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Why Is <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> Not a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>?</a><a class="headerlink" href="#why-is-list-int-not-a-list-float" title="Link to this heading">#</a></h2>
+<p>Start with the classic example Guido van Rossum used to introduce variance
+when presenting Python’s type hints<a class="footnote-reference brackets" href="#guido-pycon-2015" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">append_pi</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">2</span>    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span> <span class="c1"># original is lst += [3.14]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">append_pi</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">2</span>    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span>
 <span class="linenos">3</span>
-<span class="linenos">4</span><span class="n">my_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>  <span class="c1"># type: List[int]</span>
-<span class="linenos">5</span>
-<span class="linenos">6</span><span class="n">_</span> <span class="o">=</span> <span class="n">append_pi</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>   <span class="c1"># Naively, this should be safe..</span>
-<span class="linenos">7</span><span class="n">pprint</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="n">my_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="linenos">6</span><span class="n">append_pi</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>  <span class="c1"># naively, this should be safe...</span>
+<span class="linenos">7</span><span class="nb">print</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">[</span><span style="color: #008080; text-decoration-color: #008080; font-weight: bold">1</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">5</span>, <span style="color: #008080; text-decoration-color: #008080; font-weight: bold">3.14</span><span style="font-weight: bold">]</span>
-</pre>
-</div></div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1, 3, 5, 3.14]
+</pre></div>
 </div>
-<p>The function <code class="docutils literal notranslate"><span class="pre">append_pi</span></code> is supposed to append the value of <span class="math notranslate nohighlight">\(\pi\)</span> to the list
-<code class="docutils literal notranslate"><span class="pre">lst</span></code>. However, the type of <code class="docutils literal notranslate"><span class="pre">lst</span></code> is <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, and the type of <code class="docutils literal notranslate"><span class="pre">my_list</span></code> is
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code>. The function <code class="docutils literal notranslate"><span class="pre">append_pi</span></code> is supposed to be safe, but it is not. Why
-not? Isn’t <code class="docutils literal notranslate"><span class="pre">int</span></code> (integers <span class="math notranslate nohighlight">\(\mathbb{Z}\)</span>) a subtype of <code class="docutils literal notranslate"><span class="pre">float</span></code> (real numbers
-<span class="math notranslate nohighlight">\(\mathbb{R}\)</span>)? Did we not establish this in the section on subsumption?</p>
-<p>Yes, we did. However, <code class="docutils literal notranslate"><span class="pre">int</span></code> being a subtype of <code class="docutils literal notranslate"><span class="pre">float</span></code> does not imply that
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>. Upon reflection, this makes sense,
-because the above code would break the second criterion of subtyping (
-<a class="reference internal" href="03-subsumption.html#type-theory-subtype-criterion">Criterion 3</a>). The second criterion states that the
-if the type <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then if <span class="math notranslate nohighlight">\(T\)</span> has <span class="math notranslate nohighlight">\(N\)</span> methods, then <span class="math notranslate nohighlight">\(S\)</span> must
-have at least the same set of <span class="math notranslate nohighlight">\(N\)</span> methods. Furthermore, it must preserve the
-semantics of the functions. Let’s build a mental model to understand why this is
-the case. Consider the python implementation of <code class="docutils literal notranslate"><span class="pre">List</span></code>,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T&quot;</span><span class="p">)</span>
+</div>
+</div>
+<p>At runtime nothing objects: Python appends the <code class="docutils literal notranslate"><span class="pre">float</span></code> and moves on. But
+<code class="docutils literal notranslate"><span class="pre">my_list</span></code> was declared a <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> and now contains <code class="docutils literal notranslate"><span class="pre">3.14</span></code>, so any
+downstream code that trusts the annotation — say, calling <code class="docutils literal notranslate"><span class="pre">.bit_length()</span></code>
+on each element — is one iteration away from an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>. Save the
+same five lines as <code class="docutils literal notranslate"><span class="pre">append_pi.py</span></code> and the static checkers refuse the call.
+<code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>append_pi.py:6: error: Argument 1 to &quot;append_pi&quot; has incompatible type &quot;list[int]&quot;; expected &quot;list[float]&quot;  [arg-type]
+append_pi.py:6: note: &quot;list&quot; is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+append_pi.py:6: note: Consider using &quot;Sequence&quot; instead, which is covariant
+Found 1 error in 1 file (checked 1 source file)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">pyright</span></code> agrees and spells out the reason:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>append_pi.py:6:11 - error: Argument of type &quot;list[int]&quot; cannot be assigned to parameter &quot;lst&quot; of type &quot;list[float]&quot; in function &quot;append_pi&quot;
+    &quot;list[int]&quot; is not assignable to &quot;list[float]&quot;
+      Type parameter &quot;_T@list&quot; is invariant, but &quot;int&quot; is not the same as &quot;float&quot;
+      Consider switching from &quot;list&quot; to &quot;Sequence&quot; which is covariant (reportArgumentType)
+1 error, 0 warnings, 0 informations
+</pre></div>
+</div>
+<p>Two tempting explanations fail. The first says the checkers must not accept
+an <code class="docutils literal notranslate"><span class="pre">int</span></code> where a <code class="docutils literal notranslate"><span class="pre">float</span></code> is expected at all — but they do, by the numeric
+tower’s promotion rule, and
+<a class="reference internal" href="02-type-safety.html#type-theory-type-safety-int-float-promotion"><span class="std std-ref">the type-safety chapter holds the receipt</span></a>.
+The second says the problem
+is that promotion is not <em>real</em> subtyping — but swapping in a genuine
+nominal subtype changes nothing. <code class="docutils literal notranslate"><span class="pre">bool</span></code> is a true subclass of <code class="docutils literal notranslate"><span class="pre">int</span></code>, yet a
+<code class="docutils literal notranslate"><span class="pre">list[bool]</span></code> argument for a <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> parameter draws the same verdict:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">count_truthy</span><span class="p">(</span><span class="n">flags</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">flags</span> <span class="k">if</span> <span class="n">flag</span><span class="p">)</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">list</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
+
+<span class="n">bools</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]</span>
+<span class="n">count_truthy</span><span class="p">(</span><span class="n">bools</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bools.py:6: error: Argument 1 to &quot;count_truthy&quot; has incompatible type &quot;list[bool]&quot;; expected &quot;list[int]&quot;  [arg-type]
+bools.py:6: note: &quot;list&quot; is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+bools.py:6: note: Consider using &quot;Sequence&quot; instead, which is covariant
+Found 1 error in 1 file (checked 1 source file)
+</pre></div>
+</div>
+<p>(<code class="docutils literal notranslate"><span class="pre">pyright</span></code> mirrors it: <code class="docutils literal notranslate"><span class="pre">&quot;bool&quot;</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">the</span> <span class="pre">same</span> <span class="pre">as</span> <span class="pre">&quot;int&quot;</span></code>.) So the refusal is
+not about the element types at all. It is a property of <code class="docutils literal notranslate"><span class="pre">list</span></code> itself — the
+property both error messages name: <strong>invariance</strong>, glossed for now as “the
+type argument must match exactly”, and defined formally in the next section.</p>
+<p>That property follows from <code class="docutils literal notranslate"><span class="pre">list</span></code>’s own interface. Here are the
+load-bearing lines of its typeshed stub, as bundled with <code class="docutils literal notranslate"><span class="pre">mypy</span></code>
+2.2.0<a class="footnote-reference brackets" href="#typeshed-builtins" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (comments mine):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">list</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>           <span class="c1"># consumes a _T</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># produces a _T</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>                <span class="c1"># produces _T&#39;s</span>
+</pre></div>
+</div>
+<p>Read the type variable <code class="docutils literal notranslate"><span class="pre">_T</span></code> positionally. In <code class="docutils literal notranslate"><span class="pre">append</span></code> it stands in
+<strong>parameter position</strong>: the list <em>consumes</em> values of type <code class="docutils literal notranslate"><span class="pre">_T</span></code>. In <code class="docutils literal notranslate"><span class="pre">pop</span></code>
+and <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> it stands in <strong>return position</strong>: the list <em>produces</em> them.
+A type variable pulled in both directions leaves the checker exactly one
+sound option, and the sections below prove it: consuming rules out
+covariance, producing rules out contravariance, and what remains is
+invariance. The full stub, for the reader who wants every overload, is one
+click away.</p>
+<p>````{admonition} The full typeshed stub for <code class="docutils literal notranslate"><span class="pre">list</span></code>
+:class: dropdown</p>
+<p>Verbatim from the typeshed <code class="docutils literal notranslate"><span class="pre">builtins.pyi</span></code> bundled with <code class="docutils literal notranslate"><span class="pre">mypy</span></code>
+2.2.0<a class="footnote-reference brackets" href="#typeshed-builtins" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">list</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">[</span><span class="n">_T</span><span class="p">]):</span>
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__object</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__index</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
     <span class="c1"># Signature of `list.index` should be kept in line with `collections.UserList.index()`</span>
     <span class="c1"># and multiprocessing.managers.ListProxy.index()</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="n">__start</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">__stop</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__index</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="n">__object</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
     <span class="c1"># Signature of `list.sort` should be kept inline with `collections.UserList.sort()`</span>
     <span class="c1"># and multiprocessing.managers.ListProxy.sort()</span>
     <span class="c1">#</span>
@@ -1066,557 +1126,659 @@ the case. Consider the python implementation of <code class="docutils literal no
     <span class="k">def</span><span class="w"> </span><span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SupportsRichComparisonT</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
     <span class="nd">@overload</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_T</span><span class="p">],</span> <span class="n">SupportsRichComparison</span><span class="p">],</span> <span class="n">reverse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="o">...</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
     <span class="fm">__hash__</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>  <span class="c1"># type: ignore[assignment]</span>
+
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__i</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T</span><span class="p">:</span> <span class="o">...</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__s</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">slice</span><span class="p">[</span><span class="n">SupportsIndex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_T</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">[</span><span class="n">SupportsIndex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">SupportsIndex</span> <span class="o">|</span> <span class="nb">slice</span><span class="p">[</span><span class="n">SupportsIndex</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+
     <span class="c1"># Overloading looks unnecessary, but is needed to work around complex mypy problems</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span> <span class="o">|</span> <span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># type: ignore[misc]</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__imul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_S</span> <span class="o">|</span> <span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>  <span class="c1"># type: ignore[misc]</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__imul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">SupportsIndex</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__reversed__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T</span><span class="p">]:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
-    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">__item</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GenericAlias</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__class_getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GenericAlias</span><span class="p">:</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>and now consider the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">append_pi</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">3.14</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+## What Are Covariance, Contravariance, and Invariance?
+
+The definitions need one piece of vocabulary. A **type constructor** is a
+type-level function: it takes a type (or several) and returns a type.
+`list` is a type constructor — feed it `int` and it returns the concrete
+type `list[int]` — and so are `Sequence`, `dict`, and `Callable`;
+{doc}`Generics and Type Variables &lt;04-generics&gt;` introduced these as
+generic type constructors. Throughout, $C[U]$ denotes the type that a
+constructor $C$ returns for the type argument $U$.
+
+**Variance** answers one question: given $S &lt;: T$, how do $C[S]$ and $C[T]$
+relate? There are three possible answers, and each is a property of the
+constructor $C$ — chosen per constructor, not per program.
+
+```{prf:definition} Covariance
+:label: computer-science-type-theory-covariance
+
+A type constructor $C$ is **covariant** in a type parameter if subtyping
+between type arguments lifts to the constructed types in the _same_
+direction: for all types $S$ and $T$,
+
+$$
+S &lt;: T \implies C[S] &lt;: C[T].
+$$
+
+Covariance preserves the ordering of types, from more specific to more
+generic. It is the sound choice when $C$ only _produces_ values of the
+parameter type.
+```
+
+```{prf:definition} Contravariance
+:label: computer-science-type-theory-contravariance
+
+A type constructor $C$ is **contravariant** in a type parameter if
+subtyping between type arguments lifts to the constructed types in the
+_reversed_ direction: for all types $S$ and $T$,
+
+$$
+S &lt;: T \implies C[T] &lt;: C[S].
+$$
+
+Contravariance reverses the ordering of types. It is the sound choice when
+$C$ only _consumes_ values of the parameter type.
+```
+
+```{prf:definition} Invariance
+:label: computer-science-type-theory-invariance
+
+A type constructor $C$ is **invariant** in a type parameter if subtyping
+between distinct type arguments does not lift in either direction: for all
+types $S$ and $T$,
+
+$$
+S \neq T \implies \neg\bigl(C[S] &lt;: C[T]\bigr) \wedge \neg\bigl(C[T] &lt;: C[S]\bigr),
+$$
+
+and hence, using reflexivity of $&lt;:$,
+
+$$
+C[S] &lt;: C[T] \iff S = T.
+$$
+
+An invariant $C[S]$ can be used only where exactly $C[S]$ is expected, even
+when $S &lt;: T$ holds. Checkers read the equality as mutual assignability —
+`pyright`&#39;s message above says it verbatim: _invariant, but &quot;int&quot; is not
+the same as &quot;float&quot;_.
+```
+
+```{admonition} Intuition: variance is monotonicity
+:class: tip
+
+Subtyping orders types, so picture a type constructor as a function between
+ordered sets, $X \mapsto C[X]$. A covariant constructor behaves like the
+monotonically increasing $f(x) = 2x$: it preserves order, $x_1 \leq x_2
+\implies f(x_1) \leq f(x_2)$. A contravariant constructor behaves like the
+monotonically decreasing $g(x) = -x$: it reverses order. An invariant
+constructor behaves like $h(x) = x^2$ on all of $\mathbb{R}$: knowing
+$x_1 \leq x_2$ tells you nothing about how $h(x_1)$ and $h(x_2)$ compare.
+```
+
+## Why Is `list` Invariant in Python?
+
+Invariance is the correct verdict for `list`, and each rejected alternative
+exposes one half of the reason. The demonstrations share a pair of genuine
+nominal subtypes, $\texttt{Manager} &lt;: \texttt{Employee}$:
+
+```{code-cell} ipython3
+class Employee:
+    def work(self) -&gt; None: ...
+
+
+class Manager(Employee):
+    def manage(self) -&gt; None: ...
+```
+
+### What would go wrong if `list` were covariant?
+
+Covariance would turn $\texttt{Manager} &lt;: \texttt{Employee}$ into
+`list[Manager] &lt;: list[Employee]`, so a `list[Manager]` could be passed to
+any function expecting `list[Employee]` — including one that _writes_:
+
+```{code-cell} ipython3
+def add_employee(employees: list[Employee], employee: Employee) -&gt; None:
+    employees.append(employee)
+
+
+managers: list[Manager] = [Manager(), Manager()]
+add_employee(managers, Employee())  # covariance would allow this call
+
+for manager in managers:
+    try:
+        manager.manage()
+    except AttributeError as err:
+        print(err)
+```
+
+Through the covariant door, a plain `Employee` walked into a
+`list[Manager]`. The list&#39;s static type still promises `Manager` elements,
+the promise is now false, and the crash surfaces later and far from the
+call that caused it. This is a violation of the
+{prf:ref}`subtype criterion &lt;type-theory-subtype-criterion&gt;`&#39;s second
+clause: `list[Manager]` cannot honor `list[Employee]`&#39;s contract, because
+its `append` accepts only `Manager`s while `list[Employee].append` must
+accept _any_ `Employee`. Collect the cells into `covariant_list.py` and
+`mypy --strict` blocks the door (`pyright` concurs: _&quot;Manager&quot; is not the
+same as &quot;Employee&quot;_):
+
+```text
+covariant_list.py:14: error: Argument 1 to &quot;add_employee&quot; has incompatible type &quot;list[Manager]&quot;; expected &quot;list[Employee]&quot;  [arg-type]
+covariant_list.py:14: note: &quot;list&quot; is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+covariant_list.py:14: note: Consider using &quot;Sequence&quot; instead, which is covariant
+Found 1 error in 1 file (checked 1 source file)
+```
+
+### What would go wrong if `list` were contravariant?
+
+The reverse direction fails on reads. Contravariance would turn
+$\texttt{Manager} &lt;: \texttt{Employee}$ into
+`list[Employee] &lt;: list[Manager]`, letting a `list[Employee]` stand in
+where a `list[Manager]` is expected. But code holding a `list[Manager]` is
+entitled to _read_ a `Manager` back out — `lst.pop().manage()` — and the
+substituted list may hand it a plain `Employee` with no `manage` at all.
+Where covariance broke the consuming operations, contravariance breaks the
+producing ones.
+
+```{prf:proposition} Consuming and producing together force invariance
+:label: type-theory-06-variance-both-positions-invariant
+
+Let $C$ be a generic class whose interface both **consumes** its type
+parameter (the parameter appears in parameter position of some method) and
+**produces** it (the parameter appears in return position). Then neither
+covariance nor contravariance is sound, so $C$ must be **invariant**:
+
+-   If $C$ were covariant, then $C[S] &lt;: C[T]$ for $S &lt;: T$, and a context
+    holding a $C[S]$ through the type $C[T]$ may feed a consuming method a
+    $T$ that is not an $S$ — the `append` failure above.
+-   If $C$ were contravariant, then $C[T] &lt;: C[S]$ for $S &lt;: T$, and a
+    context expecting $C[S]$ may receive from a producing method a $T$ that
+    is not an $S$ — the `pop` failure above.
+```
+
+`list` is exactly such a class — `append` consumes `_T`, `pop` produces it
+— so the stub excerpt in the first section already contained the whole
+proof. `mypy`&#39;s note that &quot;`list` is invariant&quot; is this proposition applied
+to typeshed.
+
+## Why Does Immutability Make Covariance Safe?
+
+Strike every consuming method and the covariant half of the conflict
+disappears. A read-only view of a collection cannot be written through, so
+the `append` exploit has no door; every remaining operation _produces_
+elements, and by the proposition above production is compatible with
+covariance. This is why both checkers suggested `Sequence`: typeshed
+defines it with no mutating methods and marks its type variable covariant —
+the `_co` suffix is the naming convention for one:
+
+```python
+class Sequence(Reversible[_T_co], Collection[_T_co]): ...
+```
+
+With a covariant constructor, the opening example type-checks. A
+`list[int]` is a `Sequence[int]`, and covariance lifts the element-level
+acceptability of `int` where `float` is expected up to the container:
+
+```{code-cell} ipython3
+def mean(xs: Sequence[float]) -&gt; float:
+    return sum(xs) / len(xs)
+
+
+whole_numbers: list[int] = [1, 3, 5]
+print(mean(whole_numbers))
+```
+
+On this file `mypy --strict` reports
+`Success: no issues found in 1 source file` and `pyright` reports
+`0 errors, 0 warnings, 0 informations`. Same values, same call shape as
+`append_pi` — the only change is a parameter type whose constructor cannot
+write.
+
+The same trade is available for your own classes. Here is an immutable
+list, written with a PEP 695 type parameter (Python 3.12+) — note that
+nowhere do we declare a variance:
+
+```{code-cell} ipython3
+class ImmutableList[T]:
+    def __init__(self, items: list[T]) -&gt; None:
+        self._items = list(items)
+
+    def __iter__(self) -&gt; Iterator[T]:
+        return iter(self._items)
+
+
+def survey(employees: ImmutableList[Employee]) -&gt; None:
+    for employee in employees:
+        employee.work()
+
+
+managers_view: ImmutableList[Manager] = ImmutableList([Manager(), Manager()])
+survey(managers_view)
+```
+
+The runtime is satisfied. The checkers are not — and their refusal is the
+most instructive error in this chapter. On the collected
+`immutable_list.py`, `mypy --strict`:
+
+```text
+immutable_list.py:26: error: Argument 1 to &quot;survey&quot; has incompatible type &quot;ImmutableList[Manager]&quot;; expected &quot;ImmutableList[Employee]&quot;  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+`pyright` names the culprit:
+
+```text
+immutable_list.py:26:8 - error: Argument of type &quot;ImmutableList[Manager]&quot; cannot be assigned to parameter &quot;employees&quot; of type &quot;ImmutableList[Employee]&quot; in function &quot;survey&quot;
+    &quot;ImmutableList[Manager]&quot; is not assignable to &quot;ImmutableList[Employee]&quot;
+      Type parameter &quot;T@ImmutableList&quot; is invariant, but &quot;Manager&quot; is not the same as &quot;Employee&quot; (reportArgumentType)
+1 error, 0 warnings, 0 informations
+```
+
+_Invariant?_ We never declared any variance — with PEP 695 syntax there is
+no place to declare it. The variance of a modern type parameter is
+**inferred** from the class body, and something in this class made both
+checkers infer invariance. That something is the storage.
+
+## How Does PEP 695 Infer Variance — and How Did `TypeVar` Declare It?
+
+PEP 695 removed variance declarations from the syntax; the typing
+specification instead has checkers _compute_ each parameter&#39;s variance from
+the class body[^spec-variance-inference]. The algorithm builds two
+specializations of the class — an `upper` copy with the parameter replaced
+by `object`, and a `lower` copy with the parameter kept as itself — and
+compares them with the normal assignability rules: if `lower` is assignable
+to `upper`, the parameter is covariant; if `upper` is assignable to
+`lower`, contravariant; if neither, invariant.
+
+Run that on `ImmutableList`. The method side is fine: `__iter__` returns
+`Iterator[T]`, `Iterator` is covariant, so the `lower` iterator is
+assignable to the `upper` one. The attribute side is not: `self._items` has
+type `list[T]`, and `list` — this chapter&#39;s own subject — is invariant, so
+`list[T]` and `list[object]` are assignable in _neither_ direction. The
+comparison fails both ways, and `T` is invariant. Note that every member
+counts, including underscore-&quot;private&quot; attributes like `_items`: the
+underscore is a convention for human readers, not a boundary the inference
+algorithm respects.
+
+The fix is to make the storage as immutable as the interface. `tuple` is
+covariant — its stub produces `_T_co` and consumes nothing — so swapping
+the internal `list` for a `tuple` flips the inference:
+
+```{code-cell} ipython3
+class ImmutableList[T]:
+    def __init__(self, items: list[T]) -&gt; None:
+        self._items: tuple[T, ...] = tuple(items)
+
+    def __iter__(self) -&gt; Iterator[T]:
+        return iter(self._items)
+
+
+def survey(employees: ImmutableList[Employee]) -&gt; None:
+    for employee in employees:
+        employee.work()
+
+
+managers_view: ImmutableList[Manager] = ImmutableList([Manager(), Manager()])
+survey(managers_view)
+```
+
+One changed line, and both checkers accept the collected file —
+`mypy --strict`: `Success: no issues found in 1 source file`; `pyright`:
+`0 errors, 0 warnings, 0 informations`. Under PEP 695 the link between
+mutability and variance is not philosophy; it is the literal input to the
+variance computation. Store state mutably and your class is invariant;
+store it immutably and covariance falls out for free.
+
+### How did legacy `TypeVar` declare variance?
+
+Before PEP 695 — and in any code still using `typing.TypeVar` with
+`Generic` — variance was **declared**, not inferred. The flag lives on the
+type variable, with a matching naming convention: `_T_co` for
+`covariant=True`, `_T_contra` for `contravariant=True`, and a bare `_T`
+for the invariant default. This block is legacy syntax, shown as such:
+
+```python
+from collections.abc import Iterator
+from typing import Generic, TypeVar
+
+_T_co = TypeVar(&quot;_T_co&quot;, covariant=True)
+
+
+class FrozenBag(Generic[_T_co]):
+    def __init__(self, items: list[_T_co]) -&gt; None:
+        self._items = list(items)
+
+    def __iter__(self) -&gt; Iterator[_T_co]:
+        return iter(self._items)
+```
+
+Both checkers accept a `FrozenBag[Manager]` where a `FrozenBag[Employee]`
+is expected — although this is byte for byte the mutable-storage design
+that inference just judged invariant. A declaration is trusted, not
+re-derived. What the checkers do verify is the declaration against _method
+signatures_: declare `_T_co` covariant and then consume it in parameter
+position, and both object. For a `Sink(Generic[_T_co])` with
+`def push(self, item: _T_co) -&gt; None`, `mypy --strict` reports
+
+```text
+sink.py:7: error: Cannot use a covariant type variable as a parameter  [misc]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+and `pyright` reports
+
+```text
+sink.py:7:26 - error: Covariant type variable cannot be used in parameter type (reportGeneralTypeIssues)
+1 error, 0 warnings, 0 informations
+```
+
+Attributes, however, escape the audit entirely: even a _public_ mutable
+attribute typed by a covariant `_T_co` passes both checkers silently. The
+legacy system checks what you promised; the modern system computes what is
+true. When you migrate a legacy generic to PEP 695 syntax, expect the
+effective variance to _change_ wherever the declaration was more generous
+than the body — the migrated class does not merely restate your old flags.
+
+````{admonition} Checker divergence: `infer_variance`
+:class: warning
+
+For code that must keep the legacy call syntax, PEP 695 added a bridge:
+`TypeVar(&quot;_T&quot;, infer_variance=True)` asks the checker to infer variance
+for an old-style type variable[^spec-variance-inference]. On this book&#39;s
+toolchain the checkers split. `pyright` 1.1.411 supports it — our
+`FrozenBag`, redeclared with `infer_variance=True` and tuple storage, is
+inferred covariant and passes — while `mypy` 2.2.0 rejects the argument
+outright, whether imported from `typing` or `typing_extensions`:
+
+```text
+infer.py:6: error: Unexpected argument to &quot;TypeVar()&quot;: &quot;infer_variance&quot;  [misc]
+```
+
+(followed by cascading errors, since `mypy` then refuses to treat `_T` as
+a type variable at all). Until `mypy` supports it, `infer_variance` is a
+`pyright`-only convenience; portable code gets inference by moving to
+PEP 695 syntax proper.
 </pre></div>
 </div>
-<p>And since we parametrized the generic <code class="docutils literal notranslate"><span class="pre">_T</span></code> in <code class="docutils literal notranslate"><span class="pre">List</span></code> with <code class="docutils literal notranslate"><span class="pre">float</span></code>, the type
-append method <code class="docutils literal notranslate"><span class="pre">append</span></code> is now <code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">float)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code> instead of
-<code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">_T)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>. And since <code class="docutils literal notranslate"><span class="pre">my_list</span></code> is of type
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code>, the corresponding method <code class="docutils literal notranslate"><span class="pre">append</span></code> should be
-<code class="docutils literal notranslate"><span class="pre">append(self,</span> <span class="pre">__object:</span> <span class="pre">int)</span> <span class="pre">-&gt;</span> <span class="pre">None</span></code>. If we were to append a <code class="docutils literal notranslate"><span class="pre">float</span></code> to
-<code class="docutils literal notranslate"><span class="pre">my_list</span></code>, the method <code class="docutils literal notranslate"><span class="pre">append</span></code> would break the second criterion of subtyping
-(and also Liskov’s substitution principle). Furthermore, when we pass <code class="docutils literal notranslate"><span class="pre">my_list</span></code>
-to <code class="docutils literal notranslate"><span class="pre">append_pi</span></code>, we are essentially <strong>assigning</strong> <code class="docutils literal notranslate"><span class="pre">my_list:</span> <span class="pre">List[int]</span></code> to
-<code class="docutils literal notranslate"><span class="pre">lst:</span> <span class="pre">List[float]</span></code>. This is not a safe operation because their signature in
-<code class="docutils literal notranslate"><span class="pre">append</span></code> are different. So even though both have the same method name <code class="docutils literal notranslate"><span class="pre">append</span></code>,
-they are not the same method.</p>
-<p>And indeed running through this piece of code via a static type checker like
-<code class="docutils literal notranslate"><span class="pre">mypy</span></code> will raise an error.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">6</span>:<span class="w"> </span>error:<span class="w"> </span>Argument<span class="w"> </span><span class="m">1</span><span class="w"> </span>to<span class="w"> </span><span class="s2">&quot;append_pi&quot;</span><span class="w"> </span>has<span class="w"> </span>incompatible<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;list[int]&quot;</span><span class="p">;</span><span class="w"> </span>expected<span class="w"> </span><span class="s2">&quot;list[float]&quot;</span><span class="w">  </span><span class="o">[</span>arg-type<span class="o">]</span>
-<span class="w">    </span>append_pi<span class="o">(</span>my_list<span class="o">)</span><span class="w">   </span><span class="c1"># Naively, this should be safe..</span>
-<span class="w">              </span>^~~~~~~
-<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span><span class="s2">&quot;List&quot;</span><span class="w"> </span>is<span class="w"> </span>invariant<span class="w"> </span>--<span class="w"> </span>see<span class="w"> </span>https://mypy.readthedocs.io/en/stable/common_issues.html#variance
-<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span>Consider<span class="w"> </span>using<span class="w"> </span><span class="s2">&quot;Sequence&quot;</span><span class="w"> </span>instead,<span class="w"> </span>which<span class="w"> </span>is<span class="w"> </span>covariant
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">mypy</span></code> error message even gave you some suggestion that <code class="docutils literal notranslate"><span class="pre">List</span></code> is
-<strong>invariant</strong>.</p>
 </section>
-<section id="the-definitions">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">The Definitions</a><a class="headerlink" href="#the-definitions" title="Link to this heading">#</a></h2>
-<p>Let <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span> be two types, and <span class="math notranslate nohighlight">\(C[U]\)</span> denotes a generic class and an
-application of a
-<a class="reference external" href="https://en.wikipedia.org/wiki/Type_constructor">type constructor</a> <span class="math notranslate nohighlight">\(C\)</span>
-parameterized by a type <span class="math notranslate nohighlight">\(U\)</span>.</p>
-<p>It is helpful for one to think of type constructors as classes. For example,
-<code class="docutils literal notranslate"><span class="pre">List</span></code> is a type constructor, and <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is an application of the type.</p>
-<section id="covariance">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Covariance</a><a class="headerlink" href="#covariance" title="Link to this heading">#</a></h3>
-<div class="proof definition admonition" id="computer-science-type-theory-covariance">
-<p class="admonition-title"><span class="caption-number">Definition 191 </span> (Covariance)</p>
-<section class="definition-content" id="proof-content">
-<p>Within the context of type theory, we say that the type constructor <span class="math notranslate nohighlight">\(C\)</span> is
-<strong>covariant</strong> if for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then
-<span class="math notranslate nohighlight">\(C[S]\)</span> is a subtype of <span class="math notranslate nohighlight">\(C[T]\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[
-S \leq T \implies C[S] \leq C[T]
-\]</div>
-<p>This behaviour preserves the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">ordering of types</a>, which orders types
-from more specific to more generic.</p>
-</section>
-</div></section>
-<section id="contravariance">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Contravariance</a><a class="headerlink" href="#contravariance" title="Link to this heading">#</a></h3>
-<div class="proof definition admonition" id="computer-science-type-theory-contravariance">
-<p class="admonition-title"><span class="caption-number">Definition 192 </span> (Contravariance)</p>
-<section class="definition-content" id="proof-content">
-<p>Within the context of type theory, a type constructor <span class="math notranslate nohighlight">\(C\)</span> is <strong>contravariant</strong>
-if for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, if <span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>, then <span class="math notranslate nohighlight">\(C[T]\)</span> is a
-subtype of <span class="math notranslate nohighlight">\(C[S]\)</span>.</p>
-<div class="math notranslate nohighlight">
-\[
-S \leq T \implies C[T] \leq C[S]
-\]</div>
-<p>This behaviour reverses the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">ordering of types</a>, moving from more
-generic to more specific. Contravariance is typically relevant in scenarios
-where the type constructor represents a producer or consumer that operates
-contrarily to the direction of subtype relationships in covariance.</p>
-</section>
-</div></section>
-<section id="invariance">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Invariance</a><a class="headerlink" href="#invariance" title="Link to this heading">#</a></h3>
-<div class="proof definition admonition" id="computer-science-type-theory-invariance">
-<p class="admonition-title"><span class="caption-number">Definition 193 </span> (Invariance)</p>
-<section class="definition-content" id="proof-content">
-<p>Invariance means that if you have a type constructor <span class="math notranslate nohighlight">\(C\)</span> and two types <span class="math notranslate nohighlight">\(S\)</span> and
-<span class="math notranslate nohighlight">\(T\)</span>, then <span class="math notranslate nohighlight">\(C[S]\)</span> is neither a subtype nor a supertype of <span class="math notranslate nohighlight">\(C[T]\)</span> unless <span class="math notranslate nohighlight">\(S\)</span> and
-<span class="math notranslate nohighlight">\(T\)</span> are the same.</p>
-<p>Equivalently, for any types <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, <span class="math notranslate nohighlight">\(C[S]\)</span> and <span class="math notranslate nohighlight">\(C[T]\)</span> are considered
-compatible or equivalent only if <span class="math notranslate nohighlight">\(S = T\)</span>.</p>
-<p>Mathematically, this concept does not have a direct inequality representation
-like covariance or contravariance because it states a condition of equality
-rather than a relational order. However, it implies:</p>
-<div class="math notranslate nohighlight">
-\[
-(S \neq T) \implies (C[S] \nleq C[T] \text{ and } C[T] \nleq C[S])
-\]</div>
-<p>And conversely:</p>
-<div class="math notranslate nohighlight">
-\[
-(S = T) \implies (C[S] = C[T])
-\]</div>
-<p>This means for invariance, the specific type instantiation of <span class="math notranslate nohighlight">\(C\)</span> with <span class="math notranslate nohighlight">\(S\)</span> can
-only be used in contexts expecting exactly <span class="math notranslate nohighlight">\(C[S]\)</span>, not <span class="math notranslate nohighlight">\(C[T]\)</span> where <span class="math notranslate nohighlight">\(T\)</span> is
-different from <span class="math notranslate nohighlight">\(S\)</span>, regardless of whether <span class="math notranslate nohighlight">\(T\)</span> is a subtype or supertype of <span class="math notranslate nohighlight">\(S\)</span>.</p>
-</section>
-</div></section>
-</section>
-<section id="list-is-invariant">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink">List is Invariant</a><a class="headerlink" href="#list-is-invariant" title="Link to this heading">#</a></h2>
-<p>Let’s connect back to our earlier example on why <code class="docutils literal notranslate"><span class="pre">List</span></code> is invariant. We will
-now use backticks instead of latex symbols to denote types and type
-constructors.</p>
-<section id="id1">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink">Covariance</a><a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
-<p>Covariance describes a relationship between types where a type <code class="docutils literal notranslate"><span class="pre">T</span></code> is considered
-a subtype of a type <code class="docutils literal notranslate"><span class="pre">U</span></code> (written as <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">≤</span> <span class="pre">U</span></code>) if and only if a container of <code class="docutils literal notranslate"><span class="pre">T</span></code>
-(<code class="docutils literal notranslate"><span class="pre">Container[T]</span></code>) is considered a subtype of a container of <code class="docutils literal notranslate"><span class="pre">U</span></code> (<code class="docutils literal notranslate"><span class="pre">Container[U]</span></code>).
-This is natural for operations that produce or return values of the generic type
-(e.g., getters). In the context of our example, <code class="docutils literal notranslate"><span class="pre">List[int]</span> <span class="pre">≤</span> <span class="pre">List[float]</span></code> would
-hold true if <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were covariant, meaning that a list of integers could be
-used wherever a list of floats is expected, because every integer can be
-considered a float.</p>
-<p>However, this relationship does not hold because the <code class="docutils literal notranslate"><span class="pre">append</span></code> method of a
-<code class="docutils literal notranslate"><span class="pre">List[float]</span></code> can accept any <code class="docutils literal notranslate"><span class="pre">float</span></code> as an argument, while <code class="docutils literal notranslate"><span class="pre">append</span></code> for a
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> can only accept <code class="docutils literal notranslate"><span class="pre">int</span></code> values. Since appending a <code class="docutils literal notranslate"><span class="pre">float</span></code> to a
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is not type-safe (a float is not necessarily an int), the <code class="docutils literal notranslate"><span class="pre">List</span></code>
-type cannot be considered covariant. More concretely, if we assume that
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is indeed a subtype of <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, then the append method of
-<code class="docutils literal notranslate"><span class="pre">List[int]</span></code> should do <strong><em>exactly</em></strong> the same thing as the append method of
-<code class="docutils literal notranslate"><span class="pre">List[float]</span></code>. But this is not the case.</p>
-</section>
-<section id="id2">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">Contravariance</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<p>Contravariance is the opposite: <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">≤</span> <span class="pre">U</span></code> implies <code class="docutils literal notranslate"><span class="pre">Container[U]</span> <span class="pre">≤</span> <span class="pre">Container[T]</span></code>.
-This makes sense for containers that consume or operate on the generic type
-(e.g., setters). Using our example, <code class="docutils literal notranslate"><span class="pre">List[float]</span> <span class="pre">≤</span> <span class="pre">List[int]</span></code> would be true if
-<code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were contravariant, meaning you could use a list expecting floats
-where a list of integers is required. This is because it’s safe to pass an
-integer where a float is expected, not the other way around.</p>
-<p>The example illustrates that this relationship also doesn’t hold because the
-<code class="docutils literal notranslate"><span class="pre">pop</span></code> method returns a more specific type (<code class="docutils literal notranslate"><span class="pre">int</span></code>) in <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> than in
-<code class="docutils literal notranslate"><span class="pre">List[float]</span></code> (which returns <code class="docutils literal notranslate"><span class="pre">float</span></code>). If <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> were contravariant, we would
-expect operations that work on <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> to work on <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, but the
-narrower return type of <code class="docutils literal notranslate"><span class="pre">pop()</span></code> in <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> contradicts this, making it not
-contravariant.</p>
-</section>
-<section id="id3">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Invariance</a><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>Given that the <code class="docutils literal notranslate"><span class="pre">List</span></code> type is neither covariant nor contravariant as
-demonstrated, it is termed invariant. Invariance means that you cannot
-substitute <code class="docutils literal notranslate"><span class="pre">List[T]</span></code> with <code class="docutils literal notranslate"><span class="pre">List[U]</span></code> or vice versa unless <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">U</span></code> are exactly
-the same type. In practical terms, a <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> is only a <code class="docutils literal notranslate"><span class="pre">List[int]</span></code> and
-cannot be treated as a <code class="docutils literal notranslate"><span class="pre">List[float]</span></code>, and vice versa.</p>
-</section>
-</section>
-<section id="the-connection-of-mutability-and-variance">
-<h2><a class="toc-backref" href="#id13" role="doc-backlink">The Connection of Mutability and Variance</a><a class="headerlink" href="#the-connection-of-mutability-and-variance" title="Link to this heading">#</a></h2>
-<p>Covariance, by definition, allows a type <code class="docutils literal notranslate"><span class="pre">C[Derived]</span></code> to be treated as <code class="docutils literal notranslate"><span class="pre">C[Base]</span></code>
-if <code class="docutils literal notranslate"><span class="pre">Derived</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">Base</span></code>. This implies that wherever a <code class="docutils literal notranslate"><span class="pre">Base</span></code> is
-expected, a <code class="docutils literal notranslate"><span class="pre">Derived</span></code> can be used without issue, preserving the “is-a”
-relationship and ensuring that any operation that expects <code class="docutils literal notranslate"><span class="pre">Base</span></code> can work with
-<code class="docutils literal notranslate"><span class="pre">Derived</span></code>.</p>
-<p>When dealing with immutable structures, the operations you can perform on them
-are <strong>read-only</strong>. Since you cannot modify an immutable structure, you can’t
-perform any operation that might violate the type constraints that covariance
-imposes.</p>
-<ol class="arabic simple">
-<li><p><strong>No Mutation Means No Type Violations</strong>: Since you cannot add, remove, or
-change the elements of an immutable structure, there’s no risk of inserting
-an element of an incorrect type that might violate the expected type of the
-container.</p></li>
-<li><p><strong>Read-Only Operations Are Safe</strong>: Operations on immutable structures are
-limited to reading or deriving new structures without altering the original.
-This means any operation that works on <code class="docutils literal notranslate"><span class="pre">C[Base]</span></code> will also work on
-<code class="docutils literal notranslate"><span class="pre">C[Derived]</span></code> because it only relies on the presence of <code class="docutils literal notranslate"><span class="pre">Base</span></code> type behaviors
-in <code class="docutils literal notranslate"><span class="pre">Derived</span></code>.</p></li>
-<li><p><strong>Substitution Principle Is Preserved</strong>: The Liskov Substitution Principle,
-which is central to understanding subtype relationships, states that objects
-of a superclass should be replaceable with objects of a subclass without
-affecting the correctness of the program. Immutability ensures that this
-principle is not violated since the operations allowed on an immutable
-<code class="docutils literal notranslate"><span class="pre">C[Derived]</span></code> would not behave any differently if <code class="docutils literal notranslate"><span class="pre">C[Derived]</span></code> were replaced
-with <code class="docutils literal notranslate"><span class="pre">C[Base]</span></code>.</p></li>
-</ol>
-<p>For mutable structures, the same logic does not apply because the ability to
-modify the structure (e.g., adding or removing elements) introduces the
-possibility of violating type constraints. If you were allowed to treat a
-mutable container of <code class="docutils literal notranslate"><span class="pre">Derived</span></code> as a mutable container of <code class="docutils literal notranslate"><span class="pre">Base</span></code> (covariance),
-you could insert a <code class="docutils literal notranslate"><span class="pre">Base</span></code> instance into what is actually a container of
-<code class="docutils literal notranslate"><span class="pre">Derived</span></code>, breaking the type safety of the container.</p>
-<section id="list-vs-immutable-list">
-<h3><a class="toc-backref" href="#id14" role="doc-backlink">List vs Immutable List</a><a class="headerlink" href="#list-vs-immutable-list" title="Link to this heading">#</a></h3>
-<p>Consider the below example:</p>
+<section id="why-are-callable-parameter-types-contravariant">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Why Are <code class="docutils literal notranslate"><span class="pre">Callable</span></code> Parameter Types Contravariant?</a><a class="headerlink" href="#why-are-callable-parameter-types-contravariant" title="Link to this heading">#</a></h2>
+<p>Functions are first-class values with types of their own, so the variance
+question applies to <code class="docutils literal notranslate"><span class="pre">Callable[[A],</span> <span class="pre">R]</span></code> too — and its two slots answer in
+opposite directions. That split is where the intuition built on containers
+pays off: return position produces, parameter position consumes.</p>
+<section id="return-types-are-covariant">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Return types are covariant</a><a class="headerlink" href="#return-types-are-covariant" title="Link to this heading">#</a></h3>
+<p>A caller of <code class="docutils literal notranslate"><span class="pre">get_employee()</span></code> consumes what the function produces. Hand it a
+function that produces <code class="docutils literal notranslate"><span class="pre">Manager</span></code>s instead, and every produced value is
+still an <code class="docutils literal notranslate"><span class="pre">Employee</span></code> — substitution in the same direction as the element
+relation:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span><span class="w"> </span><span class="nc">Employee</span><span class="p">:</span>
-<span class="linenos"> 2</span>    <span class="k">def</span><span class="w"> </span><span class="nf">work</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<span class="linenos"> 3</span>
-<span class="linenos"> 4</span><span class="k">class</span><span class="w"> </span><span class="nc">Manager</span><span class="p">(</span><span class="n">Employee</span><span class="p">):</span>
-<span class="linenos"> 5</span>    <span class="k">def</span><span class="w"> </span><span class="nf">manage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<span class="linenos"> 6</span>
-<span class="linenos"> 7</span><span class="c1"># Hypothetical scenario where List is treated as covariant</span>
-<span class="linenos"> 8</span><span class="k">def</span><span class="w"> </span><span class="nf">add_new_employee_using_list</span><span class="p">(</span><span class="n">employees</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Employee</span><span class="p">],</span> <span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 9</span>    <span class="c1"># Adding an Employee to what was originally a List[Manager]</span>
-<span class="linenos">10</span>    <span class="n">employees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>  <span class="c1"># This is where type safety is compromised</span>
-<span class="linenos">11</span>
-<span class="linenos">12</span><span class="c1"># Assume that List[Manager] &lt;: List[Employee]</span>
-<span class="linenos">13</span><span class="n">managers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Manager</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Manager</span><span class="p">(),</span> <span class="n">Manager</span><span class="p">()]</span>
-<span class="linenos">14</span><span class="n">add_new_employee_using_list</span><span class="p">(</span><span class="n">managers</span><span class="p">,</span> <span class="n">employee</span><span class="o">=</span><span class="n">Employee</span><span class="p">())</span>  <span class="c1"># Assuming managers is treated as List[Employee]</span>
-<span class="linenos">15</span>
-<span class="linenos">16</span><span class="c1"># Now, assuming we want to treat all elements in &#39;managers&#39; as Managers and call Manager-specific methods:</span>
-<span class="linenos">17</span><span class="k">try</span><span class="p">:</span>
-<span class="linenos">18</span>    <span class="k">for</span> <span class="n">manager</span> <span class="ow">in</span> <span class="n">managers</span><span class="p">:</span>
-<span class="linenos">19</span>        <span class="n">manager</span><span class="o">.</span><span class="n">manage</span><span class="p">()</span>
-<span class="linenos">20</span><span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="linenos">21</span>    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;Employee&#39; object has no attribute &#39;manage&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<p>If we naively treat <code class="docutils literal notranslate"><span class="pre">List</span></code> as covariant, we would be able to pass a
-<code class="docutils literal notranslate"><span class="pre">List[Manager]</span></code> to a function that expects a <code class="docutils literal notranslate"><span class="pre">List[Employee]</span></code> since
-<code class="docutils literal notranslate"><span class="pre">List[Manager]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">List[Employee]</span></code>. In the above example, our
-<code class="docutils literal notranslate"><span class="pre">add_new_employee_using_list</span></code> would then be able to accept a list of managers.
-However, this would break the type safety of the list, as we would be able to
-append an <code class="docutils literal notranslate"><span class="pre">Employee</span></code> into a list of <code class="docutils literal notranslate"><span class="pre">Manager</span></code>s. Then downstream, when we try to
-treat the elements in the list as <code class="docutils literal notranslate"><span class="pre">Manager</span></code>s, we would get an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code>
-because the elements are actually <code class="docutils literal notranslate"><span class="pre">[Manager,</span> <span class="pre">Manager,</span> <span class="pre">Employee]</span></code> and <code class="docutils literal notranslate"><span class="pre">Employee</span></code>
-does not have the <code class="docutils literal notranslate"><span class="pre">manage</span></code> method.</p>
-<p>But if we were to use an immutable list, the type safety would be preserved
-because we would not be able to modify the list in a way that would break the
-type constraints. This is because the operations that are allowed on an
-immutable list are read-only, and the substitution principle is preserved.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_co&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="linenos"> 2</span>
-<span class="linenos"> 3</span><span class="k">class</span><span class="w"> </span><span class="nc">ImmutableList</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]):</span>
-<span class="linenos"> 4</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_T_co</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 5</span>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">items</span>
-<span class="linenos"> 6</span>
-<span class="linenos"> 7</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]:</span>
-<span class="linenos"> 8</span>        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
-<span class="linenos"> 9</span>
-<span class="linenos">10</span>
-<span class="linenos">11</span><span class="k">def</span><span class="w"> </span><span class="nf">loop_employees</span><span class="p">(</span><span class="n">employees</span><span class="p">:</span> <span class="n">ImmutableList</span><span class="p">[</span><span class="n">Employee</span><span class="p">],</span> <span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">12</span>    <span class="k">for</span> <span class="n">employee</span> <span class="ow">in</span> <span class="n">employees</span><span class="p">:</span>
-<span class="linenos">13</span>        <span class="n">employee</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
-<span class="linenos">14</span>
-<span class="linenos">15</span><span class="c1"># Assume that List[Manager] &lt;: List[Employee]</span>
-<span class="linenos">16</span><span class="n">managers</span><span class="p">:</span> <span class="n">ImmutableList</span><span class="p">[</span><span class="n">Manager</span><span class="p">]</span> <span class="o">=</span> <span class="n">ImmutableList</span><span class="p">([</span><span class="n">Manager</span><span class="p">(),</span> <span class="n">Manager</span><span class="p">()])</span>
-<span class="linenos">17</span><span class="n">loop_employees</span><span class="p">(</span><span class="n">managers</span><span class="p">,</span> <span class="n">employee</span><span class="o">=</span><span class="n">Employee</span><span class="p">())</span>  <span class="c1"># Assuming managers is treated as List[Employee]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>In a similar fashion, using a list here would yield mypy error because they
-really aren’t sure what operations you would do on the list within the function.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">loop_employees_using_list</span><span class="p">(</span><span class="n">employees</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Employee</span><span class="p">],</span> <span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">2</span>    <span class="k">for</span> <span class="n">employee</span> <span class="ow">in</span> <span class="n">employees</span><span class="p">:</span>
-<span class="linenos">3</span>        <span class="n">employee</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="n">get_employee</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Employee</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">2</span>    <span class="n">get_employee</span><span class="p">()</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
+<span class="linenos">3</span>
 <span class="linenos">4</span>
-<span class="linenos">5</span><span class="n">managers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Manager</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Manager</span><span class="p">(),</span> <span class="n">Manager</span><span class="p">()]</span>
-<span class="linenos">6</span><span class="n">loop_employees_using_list</span><span class="p">(</span><span class="n">managers</span><span class="p">,</span> <span class="n">employee</span><span class="o">=</span><span class="n">Employee</span><span class="p">())</span>  <span class="c1"># Assuming managers is treated as List[Employee]</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>will result in:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="m">6</span>:<span class="w"> </span>error:<span class="w"> </span>Argument<span class="w"> </span><span class="m">1</span><span class="w"> </span>to<span class="w"> </span><span class="s2">&quot;loop_employees_using_list&quot;</span><span class="w"> </span>has<span class="w"> </span>incompatible<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="s2">&quot;list[Manager]&quot;</span><span class="p">;</span><span class="w"> </span>expected<span class="w"> </span><span class="s2">&quot;list[Employee]&quot;</span><span class="w">  </span><span class="o">[</span>arg-type<span class="o">]</span>
-<span class="w">    </span>loop_employees_using_list<span class="o">(</span>managers,<span class="w"> </span><span class="nv">employee</span><span class="o">=</span>Employee<span class="o">())</span><span class="w">  </span><span class="c1"># Assuming managers is treated as List[Employee]</span>
-<span class="w">                              </span>^~~~~~~~
-<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span><span class="s2">&quot;List&quot;</span><span class="w"> </span>is<span class="w"> </span>invariant<span class="w"> </span>--<span class="w"> </span>see<span class="w"> </span>https://mypy.readthedocs.io/en/stable/common_issues.html#variance
-<span class="m">6</span>:<span class="w"> </span>note:<span class="w"> </span>Consider<span class="w"> </span>using<span class="w"> </span><span class="s2">&quot;Sequence&quot;</span><span class="w"> </span>instead,<span class="w"> </span>which<span class="w"> </span>is<span class="w"> </span>covariant
-</pre></div>
-</div>
-</section>
-</section>
-<section id="drawing-some-connection-to-ordinary-functions">
-<h2><a class="toc-backref" href="#id15" role="doc-backlink">Drawing Some Connection to Ordinary Functions</a><a class="headerlink" href="#drawing-some-connection-to-ordinary-functions" title="Link to this heading">#</a></h2>
-<p>Before we tackle the less intuitive concept of contravariance, it is good to
-look at an analogy.</p>
-<p>Consider the below 3 functions:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">covariant</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="linenos">2</span>    <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span>
-<span class="linenos">3</span>
-<span class="linenos">4</span><span class="k">def</span><span class="w"> </span><span class="nf">contravariant</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="linenos">5</span>    <span class="k">return</span> <span class="o">-</span><span class="n">x</span>
-<span class="linenos">6</span>
-<span class="linenos">7</span><span class="k">def</span><span class="w"> </span><span class="nf">invariant</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="linenos">8</span>    <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
-</pre></div>
-</div>
-</div>
-</div>
-<ol class="arabic">
-<li><p><strong>Covariant Function</strong></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">covariant</span></code> function doubles its input value.</p>
-<div class="math notranslate nohighlight">
-\[
-    f(x) = 2x
-    \]</div>
-<p>It is now fairly obvious if we understand covariant via
-<a class="reference external" href="https://en.wikipedia.org/wiki/Monotonic_function"><strong>monotonically increasing function</strong></a>
-where if <span class="math notranslate nohighlight">\(x_1 &lt;= x_2\)</span>, then we <em>must</em> have <span class="math notranslate nohighlight">\(f(x_1) &lt;= f(x_2)\)</span>. And this
-holds true for <span class="math notranslate nohighlight">\(f(x) = 2x\)</span> because if <span class="math notranslate nohighlight">\(x_1 &lt;= x_2\)</span>, then <span class="math notranslate nohighlight">\(2x_1 &lt;= 2x_2\)</span>.</p>
-</li>
-<li><p><strong>Contravariant Function</strong></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">contravariant</span></code> function negates its input value.</p>
-<div class="math notranslate nohighlight">
-\[
-    g(x) = -x
-    \]</div>
-<p>Similarly, if we understand contravariant via
-<a class="reference external" href="https://en.wikipedia.org/wiki/Monotonic_function"><strong>monotonically decreasing function</strong></a>
-where if <span class="math notranslate nohighlight">\(x_1 &lt;= x_2\)</span>, then we <em>must</em> have <span class="math notranslate nohighlight">\(g(x_2) &lt;= g(x_1)\)</span>. And this
-holds true for <span class="math notranslate nohighlight">\(g(x) = -x\)</span> because if <span class="math notranslate nohighlight">\(x_1 &lt;= x_2\)</span>, then <span class="math notranslate nohighlight">\(-x_2 &lt;= -x_1\)</span>.</p>
-</li>
-<li><p><strong>Invariant Function</strong></p>
-<p>The <code class="docutils literal notranslate"><span class="pre">invariant</span></code> function squares its input value.</p>
-<div class="math notranslate nohighlight">
-\[
-    h(x) = x^2
-    \]</div>
-<p>Here it more of a <strong>idempotent</strong> or just non-monotonic function. It does not
-preserve the ordering of the input value.</p>
-</li>
-</ol>
-</section>
-<section id="contravariant-and-callable-types">
-<h2><a class="toc-backref" href="#id16" role="doc-backlink">Contravariant and Callable Types</a><a class="headerlink" href="#contravariant-and-callable-types" title="Link to this heading">#</a></h2>
-<p>Functions, as we know it, is a first class citizens in Python. This means that
-functions can be passed around as arguments, returned from other functions, and
-assigned to variables. This is why we can use the <code class="docutils literal notranslate"><span class="pre">Callable</span></code> type to represent
-functions.</p>
-<section id="callable-return-types-covariance">
-<h3><a class="toc-backref" href="#id17" role="doc-backlink">Callable Return Types (Covariance)</a><a class="headerlink" href="#callable-return-types-covariance" title="Link to this heading">#</a></h3>
-<p>When we talk about the return type of a callable (e.g., a function) being
-covariant, we mean that a function’s return type can be substituted with its
-subtype without affecting the correctness of the program. This is
-straightforward and intuitive:</p>
-<ul class="simple">
-<li><p>If you have a function expected to return an <code class="docutils literal notranslate"><span class="pre">Employee</span></code>, a function that
-returns a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> (assuming <code class="docutils literal notranslate"><span class="pre">Manager</span></code> is a subclass of <code class="docutils literal notranslate"><span class="pre">Employee</span></code>) can be
-used instead because every <code class="docutils literal notranslate"><span class="pre">Manager</span></code> is an <code class="docutils literal notranslate"><span class="pre">Employee</span></code>. This substitution
-follows the intuitive direction of the subtype relationship.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Callable[[],</span> <span class="pre">Manager]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">Callable[[],</span> <span class="pre">Employee]</span></code> because the
-function’s return value (a <code class="docutils literal notranslate"><span class="pre">Manager</span></code>) can be used in any context that
-expects an <code class="docutils literal notranslate"><span class="pre">Employee</span></code>, following the principle that a subclass instance can
-be used wherever a superclass instance is expected.</p></li>
-</ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span><span class="w"> </span><span class="nf">process_employee</span><span class="p">(</span><span class="n">get_employee</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Employee</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 2</span>    <span class="n">employee</span> <span class="o">=</span> <span class="n">get_employee</span><span class="p">()</span>
-<span class="linenos"> 3</span>    <span class="nb">print</span><span class="p">(</span><span class="n">employee</span><span class="o">.</span><span class="n">work</span><span class="p">())</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c1"># A function that returns an Employee instance</span>
-<span class="linenos"> 6</span><span class="k">def</span><span class="w"> </span><span class="nf">get_employee</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Employee</span><span class="p">:</span>
-<span class="linenos"> 7</span>    <span class="k">return</span> <span class="n">Employee</span><span class="p">()</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span><span class="c1"># A function that returns a Manager instance</span>
-<span class="linenos">10</span><span class="k">def</span><span class="w"> </span><span class="nf">get_manager</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Manager</span><span class="p">:</span>
-<span class="linenos">11</span>    <span class="k">return</span> <span class="n">Manager</span><span class="p">()</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="n">process_employee</span><span class="p">(</span><span class="n">get_employee</span><span class="p">)</span>
-<span class="linenos">14</span><span class="n">process_employee</span><span class="p">(</span><span class="n">get_manager</span><span class="p">)</span>
+<span class="linenos">5</span><span class="k">def</span><span class="w"> </span><span class="nf">get_manager</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Manager</span><span class="p">:</span>
+<span class="linenos">6</span>    <span class="k">return</span> <span class="n">Manager</span><span class="p">()</span>
+<span class="linenos">7</span>
+<span class="linenos">8</span>
+<span class="linenos">9</span><span class="n">dispatch</span><span class="p">(</span><span class="n">get_manager</span><span class="p">)</span>  <span class="c1"># Callable[[], Manager] &lt;: Callable[[], Employee]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>None
-None
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">9</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_manager</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Manager</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="k">return</span> <span class="n">Manager</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> 
+<span class="g g-Whitespace">      </span><span class="mi">8</span> 
+<span class="ne">----&gt; </span><span class="mi">9</span> <span class="n">dispatch</span><span class="p">(</span><span class="n">get_manager</span><span class="p">)</span>  <span class="c1"># Callable[[], Manager] &lt;: Callable[[], Employee]</span>
+
+<span class="nn">Cell In[3], line 2,</span> in <span class="ni">dispatch</span><span class="nt">(get_employee)</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="k">def</span><span class="w"> </span><span class="nf">dispatch</span><span class="p">(</span><span class="n">get_employee</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Employee</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">----&gt; </span><span class="mi">2</span>     <span class="n">get_employee</span><span class="p">()</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
+
+<span class="nn">Cell In[3], line 6,</span> in <span class="ni">get_manager</span><span class="nt">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="k">def</span><span class="w"> </span><span class="nf">get_manager</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Manager</span><span class="p">:</span>
+<span class="ne">----&gt; </span><span class="mi">6</span>     <span class="k">return</span> <span class="n">Manager</span><span class="p">()</span>
+
+<span class="ne">NameError</span>: name &#39;Manager&#39; is not defined
 </pre></div>
 </div>
 </div>
 </div>
-<p>Consequently, <code class="docutils literal notranslate"><span class="pre">Callable</span></code> is <strong>covariant in its return type</strong>.</p>
+<p>Both checkers accept the file: <code class="docutils literal notranslate"><span class="pre">Callable</span></code> is <strong>covariant in its return
+type</strong>, exactly as <code class="docutils literal notranslate"><span class="pre">Sequence</span></code> is covariant in its element type.</p>
 </section>
-<section id="callable-argument-types-contravariance">
-<h3><a class="toc-backref" href="#id18" role="doc-backlink">Callable Argument Types (Contravariance)</a><a class="headerlink" href="#callable-argument-types-contravariance" title="Link to this heading">#</a></h3>
-<p>Contravariance for argument types in callable types is where it gets
-counterintuitive for many. If a callable is contravariant in its argument type,
-it means that you can pass a callable that accepts a more general type in place
-of one that accepts a more specific type. This might seem backward at first, but
-it makes sense when you consider the principle of substitutability (LSP) from
-the caller’s perspective:</p>
-<ul class="simple">
-<li><p>If a function is designed to handle a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> as its input, you can safely
-replace it with a function designed to handle any <code class="docutils literal notranslate"><span class="pre">Employee</span></code>, because the
-latter can deal with <code class="docutils literal notranslate"><span class="pre">Manager</span></code> instances (being a specific kind of
-<code class="docutils literal notranslate"><span class="pre">Employee</span></code>) and more.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Callable[[Employee],</span> <span class="pre">None]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">Callable[[Manager],</span> <span class="pre">None]</span></code>.
-This is because a function capable of dealing with any <code class="docutils literal notranslate"><span class="pre">Employee</span></code> can, by
-definition, deal with a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> (a specific kind of <code class="docutils literal notranslate"><span class="pre">Employee</span></code>).</p></li>
-</ul>
+<section id="parameter-types-are-contravariant">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Parameter types are contravariant</a><a class="headerlink" href="#parameter-types-are-contravariant" title="Link to this heading">#</a></h3>
+<p>Parameter position points the other way. A function that can process <em>any</em>
+<code class="docutils literal notranslate"><span class="pre">Employee</span></code> can in particular process a <code class="docutils literal notranslate"><span class="pre">Manager</span></code>; a function that needs
+specifically a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> cannot be trusted with an arbitrary <code class="docutils literal notranslate"><span class="pre">Employee</span></code>.
+So the <em>more general</em> handler substitutes for the <em>more specific</em> one —
+against the direction of the element relation:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span><span class="w"> </span><span class="nc">CEO</span><span class="p">(</span><span class="n">Employee</span><span class="p">):</span>
-<span class="linenos"> 2</span>    <span class="k">def</span><span class="w"> </span><span class="nf">manage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
-<span class="linenos"> 3</span>    <span class="k">def</span><span class="w"> </span><span class="nf">fire</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span><span class="w"> </span><span class="nf">process_employee</span><span class="p">(</span><span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 2</span>    <span class="n">employee</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
+<span class="linenos"> 3</span>
 <span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="k">def</span><span class="w"> </span><span class="nf">process_employee</span><span class="p">(</span><span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 6</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function has type `Callable[[Employee], None]`.&quot;&quot;&quot;</span>
-<span class="linenos"> 7</span>    <span class="n">employee</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
+<span class="linenos"> 5</span><span class="k">def</span><span class="w"> </span><span class="nf">assign_to_manager</span><span class="p">(</span><span class="n">manager</span><span class="p">:</span> <span class="n">Manager</span><span class="p">,</span> <span class="n">process</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Manager</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 6</span>    <span class="n">process</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
+<span class="linenos"> 7</span>
 <span class="linenos"> 8</span>
-<span class="linenos"> 9</span><span class="k">def</span><span class="w"> </span><span class="nf">process_manager</span><span class="p">(</span><span class="n">manager</span><span class="p">:</span> <span class="n">Manager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">10</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function has type `Callable[[Manager], None]`.&quot;&quot;&quot;</span>
-<span class="linenos">11</span>    <span class="n">manager</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
-<span class="linenos">12</span>    <span class="n">manager</span><span class="o">.</span><span class="n">manage</span><span class="p">()</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span><span class="k">def</span><span class="w"> </span><span class="nf">process_ceo</span><span class="p">(</span><span class="n">ceo</span><span class="p">:</span> <span class="n">CEO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">15</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;This function has type `Callable[[CEO], None]`.&quot;&quot;&quot;</span>
-<span class="linenos">16</span>    <span class="n">ceo</span><span class="o">.</span><span class="n">work</span><span class="p">()</span>
-<span class="linenos">17</span>    <span class="n">ceo</span><span class="o">.</span><span class="n">manage</span><span class="p">()</span>
-<span class="linenos">18</span>    <span class="n">ceo</span><span class="o">.</span><span class="n">fire</span><span class="p">()</span>
-<span class="linenos">19</span>
-<span class="linenos">20</span><span class="k">def</span><span class="w"> </span><span class="nf">assign_project</span><span class="p">(</span><span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">,</span> <span class="n">process</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Employee</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">21</span>    <span class="n">process</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
+<span class="linenos"> 9</span><span class="c1"># Callable[[Employee], None] &lt;: Callable[[Manager], None]</span>
+<span class="linenos">10</span><span class="n">assign_to_manager</span><span class="p">(</span><span class="n">Manager</span><span class="p">(),</span> <span class="n">process_employee</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Now we ask if we can assign <code class="docutils literal notranslate"><span class="pre">process_manager</span></code> of type
-<code class="docutils literal notranslate"><span class="pre">Callable[[Manager],</span> <span class="pre">None]</span></code> to <code class="docutils literal notranslate"><span class="pre">process_employee</span></code> of type
-<code class="docutils literal notranslate"><span class="pre">Callable[[Employee],</span> <span class="pre">None]</span></code> (i.e. <code class="docutils literal notranslate"><span class="pre">process_employee</span> <span class="pre">=</span> <span class="pre">process_manager</span></code>)? Can we
-safely substitute <code class="docutils literal notranslate"><span class="pre">process_employee</span></code> with <code class="docutils literal notranslate"><span class="pre">process_manager</span></code>? If we can do that,
-then <code class="docutils literal notranslate"><span class="pre">Callable[[Manager],</span> <span class="pre">None]</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">Callable[[Employee],</span> <span class="pre">None]</span></code>.
-We cannot do this:</p>
+<p>Both checkers accept: <code class="docutils literal notranslate"><span class="pre">process_employee</span></code> promises to handle every
+<code class="docutils literal notranslate"><span class="pre">Employee</span></code>, and a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> is one. Now the unsafe direction — a
+<code class="docutils literal notranslate"><span class="pre">Manager</span></code>-only handler where an any-<code class="docutils literal notranslate"><span class="pre">Employee</span></code> handler is required:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">my_good_employee</span><span class="p">:</span> <span class="n">Employee</span> <span class="o">=</span> <span class="n">Employee</span><span class="p">()</span>
-<span class="linenos">2</span><span class="k">try</span><span class="p">:</span>
-<span class="linenos">3</span>    <span class="n">assign_project</span><span class="p">(</span><span class="n">employee</span><span class="o">=</span><span class="n">my_good_employee</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">process_manager</span><span class="p">)</span>
-<span class="linenos">4</span><span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="linenos">5</span>    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;Employee&#39; object has no attribute &#39;manage&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<p>This is because <code class="docutils literal notranslate"><span class="pre">process_manager</span></code> expects a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> and not just any
-<code class="docutils literal notranslate"><span class="pre">Employee</span></code>. This is where contravariance comes into play. It allows us to safely
-substitute a function that expects a more specific type with one that expects a
-more general type. This is because the function that expects a more general type
-can handle the more specific type and more.</p>
-<p>More concretely, can we assign <code class="docutils literal notranslate"><span class="pre">process_employee</span></code> to <code class="docutils literal notranslate"><span class="pre">process_manager</span></code>? This is
-counterintuitive because we are more used to a subtype <span class="math notranslate nohighlight">\(S\)</span> being able to replace
-a supertype <span class="math notranslate nohighlight">\(T\)</span> and not the other way around.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">def</span><span class="w"> </span><span class="nf">assign_project</span><span class="p">(</span><span class="n">manager</span><span class="p">:</span> <span class="n">Manager</span><span class="p">,</span> <span class="n">process</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Manager</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos">2</span>    <span class="n">process</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
-<span class="linenos">3</span>
-<span class="linenos">4</span><span class="n">my_manager</span><span class="p">:</span> <span class="n">Manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
-<span class="linenos">5</span><span class="n">assign_project</span><span class="p">(</span><span class="n">manager</span><span class="o">=</span><span class="n">my_manager</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">process_employee</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span><span class="w"> </span><span class="nf">process_manager</span><span class="p">(</span><span class="n">manager</span><span class="p">:</span> <span class="n">Manager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 2</span>    <span class="n">manager</span><span class="o">.</span><span class="n">manage</span><span class="p">()</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="k">def</span><span class="w"> </span><span class="nf">assign_to_any_employee</span><span class="p">(</span><span class="n">employee</span><span class="p">:</span> <span class="n">Employee</span><span class="p">,</span> <span class="n">process</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Employee</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos"> 6</span>    <span class="n">process</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="k">try</span><span class="p">:</span>
+<span class="linenos">10</span>    <span class="n">assign_to_any_employee</span><span class="p">(</span><span class="n">Employee</span><span class="p">(),</span> <span class="n">process_manager</span><span class="p">)</span>
+<span class="linenos">11</span><span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+<span class="linenos">12</span>    <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>This will be fine because <code class="docutils literal notranslate"><span class="pre">process_employee</span></code> can handle a <code class="docutils literal notranslate"><span class="pre">Manager</span></code> instance
-since <code class="docutils literal notranslate"><span class="pre">Manager</span></code> is a subclass of <code class="docutils literal notranslate"><span class="pre">Employee</span></code>. More verbosely, in
-<code class="docutils literal notranslate"><span class="pre">process_employee</span></code>, we accept an <code class="docutils literal notranslate"><span class="pre">Employee</span></code> instance that may have <span class="math notranslate nohighlight">\(N\)</span>
-functions/methods, but we know for a fact any subclass of <code class="docutils literal notranslate"><span class="pre">Employee</span></code> will have
-at least the same <span class="math notranslate nohighlight">\(N\)</span> functions/methods. So we can safely pass a <code class="docutils literal notranslate"><span class="pre">Manager</span></code>
-instance to <code class="docutils literal notranslate"><span class="pre">process_employee</span></code>. Consequently, <code class="docutils literal notranslate"><span class="pre">Callable</span></code> is <strong>contravariant in
-its argument type</strong>.</p>
-<p>One more good example from
-<a class="reference external" href="https://peps.python.org/pep-0483/#covariance-and-contravariance">PEP 483</a>:</p>
-<p>In the salary calculation example:</p>
+<p>The runtime crash is the <code class="docutils literal notranslate"><span class="pre">append</span></code> disaster with the arrow reversed. On the
+collected <code class="docutils literal notranslate"><span class="pre">process.py</span></code>, <code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>process.py:21: error: Argument 2 to &quot;assign_to_any_employee&quot; has incompatible type &quot;Callable[[Manager], None]&quot;; expected &quot;Callable[[Employee], None]&quot;  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+</pre></div>
+</div>
+<p>and <code class="docutils literal notranslate"><span class="pre">pyright</span></code> points at the reversed slot:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>process.py:21:40 - error: Argument of type &quot;(manager: Manager) -&gt; None&quot; cannot be assigned to parameter &quot;process&quot; of type &quot;(Employee) -&gt; None&quot; in function &quot;assign_to_any_employee&quot;
+    Type &quot;(manager: Manager) -&gt; None&quot; is not assignable to type &quot;(Employee) -&gt; None&quot;
+      Parameter 1: type &quot;Employee&quot; is incompatible with type &quot;Manager&quot;
+        &quot;Employee&quot; is not assignable to &quot;Manager&quot; (reportArgumentType)
+1 error, 0 warnings, 0 informations
+</pre></div>
+</div>
+<p>The formal statement combines both slots into the classic function
+subtyping rule:</p>
+<div class="proof theorem admonition" id="type-theory-06-variance-function-subtyping">
+<p class="admonition-title"><span class="caption-number">Theorem 74 </span> (Function type subtyping)</p>
+<section class="theorem-content" id="proof-content">
+<p>For parameter types <span class="math notranslate nohighlight">\(A_1, A_2\)</span> and return types <span class="math notranslate nohighlight">\(R_1, R_2\)</span>, writing
+<span class="math notranslate nohighlight">\(A \to R\)</span> for <code class="docutils literal notranslate"><span class="pre">Callable[[A],</span> <span class="pre">R]</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+A_2 &lt;: A_1 \ \text{ and } \ R_1 &lt;: R_2
+\implies
+(A_1 \to R_1) &lt;: (A_2 \to R_2).
+\]</div>
+<p>The parameter side is compared in the reversed (contravariant) direction
+and the return side in the preserved (covariant) direction. PEP 483 states
+this rule for Python directly<a class="footnote-reference brackets" href="#pep-483-variance" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.</p>
+</section>
+</div><p>PEP 483’s own illustration is the salary calculator<a class="footnote-reference brackets" href="#pep-483-variance" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">decimal</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decimal</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">calculate_all</span><span class="p">(</span><span class="n">lst</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Manager</span><span class="p">],</span> <span class="n">salary</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Manager</span><span class="p">],</span> <span class="n">Decimal</span><span class="p">]):</span>
-    <span class="o">...</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_all</span><span class="p">(</span><span class="n">employees</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Manager</span><span class="p">],</span> <span class="n">salary</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Manager</span><span class="p">],</span> <span class="n">Decimal</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>A <code class="docutils literal notranslate"><span class="pre">Callable[[Employee],</span> <span class="pre">Decimal]</span></code> can indeed replace a
-<code class="docutils literal notranslate"><span class="pre">Callable[[Manager],</span> <span class="pre">Decimal]</span></code> because the former can handle not just <code class="docutils literal notranslate"><span class="pre">Manager</span></code>
-instances but any <code class="docutils literal notranslate"><span class="pre">Employee</span></code>, making it a safe and more general substitution.
-This adheres to the principle that functions that operate on broader types can
-replace those that operate on more specific types within the context of function
-arguments.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">Callable[[Employee],</span> <span class="pre">Decimal]</span></code> argument for <code class="docutils literal notranslate"><span class="pre">salary</span></code> is accepted: a
+function that can price any <code class="docutils literal notranslate"><span class="pre">Employee</span></code> prices <code class="docutils literal notranslate"><span class="pre">Manager</span></code>s in particular.</p>
 </section>
 </section>
-<section id="real-world-examples-of-covariance-and-contravariance">
-<h2><a class="toc-backref" href="#id19" role="doc-backlink">Real World Examples of Covariance and Contravariance</a><a class="headerlink" href="#real-world-examples-of-covariance-and-contravariance" title="Link to this heading">#</a></h2>
+<section id="where-does-variance-show-up-in-the-wild">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Where Does Variance Show Up in the Wild?</a><a class="headerlink" href="#where-does-variance-show-up-in-the-wild" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Here is how
-<a class="reference external" href="https://github.com/chroma-core/chroma/blob/d9a8c28055ca1aa4c602560c0117f7608858d3f0/chromadb/api/types.py#L146">ChromaDB uses contravariant</a>
-on <code class="docutils literal notranslate"><span class="pre">Embeddable</span></code>.</p></li>
-<li><p>Here is how
-<a class="reference external" href="https://github.com/chroma-core/chroma/blob/d9a8c28055ca1aa4c602560c0117f7608858d3f0/chromadb/api/types.py#L150">ChromaDB uses covariance</a>.</p>
-<ul>
-<li><p>On a side note, <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> from PyTorch also uses covariance.</p></li>
+<li><p>Typeshed is a variance atlas once you can read the suffixes:
+<code class="docutils literal notranslate"><span class="pre">Mapping[_KT,</span> <span class="pre">_VT_co]</span></code> is invariant in its key type (keys are consumed
+by <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>) but covariant in its value type (values are only
+produced).</p></li>
+<li><p><a class="reference external" href="https://github.com/chroma-core/chroma/blob/d9a8c28055ca1aa4c602560c0117f7608858d3f0/chromadb/api/types.py#L146">ChromaDB declares a contravariant type variable</a>
+for its <code class="docutils literal notranslate"><span class="pre">Embeddable</span></code> payloads, and
+<a class="reference external" href="https://github.com/chroma-core/chroma/blob/d9a8c28055ca1aa4c602560c0117f7608858d3f0/chromadb/api/types.py#L150">a covariant one</a>
+right next to it.</p></li>
+<li><p>PyTorch’s <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> is generic over a covariant type variable for
+the samples it yields — a producer, exactly as the proposition
+predicts.</p></li>
 </ul>
-</li>
-</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>If I had to compress this chapter into a single sentence: <strong>variance is the
+per-constructor rule that says whether subtyping between type arguments
+lifts through the constructor preserved (covariant), reversed
+(contravariant), or not at all (invariant) — and which rule is sound is
+dictated by whether the constructor produces its parameter, consumes it, or
+does both.</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variance</p></th>
+<th class="head"><p>Rule</p></th>
+<th class="head"><p>Sound when <span class="math notranslate nohighlight">\(C\)</span>…</p></th>
+<th class="head"><p>Where you meet it</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Covariant</p></td>
+<td><p><span class="math notranslate nohighlight">\(S &lt;: T \implies C[S] &lt;: C[T]\)</span></p></td>
+<td><p>only produces</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Sequence</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">Iterator</span></code>, <code class="docutils literal notranslate"><span class="pre">Callable</span></code> returns</p></td>
+</tr>
+<tr class="row-odd"><td><p>Contravariant</p></td>
+<td><p><span class="math notranslate nohighlight">\(S &lt;: T \implies C[T] &lt;: C[S]\)</span></p></td>
+<td><p>only consumes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Callable</span></code> parameters</p></td>
+</tr>
+<tr class="row-even"><td><p>Invariant</p></td>
+<td><p><span class="math notranslate nohighlight">\(C[S] &lt;: C[T] \iff S = T\)</span></p></td>
+<td><p>consumes and produces</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code>, mutable containers generally</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Three receipts to carry forward. <code class="docutils literal notranslate"><span class="pre">list</span></code> is invariant because <code class="docutils literal notranslate"><span class="pre">append</span></code>
+consumes <code class="docutils literal notranslate"><span class="pre">_T</span></code> while <code class="docutils literal notranslate"><span class="pre">pop</span></code> produces it, and mutability is what puts a type
+variable in both positions. PEP 695 type parameters get their variance
+<em>inferred</em> from the whole class body — private attributes included — while
+legacy <code class="docutils literal notranslate"><span class="pre">TypeVar</span></code> variance is <em>declared</em> and only partially policed, so a
+syntax migration can silently change a class’s effective variance. And
+<code class="docutils literal notranslate"><span class="pre">Callable</span></code> is the one constructor whose slots split: covariant returns,
+contravariant parameters.</p>
+<p>Next, <a class="reference internal" href="07-overload.html"><span class="doc">Function Overloading</span></a> stays with function types
+and examines <code class="docutils literal notranslate"><span class="pre">&#64;overload</span></code> variants, including the unsafe overlapping
+overloads that both checkers flag. Variance also composes with the upper
+bounds and constraint sets of
+<a class="reference internal" href="05-typevar-bound-constraints.html"><span class="doc">Bound and Constraint in Generics and Type Variables</span></a>,
+which restrict what a type parameter may range over before variance decides
+how its applications relate.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id20" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<div class="seealso admonition">
+<p class="admonition-title">References</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://peps.python.org/pep-0483/#covariance-and-contravariance">PEP 483 - The Theory of Type Hints</a></p></li>
-<li><p><a class="reference external" href="https://peps.python.org/pep-0484/#covariance-and-contravariance">PEP 484 - Type Hints</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0483/#covariance-and-contravariance">PEP 483 – The Theory of Type Hints</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0484/#covariance-and-contravariance">PEP 484 – Type Hints</a></p></li>
+<li><p><a class="reference external" href="https://peps.python.org/pep-0695/">PEP 695 – Type Parameter Syntax</a></p></li>
+<li><p><a class="reference external" href="https://typing.python.org/en/latest/spec/generics.html#variance-inference">Python typing specification – Variance Inference</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=2wDvzy6Hgxg">Guido van Rossum – Type Hints (PyCon 2015 keynote)</a></p></li>
+<li><p><a class="reference external" href="https://mypy.readthedocs.io/en/stable/generics.html#variance-of-generics">Variance of generics in mypy</a></p></li>
+<li><p><a class="reference external" href="https://github.com/python/typeshed/blob/main/stdlib/builtins.pyi">python/typeshed – stdlib/builtins.pyi</a></p></li>
 <li><p><a class="reference external" href="https://www.playfulpython.com/type-hinting-covariance-contra-variance/">Type Hinting: Covariance &amp; Contra-Variance</a></p></li>
 <li><p><a class="reference external" href="https://nus-cs2030s.github.io/2021-s2/18-variance.html">CS2030S: Variance</a></p></li>
-<li><p><a class="reference external" href="https://mypy.readthedocs.io/en/stable/generics.html#variance-of-generics">Variance of generics in mypy</a></p></li>
-<li><p><a class="reference external" href="https://blog.daftcode.pl/covariance-contravariance-and-invariance-the-ultimate-python-guide-8fabc0c24278">Covariance, Contravariance, and Invariance - The Ultimate Python Guide</a></p></li>
+<li><p><a class="reference external" href="https://blog.daftcode.pl/covariance-contravariance-and-invariance-the-ultimate-python-guide-8fabc0c24278">Covariance, Contravariance, and Invariance – The Ultimate Python Guide</a></p></li>
 <li><p><a class="reference external" href="https://eli.thegreenplace.net/2018/covariance-and-contravariance-in-subtyping/">Covariance and contravariance in subtyping</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/61568462/python-typing-what-does-typevara-b-covariant-true-mean">Python typing: What does TypeVar(‘A’, ‘B’, covariant=True) mean?</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/6684493/why-are-arrays-invariant-but-lists-covariant">Why are arrays invariant but lists covariant?</a></p></li>
 <li><p><a class="reference external" href="https://stackoverflow.com/questions/1163465/what-is-the-difference-between-covariance-and-contra-variance-in-programming-lan">What is the difference between covariance and contra-variance in programming languages?</a></p></li>
-<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)">Covariance and contravariance (computer science) - Wikipedia</a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)">Covariance and contravariance (computer science) – Wikipedia</a></p></li>
 </ul>
+</div>
+<hr class="footnotes docutils" />
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="guido-pycon-2015" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Guido van Rossum,
+<a class="reference external" href="https://www.youtube.com/watch?v=2wDvzy6Hgxg">“Type Hints”</a>, PyCon 2015
+keynote. The slide’s original body is <code class="docutils literal notranslate"><span class="pre">lst</span> <span class="pre">+=</span> <span class="pre">[3.14]</span></code>; <code class="docutils literal notranslate"><span class="pre">append</span></code> is the
+equivalent single-element form.</p>
+</aside>
+<aside class="footnote brackets" id="typeshed-builtins" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>)</span>
+<p><a class="reference external" href="https://github.com/python/typeshed/blob/main/stdlib/builtins.pyi">python/typeshed, <code class="docutils literal notranslate"><span class="pre">stdlib/builtins.pyi</span></code></a>,
+as vendored by <code class="docutils literal notranslate"><span class="pre">mypy</span></code> 2.2.0. Typeshed evolves; line-level details may
+differ in later versions.</p>
+</aside>
+<aside class="footnote brackets" id="pep-483-variance" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id4">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p><a class="reference external" href="https://peps.python.org/pep-0483/#covariance-and-contravariance">PEP 483, “Covariance and Contravariance”</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -1686,30 +1848,14 @@ on <code class="docutils literal notranslate"><span class="pre">Embeddable</span
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-motivation">The Motivation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-definitions">The Definitions</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#covariance">Covariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariance">Contravariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#invariance">Invariance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-is-list-int-not-a-list-float">Why Is <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> Not a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-are-callable-parameter-types-contravariant">Why Are <code class="docutils literal notranslate"><span class="pre">Callable</span></code> Parameter Types Contravariant?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#return-types-are-covariant">Return types are covariant</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-types-are-contravariant">Parameter types are contravariant</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-is-invariant">List is Invariant</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Covariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Contravariance</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Invariance</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-connection-of-mutability-and-variance">The Connection of Mutability and Variance</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#list-vs-immutable-list">List vs Immutable List</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#drawing-some-connection-to-ordinary-functions">Drawing Some Connection to Ordinary Functions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contravariant-and-callable-types">Contravariant and Callable Types</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callable-return-types-covariance">Callable Return Types (Covariance)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#callable-argument-types-contravariance">Callable Argument Types (Contravariance)</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#real-world-examples-of-covariance-and-contravariance">Real World Examples of Covariance and Contravariance</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-does-variance-show-up-in-the-wild">Where Does Variance Show Up in the Wild?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
   </nav></div>

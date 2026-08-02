@@ -7,8 +7,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="What makes one Python type substitutable for another? Nominal vs structural subtyping from set-theoretic first principles, with mypy and pyright evidence." lang="en" name="description" xml:lang="en" />
+<meta content="python, subtyping, nominal subtyping, structural subtyping, protocol, type theory" name="keywords" />
+<meta property="og:title" content="Subtyping in Python: Nominal vs Structural Explained" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.gaohongnan.com/computer_science/type_theory/01-subtypes.html" />
+<meta property="og:site_name" content="Omniverse" />
+<meta property="og:description" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Tag Types Are Sets of Values, The Two Subtyping Schemes: Nominal and Structural, Nominal Subtyping: Subtypes by Declaration, Structural Subtyp..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="https://www.gaohongnan.com/_images/social_previews/summary_computer_science_type_theory_01-subtypes_7972fcb9.png" />
+<meta property="og:image:alt" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Tag Types Are Sets of Values, The Two Subtyping Schemes: Nominal and Structural, Nominal Subtyping: Subtypes by Declaration, Structural Subtyp..." />
+<meta name="twitter:card" content="summary_large_image" />
 
-    <title>Subtypes &#8212; Omniverse</title>
+    <title>Subtyping in Python: Nominal vs Structural Explained &#8212; Omniverse</title>
   
   
   
@@ -590,12 +602,12 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="intro.html">Type Theory, A Very Rudimentary Introduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Subtypes</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Subtyping in Python: Nominal vs Structural Explained</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02-type-safety.html">Type Safety</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03-subsumption.html">Subsumption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-generics.html">Generics in Python: Type Variables and Parameterized Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06-invariance-covariance-contravariance.html">Invariance, Covariance and Contravariance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-invariance-covariance-contravariance.html">Covariance, Contravariance, and Invariance in Python Generics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07-overload.html">Function Overloading</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08-pep-661-sentinel-values.html">Sentinel Types</a></li>
 </ul>
@@ -920,7 +932,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Subtypes</h1>
+    <h1>Subtyping in Python: Nominal vs Structural Explained</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -930,24 +942,18 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets">Types are Sets</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-vs-structural-subtyping">Nominal vs. Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-nominal-subtyping">What is Nominal Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-nominal-subtyping">Why Nominal Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-nominal-subtyping">How to Implement Nominal Subtyping?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets-of-values">Types Are Sets of Values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-subtyping-schemes-nominal-and-structural">The Two Subtyping Schemes: Nominal and Structural</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-subtypes-by-declaration">Nominal Subtyping: Subtypes by Declaration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping-subtypes-by-shape">Structural Subtyping: Subtypes by Shape</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duck-typing-at-runtime-sized-and-subclasshook">Duck Typing at Runtime: <code class="docutils literal notranslate"><span class="pre">Sized</span></code> and <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-static-checkers-cannot-see-a-duck-check">Why Static Checkers Cannot See a Duck Check</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#protocols-structural-subtyping-at-static-analysis-time">Protocols: Structural Subtyping at Static-Analysis Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-protocol-checks-with-runtime-checkable">Runtime Protocol Checks with <code class="docutils literal notranslate"><span class="pre">@runtime_checkable</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-structural-subtyping">What is Structural Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-structural-subtyping">Why Structural Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-structural-subtyping">How to Implement Structural Subtyping?</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-structural-subtyping-backfires-lsp">When Structural Subtyping Backfires: LSP</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs. Coercive Implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-structural-subtyping-backfires-the-lsp">When Structural Subtyping Backfires: The LSP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs Coercive Implementations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
@@ -961,8 +967,8 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="subtypes">
-<h1>Subtypes<a class="headerlink" href="#subtypes" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="subtyping-in-python-nominal-vs-structural-explained">
+<h1>Subtyping in Python: Nominal vs Structural Explained<a class="headerlink" href="#subtyping-in-python-nominal-vs-structural-explained" title="Link to this heading">#</a></h1>
 <p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
 <a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
 <a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
@@ -971,132 +977,162 @@
 <img alt="Tag" src="https://img.shields.io/badge/Tag-Vetted-green" /></p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#types-are-sets" id="id6">Types are Sets</a></p></li>
-<li><p><a class="reference internal" href="#nominal-vs-structural-subtyping" id="id7">Nominal vs. Structural Subtyping</a></p>
+<li><p><a class="reference internal" href="#types-are-sets-of-values" id="id7">Types Are Sets of Values</a></p></li>
+<li><p><a class="reference internal" href="#the-two-subtyping-schemes-nominal-and-structural" id="id8">The Two Subtyping Schemes: Nominal and Structural</a></p></li>
+<li><p><a class="reference internal" href="#nominal-subtyping-subtypes-by-declaration" id="id9">Nominal Subtyping: Subtypes by Declaration</a></p></li>
+<li><p><a class="reference internal" href="#structural-subtyping-subtypes-by-shape" id="id10">Structural Subtyping: Subtypes by Shape</a></p>
 <ul>
-<li><p><a class="reference internal" href="#nominal-subtyping-class-hierarchy-determines-subtypes" id="id8">Nominal Subtyping - Class Hierarchy Determines Subtypes</a></p>
-<ul>
-<li><p><a class="reference internal" href="#what-is-nominal-subtyping" id="id9">What is Nominal Subtyping?</a></p></li>
-<li><p><a class="reference internal" href="#why-nominal-subtyping" id="id10">Why Nominal Subtyping?</a></p></li>
-<li><p><a class="reference internal" href="#how-to-implement-nominal-subtyping" id="id11">How to Implement Nominal Subtyping?</a></p></li>
+<li><p><a class="reference internal" href="#duck-typing-at-runtime-sized-and-subclasshook" id="id11">Duck Typing at Runtime: <code class="docutils literal notranslate"><span class="pre">Sized</span></code> and <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code></a></p></li>
+<li><p><a class="reference internal" href="#why-static-checkers-cannot-see-a-duck-check" id="id12">Why Static Checkers Cannot See a Duck Check</a></p></li>
+<li><p><a class="reference internal" href="#protocols-structural-subtyping-at-static-analysis-time" id="id13">Protocols: Structural Subtyping at Static-Analysis Time</a></p></li>
+<li><p><a class="reference internal" href="#runtime-protocol-checks-with-runtime-checkable" id="id14">Runtime Protocol Checks with <code class="docutils literal notranslate"><span class="pre">&#64;runtime_checkable</span></code></a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#structural-subtyping" id="id12">Structural Subtyping</a></p>
-<ul>
-<li><p><a class="reference internal" href="#what-is-structural-subtyping" id="id13">What is Structural Subtyping?</a></p></li>
-<li><p><a class="reference internal" href="#why-structural-subtyping" id="id14">Why Structural Subtyping?</a></p></li>
-<li><p><a class="reference internal" href="#how-to-implement-structural-subtyping" id="id15">How to Implement Structural Subtyping?</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#when-structural-subtyping-backfires-lsp" id="id16">When Structural Subtyping Backfires: LSP</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#inclusive-vs-coercive-implementations" id="id17">Inclusive vs. Coercive Implementations</a></p></li>
-<li><p><a class="reference internal" href="#summary" id="id18">Summary</a></p></li>
-<li><p><a class="reference internal" href="#references-and-further-readings" id="id19">References and Further Readings</a></p></li>
+<li><p><a class="reference internal" href="#when-structural-subtyping-backfires-the-lsp" id="id15">When Structural Subtyping Backfires: The LSP</a></p></li>
+<li><p><a class="reference internal" href="#inclusive-vs-coercive-implementations" id="id16">Inclusive vs Coercive Implementations</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id17">Summary</a></p></li>
+<li><p><a class="reference internal" href="#references-and-further-readings" id="id18">References and Further Readings</a></p></li>
 </ul>
 </nav>
-<p>In
-<a class="reference external" href="https://en.wikipedia.org/wiki/Programming_language_theory">programming language theory</a>,
-<a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping"><strong>subtyping</strong></a> (also called subtype
-polymorphism or inclusion polymorphism) is a form of
-<a class="reference external" href="https://en.wikipedia.org/wiki/Polymorphism_(computer_science)">type polymorphism</a>.
-A subtype is a datatype that is related to another datatype (the supertype) by
-some notion of
-<a class="reference external" href="https://en.wikipedia.org/wiki/Substitutability">substitutability</a> (read:
-<a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov substitution principle</a>),
-meaning that program elements (typically
-<a class="reference external" href="https://en.wikipedia.org/wiki/Subroutines">subroutines</a> or
-<a class="reference external" href="https://en.wikipedia.org/wiki/Function_(computer_programming)">functions</a>),
-written to operate on elements of the supertype, can also operate on elements of
-the subtype<a class="footnote-reference brackets" href="#subtype-wikipedia" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
-<section id="types-are-sets">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Types are Sets</a><a class="headerlink" href="#types-are-sets" title="Link to this heading">#</a></h2>
-<p>For people coming from a mathematical background, it may be useful to think of
-types as <a class="reference external" href="https://en.wikipedia.org/wiki/Set_(mathematics)">sets</a>. Indeed, a
-type in the context of type theory, <em>is a</em> set of
-values<a class="footnote-reference brackets" href="#subtype-subsumption-wikipedia" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. In essence, a type defines a
-collection—or set—of values that share certain characteristics.</p>
+<p>When you pass a <code class="docutils literal notranslate"><span class="pre">Dog</span></code> to a function annotated to take <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> says
+nothing. Pass a <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> to a function that wants <code class="docutils literal notranslate"><span class="pre">list[float]</span></code>, and it
+objects. Both feel like “a smaller thing where a bigger thing is expected” —
+so why does one substitution type-check while the other fails?</p>
+<p>The rule behind both verdicts is <strong>subtyping</strong>: the contract that lets a
+value of one type stand in wherever another type is expected, with the
+surrounding program none the wiser. This chapter builds that contract from
+first principles — types as sets of values, subtypes as substitutable
+subsets — and then shows the two ways Python establishes it: <strong>nominally</strong>,
+through class inheritance, and <strong>structurally</strong>, through duck typing and
+<code class="docutils literal notranslate"><span class="pre">typing.Protocol</span></code>.</p>
+<p>By the end you can predict, before running a checker, whether one type may
+substitute for another; pick between inheritance and protocols for your own
+APIs; and spot the trap where a structural match violates the <strong>Liskov
+substitution principle</strong> — the rule that a subtype must <em>behave</em> like its
+supertype, not merely look like it. (The <code class="docutils literal notranslate"><span class="pre">list</span></code> refusal is <em>variance</em>, which
+<a class="reference internal" href="06-invariance-covariance-contravariance.html"><span class="doc">the variance chapter</span></a>
+resolves.)</p>
+<div class="note admonition">
+<p class="admonition-title">Prerequisites</p>
+<p>This is the first chapter of the series, and it assumes only comfort with
+Python classes and inheritance — no prior type theory. The roadmap and the
+series conventions (Python 3.14 syntax, every static-analysis claim verified
+against both <code class="docutils literal notranslate"><span class="pre">mypy</span></code> and <code class="docutils literal notranslate"><span class="pre">pyright</span></code>) live in
+<a class="reference internal" href="intro.html"><span class="doc">the series introduction</span></a>.</p>
+</div>
+<section id="types-are-sets-of-values">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Types Are Sets of Values</a><a class="headerlink" href="#types-are-sets-of-values" title="Link to this heading">#</a></h2>
+<p>The fastest route into subtyping — especially for readers with a
+mathematical background — is to identify a <strong>type</strong> with a
+<a class="reference external" href="https://en.wikipedia.org/wiki/Set_(mathematics)">set</a> of values: that is
+what a type <em>is</em> in type theory<a class="footnote-reference brackets" href="#subtype-subsumption-wikipedia" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. <code class="docutils literal notranslate"><span class="pre">bool</span></code>
+names a set with exactly two elements, <code class="docutils literal notranslate"><span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">False</span></code>; <code class="docutils literal notranslate"><span class="pre">str</span></code> names the
+infinite set of all strings; and a value “has type <code class="docutils literal notranslate"><span class="pre">T</span></code>” precisely when it is
+an element of <code class="docutils literal notranslate"><span class="pre">T</span></code>’s set.</p>
 <div class="proof example admonition" id="type-theory-01-subtypes-example-int-type-as-set">
 <p class="admonition-title"><span class="caption-number">Example 56 </span> (Integer Type as a Set)</p>
 <section class="example-content" id="proof-content">
 <p>To illustrate, consider the <strong>Integer</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>) type in many programming
-languages. You can think of this type as a set that includes all whole numbers
-from negative infinity to positive infinity. Each number in this set ranging
-from <span class="math notranslate nohighlight">\(-\infty\)</span> to <span class="math notranslate nohighlight">\(\infty\)</span> is an <strong>element</strong> of the <strong>Integer</strong> type.</p>
+languages. You can think of this type as a set that includes all whole
+numbers from negative infinity to positive infinity. Each such number is an
+<strong>element</strong> of the <strong>Integer</strong> type.</p>
 </section>
-</div></section>
-<section id="nominal-vs-structural-subtyping">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Nominal vs. Structural Subtyping</a><a class="headerlink" href="#nominal-vs-structural-subtyping" title="Link to this heading">#</a></h2>
-<p>In type theory, a crucial distinction is made between two primary subtyping
-schemes:
-<a class="reference external" href="https://en.wikipedia.org/wiki/Nominal_type_system"><strong><em>nominal subtyping</em></strong></a> and
-<a class="reference external" href="https://en.wikipedia.org/wiki/Structural_type_system"><strong><em>structural subtyping</em></strong></a>.
-This distinction is fundamental in understanding how different programming
-languages conceptualize and implement <strong>subtype relationships</strong>. <strong><em>Nominal
-subtyping</em></strong> bases the subtype relationship on <strong>explicit declarations</strong> (like
-class inheritance), while <strong><em>structural subtyping</em></strong> determines it based on the
-actual <strong>structure</strong> (methods and properties) of the types.</p>
-<p>This distinction is particularly important for static type checkers, which
-check the types at <strong>static-analysis time</strong> (i.e., before the program ever
-runs), and rely on the subtyping schemes to determine if one type,
-<span class="math notranslate nohighlight">\(\mathcal{A}\)</span>, is a subtype of another type, <span class="math notranslate nohighlight">\(\mathcal{B}\)</span>.</p>
-<p>In <strong>nominal subtyping</strong>, the static type checker searches for <strong><em>explicit
-declarations of inheritance</em></strong> (e.g., class <code class="docutils literal notranslate"><span class="pre">A</span></code> extends <code class="docutils literal notranslate"><span class="pre">B</span></code>), clearly indicating
-that <code class="docutils literal notranslate"><span class="pre">A</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">B</span></code>. This establishes a formal, name-based relationship
-between types at the time of declaration which means that this schema relies
-more on the declared hierarchy and naming of the types rather than their
-inherent structure or functionalities. Conversely, <strong>structural subtyping</strong>
-involves the checker assessing whether a potential subtype possesses all
-necessary <strong><em>structural features, such as methods and properties</em></strong>, to fulfill
-the requirements of its supertype, <em>without</em> requiring any explicit declaration
-of this relationship. For instance, the checker would examine if the subtype
-implements all the <em>methods</em> present in the supertype, ensuring <em>compatibility</em>
-based solely on structural <em>characteristics</em>.</p>
+</div><p>Once types are sets, subtyping nearly defines itself: a <strong>subtype</strong> is a
+type whose set of values sits inside the set of another type — its
+<strong>supertype</strong> — in a way that lets every subtype value <strong>stand in</strong> for a
+supertype value. We write <span class="math notranslate nohighlight">\(S &lt;: T\)</span> for “<span class="math notranslate nohighlight">\(S\)</span> is a subtype of <span class="math notranslate nohighlight">\(T\)</span>”; read it as
+“an <span class="math notranslate nohighlight">\(S\)</span> can stand in for a <span class="math notranslate nohighlight">\(T\)</span>”<a class="footnote-reference brackets" href="#notation" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+<div class="proof definition admonition" id="type-theory-01-subtypes-definition-subtype">
+<p class="admonition-title"><span class="caption-number">Definition 190 </span> (Subtype)</p>
+<section class="definition-content" id="proof-content">
+<p>A type <span class="math notranslate nohighlight">\(S\)</span> is a <strong>subtype</strong> of a type <span class="math notranslate nohighlight">\(T\)</span>, written <span class="math notranslate nohighlight">\(S &lt;: T\)</span>, when both of
+the following hold<a class="footnote-reference brackets" href="#subtype-wikipedia" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>:</p>
+<ol class="arabic simple">
+<li><p><strong>Values</strong>: every value of <span class="math notranslate nohighlight">\(S\)</span> is also a value of <span class="math notranslate nohighlight">\(T\)</span> — as sets,
+<span class="math notranslate nohighlight">\(S \subseteq T\)</span>.</p></li>
+<li><p><strong>Substitutability</strong>: every program element (typically a function or
+subroutine) written to operate on values of <span class="math notranslate nohighlight">\(T\)</span> also works, with
+unchanged meaning, on values of <span class="math notranslate nohighlight">\(S\)</span>.</p></li>
+</ol>
+<p><span class="math notranslate nohighlight">\(T\)</span> is then called the <strong>supertype</strong> of <span class="math notranslate nohighlight">\(S\)</span>, and the relation <span class="math notranslate nohighlight">\(&lt;:\)</span> is what
+a type checker consults whenever a value of one type appears where another
+type is expected.</p>
+</section>
+</div><p>Clause 1 is the subset picture. Clause 2 carries the weight: “works” means
+<em>behaves as the supertype’s contract promises</em>, not merely “does not
+raise”. That behavioral fine print is the Liskov substitution principle
+from the opening, stated formally in
+<a class="reference internal" href="03-subsumption.html#type-theory-liskov-substitution-principle">the LSP theorem</a>, and
+<a class="reference internal" href="03-subsumption.html"><span class="doc">Subsumption</span></a> sharpens both clauses into a checkable,
+three-part <a class="reference internal" href="03-subsumption.html#type-theory-subtype-criterion">subtype criterion</a>.
+Subtyping is also called <strong>subtype polymorphism</strong> or <strong>inclusion
+polymorphism</strong> — <em>polymorphism</em> (“many forms”) because one function written
+against <span class="math notranslate nohighlight">\(T\)</span> operates, unchanged, on values of every subtype of <span class="math notranslate nohighlight">\(T\)</span>.</p>
+</section>
+<section id="the-two-subtyping-schemes-nominal-and-structural">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">The Two Subtyping Schemes: Nominal and Structural</a><a class="headerlink" href="#the-two-subtyping-schemes-nominal-and-structural" title="Link to this heading">#</a></h2>
+<p>Knowing what a subtype <em>is</em> does not yet tell a type checker how to
+<em>decide</em> that <span class="math notranslate nohighlight">\(S &lt;: T\)</span> holds for two concrete types. Type systems answer
+with one of two <strong>subtyping schemes</strong> — and Python, unusually, offers both:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Nominal_type_system"><strong>Nominal subtyping</strong></a>
+bases the relationship on <strong>explicit declarations</strong>: <span class="math notranslate nohighlight">\(S &lt;: T\)</span> holds only
+if the code says so — in Python, <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">S(T)</span></code>. Names and declared
+lineage decide.</p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Structural_type_system"><strong>Structural subtyping</strong></a>
+bases the relationship on <strong>shape</strong>: <span class="math notranslate nohighlight">\(S &lt;: T\)</span> holds if <span class="math notranslate nohighlight">\(S\)</span> supplies
+every member (method or property) that <span class="math notranslate nohighlight">\(T\)</span> requires, whether or not the
+two classes have ever heard of each other.</p></li>
+</ul>
+<div class="proof definition admonition" id="type-theory-01-subtypes-definition-nominal-structural">
+<p class="admonition-title"><span class="caption-number">Definition 191 </span> (Nominal and Structural Subtyping)</p>
+<section class="definition-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(S\)</span> and <span class="math notranslate nohighlight">\(T\)</span> be types.</p>
+<ol class="arabic simple">
+<li><p>Under <strong>nominal subtyping</strong>, <span class="math notranslate nohighlight">\(S &lt;: T\)</span> holds if and only if the program
+explicitly declares <span class="math notranslate nohighlight">\(S\)</span> a subtype of <span class="math notranslate nohighlight">\(T\)</span> — in Python, <code class="docutils literal notranslate"><span class="pre">T</span></code> appears in the
+inheritance chain (the <strong>method resolution order</strong>) of <code class="docutils literal notranslate"><span class="pre">S</span></code>.</p></li>
+<li><p>Under <strong>structural subtyping</strong>, <span class="math notranslate nohighlight">\(S &lt;: T\)</span> holds if and only if <span class="math notranslate nohighlight">\(S\)</span>
+provides every member that <span class="math notranslate nohighlight">\(T\)</span> requires, with compatible signatures.</p></li>
+</ol>
+</section>
+</div><p>The distinction matters most to <strong>static type checkers</strong> — tools such as
+<code class="docutils literal notranslate"><span class="pre">mypy</span></code> and <code class="docutils literal notranslate"><span class="pre">pyright</span></code> that read source and flag type errors at
+<strong>static-analysis time</strong>, before the program ever runs. Asked whether
+<span class="math notranslate nohighlight">\(S &lt;: T\)</span>, a nominal check walks the declared class hierarchy looking for
+<code class="docutils literal notranslate"><span class="pre">T</span></code> among <code class="docutils literal notranslate"><span class="pre">S</span></code>’s ancestors; a structural check compares members, asking
+whether <code class="docutils literal notranslate"><span class="pre">S</span></code> could fulfill <code class="docutils literal notranslate"><span class="pre">T</span></code>’s obligations regardless of ancestry.</p>
 <div class="note admonition">
-<p class="admonition-title">Declaration, Static-Analysis, and Run Time</p>
-<p><strong>Nominal subtype relationships</strong> are established at <strong>declaration time</strong> (i.e.,
-when a new subclass is declared), and checked at <strong>static-analysis time</strong>, whereas
-<strong>structural subtype relationships</strong> are established at the <strong>point of use</strong>,
-and checked at <strong>runtime</strong>. However, when defining via <code class="docutils literal notranslate"><span class="pre">typing.Protocol</span></code>
-(<a class="reference external" href="https://peps.python.org/pep-0544/">PEP 544</a>, in the standard library since
-Python 3.8 — a language feature, not a <code class="docutils literal notranslate"><span class="pre">mypy</span></code> one, so any type checker
-understands it), the structural subtyping is actually checked at
-<strong>static-analysis time</strong>. We will see the difference later.</p>
+<p class="admonition-title">When is the relationship established — and when is it checked?</p>
+<p>A <strong>nominal</strong> subtype relationship is <em>established</em> at declaration time
+(the moment <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dog(Animal)</span></code> is written) and <em>checked</em> at
+static-analysis time by walking the declared hierarchy — or at runtime by
+<code class="docutils literal notranslate"><span class="pre">isinstance</span></code>. A <strong>structural</strong> relationship is never declared: it is
+<em>established</em> implicitly at the point of use, and classic duck typing
+<em>checks</em> it only at runtime. <code class="docutils literal notranslate"><span class="pre">typing.Protocol</span></code>
+(<a class="reference external" href="https://peps.python.org/pep-0544/">PEP 544</a>, in the standard library
+since Python 3.8 — a language feature, not a <code class="docutils literal notranslate"><span class="pre">mypy</span></code> one, so any type
+checker understands it) is precisely the device that lifts the structural
+check to static-analysis time. Both timings are demonstrated below.</p>
 </div>
-<section id="nominal-subtyping-class-hierarchy-determines-subtypes">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><a class="headerlink" href="#nominal-subtyping-class-hierarchy-determines-subtypes" title="Link to this heading">#</a></h3>
-<p>Given the backdrop in the previous section, we would condense out the key
-concepts of nominal subtyping below, and end it off with a python example.</p>
-<section id="what-is-nominal-subtyping">
-<h4><a class="toc-backref" href="#id9" role="doc-backlink">What is Nominal Subtyping?</a><a class="headerlink" href="#what-is-nominal-subtyping" title="Link to this heading">#</a></h4>
-<p><strong><em>Nominal subtyping</em></strong> is a type system concept where a type is considered a
-subtype of another <strong>only if it is explicitly declared as such</strong>. This mechanism
-is rooted in <strong>explicit declarations</strong> of type relationships, typically through
-class inheritance in object-oriented programming languages.</p>
 </section>
-<section id="why-nominal-subtyping">
-<h4><a class="toc-backref" href="#id10" role="doc-backlink">Why Nominal Subtyping?</a><a class="headerlink" href="#why-nominal-subtyping" title="Link to this heading">#</a></h4>
-<p>Nominal subtyping provides a <strong>controlled environment for polymorphism</strong>, where
-the relationships between types are <strong>well-defined</strong> and <strong>restricted according
-to the class hierarchy</strong>. Consequently, the <em>explicitness</em> of such declaration
-provides clarity to developers. Furthermore, nominal subtype relationships need
-to be planned in advance, and hence it might be easier to ensure that certain
-principles (e.g, the Liskov substitution principle) hold for subtypes.</p>
-</section>
-<section id="how-to-implement-nominal-subtyping">
-<h4><a class="toc-backref" href="#id11" role="doc-backlink">How to Implement Nominal Subtyping?</a><a class="headerlink" href="#how-to-implement-nominal-subtyping" title="Link to this heading">#</a></h4>
-<p>In languages that utilize <strong><em>nominal subtyping</em></strong>, <strong>subclassing</strong> or
-<strong>interface implementation</strong> are the primary means to establish subtype
-relationships. For instance, a class must <strong>explicitly extend another class</strong> or
-<strong>implement an interface</strong> to be considered its subtype. This approach relies on
-the <strong>lineage of type declarations</strong> to determine subtype relationships,
-focusing on <strong>names and declarations</strong> rather than the structural content of the
-types.</p>
-<p>In Java for instance, if <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dog</span> <span class="pre">extends</span> <span class="pre">Animal</span></code>, <strong><em>Dog</em></strong> is a <strong><em>nominal
-subtype</em></strong> of <strong><em>Animal</em></strong> because it <strong>explicitly extends</strong> <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. We see a
-similar implementation in Python below, detailing how <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are both
-subtypes of their parent class <code class="docutils literal notranslate"><span class="pre">Animal</span></code> through inheritance.</p>
+<section id="nominal-subtyping-subtypes-by-declaration">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Nominal Subtyping: Subtypes by Declaration</a><a class="headerlink" href="#nominal-subtyping-subtypes-by-declaration" title="Link to this heading">#</a></h2>
+<p><strong>Nominal subtyping</strong> is the conservative scheme: a type is a subtype of
+another <strong>only if it is explicitly declared as such</strong>. In Python — as in
+Java and C# — the declaration is class inheritance (or, in interface-based
+languages, an explicit <code class="docutils literal notranslate"><span class="pre">implements</span></code> clause). <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dog(Animal)</span></code> <em>is</em> the
+declaration; there is no way for <code class="docutils literal notranslate"><span class="pre">Dog</span></code> to become a nominal subtype of
+<code class="docutils literal notranslate"><span class="pre">Animal</span></code> after the fact, and no way to do it by accident.</p>
+<p>That explicitness is the scheme’s selling point. Subtype relationships are
+planned in advance and visible in the source, so the hierarchy is a
+controlled environment for polymorphism: readers can trace the lineage, and
+the author of a superclass can design for — and document — the behavioral
+obligations the Liskov substitution principle places on every subclass. The
+cost is rigidity, which the structural scheme exists to relieve.</p>
+<p>The cell below is the canonical fixture for this series; later chapters
+reuse it. <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> inherit from <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, while <code class="docutils literal notranslate"><span class="pre">Robot</span></code> copies
+<code class="docutils literal notranslate"><span class="pre">Animal</span></code>’s methods exactly but declares no lineage.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1"># Canonical fixture for this series — reused by later chapters</span>
@@ -1147,44 +1183,40 @@ False
 </div>
 </div>
 </div>
-<p>In this example, <code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are nominal subtypes of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> because they
-explicitly inherit from the <code class="docutils literal notranslate"><span class="pre">Animal</span></code> class. However, <code class="docutils literal notranslate"><span class="pre">Robot</span></code> which has the exact
-same methods as <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, is not a subclass of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> and therefore do not
-qualify as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> under the nominal subtyping framework. Note
-that python allows unsafe overriding of attributes and methods, so we really
-want static type checker to ensure we do not violate any rules such as
-<a class="reference external" href="https://en.wikipedia.org/wiki/Liskov_substitution_principle">Liskov Substitution Principle</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Dog</span></code> and <code class="docutils literal notranslate"><span class="pre">Cat</span></code> are nominal subtypes of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> because they explicitly
+inherit from it. <code class="docutils literal notranslate"><span class="pre">Robot</span></code> has the exact same method signatures as <code class="docutils literal notranslate"><span class="pre">Animal</span></code> —
+under a structural reading it would qualify — but it declares no lineage,
+so under the nominal scheme it is simply not an <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, and <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>
+agrees. Note, too, that Python happily lets a subclass override methods
+unsafely; nothing at runtime stops <code class="docutils literal notranslate"><span class="pre">Dog.make_sound</span></code> from returning an
+<code class="docutils literal notranslate"><span class="pre">int</span></code>. It is the static type checker that polices such violations of the
+Liskov substitution principle, and
+<a class="reference internal" href="02-type-safety.html"><span class="doc">Type Safety</span></a> stages exactly that crash with a
+misbehaving <code class="docutils literal notranslate"><span class="pre">Robot</span></code> variant.</p>
 </section>
-</section>
-<section id="structural-subtyping">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Structural Subtyping</a><a class="headerlink" href="#structural-subtyping" title="Link to this heading">#</a></h3>
-<section id="what-is-structural-subtyping">
-<h4><a class="toc-backref" href="#id13" role="doc-backlink">What is Structural Subtyping?</a><a class="headerlink" href="#what-is-structural-subtyping" title="Link to this heading">#</a></h4>
-<p><strong><em>Structural subtyping</em></strong> is a type system strategy where a type is considered
-a subtype of another based on its <strong>structure</strong> — specifically, if it possesses
-all the <strong>members</strong> (properties and methods) required by the supertype. This
-approach contrasts with nominal subtyping by focusing on the capabilities of
-types rather than their explicit declarations or lineage. It aligns with the
-concept of “<a class="reference external" href="https://en.wikipedia.org/wiki/Duck_typing">duck typing</a>” in
-dynamically typed languages: if an object behaves like a duck (implements all
-the duck behaviors), it can be treated as a duck</p>
-</section>
-<section id="why-structural-subtyping">
-<h4><a class="toc-backref" href="#id14" role="doc-backlink">Why Structural Subtyping?</a><a class="headerlink" href="#why-structural-subtyping" title="Link to this heading">#</a></h4>
-<p>The flexibility of structural subtyping allows for <strong>novel and unintended uses</strong>
-of existing code by enabling objects that do not share a common inheritance path
-to interact seamlessly as long as they fulfill the structural criteria.
-Sometimes you would like to enable loose coupling and subclass (nominal) may
-just add unwanted complexity.</p>
-<p>Consider a toy example below, where we construct a generic <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> to hold a
-<code class="docutils literal notranslate"><span class="pre">Sequence</span></code> containing elements of type <code class="docutils literal notranslate"><span class="pre">T</span></code> (the <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dataset[T]:</span></code>
-type-parameter syntax comes from
-<a class="reference external" href="https://peps.python.org/pep-0695/">PEP 695</a> — we unpack it properly in
-<a class="reference internal" href="04-generics.html"><span class="doc">Generics</span></a>). The current implementation does not have any
-subtyping schemes to it, and therefore, if we try to check if this <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is
-an instance of
-<a class="reference external" href="https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399"><code class="docutils literal notranslate"><span class="pre">Sized</span></code></a>,
-we would get <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<section id="structural-subtyping-subtypes-by-shape">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Structural Subtyping: Subtypes by Shape</a><a class="headerlink" href="#structural-subtyping-subtypes-by-shape" title="Link to this heading">#</a></h2>
+<p><strong>Structural subtyping</strong> is the liberal scheme: a type is a subtype of
+another based on its <strong>structure</strong> — it possesses every member (property
+and method) the supertype requires — regardless of what it inherits from.
+It is the typed rendering of
+<a class="reference external" href="https://en.wikipedia.org/wiki/Duck_typing">duck typing</a>: if an object
+walks like a duck and quacks like a duck, treat it as a duck.</p>
+<p>Why would you want this? Loose coupling. Structural subtyping lets classes
+that share no ancestor — often classes from libraries that cannot know
+about each other — interoperate the moment their shapes line up, enabling
+novel and unintended uses of existing code. Forcing every such relationship
+through a nominal base class would add ceremony and coupling without adding
+safety.</p>
+<section id="duck-typing-at-runtime-sized-and-subclasshook">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Duck Typing at Runtime: <code class="docutils literal notranslate"><span class="pre">Sized</span></code> and <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code></a><a class="headerlink" href="#duck-typing-at-runtime-sized-and-subclasshook" title="Link to this heading">#</a></h3>
+<p>Consider a toy example: a generic <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> holding a <code class="docutils literal notranslate"><span class="pre">Sequence</span></code> of
+elements of type <code class="docutils literal notranslate"><span class="pre">T</span></code> (the <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">Dataset[T]:</span></code> type-parameter syntax comes
+from <a class="reference external" href="https://peps.python.org/pep-0695/">PEP 695</a> — we unpack it properly
+in <a class="reference internal" href="04-generics.html"><span class="doc">Generics</span></a>). The class declares no lineage at all, so
+checking it against
+<a class="reference external" href="https://github.com/python/cpython/blob/15309329b65a285cb7b3071f0f08ac964b61411b/Lib/_collections_abc.py#L399"><code class="docutils literal notranslate"><span class="pre">Sized</span></code></a>
+— the standard library’s “has a <code class="docutils literal notranslate"><span class="pre">__len__</span></code>” interface — reports <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
@@ -1202,11 +1234,11 @@ we would get <code class="docutils literal notranslate"><span class="pre">False<
 </div>
 </div>
 </div>
-<p>However, once we add <code class="docutils literal notranslate"><span class="pre">__len__</span></code> to the example, then <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is now an instance
-of the <code class="docutils literal notranslate"><span class="pre">Sized</span></code>. The Sized protocol requires just one thing: a <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method
-that returns the size of the container. Despite Dataset not inheriting from any
-specific class that implements Sized, the mere presence of the said method
-adheres to the structural expectations of being “sizable”.</p>
+<p>However, once we add <code class="docutils literal notranslate"><span class="pre">__len__</span></code>, the very same check reports <code class="docutils literal notranslate"><span class="pre">True</span></code>. <code class="docutils literal notranslate"><span class="pre">Sized</span></code>
+requires just one thing — a <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method returning the size of the
+container — and despite <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> inheriting from nothing, the mere
+presence of that method satisfies the structural expectation of being
+“sized”.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span><span class="w"> </span><span class="nc">Dataset</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
@@ -1228,11 +1260,13 @@ adheres to the structural expectations of being “sizable”.</p>
 </div>
 </div>
 </div>
-<p>It is worth noting that the <code class="docutils literal notranslate"><span class="pre">Sized</span></code> protocol is not really the <code class="docutils literal notranslate"><span class="pre">Protocol</span></code> we
-know of, instead they use <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> for the <strong><em>structural typing dark
-magic</em></strong> to happen.</p>
-<div class="literal-block-wrapper docutils container" id="id5">
-<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">Reproduced from CPython’s Lib/_collections_abc.py (quoted source; annotations added for exposition)</span><a class="headerlink" href="#id5" title="Link to this code">#</a></div>
+<p>How did that work with no inheritance in sight? <code class="docutils literal notranslate"><span class="pre">Sized</span></code> is not a
+<code class="docutils literal notranslate"><span class="pre">typing.Protocol</span></code> (those arrive below); it is an <strong>abstract base class</strong>
+(ABC) that performs older <strong><em>structural typing dark magic</em></strong>: its
+<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> classmethod inspects any candidate class the moment
+<code class="docutils literal notranslate"><span class="pre">isinstance</span></code> or <code class="docutils literal notranslate"><span class="pre">issubclass</span></code> asks.</p>
+<div class="literal-block-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-number">Listing 1 </span><span class="caption-text">Reproduced from CPython’s Lib/_collections_abc.py (quoted source; annotations added for exposition)</span><a class="headerlink" href="#id6" title="Link to this code">#</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span><span class="w"> </span><span class="nc">Sized</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
 <span class="linenos"> 2</span>
 <span class="linenos"> 3</span>    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
@@ -1249,24 +1283,19 @@ magic</em></strong> to happen.</p>
 </span></pre></div>
 </div>
 </div>
-<p>To this end, the <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> class is now a structural subtype of the <code class="docutils literal notranslate"><span class="pre">Sized</span></code>
-class, as it implements the <code class="docutils literal notranslate"><span class="pre">__len__</span></code> method required by the <code class="docutils literal notranslate"><span class="pre">Sized</span></code> “protocol”.
-The check is done at <strong>runtime</strong> via the <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> method, which
-verifies if the class implements the necessary methods for the protocol.</p>
+<p>The highlighted hook makes <code class="docutils literal notranslate"><span class="pre">Sized</span></code> accept any class for which
+<code class="docutils literal notranslate"><span class="pre">_check_methods(C,</span> <span class="pre">&quot;__len__&quot;)</span></code> succeeds — the helper walks the candidate’s
+method resolution order looking for a <code class="docutils literal notranslate"><span class="pre">__len__</span></code> definition. To this end,
+<code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is a structural subtype of <code class="docutils literal notranslate"><span class="pre">Sized</span></code>, and the check happens at
+<strong>runtime</strong>, inside <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> itself. Hold on to <code class="docutils literal notranslate"><span class="pre">_check_methods</span></code>; it
+returns in the final section with less charming consequences.</p>
 </section>
-<section id="how-to-implement-structural-subtyping">
-<h4><a class="toc-backref" href="#id15" role="doc-backlink">How to Implement Structural Subtyping?</a><a class="headerlink" href="#how-to-implement-structural-subtyping" title="Link to this heading">#</a></h4>
-<p>In languages supporting <strong><em>structural subtyping</em></strong>, subtype relationships are
-established through the implementation of the required members, without the need
-for explicit inheritance or interface implementation. This method focuses on the
-actual implementation of the required properties and methods. More concretely,
-if type <code class="docutils literal notranslate"><span class="pre">A</span></code> defines all the methods of type <code class="docutils literal notranslate"><span class="pre">B</span></code> (and <code class="docutils literal notranslate"><span class="pre">B</span></code> is usually a
-<code class="docutils literal notranslate"><span class="pre">Protocol</span></code>), then <code class="docutils literal notranslate"><span class="pre">A</span></code> is a subtype of <code class="docutils literal notranslate"><span class="pre">B</span></code>, irrespective of their inheritance
-relationship.</p>
-<p>For pedagogical purposes, we can illustrate structural subtyping by implementing
-it manually. Our <code class="docutils literal notranslate"><span class="pre">is_flyable</span></code> function checks if an object has a <code class="docutils literal notranslate"><span class="pre">fly</span></code>
-attribute, and if that attribute is callable so we know that this attribute is a
-method or function, and not a data attribute.</p>
+<section id="why-static-checkers-cannot-see-a-duck-check">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Why Static Checkers Cannot See a Duck Check</a><a class="headerlink" href="#why-static-checkers-cannot-see-a-duck-check" title="Link to this heading">#</a></h3>
+<p>For pedagogical purposes, we can illustrate structural subtyping by
+implementing it manually. Our <code class="docutils literal notranslate"><span class="pre">is_flyable</span></code> function checks that an object
+has a <code class="docutils literal notranslate"><span class="pre">fly</span></code> attribute and that the attribute is callable — so we know it is
+a method or function, not a data attribute.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span><span class="w"> </span><span class="nf">is_flyable</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -1308,13 +1337,13 @@ Car cannot fly.
 </div>
 </div>
 </div>
-<p>The cell runs happily — at runtime the duck check does its job. But watch what
-happens when we hand the same code to the static type checkers. The guard
-<code class="docutils literal notranslate"><span class="pre">is_flyable</span></code> returns a plain <code class="docutils literal notranslate"><span class="pre">bool</span></code>, which tells a checker <em>nothing</em> about
-<code class="docutils literal notranslate"><span class="pre">obj</span></code> inside the <code class="docutils literal notranslate"><span class="pre">if</span></code> branch, and the heterogeneous list gives the two
-checkers room to disagree about <code class="docutils literal notranslate"><span class="pre">obj</span></code> itself. <code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code> joins the
-element type of <code class="docutils literal notranslate"><span class="pre">objects</span></code> up to <code class="docutils literal notranslate"><span class="pre">object</span></code> (the only common ancestor of <code class="docutils literal notranslate"><span class="pre">Bird</span></code>,
-<code class="docutils literal notranslate"><span class="pre">Airplane</span></code>, and <code class="docutils literal notranslate"><span class="pre">Car</span></code>) and rejects the call:</p>
+<p>The cell runs happily — at runtime the duck check does its job. But watch
+what happens when we hand the same code to the static type checkers. The
+guard <code class="docutils literal notranslate"><span class="pre">is_flyable</span></code> returns a plain <code class="docutils literal notranslate"><span class="pre">bool</span></code>, which tells a checker <em>nothing</em>
+about <code class="docutils literal notranslate"><span class="pre">obj</span></code> inside the <code class="docutils literal notranslate"><span class="pre">if</span></code> branch, and the heterogeneous list gives the
+two checkers room to disagree about <code class="docutils literal notranslate"><span class="pre">obj</span></code> itself. <code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code> joins the
+element type of <code class="docutils literal notranslate"><span class="pre">objects</span></code> up to <code class="docutils literal notranslate"><span class="pre">object</span></code> (the only common ancestor of
+<code class="docutils literal notranslate"><span class="pre">Bird</span></code>, <code class="docutils literal notranslate"><span class="pre">Airplane</span></code>, and <code class="docutils literal notranslate"><span class="pre">Car</span></code>) and rejects the call:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>duck_check.py:26: error: &quot;object&quot; has no attribute &quot;fly&quot;  [attr-defined]
 Found 1 error in 1 file (checked 1 source file)
 </pre></div>
@@ -1323,12 +1352,15 @@ Found 1 error in 1 file (checked 1 source file)
 implicit <code class="docutils literal notranslate"><span class="pre">Any</span></code>) and stays silent — <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">errors,</span> <span class="pre">0</span> <span class="pre">warnings,</span> <span class="pre">0</span> <span class="pre">informations</span></code> —
 though its strict mode flags the unknown-ness instead. Neither checker
 <em>understands</em> the duck check; they differ only in how loudly they shrug.
-(Teaching a checker to trust a boolean predicate is possible, but it must be
-declared with <code class="docutils literal notranslate"><span class="pre">TypeIs</span></code> or <code class="docutils literal notranslate"><span class="pre">TypeGuard</span></code> — the subject of a later chapter.)</p>
+(Teaching a checker to trust a boolean predicate is possible, but it must
+be declared with <code class="docutils literal notranslate"><span class="pre">TypeIs</span></code> or <code class="docutils literal notranslate"><span class="pre">TypeGuard</span></code> — the subject of a later chapter.)</p>
+</section>
+<section id="protocols-structural-subtyping-at-static-analysis-time">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Protocols: Structural Subtyping at Static-Analysis Time</a><a class="headerlink" href="#protocols-structural-subtyping-at-static-analysis-time" title="Link to this heading">#</a></h3>
 <p>This gap is precisely what <code class="docutils literal notranslate"><span class="pre">typing</span></code> closes. By defining a
-<a class="reference external" href="https://peps.python.org/pep-0544/">protocol</a> via the <code class="docutils literal notranslate"><span class="pre">Protocol</span></code> class, you can
-specify the required methods and properties for a type — making the structural
-relationship visible at static-analysis time,</p>
+<a class="reference external" href="https://peps.python.org/pep-0544/">protocol</a> via the <code class="docutils literal notranslate"><span class="pre">Protocol</span></code> class, you
+can specify the required methods and properties for a type — making the
+structural relationship visible at static-analysis time:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
@@ -1358,16 +1390,17 @@ relationship visible at static-analysis time,</p>
 </div>
 </div>
 <p>Here, both <code class="docutils literal notranslate"><span class="pre">Bird</span></code> and <code class="docutils literal notranslate"><span class="pre">Airplane</span></code> are considered structural subtypes of the
-<code class="docutils literal notranslate"><span class="pre">Flyable</span></code> protocol because they implement the required <code class="docutils literal notranslate"><span class="pre">fly</span></code> method, even though
-they don’t explicitly inherit from <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>. The <code class="docutils literal notranslate"><span class="pre">Car</span></code> class, on the other
-hand, does not implement the <code class="docutils literal notranslate"><span class="pre">fly</span></code> method and is not considered a structural
-subtype of <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>.</p>
-<p>Notice that the cell above executes without a single complaint — annotations
-are not enforced while the program runs, so even <code class="docutils literal notranslate"><span class="pre">can_we_fly(car)</span></code> sails
-through at runtime. The rejection happens at <strong>static-analysis time</strong>: save the
-<code class="docutils literal notranslate"><span class="pre">Bird</span></code>/<code class="docutils literal notranslate"><span class="pre">Airplane</span></code>/<code class="docutils literal notranslate"><span class="pre">Car</span></code> definitions together with the cell above as
-<code class="docutils literal notranslate"><span class="pre">flyable.py</span></code> and run a static type checker over it, and the <code class="docutils literal notranslate"><span class="pre">car</span></code> call — and
-only the <code class="docutils literal notranslate"><span class="pre">car</span></code> call — is flagged. <code class="docutils literal notranslate"><span class="pre">pyright</span></code> reports</p>
+<code class="docutils literal notranslate"><span class="pre">Flyable</span></code> protocol because they implement the required <code class="docutils literal notranslate"><span class="pre">fly</span></code> method, even
+though they don’t explicitly inherit from <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>. The <code class="docutils literal notranslate"><span class="pre">Car</span></code> class, on
+the other hand, does not implement the <code class="docutils literal notranslate"><span class="pre">fly</span></code> method and is not considered a
+structural subtype of <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>.</p>
+<p>Notice that the cell above executes without a single complaint —
+annotations are not enforced while the program runs, so even
+<code class="docutils literal notranslate"><span class="pre">can_we_fly(car)</span></code> sails through at runtime. The rejection happens at
+<strong>static-analysis time</strong>: save the <code class="docutils literal notranslate"><span class="pre">Bird</span></code>/<code class="docutils literal notranslate"><span class="pre">Airplane</span></code>/<code class="docutils literal notranslate"><span class="pre">Car</span></code> definitions
+together with the cell above as <code class="docutils literal notranslate"><span class="pre">flyable.py</span></code> and run a static type checker
+over it, and the <code class="docutils literal notranslate"><span class="pre">car</span></code> call — and only the <code class="docutils literal notranslate"><span class="pre">car</span></code> call — is flagged.
+<code class="docutils literal notranslate"><span class="pre">pyright</span></code> reports</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>flyable.py:34:12 - error: Argument of type &quot;Car&quot; cannot be assigned to parameter &quot;obj&quot; of type &quot;Flyable&quot; in function &quot;can_we_fly&quot;
     &quot;Car&quot; is incompatible with protocol &quot;Flyable&quot;
       &quot;fly&quot; is not present (reportArgumentType)
@@ -1379,10 +1412,13 @@ only the <code class="docutils literal notranslate"><span class="pre">car</span>
 Found 1 error in 1 file (checked 1 source file)
 </pre></div>
 </div>
-<p>If you want to ensure that the check is done at runtime with <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>, you
-can use the decorator <code class="docutils literal notranslate"><span class="pre">runtime_checkable</span></code> to enable runtime instance
-checks<a class="footnote-reference brackets" href="#runtime-checkable" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> (you cannot call <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> on <code class="docutils literal notranslate"><span class="pre">Flyable</span></code> without
-this decorator):</p>
+</section>
+<section id="runtime-protocol-checks-with-runtime-checkable">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Runtime Protocol Checks with <code class="docutils literal notranslate"><span class="pre">&#64;runtime_checkable</span></code></a><a class="headerlink" href="#runtime-protocol-checks-with-runtime-checkable" title="Link to this heading">#</a></h3>
+<p>If you want to ensure that the check is done at runtime with <code class="docutils literal notranslate"><span class="pre">isinstance</span></code>,
+you can use the decorator <code class="docutils literal notranslate"><span class="pre">runtime_checkable</span></code> to enable runtime instance
+checks<a class="footnote-reference brackets" href="#runtime-checkable" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> (you cannot call <code class="docutils literal notranslate"><span class="pre">isinstance</span></code> on <code class="docutils literal notranslate"><span class="pre">Flyable</span></code>
+without this decorator):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span><span class="p">,</span> <span class="n">runtime_checkable</span>
@@ -1408,91 +1444,126 @@ False
 </div>
 </section>
 </section>
-<section id="when-structural-subtyping-backfires-lsp">
-<h3><a class="toc-backref" href="#id16" role="doc-backlink">When Structural Subtyping Backfires: LSP</a><a class="headerlink" href="#when-structural-subtyping-backfires-lsp" title="Link to this heading">#</a></h3>
-<p>In the nominal subtyping example, the subtype relationship is established
-through explicit class inheritance. In the structural subtyping example, the
-subtype relationship is based on the implementation of a specific interface
-(defined by a <code class="docutils literal notranslate"><span class="pre">Protocol</span></code>), regardless of the inheritance relationship.</p>
-<p>In the context of structural subtyping, a <em>nuanced</em> issue arises from the
-application of the Liskov Substitution Principle (LSP). The LSP <em>asserts that
-objects of a superclass should be replaceable with objects of a subclass without
-affecting the correctness of the program</em>. Structural subtyping, however,
-<em>evaluates</em> type compatibility based on the <em>presence and signature of methods</em>,
-<em>not</em> on the <strong>inherent relationship</strong> or <strong>semantic compatibility</strong> between the
-types. This leads to scenarios where a class <em>might</em> unintentionally become a
-subtype of another by merely implementing the <strong>same</strong> method signatures,
-potentially violating the LSP due to semantic discrepancies.</p>
-<p>Consider the same example from nominal subtyping, but with an added
-<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> method to the <code class="docutils literal notranslate"><span class="pre">Animal</span></code> class. This method is used to check if
-a class is a structural subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> by checking if it implements the
-<code class="docutils literal notranslate"><span class="pre">describe</span></code> and <code class="docutils literal notranslate"><span class="pre">make_sound</span></code> methods.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">def</span><span class="w"> </span><span class="nf">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">methods</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="linenos"> 2</span>    <span class="n">mro</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="vm">__mro__</span>
-<span class="linenos"> 3</span>    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
-<span class="linenos"> 4</span>        <span class="k">for</span> <span class="n">B</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
-<span class="linenos"> 5</span>            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
-<span class="linenos"> 6</span>                <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-<span class="linenos"> 7</span>                    <span class="k">return</span> <span class="bp">NotImplemented</span>
-<span class="linenos"> 8</span>                <span class="k">break</span>
-<span class="linenos"> 9</span>        <span class="k">else</span><span class="p">:</span>
-<span class="linenos">10</span>            <span class="k">return</span> <span class="bp">NotImplemented</span>
-<span class="linenos">11</span>    <span class="k">return</span> <span class="kc">True</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="k">class</span><span class="w"> </span><span class="nc">Animal</span><span class="p">:</span>
-<span class="hll"><span class="linenos">14</span>    <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span class="linenos">15</span>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="linenos">16</span>
-<span class="hll"><span class="linenos">17</span>    <span class="k">def</span><span class="w"> </span><span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span class="linenos">18</span>        <span class="k">return</span> <span class="s2">&quot;Generic Animal Sound!&quot;</span>
-<span class="linenos">19</span>
-<span class="linenos">20</span>    <span class="nd">@classmethod</span>
-<span class="linenos">21</span>    <span class="k">def</span><span class="w"> </span><span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Animal</span><span class="p">],</span> <span class="n">C</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="linenos">22</span>        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">Animal</span><span class="p">:</span>
-<span class="linenos">23</span>            <span class="k">return</span> <span class="n">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="s2">&quot;describe&quot;</span><span class="p">,</span> <span class="s2">&quot;make_sound&quot;</span><span class="p">)</span>
-<span class="linenos">24</span>        <span class="k">return</span> <span class="bp">NotImplemented</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="k">class</span><span class="w"> </span><span class="nc">Dog</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
-<span class="linenos">27</span>    <span class="k">def</span><span class="w"> </span><span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="linenos">28</span>        <span class="k">return</span> <span class="s2">&quot;Woof!&quot;</span>
-<span class="linenos">29</span>
-<span class="linenos">30</span>    <span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="linenos">31</span>        <span class="k">return</span> <span class="s2">&quot;Happily fetching balls!&quot;</span>
-<span class="linenos">32</span>
-<span class="linenos">33</span>
-<span class="linenos">34</span><span class="k">class</span><span class="w"> </span><span class="nc">Cat</span><span class="p">(</span><span class="n">Animal</span><span class="p">):</span>
-<span class="linenos">35</span>    <span class="k">def</span><span class="w"> </span><span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="linenos">36</span>        <span class="k">return</span> <span class="s2">&quot;Meow&quot;</span>
-<span class="linenos">37</span>
-<span class="linenos">38</span>    <span class="k">def</span><span class="w"> </span><span class="nf">how_many_lives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="linenos">39</span>        <span class="k">return</span> <span class="s2">&quot;I have 9 lives!&quot;</span>
-<span class="linenos">40</span>
-<span class="linenos">41</span><span class="k">class</span><span class="w"> </span><span class="nc">Robot</span><span class="p">:</span>
-<span class="hll"><span class="linenos">42</span>    <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span class="linenos">43</span>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="linenos">44</span>
-<span class="hll"><span class="linenos">45</span>    <span class="k">def</span><span class="w"> </span><span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span class="linenos">46</span>        <span class="k">return</span> <span class="s2">&quot;Generic Robot Sound!&quot;</span>
+<section id="when-structural-subtyping-backfires-the-lsp">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">When Structural Subtyping Backfires: The LSP</a><a class="headerlink" href="#when-structural-subtyping-backfires-the-lsp" title="Link to this heading">#</a></h2>
+<p>Nominal and structural subtyping establish the same promise by different
+tests, and the structural test has a blind spot: it evaluates the <em>presence
+and signatures</em> of members, not their <em>meaning</em>. Any class that happens to
+match an interface’s shape becomes its subtype — including classes that
+satisfy the letter of the contract while violating its spirit. That is
+precisely the failure the Liskov substitution principle names: substituting
+such a “subtype” changes what the program observably does, breaching
+<a class="reference internal" href="03-subsumption.html#type-theory-liskov-substitution-principle">the LSP theorem</a>
+stated in <a class="reference internal" href="03-subsumption.html"><span class="doc">Subsumption</span></a>.</p>
+<p>The fixture already contains the culprit. Under the nominal test, <code class="docutils literal notranslate"><span class="pre">Robot</span></code>
+was not an <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. Give <code class="docutils literal notranslate"><span class="pre">Animal</span></code> a structural test instead — the same
+<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> device <code class="docutils literal notranslate"><span class="pre">Sized</span></code> uses — and watch the verdict flip. First,
+the helper CPython’s ABCs rely on, reproduced with type annotations added:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">NotImplementedType</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="k">def</span><span class="w"> </span><span class="nf">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="o">*</span><span class="n">methods</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">NotImplementedType</span><span class="p">:</span>
+<span class="linenos"> 6</span>    <span class="n">mro</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="vm">__mro__</span>
+<span class="linenos"> 7</span>    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+<span class="linenos"> 8</span>        <span class="k">for</span> <span class="n">B</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">:</span>
+<span class="linenos"> 9</span>            <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">B</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+<span class="linenos">10</span>                <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">method</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="linenos">11</span>                    <span class="k">return</span> <span class="bp">NotImplemented</span>
+<span class="linenos">12</span>                <span class="k">break</span>
+<span class="linenos">13</span>        <span class="k">else</span><span class="p">:</span>
+<span class="linenos">14</span>            <span class="k">return</span> <span class="bp">NotImplemented</span>
+<span class="linenos">15</span>    <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>In this code, <code class="docutils literal notranslate"><span class="pre">Robot</span></code> implements the <code class="docutils literal notranslate"><span class="pre">make_sound</span></code> method, which according to the
-<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> in <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, qualifies it as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> from a
-structural subtyping perspective. However, from a semantic standpoint,
-classifying a <code class="docutils literal notranslate"><span class="pre">Robot</span></code> as a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code> is incorrect because they belong
-to fundamentally different categories of entities.</p>
-<p>In practice, this can be avoided by adhering to good design patterns for your
-type protocols or interfaces. Golang is a famous language that relies almost
-exclusively on structural subtyping, here’s a good
-<a class="reference external" href="https://appmaster.io/blog/interface-implementation-go">post</a> that summarizes
-some of these rules.</p>
-</section>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">_check_methods</span></code> walks the candidate’s method resolution order and reports
+whether every requested method is defined somewhere along it — <code class="docutils literal notranslate"><span class="pre">True</span></code> for a
+match, <code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code> for “no verdict, fall back to the usual check”.
+Now the hook goes onto <code class="docutils literal notranslate"><span class="pre">Animal</span></code>. One detail is load-bearing:
+<code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code> is consulted only by <code class="docutils literal notranslate"><span class="pre">ABCMeta.__subclasscheck__</span></code>, so the
+class <strong>must</strong> be built with <code class="docutils literal notranslate"><span class="pre">metaclass=ABCMeta</span></code> — on a plain class the
+hook is silently ignored, and <code class="docutils literal notranslate"><span class="pre">issubclass</span></code> behaves as if it were never
+written. (The cell deliberately redefines the fixture’s <code class="docutils literal notranslate"><span class="pre">Animal</span></code>; <code class="docutils literal notranslate"><span class="pre">Dog</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Cat</span></code>, and <code class="docutils literal notranslate"><span class="pre">Robot</span></code> are untouched.)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">class</span><span class="w"> </span><span class="nc">Animal</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+<span class="linenos"> 2</span>    <span class="k">def</span><span class="w"> </span><span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos"> 3</span>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span>    <span class="k">def</span><span class="w"> </span><span class="nf">make_sound</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="linenos"> 6</span>        <span class="k">return</span> <span class="s2">&quot;Generic Animal Sound!&quot;</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span>    <span class="nd">@classmethod</span>
+<span class="linenos"> 9</span>    <span class="k">def</span><span class="w"> </span><span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="n">NotImplementedType</span><span class="p">:</span>
+<span class="linenos">10</span>        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">Animal</span><span class="p">:</span>
+<span class="linenos">11</span>            <span class="k">return</span> <span class="n">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="s2">&quot;describe&quot;</span><span class="p">,</span> <span class="s2">&quot;make_sound&quot;</span><span class="p">)</span>
+<span class="linenos">12</span>        <span class="k">return</span> <span class="bp">NotImplemented</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="nb">print</span><span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">Robot</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>  <span class="c1"># True — structurally admitted</span>
+<span class="linenos">2</span><span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">rob</span><span class="p">,</span> <span class="n">Animal</span><span class="p">))</span>    <span class="c1"># True — the same rob that failed the nominal test</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+True
+</pre></div>
+</div>
+</div>
+</div>
+<p>The same <code class="docutils literal notranslate"><span class="pre">Robot</span></code> — the very instance that printed <code class="docutils literal notranslate"><span class="pre">False</span></code> at the top of the
+page — is now a subtype of <code class="docutils literal notranslate"><span class="pre">Animal</span></code>, because the structural test asks only
+whether <code class="docutils literal notranslate"><span class="pre">describe</span></code> and <code class="docutils literal notranslate"><span class="pre">make_sound</span></code> exist. Semantically the classification
+is nonsense: a robot is not an animal, and downstream code that assumes
+animal behavior will now cheerfully accept one. The signatures match, the
+semantics do not, and the LSP is violated without a line of inheritance in
+sight.</p>
+<div class="dropdown admonition">
+<p class="admonition-title">How the checkers see these cells</p>
+<p>Collect the two definition cells, the fixture’s <code class="docutils literal notranslate"><span class="pre">Robot</span></code>, and the two
+checks into <code class="docutils literal notranslate"><span class="pre">structural_animal.py</span></code>, and the checkers split. <code class="docutils literal notranslate"><span class="pre">pyright</span></code>
+accepts the file as written:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>0 errors, 0 warnings, 0 informations
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">mypy</span> <span class="pre">--strict</span></code>, however, objects to every <code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">NotImplemented</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>structural_animal.py:11: error: Returning Any from function declared to return &quot;bool | NotImplementedType&quot;  [no-any-return]
+structural_animal.py:14: error: Returning Any from function declared to return &quot;bool | NotImplementedType&quot;  [no-any-return]
+structural_animal.py:29: error: Returning Any from function declared to return &quot;bool | NotImplementedType&quot;  [no-any-return]
+Found 3 errors in 1 file (checked 1 source file)
+</pre></div>
+</div>
+<p>Typeshed declares the type of <code class="docutils literal notranslate"><span class="pre">NotImplemented</span></code>, <code class="docutils literal notranslate"><span class="pre">types.NotImplementedType</span></code>,
+as a class deriving from <code class="docutils literal notranslate"><span class="pre">Any</span></code> — which is why <code class="docutils literal notranslate"><span class="pre">pyright</span></code> lets it flow into
+any return type, while strict <code class="docutils literal notranslate"><span class="pre">mypy</span></code> (<code class="docutils literal notranslate"><span class="pre">warn_return_any</span></code>) refuses to launder
+an <code class="docutils literal notranslate"><span class="pre">Any</span></code> through a declared return. Note that neither checker has anything
+to say about the <em>semantic</em> absurdity of <code class="docutils literal notranslate"><span class="pre">Robot</span> <span class="pre">&lt;:</span> <span class="pre">Animal</span></code>: no tool checks
+meaning.</p>
+</div>
+<p>In practice the cure is design, not tooling: keep protocols small and
+behavior-focused, name them for the capability they demand (<code class="docutils literal notranslate"><span class="pre">Sized</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Flyable</span></code>), and never use a shape as a proxy for a semantic category. Go —
+a language built almost entirely on structural subtyping — has evolved
+exactly these conventions, and
+<a class="reference external" href="https://go.dev/doc/effective_go#interfaces">Effective Go’s interface guidance</a>
+codifies them.</p>
 </section>
 <section id="inclusive-vs-coercive-implementations">
-<h2><a class="toc-backref" href="#id17" role="doc-backlink">Inclusive vs. Coercive Implementations</a><a class="headerlink" href="#inclusive-vs-coercive-implementations" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Inclusive vs Coercive Implementations</a><a class="headerlink" href="#inclusive-vs-coercive-implementations" title="Link to this heading">#</a></h2>
 <p>While nominal and structural subtyping focus on <em>how</em> type relationships are
 defined, <strong>inclusive</strong> and <strong>coercive</strong> implementations concern themselves with
 <em>what happens</em> to a value when types <strong>interact</strong> in a
-program<a class="footnote-reference brackets" href="#subtype-schemes-wikipedia" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>. In an <strong>inclusive</strong> implementation, the
+program<a class="footnote-reference brackets" href="#subtype-schemes-wikipedia" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>. In an <strong>inclusive</strong> implementation, the
 internal representation of a subtype value is already a valid representation of
 the supertype value, so nothing needs to change or be converted — think of it
 as direct <strong>“plug-and-play”</strong>. A <code class="docutils literal notranslate"><span class="pre">Dog</span></code> object passed to a function expecting an
@@ -1529,18 +1600,18 @@ we take up in <a class="reference internal" href="02-type-safety.html"><span cla
 </section>
 </div></section>
 <section id="summary">
-<h2><a class="toc-backref" href="#id18" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
-<p>If I had to compress this chapter into a single sentence, it would be the one
-we opened with: a subtype is a type whose values can <strong>stand in</strong> for values of
-its supertype without the surrounding program noticing. Types are sets of
-values, and subtyping is a <em>substitutability</em> promise over those sets — every
-program element written to operate on the supertype must keep working when
-handed the subtype. Nominal and structural subtyping are not two different
-promises; they are two different ways of <em>establishing</em> the same promise. And
-as the <code class="docutils literal notranslate"><span class="pre">Robot</span></code> example showed, the structural route can extend the promise to
-types that match an interface’s letter while violating its spirit, which is
-why the Liskov substitution principle remains the semantic yardstick behind
-both schemes.</p>
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>If I had to compress this chapter into a single sentence, it would be the
+contract we opened with: a subtype is a type whose values can <strong>stand in</strong>
+for values of its supertype without the surrounding program noticing. Types
+are sets of values, and subtyping is a <em>substitutability</em> promise over those
+sets — every program element written to operate on the supertype must keep
+working when handed the subtype. Nominal and structural subtyping are not two
+different promises; they are two different ways of <em>establishing</em> the same
+promise. And as the <code class="docutils literal notranslate"><span class="pre">Robot</span></code> example showed, the structural route can extend
+the promise to types that match an interface’s letter while violating its
+spirit, which is why the Liskov substitution principle remains the semantic
+yardstick behind both schemes.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p></p></th>
@@ -1580,14 +1651,18 @@ both schemes.</p>
 <a class="reference internal" href="02-type-safety.html"><span class="doc">Type Safety</span></a> examines what can go wrong when
 substitution is allowed — and why the static type checker exists to stop it —
 while <a class="reference internal" href="03-subsumption.html"><span class="doc">Subsumption</span></a> states the formal criterion a
-checker applies when it lets a subtype stand in for its supertype.</p>
+checker applies when it lets a subtype stand in for its supertype. And the
+opening’s other refusal — a <code class="docutils literal notranslate"><span class="pre">list[int]</span></code> where a <code class="docutils literal notranslate"><span class="pre">list[float]</span></code> is wanted — is
+deliberately not settled here: that is <em>variance</em>, the subject of
+<a class="reference internal" href="06-invariance-covariance-contravariance.html"><span class="doc">Invariance, Covariance and Contravariance</span></a>.</p>
 </section>
 <section id="references-and-further-readings">
-<h2><a class="toc-backref" href="#id19" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">References and Further Readings</a><a class="headerlink" href="#references-and-further-readings" title="Link to this heading">#</a></h2>
 <div class="seealso admonition">
 <p class="admonition-title">References</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://mypy.readthedocs.io/en/stable/protocols.html">mypy - Protocols</a></p></li>
+<li><p><a class="reference external" href="https://typing.python.org/en/latest/spec/protocol.html">Python typing specification - Protocols</a></p></li>
 <li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping#Subtyping_schemes">Subtyping schemes - Wikipedia</a></p></li>
 <li><p><a class="reference external" href="https://medium.com/&#64;thejameskyle/type-systems-structural-vs-nominal-typing-explained-56511dd969f4">Type Systems: Structural vs. Nominal Typing Explained - Medium</a></p></li>
 <li><p><a class="reference external" href="https://wiki.edunitas.com/IT/en/114-10/Subtyping_4238_eduNitas.html">Subtyping - eduNitas</a></p></li>
@@ -1598,20 +1673,25 @@ checker applies when it lets a subtype stand in for its supertype.</p>
 </div>
 <hr class="footnotes docutils" />
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="subtype-wikipedia" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">Subtyping - Wikipedia</a></p>
-</aside>
 <aside class="footnote brackets" id="subtype-subsumption-wikipedia" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping#Subsumption">Subtype Subsumption - Wikipedia</a></p>
 </aside>
-<aside class="footnote brackets" id="runtime-checkable" role="doc-footnote">
+<aside class="footnote brackets" id="notation" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Other texts write the same relation as <span class="math notranslate nohighlight">\(S \subseteq T\)</span> or <span class="math notranslate nohighlight">\(S \leq T\)</span>.
+This series uses <span class="math notranslate nohighlight">\(S &lt;: T\)</span> throughout.</p>
+</aside>
+<aside class="footnote brackets" id="subtype-wikipedia" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">3</a><span class="fn-bracket">]</span></span>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping">Subtyping - Wikipedia</a></p>
+</aside>
+<aside class="footnote brackets" id="runtime-checkable" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://mypy.readthedocs.io/en/stable/protocols.html#using-isinstance-with-protocols">Using isinstance() with protocols</a></p>
 </aside>
 <aside class="footnote brackets" id="subtype-schemes-wikipedia" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">5</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/Subtyping#Subtyping_schemes">Subtyping Schemes - Wikipedia</a></p>
 </aside>
 </aside>
@@ -1684,24 +1764,18 @@ checker applies when it lets a subtype stand in for its supertype.</p>
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets">Types are Sets</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-vs-structural-subtyping">Nominal vs. Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-class-hierarchy-determines-subtypes">Nominal Subtyping - Class Hierarchy Determines Subtypes</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-nominal-subtyping">What is Nominal Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-nominal-subtyping">Why Nominal Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-nominal-subtyping">How to Implement Nominal Subtyping?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#types-are-sets-of-values">Types Are Sets of Values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-subtyping-schemes-nominal-and-structural">The Two Subtyping Schemes: Nominal and Structural</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nominal-subtyping-subtypes-by-declaration">Nominal Subtyping: Subtypes by Declaration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping-subtypes-by-shape">Structural Subtyping: Subtypes by Shape</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#duck-typing-at-runtime-sized-and-subclasshook">Duck Typing at Runtime: <code class="docutils literal notranslate"><span class="pre">Sized</span></code> and <code class="docutils literal notranslate"><span class="pre">__subclasshook__</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-static-checkers-cannot-see-a-duck-check">Why Static Checkers Cannot See a Duck Check</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#protocols-structural-subtyping-at-static-analysis-time">Protocols: Structural Subtyping at Static-Analysis Time</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-protocol-checks-with-runtime-checkable">Runtime Protocol Checks with <code class="docutils literal notranslate"><span class="pre">@runtime_checkable</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#structural-subtyping">Structural Subtyping</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-structural-subtyping">What is Structural Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#why-structural-subtyping">Why Structural Subtyping?</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#how-to-implement-structural-subtyping">How to Implement Structural Subtyping?</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-structural-subtyping-backfires-lsp">When Structural Subtyping Backfires: LSP</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs. Coercive Implementations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-structural-subtyping-backfires-the-lsp">When Structural Subtyping Backfires: The LSP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inclusive-vs-coercive-implementations">Inclusive vs Coercive Implementations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references-and-further-readings">References and Further Readings</a></li>
 </ul>
