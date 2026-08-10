@@ -50,7 +50,7 @@ equivariance, and increasing abstraction), how the sliding-window computation
 actually proceeds (cross-correlation, padding, stride, channels), and how the
 input scale is set up so that what follows trains well. It is the visual
 counterpart to the
-{doc}`initialization series <../training_fundamentals/numerical_stability_and_initialization/01_intro>`;
+{doc}`initialization series <../../influential/numerical_stability_and_initialization/01_intro>`;
 the two meet at the question of signal scale.
 
 By the end of the chapter you will be able to compute a feature map by hand
@@ -62,7 +62,7 @@ image batch before training.
 :class: note
 
 Comfort with matrix multiplication and the MLP forward pass —
-{doc}`permutation symmetry <../training_fundamentals/numerical_stability_and_initialization/02_permutation_symmetry>`
+{doc}`permutation symmetry <../../influential/numerical_stability_and_initialization/02_permutation_symmetry>`
 is useful context for why parameter sharing changes a layer's symmetry
 structure. Notation follows
 {doc}`the deep-learning notation page <../../notations/deep_learning>`.

@@ -67,9 +67,9 @@ your model, rather than copying a default and hoping.
 You need comfort with matrix multiplication and the forward and backward
 passes of a one-hidden-layer MLP — we restate every equation we use, but we do
 not teach the chain rule from scratch. The notation follows
-{doc}`the deep-learning notation page <../../../notations/deep_learning>`;
+{doc}`the deep-learning notation page <../../notations/deep_learning>`;
 a passing familiarity with
-{doc}`cross-entropy loss <../../../influential/loss_functions/04_cross_entropy_loss>`
+{doc}`cross-entropy loss <../loss_functions/04_cross_entropy_loss>`
 helps for the gradient discussion but is not required.
 ```
 
@@ -145,7 +145,7 @@ you reach for every time you call `nn.Linear`.
 - {cite}`zhang2023dive`, §5.4 *Numerical Stability and Initialization*, whose
   treatment of permutation symmetry and constant initialization motivates this
   series.
-- {doc}`Why cosine annealing with warmup stabilizes training <../../../playbook/training/why_cosine_annealing_warmup_stabilize_training>`
+- {doc}`Why cosine annealing with warmup stabilizes training <../../playbook/training/why_cosine_annealing_warmup_stabilize_training>`
   — a companion note on the *optimizer-side* of training stability; this series
   handles the *architecture-and-init* side.
 ```

@@ -69,7 +69,7 @@ one-hidden-layer MLP — we restate every equation we use, but we do not teach
 linear layers from scratch. The notation follows
 {doc}`the deep-learning notation page <../../../notations/deep_learning>`.
 The discussion of *why* bad parameter scales harm training connects forward to
-{doc}`the numerical-stability and initialization series <../../training_fundamentals/numerical_stability_and_initialization/01_intro>`,
+{doc}`the numerical-stability and initialization series <../../../influential/numerical_stability_and_initialization/01_intro>`,
 but nothing here depends on having read it.
 ```
 

@@ -65,7 +65,7 @@ code.
 :class: note
 
 This page assumes the forward/backward variance analysis from
-{doc}`weight initialization <../../training_fundamentals/numerical_stability_and_initialization/03_weight_initialization>`.
+{doc}`weight initialization <../../../influential/numerical_stability_and_initialization/03_weight_initialization>`.
 Read {doc}`the deep learning notations <../../../notations/deep_learning>` if
 any symbol is unfamiliar.
 ```
@@ -216,7 +216,7 @@ The next page, {doc}`02_implementation`, computes per-channel mean and std
 over an image tensor and applies both transforms to a batch, printing the
 before/after statistics so the effect is visible. For the inverse story —
 keeping variance near one *inside* the network rather than at its input — see
-{doc}`weight initialization <../../training_fundamentals/numerical_stability_and_initialization/03_weight_initialization>`.
+{doc}`weight initialization <../../../influential/numerical_stability_and_initialization/03_weight_initialization>`.
 
 ```{admonition} Further reading
 :class: seealso

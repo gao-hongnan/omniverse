@@ -243,7 +243,7 @@ apply the two rival transforms, and the split-then-standardize pattern keeps
 that fingerprint honest by fitting it on the training split alone.** Drop the
 three functions into a data pipeline, compute the constants once on your
 training set, and your first layer receives the $O(1)$-scale input that
-{doc}`weight initialization <../../training_fundamentals/numerical_stability_and_initialization/03_weight_initialization>`
+{doc}`weight initialization <../../../influential/numerical_stability_and_initialization/03_weight_initialization>`
 needs to do its job.
 
 For the conceptual half — why input scale drives gradient scale, when to
