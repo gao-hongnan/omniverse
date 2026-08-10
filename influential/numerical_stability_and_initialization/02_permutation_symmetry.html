@@ -1,0 +1,1470 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta content="Hidden units in a neural network are interchangeable: permuting them leaves the output and every gradient unchanged. The full permutation-symmetry derivation, forward and backward." lang="en" name="description" xml:lang="en" />
+<meta content="permutation symmetry, neural network, hidden units, over-parametrization, weight symmetry, deep learning, backpropagation" name="keywords" />
+<meta property="og:title" content="Permutation Symmetry in Neural Networks Explained" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.gaohongnan.com/influential/numerical_stability_and_initialization/02_permutation_symmetry.html" />
+<meta property="og:site_name" content="Omniverse" />
+<meta property="og:description" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Hidden units are interchangeable, Setting: a one-hidden-layer MLP, Permutation matrices, briefly, Permuting the weights, The forward pass is i..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="https://www.gaohongnan.com/_images/social_previews/summary_influential_numerical_stability_and_initialization_02_permutation_symmetry_76f3c2a7.png" />
+<meta property="og:image:alt" content="Twitter Handle LinkedIn Profile GitHub Profile Tag Tag Hidden units are interchangeable, Setting: a one-hidden-layer MLP, Permutation matrices, briefly, Permuting the weights, The forward pass is i..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>Permutation Symmetry in Neural Networks Explained &#8212; Omniverse</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css?v=9c3e77be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css?v=4c969af8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=bb35926c" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=fab101a9"></script>
+    <script src="../../_static/tabs.js?v=3ee01567"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js?v=b8b12719"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-MYW5YKC2WF"></script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', 'G-MYW5YKC2WF');
+            </script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"tex": {"macros": {"defeq": "\\overset{\\text{def}}{=}", "defa": "\\overset{\\text{(a)}}{=}", "defb": "\\overset{\\text{(b)}}{=}", "defc": "\\overset{\\text{(c)}}{=}", "defd": "\\overset{\\text{(d)}}{=}", "st": "\\mid", "mod": "\\mid", "S": "\\Omega", "s": "\\omega", "e": "\\exp", "P": "\\mathbb{P}", "R": "\\mathbb{R}", "expectation": "\\mathbb{E}", "v": "\\mathbf{v}", "a": "\\mathbf{a}", "b": "\\mathbf{b}", "c": "\\mathbf{c}", "u": "\\mathbf{u}", "w": "\\mathbf{w}", "x": "\\mathbf{x}", "y": "\\mathbf{y}", "z": "\\mathbf{z}", "0": "\\mathbf{0}", "1": "\\mathbf{1}", "A": "\\mathbf{A}", "B": "\\mathbf{B}", "C": "\\mathbf{C}", "E": "\\mathcal{F}", "eventA": "\\mathcal{A}", "lset": "\\left\\{", "rset": "\\right\\}", "lsq": "\\left[", "rsq": "\\right]", "lpar": "\\left(", "rpar": "\\right)", "lcurl": "\\left\\{", "rcurl": "\\right\\}", "pmf": "p_X", "pdf": "f_X", "pdftwo": "f_{X,Y}", "pdfjoint": "f_{\\mathbf{X}}", "pmfjointxy": "p_{X, Y}", "pdfjointxy": "f_{X, Y}", "cdf": "F_X", "pspace": "(\\Omega, \\mathcal{F}, \\mathbb{P})", "var": "\\operatorname{Var}", "std": "\\operatorname{Std}", "bern": "\\operatorname{Bernoulli}", "binomial": "\\operatorname{Binomial}", "geometric": "\\operatorname{Geometric}", "poisson": "\\operatorname{Poisson}", "uniform": "\\operatorname{Uniform}", "normal": "\\operatorname{Normal}", "gaussian": "\\operatorname{Gaussian}", "gaussiansymbol": "\\mathcal{N}", "exponential": "\\operatorname{Exponential}", "iid": "\\textbf{i.i.d.}", "and": "\\text{and}", "O": "\\mathcal{O}"}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'influential/numerical_stability_and_initialization/02_permutation_symmetry';</script>
+    <link rel="canonical" href="https://www.gaohongnan.com/influential/numerical_stability_and_initialization/02_permutation_symmetry.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Weight Initialization: Why Constant and Zero Init Fail" href="03_weight_initialization.html" />
+    <link rel="prev" title="Why Neural Network Initialization Matters" href="01_intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Omniverse - Home"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Omniverse - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/gao-hongnan" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.linkedin.com/in/gao-hongnan/" title="LinkedIn" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-linkedin fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">LinkedIn</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://x.com/gaohongnan" title="X" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-x-twitter fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">X</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    Omniverse
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Notations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../notations/machine_learning.html">Machine Learning Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notations/mathematics.html">Mathematical Notations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notations/deep_learning.html">Deep Learning Notations</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Influential Ideas and Papers</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../generative_pretrained_transformer/01_intro.html">Generative Pre-trained Transformers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/02_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/03_concept.html">The Concept of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/04_implementation.html">The Implementation of Generative Pre-trained Transformers (GPT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generative_pretrained_transformer/05_adder.html">Training a Mini-GPT to Learn Two-Digit Addition</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../low_rank_adaptation/01_intro.html">Low-Rank Adaptation Of Large Language Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../low_rank_adaptation/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../cove/cove.html">Chain-of-Verification Reduces Hallucination in Large Language Models</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/01_intro.html">Vector Semantics and Embeddings</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/words_and_vectors/intro.html">Words and Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/words_and_vectors/concept.html">Concept: Words and Vectors</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/tf_idf/intro.html">Term Frequency-Inverse Document Frequency (TF-IDF)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/tf_idf/application.html">TF-IDF Application: IMDB Recommender System</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/intro.html">Cosine Similarity and Notion of Closeness</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/concept.html">Concept: Cosine Similarity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/implementation.html">Cosine Similarity Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../vector_semantics_and_embeddings/cosine_similarity/word_similarity.html">Cosine Similarity Application: Word Similarity</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../machine_learning_framework/01_framework.html">The Machine Learning Framework</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../machine_learning_framework/02_faq.html">FAQ: The Machine Learning Framework</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../empirical_risk_minimization/01_intro.html">Empirical Risk Minimization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/02_concept.html">Concept: Empirical Risk Minimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../empirical_risk_minimization/03_bayes_optimal_classifier.html">Bayes Optimal Classifier</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../loss_functions/01_intro.html">Loss Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../loss_functions/02_concept.html">Concept: Loss Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../loss_functions/03_entropy_and_information_gain.html">Entropy and Information Gain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../loss_functions/04_cross_entropy_loss.html">Cross Entropy Loss</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Why Neural Network Initialization Matters</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Permutation Symmetry in Neural Networks Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_weight_initialization.html">Weight Initialization: Why Constant and Zero Init Fail</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../decision_boundary/01_intro.html">Decision Boundary</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../decision_boundary/02_concept.html">Concept: Decision Boundary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../learning_theory/01_intro.html">Is The Learning Problem Solvable?</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../learning_theory/02_concept.html">Concept: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../kmeans_clustering/01_intro.html">Lloyd’s K-Means Clustering Algorithm</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/02_concept.html">Concept: K-Means Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/03_implementation.html">Implementation: K-Means (Lloyd)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/04_image_segmentation.html">Application: Image Compression and Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kmeans_clustering/05_conceptual_questions.html">Conceptual Questions</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../naive_bayes/01_intro.html">Naive Bayes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/03_implementation.html">Naives Bayes Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/04_example_penguins.html">Naive Bayes Application: Penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../naive_bayes/05_application_mnist.html">Naive Bayes Application (MNIST)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../k_nearest_neighbours/01_intro.html">K-Nearest Neighbours</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../k_nearest_neighbours/02_different_k_visualizations.html">K-Nearest Neighbours: Effect of K</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../k_nearest_neighbours/03_decision_boundary.html">K-Nearest Neighbours: Decision Boundaries</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gaussian_mixture_models/01_intro.html">Mixture Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gaussian_mixture_models/03_implementation.html">Gaussian Mixture Models Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../principal_component_analysis/01_intro.html">Principal Component Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../principal_component_analysis/02_implementation.html">Principal Component Analysis Implementation</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../linear_regression/01_intro.html">Linear Regression</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/02_concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../linear_regression/03_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../gradient_descent/01_intro.html">Gradient Descent</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../gradient_descent/02_concept.html">Concept: Gradient Descent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gradient_descent/03_implementation.html">Gradient Descent Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../evaluation_metrics/01_intro.html">Metrics and Scoring Rules</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/classification/intro.html">Classification Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/accuracy.html">Accuracy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/precision_recall_f1.html">Precision, Recall and F1 Score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/classification/brier_score.html">Brier Score</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/regression/intro.html">Regression Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/regression/mae.html">Mean Absolute Error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/regression/mape.html">Mean Absolute Percentage Error</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../evaluation_metrics/computer_vision/intro.html">Computer Vision Metrics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/intersection_over_union.html">Intersection Over Union (IOU)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/precision_recall_revisited.html">Precision and Recall Revisited: Object Detection</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/01_intro.html">Computer Vision: Learning to See with Convolutions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/01_intro.html">Convolutional Kernels: How CNNs Learn Local Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/02_concept.html">Cross-Correlation vs Convolution: The Sliding-Window Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/03_implementation.html">Implementing 2D Cross-Correlation From Scratch in NumPy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/01_concept.html">Image Normalization vs Standardization: Why Scale Matters</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/02_implementation.html">Computing Image Statistics and Applying Both Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../deep_learning/computer_vision/helpsheet.html">CNN Design Principles: Locality, Weight Sharing, Equivariance</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Playbook</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../playbook/training/intro.html">Training Dynamics And Tricks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_calculate_flops_in_transformer_based_models.html">How to Calculate the Number of FLOPs in Transformer Based Models?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/why_cosine_annealing_warmup_stabilize_training.html">Why Does Cosine Annealing With Warmup Stabilize Training?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_last_token_pooling.html">How To Fine-Tune Decoder-Only Models For Sequence Classification Using Last Token Pooling?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_finetune_decoder_with_cross_attention.html">How To Fine-Tune Decoder-Only Models For Sequence Classification With Cross-Attention?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../playbook/training/how_to_teacher_student_knowledge_distillation.html">How To Do Teacher-Student Knowledge Distillation?</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/why_softmax_preserves_order_translation_invariant_not_invariant_scaling.html">Softmax Preserves Order, Is Translation Invariant But Not Invariant Under Scaling.</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../playbook/how_to_inspect_function_and_class_signatures.html">How to Inspect Function and Class Signatures in Python?</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Probability Theory</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/intro.html">Chapter 1. Mathematical Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/01_combinatorics.html">Permutations and Combinations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/02_calculus.html">Calculus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/03_contours.html">Contour Maps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/01_mathematical_preliminaries/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/02_probability/intro.html">Chapter 2. Probability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0202_probability_space.html">Probability Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0203_probability_axioms.html">Probability Axioms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0204_conditional_probability.html">Conditional Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0205_independence.html">Independence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/0206_bayes_theorem.html">Baye’s Theorem and the Law of Total Probability</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/02_probability/summary.html">Summary</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/intro.html">Chapter 3. Discrete Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0301_random_variables.html">Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0302_discrete_random_variables.html">Discrete Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0303_probability_mass_function.html">Probability Mass Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0304_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0305_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/0306_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/intro.html">Discrete Uniform Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/uniform/0307_discrete_uniform_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/intro.html">Bernoulli Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/bernoulli/0308_bernoulli_distribution_application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/iid.html">Independent and Identically Distributed (IID)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/intro.html">Binomial Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_implementation.html">Implementation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/binomial/0309_binomial_distribution_application.html">Real World Examples</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/intro.html">Geometric Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/geometric/0310_geometric_distribution_concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/intro.html">Poisson Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/poisson/0311_poisson_distribution_implementation.html">Implementation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/summary.html">Important</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/03_discrete_random_variables/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/intro.html">Chapter 4. Continuous Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/from_discrete_to_continuous.html">From Discrete to Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0401_continuous_random_variables.html">Continuous Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0402_probability_density_function.html">Probability Density Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0403_expectation.html">Expectation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0404_moments_and_variance.html">Moments and Variance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0405_cumulative_distribution_function.html">Cumulative Distribution Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0406_mean_median_mode.html">Mean, Median and Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0407_continuous_uniform_distribution.html">Continuous Uniform Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0408_exponential_distribution.html">Exponential Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0409_gaussian_distribution.html">Gaussian Distribution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0410_skewness_and_kurtosis.html">Skewness and Kurtosis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0411_convolve_and_sum_of_random_variables.html">Convolution and Sum of Random Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/04_continuous_random_variables/0412_functions_of_random_variables.html">Functions of Random Variables</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/intro.html">Chapter 5. Joint Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../probability_theory/05_joint_distributions/from_single_variable_to_joint_distributions.html">From Single Variable to Joint Distributions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/intro.html">Joint PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0501_joint_pmf_pdf/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/intro.html">Joint Expectation and Correlation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0502_joint_expectation_and_correlation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/intro.html">Conditional PMF and PDF</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0503_conditional_pmf_pdf/application.html">Application</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/intro.html">Conditional Expectation and Variance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0504_conditional_expectation_variance/exercises.html">Exercises</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/intro.html">Sum of Random Variables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0505_sum_of_random_variables/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/intro.html">Random Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0506_random_vectors/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/intro.html">Multivariate Gaussian Distribution</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/application_transformation.html">Application: Plots and Transformations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/psd.html">Covariance Matrix is Positive Semi-Definite</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/eigendecomposition.html">Eigendecomposition and Covariance Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/05_joint_distributions/0507_multivariate_gaussian/geometry_of_multivariate_gaussian.html">The Geometry of Multivariate Gaussians</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/intro.html">Chapter 6. Sample Statistics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/intro.html">Moment Generating and Characteristic Functions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function.html">Moment Generating Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/moment_generating_function_application_sum_of_rv.html">Application: Moment Generating Function and the Sum of Random Variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0601_moment_generating_and_characteristic_functions/characteristic_function.html">Characteristic Function</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/intro.html">Probability Inequalities</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/concept.html">Probability Inequalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0602_probability_inequalities/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/intro.html">Law of Large Numbers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/concept.html">Concept</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/convergence.html">Convergence of Sample Average</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/06_sample_statistics/0603_law_of_large_numbers/application.html">Application: Learning Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/intro.html">Chapter 8. Estimation Theory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/intro.html">Maximum Likelihood Estimation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../probability_theory/08_estimation_theory/maximum_likelihood_estimation/concept.html">Concept</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Operations</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/distributed/intro.html">Distributed Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/01_notations.html">Notations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/02_basics.html">Basics Of Distributed Data Parallelism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/03_how_to_setup_slurm_in_aws.html">How to Setup SLURM and ParallelCluster in AWS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/distributed/04_ablation.html">Ablations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/profiling/intro.html">Profiling</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/01_synchronize.html">Synchronize CUDA To Time CUDA Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/02_timeit.html">Profiling Code With Timeit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/03_time_profiler.html">PyTorch’s Event And Profiler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/04_small_gpt_profile.html">Profile GPT Small Time And Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/profiling/05_memory_leak.html">CUDA Memory Allocations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/00_intro.html">The Lifecycle of an AIOps System</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/01_problem_formulation.html">Stage 1. Problem Formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/02_project_scoping.html">Stage 2. Project Scoping And Framing The Problem</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/03_dataops_pipeline.html">Stage 3. Data Pipeline (Data Engineering and DataOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/031_data_source_and_format.html">Stage 3.1. Data Source and Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/032_data_model_and_storage.html">Stage 3.2. Data Model and Storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/03_dataops_pipeline/033_etl.html">Stage 3.3. Extract, Transform, Load (ETL)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/04_mlops_data_pipeline.html">Stage 4. Data Extraction (MLOps), Data Analysis (Data Science), Data Preparation (Data Science)</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/05_ml_training_pipeline.html">Stage 5. Model Development and Training (MLOps)</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/051_model_selection.html">Stage 5.1. Model Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/052_metric_selection.html">Stage 5.2. Metric Selection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/053_experiment_tracking.html">Stage 5.3. Experiment Tracking And Versioning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../operations/machine_learning_lifecycle/05_model_development_selection_and_training/054_model_testing.html">Stage 5.4. Model Testing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/06_model_evaluation.html">Stage 6. Model Evaluation (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/07_model_validation_registry_and_pushing_model_to_production.html">Stage 7. Model Validation, Registry and Pushing Model to Production (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/08_model_deployment_and_serving.html">Stage 8. Model Serving (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/09_model_monitoring.html">Stage 9. Model Monitoring (MLOps)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../operations/machine_learning_lifecycle/010_continuous_integration_deployment_learning_and_training.html">Stage 10. Continuous Integration, Deployment, Learning and Training (DevOps, DataOps, MLOps)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Software Engineering</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/config_management/intro.html">Config, State, Metadata Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/concept.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/01-pydra.html">Pydantic And Hydra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/config_management/02-state.html">State And Metadata Management</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/design_patterns/intro.html">Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/dependency_inversion_principle.html">Dependency Inversion Principle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/named_constructor.html">Named Constructor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/strategy.html">Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/registry.html">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/god_object_pattern.html">Context Object Pattern (God Object)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/factory_method.html">Factory Method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/design_patterns/singleton.html">Singleton</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/python/intro.html">Python</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/new_vs_init.html">Init vs New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/gil.html">Global Interpreter Lock (GIL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/iterator_protocol.html">The Iterator Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/decorator.html">Decorator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/generators_over_lists.html">Generators Over Lists For Memory Efficiency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/pydantic.html">Pydantic Is All You Need - Jason Liu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/mutable_default.html">Do Not Use Mutable Default Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/set_vs_list.html">Set Over List For Frequent Membership Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/late_binding_closures.html">Late Binding Closures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/python/is_vs_equality.html">Is vs Equality</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../software_engineering/python/memory_internals/00_introduction.html">Introduction: Why Python Objects Are “Heavier”</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/01_c_memory_basics.html">C Memory Basics: The Foundation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/02_python_object_model.html">Python Object Model: Everything is a PyObject</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/03_integer_internals.html">Integer Internals: PyLongObject and Arbitrary Precision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/04_string_internals.html">String Internals: PyUnicodeObject and Memory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/05_ctypes_inspection.html">Section 5: Hands-On ctypes Memory Inspection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../software_engineering/python/memory_internals/06_optimization_techniques.html">Section 6: Optimization Techniques</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/intro.html">Concurrency, Parallelism and Asynchronous Programming</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/overview.html">Overview Of Concurrency, Parallelism, and Asynchronous Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/insights/locks_for_thread_safety.html">Thread Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../software_engineering/concurrency_parallelism_asynchronous/generator_yield.html">A Rudimentary Introduction to Generator and Yield in Python</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Computer Science</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../computer_science/type_theory/intro.html">Type Theory, A Very Rudimentary Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/01-subtypes.html">Subtyping in Python: Nominal vs Structural Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/02-type-safety.html">Type Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/03-subsumption.html">Subsumption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/04-generics.html">Generics in Python: Type Variables and Parameterized Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/05-typevar-bound-constraints.html">Bound and Constraint in Generics and Type Variables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/06-invariance-covariance-contravariance.html">Covariance, Contravariance, and Invariance in Python Generics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/07-overload.html">Function Overloading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../computer_science/type_theory/08-pep-661-sentinel-values.html">Sentinel Types</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Structures and Algorithms</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/complexity_analysis/intro.html">Complexity Analysis</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/complexity_analysis/master_theorem.html">Master Theorem </a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/array/intro.html">List/Array</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/array/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/array/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/array/questions/01-two-sum.html">Two Sum</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/hash_map/intro.html">Hash Map</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/hash_map/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/hash_map/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/01-two-sum.html">Two Sum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/hash_map/questions/49-group-anagrams.html">Group Anagrams</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/two_pointers/intro.html">Two Pointers And Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/two_pointers.html">Two Pointers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/two_pointers/sliding_window.html">Sliding Window</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/intro.html">Two Pointers</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/26-remove-duplicates-from-sorted-array.html">Remove Duplicates from Sorted Array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/two_pointers/167-two-sum-ii-input-array-is-sorted.html">Two Sum II - Input Array Is Sorted</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/intro.html">Sliding Window</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../dsa/two_pointers/questions/sliding_window/438-find-all-anagrams-in-a-string.html">Find All Anagrams in a String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/stack/intro.html">Stack</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/stack/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/stack/questions/intro.html">Questions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/20-valid-parentheses.html">Valid Parentheses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/155-min-stack.html">Min Stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/232-implement-queue-using-stacks.html">Implement Queue using Stacks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/stack/questions/344-reverse-string.html">Reverse String</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/queue/intro.html">Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/queue/concept.html">Concept</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../dsa/queue/dequeue.html">Double Ended Queue</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/hot-potatoes.html">Easy - Hot Potatoes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../dsa/queue/questions/125-valid-palindrome.html">Palindrome Checker</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/intro.html">Linear Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/linear_search/concept.html">Concept</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/intro.html">Binary Search</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/concept.html">Concept</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dsa/searching_algorithms/binary_search/problems/875-koko-eating-bananas.html">Koko Eating Bananas</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Linear Algebra</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/01_preliminaries/intro.html">Preliminaries</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/01-fields.html">Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/01_preliminaries/02-systems-of-linear-equations.html">Systems of Linear Equations</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../linear_algebra/02_vectors/intro.html">Vectors</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/01-vector-definition.html">Vector and Its Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/02-vector-operation.html">Vector and Its Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/03-vector-norm.html">Vector Norm and Distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../linear_algebra/02_vectors/04-vector-products.html">A First Look at Vector Products</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">References, Resources and Roadmap</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../bibliography.html">Bibliography</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citations.html">IEEE (Style) Citations</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/gao-hongnan/omniverse/blob/main/omniverse/influential/numerical_stability_and_initialization/02_permutation_symmetry.md" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch on Colab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img alt="Colab logo" src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/gao-hongnan/omniverse/issues/new?title=Issue%20on%20page%20%2Finfluential/numerical_stability_and_initialization/02_permutation_symmetry.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/influential/numerical_stability_and_initialization/02_permutation_symmetry.ipynb" target="_blank"
+   class="btn btn-sm btn-download-notebook-button dropdown-item"
+   title="Download notebook file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="../../_sources/influential/numerical_stability_and_initialization/02_permutation_symmetry.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button pst-navbar-icon"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm pst-navbar-icon" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Permutation Symmetry in Neural Networks Explained</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-units-are-interchangeable">Hidden units are interchangeable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-a-one-hidden-layer-mlp">Setting: a one-hidden-layer MLP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-matrices-briefly">Permutation matrices, briefly</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#permuting-the-weights">Permuting the weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-pass-is-invariant">The forward pass is invariant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-backward-pass-is-invariant">The backward pass is invariant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimizer-preserves-the-symmetry">The optimizer preserves the symmetry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-matters-exact-redundancy">Why this matters: exact redundancy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="permutation-symmetry-in-neural-networks-explained">
+<h1>Permutation Symmetry in Neural Networks Explained<a class="headerlink" href="#permutation-symmetry-in-neural-networks-explained" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://twitter.com/gaohongnan"><img alt="Twitter Handle" src="https://img.shields.io/badge/Twitter-&#64;gaohongnan-blue?style=social&amp;logo=twitter" /></a>
+<a class="reference external" href="https://linkedin.com/in/gao-hongnan"><img alt="LinkedIn Profile" src="https://img.shields.io/badge/&#64;gaohongnan-blue?style=social&amp;logo=linkedin" /></a>
+<a class="reference external" href="https://github.com/gao-hongnan"><img alt="GitHub Profile" src="https://img.shields.io/badge/GitHub-gao--hongnan-lightgrey?style=social&amp;logo=github" /></a>
+<img alt="Tag" src="https://img.shields.io/badge/Tag-Deep_Learning-blue" />
+<img alt="Tag" src="https://img.shields.io/badge/Level-Intermediate-yellow" /></p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#hidden-units-are-interchangeable" id="id2">Hidden units are interchangeable</a></p></li>
+<li><p><a class="reference internal" href="#setting-a-one-hidden-layer-mlp" id="id3">Setting: a one-hidden-layer MLP</a></p></li>
+<li><p><a class="reference internal" href="#permutation-matrices-briefly" id="id4">Permutation matrices, briefly</a></p></li>
+<li><p><a class="reference internal" href="#permuting-the-weights" id="id5">Permuting the weights</a></p></li>
+<li><p><a class="reference internal" href="#the-forward-pass-is-invariant" id="id6">The forward pass is invariant</a></p></li>
+<li><p><a class="reference internal" href="#the-backward-pass-is-invariant" id="id7">The backward pass is invariant</a></p></li>
+<li><p><a class="reference internal" href="#the-optimizer-preserves-the-symmetry" id="id8">The optimizer preserves the symmetry</a></p></li>
+<li><p><a class="reference internal" href="#why-this-matters-exact-redundancy" id="id9">Why this matters: exact redundancy</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id10">Summary</a></p></li>
+</ul>
+</nav>
+<p>Rename the third hidden unit of a trained MLP to be “the first” and shuffle the
+others to match. Does the network’s behavior change? It does not — and not by
+coincidence. The units inside a hidden layer are <em>interchangeable</em>: any
+relabeling of them, accompanied by the matching relabeling of the weights, is
+an exact symmetry of the network. The function computed is identical, and —
+this is the part that matters for training — so is every gradient.</p>
+<p>This chapter proves that statement, called <strong>permutation symmetry</strong>, for a
+one-hidden-layer network. The proof has two halves. Forward, we show the output
+is unchanged when the units are relabeled; backward, we show the gradients
+relabel in lockstep, so a gradient step <em>preserves</em> the relabeling. The
+consequence is sharp: permutation symmetry is an invariant of training itself.
+The optimizer cannot break it, which is exactly why identical initialization is
+fatal — the topic of <a class="reference internal" href="03_weight_initialization.html"><span class="doc">the next chapter</span></a>.</p>
+<p>By the end you will be able to state precisely <em>which</em> weight matrices must be
+permuted together, prove output-invariance in four lines, and explain why a
+network whose units start out identical can never grow them apart.</p>
+<div class="note admonition">
+<p class="admonition-title">Prerequisites</p>
+<p>This is the second page of the
+<a class="reference internal" href="01_intro.html"><span class="doc">initialization series</span></a>. You need the forward and backward
+equations of a one-hidden-layer MLP and the definition of a permutation
+matrix; both are restated below.</p>
+</div>
+<section id="hidden-units-are-interchangeable">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Hidden units are interchangeable</a><a class="headerlink" href="#hidden-units-are-interchangeable" title="Link to this heading">#</a></h2>
+<p>A hidden layer holds <span class="math notranslate nohighlight">\(h\)</span> units. Nothing in the layer’s definition ordains an
+ordering on them: unit 3 is not structurally prior to unit 7. The only thing
+that distinguishes two units is the column of incoming weights that feeds each
+one and the row of outgoing weights that reads each one. Swap those together —
+the incoming column <em>and</em> the outgoing row — and you have renamed the unit
+without altering a single computation.</p>
+<div class="proof definition admonition" id="def:perm-symmetry">
+<p class="admonition-title"><span class="caption-number">Definition 25 </span> (Permutation symmetry of a hidden layer)</p>
+<section class="definition-content" id="proof-content">
+<p>A hidden layer with <span class="math notranslate nohighlight">\(h\)</span> units has <strong>permutation symmetry</strong>: for every
+permutation (relabeling) <span class="math notranslate nohighlight">\(\pi\)</span> of the <span class="math notranslate nohighlight">\(h\)</span> units, there is a relabeling of the
+weight matrices that leaves the network’s input-output function exactly
+unchanged.</p>
+</section>
+</div><p>That is the claim. The rest of the chapter makes it precise and proves it.</p>
+</section>
+<section id="setting-a-one-hidden-layer-mlp">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Setting: a one-hidden-layer MLP</a><a class="headerlink" href="#setting-a-one-hidden-layer-mlp" title="Link to this heading">#</a></h2>
+<p>We work with a single hidden layer so every step is explicit; the result
+extends layer-by-layer to any depth. With a minibatch
+<span class="math notranslate nohighlight">\(\mathbf{X} \in \R^{n \times d}\)</span> of <span class="math notranslate nohighlight">\(n\)</span> samples and <span class="math notranslate nohighlight">\(d\)</span> features, <span class="math notranslate nohighlight">\(h\)</span> hidden
+units, and <span class="math notranslate nohighlight">\(q\)</span> outputs, the forward pass is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+\mathbf{H} &amp;= \sigma\!\left(\mathbf{X}\mathbf{W}^{(1)} + \mathbf{b}^{(1)}\right), \\
+\mathbf{O} &amp;= \mathbf{H}\mathbf{W}^{(2)} + \mathbf{b}^{(2)},
+\end{aligned}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)} \in \R^{d \times h}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}^{(1)} \in \R^{1 \times h}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(2)} \in \R^{h \times q}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}^{(2)} \in \R^{1 \times q}\)</span>, and
+<span class="math notranslate nohighlight">\(\sigma\)</span> is applied element-wise. Write the hidden pre-activation as
+<span class="math notranslate nohighlight">\(\mathbf{Z} = \mathbf{X}\mathbf{W}^{(1)} + \mathbf{b}^{(1)}\)</span>, so
+<span class="math notranslate nohighlight">\(\mathbf{H} = \sigma(\mathbf{Z})\)</span>.</p>
+<p>Two index conventions to fix in mind, because the whole proof turns on them:</p>
+<ul class="simple">
+<li><p>The <span class="math notranslate nohighlight">\(h\)</span> <strong>columns</strong> of <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{b}^{(1)}\)</span> index the
+hidden units. Column <span class="math notranslate nohighlight">\(j\)</span> is the incoming weight vector for unit <span class="math notranslate nohighlight">\(j\)</span>.</p></li>
+<li><p>The <span class="math notranslate nohighlight">\(h\)</span> <strong>rows</strong> of <span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}\)</span> index the hidden units. Row <span class="math notranslate nohighlight">\(j\)</span> is the
+outgoing weight vector <em>from</em> unit <span class="math notranslate nohighlight">\(j\)</span>.</p></li>
+</ul>
+<p>So a hidden unit <span class="math notranslate nohighlight">\(j\)</span> lives in <em>column</em> <span class="math notranslate nohighlight">\(j\)</span> of the first weight matrix and <em>row</em>
+<span class="math notranslate nohighlight">\(j\)</span> of the second. Relabeling unit <span class="math notranslate nohighlight">\(j\)</span> therefore means permuting columns of
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\)</span> and rows of <span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}\)</span> — in the same order.</p>
+</section>
+<section id="permutation-matrices-briefly">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Permutation matrices, briefly</a><a class="headerlink" href="#permutation-matrices-briefly" title="Link to this heading">#</a></h2>
+<div class="proof definition admonition" id="def:perm-matrix">
+<p class="admonition-title"><span class="caption-number">Definition 26 </span> (Permutation matrix)</p>
+<section class="definition-content" id="proof-content">
+<p>A <strong>permutation matrix</strong> <span class="math notranslate nohighlight">\(\mathbf{P} \in \R^{h \times h}\)</span> has exactly one entry
+equal to <span class="math notranslate nohighlight">\(1\)</span> in each row and each column and <span class="math notranslate nohighlight">\(0\)</span> everywhere else.
+Right-multiplying <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> permutes columns; left-multiplying permutes
+rows. Permutation matrices are orthogonal: <span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\mathbf{P} =
+\mathbf{P}\mathbf{P}^{\top} = \mathbf{I}\)</span>.</p>
+</section>
+</div><p>For example,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\mathbf{P} = \begin{bmatrix} 0 &amp; 1 &amp; 0 \\ 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}
+\end{split}\]</div>
+<p>swaps the first two columns of anything it right-multiplies and the first two
+rows of anything it left-multiplies. Orthogonality is the key: it lets us move
+<span class="math notranslate nohighlight">\(\mathbf{P}\)</span> through an expression and cancel <span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\mathbf{P}\)</span> to
+<span class="math notranslate nohighlight">\(\mathbf{I}\)</span>.</p>
+</section>
+<section id="permuting-the-weights">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Permuting the weights</a><a class="headerlink" href="#permuting-the-weights" title="Link to this heading">#</a></h2>
+<p>Applying a hidden-unit permutation <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> to the parameters means
+relabeling the units consistently across both weight matrices and the hidden
+bias. Using the convention above:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{W}^{(1)}_{\pi} \defeq \mathbf{W}^{(1)}\mathbf{P}, \qquad
+\mathbf{b}^{(1)}_{\pi} \defeq \mathbf{b}^{(1)}\mathbf{P}, \qquad
+\mathbf{W}^{(2)}_{\pi} \defeq \mathbf{P}^{\top}\mathbf{W}^{(2)}.
+\]</div>
+<p>The output bias <span class="math notranslate nohighlight">\(\mathbf{b}^{(2)}\)</span> is indexed by outputs <span class="math notranslate nohighlight">\(q\)</span>, not hidden units
+<span class="math notranslate nohighlight">\(h\)</span>, so it is untouched. Read the subscripts literally:
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\mathbf{P}\)</span> permutes the <em>columns</em> of <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\)</span> (the
+hidden units as seen by layer 1), and <span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\mathbf{W}^{(2)}\)</span>
+permutes the <em>rows</em> of <span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}\)</span> (the hidden units as seen by layer 2).
+The transpose appears because left-multiplication by <span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\)</span> does
+the same relabeling as right-multiplication by <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>.</p>
+<div class="proof remark admonition" id="rem:why-transpose">
+<p class="admonition-title"><span class="caption-number">Remark 17 </span> (Why the transpose, and why one convention throughout)</p>
+<section class="remark-content" id="proof-content">
+<p>Because <span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}\)</span>’s hidden-unit index is its <em>row</em> index, permuting
+those rows is a left-multiplication. To perform the <em>same</em> relabeling that
+<span class="math notranslate nohighlight">\(\mathbf{P}\)</span> performs as a right-multiplication, we left-multiply by
+<span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\)</span> (the inverse of a permutation matrix is its transpose).
+We use this column/right, row/left convention for <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\)</span> and
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}\)</span> respectively throughout — including the gradient and
+update steps — so every “permuted” quantity stays a faithful relabeling.</p>
+</section>
+</div></section>
+<section id="the-forward-pass-is-invariant">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">The forward pass is invariant</a><a class="headerlink" href="#the-forward-pass-is-invariant" title="Link to this heading">#</a></h2>
+<p>We prove two things: the hidden activations merely get permuted, and the output
+does not change at all.</p>
+<p>The first step needs a small lemma — that an element-wise activation commutes
+with a column permutation.</p>
+<div class="proof lemma admonition" id="lem:elemwise-permute">
+<p class="admonition-title"><span class="caption-number">Lemma 2 </span> (Element-wise functions commute with permutation)</p>
+<section class="lemma-content" id="proof-content">
+<p>For any element-wise function <span class="math notranslate nohighlight">\(\sigma\)</span>, any matrix <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>, and any
+permutation matrix <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> of compatible width,
+<span class="math notranslate nohighlight">\(\sigma(\mathbf{Z}\mathbf{P}) = \sigma(\mathbf{Z})\,\mathbf{P}\)</span>.</p>
+</section>
+</div><p>The reason: <span class="math notranslate nohighlight">\(\mathbf{Z}\mathbf{P}\)</span> just reorders the columns of <span class="math notranslate nohighlight">\(\mathbf{Z}\)</span>,
+and because <span class="math notranslate nohighlight">\(\sigma\)</span> acts independently on each entry, reordering the columns
+before or after applying <span class="math notranslate nohighlight">\(\sigma\)</span> gives the same result. We verify it
+numerically before trusting the algebra:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1992</span><span class="p">)</span>
+<span class="linenos">2</span><span class="n">Z</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>                 <span class="c1"># any pre-activation matrix</span>
+<span class="linenos">3</span><span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span> <span class="c1"># a column permutation</span>
+<span class="linenos">4</span>
+<span class="linenos">5</span><span class="n">sigmoid</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">m</span><span class="p">))</span>
+<span class="linenos">6</span>
+<span class="linenos">7</span><span class="c1"># sigma(Z P)  vs.  sigma(Z) P</span>
+<span class="linenos">8</span><span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">Z</span> <span class="o">@</span> <span class="n">P</span><span class="p">),</span> <span class="n">sigmoid</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">@</span> <span class="n">P</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<p>With the lemma in hand, the hidden activation under the permuted weights is</p>
+<div class="math notranslate nohighlight" id="equation-eq-hidden-permuted">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-hidden-permuted" title="Link to this equation">#</a></span>\[
+\mathbf{H}_{\pi}
+= \sigma\!\left(\mathbf{X}\mathbf{W}^{(1)}_{\pi} + \mathbf{b}^{(1)}_{\pi}\right)
+= \sigma\!\left(\mathbf{X}\mathbf{W}^{(1)}\mathbf{P} + \mathbf{b}^{(1)}\mathbf{P}\right)
+= \sigma\!\left(\bigl(\mathbf{X}\mathbf{W}^{(1)} + \mathbf{b}^{(1)}\bigr)\mathbf{P}\right)
+= \sigma(\mathbf{Z}\mathbf{P})
+= \sigma(\mathbf{Z})\,\mathbf{P}
+= \mathbf{H}\mathbf{P}.
+\]</div>
+<p>The activations are not different — they are the same activations, columns
+reordered. Now feed them through the permuted second layer:</p>
+<div class="math notranslate nohighlight" id="equation-eq-output-invariant">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-output-invariant" title="Link to this equation">#</a></span>\[
+\mathbf{O}_{\pi}
+= \mathbf{H}_{\pi}\mathbf{W}^{(2)}_{\pi} + \mathbf{b}^{(2)}
+= (\mathbf{H}\mathbf{P})(\mathbf{P}^{\top}\mathbf{W}^{(2)}) + \mathbf{b}^{(2)}
+= \mathbf{H}(\mathbf{P}\mathbf{P}^{\top})\mathbf{W}^{(2)} + \mathbf{b}^{(2)}
+= \mathbf{H}\mathbf{W}^{(2)} + \mathbf{b}^{(2)}
+= \mathbf{O}.
+\]</div>
+<div class="proof theorem admonition" id="thm:forward-invariance">
+<p class="admonition-title"><span class="caption-number">Theorem 4 </span> (Forward invariance)</p>
+<section class="theorem-content" id="proof-content">
+<p>Permuting the hidden units of a layer — <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}_{\pi} =
+\mathbf{W}^{(1)}\mathbf{P}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{b}^{(1)}_{\pi} = \mathbf{b}^{(1)}\mathbf{P}\)</span>,
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}_{\pi} = \mathbf{P}^{\top}\mathbf{W}^{(2)}\)</span> — permutes the
+hidden activations (<span class="math notranslate nohighlight">\(\mathbf{H}_{\pi} = \mathbf{H}\mathbf{P}\)</span>) and leaves the
+output exactly unchanged (<span class="math notranslate nohighlight">\(\mathbf{O}_{\pi} = \mathbf{O}\)</span>).</p>
+</section>
+</div><p>The output is identical, so the <em>loss</em> is identical. The forward pass cannot
+tell the two parameterizations apart.</p>
+</section>
+<section id="the-backward-pass-is-invariant">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">The backward pass is invariant</a><a class="headerlink" href="#the-backward-pass-is-invariant" title="Link to this heading">#</a></h2>
+<p>If the gradients also relabeled consistently, then a training step cannot
+distinguish the parameterizations either — which is what makes the symmetry
+ungovernable. We show exactly that. Take squared error
+<span class="math notranslate nohighlight">\(\mathcal{L} = \tfrac{1}{2}\lVert \mathbf{O} - \mathbf{Y} \rVert^{2}\)</span>, so the
+output-layer error is <span class="math notranslate nohighlight">\(\boldsymbol{\delta}_{O} = \mathbf{O} - \mathbf{Y}\)</span>,
+unchanged by the permutation because <span class="math notranslate nohighlight">\(\mathbf{O}\)</span> is.</p>
+<p><strong>Output-layer weights.</strong> Since <span class="math notranslate nohighlight">\(\partial \mathbf{O}/\partial \mathbf{W}^{(2)}\)</span>
+contributes <span class="math notranslate nohighlight">\(\mathbf{H}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(2)}} = \mathbf{H}^{\top}\boldsymbol{\delta}_{O}.
+\]</div>
+<p>Under the permutation, <span class="math notranslate nohighlight">\(\mathbf{H}\)</span> becomes <span class="math notranslate nohighlight">\(\mathbf{H}_{\pi} = \mathbf{H}\mathbf{P}\)</span>,
+so</p>
+<div class="math notranslate nohighlight" id="equation-eq-grad-w2">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-grad-w2" title="Link to this equation">#</a></span>\[
+\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(2)}_{\pi}}
+= \mathbf{H}_{\pi}^{\top}\boldsymbol{\delta}_{O}
+= (\mathbf{H}\mathbf{P})^{\top}\boldsymbol{\delta}_{O}
+= \mathbf{P}^{\top}\mathbf{H}^{\top}\boldsymbol{\delta}_{O}
+= \mathbf{P}^{\top}\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(2)}}.
+\]</div>
+<p>The gradient’s <em>rows</em> are permuted by <span class="math notranslate nohighlight">\(\mathbf{P}^{\top}\)</span> — precisely the
+relabeling that <span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}_{\pi} = \mathbf{P}^{\top}\mathbf{W}^{(2)}\)</span>
+applied to the weights. Weight and gradient relabel together.</p>
+<p><strong>Hidden-layer weights.</strong> Let
+<span class="math notranslate nohighlight">\(\boldsymbol{\delta}_{H} = (\boldsymbol{\delta}_{O}\mathbf{W}^{(2)\top}) \odot \sigma'(\mathbf{Z})\)</span>,
+the backpropagated error at the hidden layer, with <span class="math notranslate nohighlight">\(\odot\)</span> the element-wise
+(Hadamard) product. Then
+<span class="math notranslate nohighlight">\(\partial \mathcal{L}/\partial \mathbf{W}^{(1)} = \mathbf{X}^{\top}\boldsymbol{\delta}_{H}\)</span>.
+We need <span class="math notranslate nohighlight">\(\boldsymbol{\delta}_{H}\)</span> under the permutation. Using
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(2)\top}_{\pi} = (\mathbf{P}^{\top}\mathbf{W}^{(2)})^{\top} =
+\mathbf{W}^{(2)\top}\mathbf{P}\)</span>, <span class="math notranslate nohighlight">\(\mathbf{Z}_{\pi} = \mathbf{Z}\mathbf{P}\)</span>, and
+<a class="reference internal" href="#lem:elemwise-permute">Lemma 2</a> again
+(<span class="math notranslate nohighlight">\(\sigma'(\mathbf{Z}\mathbf{P}) = \sigma'(\mathbf{Z})\mathbf{P}\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+\boldsymbol{\delta}_{H,\pi}
+= \bigl(\boldsymbol{\delta}_{O}\mathbf{W}^{(2)\top}_{\pi}\bigr) \odot \sigma'(\mathbf{Z}_{\pi})
+= \bigl(\boldsymbol{\delta}_{O}\mathbf{W}^{(2)\top}\mathbf{P}\bigr) \odot \bigl(\sigma'(\mathbf{Z})\mathbf{P}\bigr)
+= \bigl((\boldsymbol{\delta}_{O}\mathbf{W}^{(2)\top}) \odot \sigma'(\mathbf{Z})\bigr)\mathbf{P}
+= \boldsymbol{\delta}_{H}\mathbf{P},
+\]</div>
+<p>where the Hadamard product pulls through the column permutation for the same
+reason <span class="math notranslate nohighlight">\(\sigma\)</span> did — it is element-wise. Therefore</p>
+<div class="math notranslate nohighlight" id="equation-eq-grad-w1">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-grad-w1" title="Link to this equation">#</a></span>\[
+\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(1)}_{\pi}}
+= \mathbf{X}^{\top}\boldsymbol{\delta}_{H,\pi}
+= \mathbf{X}^{\top}\boldsymbol{\delta}_{H}\mathbf{P}
+= \frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(1)}}\mathbf{P},
+\]</div>
+<p>and similarly <span class="math notranslate nohighlight">\(\partial \mathcal{L}/\partial \mathbf{b}^{(1)}_{\pi} =
+(\partial \mathcal{L}/\partial \mathbf{b}^{(1)})\mathbf{P}\)</span>, while
+<span class="math notranslate nohighlight">\(\partial \mathcal{L}/\partial \mathbf{b}^{(2)}\)</span> is unchanged. Every gradient
+that is indexed by hidden units is relabeled by the <em>same</em> <span class="math notranslate nohighlight">\(\mathbf{P}\)</span> that
+relabeled the weights.</p>
+<div class="proof theorem admonition" id="thm:backward-invariance">
+<p class="admonition-title"><span class="caption-number">Theorem 5 </span> (Backward invariance)</p>
+<section class="theorem-content" id="proof-content">
+<p>Under the hidden-unit permutation, the gradients relabel exactly as the
+weights do: <span class="math notranslate nohighlight">\(\partial \mathcal{L}/\partial \mathbf{W}^{(1)}_{\pi} =
+(\partial \mathcal{L}/\partial \mathbf{W}^{(1)})\mathbf{P}\)</span> and
+<span class="math notranslate nohighlight">\(\partial \mathcal{L}/\partial \mathbf{W}^{(2)}_{\pi} =
+\mathbf{P}^{\top}(\partial \mathcal{L}/\partial \mathbf{W}^{(2)})\)</span>.</p>
+</section>
+</div></section>
+<section id="the-optimizer-preserves-the-symmetry">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">The optimizer preserves the symmetry</a><a class="headerlink" href="#the-optimizer-preserves-the-symmetry" title="Link to this heading">#</a></h2>
+<p>This is the punchline. Take one SGD step of size <span class="math notranslate nohighlight">\(\alpha\)</span>. For the first layer,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{W}^{(1)}_{\pi} \leftarrow \mathbf{W}^{(1)}_{\pi} - \alpha\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(1)}_{\pi}}
+= \mathbf{W}^{(1)}\mathbf{P} - \alpha\!\left(\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(1)}}\mathbf{P}\right)
+= \left(\mathbf{W}^{(1)} - \alpha\frac{\partial \mathcal{L}}{\partial \mathbf{W}^{(1)}}\right)\!\mathbf{P}.
+\]</div>
+<p>The updated <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}_{\pi}\)</span> is <em>still</em> the updated <span class="math notranslate nohighlight">\(\mathbf{W}^{(1)}\)</span>
+right-multiplied by <span class="math notranslate nohighlight">\(\mathbf{P}\)</span>. The same algebra gives
+<span class="math notranslate nohighlight">\(\mathbf{W}^{(2)}_{\pi} \leftarrow \mathbf{P}^{\top}(\mathbf{W}^{(2)} - \alpha\,\partial \mathcal{L}/\partial \mathbf{W}^{(2)})\)</span>.
+The permutation relationship survives the step unchanged — and so, by
+<a class="reference internal" href="#thm:forward-invariance">Theorem 4</a>, does <span class="math notranslate nohighlight">\(\mathbf{O}_{\pi} = \mathbf{O}\)</span>.</p>
+<div class="proof corollary admonition" id="cor:symmetry-invariant">
+<p class="admonition-title"><span class="caption-number">Corollary 1 </span> (Permutation symmetry is a training invariant)</p>
+<section class="corollary-content" id="proof-content">
+<p>If two parameterizations are related by a hidden-unit permutation at step <span class="math notranslate nohighlight">\(t\)</span>,
+they are related by the same permutation at step <span class="math notranslate nohighlight">\(t+1\)</span>, and produce the same
+output at every step. Plain gradient descent cannot break permutation
+symmetry.</p>
+</section>
+</div><div class="tip admonition">
+<p class="admonition-title">What <em>can</em> break it</p>
+<p>If the optimizer cannot, what does? Asymmetric initialization (random weights)
+starts the units out <em>non</em>-identical, so there is no permutation relating them
+to preserve. Stochastic regularization such as <strong>dropout</strong> perturbs units
+independently each step, which is part of why it helps beyond its explicit
+regularization role. Batch noise and data augmentation help for the same
+reason. The deterministic, full-batch gradient descent of the proof above does
+not.</p>
+</div>
+</section>
+<section id="why-this-matters-exact-redundancy">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Why this matters: exact redundancy</a><a class="headerlink" href="#why-this-matters-exact-redundancy" title="Link to this heading">#</a></h2>
+<p>Permutation symmetry is a form of <strong>over-parametrization</strong> (equivalently,
+non-identifiability): many distinct settings of the parameters compute the
+same function and attain the same loss. The practical consequences:</p>
+<ul class="simple">
+<li><p><strong>The loss surface has many equivalent minima.</strong> For a layer of <span class="math notranslate nohighlight">\(h\)</span> units
+there are <span class="math notranslate nohighlight">\(h!\)</span> parameterizations of any solution, related by permutation.
+Comparing two trained networks parameter-for-parameter is therefore
+meaningless without accounting for this symmetry.</p></li>
+<li><p><strong>Symmetric initializations are traps.</strong> If the initializer happens to place
+units in a symmetric configuration — most dramatically, identical — the
+corollary says training stays there. This is not a loose intuition; it is the
+content of <a class="reference internal" href="#cor:symmetry-invariant">Corollary 1</a>, and it is the bridge to
+<a class="reference internal" href="03_weight_initialization.html"><span class="doc">weight initialization</span></a>.</p></li>
+</ul>
+</section>
+<section id="summary">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>If this chapter had to be one sentence: <strong>hidden units are interchangeable, and
+because the gradient relabels exactly as the weights do, a gradient step
+preserves that interchangeability — so plain training can never break a
+symmetry the initializer created.</strong> The forward invariance
+(<span class="math notranslate nohighlight">\(\mathbf{O}_{\pi} = \mathbf{O}\)</span>, <a class="reference internal" href="#thm:forward-invariance">Theorem 4</a>) and the
+gradient relabeling (<a class="reference internal" href="#thm:backward-invariance">Theorem 5</a>) are the two facts to
+carry forward. The next chapter uses the second of them — the
+corollary — to prove that constant initialization is fatal, and then derives
+the random, scale-aware schemes (Xavier, Kaiming) that break symmetry <em>and</em>
+control signal scale across depth.</p>
+<div class="seealso admonition">
+<p class="admonition-title">Further reading</p>
+<ul class="simple">
+<li><p><span class="bibtex-citation" id="id1">[<a class="reference internal" href="../../bibliography.html#id5" title="Aston Zhang, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive into Deep Learning. Cambridge University Press, 2023. URL: https://D2L.ai.">Zhang <em>et al.</em>, 2023</a>]</span>, §5.4, motivates the permutation-symmetry argument for
+why symmetric (constant) initialization fails; this chapter formalizes it
+fully, forward and backward.</p></li>
+<li><p><a class="reference internal" href="03_weight_initialization.html"><span class="doc">Weight Initialization: Why Constant and Zero Init Fail</span></a>
+— the direct continuation, applying <a class="reference internal" href="#cor:symmetry-invariant">Corollary 1</a>.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./influential/numerical_stability_and_initialization"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01_intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Why Neural Network Initialization Matters</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03_weight_initialization.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Weight Initialization: Why Constant and Zero Init Fail</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item"><div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hidden-units-are-interchangeable">Hidden units are interchangeable</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-a-one-hidden-layer-mlp">Setting: a one-hidden-layer MLP</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#permutation-matrices-briefly">Permutation matrices, briefly</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#permuting-the-weights">Permuting the weights</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-pass-is-invariant">The forward pass is invariant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-backward-pass-is-invariant">The backward pass is invariant</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-optimizer-preserves-the-symmetry">The optimizer preserves the symmetry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-this-matters-exact-redundancy">Why this matters: exact redundancy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Gao Hongnan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2026.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

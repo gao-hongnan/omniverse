@@ -291,6 +291,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../loss_functions/04_cross_entropy_loss.html">Cross Entropy Loss</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_stability_and_initialization/01_intro.html">Why Neural Network Initialization Matters</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_stability_and_initialization/02_permutation_symmetry.html">Permutation Symmetry in Neural Networks Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_stability_and_initialization/03_weight_initialization.html">Weight Initialization: Why Constant and Zero Init Fail</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../decision_boundary/01_intro.html">Decision Boundary</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../decision_boundary/02_concept.html">Concept: Decision Boundary</a></li>
 </ul>
@@ -356,6 +361,22 @@
 <li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/precision_recall_revisited.html">Precision and Recall Revisited: Object Detection</a></li>
 </ul>
 </details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/01_intro.html">Computer Vision: Learning to See with Convolutions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/01_intro.html">Convolutional Kernels: How CNNs Learn Local Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/02_concept.html">Cross-Correlation vs Convolution: The Sliding-Window Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/03_implementation.html">Implementing 2D Cross-Correlation From Scratch in NumPy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/01_concept.html">Image Normalization vs Standardization: Why Scale Matters</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/02_implementation.html">Computing Image Statistics and Applying Both Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../deep_learning/computer_vision/helpsheet.html">CNN Design Principles: Locality, Weight Sharing, Equivariance</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1020,10 +1041,10 @@ based on the optimal assignment <span class="math notranslate nohighlight">\(\ma
 monotonically decreases.</p>
 <p><strong>First</strong>, once all the samples <span class="math notranslate nohighlight">\(\left\{\mathbf{x}^{(n)}\right\}_{n=1}^N\)</span> are
 assigned to the clusters as per the <strong>assignment step</strong> in
-<a class="reference internal" href="02_concept.html#equation-eq-kmeans-classify">(33)</a>, we will recover the cost at the <span class="math notranslate nohighlight">\(t\)</span>-th iteration,
+<a class="reference internal" href="02_concept.html#equation-eq-kmeans-classify">(38)</a>, we will recover the cost at the <span class="math notranslate nohighlight">\(t\)</span>-th iteration,
 defined as:</p>
 <div class="math notranslate nohighlight" id="equation-eq-kmeans-convergence-repeat-1">
-<span class="eqno">(40)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-1" title="Link to this equation">#</a></span>\[\widehat{\mathcal{J}}_{\mathcal{S}}^{[t]}\left(\hat{C}_1^{[t]}, \ldots, \hat{C}_K^{[t]}, \boldsymbol{\mu}_1^{[t]}, \ldots, \boldsymbol{\mu}_K^{[t]} \right) = \sum_{k=1}^K \sum_{n \in \hat{C}_k^{[t]}} \left\|\mathbf{x}^{(n)} - \boldsymbol{\mu}_k^{[t]}\right\|^2\]</div>
+<span class="eqno">(45)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-1" title="Link to this equation">#</a></span>\[\widehat{\mathcal{J}}_{\mathcal{S}}^{[t]}\left(\hat{C}_1^{[t]}, \ldots, \hat{C}_K^{[t]}, \boldsymbol{\mu}_1^{[t]}, \ldots, \boldsymbol{\mu}_K^{[t]} \right) = \sum_{k=1}^K \sum_{n \in \hat{C}_k^{[t]}} \left\|\mathbf{x}^{(n)} - \boldsymbol{\mu}_k^{[t]}\right\|^2\]</div>
 <p>Note in particular that the base case is we initialized the cluster centers
 <span class="math notranslate nohighlight">\(\boldsymbol{\mu}_k^{[0]}\)</span> for the first iteration <span class="math notranslate nohighlight">\(t=0\)</span> and this induces the
 clusters <span class="math notranslate nohighlight">\(\hat{C}_1^{[0]}, \ldots, \hat{C}_K^{[0]}\)</span> for which we assigned each
@@ -1052,7 +1073,7 @@ minimizes the cost function <span class="math notranslate nohighlight">\(\wideha
 \]</div>
 <p>and subsequently,</p>
 <div class="math notranslate nohighlight" id="equation-eq-kmeans-convergence-repeat-2">
-<span class="eqno">(41)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-2" title="Link to this equation">#</a></span>\[\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t]},
+<span class="eqno">(46)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-2" title="Link to this equation">#</a></span>\[\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t]},
 \ldots, \hat{C}_K^{[t]}, \boldsymbol{\mu}_1^{[t+1]}, \ldots,
 \boldsymbol{\mu}_K^{[t+1]} \right) \leq
 \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t]}, \ldots,
@@ -1080,7 +1101,7 @@ function <span class="math notranslate nohighlight">\(\widehat{\mathcal{J}}\)</s
 \]</div>
 <p>and subsequently,</p>
 <div class="math notranslate nohighlight" id="equation-eq-kmeans-convergence-repeat-3">
-<span class="eqno">(42)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-3" title="Link to this equation">#</a></span>\[\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t+1]},
+<span class="eqno">(47)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-3" title="Link to this equation">#</a></span>\[\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t+1]},
 \ldots, \hat{C}_K^{[t+1]}, \boldsymbol{\mu}_1^{[t+1]}, \ldots,
 \boldsymbol{\mu}_K^{[t+1]} \right) \leq
 \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t]}, \ldots,
@@ -1093,10 +1114,10 @@ we replace the cluster assignments <span class="math notranslate nohighlight">\(
 the new assignments <span class="math notranslate nohighlight">\(\hat{C}_1^{[t+1]}, \ldots, \hat{C}_K^{[t+1]}\)</span>.</p>
 <p><strong>Finally</strong>, we can show that the cost function <span class="math notranslate nohighlight">\(\widehat{\mathcal{J}}\)</span> is
 <strong>decreasing</strong> in each iteration.</p>
-<p>Combining <a class="reference internal" href="#equation-eq-kmeans-convergence-repeat-2">(41)</a> and
-<a class="reference internal" href="#equation-eq-kmeans-convergence-repeat-3">(42)</a>, we have the following inequality:</p>
+<p>Combining <a class="reference internal" href="#equation-eq-kmeans-convergence-repeat-2">(46)</a> and
+<a class="reference internal" href="#equation-eq-kmeans-convergence-repeat-3">(47)</a>, we have the following inequality:</p>
 <div class="math notranslate nohighlight" id="equation-eq-kmeans-convergence-repeat-4">
-<span class="eqno">(43)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-4" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}^{[t+1]} &amp;=
+<span class="eqno">(48)<a class="headerlink" href="#equation-eq-kmeans-convergence-repeat-4" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned} \widehat{\mathcal{J}}_{\mathcal{S}}^{[t+1]} &amp;=
 \widehat{\mathcal{J}}_{\mathcal{S}}\left(\hat{C}_1^{[t+1]}, \ldots,
 \hat{C}_K^{[t+1]}, \boldsymbol{\mu}_1^{[t+1]}, \ldots,
 \boldsymbol{\mu}_K^{[t+1]} \right) \\ &amp;\leq

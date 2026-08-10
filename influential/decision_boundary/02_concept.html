@@ -291,6 +291,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../loss_functions/04_cross_entropy_loss.html">Cross Entropy Loss</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../numerical_stability_and_initialization/01_intro.html">Why Neural Network Initialization Matters</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_stability_and_initialization/02_permutation_symmetry.html">Permutation Symmetry in Neural Networks Explained</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../numerical_stability_and_initialization/03_weight_initialization.html">Weight Initialization: Why Constant and Zero Init Fail</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="01_intro.html">Decision Boundary</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Concept: Decision Boundary</a></li>
 </ul>
@@ -356,6 +361,22 @@
 <li class="toctree-l3"><a class="reference internal" href="../evaluation_metrics/computer_vision/precision_recall_revisited.html">Precision and Recall Revisited: Object Detection</a></li>
 </ul>
 </details></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Deep Learning</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/01_intro.html">Computer Vision: Learning to See with Convolutions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/01_intro.html">Convolutional Kernels: How CNNs Learn Local Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/02_concept.html">Cross-Correlation vs Convolution: The Sliding-Window Math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/convolutional_kernels/03_implementation.html">Implementing 2D Cross-Correlation From Scratch in NumPy</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/01_concept.html">Image Normalization vs Standardization: Why Scale Matters</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../deep_learning/computer_vision/image_normalization/02_implementation.html">Computing Image Statistics and Applying Both Transforms</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../deep_learning/computer_vision/helpsheet.html">CNN Design Principles: Locality, Weight Sharing, Equivariance</a></li>
 </ul>
 </details></li>
 </ul>
@@ -937,14 +958,14 @@ used to make predictions for new observations.</p>
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Decision Boundary</a><a class="headerlink" href="#decision-boundary" title="Link to this heading">#</a></h2>
 <p>We will assume that the dataset has <span class="math notranslate nohighlight">\(N\)</span> samples,<span class="math notranslate nohighlight">\(K=2\)</span> classes and <span class="math notranslate nohighlight">\(D\)</span> features.</p>
 <div class="proof definition admonition" id="def:decision_boundary">
-<p class="admonition-title"><span class="caption-number">Definition 25 </span> (Decision Boundary)</p>
+<p class="admonition-title"><span class="caption-number">Definition 30 </span> (Decision Boundary)</p>
 <section class="definition-content" id="proof-content">
 <p>A decision boundary is a hyperplane that separates the two classes in a
 dataset (sample) <span class="math notranslate nohighlight">\(\mathcal{S} = \{(\mathbf{x}_i, y_i)\}_{i=1}^N\)</span>.</p>
 <p>More specifically, it is the set of points <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> such that the following
 equation holds:</p>
 <div class="math notranslate nohighlight" id="equation-eq-decision-boundary-eq-1">
-<span class="eqno">(7)<a class="headerlink" href="#equation-eq-decision-boundary-eq-1" title="Link to this equation">#</a></span>\[
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-decision-boundary-eq-1" title="Link to this equation">#</a></span>\[
 \mathbb{P}(\hat{Y} = 1 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}}) = \mathbb{P}(\hat{Y} = 0 \mid \mathbf{X} ;  \boldsymbol{\hat{\theta}})
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\hat{Y}\)</span> is the predicted class (or logits), <span class="math notranslate nohighlight">\(\mathbf{X}\)</span> is the feature vector, and
@@ -977,9 +998,9 @@ that <span class="math notranslate nohighlight">\(\mathbb{P}(\hat{Y}=0 \mid \mat
 \mathbb{P}(\hat{Y} = 1 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}}) &amp;= \frac{1}{2} \\
 \end{aligned}
 \end{split}\]</div>
-<p>So another way of writing <a class="reference internal" href="#equation-eq-decision-boundary-eq-1">(7)</a> is</p>
+<p>So another way of writing <a class="reference internal" href="#equation-eq-decision-boundary-eq-1">(12)</a> is</p>
 <div class="math notranslate nohighlight" id="equation-eq-decision-boundary-eq-2">
-<span class="eqno">(8)<a class="headerlink" href="#equation-eq-decision-boundary-eq-2" title="Link to this equation">#</a></span>\[
+<span class="eqno">(13)<a class="headerlink" href="#equation-eq-decision-boundary-eq-2" title="Link to this equation">#</a></span>\[
 \mathbb{P}(\hat{Y} = 1 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}}) = \frac{1}{2}
 \]</div>
 </section>
@@ -1016,7 +1037,7 @@ vector, and find the parameters <span class="math notranslate nohighlight">\(\bo
 loss function.</p>
 <p>Now the decision boundary is given by:</p>
 <div class="math notranslate nohighlight" id="equation-eq-decision-boundary-logistic-eq-1">
-<span class="eqno">(9)<a class="headerlink" href="#equation-eq-decision-boundary-logistic-eq-1" title="Link to this equation">#</a></span>\[
+<span class="eqno">(14)<a class="headerlink" href="#equation-eq-decision-boundary-logistic-eq-1" title="Link to this equation">#</a></span>\[
 \mathbb{P}(\hat{Y} = 1 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}}) = \mathbb{P}(\hat{Y} = 0 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}})
 \]</div>
 <p>where <span class="math notranslate nohighlight">\(\boldsymbol{\hat{\theta}}\)</span> is the vector of parameters that minimizes the loss function.</p>
@@ -1035,7 +1056,7 @@ x_2 + \hat{\theta}\_0)} &amp;= 1 \\ -(\hat{\theta}\_1 x_1 + \hat{\theta}\_2 x_2 
 \hat{\theta}\_0 &amp;= 0 \\ \boldsymbol{\hat{\theta}}^T \mathbf{x} &amp;= 0 \\
 \end{aligned}\end{split}\]</div>
 <p>Thus the decision boundary is a line in the 2D space.</p>
-<p>Note if you want to solve it by <a class="reference internal" href="#equation-eq-decision-boundary-logistic-eq-1">(9)</a>, then you just define</p>
+<p>Note if you want to solve it by <a class="reference internal" href="#equation-eq-decision-boundary-logistic-eq-1">(14)</a>, then you just define</p>
 <div class="math notranslate nohighlight">
 \[\mathbb{P}(\hat{Y} = 1 \mid \mathbf{X} ; \boldsymbol{\hat{\theta}}) =
 \frac{1}{1 + e^{-(\hat{\theta}\_1 x_1 + \hat{\theta}\_2 x_2 + \hat{\theta}\_0)}}\]</div>
