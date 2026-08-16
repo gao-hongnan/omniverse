@@ -376,7 +376,7 @@ root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
-    from omnivault.dsa.stack.concrete import StackList
+    from omnivault.dsa.containers.linear.stack.concrete import ArrayStack
     from omnivault._types._generic import T
 else:
     raise ImportError("Root directory not found.")
@@ -388,16 +388,16 @@ class MyQueue:
 
     Attributes
     ----------
-    enqueue : StackList[int]
+    enqueue : ArrayStack[int]
         Stack for enqueue operation (push to back of queue).
-    dequeue : StackList[int]
+    dequeue : ArrayStack[int]
         Stack for dequeue operation (remove from front of queue).
     """
 
     def __init__(self) -> None:
         """Initializes an empty queue."""
-        self.enqueue: StackList[int] = StackList()
-        self.dequeue: StackList[int] = StackList()
+        self.enqueue: ArrayStack[int] = ArrayStack()
+        self.dequeue: ArrayStack[int] = ArrayStack()
 
     def push(self, x: int) -> None:
         """

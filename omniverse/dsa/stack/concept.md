@@ -37,7 +37,7 @@ from __future__ import annotations
 
 import math
 from IPython.display import display
-from typing import Generator, List, Union, Any
+from typing import Generator, List, Union, Any, TypeVar
 from rich.pretty import pprint
 
 import sys
@@ -73,10 +73,11 @@ root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
-    from omnivault.dsa.stack.base import Stack
-    from omnivault._types._generic import T
+    from omnivault.dsa.containers.linear.stack.base import AbstractStack
 else:
     raise ImportError("Root directory not found.")
+
+T = TypeVar("T")
 ```
 
 ## Learning Objectives
@@ -299,7 +300,13 @@ Stack being a container, we will also implement some dunder methods:
 ```
 
 ```{code-cell} ipython3
-class StackList(Stack[T]):
+class StackList(AbstractStack[T]):
+    def __init__(self, iterable: Union[List[T], None] = None) -> None:
+        self._stack_items: List[T] = []
+        if iterable is not None:
+            for item in iterable:
+                self.push(item)
+
     def __len__(self) -> int:
         return len(self.stack_items)
 
@@ -328,6 +335,9 @@ class StackList(Stack[T]):
 
     def push(self, item: T) -> None:
         self.stack_items.append(item)
+
+    def clear(self) -> None:
+        self._stack_items.clear()
 ```
 
 ```{prf:remark} Some Remarks

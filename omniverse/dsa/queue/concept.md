@@ -73,7 +73,6 @@ root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
-    from omnivault.dsa.stack.base import Stack
     from omnivault._types._generic import T
 else:
     raise ImportError("Root directory not found.")
