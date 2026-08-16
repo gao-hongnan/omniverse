@@ -985,7 +985,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Solution</span><span class="p">:</span>
-    <span class="n">deque</span><span class="p">:</span> <span class="n">DeQueueList</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">DeQueueList</span><span class="p">)</span>
+    <span class="n">deque</span><span class="p">:</span> <span class="n">ArrayDeque</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ArrayDeque</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">check_palindrome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
@@ -1012,7 +1012,25 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(True, False)
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">str_1</span> <span class="o">=</span> <span class="s2">&quot;radar&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">str_2</span> <span class="o">=</span> <span class="s2">&quot;lsdkjfskf&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> 
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">Solution</span><span class="p">()</span><span class="o">.</span><span class="n">check_palindrome</span><span class="p">(</span><span class="n">str_1</span><span class="p">),</span> <span class="n">Solution</span><span class="p">()</span><span class="o">.</span><span class="n">check_palindrome</span><span class="p">(</span><span class="n">str_2</span><span class="p">)</span>
+
+<span class="nn">Cell In[2], line 9,</span> in <span class="ni">Solution.check_palindrome</span><span class="nt">(self, string)</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span>     <span class="k">def</span><span class="w"> </span><span class="nf">check_palindrome</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>         <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">string</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>             <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="o">.</span><span class="n">add_rear</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>  <span class="c1"># enqueue</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span> 
+<span class="ne">----&gt; </span><span class="mi">9</span>         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">10</span>             <span class="n">front</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="o">.</span><span class="n">remove_front</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>             <span class="n">rear</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deque</span><span class="o">.</span><span class="n">remove_rear</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>             <span class="k">if</span> <span class="n">front</span> <span class="o">!=</span> <span class="n">rear</span><span class="p">:</span>
+
+<span class="ne">AttributeError</span>: &#39;ArrayDeque&#39; object has no attribute &#39;size&#39;
 </pre></div>
 </div>
 </div>

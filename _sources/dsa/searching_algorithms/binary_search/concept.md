@@ -71,8 +71,8 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.testing.test_framework import TestFramework
     from omnivault.utils.visualization.tabbed_svg_viewer import create_tabbed_svg_viewer
-    from omnivault.dsa.searching_algorithms.context import SearchContext
-    from omnivault.dsa.searching_algorithms.strategies import IterativeBinarySearchExactMatch, RecursiveBinarySearchExactMatch
+    from omnivault.dsa.algorithms.searching.context import SearchContext
+    from omnivault.dsa.algorithms.searching.strategies import IterativeBinarySearchExactMatch, RecursiveBinarySearchExactMatch
 else:
     raise ImportError("Root directory not found.")
 

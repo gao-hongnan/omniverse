@@ -1025,7 +1025,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">is_valid_parentheses</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a string is valid for one type of parentheses.&quot;&quot;&quot;</span>
-    <span class="n">stack</span><span class="p">:</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">StackList</span><span class="p">()</span>
+    <span class="n">stack</span><span class="p">:</span> <span class="n">ArrayStack</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">ArrayStack</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;)&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -1105,8 +1105,8 @@ We will keep pushing the open bracket until we encounter the first close bracket
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Solution</span><span class="p">:</span>
     <span class="n">mapping</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>  <span class="c1"># {&quot;)&quot;: &quot;(&quot;, &quot;}&quot;: &quot;{&quot;, &quot;]&quot;: &quot;[&quot;}</span>
-    <span class="c1"># stack: StackList[str] = StackList()  # The stack to keep track of opening brackets.</span>
-    <span class="n">stack</span><span class="p">:</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StackList</span><span class="p">)</span>
+    <span class="c1"># stack: ArrayStack[str] = ArrayStack()  # The stack to keep track of opening brackets.</span>
+    <span class="n">stack</span><span class="p">:</span> <span class="n">ArrayStack</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ArrayStack</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_valid_parentheses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a string is valid parentheses.&quot;&quot;&quot;</span>
@@ -1150,13 +1150,13 @@ We will keep pushing the open bracket until we encounter the first close bracket
 <div class="warning admonition">
 <p class="admonition-title">Mutation!</p>
 <p>I appreciate why <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> forces you to use <code class="docutils literal notranslate"><span class="pre">field(default)</span></code> when defining a mutable container such as <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
-<p>I have no idea why my code kept overwriting and soon I figured that my <code class="docutils literal notranslate"><span class="pre">StackList</span></code> object is a mutable container, and
+<p>I have no idea why my code kept overwriting and soon I figured that my <code class="docutils literal notranslate"><span class="pre">ArrayStack</span></code> object is a mutable container, and
 this is why you cannot just instantiate an empty list in <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> by</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mylist</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
 </div>
 <p>so in here it should be</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stack</span><span class="p">:</span> <span class="n">StackList</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">StackList</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stack</span><span class="p">:</span> <span class="n">ArrayStack</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ArrayStack</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>as well instead.</p>

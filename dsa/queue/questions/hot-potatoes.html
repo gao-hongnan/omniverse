@@ -993,7 +993,7 @@
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Solution</span><span class="p">:</span>
     <span class="n">counter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">q</span><span class="p">:</span> <span class="n">QueueList</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">QueueList</span><span class="p">)</span>
+    <span class="n">q</span><span class="p">:</span> <span class="n">ArrayQueue</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">ArrayQueue</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">hot_potato</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
@@ -1021,7 +1021,22 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Susan
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="nb">print</span><span class="p">(</span><span class="n">Solution</span><span class="p">()</span><span class="o">.</span><span class="n">hot_potato</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Bill&quot;</span><span class="p">,</span> <span class="s2">&quot;David&quot;</span><span class="p">,</span> <span class="s2">&quot;Susan&quot;</span><span class="p">,</span> <span class="s2">&quot;Jane&quot;</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>  <span class="c1"># Susan</span>
+
+<span class="nn">Cell In[2], line 10,</span> in <span class="ni">Solution.hot_potato</span><span class="nt">(self, names, num)</span>
+<span class="g g-Whitespace">      </span><span class="mi">6</span>     <span class="k">def</span><span class="w"> </span><span class="nf">hot_potato</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span>         <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+<span class="g g-Whitespace">      </span><span class="mi">8</span>             <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">9</span> 
+<span class="ne">---&gt; </span><span class="mi">10</span>         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">11</span>             <span class="n">first_in_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">dequeue</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span>             <span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="o">.</span><span class="n">enqueue</span><span class="p">(</span><span class="n">first_in_q</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span> 
+
+<span class="ne">AttributeError</span>: &#39;ArrayQueue&#39; object has no attribute &#39;size&#39;
 </pre></div>
 </div>
 </div>
