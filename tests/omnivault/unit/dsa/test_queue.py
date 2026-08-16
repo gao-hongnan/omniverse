@@ -1,148 +1,203 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
+
 import pytest
 
-from omnivault.dsa.queue.base import EmptyQueueError
-from omnivault.dsa.queue.concrete import DeQueueList, QueueList
+from omnivault.dsa.containers.linear.queue import AbstractQueue, ArrayQueue, LinkedListQueue
+
+if TYPE_CHECKING:
+    from tests.omnivault.unit.dsa.conftest import TestData
 
 
-class TestQueueList:
+class TestQueueImplementations:
+    @pytest.fixture(params=[ArrayQueue, LinkedListQueue])
+    def queue_class(self, request: pytest.FixtureRequest) -> type[AbstractQueue[Any]]:
+        return cast("type[AbstractQueue[Any]]", request.param)
+
     @pytest.fixture
-    def empty_queue(self) -> QueueList[int]:
-        return QueueList[int]()
+    def empty_queue(self, queue_class: type[AbstractQueue[Any]]) -> AbstractQueue[Any]:
+        return queue_class()
 
     @pytest.fixture
-    def populated_queue(self) -> QueueList[int]:
-        queue: QueueList[int] = QueueList()
-        for i in range(1, 4):  # Add 1, 2, 3
-            queue.enqueue(i)
+    def filled_queue(self, queue_class: type[AbstractQueue[Any]], test_data: TestData) -> AbstractQueue[int]:
+        queue: AbstractQueue[int] = queue_class()
+        for item in test_data.integers[:5]:
+            queue.enqueue(item)
         return queue
 
-    def test_queue_initialization(self, empty_queue: QueueList[int]) -> None:
-        assert empty_queue.size == 0
-        assert empty_queue.is_empty() is True
-        assert empty_queue.queue_items == []
+    @pytest.mark.unit
+    def test_empty_queue_properties(self, empty_queue: AbstractQueue[Any]) -> None:
+        assert empty_queue.is_empty()
+        assert len(empty_queue) == 0
+        assert not empty_queue
+        assert list(empty_queue) == []
+        assert empty_queue.to_list() == []
 
-    def test_enqueue(self, empty_queue: QueueList[int]) -> None:
-        empty_queue.enqueue(1)
-        assert empty_queue.size == 1
-        assert empty_queue.peek() == 1
-        assert empty_queue.queue_items == [1]
+    @pytest.mark.unit
+    def test_enqueue_single_item(self, empty_queue: AbstractQueue[int]) -> None:
+        empty_queue.enqueue(42)
+        assert not empty_queue.is_empty()
+        assert len(empty_queue) == 1
+        assert empty_queue.peek() == 42
+        assert 42 in empty_queue
 
-        empty_queue.enqueue(2)
-        assert empty_queue.size == 2
-        assert empty_queue.peek() == 1
-        assert empty_queue.queue_items == [2, 1]
+    @pytest.mark.unit
+    def test_enqueue_dequeue_fifo_order(self, empty_queue: AbstractQueue[int], test_data: TestData) -> None:
+        items = test_data.integers[:5]
 
-    def test_dequeue(self, populated_queue: QueueList[int]) -> None:
-        assert populated_queue.dequeue() == 1
-        assert populated_queue.size == 2
-        assert populated_queue.peek() == 2
+        for item in items:
+            empty_queue.enqueue(item)
 
-        assert populated_queue.dequeue() == 2
-        assert populated_queue.size == 1
-        assert populated_queue.peek() == 3
+        dequeued_items = []
+        while not empty_queue.is_empty():
+            dequeued_items.append(empty_queue.dequeue())
 
-        assert populated_queue.dequeue() == 3
-        assert populated_queue.is_empty() is True
+        assert dequeued_items == items
 
-    def test_peek(self, populated_queue: QueueList[int]) -> None:
-        assert populated_queue.peek() == 1
-        assert populated_queue.size == 3  # Ensure peek doesn't remove item
+    @pytest.mark.unit
+    def test_peek_does_not_modify_queue(self, filled_queue: AbstractQueue[int]) -> None:
+        initial_len = len(filled_queue)
+        first_item = filled_queue.peek()
 
-    def test_empty_queue_operations(self, empty_queue: QueueList[int]) -> None:
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
-            empty_queue.peek()
+        assert len(filled_queue) == initial_len
+        assert filled_queue.peek() == first_item
+        assert filled_queue.dequeue() == first_item
 
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
+    @pytest.mark.unit
+    def test_dequeue_from_empty_raises_error(self, empty_queue: AbstractQueue[Any]) -> None:
+        with pytest.raises(IndexError, match="empty queue"):
             empty_queue.dequeue()
 
-    def test_iteration(self, populated_queue: QueueList[int]) -> None:
-        result: list[int] = list(populated_queue)
+    @pytest.mark.unit
+    def test_peek_from_empty_raises_error(self, empty_queue: AbstractQueue[Any]) -> None:
+        with pytest.raises(IndexError, match="empty queue"):
+            empty_queue.peek()
 
-        assert result == [1, 2, 3]
-        assert populated_queue.is_empty() is True  # Iterator should consume queue
+    @pytest.mark.unit
+    def test_clear_queue(self, filled_queue: AbstractQueue[int]) -> None:
+        filled_queue.clear()
+        assert filled_queue.is_empty()
+        assert len(filled_queue) == 0
 
-    def test_generic_type_support(self) -> None:
-        string_queue: QueueList[str] = QueueList()
-        string_queue.enqueue("hello")
-        string_queue.enqueue("world")
+    @pytest.mark.unit
+    def test_extend_multiple_items(self, empty_queue: AbstractQueue[int], test_data: TestData) -> None:
+        items = test_data.integers[:5]
+        empty_queue.extend(items)
 
-        assert string_queue.dequeue() == "hello"
-        assert string_queue.peek() == "world"
+        assert len(empty_queue) == len(items)
+        assert empty_queue.to_list() == items
+
+    @pytest.mark.unit
+    def test_iterator_behavior(self, filled_queue: AbstractQueue[int], test_data: TestData) -> None:
+        expected = test_data.integers[:5]
+        assert list(filled_queue) == expected
+
+        for i, item in enumerate(filled_queue):
+            assert item == expected[i]
+
+    @pytest.mark.unit
+    def test_contains_operation(self, filled_queue: AbstractQueue[int], test_data: TestData) -> None:
+        for item in test_data.integers[:5]:
+            assert item in filled_queue
+
+        assert 999 not in filled_queue
+
+    @pytest.mark.unit
+    def test_repr_output(self, queue_class: type[AbstractQueue[Any]]) -> None:
+        queue: AbstractQueue[int] = queue_class([1, 2, 3])
+        repr_str = repr(queue)
+        assert queue_class.__name__ in repr_str
+        assert "1" in repr_str
+        assert "2" in repr_str
+        assert "3" in repr_str
+
+    @pytest.mark.parametrize("size", [10, 100, 1000])
+    def test_large_queue_operations(self, queue_class: type[AbstractQueue[Any]], size: int) -> None:
+        queue: AbstractQueue[int] = queue_class()
+
+        for i in range(size):
+            queue.enqueue(i)
+
+        assert len(queue) == size
+
+        for i in range(size):
+            assert queue.dequeue() == i
+
+        assert queue.is_empty()
+
+    @pytest.mark.edge_case
+    def test_alternating_enqueue_dequeue(self, empty_queue: AbstractQueue[int]) -> None:
+        empty_queue.enqueue(0)
+
+        for i in range(1, 10):
+            empty_queue.enqueue(i)
+            assert empty_queue.dequeue() == i - 1
+
+        assert len(empty_queue) == 1
+        assert empty_queue.dequeue() == 9
 
 
-class TestDeQueueList:
-    @pytest.fixture
-    def empty_deque(self) -> DeQueueList[int]:
-        return DeQueueList[int]()
+class TestArrayQueueSpecific:
+    @pytest.mark.unit
+    def test_array_resizing_optimization(self) -> None:
+        queue = ArrayQueue[int]()
 
-    @pytest.fixture
-    def populated_deque(self) -> DeQueueList[int]:
-        deque: DeQueueList[int] = DeQueueList()
-        for i in range(1, 4):  # Add 1, 2, 3
-            deque.add_rear(i)
-        return deque
+        for i in range(1000):
+            queue.enqueue(i)
 
-    def test_deque_initialization(self, empty_deque: DeQueueList[int]) -> None:
-        assert empty_deque.size == 0
-        assert empty_deque.is_empty() is True
-        assert empty_deque.queue_items == []
+        for _ in range(501):
+            queue.dequeue()
 
-    def test_add_front(self, empty_deque: DeQueueList[int]) -> None:
-        empty_deque.add_front(1)
-        assert empty_deque.size == 1
-        assert empty_deque.peek_front() == 1
-        assert empty_deque.peek_rear() == 1
+        assert len(queue) == 499
+        assert queue._front == 0
 
-        empty_deque.add_front(2)
-        assert empty_deque.size == 2
-        assert empty_deque.peek_front() == 2
-        assert empty_deque.peek_rear() == 1
+    @pytest.mark.unit
+    def test_initialization_with_items(self, test_data: TestData) -> None:
+        items = test_data.integers[:5]
+        queue = ArrayQueue(items)
 
-    def test_add_rear(self, empty_deque: DeQueueList[int]) -> None:
-        empty_deque.add_rear(1)
-        assert empty_deque.size == 1
-        assert empty_deque.peek_front() == 1
-        assert empty_deque.peek_rear() == 1
+        assert len(queue) == len(items)
+        assert queue.to_list() == items
 
-        empty_deque.add_rear(2)
-        assert empty_deque.size == 2
-        assert empty_deque.peek_front() == 1
-        assert empty_deque.peek_rear() == 2
+        items.append(999)
+        assert 999 not in queue
 
-    def test_remove_front(self, populated_deque: DeQueueList[int]) -> None:
-        assert populated_deque.remove_front() == 1
-        assert populated_deque.size == 2
-        assert populated_deque.peek_front() == 2
 
-    def test_remove_rear(self, populated_deque: DeQueueList[int]) -> None:
-        assert populated_deque.remove_rear() == 3
-        assert populated_deque.size == 2
-        assert populated_deque.peek_rear() == 2
+class TestLinkedListQueueSpecific:
+    @pytest.mark.unit
+    def test_initialization_with_items(self, test_data: TestData) -> None:
+        items = test_data.integers[:5]
+        queue = LinkedListQueue(items)
 
-    def test_peek_operations(self, populated_deque: DeQueueList[int]) -> None:
-        assert populated_deque.peek_front() == 1
-        assert populated_deque.peek_rear() == 3
-        assert populated_deque.size == 3  # Ensure peeks don't modify deque
+        assert len(queue) == len(items)
+        assert queue.to_list() == items
 
-    def test_empty_deque_operations(self, empty_deque: DeQueueList[int]) -> None:
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
-            empty_deque.peek_front()
+    @pytest.mark.unit
+    def test_front_rear_pointers(self) -> None:
+        queue = LinkedListQueue[int]()
 
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
-            empty_deque.peek_rear()
+        assert (queue._front, queue._rear) == (None, None)
 
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
-            empty_deque.remove_front()
+        queue.enqueue(1)
+        front = queue._front
+        assert front is queue._rear
+        assert front is not None
+        assert front.value == 1
 
-        with pytest.raises(EmptyQueueError, match="Queue is empty"):
-            empty_deque.remove_rear()
+        queue.enqueue(2)
+        front, rear = queue._front, queue._rear
+        assert front is not rear
+        assert front is not None
+        assert front.value == 1
+        assert rear is not None
+        assert rear.value == 2
 
-    def test_generic_type_support(self) -> None:
-        string_deque: DeQueueList[str] = DeQueueList()
-        string_deque.add_front("hello")
-        string_deque.add_rear("world")
+        queue.dequeue()
+        front = queue._front
+        assert front is queue._rear
+        assert front is not None
+        assert front.value == 2
 
-        assert string_deque.peek_front() == "hello"
-        assert string_deque.peek_rear() == "world"
-        assert string_deque.remove_front() == "hello"
-        assert string_deque.remove_rear() == "world"
+        queue.dequeue()
+        assert (queue._front, queue._rear) == (None, None)

@@ -72,7 +72,7 @@ root_dir = find_root_dir(marker='omnivault')
 
 if root_dir is not None:
     sys.path.append(str(root_dir))
-    from omnivault.dsa.complexity.benchmark import time_complexity_analyzer
+    from omnivault.dsa.core.complexity.benchmark import time_complexity_analyzer
     from reproducibility.seed import seed_all
 else:
     raise ImportError("Root directory not found.")

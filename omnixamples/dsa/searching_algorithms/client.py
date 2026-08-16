@@ -18,8 +18,8 @@ from typing import Callable, List
 import rich
 from rich.pretty import pprint
 
-from omnivault.dsa.searching_algorithms.context import SearchContext
-from omnivault.dsa.searching_algorithms.strategies import IterativeBinarySearchExactMatch, LinearSearchForLoop
+from omnivault.dsa.algorithms.searching.context import SearchContext
+from omnivault.dsa.algorithms.searching.strategies import IterativeBinarySearchExactMatch, LinearSearchForLoop
 
 
 @dataclass

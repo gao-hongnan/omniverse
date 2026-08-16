@@ -1,130 +1,189 @@
-from typing import Any
-
-import pytest
-
-from omnivault.dsa.linked_list.base import DoublyNode, SinglyNode
+from omnivault.dsa.containers.linear.linked_list import DoublyLinkedList, SinglyLinkedList
 
 
-class TestSinglyNode:
-    def test_init_with_data(self) -> None:
-        """Test initialization with only value."""
-        node = SinglyNode[int](value=1)
-        assert node.value == 1
-        assert node.next is None
+class TestSinglyLinkedList:
+    def test_empty_list(self) -> None:
+        sll = SinglyLinkedList[int]()
+        assert len(sll) == 0
+        assert sll.is_empty()
+        assert list(sll) == []
+        assert str(sll) == "None"
 
-    def test_init_with_next(self) -> None:
-        """Test initialization with both value and next node."""
-        next_node = SinglyNode[int](value=2)
-        node = SinglyNode[int](value=1, next=next_node)
-        assert node.value == 1
-        assert node.next is next_node
-        assert node.next.value == 2
+    def test_append(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        sll.append(3)
+        assert len(sll) == 3
+        assert list(sll) == [1, 2, 3]
+        assert str(sll) == "1 -> 2 -> 3 -> None"
 
-    def test_link_nodes(self) -> None:
-        """Test linking nodes after creation."""
-        node1 = SinglyNode[str](value="first")
-        node2 = SinglyNode[str](value="second")
-        node1.next = node2
-        assert node1.next is node2
-        assert node1.next.value == "second"
+    def test_prepend(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.prepend(3)
+        sll.prepend(2)
+        sll.prepend(1)
+        assert len(sll) == 3
+        assert list(sll) == [1, 2, 3]
+        assert str(sll) == "1 -> 2 -> 3 -> None"
 
-    @pytest.mark.parametrize(
-        "value",
-        [
-            42,  # int
-            "hello",  # str
-            3.14,  # float
-            True,  # bool
-            [1, 2, 3],  # list
-            {"key": "value"},  # dict
-        ],
-    )
-    def test_generic_type_support(self, value: Any) -> None:
-        """Test that node supports various value types."""
-        node = SinglyNode[Any](value=value)
-        assert node.value == value
+    def test_remove_head(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        sll.append(3)
+        assert sll.remove(1)
+        assert len(sll) == 2
+        assert list(sll) == [2, 3]
+
+    def test_remove_middle(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        sll.append(3)
+        assert sll.remove(2)
+        assert len(sll) == 2
+        assert list(sll) == [1, 3]
+
+    def test_remove_tail(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        sll.append(3)
+        assert sll.remove(3)
+        assert len(sll) == 2
+        assert list(sll) == [1, 2]
+
+    def test_remove_not_found(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        assert not sll.remove(3)
+        assert len(sll) == 2
+
+    def test_clear(self) -> None:
+        sll = SinglyLinkedList[int]()
+        sll.append(1)
+        sll.append(2)
+        sll.clear()
+        assert len(sll) == 0
+        assert sll.is_empty()
+
+    def test_initialize_with_values(self) -> None:
+        sll = SinglyLinkedList[int]([1, 2, 3])
+        assert len(sll) == 3
+        assert list(sll) == [1, 2, 3]
+
+    def test_iteration(self) -> None:
+        sll = SinglyLinkedList[int]([1, 2, 3])
+        values = list(sll)
+        assert values == [1, 2, 3]
+
+    def test_bool(self) -> None:
+        sll = SinglyLinkedList[int]()
+        assert not sll
+        sll.append(1)
+        assert sll
 
 
-class TestDoublyNode:
-    def test_init_with_data(self) -> None:
-        """Test initialization with only value."""
-        node = DoublyNode[int](value=1)
-        assert node.value == 1
-        assert node.next is None
-        assert node.prev is None
+class TestDoublyLinkedList:
+    def test_empty_list(self) -> None:
+        dll = DoublyLinkedList[int]()
+        assert len(dll) == 0
+        assert dll.is_empty()
+        assert list(dll) == []
+        assert str(dll) == "None"
 
-    def test_init_with_next_and_prev(self) -> None:
-        """Test initialization with value, next, and prev nodes."""
-        node1 = DoublyNode[int](value=1)
-        node2 = DoublyNode[int](value=2)
-        node3 = DoublyNode[int](value=3)
+    def test_append(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        dll.append(3)
+        assert len(dll) == 3
+        assert list(dll) == [1, 2, 3]
+        assert str(dll) == "1 <-> 2 <-> 3 <-> None"
 
-        # Link nodes
-        node2.prev = node1
-        node2.next = node3
-        node1.next = node2
-        node3.prev = node2
+    def test_prepend(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.prepend(3)
+        dll.prepend(2)
+        dll.prepend(1)
+        assert len(dll) == 3
+        assert list(dll) == [1, 2, 3]
+        assert str(dll) == "1 <-> 2 <-> 3 <-> None"
 
-        # Test node2's connections
-        assert node2.value == 2
-        assert node2.prev is node1
-        assert node2.next is node3
+    def test_remove_head(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        dll.append(3)
+        assert dll.remove(1)
+        assert len(dll) == 2
+        assert list(dll) == [2, 3]
 
-        # Test bidirectional linking
-        assert node2.prev.value == 1
-        assert node2.next.value == 3
-        assert node2.prev.next is node2
-        assert node2.next.prev is node2
+    def test_remove_middle(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        dll.append(3)
+        assert dll.remove(2)
+        assert len(dll) == 2
+        assert list(dll) == [1, 3]
 
-    def test_link_nodes(self) -> None:
-        """Test linking nodes after creation."""
-        node1 = DoublyNode[str](value="first")
-        node2 = DoublyNode[str](value="second")
-        node3 = DoublyNode[str](value="third")
+    def test_remove_tail(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        dll.append(3)
+        assert dll.remove(3)
+        assert len(dll) == 2
+        assert list(dll) == [1, 2]
 
-        # Create chain: node1 <-> node2 <-> node3
-        node1.next = node2
-        node2.prev = node1
-        node2.next = node3
-        node3.prev = node2
+    def test_remove_not_found(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        assert not dll.remove(3)
+        assert len(dll) == 2
 
-        # Test forward traversal
-        assert node1.next is node2
-        assert node2.next is node3
+    def test_clear(self) -> None:
+        dll = DoublyLinkedList[int]()
+        dll.append(1)
+        dll.append(2)
+        dll.clear()
+        assert len(dll) == 0
+        assert dll.is_empty()
+        assert dll.tail is None
 
-        # Test backward traversal
-        assert node3.prev is node2
-        assert node2.prev is node1
+    def test_initialize_with_values(self) -> None:
+        dll = DoublyLinkedList[int]([1, 2, 3])
+        assert len(dll) == 3
+        assert list(dll) == [1, 2, 3]
 
-    @pytest.mark.parametrize(
-        "value",
-        [
-            42,  # int
-            "hello",  # str
-            3.14,  # float
-            True,  # bool
-            [1, 2, 3],  # list
-            {"key": "value"},  # dict
-        ],
-    )
-    def test_generic_type_support(self, value: Any) -> None:
-        """Test that node supports various value types."""
-        node = DoublyNode[Any](value=value)
-        assert node.value == value
+    def test_forward_iteration(self) -> None:
+        dll = DoublyLinkedList[int]([1, 2, 3])
+        values = list(dll)
+        assert values == [1, 2, 3]
 
-    def test_circular_reference(self) -> None:
-        """Test creating a circular reference with doubly linked nodes."""
-        node1 = DoublyNode[int](value=1)
-        node2 = DoublyNode[int](value=2)
+    def test_reverse_iteration(self) -> None:
+        dll = DoublyLinkedList[int]([1, 2, 3])
+        values = list(reversed(dll))
+        assert values == [3, 2, 1]
 
-        # Create circular reference
-        node1.next = node2
-        node2.prev = node1
-        node2.next = node1
-        node1.prev = node2
+    def test_bool(self) -> None:
+        dll = DoublyLinkedList[int]()
+        assert not dll
+        dll.append(1)
+        assert dll
 
-        # Test circular nature
-        assert node1.next is node2
-        assert node2.next is node1
-        assert node1.prev is node2
-        assert node2.prev is node1
+    def test_tail_property(self) -> None:
+        dll = DoublyLinkedList[int]()
+        assert (dll.tail,) == (None,)
+        dll.append(1)
+        tail = dll.tail
+        assert tail is not None
+        assert tail.value == 1
+        dll.append(2)
+        tail = dll.tail
+        assert tail is not None
+        assert tail.value == 2
