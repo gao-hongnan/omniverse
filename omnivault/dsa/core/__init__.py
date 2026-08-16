@@ -1,15 +1,6 @@
 from __future__ import annotations
 
-from . import (
-    algorithms,
-    containers,
-    core,
-    geometry,
-    graphs,
-    probabilistic,
-    trees,
-)
-from .core.errors import (
+from .errors import (
     CycleDetected,
     DSAError,
     EmptyContainer,
@@ -31,11 +22,4 @@ __all__ = [
     "KeyNotFound",
     "RectangularityViolation",
     "UnsupportedDataType",
-    "algorithms",
-    "containers",
-    "core",
-    "geometry",
-    "graphs",
-    "probabilistic",
-    "trees",
 ]
