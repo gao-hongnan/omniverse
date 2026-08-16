@@ -1,23 +1,55 @@
 from __future__ import annotations
 
 import functools as fn
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
+
+from .binary import BinaryTreeNode
 
 if TYPE_CHECKING:
-    from .binary import BinaryTreeNode
+    from collections.abc import Callable, Iterable
+
+type NodeInfo[NodeT] = Callable[[NodeT], tuple[str, NodeT | None, NodeT | None]]
 
 
-def print_binary_tree[ItemT](
+def build_binary_tree_from_list_preorder[ItemT](values: Iterable[ItemT | None]) -> BinaryTreeNode[ItemT] | None:
+    cursor = iter(values)
+
+    def build() -> BinaryTreeNode[ItemT] | None:
+        value = next(cursor, None)
+        if value is None:
+            return None
+
+        node = BinaryTreeNode(value)
+        node.left = build()
+        node.right = build()
+        return node
+
+    return build()
+
+
+def _binary_tree_node_info[ItemT](
     node: BinaryTreeNode[ItemT],
+) -> tuple[str, BinaryTreeNode[ItemT] | None, BinaryTreeNode[ItemT] | None]:
+    return str(node.value), node.left, node.right
+
+
+def print_binary_tree[NodeT](
+    node: NodeT,
+    node_info: NodeInfo[NodeT] | None = None,
     *,
     inverted: bool = False,
     is_top: bool = True,
 ) -> list[str] | None:
-    string_value = str(node.value)
+    describe: NodeInfo[NodeT] = node_info if node_info is not None else cast("NodeInfo[NodeT]", _binary_tree_node_info)
+    string_value, left_child, right_child = describe(node)
     string_width = len(string_value)
 
-    left_block = [] if not node.left else print_binary_tree(node.left, inverted=inverted, is_top=False) or []
-    right_block = [] if not node.right else print_binary_tree(node.right, inverted=inverted, is_top=False) or []
+    left_block = (
+        [] if not left_child else print_binary_tree(left_child, describe, inverted=inverted, is_top=False) or []
+    )
+    right_block = (
+        [] if not right_child else print_binary_tree(right_child, describe, inverted=inverted, is_top=False) or []
+    )
 
     common_lines = min(len(left_block), len(right_block))
     sub_level_lines = max(len(left_block), len(right_block))
@@ -32,8 +64,8 @@ def print_binary_tree[ItemT](
     first_right_indent = (right_line_indents + [0])[0]
 
     link_spacing = min(string_width, 2 - string_width % 2)
-    left_link_bar = 1 if node.left else 0
-    right_link_bar = 1 if node.right else 0
+    left_link_bar = 1 if left_child else 0
+    right_link_bar = 1 if right_child else 0
     min_link_width = left_link_bar + link_spacing + right_link_bar
     value_offset = (string_width - link_spacing) // 2
 
@@ -54,9 +86,9 @@ def print_binary_tree[ItemT](
     backslash = "/" if inverted else "\\"
     u_line = "¯" if inverted else "_"
 
-    left_link = "" if not node.left else (" " * first_left_width + u_line * left_link_extra + slash)
+    left_link = "" if not left_child else (" " * first_left_width + u_line * left_link_extra + slash)
     right_link_offset = link_spacing + value_offset * (1 - left_link_bar)
-    right_link = "" if not node.right else (" " * right_link_offset + backslash + u_line * right_link_extra)
+    right_link = "" if not right_child else (" " * right_link_offset + backslash + u_line * right_link_extra)
     link_line = left_link + right_link
 
     left_indent_width = max(0, first_right_indent - right_node_position)
