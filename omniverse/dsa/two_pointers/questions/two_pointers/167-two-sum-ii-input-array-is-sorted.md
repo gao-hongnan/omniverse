@@ -519,3 +519,4 @@ complexity of $\mathcal{O}(n)$ and a space complexity of $\mathcal{O}(1)$.
 
 -   [Algomonster: Two Sum II - Input array is sorted](https://algo.monster/problems/two_sum_sorted)
 -   [Leetcode: Two Sum II - Input array is sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/editorial/)
+-   [PracHub: Find all pairs summing to a target in a sorted array](https://prachub.com/coding-questions/find-all-pairs-summing-to-target-in-sorted-array) — an interview-style two-pointer extension that handles duplicate value pairs.
