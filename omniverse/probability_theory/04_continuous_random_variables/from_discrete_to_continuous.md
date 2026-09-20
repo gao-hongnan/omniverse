@@ -36,7 +36,7 @@ import seaborn as sns
 from typing import *
 %matplotlib inline
 
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 from omnivault.utils.probability_theory.plot import plot_continuous_pdf_and_cdf
 seed_all()
 ```

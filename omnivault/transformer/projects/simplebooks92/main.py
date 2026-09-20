@@ -11,10 +11,10 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import torch
+from hypervigilant.reproducibility import seed_all
 from keras.saving import deserialize_keras_object, serialize_keras_object
 from keras_nlp.samplers import Sampler
 from numpy.typing import NDArray
-from reproducibility.seed import seed_all
 from tensorflow.python.framework.ops import EagerTensor
 from torch import nn
 from torch.utils.data import DataLoader, Dataset

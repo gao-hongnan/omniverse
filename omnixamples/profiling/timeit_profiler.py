@@ -10,8 +10,8 @@ from typing import Dict, Iterable, List, Literal, Tuple
 import numpy as np
 import pandas as pd
 import torch
+from hypervigilant.reproducibility import seed_all
 from pydantic import BaseModel, Field
-from reproducibility.seed import seed_all
 from rich.pretty import pprint
 from tqdm import tqdm
 

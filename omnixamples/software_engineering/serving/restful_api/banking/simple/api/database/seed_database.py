@@ -19,7 +19,7 @@ import random
 from pathlib import Path
 
 from faker import Faker
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker

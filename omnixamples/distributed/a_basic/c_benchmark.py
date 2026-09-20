@@ -37,7 +37,7 @@ import pandas as pd
 import torch
 import torch.distributed
 import torch.multiprocessing as mp
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 from rich.pretty import pprint
 from torch._C._distributed_c10d import ReduceOp
 

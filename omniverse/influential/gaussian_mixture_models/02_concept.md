@@ -63,7 +63,7 @@ if root_dir is not None:
     sys.path.append(str(root_dir))
     from omnivault.utils.visualization.style import use_svg_display
     from omnivault.machine_learning.estimator import BaseEstimator
-    from reproducibility.seed import seed_all
+    from hypervigilant.reproducibility import seed_all
     from omnivault.machine_learning.utils import make_meshgrid
 else:
     raise ImportError("Root directory not found.")

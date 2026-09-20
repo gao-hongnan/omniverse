@@ -29,7 +29,7 @@ from pathlib import Path
 parent_dir = str(Path().resolve().parents[3])
 sys.path.append(parent_dir)
 
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 
 seed_all()
 

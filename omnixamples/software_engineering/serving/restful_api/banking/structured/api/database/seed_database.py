@@ -17,7 +17,7 @@ initial set of data that you're using to populate the database.
 import random
 
 from faker import Faker
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 from sqlalchemy.exc import SQLAlchemyError
 
 from omnixamples.software_engineering.serving.restful_api.banking.structured.api.conf.base import SEED

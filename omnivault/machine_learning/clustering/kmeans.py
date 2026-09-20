@@ -15,8 +15,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import sklearn.cluster
+from hypervigilant.reproducibility import seed_all
 from numpy.typing import NDArray
-from reproducibility.seed import seed_all
 
 from omnivault.machine_learning._types import Fittable, Predictable
 from omnivault.machine_learning.estimator import BaseEstimator

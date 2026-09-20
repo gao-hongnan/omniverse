@@ -3,8 +3,8 @@ from typing import Any, Literal, Self, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
+from hypervigilant.reproducibility import seed_all
 from numpy.typing import NDArray
-from reproducibility.seed import seed_all
 from scipy.stats import multivariate_normal
 from tqdm import tqdm
 

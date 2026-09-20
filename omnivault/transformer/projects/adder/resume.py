@@ -4,9 +4,9 @@ import warnings
 from pathlib import Path
 
 from hydra.utils import instantiate
+from hypervigilant.reproducibility import seed_all
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from reproducibility.seed import seed_all
 
 from omnivault._types._alias import Missing
 from omnivault._types._sentinel import MISSING

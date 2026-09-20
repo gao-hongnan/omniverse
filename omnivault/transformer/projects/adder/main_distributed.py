@@ -9,9 +9,9 @@ import warnings
 import torch
 import torch.multiprocessing as mp
 from hydra.utils import instantiate
+from hypervigilant.reproducibility import seed_all
 from omegaconf import DictConfig, ListConfig
 from omegaconf import OmegaConf as om
-from reproducibility.seed import seed_all
 from torch.distributed import destroy_process_group
 from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data.distributed import DistributedSampler

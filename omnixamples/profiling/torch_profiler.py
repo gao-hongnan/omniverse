@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any, Iterable, Tuple
 
 import torch
-from reproducibility.seed import seed_all
+from hypervigilant.reproducibility import seed_all
 from torch import nn
 from torch._C._profiler import _ExperimentalConfig
 from torch.profiler import ProfilerActivity, profile, record_function
