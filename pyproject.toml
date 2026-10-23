@@ -57,6 +57,23 @@ serving = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["omnivault"]
+# colon-named train_logs dirs make uv build fail (tar name policy)
+exclude = [
+    "omnivault/**/checkpoints",
+    "omnivault/**/train_logs",
+    "omnivault/**/assets",
+    "omnivault/**/*.ipynb",
+    "omnivault/**/*.log",
+]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "omnivault/**/checkpoints",
+    "omnivault/**/train_logs",
+    "omnivault/**/assets",
+    "omnivault/**/*.ipynb",
+    "omnivault/**/*.log",
+]
 
 [dependency-groups]
 lint = [
