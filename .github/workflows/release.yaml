@@ -6,10 +6,8 @@ on:
       - "v*.*.*"  # Trigger on version tags
   workflow_dispatch:  # Allow manual triggering
 
-# Ensure only one release runs at a time
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+# no top-level concurrency: a caller of reusable workflows with a concurrency
+# block fails at startup on GitHub Actions
 
 env:
   UV_FROZEN: "1"
